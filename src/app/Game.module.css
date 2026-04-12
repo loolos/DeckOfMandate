@@ -76,15 +76,55 @@
   font-size: 1rem;
 }
 
-.resources {
+.resourceStack {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.fundingHighlight {
+  border: 2px solid color-mix(in srgb, var(--accent) 55%, var(--border));
+  border-radius: 12px;
+  padding: 0.65rem 0.85rem;
+  background: linear-gradient(
+    165deg,
+    color-mix(in srgb, var(--accent) 14%, transparent) 0%,
+    color-mix(in srgb, var(--panel) 100%, transparent) 55%
+  );
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 22%, transparent);
+}
+
+.fundingHighlightLabel {
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--accent);
+}
+
+.fundingHighlightValue {
+  margin-top: 0.2rem;
+  font-variant-numeric: tabular-nums;
+  font-size: clamp(1.85rem, 5vw, 2.35rem);
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.fundingHighlightHint {
+  margin-top: 0.35rem;
+  font-size: 0.72rem;
+  line-height: 1.3;
+  color: var(--muted);
+}
+
+.resourceSecondary {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 0.5rem;
 }
 
 @media (min-width: 520px) {
-  .resources {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+  .resourceSecondary {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 
