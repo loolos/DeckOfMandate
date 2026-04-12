@@ -1,0 +1,28 @@
+import { getEventTemplate, isContinuedCrisis } from "../data/events";
+import type { SlotId } from "../types/event";
+import type { GameState } from "../types/game";
+import { applyEffects, enforceLegitimacy } from "./applyEffects";
+
+const SLOTS: SlotId[] = ["A", "B"];
+
+/** After Action phase: harmful unresolved penalties in slot order A then B. */
+export function resolveEndOfYearPenalties(state: GameState): GameState {
+  let s = state;
+  for (const slot of SLOTS) {
+    const ev = s.slots[slot];
+    if (!ev || ev.resolved) continue;
+    const tmpl = getEventTemplate(ev.templateId);
+    if (!tmpl.harmful) continue;
+    if (ev.templateId === "powerVacuum") {
+      s = { ...s, pendingMajorCrisis: { ...s.pendingMajorCrisis, [slot]: true } };
+      continue;
+    }
+    s = applyEffects(s, tmpl.penaltiesIfUnresolved);
+    s = enforceLegitimacy(s);
+    if (s.outcome !== "playing") return s;
+    if (!isContinuedCrisis(tmpl)) {
+      s = { ...s, slots: { ...s.slots, [slot]: null } };
+    }
+  }
+  return s;
+}

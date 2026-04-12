@@ -71,7 +71,7 @@ This ensures strategic diversity even with a small deck.
 | Field | Value |
 | --- | --- |
 | **Role** | Control |
-| **Cost** | 2 funding |
+| **Cost** | 1 funding |
 | **Effect** | **MVP:** Resolve **one harmful event** among the two current events (**Trade Opportunity** cannot be chosen) |
 | **Copies** | 3 |
 | **Purpose** | Immediate danger removal; protect Legitimacy; strong against pressure turns |
@@ -106,7 +106,7 @@ This ensures strategic diversity even with a small deck.
 | Card Name | Cost | Effect | Role | Copies |
 | --- | --- | --- | --- | --- |
 | Funding | 0 | Gain +1 funding this turn | Economy | 3 |
-| Crackdown | 2 | MVP: resolve one harmful event (not Trade Opportunity) | Control | 3 |
+| Crackdown | 1 | MVP: resolve one harmful event (not Trade Opportunity) | Control | 3 |
 | Reform | 2 | Power +1 (next turn draw size); Draw 1 now (hand cap 10) | Growth | 3 |
 | Ceremony | 2 | Legitimacy +1 | Stability | 3 |
 

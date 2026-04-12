@@ -54,6 +54,7 @@ Use React for UI rendering and component structure.
 - **Campaign date banner** (granularity from level data: *The First Mandate* is **year-only** because **1 turn = 1 year**; a **monthly** cadence level would show **year + month**—see `gameplay.md` / `levels.md`)
 - Turn Button
 - Game Over Screen
+- **Language toggle** (switch `en` / `zh`; see **Localization**)
 
 ---
 
@@ -214,6 +215,11 @@ deck-of-mandate/
       event.ts
       game.ts
 
+    locales/
+      index.ts
+      en.ts
+      zh.ts
+
     styles/
       Card.module.css
       Game.module.css
@@ -266,6 +272,19 @@ Rules engine handles:
 
 React components only display state.
 
+### Localization (MVP)
+
+The prototype supports **two player-facing languages**: **English (`en`)** and **Chinese (`zh`)**.
+
+**Requirements:**
+
+- **Single source of truth for display text:** all strings the player reads (chrome labels, buttons, phase hints, **card names and descriptions**, **event titles and descriptions**, solve-button labels, win/lose copy, retention instructions, and any short **mechanism help** text shown in the UI) live in **locale modules**, not scattered as literals inside components.
+- **Stable keys:** content data (`data/cards.ts`, `data/events.ts`, and similar) should reference **message keys** (for example `titleKey: "card.funding.name"`) or equivalent typed keys. Components resolve text with **`t(key)`** (or a small hook) for the **active locale**.
+- **Runtime switch:** the game exposes a **always-visible or easy-to-reach control** (for example a header **Language** / **语言** toggle) to switch between `en` and `zh` **without restarting** the app.
+- **Persistence:** store the selected locale in **LocalStorage** (separate from run save is fine) so the choice survives reload.
+- **Implementation shape (recommended):** `src/locales/en.ts` and `src/locales/zh.ts` export nested or flat string maps; `src/locales/index.ts` exports `LocaleId`, `messages[locale]`, and helpers. A React **context** provides `{ locale, setLocale, t }` to the tree. **TypeScript** can enforce that keys exist in both locales (for example a shared `MessageKey` type or satisfies pattern).
+- **What stays English:** **identifiers** in code (`cardId`, effect kinds), file paths, commit messages, and the canonical **`docs/`** rules remain English. Only **player-visible** strings are translated in locale files.
+
 ### Content effects (typed)
 
 - Define effect unions in `types/` (for example `effect.ts` or alongside `card.ts` / `event.ts`).
@@ -302,6 +321,7 @@ Build first version with:
 
 - **No main menu required for the first playable build:** load the app and **start a run immediately** (single scene / single screen flow). Menus, meta-progression, and save slots can come later.
 - **Persistence:** optional; **LocalStorage** is supported by the stack recommendation but **not** required to ship the first loop.
+- **Localization:** player-facing copy in **English and Chinese** from **central locale bundles**; in-game **language switch** and **remembered locale** (see **Localization** above).
 
 ### Content
 

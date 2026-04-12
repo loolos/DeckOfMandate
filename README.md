@@ -4,15 +4,16 @@ Single-player, turn-based strategy card game about governance, crisis management
 
 ## Language policy (project)
 
-All **implementation-facing** work is in **English**, including:
+**Source and repo conventions** stay in **English**:
 
-- In-game **UI copy**
 - **Source code** identifiers, file names, and structure
 - **Comments** and inline documentation in the codebase
 - **Commit messages** and technical change descriptions
-- **Design and rules text** that ships with or is maintained for the build (aligned with the English docs under `docs/`)
+- **Authoritative design and rules text** under `docs/` (English)
 
-Informal design discussion may use other languages if your team prefers; the shipped product and repository conventions above stay English.
+**Player-facing UI copy** is **localized**: the shipped app supports **English** and **Chinese** for all user-visible strings (labels, card text, event text, onboarding or rules summaries shown in the UI). Copy is **not** hard-coded in components; it lives in **central locale bundles** (see [docs/design.md](docs/design.md) — **Localization**). The player can **switch language at any time** from an in-game control; the chosen locale should be **remembered** (for example LocalStorage).
+
+Informal design discussion may use other languages if your team prefers.
 
 ## Documentation
 
@@ -29,6 +30,6 @@ React, TypeScript, Vite, CSS Modules, central `useReducer` game state, **typed d
 
 ## Status
 
-Design docs and rules are in place; application code is not included in this repository yet.
+Design docs and rules are in place. A playable **MVP web client** (Vite + React + TypeScript) lives under `src/` — run `npm install`, `npm run dev`, `npm test`, and `npm run build` as needed.
 
-**MVP app shell:** first build can **start a run on load** (no main menu required); see [docs/design.md](docs/design.md) (**MVP product shell**).
+**MVP app shell:** the build **starts or resumes a run on load** (no main menu); see [docs/design.md](docs/design.md) (**MVP product shell**).

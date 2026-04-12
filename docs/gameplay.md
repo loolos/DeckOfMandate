@@ -191,7 +191,7 @@ Cards are the player's tools.
 
 **Crackdown**
 
-- **Cost:** 2 **funding**
+- **Cost:** 1 **funding**
 - **Effect (MVP):** Resolve **one harmful event** you choose among the two current events. **Trade Opportunity** cannot be chosen (it is not harmful: no penalty if ignored).
 - **Purpose:** Short-term control tool. Later versions may narrow this to tag-based targeting (Unrest/Crisis, and so on).
 
