@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { getCardTemplate } from "../data/cards";
 import type { GameAction } from "../app/gameReducer";
 import { OutcomeQuickFrame } from "./OutcomeQuickFrame";
@@ -20,7 +20,6 @@ export function Hand({
   const { t } = useI18n();
   const isSmallScreen = useSmallScreen();
   const [expandedCardId, setExpandedCardId] = useState<string | null>(null);
-  const lastTapRef = useRef<{ id: string; at: number } | null>(null);
   const crackPick = state.pendingInteraction?.type === "crackdownPick" ? state.pendingInteraction : null;
   const canPlay =
     state.outcome === "playing" && state.phase === "action" && !state.pendingInteraction;
@@ -100,26 +99,49 @@ export function Hand({
           );
         }
 
-        const onMobileTap = () => {
-          const now = Date.now();
-          const lastTap = lastTapRef.current;
-          if (playable && lastTap?.id === id && now - lastTap.at <= 360) {
-            lastTapRef.current = null;
-            dispatch({ type: "PLAY_CARD", handIndex: index });
-            return;
-          }
-          lastTapRef.current = { id, at: now };
-          setExpandedCardId((prev) => (prev === id ? null : id));
-        };
+        const onMobileTap = () => setExpandedCardId((prev) => (prev === id ? null : id));
+
+        if (isSmallScreen) {
+          return (
+            <div
+              key={id}
+              className={cardClassName}
+              role="button"
+              tabIndex={0}
+              aria-disabled={!playable ? "true" : undefined}
+              aria-expanded={showDetails ? "true" : "false"}
+              onClick={onMobileTap}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  onMobileTap();
+                }
+              }}
+            >
+              {body}
+              {showDetails ? (
+                <div className={styles.cardMobileActions} onClick={(e) => e.stopPropagation()}>
+                  <button
+                    type="button"
+                    className={`${styles.btn} ${styles.btnPrimary}`}
+                    disabled={!playable}
+                    onClick={() => dispatch({ type: "PLAY_CARD", handIndex: index })}
+                  >
+                    {t("ui.playThisCard")}
+                  </button>
+                </div>
+              ) : null}
+            </div>
+          );
+        }
 
         return (
           <button
             key={id}
             type="button"
             className={cardClassName}
-            disabled={!isSmallScreen && !playable}
-            aria-disabled={isSmallScreen && !playable ? "true" : undefined}
-            onClick={isSmallScreen ? onMobileTap : () => dispatch({ type: "PLAY_CARD", handIndex: index })}
+            disabled={!playable}
+            onClick={() => dispatch({ type: "PLAY_CARD", handIndex: index })}
           >
             {body}
           </button>

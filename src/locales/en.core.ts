@@ -37,7 +37,8 @@ export const messagesEnCore = {
   "ui.events": "Events",
   "ui.eventsResizeHint": "Drag the bottom-right corner to resize the events area.",
   "ui.mobileLogTapHint":
-    "Small screen: tap an event or hand card to expand details; double-tap a hand card quickly to play when you can afford it.",
+    "Small screen: tap events, statuses, and hand cards to expand details; in hand details, tap “Play this card” to play.",
+  "ui.playThisCard": "Play this card",
   "log.crackdownPickPrompt":
     "[Turn {turn}] Choose a harmful event to resolve with Royal Intervention (not Colonial Trade Boom).",
   "ui.cancel": "Cancel",
@@ -76,6 +77,9 @@ export const messagesEnCore = {
   "ui.statuses": "Ongoing effects",
   "ui.statuses.empty": "No ongoing effects.",
   "ui.statusTurnsRemaining": "{n} turn(s) left",
+  "ui.statusDetail.drawAttemptsDelta": "Draw attempts modifier each turn: {delta}.",
+  "ui.statusDetail.retentionCapacityDelta": "Retention cap modifier at turn end: {delta}.",
+  "ui.statusDetail.blockCardTag": "Cards with the “{tag}” tag cannot be played.",
   "ui.actionLog": "Action log",
   "ui.actionLog.empty": "No effects yet this run.",
   "ui.targets": "Level goals — within {limit} turns: Treasury {tT}, Power {tP}, Legitimacy {tL}",
