@@ -515,6 +515,7 @@ export function Game() {
           <h3 className={styles.statusSectionTitle}>{t("ui.statuses")}</h3>
           <StatusBar
             statuses={state.playerStatuses}
+            europeAlertActive={state.europeAlert && state.outcome === "playing"}
             coalitionActive={
               !!state.antiFrenchLeague &&
               state.turn <= state.antiFrenchLeague.untilTurn &&

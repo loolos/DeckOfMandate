@@ -12,6 +12,8 @@ export const messagesEnSecondMandate = {
     "Europe still remembers your earlier offensives. Rivals never fully trust French restraint, but careful reconstruction after war keeps the crown standing.",
   "level.gloryUnderStrain.ending.defeat":
     "The burdens of hegemony break the regime. Fiscal strain, social unrest, and diplomatic pressure outpace royal control, leaving the crown weakened and isolated.",
+  "status.europeAlert.name": "Europe Alert",
+  "status.europeAlert.hint": "Coalition-pressure war events roll with +1 weight.",
   "event.nymwegenSettlement.name": "Treaties of Nijmegen",
   "event.nymwegenSettlement.desc":
     "The settlement can consolidate your gains. Invest 1 Funding to secure Treasury +1 and Legitimacy +1.",
