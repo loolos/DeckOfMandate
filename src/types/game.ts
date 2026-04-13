@@ -143,5 +143,7 @@ export type GameState = {
   antiFrenchLeague: AntiFrenchLeagueState | null;
   /** True after the player chooses the military option on the War of Devolution event (affects victory epilogue). */
   warOfDevolutionAttacked: boolean;
+  /** Continuity marker from Chapter 1 military overreach; increases selected war-pressure rolls in Chapter 2. */
+  europeAlert: boolean;
   actionLog: readonly ActionLogEntry[];
 };

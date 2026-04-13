@@ -2,7 +2,7 @@ import { getCardTemplate } from "../data/cards";
 import { getEventTemplate } from "../data/events";
 import { getLevelDef, type LevelId } from "../data/levels";
 import { appendActionLog } from "../logic/actionLog";
-import { enforceLegitimacy } from "../logic/applyEffects";
+import { applyEffects, enforceLegitimacy } from "../logic/applyEffects";
 import { normalizeGameState } from "../logic/normalizeGameState";
 import { applyPlayedCardEffects } from "../logic/resolveCard";
 import { resolveEndOfYearPenalties } from "../logic/resolveEvents";
@@ -70,7 +70,7 @@ function canScriptedAttack(state: GameState, slot: SlotId): boolean {
   const tmpl = getEventTemplate(ev.templateId);
   if (tmpl.solve.kind !== "scriptedAttack") return false;
   const cfg = findScriptedCalendarConfig(state.levelId, ev.templateId);
-  if (!cfg) return false;
+  if (!cfg?.attack) return false;
   return state.resources.funding >= cfg.attack.fundingCost;
 }
 
@@ -80,7 +80,7 @@ function performScriptedAttack(state: GameState, slot: SlotId): GameState {
   const tmpl = getEventTemplate(ev.templateId);
   if (tmpl.solve.kind !== "scriptedAttack") return state;
   const cfg = findScriptedCalendarConfig(state.levelId, ev.templateId);
-  if (!cfg) return state;
+  if (!cfg?.attack || !cfg.antiCoalition) return state;
   const cost = cfg.attack.fundingCost;
   if (state.resources.funding < cost) return state;
 
@@ -174,20 +174,19 @@ function performFundSolve(state: GameState, slot: SlotId): GameState {
   } else {
     return state;
   }
-  if (tmpl.id === "tradeOpportunity") {
-    s = {
-      ...s,
-      resources: {
-        ...s.resources,
-        treasuryStat: s.resources.treasuryStat + 1,
-      },
-    };
+  let treasuryGain = 0;
+  if (tmpl.onFundSolveEffects && tmpl.onFundSolveEffects.length > 0) {
+    for (const effect of tmpl.onFundSolveEffects) {
+      if (effect.kind === "modResource" && effect.resource === "treasuryStat" && effect.delta > 0) {
+        treasuryGain += effect.delta;
+      }
+    }
+    s = applyEffects(s, tmpl.onFundSolveEffects);
   }
   s = markSlotResolved(s, slot);
   s = enforceLegitimacy(s);
   const fundingPaid =
     tmpl.solve.kind === "funding" || tmpl.solve.kind === "fundingOrCrackdown" ? tmpl.solve.amount : 0;
-  const treasuryGain = tmpl.id === "tradeOpportunity" ? 1 : 0;
   s = appendActionLog(s, {
     kind: "eventFundSolved",
     slot,

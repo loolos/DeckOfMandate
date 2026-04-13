@@ -1,6 +1,16 @@
 import type { Effect } from "./effect";
 
-export type CardTemplateId = "funding" | "crackdown" | "reform" | "ceremony" | "development";
+export type CardTemplateId =
+  | "funding"
+  | "crackdown"
+  | "reform"
+  | "ceremony"
+  | "development"
+  | "grainRelief"
+  | "taxRebalance"
+  | "diplomaticCongress"
+  | "patronageOffice"
+  | "warBond";
 
 export type CardTemplate = {
   id: CardTemplateId;

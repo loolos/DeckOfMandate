@@ -32,7 +32,7 @@ export function slotScriptedAttackAffordable(state: GameState, slot: SlotId): bo
   const tmpl = getEventTemplate(ev.templateId);
   if (tmpl.solve.kind !== "scriptedAttack") return false;
   const cfg = findScriptedCalendarConfig(state.levelId, ev.templateId);
-  if (!cfg) return false;
+  if (!cfg?.attack) return false;
   return state.resources.funding >= cfg.attack.fundingCost;
 }
 
@@ -55,7 +55,7 @@ export function fundSolveLabelAmount(state: GameState, slot: SlotId): number | n
   if (tmpl.solve.kind === "fundingOrCrackdown") return tmpl.solve.amount;
   if (tmpl.solve.kind === "scriptedAttack") {
     const cfg = findScriptedCalendarConfig(state.levelId, ev.templateId);
-    return cfg?.attack.fundingCost ?? null;
+    return cfg?.attack?.fundingCost ?? null;
   }
   return null;
 }
