@@ -34,6 +34,8 @@ export const messagesZhCore = {
   "ui.hand": "手牌",
   "ui.events": "事件",
   "ui.eventsResizeHint": "拖动右下角可调整事件区域高度。",
+  "ui.mobileEventTapHint": "单击查看详情",
+  "ui.mobileCardTapHint": "单击看详情 · 双击打出",
   "log.crackdownPickPrompt":
     "[第 {turn} 年] 选择要用「王室干预」解决的有害事件（不能选殖民贸易机遇）。",
   "ui.cancel": "取消",

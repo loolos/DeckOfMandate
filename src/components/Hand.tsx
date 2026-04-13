@@ -1,8 +1,10 @@
+import { useRef, useState } from "react";
 import { getCardTemplate } from "../data/cards";
 import type { GameAction } from "../app/gameReducer";
 import { OutcomeQuickFrame } from "./OutcomeQuickFrame";
 import { buildCardQuickFrameRows } from "../logic/quickOutcomeFrame";
 import { cardLabelWithIcon } from "../logic/icons";
+import { useSmallScreen } from "../logic/useSmallScreen";
 import type { GameState } from "../types/game";
 import type { MessageKey } from "../locales";
 import { useI18n } from "../locales";
@@ -16,6 +18,9 @@ export function Hand({
   dispatch: (a: GameAction) => void;
 }) {
   const { t } = useI18n();
+  const isSmallScreen = useSmallScreen();
+  const [expandedCardId, setExpandedCardId] = useState<string | null>(null);
+  const lastTapRef = useRef<{ id: string; at: number } | null>(null);
   const crackPick = state.pendingInteraction?.type === "crackdownPick" ? state.pendingInteraction : null;
   const canPlay =
     state.outcome === "playing" && state.phase === "action" && !state.pendingInteraction;
@@ -27,11 +32,29 @@ export function Hand({
         if (!inst) return null;
         const tmpl = getCardTemplate(inst.templateId);
         const affordable = state.resources.funding >= tmpl.cost;
+        const playable = canPlay && affordable;
         const title = cardLabelWithIcon(inst.templateId, t(tmpl.titleKey as MessageKey));
-        const body = (
+        const quickRows = buildCardQuickFrameRows(tmpl);
+        const compactSummary = quickRows.map((row) => row.value).join(" · ");
+        const showDetails = !isSmallScreen || expandedCardId === id || (crackPick && id === crackPick.cardInstanceId);
+        const body = isSmallScreen ? (
           <>
             <div className={styles.cardTitle}>{title}</div>
-            <OutcomeQuickFrame rows={buildCardQuickFrameRows(tmpl)} />
+            <div className={styles.compactSummary}>{compactSummary}</div>
+            {showDetails ? (
+              <div className={styles.compactDetails}>
+                <OutcomeQuickFrame rows={quickRows} />
+                <div className={styles.cardBg}>{t(tmpl.backgroundKey as MessageKey)}</div>
+                <div className={styles.cardDesc}>{t(tmpl.descriptionKey as MessageKey)}</div>
+              </div>
+            ) : (
+              <div className={styles.compactHint}>{t("ui.mobileCardTapHint")}</div>
+            )}
+          </>
+        ) : (
+          <>
+            <div className={styles.cardTitle}>{title}</div>
+            <OutcomeQuickFrame rows={quickRows} />
             <div className={styles.cardBg}>{t(tmpl.backgroundKey as MessageKey)}</div>
             <div className={styles.cardDesc}>{t(tmpl.descriptionKey as MessageKey)}</div>
           </>
@@ -50,13 +73,26 @@ export function Hand({
           );
         }
 
+        const onMobileTap = () => {
+          const now = Date.now();
+          const lastTap = lastTapRef.current;
+          if (playable && lastTap?.id === id && now - lastTap.at <= 360) {
+            lastTapRef.current = null;
+            dispatch({ type: "PLAY_CARD", handIndex: index });
+            return;
+          }
+          lastTapRef.current = { id, at: now };
+          setExpandedCardId((prev) => (prev === id ? null : id));
+        };
+
         return (
           <button
             key={id}
             type="button"
-            className={styles.card}
-            disabled={!canPlay || !affordable}
-            onClick={() => dispatch({ type: "PLAY_CARD", handIndex: index })}
+            className={`${styles.card} ${isSmallScreen && !playable ? styles.cardDisabled : ""}`}
+            disabled={!isSmallScreen && !playable}
+            aria-disabled={isSmallScreen && !playable ? "true" : undefined}
+            onClick={isSmallScreen ? onMobileTap : () => dispatch({ type: "PLAY_CARD", handIndex: index })}
           >
             {body}
           </button>

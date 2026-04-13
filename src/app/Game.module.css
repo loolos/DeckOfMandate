@@ -76,6 +76,10 @@
   font-size: 1rem;
 }
 
+.handPanel {
+  margin-top: 1rem;
+}
+
 .eventsPanel {
   display: flex;
   flex-direction: column;
@@ -264,6 +268,34 @@
   flex: 1;
 }
 
+.compactSummary {
+  margin-top: 0.05rem;
+  font-size: 0.76rem;
+  line-height: 1.3;
+  color: color-mix(in srgb, var(--text) 90%, var(--muted));
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.compactDetails {
+  margin-top: 0.2rem;
+  display: grid;
+  gap: 0.25rem;
+}
+
+.compactHint {
+  margin-top: 0.08rem;
+  font-size: 0.68rem;
+  line-height: 1.2;
+  color: var(--muted);
+}
+
+.eventCardCollapsed {
+  min-height: 0;
+}
+
 .outcomeQuickFrame {
   margin-top: 0.15rem;
   padding: 0.4rem 0.45rem;
@@ -372,6 +404,10 @@
   background: #141a24;
   padding: 0.5rem 0.55rem;
   text-align: left;
+}
+
+.cardDisabled {
+  opacity: 0.66;
 }
 
 .cardTitle {
@@ -729,4 +765,162 @@
   overflow-y: auto;
   padding-right: 0.25rem;
   white-space: pre-wrap;
+}
+
+@media (max-width: 760px) {
+  .root {
+    padding: max(0.5rem, env(safe-area-inset-top, 0px)) max(0.6rem, env(safe-area-inset-right, 0px))
+      max(0.75rem, env(safe-area-inset-bottom, 0px)) max(0.6rem, env(safe-area-inset-left, 0px));
+  }
+
+  .header {
+    margin-bottom: 0.4rem;
+    padding-bottom: 0.45rem;
+  }
+
+  .titleBlock h1 {
+    font-size: 1.08rem;
+  }
+
+  .titleBlock p {
+    margin-top: 0.15rem;
+    font-size: 0.8rem;
+  }
+
+  .banner {
+    font-size: 0.95rem;
+  }
+
+  .targets {
+    margin-top: 0.25rem;
+    font-size: 0.72rem;
+    line-height: 1.3;
+  }
+
+  .help {
+    display: none;
+  }
+
+  .grid {
+    gap: 0.45rem;
+  }
+
+  .panel {
+    padding: 0.5rem 0.55rem;
+  }
+
+  .panel h2 {
+    margin-bottom: 0.35rem;
+    font-size: 0.9rem;
+  }
+
+  .handPanel {
+    margin-top: 0.45rem;
+  }
+
+  .eventsPanel > h2 {
+    margin-bottom: 0.3rem;
+    font-size: 0.9rem;
+  }
+
+  .eventsResizable {
+    resize: none;
+    overflow: visible;
+    min-height: 0;
+    max-height: none;
+    padding-bottom: 0;
+  }
+
+  .events,
+  .hand {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 0.45rem;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding-bottom: 0.25rem;
+    scrollbar-width: thin;
+    scroll-snap-type: x proximity;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .eventCard,
+  .card {
+    flex: 0 0 min(78vw, 14rem);
+    width: min(78vw, 14rem);
+    max-width: min(78vw, 14rem);
+    scroll-snap-align: start;
+  }
+
+  .eventCard {
+    padding: 0.5rem 0.55rem;
+    gap: 0.3rem;
+  }
+
+  .eventTitle,
+  .cardTitle {
+    font-size: 0.88rem;
+    line-height: 1.25;
+  }
+
+  .eventBody,
+  .cardBg,
+  .cardDesc {
+    font-size: 0.74rem;
+    line-height: 1.28;
+  }
+
+  .badge {
+    font-size: 0.65rem;
+  }
+
+  .outcomeQuickFrame {
+    padding: 0.32rem 0.35rem;
+    font-size: 0.7rem;
+  }
+
+  .quickFrameRow {
+    grid-template-columns: minmax(3.25rem, 34%) minmax(0, 1fr);
+    gap: 0.15rem 0.3rem;
+  }
+
+  .quickFrameLabel {
+    font-size: 0.63rem;
+  }
+
+  .actions {
+    gap: 0.3rem;
+  }
+
+  .btn {
+    min-height: 2.35rem;
+    padding: 0.42rem 0.58rem;
+    font-size: 0.82rem;
+  }
+
+  .actionLogSection {
+    margin-top: 0.5rem;
+  }
+
+  .actionLogHeading {
+    margin-bottom: 0.3rem;
+    font-size: 0.9rem;
+  }
+
+  .actionLogScroll {
+    height: 4.8rem;
+    max-height: 4.8rem;
+    font-size: 0.74rem;
+    line-height: 1.3;
+  }
+
+  .footerRow {
+    margin-top: 0.5rem;
+    gap: 0.4rem;
+  }
+
+  .piles {
+    gap: 0.55rem;
+    font-size: 0.75rem;
+  }
 }
