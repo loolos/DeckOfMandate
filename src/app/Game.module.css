@@ -617,6 +617,30 @@
   line-height: 1.35;
 }
 
+.startMenuTutorial {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.55rem;
+  margin: 0.35rem 0 0.5rem;
+  font-size: 0.85rem;
+  line-height: 1.35;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.startMenuTutorial input {
+  margin-top: 0.2rem;
+  flex-shrink: 0;
+}
+
+.startMenuTutorialHint {
+  display: block;
+  margin-top: 0.2rem;
+  font-size: 0.78rem;
+  font-weight: 400;
+  color: var(--muted);
+}
+
 .startMenuResume {
   margin-top: 1rem;
   padding-top: 1rem;
@@ -642,4 +666,50 @@
 
 .startMenuScreen .modal {
   width: min(520px, 100%);
+}
+
+.levelIntroScreen {
+  min-height: 100vh;
+  min-height: 100dvh;
+  width: 100%;
+  margin: 0;
+  max-width: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: max(1rem, env(safe-area-inset-top, 0px)) max(1.25rem, env(safe-area-inset-right, 0px))
+    max(1.5rem, env(safe-area-inset-bottom, 0px)) max(1.25rem, env(safe-area-inset-left, 0px));
+  box-sizing: border-box;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.levelIntroScreen .modal {
+  width: min(560px, 100%);
+}
+
+.levelIntroHeader {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.65rem;
+}
+
+.levelIntroTitle {
+  margin: 0;
+  font-size: 1.15rem;
+  flex: 1 1 12rem;
+}
+
+.levelIntroBody {
+  margin: 0 0 1rem;
+  font-size: 0.9rem;
+  line-height: 1.55;
+  color: color-mix(in srgb, var(--text) 92%, var(--muted));
+  max-height: min(52dvh, 420px);
+  overflow-y: auto;
+  padding-right: 0.25rem;
+  white-space: pre-wrap;
 }

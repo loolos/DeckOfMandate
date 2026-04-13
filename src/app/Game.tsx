@@ -1,22 +1,33 @@
-import { useEffect, useMemo, useReducer, useState } from "react";
-import { createInitialState } from "./initialState";
-import { gameReducer, type GameAction } from "./gameReducer";
-import { normalizeGameState } from "../logic/normalizeGameState";
-import { loadGame, saveGame } from "../logic/saveLoad";
-import { cardLabelWithIcon, resourceLabelWithIcon } from "../logic/icons";
-import type { GameState } from "../types/game";
-import { EVENT_SLOT_ORDER } from "../types/event";
-import { defaultLevelId, getLevelDef, isLevelId, levelDefs, type LevelId } from "../data/levels";
+import { useCallback, useEffect, useMemo, useReducer, useState } from "react";
 import { ActionLog } from "../components/ActionLog";
 import { EventPanel } from "../components/EventPanel";
 import { Hand } from "../components/Hand";
 import { LanguageToggle } from "../components/LanguageToggle";
+import { LevelTutorialOverlay } from "../components/LevelTutorialOverlay";
 import { ResourceBar } from "../components/ResourceBar";
 import { StatusBar } from "../components/StatusBar";
 import { getCardTemplate } from "../data/cards";
+import { defaultLevelId, getLevelDef, isLevelId, levelDefs, type LevelId } from "../data/levels";
+import { cardLabelWithIcon, resourceLabelWithIcon } from "../logic/icons";
+import { normalizeGameState } from "../logic/normalizeGameState";
+import { loadGame, saveGame } from "../logic/saveLoad";
+import { readTutorialOnLevelEntry, writeTutorialOnLevelEntry } from "../logic/tutorialPref";
 import type { MessageKey } from "../locales";
 import { useI18n } from "../locales";
+import type { GameState } from "../types/game";
+import { EVENT_SLOT_ORDER } from "../types/event";
+import { gameReducer, type GameAction } from "./gameReducer";
+import { createInitialState } from "./initialState";
 import styles from "./Game.module.css";
+
+type PendingNewRun = { seed?: number; levelId: LevelId };
+
+function levelDefHasIntro(def: (typeof levelDefs)[LevelId]): def is (typeof levelDefs)[LevelId] & {
+  introTitleKey: MessageKey;
+  introBodyKey: MessageKey;
+} {
+  return "introTitleKey" in def && "introBodyKey" in def;
+}
 
 function isValidSave(x: unknown): x is GameState {
   if (!x || typeof x !== "object") return false;
@@ -53,6 +64,10 @@ export function Game() {
   const [startMenuOpen, setStartMenuOpen] = useState(true);
   const [menuLevelId, setMenuLevelId] = useState<LevelId>(defaultLevelId);
   const [menuSeedText, setMenuSeedText] = useState("");
+  const [pendingNewRun, setPendingNewRun] = useState<PendingNewRun | null>(null);
+  const [levelIntroOpen, setLevelIntroOpen] = useState(false);
+  const [tutorialOnEntryMenu, setTutorialOnEntryMenu] = useState(() => readTutorialOnLevelEntry());
+  const [pendingLevelTutorial, setPendingLevelTutorial] = useState(false);
 
   const menuSeedTrimmed = menuSeedText.trim();
   const menuSeedParsed =
@@ -77,6 +92,13 @@ export function Game() {
     setRetain(next);
   }, [state.phase, state.hand]);
 
+  useEffect(() => {
+    if (!pendingLevelTutorial) return;
+    if (state.outcome !== "playing" || state.phase !== "action") {
+      setPendingLevelTutorial(false);
+    }
+  }, [state.outcome, state.phase, pendingLevelTutorial]);
+
   const canEndYear =
     state.outcome === "playing" &&
     state.phase === "action" &&
@@ -93,18 +115,64 @@ export function Game() {
 
   const dispatchSafe = (a: GameAction) => dispatch(a);
 
-  const startNewFromMenu = (seed?: number) => {
-    dispatchSafe({ type: "NEW_GAME", seed, levelId: menuLevelId });
+  const dismissLevelTutorial = useCallback(() => {
+    setPendingLevelTutorial(false);
+  }, []);
+
+  const beginConfiguredRun = (seed: number | undefined, levelId: LevelId) => {
+    setPendingLevelTutorial(tutorialOnEntryMenu);
+    dispatchSafe({ type: "NEW_GAME", seed, levelId });
     setStartMenuOpen(false);
+    setLevelIntroOpen(false);
+    setPendingNewRun(null);
+  };
+
+  const requestStartFromMenu = () => {
+    const seed = menuSeedParsed === "empty" ? undefined : (menuSeedParsed as number);
+    const def = getLevelDef(menuLevelId);
+    if (levelDefHasIntro(def)) {
+      setPendingNewRun({ seed, levelId: menuLevelId });
+      setLevelIntroOpen(true);
+    } else {
+      beginConfiguredRun(seed, menuLevelId);
+    }
+  };
+
+  const confirmLevelIntro = () => {
+    if (!pendingNewRun) return;
+    beginConfiguredRun(pendingNewRun.seed, pendingNewRun.levelId);
   };
 
   const resumeFromStoredSave = () => {
+    setPendingLevelTutorial(false);
     const loaded = loadGame();
     if (loaded && isValidSave(loaded)) {
       dispatchSafe({ type: "HYDRATE", state: normalizeLoadedSave(loaded as GameState) });
     }
     setStartMenuOpen(false);
   };
+
+  const introLevelDef =
+    levelIntroOpen && pendingNewRun && levelDefHasIntro(getLevelDef(pendingNewRun.levelId))
+      ? getLevelDef(pendingNewRun.levelId)
+      : null;
+
+  const levelIntro = introLevelDef ? (
+    <div className={styles.levelIntroScreen} role="dialog" aria-modal="true" aria-labelledby="level-intro-title">
+      <div className={styles.modal}>
+        <div className={styles.levelIntroHeader}>
+          <h2 id="level-intro-title" className={styles.levelIntroTitle}>
+            {t(introLevelDef.introTitleKey)}
+          </h2>
+          <LanguageToggle />
+        </div>
+        <div className={styles.levelIntroBody}>{t(introLevelDef.introBodyKey)}</div>
+        <button type="button" className={`${styles.btn} ${styles.btnPrimary}`} onClick={confirmLevelIntro}>
+          {t("menu.introContinue")}
+        </button>
+      </div>
+    </div>
+  ) : null;
 
   const startMenu = (
     <div className={styles.startMenuScreen} role="dialog" aria-modal="true" aria-labelledby="start-menu-title">
@@ -157,14 +225,26 @@ export function Game() {
           ) : (
             <p className={styles.startMenuMuted}>{t("menu.seedHint")}</p>
           )}
+          <label className={styles.startMenuTutorial}>
+            <input
+              type="checkbox"
+              checked={tutorialOnEntryMenu}
+              onChange={(e) => {
+                const next = e.target.checked;
+                setTutorialOnEntryMenu(next);
+                writeTutorialOnLevelEntry(next);
+              }}
+            />
+            <span>
+              {t("menu.tutorialOnLevelEntry")}
+              <span className={styles.startMenuTutorialHint}>{t("menu.tutorialOnLevelEntryHint")}</span>
+            </span>
+          </label>
           <button
             type="button"
             className={`${styles.btn} ${styles.btnPrimary}`}
             disabled={menuSeedParsed === "invalid"}
-            onClick={() => {
-              const seed = menuSeedParsed === "empty" ? undefined : (menuSeedParsed as number);
-              startNewFromMenu(seed);
-            }}
+            onClick={requestStartFromMenu}
           >
             {t("menu.startConfigured")}
           </button>
@@ -181,22 +261,29 @@ export function Game() {
   );
 
   if (startMenuOpen) {
-    return startMenu;
+    return levelIntro ?? startMenu;
   }
+
+  const showLevelTutorial =
+    pendingLevelTutorial && state.outcome === "playing" && state.phase === "action";
 
   return (
     <div className={styles.root}>
+      {showLevelTutorial ? (
+        <LevelTutorialOverlay open={showLevelTutorial} onDismiss={dismissLevelTutorial} />
+      ) : null}
+
       <header className={styles.header}>
         <div className={styles.titleBlock}>
           <h1>{t("app.title")}</h1>
-          <p>{t("app.subtitle")}</p>
+          <p>{t(level.nameKey as MessageKey)}</p>
           <div className={styles.banner}>
             {year}
             <span style={{ marginLeft: "0.65rem", color: "var(--muted)", fontSize: "0.95rem" }}>
               {t("banner.turn", { turn: state.turn, limit: level.turnLimit })}
             </span>
           </div>
-          <div className={styles.targets}>
+          <div className={styles.targets} id="tutorial-targets">
             {t("ui.targets", {
               limit: level.turnLimit,
               tT: level.winTargets.treasuryStat,
@@ -211,7 +298,7 @@ export function Game() {
       <p className={styles.help}>{t("help.short")}</p>
 
       <div className={styles.grid}>
-        <section className={styles.panel}>
+        <section className={styles.panel} id="tutorial-resources">
           <h2>{t("ui.resources")}</h2>
           <ResourceBar resources={state.resources} />
           <h3 className={styles.statusSectionTitle}>{t("ui.statuses")}</h3>
@@ -220,7 +307,7 @@ export function Game() {
 
         {EVENT_SLOT_ORDER.some((id) => state.slots[id] != null) ||
         state.pendingInteraction?.type === "crackdownPick" ? (
-          <section className={`${styles.panel} ${styles.eventsPanel}`}>
+          <section className={`${styles.panel} ${styles.eventsPanel}`} id="tutorial-events">
             <h2>{t("ui.events")}</h2>
             <div className={styles.eventsResizable} title={t("ui.eventsResizeHint")}>
               <EventPanel state={state} dispatch={dispatchSafe} />
@@ -229,7 +316,7 @@ export function Game() {
         ) : null}
       </div>
 
-      <section className={styles.panel} style={{ marginTop: "1rem" }}>
+      <section className={styles.panel} style={{ marginTop: "1rem" }} id="tutorial-hand">
         <h2>{t("ui.hand")}</h2>
         <Hand state={state} dispatch={dispatchSafe} />
       </section>
