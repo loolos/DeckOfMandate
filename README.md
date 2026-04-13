@@ -1,6 +1,7 @@
 # Deck of Mandate
 
 Single-player, turn-based strategy card game about governance, crisis management, and political growth: manage resources, respond to events, and strengthen the regime before legitimacy collapses.
+[**Play Online**](https://loolos.github.io/DeckOfMandate)
 
 ## Language policy (project)
 
