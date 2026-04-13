@@ -32,8 +32,35 @@ const firstMandate = {
   },
 } as const;
 
+const secondMandate = {
+  id: "secondMandate",
+  nameKey: "level.gloryUnderStrain.name",
+  introTitleKey: "level.gloryUnderStrain.introTitle",
+  introBodyKey: "level.gloryUnderStrain.introBody",
+  ending: {
+    victoryBodyKey: "level.gloryUnderStrain.ending.victory",
+    victoryWarDevolutionExtraKey: "level.gloryUnderStrain.ending.victoryWarDevolutionExtra",
+    defeatBodyKey: "level.gloryUnderStrain.ending.defeat",
+  } satisfies LevelEndingCopyKeys,
+  turnLimit: 25,
+  calendarStartYear: 1676,
+  yearsPerTurn: 1,
+  startingResources: {
+    treasuryStat: 3,
+    funding: 0,
+    power: 3,
+    legitimacy: 3,
+  },
+  winTargets: {
+    treasuryStat: 5,
+    power: 5,
+    legitimacy: 5,
+  },
+} as const;
+
 export const levelDefs = {
   firstMandate,
+  secondMandate,
 } as const;
 
 export type LevelId = keyof typeof levelDefs;

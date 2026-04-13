@@ -44,6 +44,49 @@ const templates: Record<CardTemplateId, CardTemplate> = {
     descriptionKey: "card.development.desc",
     effects: [{ kind: "modResource", resource: "treasuryStat", delta: 1 }],
   },
+  grainRelief: {
+    id: "grainRelief",
+    cost: 2,
+    titleKey: "card.grainRelief.name",
+    backgroundKey: "card.grainRelief.background",
+    descriptionKey: "card.grainRelief.desc",
+    effects: [{ kind: "modResource", resource: "legitimacy", delta: 1 }],
+  },
+  taxRebalance: {
+    id: "taxRebalance",
+    cost: 2,
+    titleKey: "card.taxRebalance.name",
+    backgroundKey: "card.taxRebalance.background",
+    descriptionKey: "card.taxRebalance.desc",
+    effects: [{ kind: "gainFunding", amount: 1 }],
+  },
+  diplomaticCongress: {
+    id: "diplomaticCongress",
+    cost: 2,
+    titleKey: "card.diplomaticCongress.name",
+    backgroundKey: "card.diplomaticCongress.background",
+    descriptionKey: "card.diplomaticCongress.desc",
+    effects: [{ kind: "scheduleNextTurnDrawModifier", delta: 1 }],
+  },
+  patronageOffice: {
+    id: "patronageOffice",
+    cost: 1,
+    titleKey: "card.patronageOffice.name",
+    backgroundKey: "card.patronageOffice.background",
+    descriptionKey: "card.patronageOffice.desc",
+    effects: [{ kind: "modResource", resource: "power", delta: 1 }],
+  },
+  warBond: {
+    id: "warBond",
+    cost: 0,
+    titleKey: "card.warBond.name",
+    backgroundKey: "card.warBond.background",
+    descriptionKey: "card.warBond.desc",
+    effects: [
+      { kind: "gainFunding", amount: 2 },
+      { kind: "modResource", resource: "treasuryStat", delta: -1 },
+    ],
+  },
 };
 
 export function getCardTemplate(id: CardTemplateId): CardTemplate {

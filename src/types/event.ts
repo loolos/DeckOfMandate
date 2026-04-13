@@ -8,7 +8,27 @@ export type EventTemplateId =
   | "politicalGridlock"
   | "powerVacuum"
   | "majorCrisis"
-  | "warOfDevolution";
+  | "warOfDevolution"
+  | "nymwegenSettlement"
+  | "revocationNantes"
+  | "leagueOfAugsburg"
+  | "nineYearsWar"
+  | "ryswickPeace"
+  | "versaillesExpenditure"
+  | "nobleResentment"
+  | "provincialNoncompliance"
+  | "risingGrainPrices"
+  | "taxResistance"
+  | "frontierGarrisons"
+  | "tradeDisruption"
+  | "courtScandal"
+  | "militaryPrestige"
+  | "commercialExpansion"
+  | "talentedAdministrator"
+  | "warWeariness"
+  | "grainReliefCrisis"
+  | "expansionRemembered"
+  | "cautiousCrown";
 
 export type EventSolve =
   | { kind: "funding"; amount: number }
@@ -40,6 +60,8 @@ export type EventTemplate = {
   titleKey: string;
   descriptionKey: string;
   solve: EventSolve;
+  /** Applied when player resolves this event through the funding path. */
+  onFundSolveEffects?: readonly Effect[];
   /** Applied in {@link EVENT_SLOT_ORDER} at event resolution if still active and harmful. */
   penaltiesIfUnresolved: Effect[];
   /**

@@ -1,4 +1,5 @@
 import type { EventTemplate, EventTemplateId } from "../types/event";
+import type { GameState } from "../types/game";
 
 export const eventTemplates: Record<EventTemplateId, EventTemplate> = {
   budgetStrain: {
@@ -35,6 +36,7 @@ export const eventTemplates: Record<EventTemplateId, EventTemplate> = {
     titleKey: "event.tradeOpportunity.name",
     descriptionKey: "event.tradeOpportunity.desc",
     solve: { kind: "funding", amount: 1 },
+    onFundSolveEffects: [{ kind: "modResource", resource: "treasuryStat", delta: 1 }],
     penaltiesIfUnresolved: [],
   },
   politicalGridlock: {
@@ -79,12 +81,216 @@ export const eventTemplates: Record<EventTemplateId, EventTemplate> = {
     solve: { kind: "scriptedAttack" },
     penaltiesIfUnresolved: [],
   },
+  nymwegenSettlement: {
+    id: "nymwegenSettlement",
+    weight: 0,
+    harmful: false,
+    titleKey: "event.nymwegenSettlement.name",
+    descriptionKey: "event.nymwegenSettlement.desc",
+    solve: { kind: "funding", amount: 1 },
+    onFundSolveEffects: [
+      { kind: "modResource", resource: "treasuryStat", delta: 1 },
+      { kind: "modResource", resource: "legitimacy", delta: 1 },
+    ],
+    penaltiesIfUnresolved: [],
+  },
+  revocationNantes: {
+    id: "revocationNantes",
+    weight: 0,
+    harmful: true,
+    titleKey: "event.revocationNantes.name",
+    descriptionKey: "event.revocationNantes.desc",
+    solve: { kind: "fundingOrCrackdown", amount: 1 },
+    onFundSolveEffects: [{ kind: "modResource", resource: "legitimacy", delta: 1 }],
+    penaltiesIfUnresolved: [{ kind: "modResource", resource: "treasuryStat", delta: -1 }],
+  },
+  leagueOfAugsburg: {
+    id: "leagueOfAugsburg",
+    weight: 0,
+    harmful: true,
+    titleKey: "event.leagueOfAugsburg.name",
+    descriptionKey: "event.leagueOfAugsburg.desc",
+    solve: { kind: "fundingOrCrackdown", amount: 2 },
+    penaltiesIfUnresolved: [{ kind: "addPlayerStatus", templateId: "powerLeak", turns: 2 }],
+  },
+  nineYearsWar: {
+    id: "nineYearsWar",
+    weight: 0,
+    harmful: true,
+    crisisPersistence: "continued",
+    titleKey: "event.nineYearsWar.name",
+    descriptionKey: "event.nineYearsWar.desc",
+    solve: { kind: "fundingOrCrackdown", amount: 2 },
+    penaltiesIfUnresolved: [
+      { kind: "modResource", resource: "treasuryStat", delta: -1 },
+      { kind: "scheduleNextTurnDrawModifier", delta: -1 },
+    ],
+  },
+  ryswickPeace: {
+    id: "ryswickPeace",
+    weight: 0,
+    harmful: false,
+    titleKey: "event.ryswickPeace.name",
+    descriptionKey: "event.ryswickPeace.desc",
+    solve: { kind: "funding", amount: 1 },
+    onFundSolveEffects: [{ kind: "modResource", resource: "legitimacy", delta: 1 }],
+    penaltiesIfUnresolved: [],
+  },
+  versaillesExpenditure: {
+    id: "versaillesExpenditure",
+    weight: 3,
+    harmful: true,
+    titleKey: "event.versaillesExpenditure.name",
+    descriptionKey: "event.versaillesExpenditure.desc",
+    solve: { kind: "funding", amount: 2 },
+    penaltiesIfUnresolved: [{ kind: "modResource", resource: "treasuryStat", delta: -1 }],
+  },
+  nobleResentment: {
+    id: "nobleResentment",
+    weight: 2,
+    harmful: true,
+    titleKey: "event.nobleResentment.name",
+    descriptionKey: "event.nobleResentment.desc",
+    solve: { kind: "fundingOrCrackdown", amount: 1 },
+    penaltiesIfUnresolved: [{ kind: "addPlayerStatus", templateId: "powerLeak", turns: 2 }],
+  },
+  provincialNoncompliance: {
+    id: "provincialNoncompliance",
+    weight: 2,
+    harmful: true,
+    titleKey: "event.provincialNoncompliance.name",
+    descriptionKey: "event.provincialNoncompliance.desc",
+    solve: { kind: "funding", amount: 1 },
+    penaltiesIfUnresolved: [{ kind: "scheduleNextTurnDrawModifier", delta: -1 }],
+  },
+  risingGrainPrices: {
+    id: "risingGrainPrices",
+    weight: 3,
+    harmful: true,
+    titleKey: "event.risingGrainPrices.name",
+    descriptionKey: "event.risingGrainPrices.desc",
+    solve: { kind: "funding", amount: 2 },
+    penaltiesIfUnresolved: [{ kind: "modResource", resource: "legitimacy", delta: -1 }],
+  },
+  taxResistance: {
+    id: "taxResistance",
+    weight: 2,
+    harmful: true,
+    titleKey: "event.taxResistance.name",
+    descriptionKey: "event.taxResistance.desc",
+    solve: { kind: "fundingOrCrackdown", amount: 1 },
+    penaltiesIfUnresolved: [{ kind: "modResource", resource: "treasuryStat", delta: -1 }],
+  },
+  frontierGarrisons: {
+    id: "frontierGarrisons",
+    weight: 2,
+    harmful: true,
+    titleKey: "event.frontierGarrisons.name",
+    descriptionKey: "event.frontierGarrisons.desc",
+    solve: { kind: "funding", amount: 1 },
+    penaltiesIfUnresolved: [{ kind: "modResource", resource: "treasuryStat", delta: -1 }],
+  },
+  tradeDisruption: {
+    id: "tradeDisruption",
+    weight: 1,
+    harmful: true,
+    titleKey: "event.tradeDisruption.name",
+    descriptionKey: "event.tradeDisruption.desc",
+    solve: { kind: "funding", amount: 1 },
+    penaltiesIfUnresolved: [{ kind: "scheduleNextTurnDrawModifier", delta: -1 }],
+  },
+  courtScandal: {
+    id: "courtScandal",
+    weight: 1,
+    harmful: true,
+    titleKey: "event.courtScandal.name",
+    descriptionKey: "event.courtScandal.desc",
+    solve: { kind: "fundingOrCrackdown", amount: 1 },
+    penaltiesIfUnresolved: [{ kind: "modResource", resource: "legitimacy", delta: -1 }],
+  },
+  militaryPrestige: {
+    id: "militaryPrestige",
+    weight: 1,
+    harmful: false,
+    titleKey: "event.militaryPrestige.name",
+    descriptionKey: "event.militaryPrestige.desc",
+    solve: { kind: "funding", amount: 1 },
+    onFundSolveEffects: [{ kind: "modResource", resource: "legitimacy", delta: 1 }],
+    penaltiesIfUnresolved: [],
+  },
+  commercialExpansion: {
+    id: "commercialExpansion",
+    weight: 2,
+    harmful: false,
+    titleKey: "event.commercialExpansion.name",
+    descriptionKey: "event.commercialExpansion.desc",
+    solve: { kind: "funding", amount: 1 },
+    onFundSolveEffects: [{ kind: "modResource", resource: "treasuryStat", delta: 1 }],
+    penaltiesIfUnresolved: [],
+  },
+  talentedAdministrator: {
+    id: "talentedAdministrator",
+    weight: 1,
+    harmful: false,
+    titleKey: "event.talentedAdministrator.name",
+    descriptionKey: "event.talentedAdministrator.desc",
+    solve: { kind: "funding", amount: 1 },
+    onFundSolveEffects: [{ kind: "modResource", resource: "power", delta: 1 }],
+    penaltiesIfUnresolved: [],
+  },
+  warWeariness: {
+    id: "warWeariness",
+    weight: 2,
+    harmful: true,
+    titleKey: "event.warWeariness.name",
+    descriptionKey: "event.warWeariness.desc",
+    solve: { kind: "fundingOrCrackdown", amount: 1 },
+    penaltiesIfUnresolved: [{ kind: "modResource", resource: "legitimacy", delta: -1 }],
+  },
+  grainReliefCrisis: {
+    id: "grainReliefCrisis",
+    weight: 0,
+    harmful: true,
+    titleKey: "event.grainReliefCrisis.name",
+    descriptionKey: "event.grainReliefCrisis.desc",
+    solve: { kind: "funding", amount: 2 },
+    onFundSolveEffects: [{ kind: "modResource", resource: "legitimacy", delta: 1 }],
+    penaltiesIfUnresolved: [{ kind: "modResource", resource: "legitimacy", delta: -1 }],
+  },
+  expansionRemembered: {
+    id: "expansionRemembered",
+    weight: 0,
+    harmful: false,
+    titleKey: "event.expansionRemembered.name",
+    descriptionKey: "event.expansionRemembered.desc",
+    solve: { kind: "funding", amount: 0 },
+    onFundSolveEffects: [{ kind: "modResource", resource: "legitimacy", delta: 1 }],
+    penaltiesIfUnresolved: [],
+  },
+  cautiousCrown: {
+    id: "cautiousCrown",
+    weight: 0,
+    harmful: false,
+    titleKey: "event.cautiousCrown.name",
+    descriptionKey: "event.cautiousCrown.desc",
+    solve: { kind: "funding", amount: 0 },
+    penaltiesIfUnresolved: [],
+  },
 };
 
 /** Weighted roll pool is per-level; see `levelContent.ts` (`rollableEventIds`). */
 
 export function getEventTemplate(id: EventTemplateId): EventTemplate {
   return eventTemplates[id];
+}
+
+export function getEventRollWeight(state: GameState, id: EventTemplateId): number {
+  const base = eventTemplates[id].weight;
+  if (!state.europeAlert) return base;
+  if (id === "frontierGarrisons" || id === "tradeDisruption" || id === "warWeariness") {
+    return base + 1;
+  }
+  return base;
 }
 
 /** Continued crises persist or transform; all other harmful crises clear after their EOY strike. */

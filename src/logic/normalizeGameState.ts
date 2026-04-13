@@ -43,5 +43,8 @@ export function normalizeGameState(state: GameState): GameState {
   if (s.warOfDevolutionAttacked === undefined) {
     s = { ...s, warOfDevolutionAttacked: false };
   }
+  if (s.europeAlert === undefined) {
+    s = { ...s, europeAlert: false };
+  }
   return s;
 }

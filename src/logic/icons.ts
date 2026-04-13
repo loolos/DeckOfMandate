@@ -10,6 +10,11 @@ const CARD_ICONS: Record<CardTemplateId, string> = {
   reform: "📜",
   ceremony: "🎎",
   development: "🏗️",
+  grainRelief: "🌾",
+  taxRebalance: "🧾",
+  diplomaticCongress: "🕊️",
+  patronageOffice: "🏛️",
+  warBond: "💳",
 };
 
 const EVENT_ICONS: Record<EventTemplateId, string> = {
@@ -21,6 +26,26 @@ const EVENT_ICONS: Record<EventTemplateId, string> = {
   powerVacuum: "🕳️",
   majorCrisis: "🚨",
   warOfDevolution: "⚔️",
+  nymwegenSettlement: "🤝",
+  revocationNantes: "⛪",
+  leagueOfAugsburg: "🛡️",
+  nineYearsWar: "⚔️",
+  ryswickPeace: "📜",
+  versaillesExpenditure: "🏰",
+  nobleResentment: "😠",
+  provincialNoncompliance: "🗄️",
+  risingGrainPrices: "🌾",
+  taxResistance: "🧨",
+  frontierGarrisons: "🪖",
+  tradeDisruption: "🚢",
+  courtScandal: "🎭",
+  militaryPrestige: "🎖️",
+  commercialExpansion: "📈",
+  talentedAdministrator: "🧠",
+  warWeariness: "🥀",
+  grainReliefCrisis: "🌾",
+  expansionRemembered: "🦅",
+  cautiousCrown: "👑",
 };
 
 const RESOURCE_ICONS: Record<ResourceKey, string> = {

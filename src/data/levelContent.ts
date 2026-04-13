@@ -31,8 +31,11 @@ export type ScriptedCalendarEventConfig = {
   presenceEndYear: number;
   /** If every slot is full, place (replace) this slot. */
   overflowSlot?: SlotId;
-  attack: ScriptedCalendarAttackConfig;
-  antiCoalition: ScriptedCalendarAntiCoalitionConfig;
+  /** Only needed when the event template uses `solve.kind === "scriptedAttack"`. */
+  attack?: ScriptedCalendarAttackConfig;
+  antiCoalition?: ScriptedCalendarAntiCoalitionConfig;
+  /** Optional branch gate for chapter transitions. */
+  requiresWarOfDevolutionAttacked?: boolean;
 };
 
 /**
@@ -96,6 +99,92 @@ export const levelContentByLevelId = {
           drawPenaltyDelta: -1,
           activeYearsAfterAttack: 5,
         },
+      },
+    ],
+  },
+  secondMandate: {
+    starterDeckTemplateOrder: [
+      "funding",
+      "funding",
+      "funding",
+      "funding",
+      "crackdown",
+      "crackdown",
+      "crackdown",
+      "reform",
+      "reform",
+      "ceremony",
+      "ceremony",
+      "grainRelief",
+      "taxRebalance",
+      "diplomaticCongress",
+    ],
+    rollableEventIds: [
+      "versaillesExpenditure",
+      "nobleResentment",
+      "provincialNoncompliance",
+      "risingGrainPrices",
+      "taxResistance",
+      "frontierGarrisons",
+      "tradeDisruption",
+      "courtScandal",
+      "militaryPrestige",
+      "commercialExpansion",
+      "talentedAdministrator",
+      "warWeariness",
+    ],
+    slotEscalations: [],
+    eoyEscalationSchedulers: [],
+    scriptedCalendarEvents: [
+      {
+        templateId: "expansionRemembered",
+        presenceStartYear: 1676,
+        presenceEndYear: 1677,
+        overflowSlot: "D",
+        requiresWarOfDevolutionAttacked: true,
+      },
+      {
+        templateId: "cautiousCrown",
+        presenceStartYear: 1676,
+        presenceEndYear: 1677,
+        overflowSlot: "D",
+        requiresWarOfDevolutionAttacked: false,
+      },
+      {
+        templateId: "nymwegenSettlement",
+        presenceStartYear: 1678,
+        presenceEndYear: 1682,
+        overflowSlot: "D",
+      },
+      {
+        templateId: "revocationNantes",
+        presenceStartYear: 1685,
+        presenceEndYear: 1688,
+        overflowSlot: "D",
+      },
+      {
+        templateId: "grainReliefCrisis",
+        presenceStartYear: 1686,
+        presenceEndYear: 1694,
+        overflowSlot: "F",
+      },
+      {
+        templateId: "leagueOfAugsburg",
+        presenceStartYear: 1686,
+        presenceEndYear: 1690,
+        overflowSlot: "E",
+      },
+      {
+        templateId: "nineYearsWar",
+        presenceStartYear: 1689,
+        presenceEndYear: 1697,
+        overflowSlot: "E",
+      },
+      {
+        templateId: "ryswickPeace",
+        presenceStartYear: 1697,
+        presenceEndYear: 1700,
+        overflowSlot: "F",
       },
     ],
   },

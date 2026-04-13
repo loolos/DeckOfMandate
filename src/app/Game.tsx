@@ -25,6 +25,19 @@ import type { GameState } from "../types/game";
 import { EVENT_SLOT_ORDER } from "../types/event";
 import { gameReducer, type GameAction } from "./gameReducer";
 import { createInitialState } from "./initialState";
+import {
+  LEVEL2_ADJUSTABLE_IDS,
+  LEVEL2_NEW_IDS,
+  LEVEL2_REFIT_RULES,
+  buildHistoricalPreset,
+  buildLevel2StateFromDraft,
+  buildWarPreset,
+  createContinuityLevel2Draft,
+  createStandaloneLevel2Draft,
+  updateRefitCount,
+  validateLevel2Refit,
+  type Level2StartDraft,
+} from "./level2Transition";
 import styles from "./Game.module.css";
 
 type PendingNewRun = { seed?: number; levelId: LevelId };
@@ -79,6 +92,7 @@ export function Game() {
   const [levelIntroOpen, setLevelIntroOpen] = useState(false);
   const [tutorialOnEntryMenu, setTutorialOnEntryMenu] = useState(() => readTutorialOnLevelEntry());
   const [pendingLevelTutorial, setPendingLevelTutorial] = useState(false);
+  const [level2Draft, setLevel2Draft] = useState<Level2StartDraft | null>(null);
 
   const menuSeedTrimmed = menuSeedText.trim();
   const menuSeedParsed =
@@ -131,6 +145,12 @@ export function Game() {
   }, []);
 
   const beginConfiguredRun = (seed: number | undefined, levelId: LevelId) => {
+    if (levelId === "secondMandate") {
+      setLevel2Draft(createStandaloneLevel2Draft(seed));
+      setLevelIntroOpen(false);
+      setPendingNewRun(null);
+      return;
+    }
     setPendingLevelTutorial(tutorialOnEntryMenu);
     dispatchSafe({ type: "NEW_GAME", seed, levelId });
     setStartMenuOpen(false);
@@ -156,10 +176,33 @@ export function Game() {
 
   const resumeFromStoredSave = () => {
     setPendingLevelTutorial(false);
+    setLevel2Draft(null);
     const loaded = loadGame();
     if (!loaded || !isValidSave(loaded)) return;
     dispatchSafe({ type: "HYDRATE", state: normalizeLoadedSave(loaded as GameState) });
     setStartMenuOpen(false);
+  };
+
+  const level2Validation = useMemo(
+    () => (level2Draft ? validateLevel2Refit(level2Draft.counts) : null),
+    [level2Draft],
+  );
+
+  const confirmLevel2Refit = () => {
+    if (!level2Draft) return;
+    const v = validateLevel2Refit(level2Draft.counts);
+    if (!v.isValid) return;
+    const nextState = buildLevel2StateFromDraft(level2Draft);
+    setPendingLevelTutorial(tutorialOnEntryMenu);
+    dispatchSafe({ type: "HYDRATE", state: nextState });
+    setStartMenuOpen(false);
+    setLevel2Draft(null);
+    setLevelIntroOpen(false);
+    setPendingNewRun(null);
+  };
+
+  const openChapter2Continuity = () => {
+    setLevel2Draft(createContinuityLevel2Draft(state));
   };
 
   const introLevelDef =
@@ -180,6 +223,160 @@ export function Game() {
         <button type="button" className={`${styles.btn} ${styles.btnPrimary}`} onClick={confirmLevelIntro}>
           {t("menu.introContinue")}
         </button>
+      </div>
+    </div>
+  ) : null;
+
+  const level2RefitScreen = level2Draft ? (
+    <div className={styles.startMenuScreen} role="dialog" aria-modal="true" aria-labelledby="level2-refit-title">
+      <div className={styles.modal}>
+        <div className={styles.startMenuHeader}>
+          <h2 id="level2-refit-title" className={styles.startMenuTitle}>
+            {t("menu.refit.title")}
+          </h2>
+          <LanguageToggle />
+        </div>
+        <div className={styles.startMenuForm}>
+          <p className={styles.startMenuMuted}>{t("menu.refit.subtitle")}</p>
+          <h3 className={styles.statusSectionTitle}>{t("menu.refit.adjustable")}</h3>
+          {LEVEL2_ADJUSTABLE_IDS.map((id) => {
+            const min = 1;
+            const max = level2Draft.baseCounts[id] + LEVEL2_REFIT_RULES.maxAddedPerBaseCard;
+            return (
+              <div key={id} className={styles.retainRow}>
+                <span>{cardLabelWithIcon(id, t(getCardTemplate(id).titleKey as MessageKey))}</span>
+                <div style={{ display: "flex", gap: "0.35rem", alignItems: "center" }}>
+                  <button
+                    type="button"
+                    className={styles.btn}
+                    onClick={() =>
+                      setLevel2Draft((prev) =>
+                        prev
+                          ? { ...prev, counts: updateRefitCount(prev.counts, prev.baseCounts, id, -1) }
+                          : prev,
+                      )
+                    }
+                  >
+                    -
+                  </button>
+                  <span>
+                    {level2Draft.counts[id]} ({min}–{max})
+                  </span>
+                  <button
+                    type="button"
+                    className={styles.btn}
+                    onClick={() =>
+                      setLevel2Draft((prev) =>
+                        prev
+                          ? { ...prev, counts: updateRefitCount(prev.counts, prev.baseCounts, id, +1) }
+                          : prev,
+                      )
+                    }
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
+            );
+          })}
+          <h3 className={styles.statusSectionTitle}>{t("menu.refit.newCards")}</h3>
+          {LEVEL2_NEW_IDS.map((id) => (
+            <div key={id} className={styles.retainRow}>
+              <span>{cardLabelWithIcon(id, t(getCardTemplate(id).titleKey as MessageKey))}</span>
+              <div style={{ display: "flex", gap: "0.35rem", alignItems: "center" }}>
+                <button
+                  type="button"
+                  className={styles.btn}
+                  onClick={() =>
+                    setLevel2Draft((prev) =>
+                      prev ? { ...prev, counts: updateRefitCount(prev.counts, prev.baseCounts, id, -1) } : prev,
+                    )
+                  }
+                >
+                  -
+                </button>
+                <span>
+                  {level2Draft.counts[id]} (0–{LEVEL2_REFIT_RULES.maxPerNewCard})
+                </span>
+                <button
+                  type="button"
+                  className={styles.btn}
+                  onClick={() =>
+                    setLevel2Draft((prev) =>
+                      prev ? { ...prev, counts: updateRefitCount(prev.counts, prev.baseCounts, id, +1) } : prev,
+                    )
+                  }
+                >
+                  +
+                </button>
+              </div>
+            </div>
+          ))}
+          {level2Validation ? (
+            <>
+              <p className={styles.startMenuMuted}>
+                {t("menu.refit.totalCards", {
+                  current: level2Validation.totalCards,
+                  min: LEVEL2_REFIT_RULES.minDeckSize,
+                  max: LEVEL2_REFIT_RULES.maxDeckSize,
+                })}
+              </p>
+              <p className={styles.startMenuMuted}>
+                {t("menu.refit.newCardTotal", {
+                  current: level2Validation.totalNewCards,
+                  max: LEVEL2_REFIT_RULES.maxTotalNewCards,
+                })}
+              </p>
+              {!level2Validation.isValid ? (
+                <p className={styles.startMenuError}>{t("menu.refit.invalid")}</p>
+              ) : null}
+            </>
+          ) : null}
+          <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
+            <button
+              type="button"
+              className={styles.btn}
+              onClick={() =>
+                setLevel2Draft((prev) =>
+                  prev ? { ...prev, counts: buildHistoricalPreset(prev.baseCounts) } : prev,
+                )
+              }
+            >
+              {t("menu.refit.presetHistorical")}
+            </button>
+            <button
+              type="button"
+              className={styles.btn}
+              onClick={() =>
+                setLevel2Draft((prev) => (prev ? { ...prev, counts: buildWarPreset(prev.baseCounts) } : prev))
+              }
+            >
+              {t("menu.refit.presetWar")}
+            </button>
+            <button
+              type="button"
+              className={styles.btn}
+              onClick={() =>
+                setLevel2Draft((prev) => (prev ? { ...prev, counts: { ...prev.baseCounts } } : prev))
+              }
+            >
+              {t("menu.refit.reset")}
+            </button>
+          </div>
+          <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
+            <button
+              type="button"
+              className={`${styles.btn} ${styles.btnPrimary}`}
+              disabled={!level2Validation?.isValid}
+              onClick={confirmLevel2Refit}
+            >
+              {t("menu.refit.start")}
+            </button>
+            <button type="button" className={styles.btn} onClick={() => setLevel2Draft(null)}>
+              {t("menu.refit.back")}
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   ) : null;
@@ -271,7 +468,11 @@ export function Game() {
   );
 
   if (startMenuOpen) {
-    return levelIntro ?? startMenu;
+    return levelIntro ?? level2RefitScreen ?? startMenu;
+  }
+
+  if (level2Draft) {
+    return level2RefitScreen;
   }
 
   const showLevelTutorial =
@@ -456,6 +657,11 @@ export function Game() {
               <button type="button" className={`${styles.btn} ${styles.btnPrimary}`} onClick={() => dispatchSafe({ type: "NEW_GAME" })}>
                 {t("ui.newGame")}
               </button>
+              {state.outcome === "victory" && state.levelId === "firstMandate" ? (
+                <button type="button" className={styles.btn} onClick={openChapter2Continuity}>
+                  {t("menu.continueChapter2")}
+                </button>
+              ) : null}
             </div>
           </div>
         </div>

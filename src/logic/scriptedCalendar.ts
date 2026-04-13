@@ -21,6 +21,7 @@ export function coalitionUntilTurn(
   cfg: ScriptedCalendarEventConfig,
   turnLimit: number,
 ): number {
+  if (!cfg.antiCoalition) return turnLimit;
   const n = cfg.antiCoalition.activeYearsAfterAttack;
   if (n === null) return turnLimit;
   return attackTurn + n;
@@ -57,7 +58,10 @@ function placeScriptedEvent(state: GameState, templateId: EventTemplateId, slot:
  * Runs after resolved slots are cleared, before random fill.
  */
 export function applyScriptedCalendarPhase(state: GameState): GameState {
-  const scripts = getLevelContent(state.levelId).scriptedCalendarEvents;
+  const scripts = getLevelContent(state.levelId).scriptedCalendarEvents.filter((cfg) => {
+    if (cfg.requiresWarOfDevolutionAttacked === undefined) return true;
+    return cfg.requiresWarOfDevolutionAttacked === state.warOfDevolutionAttacked;
+  });
   const year = currentCalendarYear(state);
   let s = state;
 

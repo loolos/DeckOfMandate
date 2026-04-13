@@ -1,4 +1,4 @@
-import { getEventTemplate } from "../data/events";
+import { getEventRollWeight } from "../data/events";
 import { getLevelContent } from "../data/levelContent";
 import { getLevelDef } from "../data/levels";
 import { appendActionLog } from "./actionLog";
@@ -25,7 +25,7 @@ export const PROB_SINGLE_EVENT_WHEN_ALL_EMPTY = 0.3;
 
 export function rollNewEventForSlot(state: GameState, slot: SlotId): GameState {
   const pool = getLevelContent(state.levelId).rollableEventIds;
-  const weights = pool.map((id) => getEventTemplate(id).weight);
+  const weights = pool.map((id) => getEventRollWeight(state, id));
   const [rng, idx] = pickWeightedIndex(state.rng, weights);
   const templateId = pool[idx]!;
   const instance: EventInstance = {

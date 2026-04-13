@@ -56,9 +56,9 @@ function eventPayChips(tmpl: EventTemplate): string {
 }
 
 function eventSolveOutcomeChips(tmpl: EventTemplate): string {
-  if (tmpl.id === "tradeOpportunity") {
-    return `${getResourceIcon("treasuryStat")}+1`;
-  }
+  const solvedEffects = tmpl.onFundSolveEffects ?? [];
+  const chips = formatEffectChips(solvedEffects);
+  if (chips !== "") return chips;
   return "✅";
 }
 
@@ -68,6 +68,9 @@ function eventYearEndChips(tmpl: EventTemplate): string | null {
   }
   if (tmpl.id === "powerVacuum") {
     return "🚨+1⌛";
+  }
+  if (tmpl.id === "grainReliefCrisis") {
+    return `👑-1`;
   }
   const p = formatEffectChips(tmpl.penaltiesIfUnresolved);
   return p === "" ? "—" : p;
@@ -104,7 +107,7 @@ export function buildCardQuickFrameRows(tmpl: CardTemplate): QuickFrameRow[] {
 export function buildScriptedEventQuickFrameRows(levelId: LevelId, tmpl: EventTemplate): QuickFrameRow[] | null {
   if (tmpl.solve.kind !== "scriptedAttack") return null;
   const cfg = findScriptedCalendarConfig(levelId, tmpl.id);
-  if (!cfg) return null;
+  if (!cfg?.attack || !cfg.antiCoalition) return null;
   const pctTreasury = Math.round(cfg.attack.extraTreasuryProbability * 100);
   const pctCoalition = Math.round(cfg.antiCoalition.drawPenaltyProbability * 100);
   const pay: QuickFrameRow = {
