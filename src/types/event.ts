@@ -14,6 +14,19 @@ export type EventSolve =
   | { kind: "fundingOrCrackdown"; amount: number }
   | { kind: "crackdownOnly" };
 
+/** Fixed event columns (max 10); engine fills from the start of this list only. */
+export const EVENT_SLOT_ORDER = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"] as const;
+
+export type SlotId = (typeof EVENT_SLOT_ORDER)[number];
+
+export const EMPTY_EVENT_SLOTS: Record<SlotId, null> = Object.fromEntries(
+  EVENT_SLOT_ORDER.map((id) => [id, null]),
+) as Record<SlotId, null>;
+
+export const EMPTY_PENDING_MAJOR_CRISIS: Record<SlotId, boolean> = Object.fromEntries(
+  EVENT_SLOT_ORDER.map((id) => [id, false]),
+) as Record<SlotId, boolean>;
+
 export type EventTemplate = {
   id: EventTemplateId;
   weight: number;
@@ -21,7 +34,7 @@ export type EventTemplate = {
   titleKey: string;
   descriptionKey: string;
   solve: EventSolve;
-  /** Applied in slot order A then B at event resolution if still active and harmful. */
+  /** Applied in {@link EVENT_SLOT_ORDER} at event resolution if still active and harmful. */
   penaltiesIfUnresolved: Effect[];
   /**
    * If set to "continued", a harmful unresolved crisis stays on the slot after end-of-year
@@ -30,8 +43,6 @@ export type EventTemplate = {
    */
   crisisPersistence?: "continued";
 };
-
-export type SlotId = "A" | "B";
 
 export type EventInstance = {
   instanceId: string;

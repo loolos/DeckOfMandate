@@ -1,9 +1,16 @@
 import { getEventTemplate } from "../data/events";
 import type { GameAction } from "../app/gameReducer";
+import { OutcomeQuickFrame } from "./OutcomeQuickFrame";
+import { buildEventQuickFrameRows } from "../logic/quickOutcomeFrame";
 import { eventLabelWithIcon, getResourceIcon } from "../logic/icons";
-import { fundSolveLabelAmount, slotAllowsCrackdownTarget, slotAllowsFundSolve } from "../logic/uiHelpers";
+import {
+  fundSolveLabelAmount,
+  slotAllowsCrackdownTarget,
+  slotAllowsFundSolve,
+  slotFundSolveAffordable,
+} from "../logic/uiHelpers";
 import type { GameState } from "../types/game";
-import type { SlotId } from "../types/event";
+import { EVENT_SLOT_ORDER } from "../types/event";
 import type { MessageKey } from "../locales";
 import { useI18n } from "../locales";
 import styles from "../app/Game.module.css";
@@ -16,61 +23,62 @@ export function EventPanel({
   dispatch: (a: GameAction) => void;
 }) {
   const { t } = useI18n();
-  const slots: SlotId[] = ["A", "B"];
+  const visibleSlots = EVENT_SLOT_ORDER.filter((slot) => state.slots[slot] != null);
   const pending = state.pendingInteraction?.type === "crackdownPick";
+
+  if (visibleSlots.length === 0) return null;
 
   return (
     <div className={styles.events}>
-      {slots.map((slot) => {
-        const ev = state.slots[slot];
-        const tmpl = ev ? getEventTemplate(ev.templateId) : null;
-        const title = tmpl ? eventLabelWithIcon(tmpl.id, t(tmpl.titleKey as MessageKey)) : "—";
-        const desc = tmpl ? t(tmpl.descriptionKey as MessageKey) : "";
-        const canFund = slotAllowsFundSolve(state, slot);
+      {visibleSlots.map((slot) => {
+        const ev = state.slots[slot]!;
+        const tmpl = getEventTemplate(ev.templateId);
+        const title = eventLabelWithIcon(tmpl.id, t(tmpl.titleKey as MessageKey));
+        const desc = t(tmpl.descriptionKey as MessageKey);
+        const affordable = slotFundSolveAffordable(state, slot);
+        const canClickFund = slotAllowsFundSolve(state, slot);
         const amount = fundSolveLabelAmount(state, slot);
         const crack = slotAllowsCrackdownTarget(state, slot) && pending;
-        const solveKind = tmpl?.solve.kind;
+        const solveKind = tmpl.solve.kind;
 
         return (
-          <div key={slot} className={styles.eventCard}>
+          <div key={slot} className={styles.eventCard} data-crack-candidate={crack ? "true" : undefined}>
             <div className={styles.badges}>
-              <span className={styles.badge}>{t("ui.slot", { slot })}</span>
-              {tmpl ? (
-                tmpl.harmful ? (
-                  <span className={`${styles.badge} ${styles.badgeHarm}`}>{t("ui.harmful")}</span>
-                ) : (
-                  <span className={`${styles.badge} ${styles.badgeOk}`}>{t("ui.opportunity")}</span>
-                )
-              ) : null}
-              {ev?.resolved ? (
+              {tmpl.harmful ? (
+                <span className={`${styles.badge} ${styles.badgeHarm}`}>{t("ui.harmful")}</span>
+              ) : (
+                <span className={`${styles.badge} ${styles.badgeOk}`}>{t("ui.opportunity")}</span>
+              )}
+              {ev.resolved ? (
                 <span className={`${styles.badge} ${styles.badgeOk}`}>{t("ui.resolved")}</span>
               ) : null}
             </div>
             <div className={styles.eventTitle}>{title}</div>
-            <div className={styles.eventBody}>{desc || (!ev ? "—" : "")}</div>
+            <div className={styles.eventBody}>{desc}</div>
+            <OutcomeQuickFrame rows={buildEventQuickFrameRows(tmpl)} />
             <div className={styles.actions}>
-              {ev && !ev.resolved && solveKind === "funding" && amount !== null ? (
+              {!ev.resolved && solveKind === "funding" && amount !== null ? (
                 <button
                   type="button"
                   className={styles.btn}
-                  disabled={!canFund}
+                  disabled={!affordable || !canClickFund}
                   onClick={() => dispatch({ type: "SOLVE_EVENT", slot })}
                 >
                   {t("ui.solve", { cost: `${getResourceIcon("funding")} ${amount}` })}
                 </button>
               ) : null}
-              {ev && !ev.resolved && solveKind === "fundingOrCrackdown" && amount !== null ? (
+              {!ev.resolved && solveKind === "fundingOrCrackdown" && amount !== null ? (
                 <button
                   type="button"
                   className={styles.btn}
-                  disabled={!canFund}
+                  disabled={!affordable || !canClickFund}
                   onClick={() => dispatch({ type: "SOLVE_EVENT", slot })}
                 >
                   {t("ui.solveFundingOrCrackdown", { cost: `${getResourceIcon("funding")} ${amount}` })}
                 </button>
               ) : null}
-              {ev && !ev.resolved && solveKind === "crackdownOnly" && !pending ? (
-                <span className={styles.badge}>{t("ui.solveCrackdown")}</span>
+              {!ev.resolved && solveKind === "crackdownOnly" && !pending ? (
+                <span className={styles.eventCardCrackdownHint}>{t("ui.solveCrackdown")}</span>
               ) : null}
               {crack ? (
                 <button

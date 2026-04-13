@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { createInitialState } from "../app/initialState";
+import { EMPTY_EVENT_SLOTS } from "../types/event";
 import { resolveEndOfYearPenalties } from "./resolveEvents";
 
 describe("resolveEndOfYearPenalties", () => {
@@ -8,8 +9,8 @@ describe("resolveEndOfYearPenalties", () => {
     const s0 = {
       ...base,
       slots: {
+        ...EMPTY_EVENT_SLOTS,
         A: { instanceId: "e1", templateId: "budgetStrain" as const, resolved: false },
-        B: null,
       },
     };
     const treasuryBefore = s0.resources.treasuryStat;
@@ -26,8 +27,8 @@ describe("resolveEndOfYearPenalties", () => {
     const s0 = {
       ...base,
       slots: {
+        ...EMPTY_EVENT_SLOTS,
         A: { instanceId: "e1", templateId: "majorCrisis" as const, resolved: false },
-        B: null,
       },
     };
     const legBefore = s0.resources.legitimacy;
@@ -41,8 +42,8 @@ describe("resolveEndOfYearPenalties", () => {
     const s0 = {
       ...base,
       slots: {
+        ...EMPTY_EVENT_SLOTS,
         A: { instanceId: "e1", templateId: "politicalGridlock" as const, resolved: false },
-        B: null,
       },
     };
     const s1 = resolveEndOfYearPenalties(s0);
@@ -57,8 +58,8 @@ describe("resolveEndOfYearPenalties", () => {
     const s0 = {
       ...base,
       slots: {
+        ...EMPTY_EVENT_SLOTS,
         A: { instanceId: "e1", templateId: "powerVacuum" as const, resolved: false },
-        B: null,
       },
     };
     const n0 = s0.actionLog.length;

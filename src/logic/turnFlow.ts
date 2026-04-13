@@ -1,12 +1,21 @@
 import { getEventTemplate, rollableEventIds } from "../data/events";
 import { getLevelDef } from "../data/levels";
-import type { EventInstance, SlotId } from "../types/event";
+import { EVENT_SLOT_ORDER, type EventInstance, type SlotId } from "../types/event";
 import type { GameState } from "../types/game";
 import type { PlayerStatusInstance } from "../types/status";
 import { drawUpToPower } from "./draw";
-import { pickWeightedIndex } from "./rng";
+import { pickWeightedIndex, rngNext } from "./rng";
 
-const SLOTS: SlotId[] = ["A", "B"];
+const SLOTS: readonly SlotId[] = EVENT_SLOT_ORDER;
+
+/** First calendar turn on which a full empty-board roll may produce three events (turns 1–5 never triple). */
+export const FIRST_TURN_ELIGIBLE_FOR_TRIPLE_EVENTS = 6;
+
+/** When every event slot is empty, P(three new events) for turn >= {@link FIRST_TURN_ELIGIBLE_FOR_TRIPLE_EVENTS}. */
+export const PROB_TRIPLE_EVENTS = 0.1;
+
+/** When every event slot is empty, P(only slot A is filled); remaining probability is two events (A+B). */
+export const PROB_SINGLE_EVENT_WHEN_ALL_EMPTY = 0.3;
 
 export function rollNewEventForSlot(state: GameState, slot: SlotId): GameState {
   const weights = rollableEventIds.map((id) => getEventTemplate(id).weight);
@@ -60,8 +69,29 @@ function clearResolvedSlots(state: GameState): GameState {
   return { ...state, slots };
 }
 
+function allSlotsEmpty(st: GameState): boolean {
+  return EVENT_SLOT_ORDER.every((id) => !st.slots[id]);
+}
+
 function fillEmptySlots(state: GameState): GameState {
   let st = state;
+  if (allSlotsEmpty(st)) {
+    const [rng, u] = rngNext(st.rng);
+    st = { ...st, rng };
+    if (st.turn < FIRST_TURN_ELIGIBLE_FOR_TRIPLE_EVENTS) {
+      if (u < PROB_SINGLE_EVENT_WHEN_ALL_EMPTY) return rollNewEventForSlot(st, "A");
+      st = rollNewEventForSlot(st, "A");
+      return rollNewEventForSlot(st, "B");
+    }
+    if (u < PROB_TRIPLE_EVENTS) {
+      st = rollNewEventForSlot(st, "A");
+      st = rollNewEventForSlot(st, "B");
+      return rollNewEventForSlot(st, "C");
+    }
+    if (u < PROB_TRIPLE_EVENTS + PROB_SINGLE_EVENT_WHEN_ALL_EMPTY) return rollNewEventForSlot(st, "A");
+    st = rollNewEventForSlot(st, "A");
+    return rollNewEventForSlot(st, "B");
+  }
   for (const slot of SLOTS) {
     if (!st.slots[slot]) st = rollNewEventForSlot(st, slot);
   }

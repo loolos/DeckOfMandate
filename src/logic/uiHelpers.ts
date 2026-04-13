@@ -2,8 +2,9 @@ import { getEventTemplate } from "../data/events";
 import type { SlotId } from "../types/event";
 import type { GameState } from "../types/game";
 
-export function slotAllowsFundSolve(state: GameState, slot: SlotId): boolean {
-  if (state.phase !== "action" || state.pendingInteraction) return false;
+/** Funding path is affordable (ignores pending UI like Crackdown target pick). */
+export function slotFundSolveAffordable(state: GameState, slot: SlotId): boolean {
+  if (state.phase !== "action") return false;
   const ev = state.slots[slot];
   if (!ev || ev.resolved) return false;
   const tmpl = getEventTemplate(ev.templateId);
@@ -15,6 +16,12 @@ export function slotAllowsFundSolve(state: GameState, slot: SlotId): boolean {
     return state.resources.funding >= tmpl.solve.amount;
   }
   return false;
+}
+
+/** True when the player may execute a funding solve (not during Crackdown target selection). */
+export function slotAllowsFundSolve(state: GameState, slot: SlotId): boolean {
+  if (state.pendingInteraction) return false;
+  return slotFundSolveAffordable(state, slot);
 }
 
 export function slotAllowsCrackdownTarget(state: GameState, slot: SlotId): boolean {

@@ -1,6 +1,8 @@
 import { getCardTemplate } from "../data/cards";
 import type { GameAction } from "../app/gameReducer";
-import { cardLabelWithIcon, getResourceIcon } from "../logic/icons";
+import { OutcomeQuickFrame } from "./OutcomeQuickFrame";
+import { buildCardQuickFrameRows } from "../logic/quickOutcomeFrame";
+import { cardLabelWithIcon } from "../logic/icons";
 import type { GameState } from "../types/game";
 import type { MessageKey } from "../locales";
 import { useI18n } from "../locales";
@@ -34,9 +36,7 @@ export function Hand({
             onClick={() => dispatch({ type: "PLAY_CARD", handIndex: index })}
           >
             <div className={styles.cardTitle}>{title}</div>
-            <div className={styles.cardMeta}>
-              {t("ui.cardCost")}: {getResourceIcon("funding")} {tmpl.cost}
-            </div>
+            <OutcomeQuickFrame rows={buildCardQuickFrameRows(tmpl)} />
             <div className={styles.cardBg}>{t(tmpl.backgroundKey as MessageKey)}</div>
             <div className={styles.cardDesc}>{t(tmpl.descriptionKey as MessageKey)}</div>
           </button>

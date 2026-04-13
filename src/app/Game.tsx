@@ -5,6 +5,7 @@ import { normalizeGameState } from "../logic/normalizeGameState";
 import { loadGame, saveGame } from "../logic/saveLoad";
 import { cardLabelWithIcon, resourceLabelWithIcon } from "../logic/icons";
 import type { GameState } from "../types/game";
+import { EVENT_SLOT_ORDER } from "../types/event";
 import { defaultLevelId, getLevelDef, isLevelId, levelDefs, type LevelId } from "../data/levels";
 import { ActionLog } from "../components/ActionLog";
 import { EventPanel } from "../components/EventPanel";
@@ -114,11 +115,6 @@ export function Game() {
           </h2>
           <LanguageToggle />
         </div>
-        <div className={styles.startMenuActions}>
-          <button type="button" className={`${styles.btn} ${styles.btnPrimary}`} onClick={() => startNewFromMenu(undefined)}>
-            {t("menu.newRandom")}
-          </button>
-        </div>
         <div className={styles.startMenuForm}>
           <label className={styles.startMenuLabel} htmlFor="start-menu-level">
             {t("menu.levelLabel")}
@@ -214,17 +210,6 @@ export function Game() {
 
       <p className={styles.help}>{t("help.short")}</p>
 
-      {state.pendingInteraction?.type === "crackdownPick" ? (
-        <div className={styles.panel} style={{ marginBottom: "0.75rem" }}>
-          <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap", alignItems: "center" }}>
-            <strong>{t("ui.selectCrackdownTarget")}</strong>
-            <button type="button" className={styles.btn} onClick={() => dispatchSafe({ type: "CRACKDOWN_CANCEL" })}>
-              {t("ui.cancel")}
-            </button>
-          </div>
-        </div>
-      ) : null}
-
       <div className={styles.grid}>
         <section className={styles.panel}>
           <h2>{t("ui.resources")}</h2>
@@ -233,10 +218,25 @@ export function Game() {
           <StatusBar statuses={state.playerStatuses} />
         </section>
 
-        <section className={styles.panel}>
-          <h2>{t("ui.events")}</h2>
-          <EventPanel state={state} dispatch={dispatchSafe} />
-        </section>
+        {EVENT_SLOT_ORDER.some((id) => state.slots[id] != null) ||
+        state.pendingInteraction?.type === "crackdownPick" ? (
+          <section className={`${styles.panel} ${styles.eventsPanel}`}>
+            <div className={styles.eventsPanelHeader}>
+              <h2>{t("ui.events")}</h2>
+              {state.pendingInteraction?.type === "crackdownPick" ? (
+                <div className={styles.crackdownPickBanner} role="status">
+                  <strong>{t("ui.selectCrackdownTarget")}</strong>
+                  <button type="button" className={styles.btn} onClick={() => dispatchSafe({ type: "CRACKDOWN_CANCEL" })}>
+                    {t("ui.cancel")}
+                  </button>
+                </div>
+              ) : null}
+            </div>
+            <div className={styles.eventsResizable} title={t("ui.eventsResizeHint")}>
+              <EventPanel state={state} dispatch={dispatchSafe} />
+            </div>
+          </section>
+        ) : null}
       </div>
 
       <section className={styles.panel} style={{ marginTop: "1rem" }}>

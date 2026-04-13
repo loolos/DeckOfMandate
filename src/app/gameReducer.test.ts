@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { EMPTY_EVENT_SLOTS } from "../types/event";
 import { createInitialState } from "./initialState";
 import { gameReducer } from "./gameReducer";
 
@@ -40,6 +41,7 @@ describe("gameReducer", () => {
       hand: [a, b, c],
       deck: base.deck.slice(1),
       slots: {
+        ...EMPTY_EVENT_SLOTS,
         A: { instanceId: "e_u1", templateId: "publicUnrest", resolved: false },
         B: { instanceId: "e_ok", templateId: "tradeOpportunity", resolved: true },
       },
@@ -68,6 +70,7 @@ describe("gameReducer", () => {
       deck,
       resources: { treasuryStat: 4, power: 4, legitimacy: 5, funding: 3 },
       slots: {
+        ...EMPTY_EVENT_SLOTS,
         A: { instanceId: "e1", templateId: "budgetStrain", resolved: false },
         B: { instanceId: "e2", templateId: "tradeOpportunity", resolved: true },
       },
@@ -100,8 +103,8 @@ describe("gameReducer", () => {
       ...s0,
       resources: { ...s0.resources, funding: 2 },
       slots: {
+        ...s0.slots,
         A: { instanceId: "e_trade", templateId: "tradeOpportunity", resolved: false },
-        B: s0.slots.B,
       },
     };
     const n0 = s1.actionLog.length;
@@ -125,6 +128,7 @@ describe("gameReducer", () => {
       deck: [...base.deck, ...rest],
       resources: { ...base.resources, funding: 0, legitimacy: 3 },
       slots: {
+        ...EMPTY_EVENT_SLOTS,
         A: { instanceId: "test_e1", templateId: "tradeOpportunity", resolved: true },
         B: { instanceId: "test_e2", templateId: "tradeOpportunity", resolved: true },
       },

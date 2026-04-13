@@ -3,6 +3,7 @@ import { defaultLevelId, getLevelDef } from "../data/levels";
 import { createRngFromSeed, shuffle } from "../logic/rng";
 import { beginYear } from "../logic/turnFlow";
 import type { CardInstance, CardTemplateId } from "../types/card";
+import { EMPTY_EVENT_SLOTS, EMPTY_PENDING_MAJOR_CRISIS } from "../types/event";
 import type { GameState } from "../types/game";
 
 export function createInitialState(seed?: number, levelId = defaultLevelId): GameState {
@@ -37,8 +38,8 @@ export function createInitialState(seed?: number, levelId = defaultLevelId): Gam
     discard: [],
     hand: [],
     cardsById,
-    slots: { A: null, B: null },
-    pendingMajorCrisis: { A: false, B: false },
+    slots: { ...EMPTY_EVENT_SLOTS },
+    pendingMajorCrisis: { ...EMPTY_PENDING_MAJOR_CRISIS },
     playerStatuses: [],
     actionLog: [],
   };

@@ -34,7 +34,7 @@ export const eventTemplates: Record<EventTemplateId, EventTemplate> = {
     harmful: false,
     titleKey: "event.tradeOpportunity.name",
     descriptionKey: "event.tradeOpportunity.desc",
-    solve: { kind: "funding", amount: 2 },
+    solve: { kind: "funding", amount: 1 },
     penaltiesIfUnresolved: [],
   },
   politicalGridlock: {

@@ -76,6 +76,63 @@
   font-size: 1rem;
 }
 
+.eventsPanel {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.eventsPanelHeader {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.45rem 0.75rem;
+  margin-bottom: 0.35rem;
+}
+
+.eventsPanel .eventsPanelHeader h2 {
+  margin: 0;
+}
+
+.crackdownPickBanner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.88rem;
+}
+
+.crackdownPickBanner strong {
+  font-weight: 600;
+}
+
+.eventsResizable {
+  resize: vertical;
+  overflow: auto;
+  min-height: 11rem;
+  max-height: min(72vh, 560px);
+  padding-bottom: 0.35rem;
+}
+
+.eventCardCrackdownHint {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  min-height: 2.75rem;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.8rem;
+  border-radius: 8px;
+  border: 1px dashed color-mix(in srgb, var(--border) 80%, var(--muted));
+  color: var(--muted);
+}
+
+.eventCard[data-crack-candidate="true"] .actions {
+  min-height: 5.95rem;
+  align-content: flex-start;
+}
+
 .statusSectionTitle {
   margin: 0.75rem 0 0.35rem;
   font-size: 0.95rem;
@@ -202,7 +259,7 @@
 
 @media (min-width: 520px) {
   .events {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
   }
 }
 
@@ -225,6 +282,44 @@
   font-size: 0.9rem;
   color: var(--muted);
   flex: 1;
+}
+
+.outcomeQuickFrame {
+  margin-top: 0.15rem;
+  padding: 0.4rem 0.45rem;
+  border: 1px dashed color-mix(in srgb, var(--border) 85%, var(--muted));
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--panel) 75%, #0a0c10);
+  font-size: 0.76rem;
+  line-height: 1.35;
+}
+
+.quickFrameRow {
+  display: grid;
+  grid-template-columns: minmax(4.5rem, 38%) minmax(0, 1fr);
+  gap: 0.2rem 0.45rem;
+  align-items: baseline;
+}
+
+.quickFrameRow + .quickFrameRow {
+  margin-top: 0.25rem;
+}
+
+.quickFrameLabel {
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--muted);
+}
+
+.quickFrameValue {
+  font-variant-numeric: tabular-nums;
+  word-break: break-word;
+}
+
+.quickFrameMuted {
+  color: var(--muted);
+  opacity: 0.85;
 }
 
 .badges {
@@ -484,15 +579,6 @@
   margin: 0 0 0.75rem;
   font-size: 0.88rem;
   color: var(--muted);
-}
-
-.startMenuActions {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
-  padding-bottom: 1rem;
-  border-bottom: 1px solid var(--border);
 }
 
 .startMenuForm {
