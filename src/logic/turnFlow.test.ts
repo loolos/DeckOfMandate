@@ -71,6 +71,48 @@ describe("beginYear + playerStatuses", () => {
     expect(s1.playerStatuses).toHaveLength(0);
   });
 
+  it("applies beginYear resource delta statuses before draw and consumes one turn", () => {
+    const started = createInitialState(55_001);
+    const cardsById: Record<string, CardInstance> = {
+      c0: { instanceId: "c0", templateId: "funding" },
+      c1: { instanceId: "c1", templateId: "funding" },
+      c2: { instanceId: "c2", templateId: "funding" },
+      c3: { instanceId: "c3", templateId: "funding" },
+    };
+    const s0: GameState = {
+      ...started,
+      outcome: "playing",
+      phase: "action",
+      resources: { treasuryStat: 0, funding: 0, power: 2, legitimacy: 2 },
+      nextTurnDrawModifier: 0,
+      hand: [],
+      deck: ["c0", "c1", "c2", "c3"],
+      discard: [],
+      cardsById,
+      playerStatuses: [
+        {
+          instanceId: "st_draw_boost",
+          templateId: "grainReliefDrawBoost",
+          kind: "drawAttemptsDelta",
+          delta: 1,
+          turnsRemaining: 1,
+        },
+        {
+          instanceId: "st_legit_boost",
+          templateId: "grainReliefLegitimacyBoost",
+          kind: "beginYearResourceDelta",
+          resource: "legitimacy",
+          delta: 1,
+          turnsRemaining: 1,
+        },
+      ],
+    };
+    const s1 = beginYear(s0);
+    expect(s1.resources.legitimacy).toBe(3);
+    expect(s1.hand.length).toBe(3);
+    expect(s1.playerStatuses).toHaveLength(0);
+  });
+
   it("appends antiFrenchLeagueDraw to action log when coalition hazard triggers", () => {
     const started = createInitialState(11_111);
     const cardsById: Record<string, CardInstance> = {

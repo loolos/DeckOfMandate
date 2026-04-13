@@ -9,6 +9,7 @@ export const LEVEL2_NEW_IDS = [
   "grainRelief",
   "taxRebalance",
   "diplomaticCongress",
+  "diplomaticIntervention",
   "patronageOffice",
   "warBond",
 ] as const;
@@ -64,6 +65,7 @@ function zeroCounts(): Level2RefitCounts {
     grainRelief: 0,
     taxRebalance: 0,
     diplomaticCongress: 0,
+    diplomaticIntervention: 0,
     patronageOffice: 0,
     warBond: 0,
   };
@@ -91,6 +93,7 @@ function withDefaultRecommendedAdds(base: Level2RefitCounts): Level2RefitCounts 
     grainRelief: 1,
     taxRebalance: 1,
     diplomaticCongress: 1,
+    diplomaticIntervention: 1,
   };
 }
 
@@ -148,7 +151,8 @@ export function buildHistoricalPreset(baseCounts: Level2RefitCounts): Level2Refi
 export function buildWarPreset(baseCounts: Level2RefitCounts): Level2RefitCounts {
   return {
     ...baseCounts,
-    diplomaticCongress: 2,
+    diplomaticCongress: 1,
+    diplomaticIntervention: 1,
     warBond: 2,
   };
 }

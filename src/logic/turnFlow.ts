@@ -120,6 +120,24 @@ function sumDrawAttemptsStatusDelta(statuses: readonly PlayerStatusInstance[]): 
   return sum;
 }
 
+function applyBeginYearResourceStatusEffects(state: GameState): GameState {
+  let s = state;
+  for (const p of s.playerStatuses) {
+    if (p.kind !== "beginYearResourceDelta" || !p.resource) continue;
+    const delta = p.delta ?? 0;
+    if (delta === 0) continue;
+    const next = s.resources[p.resource] + delta;
+    s = {
+      ...s,
+      resources: {
+        ...s.resources,
+        [p.resource]: p.resource === "legitimacy" ? next : Math.max(0, next),
+      },
+    };
+  }
+  return s;
+}
+
 export function retentionCapacity(state: GameState): number {
   let bonus = 0;
   for (const p of state.playerStatuses) {
@@ -143,6 +161,7 @@ export function beginYear(state: GameState): GameState {
     league = null;
   }
   s = { ...s, antiFrenchLeague: league };
+  s = applyBeginYearResourceStatusEffects(s);
   s = {
     ...s,
     resources: {

@@ -5,6 +5,7 @@ export type StatusTemplate = {
   id: StatusTemplateId;
   kind: PlayerStatusKind;
   delta?: number;
+  resource?: "treasuryStat" | "power" | "legitimacy";
   blockedTag?: "royal";
   titleKey: MessageKey;
 };
@@ -33,6 +34,19 @@ export const statusTemplates: Record<StatusTemplateId, StatusTemplate> = {
     kind: "blockCardTag",
     blockedTag: "royal",
     titleKey: "status.royalBan.name",
+  },
+  grainReliefDrawBoost: {
+    id: "grainReliefDrawBoost",
+    kind: "drawAttemptsDelta",
+    delta: 1,
+    titleKey: "status.grainReliefDrawBoost.name",
+  },
+  grainReliefLegitimacyBoost: {
+    id: "grainReliefLegitimacyBoost",
+    kind: "beginYearResourceDelta",
+    resource: "legitimacy",
+    delta: 1,
+    titleKey: "status.grainReliefLegitimacyBoost.name",
   },
 };
 

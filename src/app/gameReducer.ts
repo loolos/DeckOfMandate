@@ -229,7 +229,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
         ...state,
         resources: { ...state.resources, funding: state.resources.funding - tmpl.cost },
       };
-      if (inst.templateId === "crackdown") {
+      if (inst.templateId === "crackdown" || inst.templateId === "diplomaticIntervention") {
         return appendActionLog(
           {
             ...paid,

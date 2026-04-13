@@ -226,4 +226,38 @@ describe("gameReducer", () => {
     expect(tryKeep3.phase).toBe("action");
     expect(tryKeep3.turn).toBe(boosted.turn + 1);
   });
+
+  it("allows diplomatic intervention under royal ban and enters target-pick flow", () => {
+    const base = createInitialState(123_009, "secondMandate");
+    const diplomaticIntervention = base.deck.find(
+      (id) => base.cardsById[id]?.templateId === "diplomaticIntervention",
+    );
+    if (!diplomaticIntervention) {
+      throw new Error("expected diplomaticIntervention in secondMandate deck");
+    }
+    const withCardInHand = {
+      ...base,
+      hand: [diplomaticIntervention],
+      deck: base.deck.filter((id) => id !== diplomaticIntervention),
+      resources: { ...base.resources, funding: 1 },
+      slots: {
+        ...base.slots,
+        A: { instanceId: "e_harm", templateId: "nobleResentment", resolved: false },
+      },
+      playerStatuses: [
+        ...base.playerStatuses,
+        {
+          instanceId: "st_block_royal",
+          templateId: "royalBan" as const,
+          kind: "blockCardTag" as const,
+          blockedTag: "royal" as const,
+          turnsRemaining: 1,
+        },
+      ],
+    };
+    const afterPlay = gameReducer(withCardInHand, { type: "PLAY_CARD", handIndex: 0 });
+    expect(afterPlay.pendingInteraction?.type).toBe("crackdownPick");
+    expect(afterPlay.pendingInteraction?.cardInstanceId).toBe(diplomaticIntervention);
+    expect(afterPlay.resources.funding).toBe(0);
+  });
 });

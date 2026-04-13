@@ -4,6 +4,7 @@ import type { CardTag } from "./tags";
 export type CardTemplateId =
   | "funding"
   | "crackdown"
+  | "diplomaticIntervention"
   | "reform"
   | "ceremony"
   | "development"

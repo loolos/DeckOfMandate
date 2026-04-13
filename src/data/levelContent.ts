@@ -118,6 +118,7 @@ export const levelContentByLevelId = {
       "grainRelief",
       "taxRebalance",
       "diplomaticCongress",
+      "diplomaticIntervention",
     ],
     rollableEventIds: [
       "versaillesExpenditure",

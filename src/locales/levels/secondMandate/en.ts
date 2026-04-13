@@ -77,7 +77,8 @@ export const messagesEnSecondMandate = {
   "card.grainRelief.name": "Grain Relief Program",
   "card.grainRelief.background":
     "Emergency grain purchasing and provincial relief channels cool unrest before shortages become revolt.",
-  "card.grainRelief.desc": "Legitimacy +1.",
+  "card.grainRelief.desc":
+    "Gain Relief Coordination and Relief Confidence for 1 turn (next turn: +1 draw attempt and Legitimacy +1).",
   "card.taxRebalance.name": "Tax Rebalancing",
   "card.taxRebalance.background":
     "Reallocate burdens and close loopholes to keep revenue flowing without immediate breakdown.",
@@ -85,7 +86,11 @@ export const messagesEnSecondMandate = {
   "card.diplomaticCongress.name": "Diplomatic Congress",
   "card.diplomaticCongress.background":
     "Envoys, conferences, and guarantees buy breathing room while rivals test your frontiers.",
-  "card.diplomaticCongress.desc": "Legitimacy +1.",
+  "card.diplomaticCongress.desc": "Power +1.",
+  "card.diplomaticIntervention.name": "Diplomatic Intervention",
+  "card.diplomaticIntervention.background":
+    "Apply pressure through envoys and treaty leverage rather than direct royal command.",
+  "card.diplomaticIntervention.desc": "Resolve one harmful event (not Colonial Trade Boom). Not a Royal-tag card.",
   "card.patronageOffice.name": "Patronage Office",
   "card.patronageOffice.background":
     "Centralized appointments rebuild obedience by tying careers directly to the crown.",

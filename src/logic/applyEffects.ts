@@ -50,6 +50,7 @@ export function applyEffect(state: GameState, e: Effect): GameState {
         templateId: e.templateId,
         kind: tmpl.kind,
         delta: tmpl.delta,
+        resource: tmpl.resource,
         blockedTag: tmpl.blockedTag,
         turnsRemaining: e.turns,
       };

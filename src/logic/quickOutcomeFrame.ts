@@ -28,6 +28,10 @@ function formatSingleEffectChip(e: Effect): string {
       if (st.kind === "drawAttemptsDelta") {
         return `📜${signedInt(st.delta ?? 0)}×${e.turns}⌛`;
       }
+      if (st.kind === "beginYearResourceDelta") {
+        const resource = st.resource ?? "legitimacy";
+        return `${getResourceIcon(resource)}${signedInt(st.delta ?? 0)}×${e.turns}⌛`;
+      }
       if (st.kind === "retentionCapacityDelta") {
         return `🖐️${signedInt(st.delta ?? 0)}×${e.turns}⌛`;
       }
@@ -89,7 +93,7 @@ export function buildCardQuickFrameRows(tmpl: CardTemplate): QuickFrameRow[] {
     labelKey: "ui.quickFrame.cost",
     value: `${getResourceIcon("funding")} ${tmpl.cost}`,
   };
-  if (tmpl.id === "crackdown") {
+  if (tmpl.id === "crackdown" || tmpl.id === "diplomaticIntervention") {
     return [
       cost,
       {
