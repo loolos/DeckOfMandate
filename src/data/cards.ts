@@ -1,9 +1,13 @@
 import type { CardTemplate, CardTemplateId } from "../types/card";
+import type { CardTag } from "../types/tags";
+
+const ROYAL: readonly CardTag[] = ["royal"];
 
 const templates: Record<CardTemplateId, CardTemplate> = {
   funding: {
     id: "funding",
     cost: 0,
+    tags: ROYAL,
     titleKey: "card.funding.name",
     backgroundKey: "card.funding.background",
     descriptionKey: "card.funding.desc",
@@ -12,6 +16,7 @@ const templates: Record<CardTemplateId, CardTemplate> = {
   crackdown: {
     id: "crackdown",
     cost: 1,
+    tags: ROYAL,
     titleKey: "card.crackdown.name",
     backgroundKey: "card.crackdown.background",
     descriptionKey: "card.crackdown.desc",
@@ -20,6 +25,7 @@ const templates: Record<CardTemplateId, CardTemplate> = {
   reform: {
     id: "reform",
     cost: 2,
+    tags: [],
     titleKey: "card.reform.name",
     backgroundKey: "card.reform.background",
     descriptionKey: "card.reform.desc",
@@ -31,6 +37,7 @@ const templates: Record<CardTemplateId, CardTemplate> = {
   ceremony: {
     id: "ceremony",
     cost: 2,
+    tags: [],
     titleKey: "card.ceremony.name",
     backgroundKey: "card.ceremony.background",
     descriptionKey: "card.ceremony.desc",
@@ -39,6 +46,7 @@ const templates: Record<CardTemplateId, CardTemplate> = {
   development: {
     id: "development",
     cost: 3,
+    tags: [],
     titleKey: "card.development.name",
     backgroundKey: "card.development.background",
     descriptionKey: "card.development.desc",
@@ -46,51 +54,52 @@ const templates: Record<CardTemplateId, CardTemplate> = {
   },
   grainRelief: {
     id: "grainRelief",
-    cost: 2,
+    cost: 3,
+    tags: [],
     titleKey: "card.grainRelief.name",
     backgroundKey: "card.grainRelief.background",
     descriptionKey: "card.grainRelief.desc",
     effects: [
       { kind: "modResource", resource: "legitimacy", delta: 1 },
-      { kind: "scheduleNextTurnDrawModifier", delta: 1 },
     ],
   },
   taxRebalance: {
     id: "taxRebalance",
     cost: 2,
+    tags: [],
     titleKey: "card.taxRebalance.name",
     backgroundKey: "card.taxRebalance.background",
     descriptionKey: "card.taxRebalance.desc",
     effects: [
-      { kind: "gainFunding", amount: 2 },
       { kind: "modResource", resource: "treasuryStat", delta: 1 },
+      { kind: "addPlayerStatus", templateId: "drawPenalty", turns: 2 },
     ],
   },
   diplomaticCongress: {
     id: "diplomaticCongress",
-    cost: 2,
+    cost: 3,
+    tags: [],
     titleKey: "card.diplomaticCongress.name",
     backgroundKey: "card.diplomaticCongress.background",
     descriptionKey: "card.diplomaticCongress.desc",
-    effects: [
-      { kind: "scheduleNextTurnDrawModifier", delta: 1 },
-      { kind: "modResource", resource: "legitimacy", delta: 1 },
-    ],
+    effects: [{ kind: "modResource", resource: "legitimacy", delta: 1 }],
   },
   patronageOffice: {
     id: "patronageOffice",
-    cost: 1,
+    cost: 4,
+    tags: ROYAL,
     titleKey: "card.patronageOffice.name",
     backgroundKey: "card.patronageOffice.background",
     descriptionKey: "card.patronageOffice.desc",
     effects: [
       { kind: "modResource", resource: "power", delta: 1 },
-      { kind: "gainFunding", amount: 1 },
+      { kind: "addPlayerStatus", templateId: "retentionBoost", turns: 3 },
     ],
   },
   warBond: {
     id: "warBond",
     cost: 0,
+    tags: [],
     titleKey: "card.warBond.name",
     backgroundKey: "card.warBond.background",
     descriptionKey: "card.warBond.desc",

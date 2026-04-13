@@ -115,6 +115,10 @@ export const messagesZhCore = {
   "event.politicalGridlock.desc":
     "大贵族联合反对新税方案。支付 1 经费，否则获得「权力流失」3 回合（每回合抽牌 -1，仍至少抽 1）。",
   "status.powerLeak.name": "权力流失",
+  "status.drawPenalty.name": "疲态",
+  "status.retentionBoost.name": "荐任红利",
+  "status.royalBan.name": "王室牌禁用",
+  "card.tag.royal": "王室",
   "log.cardPlayed.title": "[第 {turn} 年] {card} — 支付 {cost} {funding}。",
   "log.cardPlayed.effectsLabel": "效果：",
   "log.cardPlayed.noEffects": "无列表效果。",
@@ -122,6 +126,7 @@ export const messagesZhCore = {
   "log.effect.gainFunding": "{funding} +{amount}",
   "log.effect.drawCards": "抽牌 {count}",
   "log.effect.scheduleNextTurnDrawModifier": "下一年抽牌修正 {delta}",
+  "log.effect.setCardTagBlocked": "禁用 {tag} 牌（{turns} 回合）",
   "log.effect.addPlayerStatus": "{status}（{turns} 回合）",
   "log.eventFundSolved": "[第 {turn} 年] 槽位 {slot}：{event}。已支付 {paid} {funding}。{treasury}",
   "log.eventFundSolved.treasury": "财政 +{gain}。",

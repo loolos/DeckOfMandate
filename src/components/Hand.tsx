@@ -25,6 +25,9 @@ export function Hand({
   const canPlay =
     state.outcome === "playing" && state.phase === "action" && !state.pendingInteraction;
 
+  const blockedRoyal =
+    state.playerStatuses.some((st) => st.kind === "blockCardTag" && st.blockedTag === "royal");
+
   return (
     <div className={styles.hand}>
       {state.hand.map((id, index) => {
@@ -32,7 +35,8 @@ export function Hand({
         if (!inst) return null;
         const tmpl = getCardTemplate(inst.templateId);
         const affordable = state.resources.funding >= tmpl.cost;
-        const playable = canPlay && affordable;
+        const blockedByStatus = blockedRoyal && tmpl.tags.includes("royal");
+        const playable = canPlay && affordable && !blockedByStatus;
         const title = cardLabelWithIcon(inst.templateId, t(tmpl.titleKey as MessageKey));
         const quickRows = buildCardQuickFrameRows(tmpl);
         const compactSummary = quickRows.map((row) => row.value).join(" · ");

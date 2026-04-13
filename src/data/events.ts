@@ -145,7 +145,7 @@ export const eventTemplates: Record<EventTemplateId, EventTemplate> = {
     harmful: true,
     titleKey: "event.versaillesExpenditure.name",
     descriptionKey: "event.versaillesExpenditure.desc",
-    solve: { kind: "funding", amount: 2 },
+    solve: { kind: "fundingOrCrackdown", amount: 3 },
     penaltiesIfUnresolved: [{ kind: "modResource", resource: "treasuryStat", delta: -2 }],
   },
   nobleResentment: {
@@ -163,7 +163,7 @@ export const eventTemplates: Record<EventTemplateId, EventTemplate> = {
     harmful: true,
     titleKey: "event.provincialNoncompliance.name",
     descriptionKey: "event.provincialNoncompliance.desc",
-    solve: { kind: "funding", amount: 1 },
+    solve: { kind: "funding", amount: 2 },
     penaltiesIfUnresolved: [{ kind: "scheduleNextTurnDrawModifier", delta: -2 }],
   },
   risingGrainPrices: {
@@ -172,7 +172,7 @@ export const eventTemplates: Record<EventTemplateId, EventTemplate> = {
     harmful: true,
     titleKey: "event.risingGrainPrices.name",
     descriptionKey: "event.risingGrainPrices.desc",
-    solve: { kind: "funding", amount: 2 },
+    solve: { kind: "fundingOrCrackdown", amount: 3 },
     penaltiesIfUnresolved: [{ kind: "modResource", resource: "legitimacy", delta: -2 }],
   },
   taxResistance: {
@@ -181,7 +181,7 @@ export const eventTemplates: Record<EventTemplateId, EventTemplate> = {
     harmful: true,
     titleKey: "event.taxResistance.name",
     descriptionKey: "event.taxResistance.desc",
-    solve: { kind: "fundingOrCrackdown", amount: 1 },
+    solve: { kind: "funding", amount: 2 },
     penaltiesIfUnresolved: [
       { kind: "modResource", resource: "treasuryStat", delta: -1 },
       { kind: "modResource", resource: "legitimacy", delta: -1 },
@@ -193,7 +193,7 @@ export const eventTemplates: Record<EventTemplateId, EventTemplate> = {
     harmful: true,
     titleKey: "event.frontierGarrisons.name",
     descriptionKey: "event.frontierGarrisons.desc",
-    solve: { kind: "funding", amount: 1 },
+    solve: { kind: "funding", amount: 2 },
     penaltiesIfUnresolved: [
       { kind: "modResource", resource: "treasuryStat", delta: -1 },
       { kind: "scheduleNextTurnDrawModifier", delta: -1 },
@@ -214,8 +214,8 @@ export const eventTemplates: Record<EventTemplateId, EventTemplate> = {
     harmful: true,
     titleKey: "event.courtScandal.name",
     descriptionKey: "event.courtScandal.desc",
-    solve: { kind: "fundingOrCrackdown", amount: 1 },
-    penaltiesIfUnresolved: [{ kind: "modResource", resource: "legitimacy", delta: -2 }],
+    solve: { kind: "funding", amount: 3 },
+    penaltiesIfUnresolved: [{ kind: "addPlayerStatus", templateId: "royalBan", turns: 1 }],
   },
   militaryPrestige: {
     id: "militaryPrestige",

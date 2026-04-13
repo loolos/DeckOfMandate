@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { levelContentByLevelId } from "../data/levelContent";
 import { getLevelDef } from "../data/levels";
+import { getCardTemplate } from "../data/cards";
 import { EMPTY_EVENT_SLOTS } from "../types/event";
 import { createInitialState } from "./initialState";
 import { gameReducer } from "./gameReducer";
@@ -167,5 +168,62 @@ describe("gameReducer", () => {
     expect(after.phase).toBe("action");
     expect(after.turn).toBe(s0.turn + 1);
     expect(after.hand).toContain(keepOne);
+  });
+
+  it("blocks royal-tag cards when royal ban status is active", () => {
+    const base = createInitialState(778899);
+    const royalInDeck = base.deck.find((id) => getCardTemplate(base.cardsById[id]!.templateId).tags.includes("royal"));
+    if (!royalInDeck) throw new Error("expected at least one royal-tag card in deck");
+    const blockedState = {
+      ...base,
+      hand: [royalInDeck],
+      deck: base.deck.filter((id) => id !== royalInDeck),
+    };
+    const handIndex = 0;
+    const beforeFunding = base.resources.funding;
+    const beforeLog = base.actionLog.length;
+    const blocked = {
+      ...blockedState,
+      playerStatuses: [
+        ...blockedState.playerStatuses,
+        {
+          instanceId: "st_block_royal",
+          templateId: "royalBan" as const,
+          kind: "blockCardTag" as const,
+          blockedTag: "royal" as const,
+          turnsRemaining: 1,
+        },
+      ],
+    };
+    const after = gameReducer(blocked, { type: "PLAY_CARD", handIndex });
+    expect(after).toEqual(blocked);
+    expect(after.resources.funding).toBe(beforeFunding);
+    expect(after.actionLog.length).toBe(beforeLog);
+  });
+
+  it("retention boost status increases keep limit by +1", () => {
+    const base = createInitialState(990011);
+    const full = [...base.hand, ...base.deck];
+    if (full.length < 3) throw new Error("expected at least three cards total");
+    const hand = full.slice(0, 3);
+    const boosted = {
+      ...base,
+      phase: "retention" as const,
+      hand,
+      deck: full.slice(3),
+      playerStatuses: [
+        ...base.playerStatuses,
+        {
+          instanceId: "st_keep_boost",
+          templateId: "retentionBoost" as const,
+          kind: "retentionCapacityDelta" as const,
+          delta: 1,
+          turnsRemaining: 3,
+        },
+      ],
+    };
+    const tryKeep3 = gameReducer(boosted, { type: "CONFIRM_RETENTION", keepIds: hand.slice(0, 3) });
+    expect(tryKeep3.phase).toBe("action");
+    expect(tryKeep3.turn).toBe(boosted.turn + 1);
   });
 });

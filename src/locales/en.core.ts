@@ -127,6 +127,10 @@ export const messagesEnCore = {
   "event.politicalGridlock.desc":
     "Great nobles unite against your fiscal scheme. Pay 1 Funding or suffer Loss of Authority for 3 turns (−1 draw attempt each turn, min 1 draw).",
   "status.powerLeak.name": "Loss of Authority",
+  "status.drawPenalty.name": "Draw Fatigue",
+  "status.retentionBoost.name": "Court Storage",
+  "status.royalBan.name": "Royal Access Frozen",
+  "card.tag.royal": "Royal",
   "log.cardPlayed.title": "[Turn {turn}] {card} — paid {cost} {funding}.",
   "log.cardPlayed.effectsLabel": "Effects:",
   "log.cardPlayed.noEffects": "No listed effects.",
@@ -134,6 +138,7 @@ export const messagesEnCore = {
   "log.effect.gainFunding": "{funding} +{amount}",
   "log.effect.drawCards": "Draw {count}",
   "log.effect.scheduleNextTurnDrawModifier": "Next-year draw modifier {delta}",
+  "log.effect.setCardTagBlocked": "Block {tag} cards ({turns} turns)",
   "log.effect.addPlayerStatus": "{status} ({turns} turns)",
   "log.eventFundSolved": "[Turn {turn}] Slot {slot}: {event}. Paid {paid} {funding}{treasury}",
   "log.eventFundSolved.treasury": " Treasury +{gain}.",

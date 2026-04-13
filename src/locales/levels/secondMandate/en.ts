@@ -31,28 +31,28 @@ export const messagesEnSecondMandate = {
     "Peace terms can restore order. Invest 1 Funding to gain Legitimacy +1 and lock in a softer landing.",
   "event.versaillesExpenditure.name": "Versailles Expenditure",
   "event.versaillesExpenditure.desc":
-    "Court spending rises again. Pay 2 Funding or lose 2 Treasury.",
+    "Court spending rises again. Pay 3 Funding or use Royal Intervention; if unresolved, lose 2 Treasury.",
   "event.nobleResentment.name": "Noble Resentment",
   "event.nobleResentment.desc":
     "Elite resistance grows at court and in the provinces. Pay 1 Funding or Royal Intervention, or gain Loss of Authority for 3 turns.",
   "event.provincialNoncompliance.name": "Provincial Noncompliance",
   "event.provincialNoncompliance.desc":
-    "Local officials stall implementation. Pay 1 Funding or suffer a -2 draw modifier next year.",
+    "Local officials stall implementation. Pay 2 Funding or suffer a -2 draw modifier next year.",
   "event.risingGrainPrices.name": "Rising Grain Prices",
   "event.risingGrainPrices.desc":
-    "Food pressure drives unrest. Pay 2 Funding or lose 2 Legitimacy.",
+    "Food pressure drives unrest. Pay 3 Funding or use Royal Intervention; if unresolved, lose 2 Legitimacy.",
   "event.taxResistance.name": "Tax Resistance",
   "event.taxResistance.desc":
-    "Communities and elites resist levies. Pay 1 Funding or Royal Intervention, or lose 1 Treasury and 1 Legitimacy.",
+    "Communities and elites resist levies. Pay 2 Funding or use Royal Intervention; if unresolved, lose 1 Treasury and 1 Legitimacy.",
   "event.frontierGarrisons.name": "Frontier Garrisons",
   "event.frontierGarrisons.desc":
-    "Border garrisons consume revenue. Pay 1 Funding or lose 1 Treasury and take a draw penalty next year.",
+    "Border garrisons consume revenue. Pay 2 Funding or lose 1 Treasury and take a draw penalty next year.",
   "event.tradeDisruption.name": "Trade Disruption",
   "event.tradeDisruption.desc":
     "Sea lanes and convoy risk cut into policy bandwidth. Pay 1 Funding or take a -2 draw modifier next year.",
   "event.courtScandal.name": "Court Scandal",
   "event.courtScandal.desc":
-    "Factional intrigue weakens authority. Pay 1 Funding or Royal Intervention, or lose 2 Legitimacy.",
+    "Factional intrigue weakens authority. Pay 3 Funding or use Royal Intervention; unresolved scandal blocks all Royal-tag cards next turn.",
   "event.militaryPrestige.name": "Military Prestige",
   "event.militaryPrestige.desc":
     "A chance to convert battlefield image into authority. Invest 1 Funding for Legitimacy +1.",
@@ -77,19 +77,19 @@ export const messagesEnSecondMandate = {
   "card.grainRelief.name": "Grain Relief Program",
   "card.grainRelief.background":
     "Emergency grain purchasing and provincial relief channels cool unrest before shortages become revolt.",
-  "card.grainRelief.desc": "Legitimacy +1 and next turn draw modifier +1.",
+  "card.grainRelief.desc": "Legitimacy +1.",
   "card.taxRebalance.name": "Tax Rebalancing",
   "card.taxRebalance.background":
     "Reallocate burdens and close loopholes to keep revenue flowing without immediate breakdown.",
-  "card.taxRebalance.desc": "Gain +2 Funding and Treasury +1.",
+  "card.taxRebalance.desc": "Treasury +1. Gain Draw Penalty (draw -1) for 2 turns.",
   "card.diplomaticCongress.name": "Diplomatic Congress",
   "card.diplomaticCongress.background":
     "Envoys, conferences, and guarantees buy breathing room while rivals test your frontiers.",
-  "card.diplomaticCongress.desc": "Next turn draw modifier +1 and Legitimacy +1.",
+  "card.diplomaticCongress.desc": "Legitimacy +1.",
   "card.patronageOffice.name": "Patronage Office",
   "card.patronageOffice.background":
     "Centralized appointments rebuild obedience by tying careers directly to the crown.",
-  "card.patronageOffice.desc": "Power +1 and Funding +1.",
+  "card.patronageOffice.desc": "Power +1. Gain Retention Boost (+1 keep cap) for 3 turns.",
   "card.warBond.name": "War Bond",
   "card.warBond.background":
     "Borrow now to survive this year; the fiscal burden arrives later.",

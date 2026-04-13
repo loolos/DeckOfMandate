@@ -39,6 +39,7 @@ import {
   type Level2StartDraft,
 } from "./level2Transition";
 import styles from "./Game.module.css";
+import { retentionCapacity } from "../logic/turnFlow";
 
 type PendingNewRun = { seed?: number; levelId: LevelId };
 
@@ -135,7 +136,7 @@ export function Game() {
 
   const canConfirmRetention =
     state.phase === "retention" &&
-    selectedIds.length <= state.resources.legitimacy &&
+    selectedIds.length <= retentionCapacity(state) &&
     selectedIds.every((id) => state.hand.includes(id));
 
   const dispatchSafe = (a: GameAction) => dispatch(a);
@@ -616,7 +617,8 @@ export function Game() {
           <div className={styles.modal}>
             <h3>{t("phase.retention")}</h3>
             <p className={styles.help}>
-              {resourceLabelWithIcon("legitimacy", t("resource.legitimacy"))}: {state.resources.legitimacy}
+              {resourceLabelWithIcon("legitimacy", t("resource.legitimacy"))}:{" "}
+              {retentionCapacity(state)}
             </p>
             <div className={styles.retainList}>
               {state.hand.map((id) => {

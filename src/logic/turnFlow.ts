@@ -115,9 +115,17 @@ function runEventPhase(state: GameState): GameState {
 function sumDrawAttemptsStatusDelta(statuses: readonly PlayerStatusInstance[]): number {
   let sum = 0;
   for (const p of statuses) {
-    if (p.kind === "drawAttemptsDelta") sum += p.delta;
+    if (p.kind === "drawAttemptsDelta") sum += p.delta ?? 0;
   }
   return sum;
+}
+
+export function retentionCapacity(state: GameState): number {
+  let bonus = 0;
+  for (const p of state.playerStatuses) {
+    if (p.kind === "retentionCapacityDelta") bonus += p.delta ?? 0;
+  }
+  return Math.max(0, state.resources.legitimacy + bonus);
 }
 
 function tickPlayerStatusesAfterDraw(statuses: readonly PlayerStatusInstance[]): PlayerStatusInstance[] {

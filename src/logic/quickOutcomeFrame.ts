@@ -26,7 +26,13 @@ function formatSingleEffectChip(e: Effect): string {
     case "addPlayerStatus": {
       const st = getStatusTemplate(e.templateId);
       if (st.kind === "drawAttemptsDelta") {
-        return `📜${signedInt(st.delta)}×${e.turns}⌛`;
+        return `📜${signedInt(st.delta ?? 0)}×${e.turns}⌛`;
+      }
+      if (st.kind === "retentionCapacityDelta") {
+        return `🖐️${signedInt(st.delta ?? 0)}×${e.turns}⌛`;
+      }
+      if (st.kind === "blockCardTag") {
+        return `🚫👑×${e.turns}⌛`;
       }
       return `⚠️×${e.turns}⌛`;
     }
@@ -70,7 +76,7 @@ function eventYearEndChips(tmpl: EventTemplate): string | null {
     return "🚨+1⌛";
   }
   if (tmpl.id === "grainReliefCrisis") {
-    return `👑-1`;
+    return `👑-2`;
   }
   const p = formatEffectChips(tmpl.penaltiesIfUnresolved);
   return p === "" ? "—" : p;
