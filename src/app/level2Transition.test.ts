@@ -15,6 +15,8 @@ describe("level2Transition", () => {
     const v = validateLevel2Refit(draft.counts);
     expect(draft.mode).toBe("standalone");
     expect(draft.calendarStartYear).toBe(1676);
+    expect(draft.warOfDevolutionAttacked).toBe(true);
+    expect(draft.europeAlert).toBe(true);
     expect(draft.resources.treasuryStat).toBe(3);
     expect(draft.counts.grainRelief).toBe(1);
     expect(draft.counts.taxRebalance).toBe(1);

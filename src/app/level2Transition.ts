@@ -110,8 +110,9 @@ export function createStandaloneLevel2Draft(seed?: number): Level2StartDraft {
     seed,
     calendarStartYear: level.calendarStartYear,
     resources: { ...level.startingResources },
-    warOfDevolutionAttacked: false,
-    europeAlert: false,
+    // Standalone chapter-2 starts are treated as if the player chose the prior war branch.
+    warOfDevolutionAttacked: true,
+    europeAlert: true,
     baseCounts,
     counts: withDefaultRecommendedAdds(baseCounts),
   };
