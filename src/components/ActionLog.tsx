@@ -5,6 +5,7 @@ import { cardLabelWithIcon, eventLabelWithIcon, resourceLabelWithIcon } from "..
 import { formatEffectLogLine } from "../logic/formatEffectLog";
 import type { MessageKey } from "../locales";
 import { useI18n } from "../locales";
+import { useSmallScreen } from "../logic/useSmallScreen";
 import type { ActionLogEntry } from "../types/game";
 import type { CardTemplateId } from "../types/card";
 import type { EventTemplateId } from "../types/event";
@@ -189,8 +190,16 @@ function renderEntry(e: ActionLogEntry, t: (key: MessageKey, vars?: Record<strin
   }
 }
 
-export function ActionLog({ entries }: { entries: readonly ActionLogEntry[] }) {
+export function ActionLog({
+  entries,
+  showMobileTapGuide,
+}: {
+  entries: readonly ActionLogEntry[];
+  /** Action phase only — small-screen card/event tap hint lives in the log once. */
+  showMobileTapGuide?: boolean;
+}) {
   const { t } = useI18n();
+  const isSmallScreen = useSmallScreen();
   const wrapRef = useRef<HTMLDivElement>(null);
   const [followTail, setFollowTail] = useState(true);
   const lastEntryId = entries.length > 0 ? entries[entries.length - 1]!.id : "";
@@ -220,6 +229,13 @@ export function ActionLog({ entries }: { entries: readonly ActionLogEntry[] }) {
         aria-live="polite"
         aria-relevant="additions"
       >
+        {isSmallScreen && showMobileTapGuide ? (
+          <div className={styles.actionLogRow}>
+            <p className={styles.actionLogEmpty} style={{ marginTop: 0 }}>
+              {t("ui.mobileLogTapHint")}
+            </p>
+          </div>
+        ) : null}
         {entries.length === 0 ? (
           <p className={styles.actionLogEmpty}>{t("ui.actionLog.empty")}</p>
         ) : (

@@ -16,6 +16,8 @@ export const messagesEnCore = {
   "resource.legitimacy": "Legitimacy",
   "resource.legitimacy.hint": "Retention cap; 0 ends the run.",
   "ui.resources": "Resources",
+  "ui.resourceMobileExpand": "Tap for full labels and hints.",
+  "ui.resourceMobileCollapse": "Tap to collapse resource details",
   "ui.endTurn": "End turn",
   "ui.solve": "Solve ({cost})",
   "ui.solveCrackdown": "Resolve (Royal Intervention)",
@@ -34,8 +36,8 @@ export const messagesEnCore = {
   "ui.hand": "Hand",
   "ui.events": "Events",
   "ui.eventsResizeHint": "Drag the bottom-right corner to resize the events area.",
-  "ui.mobileEventTapHint": "Tap once for details",
-  "ui.mobileCardTapHint": "Tap once details · double-tap play",
+  "ui.mobileLogTapHint":
+    "Small screen: tap an event or hand card to expand details; double-tap a hand card quickly to play when you can afford it.",
   "log.crackdownPickPrompt":
     "[Turn {turn}] Choose a harmful event to resolve with Royal Intervention (not Colonial Trade Boom).",
   "ui.cancel": "Cancel",

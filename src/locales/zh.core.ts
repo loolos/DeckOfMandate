@@ -16,6 +16,8 @@ export const messagesZhCore = {
   "resource.legitimacy": "合法性",
   "resource.legitimacy.hint": "回合末保留上限；归零即败",
   "ui.resources": "资源",
+  "ui.resourceMobileExpand": "点击查看完整名称与说明。",
+  "ui.resourceMobileCollapse": "点击收起资源详情",
   "ui.endTurn": "结束本回合",
   "ui.solve": "处理（{cost} 经费）",
   "ui.solveCrackdown": "以王室干预解决",
@@ -34,8 +36,7 @@ export const messagesZhCore = {
   "ui.hand": "手牌",
   "ui.events": "事件",
   "ui.eventsResizeHint": "拖动右下角可调整事件区域高度。",
-  "ui.mobileEventTapHint": "单击查看详情",
-  "ui.mobileCardTapHint": "单击看详情 · 双击打出",
+  "ui.mobileLogTapHint": "小屏操作：事件与手牌单击可展开详情；手牌在可打出时请快速双击打出。",
   "log.crackdownPickPrompt":
     "[第 {turn} 年] 选择要用「王室干预」解决的有害事件（不能选殖民贸易机遇）。",
   "ui.cancel": "取消",

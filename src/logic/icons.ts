@@ -38,6 +38,11 @@ export function getResourceIcon(resource: ResourceKey): string {
   return RESOURCE_ICONS[resource];
 }
 
+/** Card-type emoji only (for compact / narrow layouts). */
+export function getCardTypeEmoji(id: CardTemplateId): string {
+  return CARD_ICONS[id];
+}
+
 export function cardLabelWithIcon(id: CardTemplateId, label: string): string {
   return withIcon(CARD_ICONS[id], label);
 }

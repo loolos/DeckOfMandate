@@ -133,9 +133,7 @@ export function EventPanel({
                   ) : null}
                 </div>
               </>
-            ) : (
-              <div className={styles.compactHint}>{t("ui.mobileEventTapHint")}</div>
-            )}
+            ) : null}
           </div>
         );
       })}

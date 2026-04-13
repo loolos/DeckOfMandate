@@ -1,5 +1,7 @@
+import { useEffect, useState } from "react";
 import type { Resources } from "../types/game";
-import { resourceLabelWithIcon } from "../logic/icons";
+import { getResourceIcon, resourceLabelWithIcon } from "../logic/icons";
+import { useSmallScreen } from "../logic/useSmallScreen";
 import { useI18n, type MessageKey } from "../locales";
 import styles from "../app/Game.module.css";
 
@@ -15,10 +17,33 @@ const OTHER_RESOURCE_ROWS: { key: keyof Resources; labelKey: MessageKey; hintKey
   { key: "legitimacy", labelKey: "resource.legitimacy", hintKey: "resource.legitimacy.hint" },
 ];
 
+/** One-line mobile summary; extend when `Resources` gains fields (scrolls horizontally). */
+const MOBILE_COMPACT_ORDER = ["funding", "treasuryStat", "power", "legitimacy"] as const satisfies readonly (keyof Resources)[];
+
+const LABEL_FOR_KEY: Record<keyof Resources, MessageKey> = {
+  funding: "resource.funding",
+  treasuryStat: "resource.treasuryStat",
+  power: "resource.power",
+  legitimacy: "resource.legitimacy",
+};
+
 export function ResourceBar({ resources }: { resources: Resources }) {
   const { t } = useI18n();
-  return (
-    <div className={styles.resourceStack}>
+  const isSmallScreen = useSmallScreen();
+  const [mobileExpanded, setMobileExpanded] = useState(false);
+
+  useEffect(() => {
+    if (!isSmallScreen) setMobileExpanded(false);
+  }, [isSmallScreen]);
+
+  const detailStack = (
+    <div
+      className={
+        isSmallScreen && mobileExpanded
+          ? `${styles.resourceStack} ${styles.resourceStackMobileHints}`
+          : styles.resourceStack
+      }
+    >
       <div className={styles.fundingHighlight}>
         <div className={styles.fundingHighlightLabel}>
           {resourceLabelWithIcon(FUNDING_ROW.key, t(FUNDING_ROW.labelKey))}
@@ -35,6 +60,56 @@ export function ResourceBar({ resources }: { resources: Resources }) {
           </div>
         ))}
       </div>
+    </div>
+  );
+
+  if (!isSmallScreen) {
+    return detailStack;
+  }
+
+  const compactAria = MOBILE_COMPACT_ORDER.map((key) => `${t(LABEL_FOR_KEY[key])} ${resources[key]}`).join(", ");
+
+  if (!mobileExpanded) {
+    return (
+      <div className={styles.resourceBarMobileWrap}>
+        <button
+          type="button"
+          className={styles.resourceMobileCompact}
+          onClick={() => setMobileExpanded(true)}
+          aria-expanded="false"
+          aria-label={`${compactAria}. ${t("ui.resourceMobileExpand")}`}
+        >
+          <div className={styles.resourceMobileCompactRow}>
+            {MOBILE_COMPACT_ORDER.map((key) => (
+              <span
+                key={key}
+                className={styles.resourceMobileChip}
+                title={`${resourceLabelWithIcon(key, t(LABEL_FOR_KEY[key]))}: ${resources[key]}`}
+              >
+                <span className={styles.resourceMobileChipIcon} aria-hidden>
+                  {getResourceIcon(key)}
+                </span>
+                <span className={styles.resourceMobileChipVal}>{resources[key]}</span>
+              </span>
+            ))}
+          </div>
+          <div className={styles.resourceMobileCompactHint}>{t("ui.resourceMobileExpand")}</div>
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <div className={styles.resourceBarMobileWrap}>
+      <button
+        type="button"
+        className={styles.resourceMobileCollapseBar}
+        onClick={() => setMobileExpanded(false)}
+        aria-expanded="true"
+      >
+        {t("ui.resourceMobileCollapse")}
+      </button>
+      {detailStack}
     </div>
   );
 }

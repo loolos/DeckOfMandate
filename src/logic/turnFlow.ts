@@ -14,8 +14,6 @@ import { drawUpToPower } from "./draw";
 import { applyScriptedCalendarPhase, rollAntiFrenchLeagueDrawAdjustment } from "./scriptedCalendar";
 import { pickWeightedIndex, rngNext } from "./rng";
 
-const SLOTS: readonly SlotId[] = EVENT_SLOT_ORDER;
-
 /** First calendar turn on which a full empty-board roll may produce three events (turns 1–5 never triple). */
 export const FIRST_TURN_ELIGIBLE_FOR_TRIPLE_EVENTS = 6;
 
@@ -46,7 +44,7 @@ export function rollNewEventForSlot(state: GameState, slot: SlotId): GameState {
 function applyScheduledTransforms(state: GameState): GameState {
   const escalations = getLevelContent(state.levelId).slotEscalations;
   let st = state;
-  for (const slot of SLOTS) {
+  for (const slot of EVENT_SLOT_ORDER) {
     const ev = st.slots[slot];
     if (!st.pendingMajorCrisis[slot] || !ev || ev.resolved) continue;
     for (const esc of escalations) {
@@ -70,7 +68,7 @@ function applyScheduledTransforms(state: GameState): GameState {
 
 function clearResolvedSlots(state: GameState): GameState {
   const slots = { ...state.slots };
-  for (const slot of SLOTS) {
+  for (const slot of EVENT_SLOT_ORDER) {
     const ev = slots[slot];
     if (ev?.resolved) slots[slot] = null;
   }

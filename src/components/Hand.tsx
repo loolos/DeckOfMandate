@@ -3,7 +3,7 @@ import { getCardTemplate } from "../data/cards";
 import type { GameAction } from "../app/gameReducer";
 import { OutcomeQuickFrame } from "./OutcomeQuickFrame";
 import { buildCardQuickFrameRows } from "../logic/quickOutcomeFrame";
-import { cardLabelWithIcon } from "../logic/icons";
+import { cardLabelWithIcon, getCardTypeEmoji } from "../logic/icons";
 import { useSmallScreen } from "../logic/useSmallScreen";
 import type { GameState } from "../types/game";
 import type { MessageKey } from "../locales";
@@ -38,19 +38,31 @@ export function Hand({
         const compactSummary = quickRows.map((row) => row.value).join(" · ");
         const showDetails = !isSmallScreen || expandedCardId === id || (crackPick && id === crackPick.cardInstanceId);
         const body = isSmallScreen ? (
-          <>
-            <div className={styles.cardTitle}>{title}</div>
-            <div className={styles.compactSummary}>{compactSummary}</div>
-            {showDetails ? (
+          showDetails ? (
+            <>
+              <div className={styles.cardTitle}>{title}</div>
+              <div className={styles.compactSummary}>{compactSummary}</div>
               <div className={styles.compactDetails}>
                 <OutcomeQuickFrame rows={quickRows} />
                 <div className={styles.cardBg}>{t(tmpl.backgroundKey as MessageKey)}</div>
                 <div className={styles.cardDesc}>{t(tmpl.descriptionKey as MessageKey)}</div>
               </div>
-            ) : (
-              <div className={styles.compactHint}>{t("ui.mobileCardTapHint")}</div>
-            )}
-          </>
+            </>
+          ) : (
+            <div className={styles.cardMobileStrip}>
+              <span className={styles.cardMobileTypeEmoji} aria-hidden>
+                {getCardTypeEmoji(inst.templateId)}
+              </span>
+              <div className={styles.cardMobileStripTitle}>{title}</div>
+              <div className={styles.cardMobileChipCol}>
+                {quickRows.map((row, i) => (
+                  <span key={i} className={styles.cardMobileChipLine}>
+                    {row.value}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )
         ) : (
           <>
             <div className={styles.cardTitle}>{title}</div>
@@ -60,9 +72,20 @@ export function Hand({
           </>
         );
 
+        const mobileHandWidthCls =
+          isSmallScreen && (showDetails || (crackPick && id === crackPick.cardInstanceId))
+            ? styles.cardHandMobileExpanded
+            : isSmallScreen
+              ? styles.cardHandMobileNarrow
+              : "";
+
+        const cardClassName = [styles.card, mobileHandWidthCls, isSmallScreen && !playable && styles.cardDisabled]
+          .filter(Boolean)
+          .join(" ");
+
         if (crackPick && id === crackPick.cardInstanceId) {
           return (
-            <div key={id} className={`${styles.card} ${styles.cardPendingCrackdown}`}>
+            <div key={id} className={[styles.card, styles.cardPendingCrackdown, mobileHandWidthCls].filter(Boolean).join(" ")}>
               {body}
               <div className={styles.cardPendingCrackdownActions}>
                 <button type="button" className={`${styles.btn} ${styles.btnDanger}`} onClick={() => dispatch({ type: "CRACKDOWN_CANCEL" })}>
@@ -89,7 +112,7 @@ export function Hand({
           <button
             key={id}
             type="button"
-            className={`${styles.card} ${isSmallScreen && !playable ? styles.cardDisabled : ""}`}
+            className={cardClassName}
             disabled={!isSmallScreen && !playable}
             aria-disabled={isSmallScreen && !playable ? "true" : undefined}
             onClick={isSmallScreen ? onMobileTap : () => dispatch({ type: "PLAY_CARD", handIndex: index })}

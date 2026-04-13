@@ -343,7 +343,10 @@ export function Game() {
         <Hand state={state} dispatch={dispatchSafe} />
       </section>
 
-      <ActionLog entries={state.actionLog} />
+      <ActionLog
+        entries={state.actionLog}
+        showMobileTapGuide={state.outcome === "playing" && state.phase === "action"}
+      />
 
       <div className={styles.footerRow}>
         <div className={styles.piles}>
