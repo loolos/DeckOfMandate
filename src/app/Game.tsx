@@ -4,7 +4,7 @@ import { gameReducer, type GameAction } from "./gameReducer";
 import { normalizeGameState } from "../logic/normalizeGameState";
 import { loadGame, saveGame } from "../logic/saveLoad";
 import type { GameState } from "../types/game";
-import { getLevelDef } from "../data/levels";
+import { defaultLevelId, getLevelDef, levelDefs, type LevelId } from "../data/levels";
 import { ActionLog } from "../components/ActionLog";
 import { EventPanel } from "../components/EventPanel";
 import { Hand } from "../components/Hand";
@@ -42,6 +42,8 @@ function initFromStorage(): GameState {
 export function Game() {
   const { t } = useI18n();
   const [state, dispatch] = useReducer(gameReducer, undefined, initFromStorage);
+  const [started, setStarted] = useState(false);
+  const [selectedLevelId, setSelectedLevelId] = useState<LevelId>(defaultLevelId);
   const [retain, setRetain] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
@@ -77,6 +79,47 @@ export function Game() {
     selectedIds.every((id) => state.hand.includes(id));
 
   const dispatchSafe = (a: GameAction) => dispatch(a);
+
+  const startRun = () => {
+    dispatchSafe({ type: "NEW_GAME", levelId: selectedLevelId });
+    setStarted(true);
+  };
+
+  if (!started) {
+    return (
+      <div className={styles.root}>
+        <header className={styles.header}>
+          <div className={styles.titleBlock}>
+            <h1>{t("app.title")}</h1>
+            <p>{t("app.subtitle")}</p>
+          </div>
+          <LanguageToggle />
+        </header>
+        <section className={`${styles.panel} ${styles.startPanel}`}>
+          <h2>{t("start.title")}</h2>
+          <p className={styles.help}>{t("start.subtitle")}</p>
+          <label className={styles.startSelectLabel} htmlFor="level-select">
+            {t("start.levelLabel")}
+          </label>
+          <select
+            id="level-select"
+            className={styles.startSelect}
+            value={selectedLevelId}
+            onChange={(e) => setSelectedLevelId(e.target.value as LevelId)}
+          >
+            {Object.keys(levelDefs).map((levelId) => (
+              <option key={levelId} value={levelId}>
+                {t(getLevelDef(levelId as LevelId).nameKey as MessageKey)}
+              </option>
+            ))}
+          </select>
+          <button type="button" className={`${styles.btn} ${styles.btnPrimary}`} onClick={startRun}>
+            {t("start.begin")}
+          </button>
+        </section>
+      </div>
+    );
+  }
 
   return (
     <div className={styles.root}>
