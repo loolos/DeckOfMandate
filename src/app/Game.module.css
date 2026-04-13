@@ -984,6 +984,50 @@
     font-size: 0.72rem;
   }
 
+  .resourceSecondary {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 0.4rem;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding-bottom: 0.2rem;
+    scrollbar-width: thin;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .resourceSecondary .stat {
+    flex: 0 0 min(42vw, 8.8rem);
+    width: min(42vw, 8.8rem);
+    min-width: min(42vw, 8.8rem);
+  }
+
+  .statusList {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 0.45rem;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding-bottom: 0.2rem;
+    scrollbar-width: thin;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .statusRow {
+    flex: 0 0 min(72vw, 15rem);
+    width: min(72vw, 15rem);
+    min-width: min(72vw, 15rem);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.38rem 0.48rem;
+    align-items: flex-start;
+    gap: 0.25rem;
+  }
+
+  .statusRow:first-of-type {
+    border-top: 1px solid var(--border);
+    padding-top: 0.38rem;
+  }
+
   .handPanel {
     margin-top: 0.45rem;
   }
@@ -1015,9 +1059,9 @@
   }
 
   .eventCard {
-    flex: 0 0 min(78vw, 14rem);
-    width: min(78vw, 14rem);
-    max-width: min(78vw, 14rem);
+    flex: 0 0 min(70vw, 12.5rem);
+    width: min(70vw, 12.5rem);
+    max-width: min(70vw, 12.5rem);
     scroll-snap-align: start;
   }
 
