@@ -1,11 +1,13 @@
 import { getCardTemplate } from "../data/cards";
 import { getEventTemplate } from "../data/events";
-import type { LevelId } from "../data/levels";
+import { getLevelDef, type LevelId } from "../data/levels";
 import { appendActionLog } from "../logic/actionLog";
 import { enforceLegitimacy } from "../logic/applyEffects";
 import { normalizeGameState } from "../logic/normalizeGameState";
 import { applyPlayedCardEffects } from "../logic/resolveCard";
 import { resolveEndOfYearPenalties } from "../logic/resolveEvents";
+import { coalitionUntilTurn, findScriptedCalendarConfig } from "../logic/scriptedCalendar";
+import { rngNext } from "../logic/rng";
 import { beginYear, evaluateTimeDefeat, evaluateVictory } from "../logic/turnFlow";
 import type { SlotId } from "../types/event";
 import type { GameState } from "../types/game";
@@ -17,6 +19,7 @@ export type GameAction =
   | { type: "PLAY_CARD"; handIndex: number }
   | { type: "END_YEAR" }
   | { type: "SOLVE_EVENT"; slot: SlotId }
+  | { type: "SCRIPTED_EVENT_ATTACK"; slot: SlotId }
   | { type: "CRACKDOWN_TARGET"; slot: SlotId }
   | { type: "CRACKDOWN_CANCEL" }
   | { type: "CONFIRM_RETENTION"; keepIds: readonly string[] };
@@ -58,6 +61,78 @@ function canFundSolve(state: GameState, slot: SlotId): boolean {
     return state.resources.funding >= tmpl.solve.amount;
   }
   return false;
+}
+
+function canScriptedAttack(state: GameState, slot: SlotId): boolean {
+  if (state.phase !== "action" || state.pendingInteraction) return false;
+  const ev = state.slots[slot];
+  if (!ev || ev.resolved) return false;
+  const tmpl = getEventTemplate(ev.templateId);
+  if (tmpl.solve.kind !== "scriptedAttack") return false;
+  const cfg = findScriptedCalendarConfig(state.levelId, ev.templateId);
+  if (!cfg) return false;
+  return state.resources.funding >= cfg.attack.fundingCost;
+}
+
+function performScriptedAttack(state: GameState, slot: SlotId): GameState {
+  const ev = state.slots[slot];
+  if (!ev || ev.resolved) return state;
+  const tmpl = getEventTemplate(ev.templateId);
+  if (tmpl.solve.kind !== "scriptedAttack") return state;
+  const cfg = findScriptedCalendarConfig(state.levelId, ev.templateId);
+  if (!cfg) return state;
+  const cost = cfg.attack.fundingCost;
+  if (state.resources.funding < cost) return state;
+
+  let s: GameState = {
+    ...state,
+    resources: {
+      ...state.resources,
+      funding: state.resources.funding - cost,
+      power: state.resources.power + cfg.attack.powerDelta,
+    },
+  };
+
+  let treasuryGain = 0;
+  const [rng1, u] = rngNext(s.rng);
+  s = { ...s, rng: rng1 };
+  if (u < cfg.attack.extraTreasuryProbability) {
+    treasuryGain = cfg.attack.extraTreasuryDelta;
+    s = {
+      ...s,
+      resources: {
+        ...s.resources,
+        treasuryStat: s.resources.treasuryStat + treasuryGain,
+      },
+    };
+  }
+
+  const turnLimit = getLevelDef(s.levelId).turnLimit;
+  const untilTurn = coalitionUntilTurn(s.turn, cfg, turnLimit);
+  s = {
+    ...s,
+    antiFrenchLeague: {
+      untilTurn,
+      drawPenaltyProbability: cfg.antiCoalition.drawPenaltyProbability,
+      drawPenaltyDelta: cfg.antiCoalition.drawPenaltyDelta,
+    },
+  };
+
+  s = markSlotResolved(s, slot);
+  if (ev.templateId === "warOfDevolution") {
+    s = { ...s, warOfDevolutionAttacked: true };
+  }
+  s = enforceLegitimacy(s);
+  s = appendActionLog(s, {
+    kind: "eventScriptedAttack",
+    slot,
+    templateId: ev.templateId,
+    fundingPaid: cost,
+    treasuryGain,
+    powerDelta: cfg.attack.powerDelta,
+    extraTreasuryProbabilityPct: Math.round(cfg.attack.extraTreasuryProbability * 100),
+  });
+  return s;
 }
 
 /** After funding is cleared: keep chosen cards, discard the rest, then EOY penalties, then win / time / next year. */
@@ -170,6 +245,13 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       }
       if (!canFundSolve(state, action.slot)) return state;
       return performFundSolve(state, action.slot);
+    }
+    case "SCRIPTED_EVENT_ATTACK": {
+      if (state.outcome !== "playing" || state.phase !== "action" || state.pendingInteraction) {
+        return state;
+      }
+      if (!canScriptedAttack(state, action.slot)) return state;
+      return performScriptedAttack(state, action.slot);
     }
     case "CRACKDOWN_TARGET": {
       const p = state.pendingInteraction;

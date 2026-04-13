@@ -124,6 +124,64 @@ function renderEntry(e: ActionLogEntry, t: (key: MessageKey, vars?: Record<strin
           {t("log.crackdownPickPrompt", { turn: e.turn })}
         </div>
       );
+    case "eventScriptedAttack": {
+      if (e.templateId === "warOfDevolution") {
+        const powerDelta = e.powerDelta ?? 0;
+        const rollPct = e.extraTreasuryProbabilityPct ?? 0;
+        return (
+          <div>
+            <div className={styles.actionLogHead}>
+              {t("log.eventScriptedAttack.war.title", {
+                turn: e.turn,
+                slot: e.slot,
+                event: eventLabelWithIcon(e.templateId, t(eventTitleKey(e.templateId))),
+              })}
+            </div>
+            <div className={styles.actionLogSub}>
+              {t("log.eventScriptedAttack.war.summary", {
+                paid: e.fundingPaid,
+                funding: fundingLabel,
+                powerDelta,
+                power: resourceLabelWithIcon("power", t("resource.power")),
+              })}
+            </div>
+            <div className={styles.actionLogSub}>
+              {e.treasuryGain > 0
+                ? t("log.eventScriptedAttack.war.treasuryYes", {
+                    gain: e.treasuryGain,
+                    treasury: resourceLabelWithIcon("treasuryStat", t("resource.treasuryStat")),
+                    rollPct,
+                  })
+                : t("log.eventScriptedAttack.war.treasuryNo", { rollPct })}
+            </div>
+            <div className={styles.actionLogSubMuted}>{t("log.eventScriptedAttack.war.coalitionNote")}</div>
+          </div>
+        );
+      }
+      const treasury =
+        e.treasuryGain > 0 ? t("log.eventFundSolved.treasury", { gain: e.treasuryGain }) : "";
+      return (
+        <div className={styles.actionLogHead}>
+          {t("log.eventScriptedAttack.generic", {
+            turn: e.turn,
+            slot: e.slot,
+            event: eventLabelWithIcon(e.templateId, t(eventTitleKey(e.templateId))),
+            paid: e.fundingPaid,
+            funding: fundingLabel,
+            treasury,
+          })}
+        </div>
+      );
+    }
+    case "antiFrenchLeagueDraw":
+      return (
+        <div>
+          <div className={styles.actionLogHead}>
+            {t("log.antiFrenchLeagueDraw.title", { turn: e.turn, pct: e.probabilityPct })}
+          </div>
+          <div className={styles.actionLogSubMuted}>{t("log.antiFrenchLeagueDraw.history")}</div>
+        </div>
+      );
     default: {
       const _never: never = e;
       return _never;

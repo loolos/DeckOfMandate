@@ -20,6 +20,7 @@ const EVENT_ICONS: Record<EventTemplateId, string> = {
   politicalGridlock: "🧱",
   powerVacuum: "🕳️",
   majorCrisis: "🚨",
+  warOfDevolution: "⚔️",
 };
 
 const RESOURCE_ICONS: Record<ResourceKey, string> = {

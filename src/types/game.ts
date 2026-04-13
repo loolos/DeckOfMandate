@@ -56,6 +56,26 @@ export type ActionLogEntry =
       kind: "crackdownPickPrompt";
       id: string;
       turn: number;
+    }
+  | {
+      kind: "eventScriptedAttack";
+      id: string;
+      turn: number;
+      slot: SlotId;
+      templateId: EventTemplateId;
+      fundingPaid: number;
+      treasuryGain: number;
+      /** From level scripted config; shown in log. */
+      powerDelta: number;
+      /** Rounded percent; treasury roll used `extraTreasuryProbability` from config. */
+      extraTreasuryProbabilityPct: number;
+    }
+  | {
+      kind: "antiFrenchLeagueDraw";
+      id: string;
+      turn: number;
+      /** Rounded percent; hazard rolled at beginYear when league is active. */
+      probabilityPct: number;
     };
 
 export type GamePhase = "action" | "retention" | "gameOver";
@@ -65,6 +85,13 @@ export type GameOutcome =
   | "victory"
   | "defeatLegitimacy"
   | "defeatTime";
+
+/** After a scripted military choice; each year’s draw may roll drawPenaltyProbability for drawPenaltyDelta (clamped with power). */
+export type AntiFrenchLeagueState = {
+  untilTurn: number;
+  drawPenaltyProbability: number;
+  drawPenaltyDelta: number;
+};
 
 export type PendingInteraction =
   | {
@@ -112,5 +139,9 @@ export type GameState = {
   pendingMajorCrisis: Record<SlotId, boolean>;
   /** Timed modifiers (e.g. draw penalty); turns tick after each beginYear draw phase. */
   playerStatuses: PlayerStatusInstance[];
+  /** Set when resolving a scripted attack (e.g. War of Devolution); cleared after `untilTurn`. */
+  antiFrenchLeague: AntiFrenchLeagueState | null;
+  /** True after the player chooses the military option on the War of Devolution event (affects victory epilogue). */
+  warOfDevolutionAttacked: boolean;
   actionLog: readonly ActionLogEntry[];
 };

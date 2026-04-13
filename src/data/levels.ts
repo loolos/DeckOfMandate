@@ -1,8 +1,23 @@
+/** Locale keys for the end-of-run narrative (shown in the game-over modal). */
+export type LevelEndingCopyKeys = {
+  victoryBodyKey: string;
+  /** Shown after victory body if the player launched the War of Devolution scripted attack. */
+  victoryWarDevolutionExtraKey: string;
+  defeatBodyKey: string;
+};
+
 const firstMandate = {
   id: "firstMandate",
-  nameKey: "app.subtitle",
+  nameKey: "level.risingSun.name",
+  introTitleKey: "level.risingSun.introTitle",
+  introBodyKey: "level.risingSun.introBody",
+  ending: {
+    victoryBodyKey: "level.risingSun.ending.victory",
+    victoryWarDevolutionExtraKey: "level.risingSun.ending.victoryWarDevolutionExtra",
+    defeatBodyKey: "level.risingSun.ending.defeat",
+  } satisfies LevelEndingCopyKeys,
   turnLimit: 15,
-  calendarStartYear: 1518,
+  calendarStartYear: 1661,
   yearsPerTurn: 1,
   startingResources: {
     treasuryStat: 2,

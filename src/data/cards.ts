@@ -50,18 +50,4 @@ export function getCardTemplate(id: CardTemplateId): CardTemplate {
   return templates[id];
 }
 
-export const starterDeckTemplateOrder: CardTemplateId[] = [
-  "funding",
-  "funding",
-  "funding",
-  "funding",
-  "crackdown",
-  "crackdown",
-  "crackdown",
-  "reform",
-  "reform",
-  "ceremony",
-  "ceremony",
-  "development",
-  "development",
-];
+/** Starter deck order is per-level; see `levelContent.ts` (`starterDeckTemplateOrder`). */

@@ -1,4 +1,4 @@
-import { starterDeckTemplateOrder } from "../data/cards";
+import { getLevelContent } from "../data/levelContent";
 import { defaultLevelId, getLevelDef } from "../data/levels";
 import { createRngFromSeed, shuffle } from "../logic/rng";
 import { beginYear } from "../logic/turnFlow";
@@ -11,7 +11,7 @@ export function createInitialState(seed?: number, levelId = defaultLevelId): Gam
   const runSeed = ((seed ?? Math.floor(Math.random() * 0x7fffffff)) >>> 0) || 0x9e3779b9;
   let rng = createRngFromSeed(runSeed);
 
-  const deckOrder = starterDeckTemplateOrder.map((templateId, i) => ({
+  const deckOrder = getLevelContent(levelId).starterDeckTemplateOrder.map((templateId, i) => ({
     instanceId: `${templateId}__${i}`,
     templateId: templateId as CardTemplateId,
   }));
@@ -41,6 +41,8 @@ export function createInitialState(seed?: number, levelId = defaultLevelId): Gam
     slots: { ...EMPTY_EVENT_SLOTS },
     pendingMajorCrisis: { ...EMPTY_PENDING_MAJOR_CRISIS },
     playerStatuses: [],
+    antiFrenchLeague: null,
+    warOfDevolutionAttacked: false,
     actionLog: [],
   };
 

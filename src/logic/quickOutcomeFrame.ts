@@ -1,4 +1,6 @@
+import type { LevelId } from "../data/levels";
 import { getStatusTemplate } from "../data/statusTemplates";
+import { findScriptedCalendarConfig } from "./scriptedCalendar";
 import { getResourceIcon } from "./icons";
 import type { MessageKey } from "../locales";
 import type { CardTemplate } from "../types/card";
@@ -47,6 +49,9 @@ function eventPayChips(tmpl: EventTemplate): string {
   if (sk.kind === "fundingOrCrackdown") {
     return `${getResourceIcon("funding")}${sk.amount} | 🛡️`;
   }
+  if (sk.kind === "scriptedAttack") {
+    return `⚔️`;
+  }
   return `🛡️ · ${getResourceIcon("funding")}1`;
 }
 
@@ -93,6 +98,29 @@ export function buildCardQuickFrameRows(tmpl: CardTemplate): QuickFrameRow[] {
       muted: fx === "",
     },
   ];
+}
+
+/** Uses level scripted calendar config when `tmpl` is a scripted attack row. */
+export function buildScriptedEventQuickFrameRows(levelId: LevelId, tmpl: EventTemplate): QuickFrameRow[] | null {
+  if (tmpl.solve.kind !== "scriptedAttack") return null;
+  const cfg = findScriptedCalendarConfig(levelId, tmpl.id);
+  if (!cfg) return null;
+  const pctTreasury = Math.round(cfg.attack.extraTreasuryProbability * 100);
+  const pctCoalition = Math.round(cfg.antiCoalition.drawPenaltyProbability * 100);
+  const pay: QuickFrameRow = {
+    labelKey: "ui.quickFrame.pay",
+    value: `${getResourceIcon("funding")}${cfg.attack.fundingCost} · ⚔️`,
+  };
+  const solvedRow: QuickFrameRow = {
+    labelKey: "ui.quickFrame.ifSolved",
+    value: `${getResourceIcon("power")}+${cfg.attack.powerDelta} · ~${pctTreasury}% ${getResourceIcon("treasuryStat")}+${cfg.attack.extraTreasuryDelta} · ~${pctCoalition}%🎲-1`,
+  };
+  const yearRow: QuickFrameRow = {
+    labelKey: "ui.quickFrame.yearEnd",
+    value: `${cfg.presenceStartYear}–${cfg.presenceEndYear}`,
+    muted: true,
+  };
+  return [pay, solvedRow, yearRow];
 }
 
 export function buildEventQuickFrameRows(tmpl: EventTemplate): QuickFrameRow[] {

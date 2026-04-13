@@ -7,17 +7,23 @@ export type EventTemplateId =
   | "tradeOpportunity"
   | "politicalGridlock"
   | "powerVacuum"
-  | "majorCrisis";
+  | "majorCrisis"
+  | "warOfDevolution";
 
 export type EventSolve =
   | { kind: "funding"; amount: number }
   | { kind: "fundingOrCrackdown"; amount: number }
-  | { kind: "crackdownOnly" };
+  | { kind: "crackdownOnly" }
+  /** Balance numbers come from level `scriptedCalendarEvents` (matched by template id). */
+  | { kind: "scriptedAttack" };
 
-/** Fixed event columns (max 10); engine fills from the start of this list only. */
+/** Fixed event columns (max 10); procedural random rolls only fill {@link PROCEDURAL_EVENT_SLOT_ORDER}. */
 export const EVENT_SLOT_ORDER = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"] as const;
 
 export type SlotId = (typeof EVENT_SLOT_ORDER)[number];
+
+/** Each beginYear random fill only targets A–C; D–J stay empty unless scripted calendar or overflow places there. */
+export const PROCEDURAL_EVENT_SLOT_ORDER: readonly SlotId[] = ["A", "B", "C"];
 
 export const EMPTY_EVENT_SLOTS: Record<SlotId, null> = Object.fromEntries(
   EVENT_SLOT_ORDER.map((id) => [id, null]),

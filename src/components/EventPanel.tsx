@@ -1,13 +1,15 @@
 import { getEventTemplate } from "../data/events";
 import type { GameAction } from "../app/gameReducer";
 import { OutcomeQuickFrame } from "./OutcomeQuickFrame";
-import { buildEventQuickFrameRows } from "../logic/quickOutcomeFrame";
+import { buildEventQuickFrameRows, buildScriptedEventQuickFrameRows } from "../logic/quickOutcomeFrame";
 import { eventLabelWithIcon, getResourceIcon } from "../logic/icons";
 import {
   fundSolveLabelAmount,
   slotAllowsCrackdownTarget,
   slotAllowsFundSolve,
+  slotAllowsScriptedAttack,
   slotFundSolveAffordable,
+  slotScriptedAttackAffordable,
 } from "../logic/uiHelpers";
 import type { GameState } from "../types/game";
 import { EVENT_SLOT_ORDER } from "../types/event";
@@ -37,6 +39,8 @@ export function EventPanel({
         const desc = t(tmpl.descriptionKey as MessageKey);
         const affordable = slotFundSolveAffordable(state, slot);
         const canClickFund = slotAllowsFundSolve(state, slot);
+        const scriptedAffordable = slotScriptedAttackAffordable(state, slot);
+        const canClickScripted = slotAllowsScriptedAttack(state, slot);
         const amount = fundSolveLabelAmount(state, slot);
         const crack = slotAllowsCrackdownTarget(state, slot) && pending;
         const solveKind = tmpl.solve.kind;
@@ -55,8 +59,20 @@ export function EventPanel({
             </div>
             <div className={styles.eventTitle}>{title}</div>
             <div className={styles.eventBody}>{desc}</div>
-            <OutcomeQuickFrame rows={buildEventQuickFrameRows(tmpl)} />
+            <OutcomeQuickFrame
+              rows={buildScriptedEventQuickFrameRows(state.levelId, tmpl) ?? buildEventQuickFrameRows(tmpl)}
+            />
             <div className={styles.actions}>
+              {!ev.resolved && solveKind === "scriptedAttack" && amount !== null ? (
+                <button
+                  type="button"
+                  className={`${styles.btn} ${styles.btnPrimary}`}
+                  disabled={!scriptedAffordable || !canClickScripted}
+                  onClick={() => dispatch({ type: "SCRIPTED_EVENT_ATTACK", slot })}
+                >
+                  {t("ui.scriptedAttack", { cost: `${getResourceIcon("funding")} ${amount}` })}
+                </button>
+              ) : null}
               {!ev.resolved && solveKind === "funding" && amount !== null ? (
                 <button
                   type="button"

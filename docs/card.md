@@ -20,12 +20,11 @@ Goals:
 
 ## Prototype Deck Size
 
-Initial deck:
+Initial deck for **level `firstMandate`** (see [`src/data/levelContent.ts`](../src/data/levelContent.ts) `starterDeckTemplateOrder`):
 
 ```text
-4 Card Types
-3 Copies Each
-12 Total Cards
+13 cards total
+5 card templates (Royal Levy ×4, Royal Intervention ×3, Administrative Reform ×2, Versailles Ceremony ×2, Royal Manufactories ×2)
 ```
 
 This is enough for early testing.
@@ -55,60 +54,72 @@ This ensures strategic diversity even with a small deck.
 
 ## Starter Cards
 
-### 1. Funding
+### 1. Funding (Royal Levy)
 
 | Field | Value |
 | --- | --- |
 | **Role** | Economy |
 | **Cost** | 0 funding |
 | **Effect** | Gain +1 funding this turn (not +1 Treasury stat) |
-| **Copies** | 3 |
+| **Copies** | 4 |
 | **Purpose** | Prevent dead turns; enable combo turns; smooth bad draws; helps expensive cards |
 | **Notes** | Simple and necessary starter resource card. |
 
-### 2. Crackdown
+### 2. Crackdown (Royal Intervention)
 
 | Field | Value |
 | --- | --- |
 | **Role** | Control |
 | **Cost** | 1 funding |
-| **Effect** | **MVP:** Resolve **one harmful event** among the two current events (**Trade Opportunity** cannot be chosen) |
+| **Effect** | **MVP:** Resolve **one harmful** event among those currently shown (**Colonial Trade Boom** cannot be chosen) |
 | **Copies** | 3 |
 | **Purpose** | Immediate danger removal; protect Legitimacy; strong against pressure turns |
 | **Notes** | Later versions may restrict this to tag-based events (Unrest/Crisis, and so on). |
 
-### 3. Reform
+### 3. Reform (Administrative Reform)
 
 | Field | Value |
 | --- | --- |
 | **Role** | Growth |
 | **Cost** | 2 funding |
 | **Effect** | **Power +1** (immediate; affects **next** turn’s **Draw phase** size). **Draw 1** **immediately** when played (**Action phase**), respecting **hand cap 10** (no draw if the hand is full). |
-| **Copies** | 3 |
+| **Copies** | 2 |
 | **Purpose** | Long-term scaling; better future turns; improves consistency |
 | **Notes** | Key strategic card. **Multiple Reform** plays in one Action phase **stack** **Power +1** for the **next** turn’s draws and each triggers its own **immediate Draw 1** in play order (hand cap). See `gameplay.md` (**Turn structure**, **Hand size**). |
 
-### 4. Ceremony
+### 4. Ceremony (Versailles Ceremony)
 
 | Field | Value |
 | --- | --- |
 | **Role** | Stability / Victory |
 | **Cost** | 2 funding |
 | **Effect** | Legitimacy +1 |
-| **Copies** | 3 |
+| **Copies** | 2 |
 | **Purpose** | Progress toward win condition; increase retained hand size; recover after crises |
 | **Notes** | Slow but essential card. |
+
+### 5. Development (Royal Manufactories)
+
+| Field | Value |
+| --- | --- |
+| **Role** | Economy / growth |
+| **Cost** | 3 funding |
+| **Effect** | **Treasury stat +1** |
+| **Copies** | 2 |
+| **Purpose** | Long-term fiscal scaling toward the Treasury win target |
+| **Notes** | Matches `development` in `levelContent` / `cards.ts`. |
 
 ---
 
 ## Full Starter Deck Summary
 
-| Card Name | Cost | Effect | Role | Copies |
+| Card name (UI) | Cost | Effect | Role | Copies |
 | --- | --- | --- | --- | --- |
-| Funding | 0 | Gain +1 funding this turn | Economy | 3 |
-| Crackdown | 1 | MVP: resolve one harmful event (not Trade Opportunity) | Control | 3 |
-| Reform | 2 | Power +1 (next turn draw size); Draw 1 now (hand cap 10) | Growth | 3 |
-| Ceremony | 2 | Legitimacy +1 | Stability | 3 |
+| Royal Levy | 0 | Gain +1 funding this turn | Economy | 4 |
+| Royal Intervention | 1 | MVP: resolve one harmful event (not Colonial Trade Boom) | Control | 3 |
+| Administrative Reform | 2 | Power +1 (next turn draw size); Draw 1 now (hand cap 10) | Growth | 2 |
+| Versailles Ceremony | 2 | Legitimacy +1 | Stability | 2 |
+| Royal Manufactories | 3 | Treasury stat +1 | Economy | 2 |
 
 ---
 
@@ -220,8 +231,6 @@ That means cards are creating decisions.
 
 ## Final Summary
 
-Starter deck intentionally uses only four cards: **Funding**, **Crackdown**, **Reform**, **Ceremony**.
-
-These four cards test the entire strategic loop: economy, survival, scaling, victory progress.
+Starter deck uses **five** templates (**Royal Levy**, **Royal Intervention**, **Administrative Reform**, **Versailles Ceremony**, **Royal Manufactories**) totaling **13** cards—enough to test economy, survival, scaling, legitimacy, and Treasury growth.
 
 If this works, larger card systems can be built safely.

@@ -1,4 +1,6 @@
 import { describe, expect, it } from "vitest";
+import { levelContentByLevelId } from "../data/levelContent";
+import { getLevelDef } from "../data/levels";
 import { EMPTY_EVENT_SLOTS } from "../types/event";
 import { createInitialState } from "./initialState";
 import { gameReducer } from "./gameReducer";
@@ -116,6 +118,34 @@ describe("gameReducer", () => {
       expect(last.templateId).toBe("tradeOpportunity");
       expect(last.treasuryGain).toBe(1);
     }
+  });
+
+  it("SCRIPTED_EVENT_ATTACK uses level scripted config (cost, power, coalition window)", () => {
+    const cfg = levelContentByLevelId.firstMandate.scriptedCalendarEvents.find(
+      (x) => x.templateId === "warOfDevolution",
+    )!;
+    const turn = cfg.presenceStartYear - getLevelDef("firstMandate").calendarStartYear + 1;
+    let s = createInitialState(100);
+    s = {
+      ...s,
+      turn,
+      phase: "action",
+      resources: { ...s.resources, funding: 5 },
+      slots: {
+        ...EMPTY_EVENT_SLOTS,
+        A: { instanceId: "e1", templateId: "warOfDevolution", resolved: false },
+      },
+    };
+    const after = gameReducer(s, { type: "SCRIPTED_EVENT_ATTACK", slot: "A" });
+    expect(after.slots.A?.resolved).toBe(true);
+    expect(after.resources.funding).toBe(5 - cfg.attack.fundingCost);
+    expect(after.resources.power).toBe(s.resources.power + cfg.attack.powerDelta);
+    expect(after.warOfDevolutionAttacked).toBe(true);
+    expect(after.antiFrenchLeague).not.toBeNull();
+    const years = cfg.antiCoalition.activeYearsAfterAttack;
+    const expectedUntil =
+      years === null ? getLevelDef("firstMandate").turnLimit : turn + years;
+    expect(after.antiFrenchLeague!.untilTurn).toBe(expectedUntil);
   });
 
   it("skips retention phase when hand size is within Legitimacy (auto-keep all)", () => {

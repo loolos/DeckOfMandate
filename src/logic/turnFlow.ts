@@ -1,9 +1,17 @@
-import { getEventTemplate, rollableEventIds } from "../data/events";
+import { getEventTemplate } from "../data/events";
+import { getLevelContent } from "../data/levelContent";
 import { getLevelDef } from "../data/levels";
-import { EVENT_SLOT_ORDER, type EventInstance, type SlotId } from "../types/event";
+import { appendActionLog } from "./actionLog";
+import {
+  EVENT_SLOT_ORDER,
+  PROCEDURAL_EVENT_SLOT_ORDER,
+  type EventInstance,
+  type SlotId,
+} from "../types/event";
 import type { GameState } from "../types/game";
 import type { PlayerStatusInstance } from "../types/status";
 import { drawUpToPower } from "./draw";
+import { applyScriptedCalendarPhase, rollAntiFrenchLeagueDrawAdjustment } from "./scriptedCalendar";
 import { pickWeightedIndex, rngNext } from "./rng";
 
 const SLOTS: readonly SlotId[] = EVENT_SLOT_ORDER;
@@ -18,9 +26,10 @@ export const PROB_TRIPLE_EVENTS = 0.1;
 export const PROB_SINGLE_EVENT_WHEN_ALL_EMPTY = 0.3;
 
 export function rollNewEventForSlot(state: GameState, slot: SlotId): GameState {
-  const weights = rollableEventIds.map((id) => getEventTemplate(id).weight);
+  const pool = getLevelContent(state.levelId).rollableEventIds;
+  const weights = pool.map((id) => getEventTemplate(id).weight);
   const [rng, idx] = pickWeightedIndex(state.rng, weights);
-  const templateId = rollableEventIds[idx]!;
+  const templateId = pool[idx]!;
   const instance: EventInstance = {
     instanceId: `evt_${state.nextIds.event}`,
     templateId,
@@ -35,18 +44,16 @@ export function rollNewEventForSlot(state: GameState, slot: SlotId): GameState {
 }
 
 function applyScheduledTransforms(state: GameState): GameState {
+  const escalations = getLevelContent(state.levelId).slotEscalations;
   let st = state;
   for (const slot of SLOTS) {
     const ev = st.slots[slot];
-    if (
-      st.pendingMajorCrisis[slot] &&
-      ev &&
-      !ev.resolved &&
-      ev.templateId === "powerVacuum"
-    ) {
+    if (!st.pendingMajorCrisis[slot] || !ev || ev.resolved) continue;
+    for (const esc of escalations) {
+      if (ev.templateId !== esc.from) continue;
       const instance: EventInstance = {
         instanceId: `evt_${st.nextIds.event}`,
-        templateId: "majorCrisis",
+        templateId: esc.to,
         resolved: false,
       };
       st = {
@@ -55,6 +62,7 @@ function applyScheduledTransforms(state: GameState): GameState {
         slots: { ...st.slots, [slot]: instance },
         pendingMajorCrisis: { ...st.pendingMajorCrisis, [slot]: false },
       };
+      break;
     }
   }
   return st;
@@ -92,7 +100,7 @@ function fillEmptySlots(state: GameState): GameState {
     st = rollNewEventForSlot(st, "A");
     return rollNewEventForSlot(st, "B");
   }
-  for (const slot of SLOTS) {
+  for (const slot of PROCEDURAL_EVENT_SLOT_ORDER) {
     if (!st.slots[slot]) st = rollNewEventForSlot(st, slot);
   }
   return st;
@@ -101,6 +109,7 @@ function fillEmptySlots(state: GameState): GameState {
 function runEventPhase(state: GameState): GameState {
   let s = applyScheduledTransforms(state);
   s = clearResolvedSlots(s);
+  s = applyScriptedCalendarPhase(s);
   s = fillEmptySlots(s);
   return s;
 }
@@ -123,6 +132,11 @@ function tickPlayerStatusesAfterDraw(statuses: readonly PlayerStatusInstance[]):
 export function beginYear(state: GameState): GameState {
   if (state.outcome !== "playing") return state;
   let s: GameState = { ...state, pendingInteraction: null };
+  let league = s.antiFrenchLeague;
+  if (league && s.turn > league.untilTurn) {
+    league = null;
+  }
+  s = { ...s, antiFrenchLeague: league };
   s = {
     ...s,
     resources: {
@@ -131,7 +145,14 @@ export function beginYear(state: GameState): GameState {
     },
   };
   const statusDrawDelta = sumDrawAttemptsStatusDelta(s.playerStatuses);
-  const attempts = Math.max(1, s.resources.power + s.nextTurnDrawModifier + statusDrawDelta);
+  let attempts = Math.max(1, s.resources.power + s.nextTurnDrawModifier + statusDrawDelta);
+  const coalition = rollAntiFrenchLeagueDrawAdjustment(s.antiFrenchLeague, s.turn, s.rng);
+  s = { ...s, rng: coalition.rng };
+  if (coalition.adjustment < 0 && s.antiFrenchLeague && s.turn <= s.antiFrenchLeague.untilTurn) {
+    const probabilityPct = Math.round(s.antiFrenchLeague.drawPenaltyProbability * 100);
+    s = appendActionLog(s, { kind: "antiFrenchLeagueDraw", probabilityPct });
+  }
+  attempts = Math.max(1, attempts + coalition.adjustment);
   s = { ...s, nextTurnDrawModifier: 0 };
   const drawn = drawUpToPower(s.rng, s.hand, s.deck, s.discard, attempts);
   s = {

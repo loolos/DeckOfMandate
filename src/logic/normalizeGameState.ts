@@ -37,5 +37,11 @@ export function normalizeGameState(state: GameState): GameState {
   if (!Array.isArray(s.actionLog)) {
     s = { ...s, actionLog: [] };
   }
+  if (s.antiFrenchLeague === undefined) {
+    s = { ...s, antiFrenchLeague: null };
+  }
+  if (s.warOfDevolutionAttacked === undefined) {
+    s = { ...s, warOfDevolutionAttacked: false };
+  }
   return s;
 }

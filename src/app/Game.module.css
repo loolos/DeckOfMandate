@@ -555,6 +555,23 @@
   margin: 0 0 0.5rem;
 }
 
+.gameOverBody {
+  margin: 0 auto 1rem;
+  max-width: 38rem;
+  text-align: left;
+  font-size: 0.92rem;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+.gameOverBody p {
+  margin: 0 0 0.75rem;
+}
+
+.gameOverBody p:last-child {
+  margin-bottom: 0;
+}
+
 .startMenuHeader {
   display: flex;
   flex-wrap: wrap;

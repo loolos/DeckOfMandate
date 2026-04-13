@@ -3,13 +3,30 @@ import { getStatusTemplate } from "../data/statusTemplates";
 import { useI18n } from "../locales";
 import type { PlayerStatusInstance } from "../types/status";
 
-export function StatusBar({ statuses }: { statuses: readonly PlayerStatusInstance[] }) {
+export function StatusBar({
+  statuses,
+  coalitionActive,
+  coalitionProbabilityPct,
+}: {
+  statuses: readonly PlayerStatusInstance[];
+  /** Anti-French League pressure (scripted war follow-up); draw risk is rolled each year in engine. */
+  coalitionActive?: boolean;
+  /** Rounded percent; shown in status hint (from `antiFrenchLeague.drawPenaltyProbability`). */
+  coalitionProbabilityPct?: number;
+}) {
   const { t } = useI18n();
-  if (statuses.length === 0) {
+  if (statuses.length === 0 && !coalitionActive) {
     return <div className={styles.statusBarEmpty}>{t("ui.statuses.empty")}</div>;
   }
+  const pct = coalitionProbabilityPct ?? 0;
   return (
     <ul className={styles.statusList}>
+      {coalitionActive ? (
+        <li key="antiFrenchLeague" className={styles.statusRow}>
+          <span className={styles.statusTitle}>{t("status.antiFrenchLeague.name")}</span>
+          <span className={styles.statusMeta}>{t("status.antiFrenchLeague.hint", { pct })}</span>
+        </li>
+      ) : null}
       {statuses.map((row) => {
         const tmpl = getStatusTemplate(row.templateId);
         return (

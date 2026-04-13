@@ -70,17 +70,18 @@ export const eventTemplates: Record<EventTemplateId, EventTemplate> = {
       { kind: "scheduleNextTurnDrawModifier", delta: -1 },
     ],
   },
+  warOfDevolution: {
+    id: "warOfDevolution",
+    weight: 0,
+    harmful: false,
+    titleKey: "event.warOfDevolution.name",
+    descriptionKey: "event.warOfDevolution.desc",
+    solve: { kind: "scriptedAttack" },
+    penaltiesIfUnresolved: [],
+  },
 };
 
-/** Pool entries used for weighted rolls (Major Crisis is transform-only). */
-export const rollableEventIds: EventTemplateId[] = [
-  "budgetStrain",
-  "publicUnrest",
-  "administrativeDelay",
-  "tradeOpportunity",
-  "politicalGridlock",
-  "powerVacuum",
-];
+/** Weighted roll pool is per-level; see `levelContent.ts` (`rollableEventIds`). */
 
 export function getEventTemplate(id: EventTemplateId): EventTemplate {
   return eventTemplates[id];

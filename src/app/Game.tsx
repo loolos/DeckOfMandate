@@ -7,7 +7,14 @@ import { LevelTutorialOverlay } from "../components/LevelTutorialOverlay";
 import { ResourceBar } from "../components/ResourceBar";
 import { StatusBar } from "../components/StatusBar";
 import { getCardTemplate } from "../data/cards";
-import { defaultLevelId, getLevelDef, isLevelId, levelDefs, type LevelId } from "../data/levels";
+import {
+  defaultLevelId,
+  getLevelDef,
+  isLevelId,
+  levelDefs,
+  type LevelEndingCopyKeys,
+  type LevelId,
+} from "../data/levels";
 import { cardLabelWithIcon, resourceLabelWithIcon } from "../logic/icons";
 import { normalizeGameState } from "../logic/normalizeGameState";
 import { loadGame, saveGame } from "../logic/saveLoad";
@@ -27,6 +34,10 @@ function levelDefHasIntro(def: (typeof levelDefs)[LevelId]): def is (typeof leve
   introBodyKey: MessageKey;
 } {
   return "introTitleKey" in def && "introBodyKey" in def;
+}
+
+function levelEndingKeys(def: (typeof levelDefs)[LevelId]): LevelEndingCopyKeys | undefined {
+  return "ending" in def ? def.ending : undefined;
 }
 
 function isValidSave(x: unknown): x is GameState {
@@ -146,9 +157,8 @@ export function Game() {
   const resumeFromStoredSave = () => {
     setPendingLevelTutorial(false);
     const loaded = loadGame();
-    if (loaded && isValidSave(loaded)) {
-      dispatchSafe({ type: "HYDRATE", state: normalizeLoadedSave(loaded as GameState) });
-    }
+    if (!loaded || !isValidSave(loaded)) return;
+    dispatchSafe({ type: "HYDRATE", state: normalizeLoadedSave(loaded as GameState) });
     setStartMenuOpen(false);
   };
 
@@ -302,7 +312,19 @@ export function Game() {
           <h2>{t("ui.resources")}</h2>
           <ResourceBar resources={state.resources} />
           <h3 className={styles.statusSectionTitle}>{t("ui.statuses")}</h3>
-          <StatusBar statuses={state.playerStatuses} />
+          <StatusBar
+            statuses={state.playerStatuses}
+            coalitionActive={
+              !!state.antiFrenchLeague &&
+              state.turn <= state.antiFrenchLeague.untilTurn &&
+              state.outcome === "playing"
+            }
+            coalitionProbabilityPct={
+              state.antiFrenchLeague
+                ? Math.round(state.antiFrenchLeague.drawPenaltyProbability * 100)
+                : undefined
+            }
+          />
         </section>
 
         {EVENT_SLOT_ORDER.some((id) => state.slots[id] != null) ||
@@ -409,6 +431,25 @@ export function Game() {
                     ? t("outcome.defeatLegitimacy")
                     : t("outcome.defeatTime")}
               </h2>
+              {(() => {
+                const ending = levelEndingKeys(getLevelDef(state.levelId));
+                if (!ending) return null;
+                if (state.outcome === "victory") {
+                  return (
+                    <div className={styles.gameOverBody}>
+                      <p>{t(ending.victoryBodyKey as MessageKey)}</p>
+                      {state.warOfDevolutionAttacked ? (
+                        <p>{t(ending.victoryWarDevolutionExtraKey as MessageKey)}</p>
+                      ) : null}
+                    </div>
+                  );
+                }
+                return (
+                  <div className={styles.gameOverBody}>
+                    <p>{t(ending.defeatBodyKey as MessageKey)}</p>
+                  </div>
+                );
+              })()}
               <button type="button" className={`${styles.btn} ${styles.btnPrimary}`} onClick={() => dispatchSafe({ type: "NEW_GAME" })}>
                 {t("ui.newGame")}
               </button>

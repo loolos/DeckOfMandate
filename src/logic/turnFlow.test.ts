@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { createInitialState } from "../app/initialState";
 import type { CardInstance } from "../types/card";
+import { EMPTY_EVENT_SLOTS } from "../types/event";
 import type { GameState } from "../types/game";
 import { beginYear } from "./turnFlow";
 
@@ -68,5 +69,57 @@ describe("beginYear + playerStatuses", () => {
     const s1 = beginYear(s0);
     expect(s1.hand.length).toBe(1);
     expect(s1.playerStatuses).toHaveLength(0);
+  });
+
+  it("appends antiFrenchLeagueDraw to action log when coalition hazard triggers", () => {
+    const started = createInitialState(11_111);
+    const cardsById: Record<string, CardInstance> = {
+      c0: { instanceId: "c0", templateId: "funding" },
+    };
+    const s0: GameState = {
+      ...started,
+      outcome: "playing",
+      phase: "action",
+      resources: { treasuryStat: 0, funding: 0, power: 2, legitimacy: 2 },
+      nextTurnDrawModifier: 0,
+      hand: [],
+      deck: ["c0"],
+      discard: [],
+      cardsById,
+      playerStatuses: [],
+      antiFrenchLeague: {
+        untilTurn: 99,
+        drawPenaltyProbability: 1,
+        drawPenaltyDelta: -1,
+      },
+    };
+    const s1 = beginYear(s0);
+    const hits = s1.actionLog.filter((e) => e.kind === "antiFrenchLeagueDraw");
+    expect(hits.length).toBeGreaterThanOrEqual(1);
+    const last = hits[hits.length - 1]!;
+    expect(last.kind).toBe("antiFrenchLeagueDraw");
+    if (last.kind === "antiFrenchLeagueDraw") {
+      expect(last.probabilityPct).toBe(100);
+    }
+  });
+
+  it("does not roll random events into D–J when A–C are occupied (procedural slots only)", () => {
+    const started = createInitialState(123_456);
+    const unresolved = { resolved: false as const };
+    const s0: GameState = {
+      ...started,
+      turn: 6,
+      phase: "action",
+      outcome: "playing",
+      slots: {
+        ...EMPTY_EVENT_SLOTS,
+        A: { instanceId: "evt_hold_a", templateId: "budgetStrain", ...unresolved },
+        B: { instanceId: "evt_hold_b", templateId: "publicUnrest", ...unresolved },
+        C: { instanceId: "evt_hold_c", templateId: "tradeOpportunity", ...unresolved },
+      },
+    };
+    const s1 = beginYear(s0);
+    expect(s1.slots.D).toBeNull();
+    expect(s1.slots.J).toBeNull();
   });
 });
