@@ -8,6 +8,7 @@ const CARD_ICONS: Record<CardTemplateId, string> = {
   funding: "💰",
   crackdown: "🛡️",
   diplomaticIntervention: "🕊️",
+  fiscalBurden: "⛓️",
   reform: "📜",
   ceremony: "🎎",
   development: "🏗️",

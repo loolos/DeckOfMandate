@@ -23,6 +23,8 @@ function formatSingleEffectChip(e: Effect): string {
       return `🃏+${e.count}`;
     case "scheduleNextTurnDrawModifier":
       return `📜${signedInt(e.delta)}`;
+    case "addCardsToDeck":
+      return `🧩+${e.count}`;
     case "addPlayerStatus": {
       const st = getStatusTemplate(e.templateId);
       if (st.kind === "drawAttemptsDelta") {
@@ -73,7 +75,7 @@ function eventSolveOutcomeChips(tmpl: EventTemplate): string {
 }
 
 function eventYearEndChips(tmpl: EventTemplate): string | null {
-  if (!tmpl.harmful) {
+  if (!tmpl.harmful && tmpl.penaltiesIfUnresolved.length === 0) {
     return "∅";
   }
   if (tmpl.id === "powerVacuum") {

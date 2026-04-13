@@ -65,7 +65,8 @@ export const messagesZhSecondMandate = {
   "event.grainReliefCrisis.desc":
     "粮食调配迟滞导致社会压力升级。支付 2 经费可稳住局势并获得合法性 +2；若放任将损失合法性 -2。",
   "event.expansionRemembered.name": "扩张余震",
-  "event.expansionRemembered.desc": "早年的强势扩张仍在发酵。免费处理以获得合法性 +1。",
+  "event.expansionRemembered.desc":
+    "早年的强势扩张余波未散。支付 2 经费可压制风险并向抽牌堆加入 2 张「财政负担」；若不处理，则加入 3 张「财政负担」。",
   "event.cautiousCrown.name": "谨慎王权",
   "event.cautiousCrown.desc": "此前克制路线带来缓冲。免费处理后继续本章。",
   "card.grainRelief.name": "粮食赈济",

@@ -70,7 +70,7 @@ export const messagesEnSecondMandate = {
     "Food insecurity surges. Spend 2 Funding to stabilize communities and gain Legitimacy +2; unresolved pressure causes Legitimacy -2.",
   "event.expansionRemembered.name": "Expansion Remembered",
   "event.expansionRemembered.desc":
-    "Your earlier aggressive successes still project strength. Resolve for free to gain Legitimacy +1.",
+    "Earlier expansion still casts a long shadow. Pay 2 Funding to contain it and add 2 Fiscal Burden cards to your deck; if unresolved, 3 Fiscal Burden cards are added.",
   "event.cautiousCrown.name": "Cautious Crown",
   "event.cautiousCrown.desc":
     "A restrained earlier posture buys diplomatic room. Resolve for free to continue into the chapter.",

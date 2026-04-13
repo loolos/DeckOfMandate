@@ -238,6 +238,15 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
           { kind: "crackdownPickPrompt" },
         );
       }
+      if (inst.templateId === "fiscalBurden") {
+        const removed = removeHand(paid, id);
+        return appendActionLog(removed, {
+          kind: "cardPlayed",
+          templateId: inst.templateId,
+          fundingCost: tmpl.cost,
+          effects: tmpl.effects,
+        });
+      }
       let s = applyPlayedCardEffects(paid, inst.templateId);
       s = removeHand(s, id);
       s = pushDiscard(s, id);

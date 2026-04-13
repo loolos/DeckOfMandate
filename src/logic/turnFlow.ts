@@ -10,6 +10,7 @@ import {
 } from "../types/event";
 import type { GameState } from "../types/game";
 import type { PlayerStatusInstance } from "../types/status";
+import { applyOnDrawCardEffects } from "./cardRuntime";
 import { drawUpToPower } from "./draw";
 import { applyScriptedCalendarPhase, rollAntiFrenchLeagueDrawAdjustment } from "./scriptedCalendar";
 import { pickWeightedIndex, rngNext } from "./rng";
@@ -186,8 +187,11 @@ export function beginYear(state: GameState): GameState {
     hand: drawn.hand,
     deck: drawn.deck,
     discard: drawn.discard,
-    playerStatuses: tickPlayerStatusesAfterDraw(s.playerStatuses),
   };
+  for (const cardId of drawn.drawnCardIds) {
+    s = applyOnDrawCardEffects(s, cardId);
+  }
+  s = { ...s, playerStatuses: tickPlayerStatusesAfterDraw(s.playerStatuses) };
   s = runEventPhase(s);
   return { ...s, phase: "action" };
 }

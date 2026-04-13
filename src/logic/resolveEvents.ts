@@ -15,7 +15,7 @@ export function resolveEndOfYearPenalties(state: GameState): GameState {
     const ev = s.slots[slot];
     if (!ev || ev.resolved) continue;
     const tmpl = getEventTemplate(ev.templateId);
-    if (!tmpl.harmful) continue;
+    if (!tmpl.harmful && tmpl.penaltiesIfUnresolved.length === 0) continue;
     if (schedulers.includes(ev.templateId)) {
       if (ev.templateId === "powerVacuum") {
         s = appendActionLog(s, { kind: "eventPowerVacuumScheduled", slot, templateId: "powerVacuum" });

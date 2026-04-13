@@ -275,9 +275,9 @@ export const eventTemplates: Record<EventTemplateId, EventTemplate> = {
     harmful: false,
     titleKey: "event.expansionRemembered.name",
     descriptionKey: "event.expansionRemembered.desc",
-    solve: { kind: "funding", amount: 0 },
-    onFundSolveEffects: [{ kind: "modResource", resource: "legitimacy", delta: 1 }],
-    penaltiesIfUnresolved: [],
+    solve: { kind: "funding", amount: 2 },
+    onFundSolveEffects: [{ kind: "addCardsToDeck", templateId: "fiscalBurden", count: 2 }],
+    penaltiesIfUnresolved: [{ kind: "addCardsToDeck", templateId: "fiscalBurden", count: 3 }],
   },
   cautiousCrown: {
     id: "cautiousCrown",

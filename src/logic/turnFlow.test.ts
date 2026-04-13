@@ -113,6 +113,29 @@ describe("beginYear + playerStatuses", () => {
     expect(s1.playerStatuses).toHaveLength(0);
   });
 
+  it("reduces funding by 1 when fiscal burden is drawn", () => {
+    const started = createInitialState(55_777);
+    const cardsById: Record<string, CardInstance> = {
+      b0: { instanceId: "b0", templateId: "fiscalBurden" },
+    };
+    const s0: GameState = {
+      ...started,
+      outcome: "playing",
+      phase: "action",
+      resources: { treasuryStat: 1, funding: 0, power: 1, legitimacy: 2 },
+      nextTurnDrawModifier: 0,
+      hand: [],
+      deck: ["b0"],
+      discard: [],
+      cardsById,
+      playerStatuses: [],
+      slots: { ...EMPTY_EVENT_SLOTS },
+    };
+    const s1 = beginYear(s0);
+    expect(s1.hand).toContain("b0");
+    expect(s1.resources.funding).toBe(0);
+  });
+
   it("appends antiFrenchLeagueDraw to action log when coalition hazard triggers", () => {
     const started = createInitialState(11_111);
     const cardsById: Record<string, CardInstance> = {

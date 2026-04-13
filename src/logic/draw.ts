@@ -19,13 +19,20 @@ export function tryDrawOne(
   hand: string[],
   deck: string[],
   discard: string[],
-): { rng: RngSerialized; hand: string[]; deck: string[]; discard: string[]; drew: boolean } {
+): {
+  rng: RngSerialized;
+  hand: string[];
+  deck: string[];
+  discard: string[];
+  drew: boolean;
+  drewCardId: string | null;
+} {
   if (hand.length >= HAND_CAP) {
-    return { rng, hand, deck, discard, drew: false };
+    return { rng, hand, deck, discard, drew: false, drewCardId: null };
   }
   const [r0, d0, di0] = refillDeckFromDiscard(rng, deck, discard);
   if (d0.length === 0) {
-    return { rng: r0, hand, deck: d0, discard: di0, drew: false };
+    return { rng: r0, hand, deck: d0, discard: di0, drew: false, drewCardId: null };
   }
   const top = d0[0]!;
   return {
@@ -34,6 +41,7 @@ export function tryDrawOne(
     deck: d0.slice(1),
     discard: di0,
     drew: true,
+    drewCardId: top,
   };
 }
 
@@ -43,21 +51,23 @@ export function drawUpToPower(
   deck: string[],
   discard: string[],
   attempts: number,
-): { rng: RngSerialized; hand: string[]; deck: string[]; discard: string[] } {
+): { rng: RngSerialized; hand: string[]; deck: string[]; discard: string[]; drawnCardIds: string[] } {
   let r = rng;
   let h = hand;
   let d = deck;
   let di = discard;
+  const drawnCardIds: string[] = [];
   for (let i = 0; i < attempts; i++) {
     const step = tryDrawOne(r, h, d, di);
     r = step.rng;
     h = step.hand;
     d = step.deck;
     di = step.discard;
+    if (step.drewCardId) drawnCardIds.push(step.drewCardId);
     if (!step.drew && h.length >= HAND_CAP) continue;
     if (!step.drew && d.length === 0 && di.length === 0) break;
   }
-  return { rng: r, hand: h, deck: d, discard: di };
+  return { rng: r, hand: h, deck: d, discard: di, drawnCardIds };
 }
 
 export const handCap = HAND_CAP;

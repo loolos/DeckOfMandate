@@ -69,4 +69,23 @@ describe("resolveEndOfYearPenalties", () => {
     expect(s1.actionLog.length).toBe(n0 + 1);
     expect(s1.actionLog[s1.actionLog.length - 1]!.kind).toBe("eventPowerVacuumScheduled");
   });
+
+  it("expansion remembered unresolved adds three fiscal burden cards to deck", () => {
+    const base = createInitialState(4_242, "secondMandate");
+    const beforeCardCount = Object.keys(base.cardsById).length;
+    const s0 = {
+      ...base,
+      slots: {
+        ...EMPTY_EVENT_SLOTS,
+        A: { instanceId: "e_expansion", templateId: "expansionRemembered" as const, resolved: false },
+      },
+    };
+    const s1 = resolveEndOfYearPenalties(s0);
+    const burdenIds = Object.values(s1.cardsById)
+      .filter((c) => c.templateId === "fiscalBurden")
+      .map((c) => c.instanceId);
+    expect(Object.keys(s1.cardsById).length).toBe(beforeCardCount + 3);
+    expect(burdenIds.length).toBe(3);
+    expect(s1.deck.slice(0, 3)).toEqual(burdenIds);
+  });
 });

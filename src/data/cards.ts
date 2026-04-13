@@ -31,6 +31,15 @@ const templates: Record<CardTemplateId, CardTemplate> = {
     descriptionKey: "card.diplomaticIntervention.desc",
     effects: [],
   },
+  fiscalBurden: {
+    id: "fiscalBurden",
+    cost: 2,
+    tags: [],
+    titleKey: "card.fiscalBurden.name",
+    backgroundKey: "card.fiscalBurden.background",
+    descriptionKey: "card.fiscalBurden.desc",
+    effects: [],
+  },
   reform: {
     id: "reform",
     cost: 2,

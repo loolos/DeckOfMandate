@@ -9,6 +9,7 @@ describe("secondMandate balance data", () => {
       "taxRebalance",
       "diplomaticCongress",
       "diplomaticIntervention",
+      "fiscalBurden",
       "patronageOffice",
       "warBond",
     ] as const;
@@ -17,6 +18,7 @@ describe("secondMandate balance data", () => {
       taxRebalance: 2,
       diplomaticCongress: 3,
       diplomaticIntervention: 0,
+      fiscalBurden: 2,
       patronageOffice: 4,
       warBond: 0,
     } as const;
@@ -45,6 +47,10 @@ describe("secondMandate balance data", () => {
     const diplomaticIntervention = getCardTemplate("diplomaticIntervention");
     expect(diplomaticIntervention.effects).toEqual([]);
     expect(diplomaticIntervention.tags.includes("royal")).toBe(false);
+
+    const fiscalBurden = getCardTemplate("fiscalBurden");
+    expect(fiscalBurden.effects).toEqual([]);
+    expect(fiscalBurden.tags.includes("royal")).toBe(false);
 
     const patronage = getCardTemplate("patronageOffice");
     expect(patronage.cost).toBe(4);
@@ -94,6 +100,16 @@ describe("secondMandate balance data", () => {
     ]);
     expect(getEventTemplate("courtScandal").penaltiesIfUnresolved).toEqual([
       { kind: "addPlayerStatus", templateId: "royalBan", turns: 1 },
+    ]);
+    expect(getEventTemplate("expansionRemembered").solve).toEqual({
+      kind: "funding",
+      amount: 2,
+    });
+    expect(getEventTemplate("expansionRemembered").onFundSolveEffects).toEqual([
+      { kind: "addCardsToDeck", templateId: "fiscalBurden", count: 2 },
+    ]);
+    expect(getEventTemplate("expansionRemembered").penaltiesIfUnresolved).toEqual([
+      { kind: "addCardsToDeck", templateId: "fiscalBurden", count: 3 },
     ]);
   });
 
