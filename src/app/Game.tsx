@@ -39,6 +39,7 @@ import {
   type Level2StartDraft,
 } from "./level2Transition";
 import styles from "./Game.module.css";
+import { retentionCapacity } from "../logic/turnFlow";
 
 type PendingNewRun = { seed?: number; levelId: LevelId };
 
@@ -106,8 +107,8 @@ export function Game() {
   const level = useMemo(() => getLevelDef(state.levelId), [state.levelId]);
 
   const year = useMemo(
-    () => level.calendarStartYear + state.turn - 1,
-    [level.calendarStartYear, state.turn],
+    () => state.calendarStartYear + state.turn - 1,
+    [state.calendarStartYear, state.turn],
   );
 
   useEffect(() => {
@@ -135,7 +136,7 @@ export function Game() {
 
   const canConfirmRetention =
     state.phase === "retention" &&
-    selectedIds.length <= state.resources.legitimacy &&
+    selectedIds.length <= retentionCapacity(state) &&
     selectedIds.every((id) => state.hand.includes(id));
 
   const dispatchSafe = (a: GameAction) => dispatch(a);
@@ -184,13 +185,14 @@ export function Game() {
   };
 
   const level2Validation = useMemo(
-    () => (level2Draft ? validateLevel2Refit(level2Draft.counts) : null),
+    () =>
+      level2Draft ? validateLevel2Refit(level2Draft.counts, level2Draft.baseCounts) : null,
     [level2Draft],
   );
 
   const confirmLevel2Refit = () => {
     if (!level2Draft) return;
-    const v = validateLevel2Refit(level2Draft.counts);
+    const v = validateLevel2Refit(level2Draft.counts, level2Draft.baseCounts);
     if (!v.isValid) return;
     const nextState = buildLevel2StateFromDraft(level2Draft);
     setPendingLevelTutorial(tutorialOnEntryMenu);
@@ -238,6 +240,26 @@ export function Game() {
         </div>
         <div className={styles.startMenuForm}>
           <p className={styles.startMenuMuted}>{t("menu.refit.subtitle")}</p>
+          <p className={styles.startMenuMuted}>
+            {level2Draft.mode === "continuity"
+              ? t("menu.refit.mode.continuity")
+              : t("menu.refit.mode.standalone")}
+          </p>
+          <p className={styles.startMenuMuted}>
+            {t("menu.refit.resources", {
+              treasury: level2Draft.resources.treasuryStat,
+              power: level2Draft.resources.power,
+              legitimacy: level2Draft.resources.legitimacy,
+            })}
+          </p>
+          <p className={styles.startMenuMuted}>
+            {t("menu.refit.startYear", { year: level2Draft.calendarStartYear })}
+          </p>
+          <p className={styles.startMenuMuted}>
+            {level2Draft.europeAlert
+              ? t("menu.refit.europeAlertOn")
+              : t("menu.refit.europeAlertOff")}
+          </p>
           <h3 className={styles.statusSectionTitle}>{t("menu.refit.adjustable")}</h3>
           {LEVEL2_ADJUSTABLE_IDS.map((id) => {
             const min = 1;
@@ -325,6 +347,12 @@ export function Game() {
                 {t("menu.refit.newCardTotal", {
                   current: level2Validation.totalNewCards,
                   max: LEVEL2_REFIT_RULES.maxTotalNewCards,
+                })}
+              </p>
+              <p className={styles.startMenuMuted}>
+                {t("menu.refit.baseAdjustTotal", {
+                  current: level2Validation.adjustableChanges,
+                  max: LEVEL2_REFIT_RULES.maxTotalAdjustableChanges,
                 })}
               </p>
               {!level2Validation.isValid ? (
@@ -589,7 +617,8 @@ export function Game() {
           <div className={styles.modal}>
             <h3>{t("phase.retention")}</h3>
             <p className={styles.help}>
-              {resourceLabelWithIcon("legitimacy", t("resource.legitimacy"))}: {state.resources.legitimacy}
+              {resourceLabelWithIcon("legitimacy", t("resource.legitimacy"))}:{" "}
+              {retentionCapacity(state)}
             </p>
             <div className={styles.retainList}>
               {state.hand.map((id) => {

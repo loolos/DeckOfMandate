@@ -19,10 +19,10 @@ export const messagesZhSecondMandate = {
     "和约可帮助巩固阶段成果。投入 1 经费，获得财政 +1 与合法性 +1。",
   "event.revocationNantes.name": "撤销南特敕令",
   "event.revocationNantes.desc":
-    "宗教政策趋于强硬。支付 1 经费（或以王室干预处理）可获得合法性 +1；若放任，将损失财政。",
+    "宗教政策趋于强硬。支付 1 经费（或以王室干预处理）可获得合法性 +1；若放任，将损失财政与合法性。",
   "event.leagueOfAugsburg.name": "奥格斯堡同盟形成",
   "event.leagueOfAugsburg.desc":
-    "欧洲列强开始系统围堵法国。支付 2 经费（或王室干预）压制升级，否则将承受持续政治拖累。",
+    "欧洲列强开始系统围堵法国。支付 2 经费（或王室干预）压制升级，否则将承受「权力流失」3 回合。",
   "event.nineYearsWar.name": "九年战争",
   "event.nineYearsWar.desc":
     "大战压力全面到来。支付 2 经费（或王室干预）稳住局势；若未处理，将持续侵蚀财政与抽牌能力。",
@@ -30,24 +30,28 @@ export const messagesZhSecondMandate = {
   "event.ryswickPeace.desc":
     "和约提供秩序重建窗口。投入 1 经费可获得合法性 +1。",
   "event.versaillesExpenditure.name": "凡尔赛开支",
-  "event.versaillesExpenditure.desc": "宫廷排场再次超预算。支付 2 经费，否则财政 -1。",
+  "event.versaillesExpenditure.desc":
+    "宫廷排场再次超预算。支付 3 经费（或王室干预），否则财政 -2。",
   "event.nobleResentment.name": "贵族怨气",
   "event.nobleResentment.desc":
-    "宫廷与地方精英抵触情绪升高。支付 1 经费或王室干预，否则获得「权力流失」2 回合。",
+    "宫廷与地方精英抵触情绪升高。支付 1 经费或王室干预，否则获得「权力流失」3 回合。",
   "event.provincialNoncompliance.name": "地方消极执行",
   "event.provincialNoncompliance.desc":
-    "地方官僚拖延政令。支付 1 经费，否则下一回合抽牌受罚。",
+    "地方官僚拖延政令。支付 2 经费，否则下一回合抽牌修正 -2。",
   "event.risingGrainPrices.name": "粮价上涨",
-  "event.risingGrainPrices.desc": "粮价推动社会不稳。支付 2 经费，否则合法性 -1。",
+  "event.risingGrainPrices.desc":
+    "粮价推动社会不稳。支付 3 经费（或王室干预），否则合法性 -2。",
   "event.taxResistance.name": "税收反弹",
-  "event.taxResistance.desc": "地方与社群抵制新税。支付 1 经费或王室干预，否则财政 -1。",
+  "event.taxResistance.desc":
+    "地方与社群抵制新税。支付 2 经费或王室干预，否则财政 -1 且合法性 -1。",
   "event.frontierGarrisons.name": "边境驻军消耗",
-  "event.frontierGarrisons.desc": "边防驻军持续消耗国库。支付 1 经费，否则财政 -1。",
+  "event.frontierGarrisons.desc": "边防驻军持续消耗国库。支付 2 经费，否则财政 -1 且下一回合抽牌受罚。",
   "event.tradeDisruption.name": "海贸受阻",
   "event.tradeDisruption.desc":
-    "航路受扰影响施政节奏。支付 1 经费，否则下一回合抽牌受罚。",
+    "航路受扰影响施政节奏。支付 1 经费，否则下一回合抽牌修正 -2。",
   "event.courtScandal.name": "宫廷丑闻",
-  "event.courtScandal.desc": "宫廷派系丑闻动摇威望。支付 1 经费或王室干预，否则合法性 -1。",
+  "event.courtScandal.desc":
+    "宫廷派系丑闻动摇威望。支付 3 经费或王室干预，否则下一回合无法打出王室牌。",
   "event.militaryPrestige.name": "军事声望",
   "event.militaryPrestige.desc": "可将军功转化为统治威望。投入 1 经费，合法性 +1。",
   "event.commercialExpansion.name": "商业扩张",
@@ -55,10 +59,11 @@ export const messagesZhSecondMandate = {
   "event.talentedAdministrator.name": "能臣举荐",
   "event.talentedAdministrator.desc": "可提拔能干官员。投入 1 经费，权力 +1。",
   "event.warWeariness.name": "战争疲劳",
-  "event.warWeariness.desc": "长期战争削弱民意与服从。支付 1 经费或王室干预，否则合法性 -1。",
+  "event.warWeariness.desc":
+    "长期战争削弱民意与服从。支付 1 经费或王室干预，否则合法性 -1 并获得「权力流失」2 回合。",
   "event.grainReliefCrisis.name": "赈济迟滞",
   "event.grainReliefCrisis.desc":
-    "粮食调配迟滞导致社会压力升级。支付 2 经费可稳住局势并获得合法性 +1；若放任将损失合法性。",
+    "粮食调配迟滞导致社会压力升级。支付 2 经费可稳住局势并获得合法性 +2；若放任将损失合法性 -2。",
   "event.expansionRemembered.name": "扩张余震",
   "event.expansionRemembered.desc": "早年的强势扩张仍在发酵。免费处理以获得合法性 +1。",
   "event.cautiousCrown.name": "谨慎王权",
@@ -68,14 +73,14 @@ export const messagesZhSecondMandate = {
   "card.grainRelief.desc": "合法性 +1。",
   "card.taxRebalance.name": "税制重估",
   "card.taxRebalance.background": "重配税负与征收口径，让财政在高压期保持流动。",
-  "card.taxRebalance.desc": "经费 +1。",
+  "card.taxRebalance.desc": "财政 +1，并获得「抽牌受限」2 回合（每回合抽牌 -1）。",
   "card.diplomaticCongress.name": "外交会议",
   "card.diplomaticCongress.background": "通过使节与会议换取喘息，减轻短期外部压力。",
-  "card.diplomaticCongress.desc": "下一回合抽牌修正 +1。",
+  "card.diplomaticCongress.desc": "合法性 +1。",
   "card.patronageOffice.name": "王室荐任",
   "card.patronageOffice.background": "把任命权重新收回宫廷，用仕途绑定忠诚。",
-  "card.patronageOffice.desc": "权力 +1。",
+  "card.patronageOffice.desc": "权力 +1，并获得「荐任网络」3 回合（每回合保留上限 +1）。",
   "card.warBond.name": "战时公债",
   "card.warBond.background": "先借未来换当下，暂时撑住战争财政。",
-  "card.warBond.desc": "经费 +2，财政 -1。",
+  "card.warBond.desc": "经费 +3，财政 -1。",
 } as const;

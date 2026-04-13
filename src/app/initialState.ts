@@ -9,6 +9,7 @@ import type { GameState, Resources } from "../types/game";
 type InitialStateOptions = {
   starterDeckTemplateOrder?: readonly CardTemplateId[];
   startingResourcesOverride?: Partial<Resources>;
+  calendarStartYearOverride?: number;
   warOfDevolutionAttacked?: boolean;
   europeAlert?: boolean;
 };
@@ -38,6 +39,7 @@ export function createInitialState(
 
   const base: GameState = {
     levelId,
+    calendarStartYear: options?.calendarStartYearOverride ?? level.calendarStartYear,
     runSeed,
     rng,
     turn: 1,

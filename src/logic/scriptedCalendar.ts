@@ -1,11 +1,10 @@
 import { getLevelContent, type ScriptedCalendarEventConfig } from "../data/levelContent";
-import { getLevelDef } from "../data/levels";
 import { EVENT_SLOT_ORDER, type EventInstance, type EventTemplateId, type SlotId } from "../types/event";
 import type { AntiFrenchLeagueState, GameState } from "../types/game";
 import { rngNext } from "./rng";
 
 export function currentCalendarYear(state: GameState): number {
-  return getLevelDef(state.levelId).calendarStartYear + state.turn - 1;
+  return state.calendarStartYear + state.turn - 1;
 }
 
 export function findScriptedCalendarConfig(

@@ -1,4 +1,5 @@
 import type { Effect } from "./effect";
+import type { CardTag } from "./tags";
 
 export type CardTemplateId =
   | "funding"
@@ -15,6 +16,7 @@ export type CardTemplateId =
 export type CardTemplate = {
   id: CardTemplateId;
   cost: number;
+  tags: readonly CardTag[];
   /** Keys into locale bundles for title, flavor, and rules text. */
   titleKey: string;
   /** Brief thematic line shown on hand cards. */

@@ -3,7 +3,7 @@ import { createInitialState } from "../app/initialState";
 import type { CardInstance } from "../types/card";
 import { EMPTY_EVENT_SLOTS } from "../types/event";
 import type { GameState } from "../types/game";
-import { beginYear } from "./turnFlow";
+import { beginYear, retentionCapacity } from "./turnFlow";
 
 describe("beginYear + playerStatuses", () => {
   it("applies drawAttemptsDelta to attempts then decrements turnsRemaining", () => {
@@ -121,5 +121,23 @@ describe("beginYear + playerStatuses", () => {
     const s1 = beginYear(s0);
     expect(s1.slots.D).toBeNull();
     expect(s1.slots.J).toBeNull();
+  });
+
+  it("retentionCapacity includes temporary retention boost statuses", () => {
+    const started = createInitialState(202_406);
+    const s0: GameState = {
+      ...started,
+      resources: { ...started.resources, legitimacy: 2 },
+      playerStatuses: [
+        {
+          instanceId: "st_ret",
+          templateId: "retentionBoost",
+          kind: "retentionCapacityDelta",
+          delta: 1,
+          turnsRemaining: 2,
+        },
+      ],
+    };
+    expect(retentionCapacity(s0)).toBe(3);
   });
 });

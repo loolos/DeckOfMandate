@@ -8,7 +8,8 @@ import { applyPlayedCardEffects } from "../logic/resolveCard";
 import { resolveEndOfYearPenalties } from "../logic/resolveEvents";
 import { coalitionUntilTurn, findScriptedCalendarConfig } from "../logic/scriptedCalendar";
 import { rngNext } from "../logic/rng";
-import { beginYear, evaluateTimeDefeat, evaluateVictory } from "../logic/turnFlow";
+import { beginYear, evaluateTimeDefeat, evaluateVictory, retentionCapacity } from "../logic/turnFlow";
+import type { CardTemplateId } from "../types/card";
 import type { SlotId } from "../types/event";
 import type { GameState } from "../types/game";
 import { createInitialState } from "./initialState";
@@ -72,6 +73,16 @@ function canScriptedAttack(state: GameState, slot: SlotId): boolean {
   const cfg = findScriptedCalendarConfig(state.levelId, ev.templateId);
   if (!cfg?.attack) return false;
   return state.resources.funding >= cfg.attack.fundingCost;
+}
+
+function isCardPlayableUnderStatuses(state: GameState, templateId: CardTemplateId): boolean {
+  const tmpl = getCardTemplate(templateId);
+  for (const st of state.playerStatuses) {
+    if (st.kind !== "blockCardTag") continue;
+    if (!st.blockedTag) continue;
+    if (tmpl.tags.includes(st.blockedTag)) return false;
+  }
+  return true;
 }
 
 function performScriptedAttack(state: GameState, slot: SlotId): GameState {
@@ -211,6 +222,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       if (!id) return state;
       const inst = state.cardsById[id];
       if (!inst) return state;
+      if (!isCardPlayableUnderStatuses(state, inst.templateId)) return state;
       const tmpl = getCardTemplate(inst.templateId);
       if (state.resources.funding < tmpl.cost) return state;
       const paid = {
@@ -293,7 +305,8 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       let s = { ...state, resources: { ...state.resources, funding: 0 } };
       s = evaluateVictory(s);
       if (s.outcome === "victory") return s;
-      if (s.hand.length <= s.resources.legitimacy) {
+      const cap = retentionCapacity(s);
+      if (s.hand.length <= cap) {
         return completeYearAfterRetention(s, s.hand);
       }
       return { ...s, phase: "retention" };
@@ -305,7 +318,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       for (const id of action.keepIds) {
         if (!state.hand.includes(id)) return state;
       }
-      if (action.keepIds.length > state.resources.legitimacy) return state;
+      if (action.keepIds.length > retentionCapacity(state)) return state;
       return completeYearAfterRetention(state, action.keepIds);
     }
     default: {

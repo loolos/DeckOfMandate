@@ -116,6 +116,8 @@ export type RngSerialized = {
 export type GameState = {
   /** Active level; drives turn limit, win targets, calendar, and starting layout on new runs. */
   levelId: LevelId;
+  /** Per-run calendar anchor; defaults to level start year but can be overridden for chapter continuity. */
+  calendarStartYear: number;
   runSeed: number;
   rng: RngSerialized;
   turn: number;

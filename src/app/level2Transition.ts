@@ -23,6 +23,7 @@ export type Level2RefitRules = {
   minDeckSize: number;
   maxDeckSize: number;
   maxAddedPerBaseCard: number;
+  maxTotalAdjustableChanges: number;
   maxPerNewCard: number;
   maxTotalNewCards: number;
 };
@@ -30,6 +31,7 @@ export type Level2RefitRules = {
 export type Level2StartDraft = {
   mode: Level2StartMode;
   seed?: number;
+  calendarStartYear: number;
   resources: Resources;
   warOfDevolutionAttacked: boolean;
   europeAlert: boolean;
@@ -40,6 +42,7 @@ export type Level2StartDraft = {
 export type Level2Validation = {
   totalCards: number;
   totalNewCards: number;
+  adjustableChanges: number;
   isValid: boolean;
 };
 
@@ -47,6 +50,7 @@ export const LEVEL2_REFIT_RULES: Level2RefitRules = {
   minDeckSize: 12,
   maxDeckSize: 18,
   maxAddedPerBaseCard: 2,
+  maxTotalAdjustableChanges: 3,
   maxPerNewCard: 2,
   maxTotalNewCards: 4,
 };
@@ -104,15 +108,18 @@ export function createStandaloneLevel2Draft(seed?: number): Level2StartDraft {
   return {
     mode: "standalone",
     seed,
+    calendarStartYear: level.calendarStartYear,
     resources: { ...level.startingResources },
-    warOfDevolutionAttacked: false,
-    europeAlert: false,
+    // Standalone chapter-2 starts are treated as if the player chose the prior war branch.
+    warOfDevolutionAttacked: true,
+    europeAlert: true,
     baseCounts,
     counts: withDefaultRecommendedAdds(baseCounts),
   };
 }
 
 export function createContinuityLevel2Draft(from: GameState, seed?: number): Level2StartDraft {
+  const carryoverCalendarStartYear = from.calendarStartYear + from.turn - 1;
   const inheritedResources: Resources = {
     treasuryStat: from.resources.treasuryStat,
     power: from.resources.power,
@@ -125,6 +132,7 @@ export function createContinuityLevel2Draft(from: GameState, seed?: number): Lev
   return {
     mode: "continuity",
     seed,
+    calendarStartYear: carryoverCalendarStartYear,
     resources: inheritedResources,
     warOfDevolutionAttacked: from.warOfDevolutionAttacked,
     europeAlert: from.warOfDevolutionAttacked,
@@ -156,7 +164,13 @@ export function updateRefitCount(
   if ((LEVEL2_ADJUSTABLE_IDS as readonly string[]).includes(id)) {
     const min = 1;
     const max = baseCounts[id] + LEVEL2_REFIT_RULES.maxAddedPerBaseCard;
-    next[id] = Math.max(min, Math.min(max, raw));
+    const clamped = Math.max(min, Math.min(max, raw));
+    next[id] = clamped;
+    if (
+      computeAdjustableChanges(next, baseCounts) > LEVEL2_REFIT_RULES.maxTotalAdjustableChanges
+    ) {
+      return counts;
+    }
     return next;
   }
   const min = 0;
@@ -165,7 +179,22 @@ export function updateRefitCount(
   return next;
 }
 
-export function validateLevel2Refit(counts: Level2RefitCounts): Level2Validation {
+function computeAdjustableChanges(
+  counts: Level2RefitCounts,
+  baseCounts: Level2RefitCounts,
+): number {
+  let changed = 0;
+  for (const id of LEVEL2_ADJUSTABLE_IDS) {
+    changed += Math.abs(counts[id] - baseCounts[id]);
+  }
+  return changed;
+}
+
+export function validateLevel2Refit(
+  counts: Level2RefitCounts,
+  baseCountsInput?: Level2RefitCounts,
+): Level2Validation {
+  const baseCounts = baseCountsInput ?? ensureAdjustableMinimum(baselineFromFirstChapterDeck());
   let totalCards = 0;
   let totalNewCards = 0;
   for (const id of LEVEL2_REFIT_ORDER) {
@@ -177,7 +206,14 @@ export function validateLevel2Refit(counts: Level2RefitCounts): Level2Validation
   const totalValid =
     totalCards >= LEVEL2_REFIT_RULES.minDeckSize && totalCards <= LEVEL2_REFIT_RULES.maxDeckSize;
   const newValid = totalNewCards <= LEVEL2_REFIT_RULES.maxTotalNewCards;
-  return { totalCards, totalNewCards, isValid: totalValid && newValid };
+  const adjustableChanges = computeAdjustableChanges(counts, baseCounts);
+  const adjustableValid = adjustableChanges <= LEVEL2_REFIT_RULES.maxTotalAdjustableChanges;
+  return {
+    totalCards,
+    totalNewCards,
+    adjustableChanges,
+    isValid: totalValid && newValid && adjustableValid,
+  };
 }
 
 export function buildDeckOrderFromRefit(counts: Level2RefitCounts): CardTemplateId[] {
@@ -190,6 +226,7 @@ export function buildDeckOrderFromRefit(counts: Level2RefitCounts): CardTemplate
 
 export function buildLevel2StateFromDraft(draft: Level2StartDraft): GameState {
   return createInitialState(draft.seed, "secondMandate", {
+    calendarStartYearOverride: draft.calendarStartYear,
     starterDeckTemplateOrder: buildDeckOrderFromRefit(draft.counts),
     startingResourcesOverride: draft.resources,
     warOfDevolutionAttacked: draft.warOfDevolutionAttacked,

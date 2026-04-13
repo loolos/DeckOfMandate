@@ -1,9 +1,11 @@
 import { describe, expect, it } from "vitest";
 import { createInitialState } from "./initialState";
 import {
+  LEVEL2_REFIT_RULES,
   buildLevel2StateFromDraft,
   createContinuityLevel2Draft,
   createStandaloneLevel2Draft,
+  updateRefitCount,
   validateLevel2Refit,
 } from "./level2Transition";
 
@@ -12,6 +14,9 @@ describe("level2Transition", () => {
     const draft = createStandaloneLevel2Draft(123);
     const v = validateLevel2Refit(draft.counts);
     expect(draft.mode).toBe("standalone");
+    expect(draft.calendarStartYear).toBe(1676);
+    expect(draft.warOfDevolutionAttacked).toBe(true);
+    expect(draft.europeAlert).toBe(true);
     expect(draft.resources.treasuryStat).toBe(3);
     expect(draft.counts.grainRelief).toBe(1);
     expect(draft.counts.taxRebalance).toBe(1);
@@ -22,6 +27,7 @@ describe("level2Transition", () => {
   it("creates continuity draft with war branch inheritance and europe alert", () => {
     const chapter1Win = {
       ...createInitialState(777, "firstMandate"),
+      turn: 12,
       warOfDevolutionAttacked: true,
       resources: {
         treasuryStat: 4,
@@ -37,6 +43,21 @@ describe("level2Transition", () => {
     expect(draft.resources.treasuryStat).toBe(4);
     expect(draft.resources.power).toBe(4);
     expect(draft.resources.legitimacy).toBe(6);
+    expect(draft.calendarStartYear).toBe(1672);
+  });
+
+  it("limits adjustable carryover changes to three cards", () => {
+    const draft = createStandaloneLevel2Draft(456);
+    const counts1 = updateRefitCount(draft.counts, draft.baseCounts, "funding", +1);
+    const counts2 = updateRefitCount(counts1, draft.baseCounts, "reform", +1);
+    const counts3 = updateRefitCount(counts2, draft.baseCounts, "ceremony", +1);
+    const counts4 = updateRefitCount(counts3, draft.baseCounts, "crackdown", +1);
+    const v3 = validateLevel2Refit(counts3, draft.baseCounts);
+    const v4 = validateLevel2Refit(counts4, draft.baseCounts);
+    expect(v3.adjustableChanges).toBe(LEVEL2_REFIT_RULES.maxTotalAdjustableChanges);
+    expect(v3.isValid).toBe(true);
+    expect(counts4).toEqual(counts3);
+    expect(v4.isValid).toBe(true);
   });
 
   it("builds a playable chapter 2 state from refit counts", () => {
@@ -44,6 +65,7 @@ describe("level2Transition", () => {
     draft.counts.warBond = 1;
     const st = buildLevel2StateFromDraft(draft);
     expect(st.levelId).toBe("secondMandate");
+    expect(st.calendarStartYear).toBe(1676);
     expect(st.resources.treasuryStat).toBe(3);
     expect(st.resources.power).toBe(3);
     expect(st.resources.legitimacy).toBe(3);
