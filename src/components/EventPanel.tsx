@@ -1,5 +1,6 @@
 import { getEventTemplate } from "../data/events";
 import type { GameAction } from "../app/gameReducer";
+import { eventLabelWithIcon, getResourceIcon } from "../logic/icons";
 import { fundSolveLabelAmount, slotAllowsCrackdownTarget, slotAllowsFundSolve } from "../logic/uiHelpers";
 import type { GameState } from "../types/game";
 import type { SlotId } from "../types/event";
@@ -23,7 +24,7 @@ export function EventPanel({
       {slots.map((slot) => {
         const ev = state.slots[slot];
         const tmpl = ev ? getEventTemplate(ev.templateId) : null;
-        const title = tmpl ? t(tmpl.titleKey as MessageKey) : "—";
+        const title = tmpl ? eventLabelWithIcon(tmpl.id, t(tmpl.titleKey as MessageKey)) : "—";
         const desc = tmpl ? t(tmpl.descriptionKey as MessageKey) : "";
         const canFund = slotAllowsFundSolve(state, slot);
         const amount = fundSolveLabelAmount(state, slot);
@@ -55,7 +56,7 @@ export function EventPanel({
                   disabled={!canFund}
                   onClick={() => dispatch({ type: "SOLVE_EVENT", slot })}
                 >
-                  {t("ui.solve", { cost: amount })}
+                  {t("ui.solve", { cost: `${getResourceIcon("funding")} ${amount}` })}
                 </button>
               ) : null}
               {ev && !ev.resolved && solveKind === "fundingOrCrackdown" && amount !== null ? (
@@ -65,7 +66,7 @@ export function EventPanel({
                   disabled={!canFund}
                   onClick={() => dispatch({ type: "SOLVE_EVENT", slot })}
                 >
-                  {t("ui.solveFundingOrCrackdown", { cost: amount })}
+                  {t("ui.solveFundingOrCrackdown", { cost: `${getResourceIcon("funding")} ${amount}` })}
                 </button>
               ) : null}
               {ev && !ev.resolved && solveKind === "crackdownOnly" && !pending ? (
