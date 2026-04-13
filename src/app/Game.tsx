@@ -3,6 +3,7 @@ import { createInitialState } from "./initialState";
 import { gameReducer, type GameAction } from "./gameReducer";
 import { normalizeGameState } from "../logic/normalizeGameState";
 import { loadGame, saveGame } from "../logic/saveLoad";
+import { cardLabelWithIcon, resourceLabelWithIcon } from "../logic/icons";
 import type { GameState } from "../types/game";
 import { defaultLevelId, getLevelDef, isLevelId, levelDefs, type LevelId } from "../data/levels";
 import { ActionLog } from "../components/ActionLog";
@@ -284,7 +285,7 @@ export function Game() {
           <div className={styles.modal}>
             <h3>{t("phase.retention")}</h3>
             <p className={styles.help}>
-              {t("resource.legitimacy")}: {state.resources.legitimacy}
+              {resourceLabelWithIcon("legitimacy", t("resource.legitimacy"))}: {state.resources.legitimacy}
             </p>
             <div className={styles.retainList}>
               {state.hand.map((id) => {
@@ -299,7 +300,10 @@ export function Game() {
                       onChange={(e) => setRetain((prev) => ({ ...prev, [id]: e.target.checked }))}
                     />
                     <label htmlFor={`keep-${id}`}>
-                      {t(getCardTemplate(state.cardsById[id]!.templateId).titleKey as MessageKey)}
+                      {cardLabelWithIcon(
+                        state.cardsById[id]!.templateId,
+                        t(getCardTemplate(state.cardsById[id]!.templateId).titleKey as MessageKey),
+                      )}
                     </label>
                   </div>
                 );

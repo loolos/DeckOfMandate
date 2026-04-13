@@ -1,6 +1,7 @@
 import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import { getCardTemplate } from "../data/cards";
 import { getEventTemplate } from "../data/events";
+import { cardLabelWithIcon, eventLabelWithIcon, resourceLabelWithIcon } from "../logic/icons";
 import { formatEffectLogLine } from "../logic/formatEffectLog";
 import type { MessageKey } from "../locales";
 import { useI18n } from "../locales";
@@ -20,7 +21,7 @@ function eventTitleKey(id: EventTemplateId): MessageKey {
 }
 
 function renderEntry(e: ActionLogEntry, t: (key: MessageKey, vars?: Record<string, string | number>) => string) {
-  const fundingLabel = t("resource.funding");
+  const fundingLabel = resourceLabelWithIcon("funding", t("resource.funding"));
   switch (e.kind) {
     case "cardPlayed":
       return (
@@ -28,7 +29,7 @@ function renderEntry(e: ActionLogEntry, t: (key: MessageKey, vars?: Record<strin
           <div className={styles.actionLogHead}>
             {t("log.cardPlayed.title", {
               turn: e.turn,
-              card: t(cardTitleKey(e.templateId)),
+              card: cardLabelWithIcon(e.templateId, t(cardTitleKey(e.templateId))),
               cost: e.fundingCost,
               funding: fundingLabel,
             })}
@@ -55,7 +56,7 @@ function renderEntry(e: ActionLogEntry, t: (key: MessageKey, vars?: Record<strin
           {t("log.eventFundSolved", {
             turn: e.turn,
             slot: e.slot,
-            event: t(eventTitleKey(e.templateId)),
+            event: eventLabelWithIcon(e.templateId, t(eventTitleKey(e.templateId))),
             paid: e.fundingPaid,
             funding: fundingLabel,
             treasury,
@@ -69,7 +70,7 @@ function renderEntry(e: ActionLogEntry, t: (key: MessageKey, vars?: Record<strin
           {t("log.eventCrackdownSolved", {
             turn: e.turn,
             slot: e.slot,
-            event: t(eventTitleKey(e.harmfulEventTemplateId)),
+            event: eventLabelWithIcon(e.harmfulEventTemplateId, t(eventTitleKey(e.harmfulEventTemplateId))),
             paid: e.fundingPaid,
             funding: fundingLabel,
           })}
@@ -82,7 +83,7 @@ function renderEntry(e: ActionLogEntry, t: (key: MessageKey, vars?: Record<strin
             {t("log.eventYearEndPenalty.title", {
               turn: e.turn,
               slot: e.slot,
-              event: t(eventTitleKey(e.templateId)),
+              event: eventLabelWithIcon(e.templateId, t(eventTitleKey(e.templateId))),
             })}
           </div>
           {e.effects.length > 0 ? (
@@ -103,7 +104,7 @@ function renderEntry(e: ActionLogEntry, t: (key: MessageKey, vars?: Record<strin
           {t("log.eventPowerVacuumScheduled", {
             turn: e.turn,
             slot: e.slot,
-            event: t(eventTitleKey(e.templateId)),
+            event: eventLabelWithIcon(e.templateId, t(eventTitleKey(e.templateId))),
           })}
         </div>
       );

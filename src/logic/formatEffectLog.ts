@@ -1,4 +1,5 @@
 import { getStatusTemplate } from "../data/statusTemplates";
+import { resourceLabelWithIcon } from "./icons";
 import type { Effect } from "../types/effect";
 import type { MessageKey } from "../locales";
 
@@ -9,13 +10,13 @@ export function formatEffectLogLine(
   switch (effect.kind) {
     case "modResource":
       return t("log.effect.modResource", {
-        resource: t(`resource.${effect.resource}` as MessageKey),
+        resource: resourceLabelWithIcon(effect.resource, t(`resource.${effect.resource}` as MessageKey)),
         delta: effect.delta >= 0 ? `+${effect.delta}` : String(effect.delta),
       });
     case "gainFunding":
       return t("log.effect.gainFunding", {
         amount: effect.amount,
-        funding: t("resource.funding"),
+        funding: resourceLabelWithIcon("funding", t("resource.funding")),
       });
     case "drawCards":
       return t("log.effect.drawCards", { count: effect.count });
