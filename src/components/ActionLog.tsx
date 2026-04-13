@@ -118,6 +118,12 @@ function renderEntry(e: ActionLogEntry, t: (key: MessageKey, vars?: Record<strin
           })}
         </div>
       );
+    case "crackdownPickPrompt":
+      return (
+        <div className={styles.actionLogHead}>
+          {t("log.crackdownPickPrompt", { turn: e.turn })}
+        </div>
+      );
     default: {
       const _never: never = e;
       return _never;

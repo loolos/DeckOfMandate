@@ -31,7 +31,8 @@ export const messagesEn = {
   "ui.hand": "Hand",
   "ui.events": "Events",
   "ui.eventsResizeHint": "Drag the bottom-right corner to resize the events area.",
-  "ui.selectCrackdownTarget": "Choose an event to resolve with Crackdown.",
+  "log.crackdownPickPrompt":
+    "[Turn {turn}] Choose a harmful event to resolve with Crackdown (not Trade Opportunity).",
   "ui.cancel": "Cancel",
   "ui.confirmRetention": "Confirm retention",
   "ui.newGame": "New run",

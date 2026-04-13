@@ -82,29 +82,9 @@
   min-height: 0;
 }
 
-.eventsPanelHeader {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.45rem 0.75rem;
-  margin-bottom: 0.35rem;
-}
-
-.eventsPanel .eventsPanelHeader h2 {
-  margin: 0;
-}
-
-.crackdownPickBanner {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.45rem;
-  font-size: 0.88rem;
-}
-
-.crackdownPickBanner strong {
-  font-weight: 600;
+.eventsPanel > h2 {
+  margin: 0 0 0.35rem;
+  font-size: 1rem;
 }
 
 .eventsResizable {
@@ -417,6 +397,20 @@
   margin-top: 0.3rem;
   font-size: 0.78rem;
   color: var(--muted);
+}
+
+.cardPendingCrackdown {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  border-color: color-mix(in srgb, var(--border) 55%, #5a7ab8);
+  box-shadow: 0 0 0 1px color-mix(in srgb, #5a7ab8 35%, transparent);
+}
+
+.cardPendingCrackdownActions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 0.1rem;
 }
 
 .actionLogSection {

@@ -221,17 +221,7 @@ export function Game() {
         {EVENT_SLOT_ORDER.some((id) => state.slots[id] != null) ||
         state.pendingInteraction?.type === "crackdownPick" ? (
           <section className={`${styles.panel} ${styles.eventsPanel}`}>
-            <div className={styles.eventsPanelHeader}>
-              <h2>{t("ui.events")}</h2>
-              {state.pendingInteraction?.type === "crackdownPick" ? (
-                <div className={styles.crackdownPickBanner} role="status">
-                  <strong>{t("ui.selectCrackdownTarget")}</strong>
-                  <button type="button" className={styles.btn} onClick={() => dispatchSafe({ type: "CRACKDOWN_CANCEL" })}>
-                    {t("ui.cancel")}
-                  </button>
-                </div>
-              ) : null}
-            </div>
+            <h2>{t("ui.events")}</h2>
             <div className={styles.eventsResizable} title={t("ui.eventsResizeHint")}>
               <EventPanel state={state} dispatch={dispatchSafe} />
             </div>

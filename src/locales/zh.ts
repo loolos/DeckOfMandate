@@ -33,7 +33,8 @@ export const messagesZh: Record<MessageKey, string> = {
   "ui.hand": "手牌",
   "ui.events": "事件",
   "ui.eventsResizeHint": "拖动右下角可调整事件区域高度。",
-  "ui.selectCrackdownTarget": "选择要用「危机干预」解决的事件。",
+  "log.crackdownPickPrompt":
+    "[第 {turn} 年] 选择要用「危机干预」解决的有害事件（不能选贸易机遇）。",
   "ui.cancel": "取消",
   "ui.confirmRetention": "确认保留",
   "ui.newGame": "新开一局",

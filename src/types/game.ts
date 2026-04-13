@@ -51,6 +51,11 @@ export type ActionLogEntry =
       id: string;
       turn: number;
       refund: number;
+    }
+  | {
+      kind: "crackdownPickPrompt";
+      id: string;
+      turn: number;
     };
 
 export type GamePhase = "action" | "retention" | "gameOver";

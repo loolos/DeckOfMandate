@@ -17,7 +17,8 @@ export type ActionLogPayload =
   | { kind: "eventCrackdownSolved"; slot: SlotId; harmfulEventTemplateId: EventTemplateId; fundingPaid: number }
   | { kind: "eventYearEndPenalty"; slot: SlotId; templateId: EventTemplateId; effects: readonly Effect[] }
   | { kind: "eventPowerVacuumScheduled"; slot: SlotId; templateId: "powerVacuum" }
-  | { kind: "crackdownCancelled"; refund: number };
+  | { kind: "crackdownCancelled"; refund: number }
+  | { kind: "crackdownPickPrompt" };
 
 export function appendActionLog(state: GameState, payload: ActionLogPayload): GameState {
   const logSeq = state.nextIds.log ?? 0;

@@ -144,10 +144,13 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
         resources: { ...state.resources, funding: state.resources.funding - tmpl.cost },
       };
       if (inst.templateId === "crackdown") {
-        return {
-          ...removeHand(paid, id),
-          pendingInteraction: { type: "crackdownPick", cardInstanceId: id, fundingPaid: tmpl.cost },
-        };
+        return appendActionLog(
+          {
+            ...paid,
+            pendingInteraction: { type: "crackdownPick", cardInstanceId: id, fundingPaid: tmpl.cost },
+          },
+          { kind: "crackdownPickPrompt" },
+        );
       }
       let s = applyPlayedCardEffects(paid, inst.templateId);
       s = removeHand(s, id);
@@ -175,6 +178,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       const cleared = state.slots[action.slot];
       if (!cleared) return state;
       let s = markSlotResolved(state, action.slot);
+      s = removeHand(s, p.cardInstanceId);
       s = pushDiscard(s, p.cardInstanceId);
       s = { ...s, pendingInteraction: null };
       s = enforceLegitimacy(s);
@@ -192,7 +196,6 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       return appendActionLog(
         {
           ...state,
-          hand: [...state.hand, p.cardInstanceId],
           resources: { ...state.resources, funding: state.resources.funding + p.fundingPaid },
           pendingInteraction: null,
         },
