@@ -34,6 +34,8 @@ export const messagesEnCore = {
   "ui.hand": "Hand",
   "ui.events": "Events",
   "ui.eventsResizeHint": "Drag the bottom-right corner to resize the events area.",
+  "ui.mobileEventTapHint": "Tap once for details",
+  "ui.mobileCardTapHint": "Tap once details · double-tap play",
   "log.crackdownPickPrompt":
     "[Turn {turn}] Choose a harmful event to resolve with Royal Intervention (not Colonial Trade Boom).",
   "ui.cancel": "Cancel",

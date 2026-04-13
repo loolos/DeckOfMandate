@@ -338,7 +338,7 @@ export function Game() {
         ) : null}
       </div>
 
-      <section className={styles.panel} style={{ marginTop: "1rem" }} id="tutorial-hand">
+      <section className={`${styles.panel} ${styles.handPanel}`} id="tutorial-hand">
         <h2>{t("ui.hand")}</h2>
         <Hand state={state} dispatch={dispatchSafe} />
       </section>
