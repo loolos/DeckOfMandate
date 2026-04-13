@@ -22,11 +22,11 @@ function formatSingleEffectChip(e: Effect): string {
     case "drawCards":
       return `🃏+${e.count}`;
     case "scheduleNextTurnDrawModifier":
-      return `🎲${signedInt(e.delta)}`;
+      return `📜${signedInt(e.delta)}`;
     case "addPlayerStatus": {
       const st = getStatusTemplate(e.templateId);
       if (st.kind === "drawAttemptsDelta") {
-        return `🎲${signedInt(st.delta)}×${e.turns}⌛`;
+        return `📜${signedInt(st.delta)}×${e.turns}⌛`;
       }
       return `⚠️×${e.turns}⌛`;
     }
@@ -113,7 +113,7 @@ export function buildScriptedEventQuickFrameRows(levelId: LevelId, tmpl: EventTe
   };
   const solvedRow: QuickFrameRow = {
     labelKey: "ui.quickFrame.ifSolved",
-    value: `${getResourceIcon("power")}+${cfg.attack.powerDelta} · ~${pctTreasury}% ${getResourceIcon("treasuryStat")}+${cfg.attack.extraTreasuryDelta} · ~${pctCoalition}%🎲-1`,
+    value: `${getResourceIcon("power")}+${cfg.attack.powerDelta} · ~${pctTreasury}% ${getResourceIcon("treasuryStat")}+${cfg.attack.extraTreasuryDelta} · ~${pctCoalition}%📜-1`,
   };
   const yearRow: QuickFrameRow = {
     labelKey: "ui.quickFrame.yearEnd",
