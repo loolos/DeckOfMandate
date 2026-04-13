@@ -160,6 +160,16 @@
   font-variant-numeric: tabular-nums;
 }
 
+.statusCompactMeta {
+  display: block;
+}
+
+.statusDetail {
+  font-size: 0.74rem;
+  line-height: 1.28;
+  color: color-mix(in srgb, var(--text) 88%, var(--muted));
+}
+
 .resourceStack {
   display: flex;
   flex-direction: column;
@@ -602,6 +612,15 @@
   margin-top: 0.1rem;
 }
 
+.cardMobileActions {
+  display: flex;
+  margin-top: 0.35rem;
+}
+
+.cardMobileActions .btn {
+  width: 100%;
+}
+
 .actionLogSection {
   margin-top: 1rem;
 }
@@ -1020,9 +1039,7 @@
   }
 
   .statusRow {
-    flex: 0 0 min(72vw, 15rem);
-    width: min(72vw, 15rem);
-    min-width: min(72vw, 15rem);
+    flex: 0 0 auto;
     border: 1px solid var(--border);
     border-radius: 8px;
     padding: 0.38rem 0.48rem;
@@ -1032,9 +1049,43 @@
     gap: 0.25rem;
   }
 
+  .statusRow.statusRowMobileCompact {
+    flex: 0 0 min(56vw, 11rem);
+    width: min(56vw, 11rem);
+    min-width: min(56vw, 11rem);
+    max-width: min(56vw, 11rem);
+  }
+
+  .statusRow.statusRowMobileExpanded {
+    flex: 0 0 min(74vw, 14.2rem);
+    width: min(74vw, 14.2rem);
+    min-width: min(74vw, 14.2rem);
+    max-width: min(74vw, 14.2rem);
+  }
+
   .statusRow:first-of-type {
     border-top: 1px solid var(--border);
     padding-top: 0.38rem;
+  }
+
+  .statusRow.statusRowMobileCompact .statusTitle {
+    font-size: 0.76rem;
+    line-height: 1.2;
+  }
+
+  .statusRow.statusRowMobileCompact .statusCompactMeta {
+    font-size: 0.66rem;
+    line-height: 1.22;
+    color: color-mix(in srgb, var(--text) 84%, var(--muted));
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+  }
+
+  .statusRow.statusRowMobileExpanded .statusDetail {
+    font-size: 0.68rem;
+    line-height: 1.25;
   }
 
   .handPanel {
