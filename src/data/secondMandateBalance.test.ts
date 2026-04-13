@@ -16,7 +16,7 @@ describe("secondMandate balance data", () => {
       grainRelief: 3,
       taxRebalance: 2,
       diplomaticCongress: 3,
-      diplomaticIntervention: 1,
+      diplomaticIntervention: 0,
       patronageOffice: 4,
       warBond: 0,
     } as const;

@@ -24,7 +24,7 @@ const templates: Record<CardTemplateId, CardTemplate> = {
   },
   diplomaticIntervention: {
     id: "diplomaticIntervention",
-    cost: 1,
+    cost: 0,
     tags: [],
     titleKey: "card.diplomaticIntervention.name",
     backgroundKey: "card.diplomaticIntervention.background",

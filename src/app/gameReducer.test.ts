@@ -239,7 +239,7 @@ describe("gameReducer", () => {
       ...base,
       hand: [diplomaticIntervention],
       deck: base.deck.filter((id) => id !== diplomaticIntervention),
-      resources: { ...base.resources, funding: 1 },
+      resources: { ...base.resources, funding: 0 },
       slots: {
         ...base.slots,
         A: { instanceId: "e_harm", templateId: "nobleResentment" as const, resolved: false },
