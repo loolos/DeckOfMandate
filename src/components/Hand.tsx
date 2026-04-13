@@ -35,6 +35,7 @@ export function Hand({
             <div className={styles.cardMeta}>
               {t("ui.cardCost")}: {tmpl.cost}
             </div>
+            <div className={styles.cardBg}>{t(tmpl.backgroundKey as MessageKey)}</div>
             <div className={styles.cardDesc}>{t(tmpl.descriptionKey as MessageKey)}</div>
           </button>
         );

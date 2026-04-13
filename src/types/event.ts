@@ -5,6 +5,7 @@ export type EventTemplateId =
   | "publicUnrest"
   | "administrativeDelay"
   | "tradeOpportunity"
+  | "politicalGridlock"
   | "powerVacuum"
   | "majorCrisis";
 

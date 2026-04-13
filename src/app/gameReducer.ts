@@ -1,6 +1,8 @@
 import { getCardTemplate } from "../data/cards";
 import { getEventTemplate } from "../data/events";
+import { appendActionLog } from "../logic/actionLog";
 import { enforceLegitimacy } from "../logic/applyEffects";
+import { normalizeGameState } from "../logic/normalizeGameState";
 import { applyPlayedCardEffects } from "../logic/resolveCard";
 import { resolveEndOfYearPenalties } from "../logic/resolveEvents";
 import { beginYear, evaluateTimeDefeat, evaluateVictory } from "../logic/turnFlow";
@@ -57,7 +59,7 @@ function canFundSolve(state: GameState, slot: SlotId): boolean {
   return false;
 }
 
-/** After funding is cleared: keep chosen cards, discard the rest, then win / time / next year. */
+/** After funding is cleared: keep chosen cards, discard the rest, then EOY penalties, then win / time / next year. */
 function completeYearAfterRetention(state: GameState, keepIds: readonly string[]): GameState {
   const keep = new Set(keepIds);
   const discardIds = state.hand.filter((id) => !keep.has(id));
@@ -67,6 +69,8 @@ function completeYearAfterRetention(state: GameState, keepIds: readonly string[]
     discard: [...state.discard, ...discardIds],
     phase: "action",
   };
+  s = resolveEndOfYearPenalties(s);
+  if (s.outcome !== "playing") return s;
   s = evaluateVictory(s);
   if (s.outcome === "victory") return s;
   s = evaluateTimeDefeat(s);
@@ -105,13 +109,23 @@ function performFundSolve(state: GameState, slot: SlotId): GameState {
   }
   s = markSlotResolved(s, slot);
   s = enforceLegitimacy(s);
+  const fundingPaid =
+    tmpl.solve.kind === "funding" || tmpl.solve.kind === "fundingOrCrackdown" ? tmpl.solve.amount : 0;
+  const treasuryGain = tmpl.id === "tradeOpportunity" ? 1 : 0;
+  s = appendActionLog(s, {
+    kind: "eventFundSolved",
+    slot,
+    templateId: ev.templateId,
+    fundingPaid,
+    treasuryGain,
+  });
   return s;
 }
 
 export function gameReducer(state: GameState, action: GameAction): GameState {
   switch (action.type) {
     case "HYDRATE":
-      return action.state;
+      return normalizeGameState(action.state);
     case "NEW_GAME":
       return createInitialState(action.seed);
     case "PLAY_CARD": {
@@ -138,6 +152,12 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       s = removeHand(s, id);
       s = pushDiscard(s, id);
       s = enforceLegitimacy(s);
+      s = appendActionLog(s, {
+        kind: "cardPlayed",
+        templateId: inst.templateId,
+        fundingCost: tmpl.cost,
+        effects: tmpl.effects,
+      });
       return s;
     }
     case "SOLVE_EVENT": {
@@ -151,21 +171,32 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       const p = state.pendingInteraction;
       if (!p || p.type !== "crackdownPick") return state;
       if (!isCrackdownTarget(state, action.slot)) return state;
+      const cleared = state.slots[action.slot];
+      if (!cleared) return state;
       let s = markSlotResolved(state, action.slot);
       s = pushDiscard(s, p.cardInstanceId);
       s = { ...s, pendingInteraction: null };
       s = enforceLegitimacy(s);
+      s = appendActionLog(s, {
+        kind: "eventCrackdownSolved",
+        slot: action.slot,
+        harmfulEventTemplateId: cleared.templateId,
+        fundingPaid: p.fundingPaid,
+      });
       return s;
     }
     case "CRACKDOWN_CANCEL": {
       const p = state.pendingInteraction;
       if (!p || p.type !== "crackdownPick") return state;
-      return {
-        ...state,
-        hand: [...state.hand, p.cardInstanceId],
-        resources: { ...state.resources, funding: state.resources.funding + p.fundingPaid },
-        pendingInteraction: null,
-      };
+      return appendActionLog(
+        {
+          ...state,
+          hand: [...state.hand, p.cardInstanceId],
+          resources: { ...state.resources, funding: state.resources.funding + p.fundingPaid },
+          pendingInteraction: null,
+        },
+        { kind: "crackdownCancelled", refund: p.fundingPaid },
+      );
     }
     case "END_YEAR": {
       if (state.outcome !== "playing" || state.phase !== "action" || state.pendingInteraction) {
@@ -174,9 +205,9 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       if (state.resources.legitimacy <= 0) {
         return { ...state, phase: "gameOver", outcome: "defeatLegitimacy" };
       }
-      let s = resolveEndOfYearPenalties(state);
-      if (s.outcome !== "playing") return s;
-      s = { ...s, resources: { ...s.resources, funding: 0 } };
+      let s = { ...state, resources: { ...state.resources, funding: 0 } };
+      s = evaluateVictory(s);
+      if (s.outcome === "victory") return s;
       if (s.hand.length <= s.resources.legitimacy) {
         return completeYearAfterRetention(s, s.hand);
       }

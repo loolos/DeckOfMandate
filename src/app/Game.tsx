@@ -1,13 +1,16 @@
 import { useEffect, useMemo, useReducer, useState } from "react";
 import { createInitialState } from "./initialState";
 import { gameReducer, type GameAction } from "./gameReducer";
+import { normalizeGameState } from "../logic/normalizeGameState";
 import { loadGame, saveGame } from "../logic/saveLoad";
 import type { GameState } from "../types/game";
-import { defaultLevelId, getLevelDef, isLevelId } from "../data/levels";
+import { getLevelDef } from "../data/levels";
+import { ActionLog } from "../components/ActionLog";
 import { EventPanel } from "../components/EventPanel";
 import { Hand } from "../components/Hand";
 import { LanguageToggle } from "../components/LanguageToggle";
 import { ResourceBar } from "../components/ResourceBar";
+import { StatusBar } from "../components/StatusBar";
 import { getCardTemplate } from "../data/cards";
 import type { MessageKey } from "../locales";
 import { useI18n } from "../locales";
@@ -27,7 +30,7 @@ function isValidSave(x: unknown): x is GameState {
 }
 
 function normalizeLoadedSave(state: GameState): GameState {
-  return isLevelId(state.levelId) ? state : { ...state, levelId: defaultLevelId };
+  return normalizeGameState(state);
 }
 
 function initFromStorage(): GameState {
@@ -116,6 +119,8 @@ export function Game() {
         <section className={styles.panel}>
           <h2>{t("ui.resources")}</h2>
           <ResourceBar resources={state.resources} />
+          <h3 className={styles.statusSectionTitle}>{t("ui.statuses")}</h3>
+          <StatusBar statuses={state.playerStatuses} />
         </section>
 
         <section className={styles.panel}>
@@ -128,6 +133,8 @@ export function Game() {
         <h2>{t("ui.hand")}</h2>
         <Hand state={state} dispatch={dispatchSafe} />
       </section>
+
+      <ActionLog entries={state.actionLog} />
 
       <div className={styles.footerRow}>
         <div className={styles.piles}>

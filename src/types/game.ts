@@ -1,6 +1,57 @@
 import type { LevelId } from "../data/levels";
-import type { CardInstance } from "./card";
-import type { EventInstance, SlotId } from "./event";
+import type { CardInstance, CardTemplateId } from "./card";
+import type { Effect } from "./effect";
+import type { EventInstance, EventTemplateId, SlotId } from "./event";
+import type { PlayerStatusInstance } from "./status";
+
+/** Append-only player-facing log; newest entries at the end of the array. */
+export type ActionLogEntry =
+  | {
+      kind: "cardPlayed";
+      id: string;
+      turn: number;
+      templateId: CardTemplateId;
+      fundingCost: number;
+      effects: readonly Effect[];
+    }
+  | {
+      kind: "eventFundSolved";
+      id: string;
+      turn: number;
+      slot: SlotId;
+      templateId: EventTemplateId;
+      fundingPaid: number;
+      treasuryGain: number;
+    }
+  | {
+      kind: "eventCrackdownSolved";
+      id: string;
+      turn: number;
+      slot: SlotId;
+      harmfulEventTemplateId: EventTemplateId;
+      fundingPaid: number;
+    }
+  | {
+      kind: "eventYearEndPenalty";
+      id: string;
+      turn: number;
+      slot: SlotId;
+      templateId: EventTemplateId;
+      effects: readonly Effect[];
+    }
+  | {
+      kind: "eventPowerVacuumScheduled";
+      id: string;
+      turn: number;
+      slot: SlotId;
+      templateId: "powerVacuum";
+    }
+  | {
+      kind: "crackdownCancelled";
+      id: string;
+      turn: number;
+      refund: number;
+    };
 
 export type GamePhase = "action" | "retention" | "gameOver";
 
@@ -39,7 +90,7 @@ export type GameState = {
   phase: GamePhase;
   outcome: GameOutcome;
   pendingInteraction: PendingInteraction | null;
-  nextIds: { event: number };
+  nextIds: { event: number; status: number; log: number };
   resources: Resources;
   /**
    * Consumed at the start of the Draw phase; sums delays / crises that affect draw count only.
@@ -54,4 +105,7 @@ export type GameState = {
   slots: Record<SlotId, EventInstance | null>;
   /** If true, that slot must become Major Crisis at the next Event phase (before empty rolls). */
   pendingMajorCrisis: Record<SlotId, boolean>;
+  /** Timed modifiers (e.g. draw penalty); turns tick after each beginYear draw phase. */
+  playerStatuses: PlayerStatusInstance[];
+  actionLog: readonly ActionLogEntry[];
 };

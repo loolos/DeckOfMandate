@@ -30,7 +30,7 @@ export function createInitialState(seed?: number, levelId = defaultLevelId): Gam
     phase: "action",
     outcome: "playing",
     pendingInteraction: null,
-    nextIds: { event: 0 },
+    nextIds: { event: 0, status: 0, log: 0 },
     resources: { ...level.startingResources },
     nextTurnDrawModifier: 0,
     deck: shuffled.map((c) => c.instanceId),
@@ -39,6 +39,8 @@ export function createInitialState(seed?: number, levelId = defaultLevelId): Gam
     cardsById,
     slots: { A: null, B: null },
     pendingMajorCrisis: { A: false, B: false },
+    playerStatuses: [],
+    actionLog: [],
   };
 
   return beginYear(base);

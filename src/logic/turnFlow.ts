@@ -2,6 +2,7 @@ import { getEventTemplate, rollableEventIds } from "../data/events";
 import { getLevelDef } from "../data/levels";
 import type { EventInstance, SlotId } from "../types/event";
 import type { GameState } from "../types/game";
+import type { PlayerStatusInstance } from "../types/status";
 import { drawUpToPower } from "./draw";
 import { pickWeightedIndex } from "./rng";
 
@@ -19,7 +20,7 @@ export function rollNewEventForSlot(state: GameState, slot: SlotId): GameState {
   return {
     ...state,
     rng,
-    nextIds: { event: state.nextIds.event + 1 },
+    nextIds: { ...state.nextIds, event: state.nextIds.event + 1 },
     slots: { ...state.slots, [slot]: instance },
   };
 }
@@ -41,7 +42,7 @@ function applyScheduledTransforms(state: GameState): GameState {
       };
       st = {
         ...st,
-        nextIds: { event: st.nextIds.event + 1 },
+        nextIds: { ...st.nextIds, event: st.nextIds.event + 1 },
         slots: { ...st.slots, [slot]: instance },
         pendingMajorCrisis: { ...st.pendingMajorCrisis, [slot]: false },
       };
@@ -74,6 +75,20 @@ function runEventPhase(state: GameState): GameState {
   return s;
 }
 
+function sumDrawAttemptsStatusDelta(statuses: readonly PlayerStatusInstance[]): number {
+  let sum = 0;
+  for (const p of statuses) {
+    if (p.kind === "drawAttemptsDelta") sum += p.delta;
+  }
+  return sum;
+}
+
+function tickPlayerStatusesAfterDraw(statuses: readonly PlayerStatusInstance[]): PlayerStatusInstance[] {
+  return statuses
+    .map((p) => ({ ...p, turnsRemaining: p.turnsRemaining - 1 }))
+    .filter((p) => p.turnsRemaining > 0);
+}
+
 /** Start-of-year pipeline: Income → Draw → Event roll (transforms, clear, fill). */
 export function beginYear(state: GameState): GameState {
   if (state.outcome !== "playing") return state;
@@ -85,10 +100,18 @@ export function beginYear(state: GameState): GameState {
       funding: s.resources.funding + s.resources.treasuryStat,
     },
   };
-  const attempts = Math.max(1, s.resources.power + s.nextTurnDrawModifier);
+  const statusDrawDelta = sumDrawAttemptsStatusDelta(s.playerStatuses);
+  const attempts = Math.max(1, s.resources.power + s.nextTurnDrawModifier + statusDrawDelta);
   s = { ...s, nextTurnDrawModifier: 0 };
   const drawn = drawUpToPower(s.rng, s.hand, s.deck, s.discard, attempts);
-  s = { ...s, rng: drawn.rng, hand: drawn.hand, deck: drawn.deck, discard: drawn.discard };
+  s = {
+    ...s,
+    rng: drawn.rng,
+    hand: drawn.hand,
+    deck: drawn.deck,
+    discard: drawn.discard,
+    playerStatuses: tickPlayerStatusesAfterDraw(s.playerStatuses),
+  };
   s = runEventPhase(s);
   return { ...s, phase: "action" };
 }

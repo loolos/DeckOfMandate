@@ -34,8 +34,17 @@ export const eventTemplates: Record<EventTemplateId, EventTemplate> = {
     harmful: false,
     titleKey: "event.tradeOpportunity.name",
     descriptionKey: "event.tradeOpportunity.desc",
-    solve: { kind: "funding", amount: 1 },
+    solve: { kind: "funding", amount: 2 },
     penaltiesIfUnresolved: [],
+  },
+  politicalGridlock: {
+    id: "politicalGridlock",
+    weight: 2,
+    harmful: true,
+    titleKey: "event.politicalGridlock.name",
+    descriptionKey: "event.politicalGridlock.desc",
+    solve: { kind: "funding", amount: 1 },
+    penaltiesIfUnresolved: [{ kind: "addPlayerStatus", templateId: "powerLeak", turns: 3 }],
   },
   powerVacuum: {
     id: "powerVacuum",
@@ -69,6 +78,7 @@ export const rollableEventIds: EventTemplateId[] = [
   "publicUnrest",
   "administrativeDelay",
   "tradeOpportunity",
+  "politicalGridlock",
   "powerVacuum",
 ];
 

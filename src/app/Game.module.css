@@ -76,6 +76,49 @@
   font-size: 1rem;
 }
 
+.statusSectionTitle {
+  margin: 0.75rem 0 0.35rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.statusBarEmpty {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.statusList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.statusRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.35rem 0.75rem;
+  padding: 0.35rem 0;
+  border-top: 1px solid var(--border);
+}
+
+.statusRow:first-of-type {
+  border-top: none;
+  padding-top: 0;
+}
+
+.statusTitle {
+  font-size: 0.9rem;
+}
+
+.statusMeta {
+  font-size: 0.85rem;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
 .resourceStack {
   display: flex;
   flex-direction: column;
@@ -267,7 +310,70 @@
   color: var(--muted);
 }
 
+.cardBg {
+  margin-top: 0.3rem;
+  font-size: 0.72rem;
+  line-height: 1.35;
+  color: color-mix(in srgb, var(--muted) 92%, var(--text));
+  font-style: italic;
+}
+
 .cardDesc {
+  margin-top: 0.3rem;
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+.actionLogSection {
+  margin-top: 1rem;
+}
+
+.actionLogHeading {
+  margin: 0 0 0.5rem;
+  font-size: 1rem;
+}
+
+.actionLogScroll {
+  height: 12rem;
+  max-height: 40vh;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.45rem 0.55rem;
+  background: color-mix(in srgb, var(--panel) 88%, #000);
+  font-size: 0.82rem;
+  line-height: 1.4;
+}
+
+.actionLogEmpty {
+  margin: 0.35rem 0;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.actionLogRow {
+  padding: 0.45rem 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--border) 70%, transparent);
+}
+
+.actionLogRow:last-child {
+  border-bottom: none;
+  padding-bottom: 0.15rem;
+}
+
+.actionLogHead {
+  color: var(--text);
+}
+
+.actionLogSub {
+  padding-left: 0.65rem;
+  margin-top: 0.2rem;
+  color: color-mix(in srgb, var(--text) 88%, var(--muted));
+}
+
+.actionLogSubMuted {
+  padding-left: 0.65rem;
   margin-top: 0.35rem;
   font-size: 0.78rem;
   color: var(--muted);

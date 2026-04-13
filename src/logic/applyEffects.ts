@@ -1,5 +1,7 @@
+import { getStatusTemplate } from "../data/statusTemplates";
 import type { Effect } from "../types/effect";
 import type { GameState } from "../types/game";
+import type { PlayerStatusInstance } from "../types/status";
 import { tryDrawOne } from "./draw";
 
 export function enforceLegitimacy(s: GameState): GameState {
@@ -40,6 +42,22 @@ export function applyEffect(state: GameState, e: Effect): GameState {
         ...state,
         nextTurnDrawModifier: state.nextTurnDrawModifier + e.delta,
       };
+    case "addPlayerStatus": {
+      const tmpl = getStatusTemplate(e.templateId);
+      const instanceId = `st_${state.nextIds.status}`;
+      const row: PlayerStatusInstance = {
+        instanceId,
+        templateId: e.templateId,
+        kind: tmpl.kind,
+        delta: tmpl.delta,
+        turnsRemaining: e.turns,
+      };
+      return {
+        ...state,
+        playerStatuses: [...state.playerStatuses, row],
+        nextIds: { ...state.nextIds, status: state.nextIds.status + 1 },
+      };
+    }
     default: {
       const _exhaustive: never = e;
       return _exhaustive;

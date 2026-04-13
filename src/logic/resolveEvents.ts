@@ -1,6 +1,7 @@
 import { getEventTemplate, isContinuedCrisis } from "../data/events";
 import type { SlotId } from "../types/event";
 import type { GameState } from "../types/game";
+import { appendActionLog } from "./actionLog";
 import { applyEffects, enforceLegitimacy } from "./applyEffects";
 
 const SLOTS: SlotId[] = ["A", "B"];
@@ -14,9 +15,16 @@ export function resolveEndOfYearPenalties(state: GameState): GameState {
     const tmpl = getEventTemplate(ev.templateId);
     if (!tmpl.harmful) continue;
     if (ev.templateId === "powerVacuum") {
+      s = appendActionLog(s, { kind: "eventPowerVacuumScheduled", slot, templateId: "powerVacuum" });
       s = { ...s, pendingMajorCrisis: { ...s.pendingMajorCrisis, [slot]: true } };
       continue;
     }
+    s = appendActionLog(s, {
+      kind: "eventYearEndPenalty",
+      slot,
+      templateId: ev.templateId,
+      effects: tmpl.penaltiesIfUnresolved,
+    });
     s = applyEffects(s, tmpl.penaltiesIfUnresolved);
     s = enforceLegitimacy(s);
     if (s.outcome !== "playing") return s;
