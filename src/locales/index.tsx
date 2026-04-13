@@ -1,4 +1,12 @@
-import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useLayoutEffect,
+  useMemo,
+  useState,
+  type ReactNode,
+} from "react";
 import type { MessageKey } from "./en";
 import { messagesEn } from "./en";
 import { messagesZh } from "./zh";
@@ -12,6 +20,9 @@ const bundles: Record<LocaleId, Record<MessageKey, string>> = {
   zh: messagesZh,
 };
 
+/** First visits (no stored choice) always start in English until the player switches language. */
+export const DEFAULT_LOCALE: LocaleId = "en";
+
 function readStoredLocale(): LocaleId {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
@@ -19,7 +30,7 @@ function readStoredLocale(): LocaleId {
   } catch {
     /* ignore */
   }
-  return "en";
+  return DEFAULT_LOCALE;
 }
 
 function storeLocale(locale: LocaleId) {
@@ -49,8 +60,12 @@ const I18nContext = createContext<I18nContextValue | null>(null);
 
 export function I18nProvider({ children }: { children: ReactNode }) {
   const [locale, setLocaleState] = useState<LocaleId>(() =>
-    typeof window === "undefined" ? "en" : readStoredLocale(),
+    typeof window === "undefined" ? DEFAULT_LOCALE : readStoredLocale(),
   );
+
+  useLayoutEffect(() => {
+    document.documentElement.lang = locale === "zh" ? "zh-Hans" : "en";
+  }, [locale]);
 
   const setLocale = useCallback((next: LocaleId) => {
     setLocaleState(next);

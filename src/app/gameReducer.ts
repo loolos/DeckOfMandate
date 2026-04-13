@@ -1,5 +1,6 @@
 import { getCardTemplate } from "../data/cards";
 import { getEventTemplate } from "../data/events";
+import type { LevelId } from "../data/levels";
 import { appendActionLog } from "../logic/actionLog";
 import { enforceLegitimacy } from "../logic/applyEffects";
 import { normalizeGameState } from "../logic/normalizeGameState";
@@ -11,7 +12,7 @@ import type { GameState } from "../types/game";
 import { createInitialState } from "./initialState";
 
 export type GameAction =
-  | { type: "NEW_GAME"; seed?: number }
+  | { type: "NEW_GAME"; seed?: number; levelId?: LevelId }
   | { type: "HYDRATE"; state: GameState }
   | { type: "PLAY_CARD"; handIndex: number }
   | { type: "END_YEAR" }
@@ -127,7 +128,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
     case "HYDRATE":
       return normalizeGameState(action.state);
     case "NEW_GAME":
-      return createInitialState(action.seed);
+      return createInitialState(action.seed, action.levelId ?? state.levelId);
     case "PLAY_CARD": {
       if (state.outcome !== "playing" || state.phase !== "action" || state.pendingInteraction) {
         return state;

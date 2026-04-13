@@ -4,7 +4,7 @@ import { gameReducer, type GameAction } from "./gameReducer";
 import { normalizeGameState } from "../logic/normalizeGameState";
 import { loadGame, saveGame } from "../logic/saveLoad";
 import type { GameState } from "../types/game";
-import { getLevelDef } from "../data/levels";
+import { defaultLevelId, getLevelDef, isLevelId, levelDefs, type LevelId } from "../data/levels";
 import { ActionLog } from "../components/ActionLog";
 import { EventPanel } from "../components/EventPanel";
 import { Hand } from "../components/Hand";
@@ -33,20 +33,33 @@ function normalizeLoadedSave(state: GameState): GameState {
   return normalizeGameState(state);
 }
 
-function initFromStorage(): GameState {
-  const loaded = loadGame();
-  if (loaded && isValidSave(loaded)) return normalizeLoadedSave(loaded as GameState);
+/** Fresh run until the player leaves the start menu (avoids showing “resume” as the default entry). */
+function initFreshForStartMenu(): GameState {
   return createInitialState();
+}
+
+function hasValidStoredSave(): boolean {
+  const loaded = loadGame();
+  return Boolean(loaded && isValidSave(loaded));
 }
 
 export function Game() {
   const { t } = useI18n();
-  const [state, dispatch] = useReducer(gameReducer, undefined, initFromStorage);
+  const [state, dispatch] = useReducer(gameReducer, undefined, initFreshForStartMenu);
   const [retain, setRetain] = useState<Record<string, boolean>>({});
+  const hadSaveOnLaunch = useMemo(() => hasValidStoredSave(), []);
+  const [startMenuOpen, setStartMenuOpen] = useState(true);
+  const [menuLevelId, setMenuLevelId] = useState<LevelId>(defaultLevelId);
+  const [menuSeedText, setMenuSeedText] = useState("");
+
+  const menuSeedTrimmed = menuSeedText.trim();
+  const menuSeedParsed =
+    menuSeedTrimmed === "" ? ("empty" as const) : Number.isFinite(Number(menuSeedTrimmed)) ? Number(menuSeedTrimmed) : ("invalid" as const);
 
   useEffect(() => {
+    if (startMenuOpen) return;
     saveGame(state);
-  }, [state]);
+  }, [state, startMenuOpen]);
 
   const level = useMemo(() => getLevelDef(state.levelId), [state.levelId]);
 
@@ -77,6 +90,102 @@ export function Game() {
     selectedIds.every((id) => state.hand.includes(id));
 
   const dispatchSafe = (a: GameAction) => dispatch(a);
+
+  const startNewFromMenu = (seed?: number) => {
+    dispatchSafe({ type: "NEW_GAME", seed, levelId: menuLevelId });
+    setStartMenuOpen(false);
+  };
+
+  const resumeFromStoredSave = () => {
+    const loaded = loadGame();
+    if (loaded && isValidSave(loaded)) {
+      dispatchSafe({ type: "HYDRATE", state: normalizeLoadedSave(loaded as GameState) });
+    }
+    setStartMenuOpen(false);
+  };
+
+  const startMenu = (
+    <div className={styles.startMenuScreen} role="dialog" aria-modal="true" aria-labelledby="start-menu-title">
+      <div className={styles.modal}>
+        <div className={styles.startMenuHeader}>
+          <h2 id="start-menu-title" className={styles.startMenuTitle}>
+            {t("menu.title")}
+          </h2>
+          <LanguageToggle />
+        </div>
+        <div className={styles.startMenuActions}>
+          <button type="button" className={`${styles.btn} ${styles.btnPrimary}`} onClick={() => startNewFromMenu(undefined)}>
+            {t("menu.newRandom")}
+          </button>
+        </div>
+        <div className={styles.startMenuForm}>
+          <label className={styles.startMenuLabel} htmlFor="start-menu-level">
+            {t("menu.levelLabel")}
+          </label>
+          <select
+            id="start-menu-level"
+            className={styles.startMenuSelect}
+            value={menuLevelId}
+            onChange={(e) => {
+              const v = e.target.value;
+              if (isLevelId(v)) setMenuLevelId(v);
+            }}
+          >
+            {(Object.keys(levelDefs) as LevelId[]).map((id) => {
+              const def = getLevelDef(id);
+              return (
+                <option key={id} value={id}>
+                  {t(def.nameKey as MessageKey)}
+                </option>
+              );
+            })}
+          </select>
+          <label className={styles.startMenuLabel} htmlFor="start-menu-seed">
+            {t("menu.seedLabel")}
+          </label>
+          <input
+            id="start-menu-seed"
+            type="text"
+            className={styles.startMenuInput}
+            inputMode="numeric"
+            autoComplete="off"
+            placeholder={t("menu.seedPlaceholder")}
+            value={menuSeedText}
+            onChange={(e) => setMenuSeedText(e.target.value)}
+          />
+          {menuSeedParsed === "invalid" ? (
+            <p className={styles.startMenuError} role="alert">
+              {t("menu.seedInvalid")}
+            </p>
+          ) : (
+            <p className={styles.startMenuMuted}>{t("menu.seedHint")}</p>
+          )}
+          <button
+            type="button"
+            className={`${styles.btn} ${styles.btnPrimary}`}
+            disabled={menuSeedParsed === "invalid"}
+            onClick={() => {
+              const seed = menuSeedParsed === "empty" ? undefined : (menuSeedParsed as number);
+              startNewFromMenu(seed);
+            }}
+          >
+            {t("menu.startConfigured")}
+          </button>
+        </div>
+        {hadSaveOnLaunch ? (
+          <div className={styles.startMenuResume}>
+            <button type="button" className={styles.btn} onClick={resumeFromStoredSave}>
+              {t("menu.resumeSave")}
+            </button>
+          </div>
+        ) : null}
+      </div>
+    </div>
+  );
+
+  if (startMenuOpen) {
+    return startMenu;
+  }
 
   return (
     <div className={styles.root}>
