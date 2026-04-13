@@ -235,14 +235,14 @@ describe("gameReducer", () => {
     if (!diplomaticIntervention) {
       throw new Error("expected diplomaticIntervention in secondMandate deck");
     }
-    const withCardInHand = {
+    const withCardInHand: typeof base = {
       ...base,
       hand: [diplomaticIntervention],
       deck: base.deck.filter((id) => id !== diplomaticIntervention),
       resources: { ...base.resources, funding: 1 },
       slots: {
         ...base.slots,
-        A: { instanceId: "e_harm", templateId: "nobleResentment", resolved: false },
+        A: { instanceId: "e_harm", templateId: "nobleResentment" as const, resolved: false },
       },
       playerStatuses: [
         ...base.playerStatuses,
