@@ -1,4 +1,4 @@
-import { defaultLevelId, isLevelId } from "../data/levels";
+import { defaultLevelId, getLevelDef, isLevelId } from "../data/levels";
 import { EMPTY_EVENT_SLOTS, EMPTY_PENDING_MAJOR_CRISIS, EVENT_SLOT_ORDER, type SlotId } from "../types/event";
 import type { GameState } from "../types/game";
 
@@ -45,6 +45,9 @@ export function normalizeGameState(state: GameState): GameState {
   }
   if (s.europeAlert === undefined) {
     s = { ...s, europeAlert: false };
+  }
+  if (typeof s.calendarStartYear !== "number") {
+    s = { ...s, calendarStartYear: getLevelDef(s.levelId).calendarStartYear };
   }
   return s;
 }

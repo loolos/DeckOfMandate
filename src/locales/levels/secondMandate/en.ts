@@ -19,10 +19,10 @@ export const messagesEnSecondMandate = {
     "The settlement can consolidate your gains. Invest 1 Funding to secure Treasury +1 and Legitimacy +1.",
   "event.revocationNantes.name": "Revocation of the Edict of Nantes",
   "event.revocationNantes.desc":
-    "Religious policy hardens. Spend 1 Funding (or use Royal Intervention) to enforce order and gain Legitimacy +1; if left unresolved, Treasury suffers.",
+    "Religious policy hardens. Spend 1 Funding (or use Royal Intervention) to enforce order and gain Legitimacy +1; if left unresolved, both Treasury and Legitimacy suffer.",
   "event.leagueOfAugsburg.name": "League of Augsburg Forms",
   "event.leagueOfAugsburg.desc":
-    "European powers coordinate against France. Pay 2 Funding (or use Royal Intervention) to contain escalation, or suffer prolonged political drag.",
+    "European powers coordinate against France. Pay 2 Funding (or use Royal Intervention) to contain escalation, or suffer Loss of Authority for 3 turns.",
   "event.nineYearsWar.name": "The Nine Years' War",
   "event.nineYearsWar.desc":
     "Major war pressure settles in. Pay 2 Funding (or use Royal Intervention) to stabilize the front; unresolved years erode Treasury and card flow.",
@@ -31,28 +31,28 @@ export const messagesEnSecondMandate = {
     "Peace terms can restore order. Invest 1 Funding to gain Legitimacy +1 and lock in a softer landing.",
   "event.versaillesExpenditure.name": "Versailles Expenditure",
   "event.versaillesExpenditure.desc":
-    "Court spending rises again. Pay 2 Funding or lose 1 Treasury.",
+    "Court spending rises again. Pay 2 Funding or lose 2 Treasury.",
   "event.nobleResentment.name": "Noble Resentment",
   "event.nobleResentment.desc":
-    "Elite resistance grows at court and in the provinces. Pay 1 Funding or Royal Intervention, or gain Loss of Authority for 2 turns.",
+    "Elite resistance grows at court and in the provinces. Pay 1 Funding or Royal Intervention, or gain Loss of Authority for 3 turns.",
   "event.provincialNoncompliance.name": "Provincial Noncompliance",
   "event.provincialNoncompliance.desc":
-    "Local officials stall implementation. Pay 1 Funding or suffer a draw penalty next year.",
+    "Local officials stall implementation. Pay 1 Funding or suffer a -2 draw modifier next year.",
   "event.risingGrainPrices.name": "Rising Grain Prices",
   "event.risingGrainPrices.desc":
-    "Food pressure drives unrest. Pay 2 Funding or lose 1 Legitimacy.",
+    "Food pressure drives unrest. Pay 2 Funding or lose 2 Legitimacy.",
   "event.taxResistance.name": "Tax Resistance",
   "event.taxResistance.desc":
-    "Communities and elites resist levies. Pay 1 Funding or Royal Intervention, or lose 1 Treasury.",
+    "Communities and elites resist levies. Pay 1 Funding or Royal Intervention, or lose 1 Treasury and 1 Legitimacy.",
   "event.frontierGarrisons.name": "Frontier Garrisons",
   "event.frontierGarrisons.desc":
-    "Border garrisons consume revenue. Pay 1 Funding or lose 1 Treasury.",
+    "Border garrisons consume revenue. Pay 1 Funding or lose 1 Treasury and take a draw penalty next year.",
   "event.tradeDisruption.name": "Trade Disruption",
   "event.tradeDisruption.desc":
-    "Sea lanes and convoy risk cut into policy bandwidth. Pay 1 Funding or take a draw penalty next year.",
+    "Sea lanes and convoy risk cut into policy bandwidth. Pay 1 Funding or take a -2 draw modifier next year.",
   "event.courtScandal.name": "Court Scandal",
   "event.courtScandal.desc":
-    "Factional intrigue weakens authority. Pay 1 Funding or Royal Intervention, or lose 1 Legitimacy.",
+    "Factional intrigue weakens authority. Pay 1 Funding or Royal Intervention, or lose 2 Legitimacy.",
   "event.militaryPrestige.name": "Military Prestige",
   "event.militaryPrestige.desc":
     "A chance to convert battlefield image into authority. Invest 1 Funding for Legitimacy +1.",
@@ -64,10 +64,10 @@ export const messagesEnSecondMandate = {
     "A capable official can be elevated. Invest 1 Funding for Power +1.",
   "event.warWeariness.name": "War Weariness",
   "event.warWeariness.desc":
-    "Long conflict exhausts support. Pay 1 Funding or Royal Intervention, or lose 1 Legitimacy.",
+    "Long conflict exhausts support. Pay 1 Funding or Royal Intervention, or lose 1 Legitimacy and gain Loss of Authority for 2 turns.",
   "event.grainReliefCrisis.name": "Grain Relief Crisis",
   "event.grainReliefCrisis.desc":
-    "Food insecurity surges. Spend 2 Funding to stabilize communities and gain Legitimacy +1; unresolved pressure erodes Legitimacy.",
+    "Food insecurity surges. Spend 2 Funding to stabilize communities and gain Legitimacy +2; unresolved pressure causes Legitimacy -2.",
   "event.expansionRemembered.name": "Expansion Remembered",
   "event.expansionRemembered.desc":
     "Your earlier aggressive successes still project strength. Resolve for free to gain Legitimacy +1.",
@@ -77,21 +77,21 @@ export const messagesEnSecondMandate = {
   "card.grainRelief.name": "Grain Relief Program",
   "card.grainRelief.background":
     "Emergency grain purchasing and provincial relief channels cool unrest before shortages become revolt.",
-  "card.grainRelief.desc": "Legitimacy +1.",
+  "card.grainRelief.desc": "Legitimacy +1 and next turn draw modifier +1.",
   "card.taxRebalance.name": "Tax Rebalancing",
   "card.taxRebalance.background":
     "Reallocate burdens and close loopholes to keep revenue flowing without immediate breakdown.",
-  "card.taxRebalance.desc": "Gain +1 Funding.",
+  "card.taxRebalance.desc": "Gain +2 Funding and Treasury +1.",
   "card.diplomaticCongress.name": "Diplomatic Congress",
   "card.diplomaticCongress.background":
     "Envoys, conferences, and guarantees buy breathing room while rivals test your frontiers.",
-  "card.diplomaticCongress.desc": "Next turn draw modifier +1.",
+  "card.diplomaticCongress.desc": "Next turn draw modifier +1 and Legitimacy +1.",
   "card.patronageOffice.name": "Patronage Office",
   "card.patronageOffice.background":
     "Centralized appointments rebuild obedience by tying careers directly to the crown.",
-  "card.patronageOffice.desc": "Power +1.",
+  "card.patronageOffice.desc": "Power +1 and Funding +1.",
   "card.warBond.name": "War Bond",
   "card.warBond.background":
     "Borrow now to survive this year; the fiscal burden arrives later.",
-  "card.warBond.desc": "Funding +2, Treasury -1.",
+  "card.warBond.desc": "Funding +3, Treasury -1.",
 } as const;

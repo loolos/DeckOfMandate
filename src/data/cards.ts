@@ -50,7 +50,10 @@ const templates: Record<CardTemplateId, CardTemplate> = {
     titleKey: "card.grainRelief.name",
     backgroundKey: "card.grainRelief.background",
     descriptionKey: "card.grainRelief.desc",
-    effects: [{ kind: "modResource", resource: "legitimacy", delta: 1 }],
+    effects: [
+      { kind: "modResource", resource: "legitimacy", delta: 1 },
+      { kind: "scheduleNextTurnDrawModifier", delta: 1 },
+    ],
   },
   taxRebalance: {
     id: "taxRebalance",
@@ -58,7 +61,10 @@ const templates: Record<CardTemplateId, CardTemplate> = {
     titleKey: "card.taxRebalance.name",
     backgroundKey: "card.taxRebalance.background",
     descriptionKey: "card.taxRebalance.desc",
-    effects: [{ kind: "gainFunding", amount: 1 }],
+    effects: [
+      { kind: "gainFunding", amount: 2 },
+      { kind: "modResource", resource: "treasuryStat", delta: 1 },
+    ],
   },
   diplomaticCongress: {
     id: "diplomaticCongress",
@@ -66,7 +72,10 @@ const templates: Record<CardTemplateId, CardTemplate> = {
     titleKey: "card.diplomaticCongress.name",
     backgroundKey: "card.diplomaticCongress.background",
     descriptionKey: "card.diplomaticCongress.desc",
-    effects: [{ kind: "scheduleNextTurnDrawModifier", delta: 1 }],
+    effects: [
+      { kind: "scheduleNextTurnDrawModifier", delta: 1 },
+      { kind: "modResource", resource: "legitimacy", delta: 1 },
+    ],
   },
   patronageOffice: {
     id: "patronageOffice",
@@ -74,7 +83,10 @@ const templates: Record<CardTemplateId, CardTemplate> = {
     titleKey: "card.patronageOffice.name",
     backgroundKey: "card.patronageOffice.background",
     descriptionKey: "card.patronageOffice.desc",
-    effects: [{ kind: "modResource", resource: "power", delta: 1 }],
+    effects: [
+      { kind: "modResource", resource: "power", delta: 1 },
+      { kind: "gainFunding", amount: 1 },
+    ],
   },
   warBond: {
     id: "warBond",
@@ -83,7 +95,7 @@ const templates: Record<CardTemplateId, CardTemplate> = {
     backgroundKey: "card.warBond.background",
     descriptionKey: "card.warBond.desc",
     effects: [
-      { kind: "gainFunding", amount: 2 },
+      { kind: "gainFunding", amount: 3 },
       { kind: "modResource", resource: "treasuryStat", delta: -1 },
     ],
   },

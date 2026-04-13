@@ -21,6 +21,11 @@ describe("scriptedCalendar", () => {
     expect(currentCalendarYear(s)).toBe(getLevelDef("firstMandate").calendarStartYear + 6);
   });
 
+  it("currentCalendarYear respects per-run calendar override", () => {
+    const s = { ...stateAtTurn(3), calendarStartYear: 1701 };
+    expect(currentCalendarYear(s)).toBe(1703);
+  });
+
   it("injects scripted row on presenceStartYear from level config", () => {
     const cfg = levelContentByLevelId.firstMandate.scriptedCalendarEvents[0]!;
     const cal = getLevelDef("firstMandate").calendarStartYear;
