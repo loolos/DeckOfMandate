@@ -52,9 +52,9 @@ const secondMandate = {
     legitimacy: 3,
   },
   winTargets: {
-    treasuryStat: 5,
-    power: 5,
-    legitimacy: 5,
+    treasuryStat: 10,
+    power: 8,
+    legitimacy: 10,
   },
 } as const;
 
