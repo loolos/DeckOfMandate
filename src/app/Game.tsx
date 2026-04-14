@@ -25,6 +25,7 @@ import { buildCardQuickFrameRows } from "../logic/quickOutcomeFrame";
 import type { MessageKey } from "../locales";
 import { useI18n } from "../locales";
 import type { GameState } from "../types/game";
+import type { CardTag } from "../types/tags";
 import { EVENT_SLOT_ORDER } from "../types/event";
 import { gameReducer, type GameAction } from "./gameReducer";
 import { createInitialState } from "./initialState";
@@ -53,6 +54,11 @@ function levelDefHasIntro(def: (typeof levelDefs)[LevelId]): def is (typeof leve
 
 function levelEndingKeys(def: (typeof levelDefs)[LevelId]): LevelEndingCopyKeys | undefined {
   return "ending" in def ? def.ending : undefined;
+}
+
+function displayRefitTags(mode: Level2StartDraft["mode"], tags: readonly CardTag[]): readonly CardTag[] {
+  if (mode !== "standalone") return tags;
+  return tags.filter((tag) => tag !== "inflation");
 }
 
 function isValidSave(x: unknown): x is GameState {
@@ -292,12 +298,25 @@ export function Game() {
   const renderContinuityCardRow = (card: Level2CarryoverCard) => {
     if (!level2Draft) return null;
     const tmpl = getCardTemplate(card.templateId);
-    const effectiveCost = tmpl.cost + card.inflationDelta;
+    const visibleTags = displayRefitTags(level2Draft.mode, tmpl.tags);
+    const visibleInflationDelta =
+      level2Draft.mode === "standalone" && tmpl.tags.includes("inflation") ? 0 : card.inflationDelta;
+    const effectiveCost = tmpl.cost + visibleInflationDelta;
     const title = cardLabelWithIcon(card.templateId, t(tmpl.titleKey as MessageKey));
     const quickRows = buildCardQuickFrameRows(tmpl, effectiveCost);
     const compactSummary = quickRows.map((row) => row.value).join(" · ");
     const expanded = expandedRefitCardId === card.instanceId;
     const removed = level2Draft.removedCarryoverIds.includes(card.instanceId);
+    const tagChips =
+      visibleTags.length > 0 ? (
+        <div className={styles.badgeRow}>
+          {visibleTags.map((tag) => (
+            <span key={`${card.instanceId}_${tag}`} className={`${styles.badge} ${styles.tagButton}`}>
+              {t(`card.tag.${tag}` as MessageKey)}
+            </span>
+          ))}
+        </div>
+      ) : null;
     return (
       <div
         key={card.instanceId}
@@ -321,6 +340,7 @@ export function Game() {
         <div className={styles.retainCardInfo}>
           <span className={styles.retainCardTitle}>{title}</span>
           <span className={styles.retainCardSummary}>{compactSummary}</span>
+          {tagChips}
           {expanded ? (
             <div className={styles.retainCardDetails}>
               <OutcomeQuickFrame rows={quickRows} />
@@ -350,11 +370,22 @@ export function Game() {
   const renderFixedNewCardPreviewRow = (id: (typeof LEVEL2_FIXED_NEW_IDS)[number]) => {
     if (!level2Draft) return null;
     const tmpl = getCardTemplate(id);
+    const visibleTags = displayRefitTags(level2Draft.mode, tmpl.tags);
     const title = cardLabelWithIcon(id, t(tmpl.titleKey as MessageKey));
     const quickRows = buildCardQuickFrameRows(tmpl);
     const compactSummary = quickRows.map((row) => row.value).join(" · ");
     const rowId = `preview-${id}`;
     const expanded = expandedRefitCardId === rowId;
+    const tagChips =
+      visibleTags.length > 0 ? (
+        <div className={styles.badgeRow}>
+          {visibleTags.map((tag) => (
+            <span key={`${rowId}_${tag}`} className={`${styles.badge} ${styles.tagButton}`}>
+              {t(`card.tag.${tag}` as MessageKey)}
+            </span>
+          ))}
+        </div>
+      ) : null;
     return (
       <div
         key={id}
@@ -373,6 +404,7 @@ export function Game() {
         <div className={styles.retainCardInfo}>
           <span className={styles.retainCardTitle}>{title}</span>
           <span className={styles.retainCardSummary}>{compactSummary}</span>
+          {tagChips}
           {expanded ? (
             <div className={styles.retainCardDetails}>
               <OutcomeQuickFrame rows={quickRows} />
