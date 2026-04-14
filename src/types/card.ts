@@ -12,7 +12,8 @@ export type CardTemplateId =
   | "grainRelief"
   | "taxRebalance"
   | "diplomaticCongress"
-  | "patronageOffice";
+  | "patronageOffice"
+  | "suppressHuguenots";
 
 export type CardTemplate = {
   id: CardTemplateId;

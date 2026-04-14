@@ -66,6 +66,9 @@ function eventPayChips(tmpl: EventTemplate): string {
   if (sk.kind === "scriptedAttack") {
     return `⚔️`;
   }
+  if (sk.kind === "nantesPolicyChoice") {
+    return `☯️ | ⚔️`;
+  }
   return `🛡️ · ${getResourceIcon("funding")}1`;
 }
 

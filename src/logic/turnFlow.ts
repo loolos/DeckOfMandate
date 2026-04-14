@@ -26,6 +26,7 @@ export const PROB_SINGLE_EVENT_WHEN_ALL_EMPTY = 0.3;
 export const PROB_EUROPE_ALERT_SUPPLEMENTAL_EVENT = 0.5;
 
 const EUROPE_ALERT_SUPPLEMENTAL_POOL = ["frontierGarrisons", "tradeDisruption"] as const;
+const RELIGIOUS_TENSION_TRIGGER_PROBABILITY = 0.3;
 
 export function rollNewEventForSlot(state: GameState, slot: SlotId): GameState {
   const pool = getLevelContent(state.levelId).rollableEventIds;
@@ -114,6 +115,7 @@ function runEventPhase(state: GameState): GameState {
   s = applyScriptedCalendarPhase(s);
   s = fillEmptySlots(s);
   s = maybeAddEuropeAlertSupplementalEvent(s);
+  s = maybeAddReligiousTensionEvent(s);
   return s;
 }
 
@@ -176,7 +178,10 @@ export function retentionCapacity(state: GameState): number {
 
 function tickPlayerStatusesAfterDraw(statuses: readonly PlayerStatusInstance[]): PlayerStatusInstance[] {
   return statuses
-    .map((p) => ({ ...p, turnsRemaining: p.turnsRemaining - 1 }))
+    .map((p) => {
+      if (p.templateId === "religiousTolerance" || p.templateId === "huguenotContainment") return p;
+      return { ...p, turnsRemaining: p.turnsRemaining - 1 };
+    })
     .filter((p) => p.turnsRemaining > 0);
 }
 
@@ -234,7 +239,9 @@ export function evaluateVictory(state: GameState): GameState {
   const { treasuryStat, power, legitimacy } = state.resources;
   const chapterObjectiveSatisfied =
     state.levelId !== "secondMandate" ||
-    (!state.europeAlert && state.nymwegenSettlementAchieved);
+    (!state.europeAlert &&
+      state.nymwegenSettlementAchieved &&
+      !state.playerStatuses.some((s) => s.templateId === "huguenotContainment"));
   if (
     treasuryStat >= t.treasuryStat &&
     power >= t.power &&
@@ -252,4 +259,25 @@ export function evaluateTimeDefeat(state: GameState): GameState {
     return { ...state, phase: "gameOver", outcome: "defeatTime" };
   }
   return state;
+}
+export function maybeAddReligiousTensionEvent(state: GameState): GameState {
+  if (!state.playerStatuses.some((s) => s.templateId === "religiousTolerance")) return state;
+  const alreadyOnBoard = EVENT_SLOT_ORDER.some((slot) => state.slots[slot]?.templateId === "religiousTension");
+  if (alreadyOnBoard) return state;
+  const target = EVENT_SLOT_ORDER.find((slot) => !state.slots[slot]);
+  if (!target) return state;
+  let s = state;
+  const [rngRoll, uRoll] = rngNext(s.rng);
+  s = { ...s, rng: rngRoll };
+  if (uRoll >= RELIGIOUS_TENSION_TRIGGER_PROBABILITY) return s;
+  const instance: EventInstance = {
+    instanceId: `evt_${s.nextIds.event}`,
+    templateId: "religiousTension",
+    resolved: false,
+  };
+  return {
+    ...s,
+    nextIds: { ...s.nextIds, event: s.nextIds.event + 1 },
+    slots: { ...s.slots, [target]: instance },
+  };
 }

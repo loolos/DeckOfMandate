@@ -18,6 +18,8 @@ export const messagesEnFirstMandate = {
     "Louis presses claims on the Spanish Netherlands and Franche-Comté. You may launch the campaign (costs and rewards below). Success alarms neighbors: after an attack, the Triple Alliance may coordinate—each year there is a chance to draw one fewer card (never below 1). The issue stays on the board through 1669 unless you attack.",
   "status.antiFrenchLeague.name": "Anti-French coalition",
   "status.antiFrenchLeague.hint": "Each year: {pct}% chance of −1 draw (min 1).",
+  "status.antiFrenchLeague.history":
+    "French expansion provokes balancing diplomacy that hardens into sustained war pressure.",
   "log.eventScriptedAttack.war.title":
     "[Turn {turn}] Slot {slot}: {event} — campaign in the Spanish Netherlands and Franche-Comté.",
   "log.eventScriptedAttack.war.summary":

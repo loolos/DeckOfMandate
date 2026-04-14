@@ -22,6 +22,8 @@ export type GameAction =
   | { type: "PLAY_CARD"; handIndex: number }
   | { type: "END_YEAR" }
   | { type: "SOLVE_EVENT"; slot: SlotId }
+  | { type: "PICK_NANTES_TOLERANCE"; slot: SlotId }
+  | { type: "PICK_NANTES_CRACKDOWN"; slot: SlotId }
   | { type: "SCRIPTED_EVENT_ATTACK"; slot: SlotId }
   | { type: "CRACKDOWN_TARGET"; slot: SlotId }
   | { type: "CRACKDOWN_CANCEL" }
@@ -72,11 +74,12 @@ function isCrackdownTarget(state: GameState, slot: SlotId): boolean {
 }
 
 function canFundSolve(state: GameState, slot: SlotId): boolean {
-  if (state.phase !== "action" || state.pendingInteraction) return false;
+  if (state.phase !== "action") return false;
   const ev = state.slots[slot];
   if (!ev || ev.resolved) return false;
   const tmpl = getEventTemplate(ev.templateId);
   if (tmpl.solve.kind === "crackdownOnly") return false;
+  if (tmpl.solve.kind === "nantesPolicyChoice") return false;
   if (tmpl.solve.kind === "funding") {
     return state.resources.funding >= tmpl.solve.amount;
   }
@@ -87,7 +90,7 @@ function canFundSolve(state: GameState, slot: SlotId): boolean {
 }
 
 function canScriptedAttack(state: GameState, slot: SlotId): boolean {
-  if (state.phase !== "action" || state.pendingInteraction) return false;
+  if (state.phase !== "action" || state.pendingInteraction?.type === "crackdownPick") return false;
   const ev = state.slots[slot];
   if (!ev || ev.resolved) return false;
   const tmpl = getEventTemplate(ev.templateId);
@@ -234,6 +237,40 @@ function performFundSolve(state: GameState, slot: SlotId): GameState {
   return s;
 }
 
+function addUniqueStatus(state: GameState, templateId: "religiousTolerance" | "huguenotContainment"): GameState {
+  const existing = state.playerStatuses.find((s) => s.templateId === templateId);
+  if (existing) return state;
+  return applyEffects(state, [{ kind: "addPlayerStatus", templateId, turns: 99 }]);
+}
+
+function setStatusTurns(
+  state: GameState,
+  templateId: "religiousTolerance" | "huguenotContainment",
+  turnsRemaining: number,
+): GameState {
+  return {
+    ...state,
+    playerStatuses: state.playerStatuses.map((st) =>
+      st.templateId === templateId ? { ...st, turnsRemaining } : st,
+    ),
+  };
+}
+
+function removeCardsEverywhere(state: GameState, templateId: CardTemplateId): GameState {
+  const toRemove = new Set(
+    Object.values(state.cardsById)
+      .filter((c) => c.templateId === templateId)
+      .map((c) => c.instanceId),
+  );
+  if (toRemove.size === 0) return state;
+  return {
+    ...state,
+    hand: state.hand.filter((id) => !toRemove.has(id)),
+    deck: state.deck.filter((id) => !toRemove.has(id)),
+    discard: state.discard.filter((id) => !toRemove.has(id)),
+  };
+}
+
 export function gameReducer(state: GameState, action: GameAction): GameState {
   switch (action.type) {
     case "HYDRATE":
@@ -273,6 +310,33 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
           effects: tmpl.effects,
         });
       }
+      if (inst.templateId === "suppressHuguenots") {
+        const removed = removeHand(paid, id);
+        let s: GameState = removed;
+        const status = s.playerStatuses.find((st) => st.templateId === "huguenotContainment");
+        if (status) {
+          const next = Math.max(0, status.turnsRemaining - 1);
+          s = {
+            ...s,
+            playerStatuses:
+              next > 0
+                ? s.playerStatuses.map((st) =>
+                    st.instanceId === status.instanceId ? { ...st, turnsRemaining: next } : st,
+                  )
+                : s.playerStatuses.filter((st) => st.instanceId !== status.instanceId),
+          };
+          if (next === 0) {
+            s = removeCardsEverywhere(s, "suppressHuguenots");
+          }
+        }
+        s = appendActionLog(s, {
+          kind: "cardPlayed",
+          templateId: inst.templateId,
+          fundingCost: tmpl.cost,
+          effects: tmpl.effects,
+        });
+        return s;
+      }
       let s = applyPlayedCardEffects(paid, inst.templateId);
       if (inst.templateId === "grainRelief") {
         s = resolveFirstUnresolvedEventByTemplate(s, "risingGrainPrices");
@@ -297,6 +361,26 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       }
       if (!canFundSolve(state, action.slot)) return state;
       return performFundSolve(state, action.slot);
+    }
+    case "PICK_NANTES_TOLERANCE": {
+      if (state.outcome !== "playing" || state.phase !== "action" || state.pendingInteraction) return state;
+      const ev = state.slots[action.slot];
+      if (!ev || ev.resolved || ev.templateId !== "revocationNantes") return state;
+      let s: GameState = applyEffects(state, [{ kind: "modResource", resource: "legitimacy", delta: -1 }]);
+      s = addUniqueStatus(s, "religiousTolerance");
+      s = markSlotResolved(s, action.slot);
+      s = enforceLegitimacy(s);
+      return s;
+    }
+    case "PICK_NANTES_CRACKDOWN": {
+      if (state.outcome !== "playing" || state.phase !== "action" || state.pendingInteraction) return state;
+      const ev = state.slots[action.slot];
+      if (!ev || ev.resolved || ev.templateId !== "revocationNantes") return state;
+      let s: GameState = addUniqueStatus(state, "huguenotContainment");
+      s = setStatusTurns(s, "huguenotContainment", 3);
+      s = applyEffects(s, [{ kind: "addCardsToDeck", templateId: "suppressHuguenots", count: 3 }]);
+      s = markSlotResolved(s, action.slot);
+      return s;
     }
     case "SCRIPTED_EVENT_ATTACK": {
       if (state.outcome !== "playing" || state.phase !== "action" || state.pendingInteraction) {

@@ -18,6 +18,7 @@ export const messagesZhFirstMandate = {
     "路易对西属尼德兰与弗朗什孔泰提出主张。你可发动攻势（代价与收益见下）。军事成功会惊动邻国：进攻后反法同盟可能形成——每年有一定几率少抽一张牌（不少于 1）。若未进攻，该议题会占位至 1669 年结束。",
   "status.antiFrenchLeague.name": "反法同盟压力",
   "status.antiFrenchLeague.hint": "每年：{pct}% 几率本年少抽 1 张牌（仍至少抽 1）。",
+  "status.antiFrenchLeague.history": "法国扩张引发列强制衡，外交围堵转化为长期战争压力。",
   "log.eventScriptedAttack.war.title":
     "[第 {turn} 年] 槽位 {slot}：{event} — 西属尼德兰与弗朗什孔泰方向开战。",
   "log.eventScriptedAttack.war.summary":

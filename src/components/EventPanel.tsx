@@ -122,6 +122,26 @@ export function EventPanel({
                       {t("ui.solveFundingOrCrackdown", { cost: `${getResourceIcon("funding")} ${amount}` })}
                     </button>
                   ) : null}
+                  {!ev.resolved && solveKind === "nantesPolicyChoice" ? (
+                    <>
+                      <button
+                        type="button"
+                        className={styles.btn}
+                        disabled={Boolean(state.pendingInteraction)}
+                        onClick={() => dispatch({ type: "PICK_NANTES_TOLERANCE", slot })}
+                      >
+                        {t("ui.nantesTolerance")}
+                      </button>
+                      <button
+                        type="button"
+                        className={styles.btn}
+                        disabled={Boolean(state.pendingInteraction)}
+                        onClick={() => dispatch({ type: "PICK_NANTES_CRACKDOWN", slot })}
+                      >
+                        {t("ui.nantesCrackdown")}
+                      </button>
+                    </>
+                  ) : null}
                   {!ev.resolved && solveKind === "crackdownOnly" && !pending ? (
                     <span className={styles.eventCardCrackdownHint}>{t("ui.solveCrackdown")}</span>
                   ) : null}
