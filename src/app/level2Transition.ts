@@ -371,6 +371,7 @@ function buildContinuityLevel2State(draft: Level2ContinuityDraft): GameState {
     europeAlert: draft.europeAlert,
     europeAlertDrawPenalty,
     nymwegenSettlementAchieved: false,
+    proceduralEventSequence: [],
     actionLog: [],
   };
 

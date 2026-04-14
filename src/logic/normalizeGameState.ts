@@ -63,6 +63,9 @@ export function normalizeGameState(state: GameState): GameState {
   if (!Array.isArray(s.scheduledDrawModifiers)) {
     s = { ...s, scheduledDrawModifiers: [] };
   }
+  if (!Array.isArray(s.proceduralEventSequence)) {
+    s = { ...s, proceduralEventSequence: [] };
+  }
   if (!s.cardInflationById || typeof s.cardInflationById !== "object") {
     s = { ...s, cardInflationById: {} };
   }

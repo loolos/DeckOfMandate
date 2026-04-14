@@ -155,5 +155,10 @@ export type GameState = {
   europeAlertDrawPenalty: number;
   /** Chapter-2 objective marker; set true once Treaties of Nijmegen is successfully resolved. */
   nymwegenSettlementAchieved: boolean;
+  /**
+   * Deterministic procedural event queue (A–C random events only).
+   * Built as concatenated shuffled blocks where each template appears `weight` times.
+   */
+  proceduralEventSequence: EventTemplateId[];
   actionLog: readonly ActionLogEntry[];
 };
