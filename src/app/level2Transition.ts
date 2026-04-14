@@ -84,17 +84,23 @@ function buildContinuityCarryoverCards(from: GameState): Level2CarryoverCard[] {
   const orderedPoolIds = [...from.deck, ...from.discard, ...from.hand];
   const seen = new Set<string>();
   const out: Level2CarryoverCard[] = [];
-  for (const id of orderedPoolIds) {
-    if (seen.has(id)) continue;
+  const appendIfEligible = (id: string) => {
+    if (seen.has(id)) return;
     seen.add(id);
     const inst = from.cardsById[id];
-    if (!inst) continue;
-    if (getCardTemplate(inst.templateId).tags.includes("temp")) continue;
+    if (!inst) return;
+    if (getCardTemplate(inst.templateId).tags.includes("temp")) return;
     out.push({
       instanceId: id,
       templateId: inst.templateId,
       inflationDelta: Math.max(0, from.cardInflationById[id] ?? 0),
     });
+  };
+  for (const id of orderedPoolIds) {
+    appendIfEligible(id);
+  }
+  for (const id of Object.keys(from.cardsById)) {
+    appendIfEligible(id);
   }
   return out;
 }

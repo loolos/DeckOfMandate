@@ -118,6 +118,29 @@ describe("level2Transition", () => {
     }
   });
 
+  it("includes non-temp cards still present in cardsById even if they are outside deck/discard/hand", () => {
+    const chapter1Win = createInitialState(1_903, "firstMandate");
+    const offPoolId = "off_pool_development";
+    const sourceDevelopment = Object.values(chapter1Win.cardsById).find((card) => card.templateId === "development");
+    if (!sourceDevelopment) throw new Error("expected development card");
+    const withOffPoolCard = {
+      ...chapter1Win,
+      cardsById: {
+        ...chapter1Win.cardsById,
+        [offPoolId]: { instanceId: offPoolId, templateId: sourceDevelopment.templateId },
+      },
+      cardInflationById: {
+        ...chapter1Win.cardInflationById,
+        [offPoolId]: 2,
+      },
+    };
+    const draft = createContinuityLevel2Draft(withOffPoolCard);
+    const carried = draft.carryoverCards.find((card) => card.instanceId === offPoolId);
+    expect(carried).toBeDefined();
+    expect(carried?.templateId).toBe("development");
+    expect(carried?.inflationDelta).toBe(2);
+  });
+
   it("validateLevel2Draft supports both standalone and continuity flows", () => {
     const standalone = createStandaloneLevel2Draft(901);
     const continuity = createContinuityLevel2Draft(createInitialState(902, "firstMandate"));
