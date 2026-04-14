@@ -1,8 +1,13 @@
-import { createInitialState } from "./initialState";
+import { getCardTemplate } from "../data/cards";
 import { getLevelContent } from "../data/levelContent";
 import { getLevelDef } from "../data/levels";
-import type { CardTemplateId } from "../types/card";
+import { computeEuropeAlertDrawPenalty } from "../logic/europeAlert";
+import { createRngFromSeed, shuffle } from "../logic/rng";
+import { beginYear } from "../logic/turnFlow";
+import type { CardInstance, CardTemplateId } from "../types/card";
+import { EMPTY_EVENT_SLOTS, EMPTY_PENDING_MAJOR_CRISIS } from "../types/event";
 import type { GameState, Resources } from "../types/game";
+import { createInitialState } from "./initialState";
 
 export const LEVEL2_ADJUSTABLE_IDS = ["funding", "crackdown", "reform", "ceremony"] as const;
 export const LEVEL2_NEW_IDS = [
@@ -18,6 +23,12 @@ export type Level2StartMode = "standalone" | "continuity";
 
 export type Level2RefitCounts = Record<Level2RefitCardId, number>;
 
+export type Level2CarryoverCard = {
+  instanceId: string;
+  templateId: CardTemplateId;
+  inflationDelta: number;
+};
+
 export type Level2RefitRules = {
   minDeckSize: number;
   maxDeckSize: number;
@@ -27,8 +38,8 @@ export type Level2RefitRules = {
   maxTotalNewCards: number;
 };
 
-export type Level2StartDraft = {
-  mode: Level2StartMode;
+export type Level2StandaloneDraft = {
+  mode: "standalone";
   seed?: number;
   calendarStartYear: number;
   resources: Resources;
@@ -38,10 +49,24 @@ export type Level2StartDraft = {
   counts: Level2RefitCounts;
 };
 
+export type Level2ContinuityDraft = {
+  mode: "continuity";
+  seed?: number;
+  calendarStartYear: number;
+  resources: Resources;
+  warOfDevolutionAttacked: boolean;
+  europeAlert: boolean;
+  carryoverCards: readonly Level2CarryoverCard[];
+  removedCarryoverIds: readonly string[];
+};
+
+export type Level2StartDraft = Level2StandaloneDraft | Level2ContinuityDraft;
+
 export type Level2Validation = {
   totalCards: number;
   totalNewCards: number;
   adjustableChanges: number;
+  maxAdjustableChanges: number;
   isValid: boolean;
 };
 
@@ -53,6 +78,8 @@ export const LEVEL2_REFIT_RULES: Level2RefitRules = {
   maxPerNewCard: 2,
   maxTotalNewCards: 4,
 };
+
+export const LEVEL2_CONTINUITY_MAX_REMOVALS = 3;
 
 function zeroCounts(): Level2RefitCounts {
   return {
@@ -100,7 +127,7 @@ function ensureAdjustableMinimum(base: Level2RefitCounts): Level2RefitCounts {
   return next;
 }
 
-export function createStandaloneLevel2Draft(seed?: number): Level2StartDraft {
+export function createStandaloneLevel2Draft(seed?: number): Level2StandaloneDraft {
   const level = getLevelDef("secondMandate");
   const baseCounts = ensureAdjustableMinimum(baselineFromFirstChapterDeck());
   return {
@@ -121,7 +148,26 @@ export function createStandaloneLevel2Draft(seed?: number): Level2StartDraft {
   };
 }
 
-export function createContinuityLevel2Draft(from: GameState, seed?: number): Level2StartDraft {
+function buildContinuityCarryoverCards(from: GameState): Level2CarryoverCard[] {
+  const orderedPoolIds = [...from.deck, ...from.discard, ...from.hand];
+  const seen = new Set<string>();
+  const out: Level2CarryoverCard[] = [];
+  for (const id of orderedPoolIds) {
+    if (seen.has(id)) continue;
+    seen.add(id);
+    const inst = from.cardsById[id];
+    if (!inst) continue;
+    if (getCardTemplate(inst.templateId).tags.includes("temp")) continue;
+    out.push({
+      instanceId: id,
+      templateId: inst.templateId,
+      inflationDelta: Math.max(0, from.cardInflationById[id] ?? 0),
+    });
+  }
+  return out;
+}
+
+export function createContinuityLevel2Draft(from: GameState, seed?: number): Level2ContinuityDraft {
   const carryoverCalendarStartYear = from.calendarStartYear + from.turn - 1;
   const inheritedResources: Resources = {
     treasuryStat: from.resources.treasuryStat,
@@ -129,9 +175,7 @@ export function createContinuityLevel2Draft(from: GameState, seed?: number): Lev
     legitimacy: from.resources.legitimacy + (from.warOfDevolutionAttacked ? 1 : 0),
     funding: 0,
   };
-  const baseCounts = ensureAdjustableMinimum(
-    countTemplates(Object.values(from.cardsById).map((x) => x.templateId)),
-  );
+  const carryoverCards = buildContinuityCarryoverCards(from);
   return {
     mode: "continuity",
     seed,
@@ -139,8 +183,8 @@ export function createContinuityLevel2Draft(from: GameState, seed?: number): Lev
     resources: inheritedResources,
     warOfDevolutionAttacked: from.warOfDevolutionAttacked,
     europeAlert: from.warOfDevolutionAttacked,
-    baseCounts,
-    counts: withDefaultRecommendedAdds(baseCounts),
+    carryoverCards,
+    removedCarryoverIds: [],
   };
 }
 
@@ -155,6 +199,21 @@ export function buildWarPreset(baseCounts: Level2RefitCounts): Level2RefitCounts
     patronageOffice: 1,
     taxRebalance: 1,
   };
+}
+
+export function toggleContinuityCardRemoval(
+  draft: Level2ContinuityDraft,
+  instanceId: string,
+): Level2ContinuityDraft {
+  if (!draft.carryoverCards.some((card) => card.instanceId === instanceId)) return draft;
+  const removed = new Set(draft.removedCarryoverIds);
+  if (removed.has(instanceId)) {
+    removed.delete(instanceId);
+    return { ...draft, removedCarryoverIds: [...removed] };
+  }
+  if (removed.size >= LEVEL2_CONTINUITY_MAX_REMOVALS) return draft;
+  removed.add(instanceId);
+  return { ...draft, removedCarryoverIds: [...removed] };
 }
 
 export function updateRefitCount(
@@ -216,8 +275,27 @@ export function validateLevel2Refit(
     totalCards,
     totalNewCards,
     adjustableChanges,
+    maxAdjustableChanges: LEVEL2_REFIT_RULES.maxTotalAdjustableChanges,
     isValid: totalValid && newValid && adjustableValid,
   };
+}
+
+export function validateLevel2ContinuityRefit(draft: Level2ContinuityDraft): Level2Validation {
+  const uniqueRemoved = new Set(draft.removedCarryoverIds);
+  const removedCards = uniqueRemoved.size;
+  const totalCards = draft.carryoverCards.length - removedCards;
+  return {
+    totalCards,
+    totalNewCards: 0,
+    adjustableChanges: removedCards,
+    maxAdjustableChanges: LEVEL2_CONTINUITY_MAX_REMOVALS,
+    isValid: removedCards <= LEVEL2_CONTINUITY_MAX_REMOVALS && totalCards > 0,
+  };
+}
+
+export function validateLevel2Draft(draft: Level2StartDraft): Level2Validation {
+  if (draft.mode === "continuity") return validateLevel2ContinuityRefit(draft);
+  return validateLevel2Refit(draft.counts, draft.baseCounts);
 }
 
 export function buildDeckOrderFromRefit(counts: Level2RefitCounts): CardTemplateId[] {
@@ -229,11 +307,72 @@ export function buildDeckOrderFromRefit(counts: Level2RefitCounts): CardTemplate
 }
 
 export function buildLevel2StateFromDraft(draft: Level2StartDraft): GameState {
-  return createInitialState(draft.seed, "secondMandate", {
-    calendarStartYearOverride: draft.calendarStartYear,
-    starterDeckTemplateOrder: buildDeckOrderFromRefit(draft.counts),
-    startingResourcesOverride: draft.resources,
+  if (draft.mode === "standalone") {
+    return createInitialState(draft.seed, "secondMandate", {
+      calendarStartYearOverride: draft.calendarStartYear,
+      starterDeckTemplateOrder: buildDeckOrderFromRefit(draft.counts),
+      startingResourcesOverride: draft.resources,
+      warOfDevolutionAttacked: draft.warOfDevolutionAttacked,
+      europeAlert: draft.europeAlert,
+    });
+  }
+  return buildContinuityLevel2State(draft);
+}
+
+function buildContinuityLevel2State(draft: Level2ContinuityDraft): GameState {
+  const runSeed = ((draft.seed ?? Math.floor(Math.random() * 0x7fffffff)) >>> 0) || 0x9e3779b9;
+  let rng = createRngFromSeed(runSeed);
+  const removed = new Set(draft.removedCarryoverIds);
+  const keptCards = draft.carryoverCards.filter((card) => !removed.has(card.instanceId));
+  const deckOrder = keptCards.map((card) => ({
+    instanceId: card.instanceId,
+    templateId: card.templateId,
+  }));
+  const [rng2, shuffled] = shuffle(rng, deckOrder);
+  rng = rng2;
+
+  const cardsById: Record<string, CardInstance> = {};
+  for (const c of shuffled) {
+    cardsById[c.instanceId] = { instanceId: c.instanceId, templateId: c.templateId };
+  }
+  const cardInflationById: Record<string, number> = {};
+  for (const card of keptCards) {
+    if (card.inflationDelta > 0) {
+      cardInflationById[card.instanceId] = card.inflationDelta;
+    }
+  }
+  const europeAlertDrawPenalty = draft.europeAlert
+    ? computeEuropeAlertDrawPenalty(draft.resources.power)
+    : 0;
+
+  const base: GameState = {
+    levelId: "secondMandate",
+    calendarStartYear: draft.calendarStartYear,
+    runSeed,
+    rng,
+    turn: 1,
+    phase: "action",
+    outcome: "playing",
+    pendingInteraction: null,
+    nextIds: { event: 0, status: 0, log: 0 },
+    resources: draft.resources,
+    nextTurnDrawModifier: 0,
+    scheduledDrawModifiers: [],
+    deck: shuffled.map((c) => c.instanceId),
+    discard: [],
+    hand: [],
+    cardsById,
+    cardInflationById,
+    slots: { ...EMPTY_EVENT_SLOTS },
+    pendingMajorCrisis: { ...EMPTY_PENDING_MAJOR_CRISIS },
+    playerStatuses: [],
+    antiFrenchLeague: null,
     warOfDevolutionAttacked: draft.warOfDevolutionAttacked,
     europeAlert: draft.europeAlert,
-  });
+    europeAlertDrawPenalty,
+    nymwegenSettlementAchieved: false,
+    actionLog: [],
+  };
+
+  return beginYear(base);
 }
