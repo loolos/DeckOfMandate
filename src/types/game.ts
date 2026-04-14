@@ -149,5 +149,7 @@ export type GameState = {
   europeAlert: boolean;
   /** Fixed Chapter-2 Europe Alert draw reduction computed from chapter-start power (floor(power/2), min 1). */
   europeAlertDrawPenalty: number;
+  /** Chapter-2 objective marker; set true once Treaties of Nijmegen is successfully resolved. */
+  nymwegenSettlementAchieved: boolean;
   actionLog: readonly ActionLogEntry[];
 };

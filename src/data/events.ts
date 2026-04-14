@@ -84,15 +84,16 @@ export const eventTemplates: Record<EventTemplateId, EventTemplate> = {
   nymwegenSettlement: {
     id: "nymwegenSettlement",
     weight: 0,
-    harmful: false,
+    harmful: true,
+    crisisPersistence: "continued",
     titleKey: "event.nymwegenSettlement.name",
     descriptionKey: "event.nymwegenSettlement.desc",
-    solve: { kind: "funding", amount: 1 },
+    solve: { kind: "funding", amount: 6 },
     onFundSolveEffects: [
-      { kind: "modResource", resource: "treasuryStat", delta: 1 },
-      { kind: "modResource", resource: "legitimacy", delta: 1 },
+      { kind: "modResource", resource: "power", delta: -3 },
+      { kind: "modResource", resource: "legitimacy", delta: -2 },
     ],
-    penaltiesIfUnresolved: [],
+    penaltiesIfUnresolved: [{ kind: "modResource", resource: "power", delta: -1 }],
   },
   revocationNantes: {
     id: "revocationNantes",
@@ -282,11 +283,11 @@ export const eventTemplates: Record<EventTemplateId, EventTemplate> = {
   cautiousCrown: {
     id: "cautiousCrown",
     weight: 0,
-    harmful: false,
+    harmful: true,
     titleKey: "event.cautiousCrown.name",
     descriptionKey: "event.cautiousCrown.desc",
-    solve: { kind: "funding", amount: 0 },
-    penaltiesIfUnresolved: [],
+    solve: { kind: "funding", amount: 2 },
+    penaltiesIfUnresolved: [{ kind: "modResource", resource: "power", delta: -1 }],
   },
 };
 

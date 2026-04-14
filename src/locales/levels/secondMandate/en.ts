@@ -17,7 +17,7 @@ export const messagesEnSecondMandate = {
     "Coalition-pressure war events roll with +1 weight. Fixed draw reduction each year: -{n}.",
   "event.nymwegenSettlement.name": "Treaties of Nijmegen",
   "event.nymwegenSettlement.desc":
-    "The settlement can consolidate your gains. Invest 1 Funding to secure Treasury +1 and Legitimacy +1.",
+    "A mandatory long-running crisis: pay 6 Funding to secure the settlement (Power -3, Legitimacy -2) and end Europe Alert; if ignored, lose 1 Power each year.",
   "event.revocationNantes.name": "Revocation of the Edict of Nantes",
   "event.revocationNantes.desc":
     "Religious policy hardens. Spend 1 Funding (or use Royal Intervention) to enforce order and gain Legitimacy +1; if left unresolved, both Treasury and Legitimacy suffer.",
@@ -74,7 +74,7 @@ export const messagesEnSecondMandate = {
     "Earlier expansion still casts a long shadow. Pay 2 Funding to contain it and add 2 Fiscal Burden cards to your deck; if unresolved, 3 Fiscal Burden cards are added.",
   "event.cautiousCrown.name": "Cautious Crown",
   "event.cautiousCrown.desc":
-    "A restrained earlier posture buys diplomatic room. Resolve for free to continue into the chapter.",
+    "Earlier restraint buys only limited room. Pay 2 Funding to resolve it; if ignored, lose 1 Power each year.",
   "card.grainRelief.name": "Grain Relief Program",
   "card.grainRelief.background":
     "Emergency grain purchasing and provincial relief channels cool unrest before shortages become revolt.",

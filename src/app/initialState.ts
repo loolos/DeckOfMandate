@@ -67,6 +67,7 @@ export function createInitialState(
     warOfDevolutionAttacked: options?.warOfDevolutionAttacked ?? false,
     europeAlert,
     europeAlertDrawPenalty,
+    nymwegenSettlementAchieved: false,
     actionLog: [],
   };
 

@@ -203,6 +203,9 @@ function performFundSolve(state: GameState, slot: SlotId): GameState {
     }
     s = applyEffects(s, tmpl.onFundSolveEffects);
   }
+  if (ev.templateId === "nymwegenSettlement") {
+    s = { ...s, europeAlert: false, nymwegenSettlementAchieved: true };
+  }
   s = markSlotResolved(s, slot);
   s = enforceLegitimacy(s);
   const fundingPaid =

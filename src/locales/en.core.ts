@@ -85,6 +85,8 @@ export const messagesEnCore = {
   "ui.actionLog": "Action log",
   "ui.actionLog.empty": "No effects yet this run.",
   "ui.targets": "Level goals — within {limit} turns: Treasury {tT}, Power {tP}, Legitimacy {tL}",
+  "ui.targets.secondMandateExtra":
+    "Chapter 2 extra objectives: Europe Alert must be cleared, and the Treaties of Nijmegen must be secured.",
   "ui.language": "Language",
   "ui.lang.en": "English",
   "ui.lang.zh": "中文",
