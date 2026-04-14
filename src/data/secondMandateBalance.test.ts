@@ -11,7 +11,6 @@ describe("secondMandate balance data", () => {
       "diplomaticCongress",
       "diplomaticIntervention",
       "fiscalBurden",
-      "patronageOffice",
     ] as const;
     const expectedCosts = {
       grainRelief: 3,
@@ -19,7 +18,6 @@ describe("secondMandate balance data", () => {
       diplomaticCongress: 3,
       diplomaticIntervention: 0,
       fiscalBurden: 2,
-      patronageOffice: 4,
     } as const;
     for (const id of newIds) {
       expect(getCardTemplate(id).cost).toBe(expectedCosts[id]);
@@ -52,16 +50,8 @@ describe("secondMandate balance data", () => {
     expect(fiscalBurden.effects).toEqual([]);
     expect(fiscalBurden.tags.includes("royal")).toBe(false);
 
-    const patronage = getCardTemplate("patronageOffice");
-    expect(patronage.cost).toBe(4);
-    expect(patronage.effects).toEqual([
-      { kind: "modResource", resource: "power", delta: 1 },
-      { kind: "addPlayerStatus", templateId: "retentionBoost", turns: 3 },
-    ]);
-
     expect(getCardTemplate("funding").tags.includes("royal")).toBe(true);
     expect(getCardTemplate("crackdown").tags.includes("royal")).toBe(true);
-    expect(getCardTemplate("patronageOffice").tags.includes("royal")).toBe(true);
   });
 
   it("applies updated chapter 2 event solve costs and penalties", () => {
@@ -152,7 +142,7 @@ describe("secondMandate balance data", () => {
     expect(pool.includes("tradeDisruption")).toBe(false);
   });
 
-  it("uses status-driven effects for draw penalty, royal ban, and retention boost", () => {
+  it("uses status-driven effects for draw penalty and royal ban", () => {
     expect(getCardTemplate("taxRebalance").effects).toContainEqual({
       kind: "addPlayerStatus",
       templateId: "drawPenalty",
@@ -167,11 +157,6 @@ describe("secondMandate balance data", () => {
       kind: "addPlayerStatus",
       templateId: "grainReliefLegitimacyBoost",
       turns: 1,
-    });
-    expect(getCardTemplate("patronageOffice").effects).toContainEqual({
-      kind: "addPlayerStatus",
-      templateId: "retentionBoost",
-      turns: 3,
     });
     expect(getEventTemplate("courtScandal").penaltiesIfUnresolved).toEqual([
       { kind: "modResource", resource: "legitimacy", delta: -1 },

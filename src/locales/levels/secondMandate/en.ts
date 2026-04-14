@@ -95,8 +95,4 @@ export const messagesEnSecondMandate = {
     "Apply pressure through envoys and treaty leverage rather than direct royal command.",
   "card.diplomaticIntervention.desc":
     "Temporary card. Resolve one harmful event (not Colonial Trade Boom). Not a Royal-tag card.",
-  "card.patronageOffice.name": "Patronage Office",
-  "card.patronageOffice.background":
-    "Centralized appointments rebuild obedience by tying careers directly to the crown.",
-  "card.patronageOffice.desc": "Power +1. Gain Retention Boost (+1 keep cap) for 3 turns.",
 } as const;

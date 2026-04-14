@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useReducer, useState } from "react";
+import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from "react";
 import { ActionLog } from "../components/ActionLog";
 import { EventPanel } from "../components/EventPanel";
 import { Hand } from "../components/Hand";
@@ -30,16 +30,11 @@ import { gameReducer, type GameAction } from "./gameReducer";
 import { createInitialState } from "./initialState";
 import {
   LEVEL2_CONTINUITY_MAX_REMOVALS,
-  LEVEL2_ADJUSTABLE_IDS,
-  LEVEL2_NEW_IDS,
-  LEVEL2_REFIT_RULES,
-  buildHistoricalPreset,
+  LEVEL2_FIXED_NEW_IDS,
   buildLevel2StateFromDraft,
-  buildWarPreset,
   createContinuityLevel2Draft,
   createStandaloneLevel2Draft,
   toggleContinuityCardRemoval,
-  updateRefitCount,
   validateLevel2Draft,
   type Level2CarryoverCard,
   type Level2StartDraft,
@@ -87,6 +82,15 @@ function hasValidStoredSave(): boolean {
   return Boolean(loaded && isValidSave(loaded));
 }
 
+function cloneLevel2Draft(draft: Level2StartDraft): Level2StartDraft {
+  return {
+    ...draft,
+    resources: { ...draft.resources },
+    carryoverCards: draft.carryoverCards.map((card) => ({ ...card })),
+    removedCarryoverIds: [...draft.removedCarryoverIds],
+  };
+}
+
 export function Game() {
   const { t } = useI18n();
   const [state, dispatch] = useReducer(gameReducer, undefined, initFreshForStartMenu);
@@ -100,7 +104,12 @@ export function Game() {
   const [tutorialOnEntryMenu, setTutorialOnEntryMenu] = useState(() => readTutorialOnLevelEntry());
   const [pendingLevelTutorial, setPendingLevelTutorial] = useState(false);
   const [level2Draft, setLevel2Draft] = useState<Level2StartDraft | null>(null);
+  const [level2DraftInitial, setLevel2DraftInitial] = useState<Level2StartDraft | null>(null);
   const [expandedRefitCardId, setExpandedRefitCardId] = useState<string | null>(null);
+  const [isSmallRefitViewport, setIsSmallRefitViewport] = useState(() =>
+    typeof window !== "undefined" ? window.matchMedia("(max-width: 800px)").matches : false,
+  );
+  const mobileRefitRowLastTapAt = useRef<Record<string, number>>({});
 
   const menuSeedTrimmed = menuSeedText.trim();
   const menuSeedParsed =
@@ -137,6 +146,17 @@ export function Game() {
     setExpandedRefitCardId(null);
   }, [level2Draft]);
 
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const media = window.matchMedia("(max-width: 800px)");
+    const onChange = (event: MediaQueryListEvent) => {
+      setIsSmallRefitViewport(event.matches);
+    };
+    setIsSmallRefitViewport(media.matches);
+    media.addEventListener("change", onChange);
+    return () => media.removeEventListener("change", onChange);
+  }, []);
+
   const canEndYear =
     state.outcome === "playing" &&
     state.phase === "action" &&
@@ -157,9 +177,39 @@ export function Game() {
     setPendingLevelTutorial(false);
   }, []);
 
+  const openLevel2Refit = (draft: Level2StartDraft) => {
+    const snapshot = cloneLevel2Draft(draft);
+    setLevel2Draft(snapshot);
+    setLevel2DraftInitial(cloneLevel2Draft(snapshot));
+  };
+
+  const resetLevel2Refit = () => {
+    if (!level2DraftInitial) return;
+    setLevel2Draft(cloneLevel2Draft(level2DraftInitial));
+    setExpandedRefitCardId(null);
+  };
+
+  const toggleRefitRemoval = useCallback((cardId: string) => {
+    setLevel2Draft((prev) => (prev ? toggleContinuityCardRemoval(prev, cardId) : prev));
+  }, []);
+
+  const maybeToggleRemovalBySmallScreenDoubleTap = useCallback(
+    (cardId: string) => {
+      if (!isSmallRefitViewport) return;
+      const now = Date.now();
+      const lastTapAt = mobileRefitRowLastTapAt.current[cardId] ?? 0;
+      mobileRefitRowLastTapAt.current[cardId] = now;
+      if (now - lastTapAt <= 320) {
+        mobileRefitRowLastTapAt.current[cardId] = 0;
+        toggleRefitRemoval(cardId);
+      }
+    },
+    [isSmallRefitViewport, toggleRefitRemoval],
+  );
+
   const beginConfiguredRun = (seed: number | undefined, levelId: LevelId) => {
     if (levelId === "secondMandate") {
-      setLevel2Draft(createStandaloneLevel2Draft(seed));
+      openLevel2Refit(createStandaloneLevel2Draft(seed));
       setLevelIntroOpen(false);
       setPendingNewRun(null);
       return;
@@ -190,6 +240,7 @@ export function Game() {
   const resumeFromStoredSave = () => {
     setPendingLevelTutorial(false);
     setLevel2Draft(null);
+    setLevel2DraftInitial(null);
     const loaded = loadGame();
     if (!loaded || !isValidSave(loaded)) return;
     dispatchSafe({ type: "HYDRATE", state: normalizeLoadedSave(loaded as GameState) });
@@ -207,12 +258,13 @@ export function Game() {
     dispatchSafe({ type: "HYDRATE", state: nextState });
     setStartMenuOpen(false);
     setLevel2Draft(null);
+    setLevel2DraftInitial(null);
     setLevelIntroOpen(false);
     setPendingNewRun(null);
   };
 
   const openChapter2Continuity = () => {
-    setLevel2Draft(createContinuityLevel2Draft(state));
+    openLevel2Refit(createContinuityLevel2Draft(state));
   };
 
   const introLevelDef =
@@ -237,81 +289,8 @@ export function Game() {
     </div>
   ) : null;
 
-  const renderRefitCountRow = (
-    id: (typeof LEVEL2_ADJUSTABLE_IDS)[number] | (typeof LEVEL2_NEW_IDS)[number],
-    opts: { min: number; max: number; decrement: number; increment: number },
-  ) => {
-    if (!level2Draft || level2Draft.mode !== "standalone") return null;
-    const tmpl = getCardTemplate(id);
-    const title = cardLabelWithIcon(id, t(tmpl.titleKey as MessageKey));
-    const quickRows = buildCardQuickFrameRows(tmpl);
-    const compactSummary = quickRows.map((row) => row.value).join(" · ");
-    const expanded = expandedRefitCardId === id;
-    const countLabel = `${level2Draft.counts[id]} (${opts.min}–${opts.max})`;
-
-    return (
-      <div
-        key={id}
-        className={[styles.retainRow, styles.refitRow, expanded && styles.refitRowExpanded]
-          .filter(Boolean)
-          .join(" ")}
-        role="button"
-        tabIndex={0}
-        aria-expanded={expanded ? "true" : "false"}
-        onClick={() => setExpandedRefitCardId((prev) => (prev === id ? null : id))}
-        onKeyDown={(e) => {
-          if (e.key === "Enter" || e.key === " ") {
-            e.preventDefault();
-            setExpandedRefitCardId((prev) => (prev === id ? null : id));
-          }
-        }}
-      >
-        <div className={styles.retainCardInfo}>
-          <span className={styles.retainCardTitle}>{title}</span>
-          <span className={styles.retainCardSummary}>{compactSummary}</span>
-          {expanded ? (
-            <div className={styles.retainCardDetails}>
-              <OutcomeQuickFrame rows={quickRows} />
-              <div className={styles.cardBg}>{t(tmpl.backgroundKey as MessageKey)}</div>
-              <div className={styles.cardDesc}>{t(tmpl.descriptionKey as MessageKey)}</div>
-            </div>
-          ) : null}
-        </div>
-        <div className={styles.retainCounterControls} onClick={(e) => e.stopPropagation()}>
-          <button
-            type="button"
-            className={styles.btn}
-            onClick={() =>
-              setLevel2Draft((prev) =>
-                prev && prev.mode === "standalone"
-                  ? { ...prev, counts: updateRefitCount(prev.counts, prev.baseCounts, id, opts.decrement) }
-                  : prev,
-              )
-            }
-          >
-            -
-          </button>
-          <span className={styles.retainCounterValue}>{countLabel}</span>
-          <button
-            type="button"
-            className={styles.btn}
-            onClick={() =>
-              setLevel2Draft((prev) =>
-                prev && prev.mode === "standalone"
-                  ? { ...prev, counts: updateRefitCount(prev.counts, prev.baseCounts, id, opts.increment) }
-                  : prev,
-              )
-            }
-          >
-            +
-          </button>
-        </div>
-      </div>
-    );
-  };
-
   const renderContinuityCardRow = (card: Level2CarryoverCard) => {
-    if (!level2Draft || level2Draft.mode !== "continuity") return null;
+    if (!level2Draft) return null;
     const tmpl = getCardTemplate(card.templateId);
     const effectiveCost = tmpl.cost + card.inflationDelta;
     const title = cardLabelWithIcon(card.templateId, t(tmpl.titleKey as MessageKey));
@@ -333,6 +312,11 @@ export function Game() {
             setExpandedRefitCardId((prev) => (prev === card.instanceId ? null : card.instanceId));
           }
         }}
+        onDoubleClick={() => {
+          if (!isSmallRefitViewport) return;
+          toggleRefitRemoval(card.instanceId);
+        }}
+        onTouchEnd={() => maybeToggleRemovalBySmallScreenDoubleTap(card.instanceId)}
       >
         <div className={styles.retainCardInfo}>
           <span className={styles.retainCardTitle}>{title}</span>
@@ -345,21 +329,57 @@ export function Game() {
             </div>
           ) : null}
         </div>
-        <div className={styles.retainCounterControls} onClick={(e) => e.stopPropagation()}>
+        <div
+          className={styles.retainCounterControls}
+          onClick={(e) => e.stopPropagation()}
+          onTouchEnd={(e) => e.stopPropagation()}
+        >
           <label className={styles.startMenuMuted} style={{ display: "flex", alignItems: "center", gap: "0.35rem" }}>
             <input
               type="checkbox"
               checked={removed}
-              onChange={() =>
-                setLevel2Draft((prev) =>
-                  prev && prev.mode === "continuity"
-                    ? toggleContinuityCardRemoval(prev, card.instanceId)
-                    : prev,
-                )
-              }
+              onChange={() => toggleRefitRemoval(card.instanceId)}
             />
             {t("menu.refit.removeToggle")}
           </label>
+        </div>
+      </div>
+    );
+  };
+
+  const renderFixedNewCardPreviewRow = (id: (typeof LEVEL2_FIXED_NEW_IDS)[number]) => {
+    if (!level2Draft) return null;
+    const tmpl = getCardTemplate(id);
+    const title = cardLabelWithIcon(id, t(tmpl.titleKey as MessageKey));
+    const quickRows = buildCardQuickFrameRows(tmpl);
+    const compactSummary = quickRows.map((row) => row.value).join(" · ");
+    const rowId = `preview-${id}`;
+    const expanded = expandedRefitCardId === rowId;
+    return (
+      <div
+        key={id}
+        className={[styles.retainRow, styles.refitRow, expanded && styles.refitRowExpanded].filter(Boolean).join(" ")}
+        role="button"
+        tabIndex={0}
+        aria-expanded={expanded ? "true" : "false"}
+        onClick={() => setExpandedRefitCardId((prev) => (prev === rowId ? null : rowId))}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            setExpandedRefitCardId((prev) => (prev === rowId ? null : rowId));
+          }
+        }}
+      >
+        <div className={styles.retainCardInfo}>
+          <span className={styles.retainCardTitle}>{title}</span>
+          <span className={styles.retainCardSummary}>{compactSummary}</span>
+          {expanded ? (
+            <div className={styles.retainCardDetails}>
+              <OutcomeQuickFrame rows={quickRows} />
+              <div className={styles.cardBg}>{t(tmpl.backgroundKey as MessageKey)}</div>
+              <div className={styles.cardDesc}>{t(tmpl.descriptionKey as MessageKey)}</div>
+            </div>
+          ) : null}
         </div>
       </div>
     );
@@ -398,59 +418,29 @@ export function Game() {
                 })
               : t("menu.refit.europeAlertOff")}
           </p>
-          {level2Draft.mode === "standalone" ? (
-            <>
-              <h3 className={styles.statusSectionTitle}>{t("menu.refit.adjustable")}</h3>
-              {LEVEL2_ADJUSTABLE_IDS.map((id) =>
-                renderRefitCountRow(id, {
-                  min: 1,
-                  max: level2Draft.baseCounts[id] + LEVEL2_REFIT_RULES.maxAddedPerBaseCard,
-                  decrement: -1,
-                  increment: +1,
-                }),
-              )}
-              <h3 className={styles.statusSectionTitle}>{t("menu.refit.newCards")}</h3>
-              {LEVEL2_NEW_IDS.map((id) =>
-                renderRefitCountRow(id, {
-                  min: 0,
-                  max: LEVEL2_REFIT_RULES.maxPerNewCard,
-                  decrement: -1,
-                  increment: +1,
-                }),
-              )}
-            </>
-          ) : (
-            <>
-              <h3 className={styles.statusSectionTitle}>{t("menu.refit.adjustable")}</h3>
-              <p className={styles.startMenuMuted}>
-                {t("menu.refit.continuityRule", { max: LEVEL2_CONTINUITY_MAX_REMOVALS })}
-              </p>
-              {level2Draft.carryoverCards.map((card) => renderContinuityCardRow(card))}
-            </>
-          )}
+          <>
+            <h3 className={styles.statusSectionTitle}>{t("menu.refit.adjustable")}</h3>
+            <p className={styles.startMenuMuted}>
+              {t("menu.refit.continuityRule", { max: LEVEL2_CONTINUITY_MAX_REMOVALS })}
+            </p>
+            {isSmallRefitViewport ? (
+              <p className={styles.startMenuMuted}>{t("menu.refit.mobileDoubleToggleHint")}</p>
+            ) : null}
+            {level2Draft.carryoverCards.map((card) => renderContinuityCardRow(card))}
+            <h3 className={styles.statusSectionTitle}>{t("menu.refit.newCards")}</h3>
+            {LEVEL2_FIXED_NEW_IDS.map((id) => renderFixedNewCardPreviewRow(id))}
+          </>
           {level2Validation ? (
             <>
-              {level2Draft.mode === "standalone" ? (
-                <>
-                  <p className={styles.startMenuMuted}>
-                    {t("menu.refit.totalCards", {
-                      current: level2Validation.totalCards,
-                      min: LEVEL2_REFIT_RULES.minDeckSize,
-                      max: LEVEL2_REFIT_RULES.maxDeckSize,
-                    })}
-                  </p>
-                  <p className={styles.startMenuMuted}>
-                    {t("menu.refit.newCardTotal", {
-                      current: level2Validation.totalNewCards,
-                      max: LEVEL2_REFIT_RULES.maxTotalNewCards,
-                    })}
-                  </p>
-                </>
-              ) : (
-                <p className={styles.startMenuMuted}>
-                  {t("menu.refit.totalCards.simple", { current: level2Validation.totalCards })}
-                </p>
-              )}
+              <p className={styles.startMenuMuted}>
+                {t("menu.refit.totalCards.simple", { current: level2Validation.totalCards })}
+              </p>
+              <p className={styles.startMenuMuted}>
+                {t("menu.refit.newCardTotal", {
+                  current: level2Validation.totalNewCards,
+                  max: LEVEL2_FIXED_NEW_IDS.length,
+                })}
+              </p>
               <p className={styles.startMenuMuted}>
                 {t("menu.refit.baseAdjustTotal", {
                   current: level2Validation.adjustableChanges,
@@ -462,50 +452,10 @@ export function Game() {
               ) : null}
             </>
           ) : null}
-          {level2Draft.mode === "standalone" ? (
-            <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
-              <button
-                type="button"
-                className={styles.btn}
-                onClick={() =>
-                  setLevel2Draft((prev) =>
-                    prev && prev.mode === "standalone"
-                      ? { ...prev, counts: buildHistoricalPreset(prev.baseCounts) }
-                      : prev,
-                  )
-                }
-              >
-                {t("menu.refit.presetHistorical")}
-              </button>
-              <button
-                type="button"
-                className={styles.btn}
-                onClick={() =>
-                  setLevel2Draft((prev) =>
-                    prev && prev.mode === "standalone"
-                      ? { ...prev, counts: buildWarPreset(prev.baseCounts) }
-                      : prev,
-                  )
-                }
-              >
-                {t("menu.refit.presetWar")}
-              </button>
-              <button
-                type="button"
-                className={styles.btn}
-                onClick={() =>
-                  setLevel2Draft((prev) =>
-                    prev && prev.mode === "standalone"
-                      ? { ...prev, counts: { ...prev.baseCounts } }
-                      : prev,
-                  )
-                }
-              >
-                {t("menu.refit.reset")}
-              </button>
-            </div>
-          ) : null}
           <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
+            <button type="button" className={styles.btn} onClick={resetLevel2Refit}>
+              {t("menu.refit.reset")}
+            </button>
             <button
               type="button"
               className={`${styles.btn} ${styles.btnPrimary}`}
@@ -514,7 +464,14 @@ export function Game() {
             >
               {t("menu.refit.start")}
             </button>
-            <button type="button" className={styles.btn} onClick={() => setLevel2Draft(null)}>
+            <button
+              type="button"
+              className={styles.btn}
+              onClick={() => {
+                setLevel2Draft(null);
+                setLevel2DraftInitial(null);
+              }}
+            >
               {t("menu.refit.back")}
             </button>
           </div>
