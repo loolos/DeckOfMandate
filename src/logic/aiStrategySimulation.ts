@@ -71,12 +71,17 @@ function pickCrackdownTarget(state: GameState): SlotId | null {
 }
 
 function pickFundSolveActions(state: GameState): GameAction[] {
+  const hasUnresolvedHarmful = unresolvedSlots(state).some((slot) => {
+    const ev = state.slots[slot];
+    return !!ev && !ev.resolved && getEventTemplate(ev.templateId).harmful;
+  });
   const candidates: Array<{ slot: SlotId; harmful: boolean; amount: number }> = [];
   for (const slot of EVENT_SLOT_ORDER) {
     const ev = state.slots[slot];
     if (!ev || ev.resolved) continue;
     const tmpl = getEventTemplate(ev.templateId);
     if (tmpl.solve.kind !== "funding" && tmpl.solve.kind !== "fundingOrCrackdown") continue;
+    if (hasUnresolvedHarmful && !tmpl.harmful) continue;
     const amount = tmpl.solve.amount;
     if (state.resources.funding < amount) continue;
     candidates.push({ slot, harmful: tmpl.harmful, amount });
