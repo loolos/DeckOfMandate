@@ -85,6 +85,7 @@ export function Hand({
         const cardClassName = [styles.card, mobileHandWidthCls, isSmallScreen && !playable && styles.cardDisabled]
           .filter(Boolean)
           .join(" ");
+        const playCard = () => dispatch({ type: "PLAY_CARD", handIndex: index });
 
         if (crackPick && id === crackPick.cardInstanceId) {
           return (
@@ -111,6 +112,7 @@ export function Hand({
               aria-disabled={!playable ? "true" : undefined}
               aria-expanded={showDetails ? "true" : "false"}
               onClick={onMobileTap}
+              onDoubleClick={() => playable && playCard()}
               onKeyDown={(e) => {
                 if (e.key === "Enter" || e.key === " ") {
                   e.preventDefault();
@@ -125,7 +127,7 @@ export function Hand({
                     type="button"
                     className={`${styles.btn} ${styles.btnPrimary}`}
                     disabled={!playable}
-                    onClick={() => dispatch({ type: "PLAY_CARD", handIndex: index })}
+                    onClick={playCard}
                   >
                     {t("ui.playThisCard")}
                   </button>
@@ -141,7 +143,7 @@ export function Hand({
             type="button"
             className={cardClassName}
             disabled={!playable}
-            onClick={() => dispatch({ type: "PLAY_CARD", handIndex: index })}
+            onDoubleClick={playCard}
           >
             {body}
           </button>

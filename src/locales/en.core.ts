@@ -37,7 +37,7 @@ export const messagesEnCore = {
   "ui.events": "Events",
   "ui.eventsResizeHint": "Drag the bottom-right corner to resize the events area.",
   "ui.mobileLogTapHint":
-    "Small screen: tap events, statuses, and hand cards to expand details; in hand details, tap “Play this card” to play.",
+    "Small screen: tap events, statuses, and hand cards to expand details; double-click any hand card (compact or expanded) to play it.",
   "ui.playThisCard": "Play this card",
   "log.crackdownPickPrompt":
     "[Turn {turn}] Choose a harmful event to resolve with Royal Intervention (not Colonial Trade Boom).",

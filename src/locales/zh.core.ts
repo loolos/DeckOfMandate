@@ -36,7 +36,7 @@ export const messagesZhCore = {
   "ui.hand": "手牌",
   "ui.events": "事件",
   "ui.eventsResizeHint": "拖动右下角可调整事件区域高度。",
-  "ui.mobileLogTapHint": "小屏操作：事件、状态与手牌单击可展开详情；手牌详情内点击“打出这张牌”来出牌。",
+  "ui.mobileLogTapHint": "小屏操作：事件、状态与手牌单击可展开详情；略缩图或详细图里双击手牌即可出牌。",
   "ui.playThisCard": "打出这张牌",
   "log.crackdownPickPrompt":
     "[第 {turn} 年] 选择要用「王室干预」解决的有害事件（不能选殖民贸易机遇）。",
