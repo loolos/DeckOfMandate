@@ -252,7 +252,7 @@ Events are the main source of challenge.
 
 **Royal Crisis** (implementation id: `majorCrisis`)
 
-- Usually reached by escalation from **Provincial Governor Ascendant**. If unresolved: Legitimacy **-1** and a **draw-attempt penalty** next turn (same modifier pipeline as **Bureaucratic Delay**). **Royal Intervention** only for the MVP solve path (see `levels.md`).
+- Usually reached by escalation from **Provincial Governor Ascendant**. Tagged **Continued**: if unresolved it **stays on the slot into next turn** and repeats Legitimacy **-1** plus a **draw-attempt penalty** each year (same modifier pipeline as **Bureaucratic Delay**) until solved. **Royal Intervention** only for the MVP solve path (see `levels.md`).
 
 **War of Devolution** (implementation id: `warOfDevolution`; *The Rising Sun*)
 
