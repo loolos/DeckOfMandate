@@ -15,7 +15,6 @@ const CARD_ICONS: Record<CardTemplateId, string> = {
   grainRelief: "🌾",
   taxRebalance: "🧾",
   diplomaticCongress: "🕊️",
-  patronageOffice: "🏛️",
   suppressHuguenots: "⚔️",
 };
 

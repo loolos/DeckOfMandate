@@ -71,7 +71,8 @@ export const messagesEnCore = {
   "menu.refit.totalCards.simple": "Deck size after removals: {current}",
   "menu.refit.newCardTotal": "New cards chosen: {current} / {max}",
   "menu.refit.baseAdjustTotal": "Carryover-card adjustments: {current} / {max}",
-  "menu.refit.continuityRule": "Continuity refit rule: remove 0–{max} carryover cards only (no additions).",
+  "menu.refit.continuityRule":
+    "Refit rule: remove 0–{max} Chapter 1 carryover cards only; the three Chapter 2 new cards are fixed at +1 each.",
   "menu.refit.removeToggle": "Remove this card",
   "menu.refit.invalid": "Deck rules not met yet.",
   "menu.refit.start": "Start Chapter 2",

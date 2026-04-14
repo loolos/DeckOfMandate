@@ -2,21 +2,19 @@ import { describe, expect, it } from "vitest";
 import { createInitialState } from "./initialState";
 import {
   LEVEL2_CONTINUITY_MAX_REMOVALS,
-  LEVEL2_REFIT_RULES,
+  LEVEL2_FIXED_NEW_IDS,
   buildLevel2StateFromDraft,
   createContinuityLevel2Draft,
   createStandaloneLevel2Draft,
   toggleContinuityCardRemoval,
   validateLevel2ContinuityRefit,
   validateLevel2Draft,
-  updateRefitCount,
-  validateLevel2Refit,
 } from "./level2Transition";
 
 describe("level2Transition", () => {
-  it("creates a valid standalone chapter 2 draft with recommended new cards", () => {
+  it("creates a valid standalone chapter 2 draft with chapter-1 carryover cards", () => {
     const draft = createStandaloneLevel2Draft(123);
-    const v = validateLevel2Refit(draft.counts);
+    const v = validateLevel2Draft(draft);
     expect(draft.mode).toBe("standalone");
     expect(draft.calendarStartYear).toBe(1676);
     expect(draft.warOfDevolutionAttacked).toBe(true);
@@ -24,9 +22,9 @@ describe("level2Transition", () => {
     expect(draft.resources.treasuryStat).toBe(7);
     expect(draft.resources.power).toBe(7);
     expect(draft.resources.legitimacy).toBe(5);
-    expect(draft.counts.grainRelief).toBe(1);
-    expect(draft.counts.taxRebalance).toBe(1);
-    expect(draft.counts.diplomaticCongress).toBe(1);
+    expect(draft.carryoverCards.length).toBe(13);
+    expect(draft.removedCarryoverIds).toEqual([]);
+    expect(v.totalNewCards).toBe(LEVEL2_FIXED_NEW_IDS.length);
     expect(v.isValid).toBe(true);
   });
 
@@ -54,23 +52,9 @@ describe("level2Transition", () => {
     expect(draft.removedCarryoverIds).toEqual([]);
   });
 
-  it("limits adjustable carryover changes to three cards", () => {
-    const draft = createStandaloneLevel2Draft(456);
-    const counts1 = updateRefitCount(draft.counts, draft.baseCounts, "funding", +1);
-    const counts2 = updateRefitCount(counts1, draft.baseCounts, "reform", +1);
-    const counts3 = updateRefitCount(counts2, draft.baseCounts, "ceremony", +1);
-    const counts4 = updateRefitCount(counts3, draft.baseCounts, "crackdown", +1);
-    const v3 = validateLevel2Refit(counts3, draft.baseCounts);
-    const v4 = validateLevel2Refit(counts4, draft.baseCounts);
-    expect(v3.adjustableChanges).toBe(LEVEL2_REFIT_RULES.maxTotalAdjustableChanges);
-    expect(v3.isValid).toBe(true);
-    expect(counts4).toEqual(counts3);
-    expect(v4.isValid).toBe(true);
-  });
-
-  it("builds a playable chapter 2 state from refit counts", () => {
+  it("builds a playable chapter 2 state from standalone removals", () => {
     const draft = createStandaloneLevel2Draft(321);
-    draft.counts.patronageOffice = 1;
+    draft.removedCarryoverIds = [draft.carryoverCards[0]!.instanceId];
     const st = buildLevel2StateFromDraft(draft);
     expect(st.levelId).toBe("secondMandate");
     expect(st.calendarStartYear).toBe(1676);
@@ -78,10 +62,12 @@ describe("level2Transition", () => {
     expect(st.resources.power).toBe(7);
     expect(st.resources.legitimacy).toBe(5);
     const allTemplateIds = Object.values(st.cardsById).map((c) => c.templateId);
-    expect(allTemplateIds.includes("development")).toBe(false);
-    expect(allTemplateIds.includes("patronageOffice")).toBe(true);
+    expect(allTemplateIds.includes("development")).toBe(true);
+    expect((allTemplateIds as string[]).includes("patronageOffice")).toBe(false);
     expect(allTemplateIds.includes("diplomaticIntervention")).toBe(false);
-    expect(allTemplateIds.includes("diplomaticCongress")).toBe(true);
+    for (const id of LEVEL2_FIXED_NEW_IDS) {
+      expect(allTemplateIds.includes(id)).toBe(true);
+    }
   });
 
   it("continuity refit removes cards per-instance up to the configured cap", () => {
@@ -126,6 +112,10 @@ describe("level2Transition", () => {
     expect(st.cardInflationById[keepInflated.instanceId]).toBe(2);
     expect(st.cardsById[removeInflated.instanceId]).toBeUndefined();
     expect(st.cardInflationById[removeInflated.instanceId]).toBeUndefined();
+    const allTemplateIds = Object.values(st.cardsById).map((c) => c.templateId);
+    for (const id of LEVEL2_FIXED_NEW_IDS) {
+      expect(allTemplateIds.includes(id)).toBe(true);
+    }
   });
 
   it("validateLevel2Draft supports both standalone and continuity flows", () => {
@@ -135,7 +125,8 @@ describe("level2Transition", () => {
     const vContinuity = validateLevel2Draft(continuity);
     expect(vStandalone.isValid).toBe(true);
     expect(vContinuity.isValid).toBe(true);
-    expect(vStandalone.maxAdjustableChanges).toBe(LEVEL2_REFIT_RULES.maxTotalAdjustableChanges);
+    expect(vStandalone.totalNewCards).toBe(LEVEL2_FIXED_NEW_IDS.length);
+    expect(vContinuity.totalNewCards).toBe(LEVEL2_FIXED_NEW_IDS.length);
     expect(vContinuity.maxAdjustableChanges).toBe(LEVEL2_CONTINUITY_MAX_REMOVALS);
   });
 });

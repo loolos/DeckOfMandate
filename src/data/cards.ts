@@ -105,18 +105,6 @@ const templates: Record<CardTemplateId, CardTemplate> = {
     descriptionKey: "card.diplomaticCongress.desc",
     effects: [{ kind: "modResource", resource: "power", delta: 1 }],
   },
-  patronageOffice: {
-    id: "patronageOffice",
-    cost: 4,
-    tags: ROYAL,
-    titleKey: "card.patronageOffice.name",
-    backgroundKey: "card.patronageOffice.background",
-    descriptionKey: "card.patronageOffice.desc",
-    effects: [
-      { kind: "modResource", resource: "power", delta: 1 },
-      { kind: "addPlayerStatus", templateId: "retentionBoost", turns: 3 },
-    ],
-  },
   suppressHuguenots: {
     id: "suppressHuguenots",
     cost: 3,

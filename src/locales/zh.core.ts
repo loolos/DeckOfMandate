@@ -70,7 +70,7 @@ export const messagesZhCore = {
   "menu.refit.totalCards.simple": "删牌后总牌数：{current}",
   "menu.refit.newCardTotal": "新增牌数量：{current} / {max}",
   "menu.refit.baseAdjustTotal": "继承基础牌调整量：{current} / {max}",
-  "menu.refit.continuityRule": "承接整编规则：只能删除旧卡 0–{max} 张，不能新增。",
+  "menu.refit.continuityRule": "整编规则：只能删除第一关旧卡 0–{max} 张；第二关三张新卡固定各 +1。",
   "menu.refit.removeToggle": "删除这张牌",
   "menu.refit.invalid": "当前构筑未满足规则。",
   "menu.refit.start": "开始第二关",

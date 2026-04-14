@@ -85,7 +85,4 @@ export const messagesZhSecondMandate = {
   "card.diplomaticIntervention.name": "外交干预",
   "card.diplomaticIntervention.background": "通过使节施压与条约操作解决危机，而非直接动用王室强制力。",
   "card.diplomaticIntervention.desc": "临时牌。解决一个有害事件（不能选殖民贸易机遇），且不带王室标签。",
-  "card.patronageOffice.name": "王室荐任",
-  "card.patronageOffice.background": "把任命权重新收回宫廷，用仕途绑定忠诚。",
-  "card.patronageOffice.desc": "权力 +1，并获得「荐任网络」3 回合（每回合保留上限 +1）。",
 } as const;
