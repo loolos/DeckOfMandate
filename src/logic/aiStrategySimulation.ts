@@ -218,15 +218,20 @@ function runStrategyStep(state: GameState): GameState {
 }
 
 export function simulateFirstMandateRun(seed: number): StrategyRunResult {
+  const state = simulateFirstMandateEndState(seed);
+  return {
+    seed,
+    outcome: state.outcome,
+    endTurn: state.turn,
+    endingResources: { ...state.resources },
+  };
+}
+
+export function simulateFirstMandateEndState(seed: number): GameState {
   let state = createInitialState(seed, "firstMandate");
   for (let i = 0; i < MAX_STEPS_PER_RUN; i++) {
     if (state.outcome !== "playing") {
-      return {
-        seed,
-        outcome: state.outcome,
-        endTurn: state.turn,
-        endingResources: { ...state.resources },
-      };
+      return state;
     }
     const next = runStrategyStep(state);
     if (next === state) {
