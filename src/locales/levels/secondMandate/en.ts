@@ -15,6 +15,8 @@ export const messagesEnSecondMandate = {
   "status.europeAlert.name": "Europe Alert",
   "status.europeAlert.hint":
     "War-weariness pressure rolls with +1 weight. Fixed draw reduction each year: -{n}. Europe Alert may also add an extra Frontier Garrisons/Trade Disruption event each year.",
+  "status.europeAlert.history":
+    "Earlier French offensives hardened long-run coalition vigilance across Europe.",
   "event.nymwegenSettlement.name": "Treaties of Nijmegen",
   "event.nymwegenSettlement.desc":
     "A mandatory long-running crisis: pay 6 Funding to secure the settlement (Power -3, Legitimacy -2) and end Europe Alert; if ignored, lose 1 Power each year.",

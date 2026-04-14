@@ -150,13 +150,24 @@ export const messagesEnCore = {
   "event.politicalGridlock.desc":
     "Great nobles unite against your fiscal scheme. Pay 2 Funding or suffer Loss of Authority for 3 turns (−1 draw attempt each turn, min 1 draw).",
   "status.powerLeak.name": "Loss of Authority",
+  "status.powerLeak.history": "Provincial resistance and factional drag steadily weaken central execution.",
   "status.drawPenalty.name": "Draw Fatigue",
+  "status.drawPenalty.history": "Tax restructuring creates short-term implementation friction.",
   "status.retentionBoost.name": "Court Storage",
+  "status.retentionBoost.history": "Patronage networks improve continuity of royal control over appointments.",
   "status.royalBan.name": "Royal Access Frozen",
+  "status.royalBan.history": "When court credibility breaks, royal command tools temporarily lose traction.",
   "status.grainReliefDrawBoost.name": "Relief Coordination",
+  "status.grainReliefDrawBoost.history": "Emergency grain administration boosts short-run coordination capacity.",
   "status.grainReliefLegitimacyBoost.name": "Relief Confidence",
+  "status.grainReliefLegitimacyBoost.history":
+    "Visible relief action briefly restores trust in crown-led governance.",
   "status.religiousTolerance.name": "Religious Tolerance (Permanent)",
+  "status.religiousTolerance.history":
+    "Tolerance lowers immediate coercion but leaves recurring confessional flashpoints.",
   "status.huguenotContainment.name": "Contain Huguenot Remnants",
+  "status.huguenotContainment.history":
+    "Harsh repression demands sustained policing campaigns and political bandwidth.",
   "status.huguenotContainment.hint": "While active, Chapter 2 victory is blocked.",
   "event.religiousTension.name": "Religious Tension",
   "event.religiousTension.desc": "Confessional conflict flares again. Pay 2 Funding or lose 1 Legitimacy.",

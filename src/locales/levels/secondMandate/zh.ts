@@ -15,6 +15,8 @@ export const messagesZhSecondMandate = {
   "status.europeAlert.name": "欧洲警觉",
   "status.europeAlert.hint":
     "对外冲突压力持续（战争疲劳权重 +1）；且每回合固定少抽 {n} 张。欧洲警觉下每年还可能额外出现边境驻军/海贸受阻。",
+  "status.europeAlert.history":
+    "法国早期扩张刺激了欧陆列强的长期戒备，外交与军事压力转入制度化阶段。",
   "event.nymwegenSettlement.name": "奈梅亨和约",
   "event.nymwegenSettlement.desc":
     "这是必须尽快收束的长期事件：支付 6 经费可达成和约（权力 -3、合法性 -2），并结束「欧洲警觉」；若不处理，每年权力 -1。",

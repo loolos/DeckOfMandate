@@ -64,20 +64,24 @@ export function StatusBar({
     const next: StatusViewRow[] = [];
     if (europeAlertActive) {
       const hint = t("status.europeAlert.hint", { n: europeAlertDrawPenalty ?? 1 });
+      const history = t("status.europeAlert.history");
       next.push({
         id: "europeAlert",
         title: t("status.europeAlert.name"),
         compactMeta: hint,
         meta: hint,
+        detail: `${hint} ${history}`.trim(),
       });
     }
     if (coalitionActive) {
       const hint = t("status.antiFrenchLeague.hint", { pct });
+      const history = t("status.antiFrenchLeague.history");
       next.push({
         id: "antiFrenchLeague",
         title: t("status.antiFrenchLeague.name"),
         compactMeta: hint,
         meta: hint,
+        detail: `${hint} ${history}`.trim(),
       });
     }
     for (const row of statuses) {
@@ -88,6 +92,8 @@ export function StatusBar({
           : row.templateId === "huguenotContainment"
             ? t("ui.statusHuguenotRemaining", { n: row.turnsRemaining })
             : t("ui.statusTurnsRemaining", { n: row.turnsRemaining });
+      const history = tmpl.historyKey ? t(tmpl.historyKey) : "";
+      const effectDetail = statusDetail(row, t);
       next.push({
         id: row.instanceId,
         title: t(tmpl.titleKey),
@@ -95,8 +101,8 @@ export function StatusBar({
         meta: turnsText,
         detail:
           row.templateId === "huguenotContainment"
-            ? t("status.huguenotContainment.hint")
-            : statusDetail(row, t),
+            ? `${effectDetail} ${history} ${t("status.huguenotContainment.hint")}`.trim()
+            : `${effectDetail} ${history}`.trim(),
       });
     }
     return next;
@@ -133,6 +139,7 @@ export function StatusBar({
             <li key={row.id} className={rowCls}>
               <span className={styles.statusTitle}>{row.title}</span>
               <span className={styles.statusMeta}>{row.meta}</span>
+              {row.detail ? <span className={styles.statusDetail}>{row.detail}</span> : null}
             </li>
           );
         }
