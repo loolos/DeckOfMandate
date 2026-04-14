@@ -111,7 +111,7 @@ export const messagesZhCore = {
   "card.fiscalBurden.desc": "抽到时经费 -1。可支付 2 经费打出并消除（不会进入弃牌堆）。",
   "card.reform.name": "行政整编",
   "card.reform.background": "册籍与汇报线重划，官僚体系在王权下收得更紧。",
-  "card.reform.desc": "权力 +1。立即抽 1（手牌上限 10）。",
+  "card.reform.desc": "权力 +1。立即抽 1（手牌上限 12）。",
   "card.ceremony.name": "凡尔赛庆典",
   "card.ceremony.background": "仪仗、誓词与排场——让各派都看清谁仍站在中心。",
   "card.ceremony.desc": "合法性 +1。",
@@ -179,6 +179,8 @@ export const messagesZhCore = {
   "log.crackdownCancelled": "[第 {turn} 年] 已取消王室干预；退回 {refund} {funding}。",
   "log.eventScriptedAttack.generic":
     "[第 {turn} 年] 槽位 {slot}：{event} — 采取军事进攻。已支付 {paid} {funding}。{treasury}",
+  "log.drawOverflowDiscarded.title":
+    "[第 {turn} 年] 手牌已达上限；将剩余未摸的 {count} 张牌直接置入弃牌堆：{cards}。",
   "log.info.firstMandateInflationActivated":
     "[第 {turn} 年] 科尔贝尔改革与凡尔赛宫廷同步扩张，王权机器越强，维持它的行政与仪式成本也越高。已触发第一关「卡牌通胀」：此后仅带「通胀」标签的牌，在从弃牌堆洗回抽牌堆时才会叠加费用。",
   "log.info.cardTag.royal": "[第 {turn} 年] 标签说明「王室」：该牌属于王室工具，部分事件只能靠此类手段处理。",

@@ -61,20 +61,20 @@ export function applyScriptedCalendarPhase(state: GameState): GameState {
     if (cfg.requiresWarOfDevolutionAttacked === undefined) return true;
     return cfg.requiresWarOfDevolutionAttacked === state.warOfDevolutionAttacked;
   });
-  const year = currentCalendarYear(state);
+  const calendarTurn = currentCalendarYear(state);
   let s = state;
 
   for (const slot of EVENT_SLOT_ORDER) {
     const ev = s.slots[slot];
     if (!ev || ev.resolved) continue;
     const cfg = scripts.find((c) => c.templateId === ev.templateId);
-    if (cfg && year > cfg.presenceEndYear) {
+    if (cfg && calendarTurn > cfg.presenceEndYear) {
       s = { ...s, slots: { ...s.slots, [slot]: null } };
     }
   }
 
   for (const cfg of scripts) {
-    if (year !== cfg.presenceStartYear) continue;
+    if (calendarTurn !== cfg.presenceStartYear) continue;
     const exists = EVENT_SLOT_ORDER.some((sl) => {
       const e = s.slots[sl];
       return e?.templateId === cfg.templateId;
