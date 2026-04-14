@@ -13,7 +13,7 @@ import type { PlayerStatusInstance } from "../types/status";
 import { applyOnDrawCardEffects } from "./cardRuntime";
 import { drawUpToPower } from "./draw";
 import { applyScriptedCalendarPhase, rollAntiFrenchLeagueDrawAdjustment } from "./scriptedCalendar";
-import { pickWeightedIndex, rngNext } from "./rng";
+import { rngNext, shuffle } from "./rng";
 
 /** First calendar turn on which a full empty-board roll may produce three events (turns 1–5 never triple). */
 export const FIRST_TURN_ELIGIBLE_FOR_TRIPLE_EVENTS = 6;
@@ -27,12 +27,65 @@ export const PROB_EUROPE_ALERT_SUPPLEMENTAL_EVENT = 0.5;
 
 const EUROPE_ALERT_SUPPLEMENTAL_POOL = ["frontierGarrisons", "tradeDisruption"] as const;
 const RELIGIOUS_TENSION_TRIGGER_PROBABILITY = 0.3;
+const PROCEDURAL_SEQUENCE_LOW_WATERMARK = 3;
+const FIRST_MANDATE_OPENING_EVENTS: readonly EventInstance["templateId"][] = [
+  "tradeOpportunity",
+  "administrativeDelay",
+];
 
-export function rollNewEventForSlot(state: GameState, slot: SlotId): GameState {
+function buildProceduralSequenceBlock(state: GameState): [GameState["rng"], EventInstance["templateId"][]] {
   const pool = getLevelContent(state.levelId).rollableEventIds;
-  const weights = pool.map((id) => getEventRollWeight(state, id));
-  const [rng, idx] = pickWeightedIndex(state.rng, weights);
-  const templateId = pool[idx]!;
+  const expanded: EventInstance["templateId"][] = [];
+  for (const id of pool) {
+    const weight = Math.max(0, Math.floor(getEventRollWeight(state, id)));
+    for (let i = 0; i < weight; i++) expanded.push(id);
+  }
+  if (expanded.length === 0) return [state.rng, []];
+  return shuffle(state.rng, expanded);
+}
+
+function buildOpeningSequencePrefix(state: GameState): EventInstance["templateId"][] {
+  if (state.levelId !== "firstMandate" || state.turn !== 1) return [];
+  return [...FIRST_MANDATE_OPENING_EVENTS];
+}
+
+function ensureProceduralSequence(state: GameState, minRemaining: number): GameState {
+  let s = state;
+  while (s.proceduralEventSequence.length < minRemaining) {
+    const isFirstBlock = s.proceduralEventSequence.length === 0;
+    const [rng, block] = buildProceduralSequenceBlock(s);
+    const prefix = isFirstBlock ? buildOpeningSequencePrefix(s) : [];
+    const withPrefix = prefix.length > 0 ? [...prefix, ...block.filter((id) => !prefix.includes(id))] : block;
+    s = { ...s, rng, proceduralEventSequence: [...s.proceduralEventSequence, ...withPrefix] };
+    if (withPrefix.length === 0) break;
+  }
+  return s;
+}
+
+function drawFromProceduralSequence(
+  state: GameState,
+  count: number,
+): [GameState, EventInstance["templateId"][]] {
+  let s = ensureProceduralSequence(state, Math.max(count, PROCEDURAL_SEQUENCE_LOW_WATERMARK));
+  const picked: EventInstance["templateId"][] = [];
+  const used = new Set<EventInstance["templateId"]>();
+  while (picked.length < count) {
+    s = ensureProceduralSequence(s, 1);
+    if (s.proceduralEventSequence.length === 0) break;
+    const [head, ...rest] = s.proceduralEventSequence;
+    s = { ...s, proceduralEventSequence: rest };
+    if (!head) continue;
+    if (used.has(head)) continue;
+    picked.push(head);
+    used.add(head);
+  }
+  if (s.proceduralEventSequence.length < PROCEDURAL_SEQUENCE_LOW_WATERMARK) {
+    s = ensureProceduralSequence(s, PROCEDURAL_SEQUENCE_LOW_WATERMARK);
+  }
+  return [s, picked];
+}
+
+function placeEventTemplateOnSlot(state: GameState, slot: SlotId, templateId: EventInstance["templateId"]): GameState {
   const instance: EventInstance = {
     instanceId: `evt_${state.nextIds.event}`,
     templateId,
@@ -40,7 +93,6 @@ export function rollNewEventForSlot(state: GameState, slot: SlotId): GameState {
   };
   return {
     ...state,
-    rng,
     nextIds: { ...state.nextIds, event: state.nextIds.event + 1 },
     slots: { ...state.slots, [slot]: instance },
   };
@@ -84,27 +136,38 @@ function allSlotsEmpty(st: GameState): boolean {
   return EVENT_SLOT_ORDER.every((id) => !st.slots[id]);
 }
 
+function desiredProceduralEventCountWhenAllEmpty(state: GameState, roll: number): number {
+  if (state.levelId === "firstMandate" && state.turn === 1) return 2;
+  if (state.turn < FIRST_TURN_ELIGIBLE_FOR_TRIPLE_EVENTS) {
+    return roll < PROB_SINGLE_EVENT_WHEN_ALL_EMPTY ? 1 : 2;
+  }
+  if (roll < PROB_TRIPLE_EVENTS) return 3;
+  if (roll < PROB_TRIPLE_EVENTS + PROB_SINGLE_EVENT_WHEN_ALL_EMPTY) return 1;
+  return 2;
+}
+
 function fillEmptySlots(state: GameState): GameState {
   let st = state;
   if (allSlotsEmpty(st)) {
     const [rng, u] = rngNext(st.rng);
     st = { ...st, rng };
-    if (st.turn < FIRST_TURN_ELIGIBLE_FOR_TRIPLE_EVENTS) {
-      if (u < PROB_SINGLE_EVENT_WHEN_ALL_EMPTY) return rollNewEventForSlot(st, "A");
-      st = rollNewEventForSlot(st, "A");
-      return rollNewEventForSlot(st, "B");
+    const count = desiredProceduralEventCountWhenAllEmpty(st, u);
+    const [afterDraw, picked] = drawFromProceduralSequence(st, count);
+    st = afterDraw;
+    for (let i = 0; i < picked.length; i++) {
+      const slot = PROCEDURAL_EVENT_SLOT_ORDER[i];
+      if (!slot) break;
+      st = placeEventTemplateOnSlot(st, slot, picked[i]!);
     }
-    if (u < PROB_TRIPLE_EVENTS) {
-      st = rollNewEventForSlot(st, "A");
-      st = rollNewEventForSlot(st, "B");
-      return rollNewEventForSlot(st, "C");
-    }
-    if (u < PROB_TRIPLE_EVENTS + PROB_SINGLE_EVENT_WHEN_ALL_EMPTY) return rollNewEventForSlot(st, "A");
-    st = rollNewEventForSlot(st, "A");
-    return rollNewEventForSlot(st, "B");
+    return st;
   }
   for (const slot of PROCEDURAL_EVENT_SLOT_ORDER) {
-    if (!st.slots[slot]) st = rollNewEventForSlot(st, slot);
+    if (st.slots[slot]) continue;
+    const [afterDraw, picked] = drawFromProceduralSequence(st, 1);
+    st = afterDraw;
+    const templateId = picked[0];
+    if (!templateId) break;
+    st = placeEventTemplateOnSlot(st, slot, templateId);
   }
   return st;
 }
