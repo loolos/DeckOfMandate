@@ -11,6 +11,7 @@ type StatusViewRow = {
   compactMeta: string;
   meta: string;
   detail?: string;
+  hideMetaWhenExpandedOnMobile?: boolean;
 };
 
 function signedValue(n: number): string {
@@ -68,9 +69,10 @@ export function StatusBar({
       next.push({
         id: "europeAlert",
         title: t("status.europeAlert.name"),
-        compactMeta: hint,
+        compactMeta: "",
         meta: hint,
         detail: `${hint} ${history}`.trim(),
+        hideMetaWhenExpandedOnMobile: true,
       });
     }
     if (coalitionActive) {
@@ -161,7 +163,7 @@ export function StatusBar({
           >
             <span className={styles.statusTitle}>{row.title}</span>
             <span className={`${styles.statusMeta} ${styles.statusCompactMeta}`}>
-              {showDetails ? row.meta : row.compactMeta}
+              {showDetails && row.hideMetaWhenExpandedOnMobile ? "" : showDetails ? row.meta : row.compactMeta}
             </span>
             {showDetails && row.detail ? <span className={styles.statusDetail}>{row.detail}</span> : null}
           </li>
