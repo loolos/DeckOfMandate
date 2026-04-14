@@ -3,6 +3,7 @@ import { getEventTemplate } from "../data/events";
 import { getLevelDef, type LevelId } from "../data/levels";
 import { appendActionLog } from "../logic/actionLog";
 import { applyEffects, enforceLegitimacy } from "../logic/applyEffects";
+import { addCardsToHand } from "../logic/cardRuntime";
 import { normalizeGameState } from "../logic/normalizeGameState";
 import { applyPlayedCardEffects } from "../logic/resolveCard";
 import { resolveEndOfYearPenalties } from "../logic/resolveEvents";
@@ -29,7 +30,14 @@ function removeHand(state: GameState, instanceId: string): GameState {
   return { ...state, hand: state.hand.filter((id) => id !== instanceId) };
 }
 
+function isTemporaryCardInstance(state: GameState, instanceId: string): boolean {
+  const inst = state.cardsById[instanceId];
+  if (!inst) return false;
+  return getCardTemplate(inst.templateId).tags.includes("temp");
+}
+
 function pushDiscard(state: GameState, instanceId: string): GameState {
+  if (isTemporaryCardInstance(state, instanceId)) return state;
   return { ...state, discard: [...state.discard, instanceId] };
 }
 
@@ -148,11 +156,12 @@ function performScriptedAttack(state: GameState, slot: SlotId): GameState {
 
 /** After funding is cleared: keep chosen cards, discard the rest, then EOY penalties, then win / time / next year. */
 function completeYearAfterRetention(state: GameState, keepIds: readonly string[]): GameState {
-  const keep = new Set(keepIds);
-  const discardIds = state.hand.filter((id) => !keep.has(id));
+  const retainedIds = keepIds.filter((id) => !isTemporaryCardInstance(state, id));
+  const keep = new Set(retainedIds);
+  const discardIds = state.hand.filter((id) => !keep.has(id) && !isTemporaryCardInstance(state, id));
   let s: GameState = {
     ...state,
-    hand: [...keepIds],
+    hand: [...retainedIds],
     discard: [...state.discard, ...discardIds],
     phase: "action",
   };
@@ -248,6 +257,9 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
         });
       }
       let s = applyPlayedCardEffects(paid, inst.templateId);
+      if (inst.templateId === "diplomaticCongress") {
+        s = addCardsToHand(s, "diplomaticIntervention", 1);
+      }
       s = removeHand(s, id);
       s = pushDiscard(s, id);
       s = enforceLegitimacy(s);

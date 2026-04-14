@@ -43,6 +43,7 @@ export function StatusBar({
   coalitionActive,
   coalitionProbabilityPct,
   europeAlertActive,
+  europeAlertDrawPenalty,
 }: {
   statuses: readonly PlayerStatusInstance[];
   /** Anti-French League pressure (scripted war follow-up); draw risk is rolled each year in engine. */
@@ -51,6 +52,8 @@ export function StatusBar({
   coalitionProbabilityPct?: number;
   /** Chapter 2 continuity marker that increases selected war-pressure event weights. */
   europeAlertActive?: boolean;
+  /** Fixed draw reduction applied each beginYear while Europe Alert is active. */
+  europeAlertDrawPenalty?: number;
 }) {
   const { t } = useI18n();
   const isSmallScreen = useSmallScreen();
@@ -60,7 +63,7 @@ export function StatusBar({
   const rows = useMemo<StatusViewRow[]>(() => {
     const next: StatusViewRow[] = [];
     if (europeAlertActive) {
-      const hint = t("status.europeAlert.hint");
+      const hint = t("status.europeAlert.hint", { n: europeAlertDrawPenalty ?? 1 });
       next.push({
         id: "europeAlert",
         title: t("status.europeAlert.name"),
@@ -89,7 +92,7 @@ export function StatusBar({
       });
     }
     return next;
-  }, [coalitionActive, europeAlertActive, pct, statuses, t]);
+  }, [coalitionActive, europeAlertActive, europeAlertDrawPenalty, pct, statuses, t]);
 
   useEffect(() => {
     if (!isSmallScreen) setExpandedStatusId(null);

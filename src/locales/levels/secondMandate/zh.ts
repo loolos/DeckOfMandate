@@ -13,7 +13,7 @@ export const messagesZhSecondMandate = {
   "level.gloryUnderStrain.ending.defeat":
     "霸权成本最终压垮了体制。财政失衡、社会不安与外交围堵超出了宫廷控制，王冠变得虚弱而孤立。",
   "status.europeAlert.name": "欧洲警觉",
-  "status.europeAlert.hint": "对外冲突类事件更易出现（部分战争事件权重 +1）。",
+  "status.europeAlert.hint": "对外冲突类事件更易出现（部分战争事件权重 +1）；且每回合固定少抽 {n} 张。",
   "event.nymwegenSettlement.name": "奈梅亨和约",
   "event.nymwegenSettlement.desc":
     "和约可帮助巩固阶段成果。投入 1 经费，获得财政 +1 与合法性 +1。",
@@ -77,10 +77,10 @@ export const messagesZhSecondMandate = {
   "card.taxRebalance.desc": "财政 +1，并获得「抽牌受限」2 回合（每回合抽牌 -1）。",
   "card.diplomaticCongress.name": "外交会议",
   "card.diplomaticCongress.background": "通过使节与会议换取喘息，减轻短期外部压力。",
-  "card.diplomaticCongress.desc": "权力 +1。",
+  "card.diplomaticCongress.desc": "权力 +1。向手牌加入 1 张临时的「外交干预」。",
   "card.diplomaticIntervention.name": "外交干预",
   "card.diplomaticIntervention.background": "通过使节施压与条约操作解决危机，而非直接动用王室强制力。",
-  "card.diplomaticIntervention.desc": "解决一个有害事件（不能选殖民贸易机遇），且不带王室标签。",
+  "card.diplomaticIntervention.desc": "临时牌。解决一个有害事件（不能选殖民贸易机遇），且不带王室标签。",
   "card.patronageOffice.name": "王室荐任",
   "card.patronageOffice.background": "把任命权重新收回宫廷，用仕途绑定忠诚。",
   "card.patronageOffice.desc": "权力 +1，并获得「荐任网络」3 回合（每回合保留上限 +1）。",

@@ -21,7 +21,6 @@ describe("level2Transition", () => {
     expect(draft.counts.grainRelief).toBe(1);
     expect(draft.counts.taxRebalance).toBe(1);
     expect(draft.counts.diplomaticCongress).toBe(1);
-    expect(draft.counts.diplomaticIntervention).toBe(1);
     expect(v.isValid).toBe(true);
   });
 
@@ -73,6 +72,7 @@ describe("level2Transition", () => {
     const allTemplateIds = Object.values(st.cardsById).map((c) => c.templateId);
     expect(allTemplateIds.includes("development")).toBe(false);
     expect(allTemplateIds.includes("warBond")).toBe(true);
-    expect(allTemplateIds.includes("diplomaticIntervention")).toBe(true);
+    expect(allTemplateIds.includes("diplomaticIntervention")).toBe(false);
+    expect(allTemplateIds.includes("diplomaticCongress")).toBe(true);
   });
 });

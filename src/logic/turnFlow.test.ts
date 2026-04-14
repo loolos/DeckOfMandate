@@ -113,6 +113,34 @@ describe("beginYear + playerStatuses", () => {
     expect(s1.playerStatuses).toHaveLength(0);
   });
 
+  it("applies fixed Europe Alert draw reduction from chapter-start power", () => {
+    const started = createInitialState(55_002);
+    const cardsById: Record<string, CardInstance> = {
+      c0: { instanceId: "c0", templateId: "funding" },
+      c1: { instanceId: "c1", templateId: "funding" },
+      c2: { instanceId: "c2", templateId: "funding" },
+      c3: { instanceId: "c3", templateId: "funding" },
+    };
+    const s0: GameState = {
+      ...started,
+      outcome: "playing",
+      phase: "action",
+      resources: { treasuryStat: 0, funding: 0, power: 4, legitimacy: 2 },
+      nextTurnDrawModifier: 0,
+      hand: [],
+      deck: ["c0", "c1", "c2", "c3"],
+      discard: [],
+      cardsById,
+      playerStatuses: [],
+      europeAlert: true,
+      europeAlertDrawPenalty: 2,
+      antiFrenchLeague: null,
+      slots: { ...EMPTY_EVENT_SLOTS },
+    };
+    const s1 = beginYear(s0);
+    expect(s1.hand.length).toBe(2);
+  });
+
   it("reduces funding by 1 when fiscal burden is drawn", () => {
     const started = createInitialState(55_777);
     const cardsById: Record<string, CardInstance> = {

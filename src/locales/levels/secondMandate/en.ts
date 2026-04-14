@@ -13,7 +13,8 @@ export const messagesEnSecondMandate = {
   "level.gloryUnderStrain.ending.defeat":
     "The burdens of hegemony break the regime. Fiscal strain, social unrest, and diplomatic pressure outpace royal control, leaving the crown weakened and isolated.",
   "status.europeAlert.name": "Europe Alert",
-  "status.europeAlert.hint": "Coalition-pressure war events roll with +1 weight.",
+  "status.europeAlert.hint":
+    "Coalition-pressure war events roll with +1 weight. Fixed draw reduction each year: -{n}.",
   "event.nymwegenSettlement.name": "Treaties of Nijmegen",
   "event.nymwegenSettlement.desc":
     "The settlement can consolidate your gains. Invest 1 Funding to secure Treasury +1 and Legitimacy +1.",
@@ -86,11 +87,12 @@ export const messagesEnSecondMandate = {
   "card.diplomaticCongress.name": "Diplomatic Congress",
   "card.diplomaticCongress.background":
     "Envoys, conferences, and guarantees buy breathing room while rivals test your frontiers.",
-  "card.diplomaticCongress.desc": "Power +1.",
+  "card.diplomaticCongress.desc": "Power +1. Add 1 temporary Diplomatic Intervention to your hand.",
   "card.diplomaticIntervention.name": "Diplomatic Intervention",
   "card.diplomaticIntervention.background":
     "Apply pressure through envoys and treaty leverage rather than direct royal command.",
-  "card.diplomaticIntervention.desc": "Resolve one harmful event (not Colonial Trade Boom). Not a Royal-tag card.",
+  "card.diplomaticIntervention.desc":
+    "Temporary card. Resolve one harmful event (not Colonial Trade Boom). Not a Royal-tag card.",
   "card.patronageOffice.name": "Patronage Office",
   "card.patronageOffice.background":
     "Centralized appointments rebuild obedience by tying careers directly to the crown.",
