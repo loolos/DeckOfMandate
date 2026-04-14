@@ -1,8 +1,14 @@
 import { getCardTemplate } from "../data/cards";
 import type { GameState } from "../types/game";
 
+const FIRST_CHAPTER_INFLATION_THRESHOLD = 18;
+
 function isInflationEnabled(state: GameState): boolean {
-  return state.levelId === "secondMandate";
+  if (state.levelId === "secondMandate") return true;
+  if (state.levelId !== "firstMandate") return false;
+  const pressureScore =
+    state.resources.power + state.resources.treasuryStat + state.resources.legitimacy;
+  return pressureScore >= FIRST_CHAPTER_INFLATION_THRESHOLD;
 }
 
 function isInflationCard(state: GameState, cardInstanceId: string): boolean {

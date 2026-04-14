@@ -138,7 +138,7 @@ export type GameState = {
   hand: string[];
   /** All card instances keyed by id (includes played copies for lookup). */
   cardsById: Record<string, CardInstance>;
-  /** Inflation stacks per card instance (only active for Chapter 2 inflation-tagged cards). */
+  /** Inflation stacks per card instance (active in Chapter 2, and in Chapter 1 after pressure threshold). */
   cardInflationById: Record<string, number>;
   slots: Record<SlotId, EventInstance | null>;
   /** If true, that slot must become Major Crisis at the next Event phase (before empty rolls). */

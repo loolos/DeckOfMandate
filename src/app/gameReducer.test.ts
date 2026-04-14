@@ -372,7 +372,7 @@ describe("gameReducer", () => {
     }
   });
 
-  it("chapter 1 ignores inflation stacks for cost calculation", () => {
+  it("chapter 1 below pressure threshold ignores inflation stacks for cost calculation", () => {
     const base = createInitialState(202_605, "firstMandate");
     const ceremonyId = "ceremony_no_inflation";
     const withCard: typeof base = {
@@ -395,6 +395,36 @@ describe("gameReducer", () => {
     expect(last?.kind).toBe("cardPlayed");
     if (last?.kind === "cardPlayed") {
       expect(last.fundingCost).toBe(2);
+    }
+  });
+
+  it("chapter 1 at pressure threshold applies inflation stacks for cost calculation", () => {
+    const base = createInitialState(202_606, "firstMandate");
+    const ceremonyId = "ceremony_threshold_inflation";
+    const withCard: typeof base = {
+      ...base,
+      cardsById: {
+        ...base.cardsById,
+        [ceremonyId]: { instanceId: ceremonyId, templateId: "ceremony" as const },
+      },
+      hand: [ceremonyId],
+      deck: [],
+      discard: [],
+      resources: { treasuryStat: 6, funding: 2, power: 6, legitimacy: 6 },
+      cardInflationById: { ...base.cardInflationById, [ceremonyId]: 1 },
+      slots: { ...EMPTY_EVENT_SLOTS },
+    };
+    const blocked = gameReducer(withCard, { type: "PLAY_CARD", handIndex: 0 });
+    expect(blocked).toEqual(withCard);
+
+    const affordable = { ...withCard, resources: { ...withCard.resources, funding: 3 } };
+    const after = gameReducer(affordable, { type: "PLAY_CARD", handIndex: 0 });
+    expect(after.resources.funding).toBe(0);
+    expect(after.discard).toContain(ceremonyId);
+    const last = after.actionLog[after.actionLog.length - 1];
+    expect(last?.kind).toBe("cardPlayed");
+    if (last?.kind === "cardPlayed") {
+      expect(last.fundingCost).toBe(3);
     }
   });
 
