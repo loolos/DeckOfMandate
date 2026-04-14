@@ -56,9 +56,8 @@ function levelEndingKeys(def: (typeof levelDefs)[LevelId]): LevelEndingCopyKeys 
   return "ending" in def ? def.ending : undefined;
 }
 
-function displayRefitTags(mode: Level2StartDraft["mode"], tags: readonly CardTag[]): readonly CardTag[] {
-  if (mode !== "standalone") return tags;
-  return tags.filter((tag) => tag !== "inflation");
+function displayRefitTags(_mode: Level2StartDraft["mode"], tags: readonly CardTag[]): readonly CardTag[] {
+  return tags;
 }
 
 function isValidSave(x: unknown): x is GameState {
@@ -299,8 +298,7 @@ export function Game() {
     if (!level2Draft) return null;
     const tmpl = getCardTemplate(card.templateId);
     const visibleTags = displayRefitTags(level2Draft.mode, tmpl.tags);
-    const visibleInflationDelta =
-      level2Draft.mode === "standalone" && tmpl.tags.includes("inflation") ? 0 : card.inflationDelta;
+    const visibleInflationDelta = card.inflationDelta;
     const effectiveCost = tmpl.cost + visibleInflationDelta;
     const title = cardLabelWithIcon(card.templateId, t(tmpl.titleKey as MessageKey));
     const quickRows = buildCardQuickFrameRows(tmpl, effectiveCost);
