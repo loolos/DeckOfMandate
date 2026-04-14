@@ -3,7 +3,7 @@ import { createInitialState } from "../app/initialState";
 import type { CardInstance } from "../types/card";
 import { EMPTY_EVENT_SLOTS } from "../types/event";
 import type { GameState } from "../types/game";
-import { beginYear, retentionCapacity } from "./turnFlow";
+import { beginYear, maybeAddEuropeAlertSupplementalEvent, retentionCapacity } from "./turnFlow";
 
 describe("beginYear + playerStatuses", () => {
   it("applies drawAttemptsDelta to attempts then decrements turnsRemaining", () => {
@@ -214,6 +214,41 @@ describe("beginYear + playerStatuses", () => {
     const s1 = beginYear(s0);
     expect(s1.slots.D).toBeNull();
     expect(s1.slots.J).toBeNull();
+  });
+
+  it("adds a europe-alert supplemental frontier/trade event with 50% yearly gate", () => {
+    const started = createInitialState(902_010, "secondMandate");
+    const pickState = (() => {
+      for (let st = 1; st < 2_000_000; st++) {
+        const s0 = { ...started, rng: { state: st }, europeAlert: true, slots: { ...EMPTY_EVENT_SLOTS } };
+        const s1 = maybeAddEuropeAlertSupplementalEvent(s0);
+        if (s1.slots.A?.templateId === "frontierGarrisons" || s1.slots.A?.templateId === "tradeDisruption") {
+          return st;
+        }
+      }
+      throw new Error("failed to find deterministic rng state for supplemental event");
+    })();
+    const s0: GameState = {
+      ...started,
+      rng: { state: pickState },
+      europeAlert: true,
+      slots: { ...EMPTY_EVENT_SLOTS },
+    };
+    const s1 = maybeAddEuropeAlertSupplementalEvent(s0);
+    expect(["frontierGarrisons", "tradeDisruption"]).toContain(s1.slots.A?.templateId);
+  });
+
+  it("does not add frontier/trade supplemental events without europe alert", () => {
+    const started = createInitialState(902_011, "secondMandate");
+    const s0: GameState = {
+      ...started,
+      europeAlert: false,
+      slots: { ...EMPTY_EVENT_SLOTS },
+    };
+    const s1 = maybeAddEuropeAlertSupplementalEvent(s0);
+    expect(s1.slots.A).toBeNull();
+    expect(s1.slots.B).toBeNull();
+    expect(s1.slots.C).toBeNull();
   });
 
   it("retentionCapacity includes temporary retention boost statuses", () => {

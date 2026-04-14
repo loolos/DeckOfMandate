@@ -60,7 +60,8 @@ export const messagesZhCore = {
   "menu.refit.mode.continuity": "模式：承接第一关胜利",
   "menu.refit.resources": "开局资源 — 财政 {treasury}，权力 {power}，合法性 {legitimacy}",
   "menu.refit.startYear": "第二关起始年份：{year}",
-  "menu.refit.europeAlertOn": "欧洲警觉：开启（围堵相关事件权重 +1；每回合固定少抽 {n} 张）。",
+  "menu.refit.europeAlertOn":
+    "欧洲警觉：开启（战争疲劳权重 +1；每回合固定少抽 {n} 张；且每年有 50% 额外出现边境驻军/海贸受阻其一）。",
   "menu.refit.europeAlertOff": "欧洲警觉：关闭（标准第二关压力）。",
   "menu.refit.totalCards": "总牌数：{current}（需在 {min}–{max}）",
   "menu.refit.newCardTotal": "新增牌数量：{current} / {max}",
@@ -137,6 +138,7 @@ export const messagesZhCore = {
   "log.effect.gainFunding": "{funding} +{amount}",
   "log.effect.drawCards": "抽牌 {count}",
   "log.effect.scheduleNextTurnDrawModifier": "下一年抽牌修正 {delta}",
+  "log.effect.scheduleDrawModifiers": "后续多年抽牌修正 {deltas}",
   "log.effect.setCardTagBlocked": "禁用 {tag} 牌（{turns} 回合）",
   "log.effect.addPlayerStatus": "{status}（{turns} 回合）",
   "log.effect.addCardsToDeck": "向抽牌堆加入 {count} 张{card}",

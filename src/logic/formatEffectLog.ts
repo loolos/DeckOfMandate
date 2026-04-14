@@ -26,6 +26,10 @@ export function formatEffectLogLine(
       const signed = d >= 0 ? `+${d}` : String(d);
       return t("log.effect.scheduleNextTurnDrawModifier", { delta: signed });
     }
+    case "scheduleDrawModifiers":
+      return t("log.effect.scheduleDrawModifiers", {
+        deltas: effect.deltas.map((d) => (d >= 0 ? `+${d}` : String(d))).join(", "),
+      });
     case "addPlayerStatus": {
       const tmpl = getStatusTemplate(effect.templateId);
       return t("log.effect.addPlayerStatus", {

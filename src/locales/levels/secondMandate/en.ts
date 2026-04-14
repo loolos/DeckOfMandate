@@ -14,7 +14,7 @@ export const messagesEnSecondMandate = {
     "The burdens of hegemony break the regime. Fiscal strain, social unrest, and diplomatic pressure outpace royal control, leaving the crown weakened and isolated.",
   "status.europeAlert.name": "Europe Alert",
   "status.europeAlert.hint":
-    "Coalition-pressure war events roll with +1 weight. Fixed draw reduction each year: -{n}.",
+    "War-weariness pressure rolls with +1 weight. Fixed draw reduction each year: -{n}. Europe Alert may also add an extra Frontier Garrisons/Trade Disruption event each year.",
   "event.nymwegenSettlement.name": "Treaties of Nijmegen",
   "event.nymwegenSettlement.desc":
     "The settlement can consolidate your gains. Invest 1 Funding to secure Treasury +1 and Legitimacy +1.",
@@ -38,7 +38,7 @@ export const messagesEnSecondMandate = {
     "Elite resistance grows at court and in the provinces. Pay 1 Funding or Royal Intervention, or gain Loss of Authority for 3 turns.",
   "event.provincialNoncompliance.name": "Provincial Noncompliance",
   "event.provincialNoncompliance.desc":
-    "Local officials stall implementation. Pay 2 Funding or suffer a -2 draw modifier next year.",
+    "Local officials stall implementation. Pay 2 Funding or suffer draw -2 next year, then draw -1 in each of the next two years.",
   "event.risingGrainPrices.name": "Rising Grain Prices",
   "event.risingGrainPrices.desc":
     "Food pressure drives unrest. Pay 3 Funding or use Royal Intervention; if unresolved, lose 2 Legitimacy.",
@@ -47,7 +47,7 @@ export const messagesEnSecondMandate = {
     "Communities and elites resist levies. Pay 2 Funding or use Royal Intervention; if unresolved, lose 1 Treasury and 1 Legitimacy.",
   "event.frontierGarrisons.name": "Frontier Garrisons",
   "event.frontierGarrisons.desc":
-    "Border garrisons consume revenue. Pay 2 Funding or lose 1 Treasury and take a draw penalty next year.",
+    "Border garrisons consume revenue. Pay 3 Funding or lose 1 Treasury and take a draw penalty next year.",
   "event.tradeDisruption.name": "Trade Disruption",
   "event.tradeDisruption.desc":
     "Sea lanes and convoy risk cut into policy bandwidth. Pay 1 Funding or take a -2 draw modifier next year.",
@@ -56,16 +56,16 @@ export const messagesEnSecondMandate = {
     "Factional intrigue weakens authority. Pay 3 Funding or use Royal Intervention; unresolved scandal blocks all Royal-tag cards next turn.",
   "event.militaryPrestige.name": "Military Prestige",
   "event.militaryPrestige.desc":
-    "A chance to convert battlefield image into authority. Invest 1 Funding for Legitimacy +1.",
+    "A chance to convert battlefield image into authority. Invest 2 Funding for Legitimacy +1.",
   "event.commercialExpansion.name": "Commercial Expansion",
   "event.commercialExpansion.desc":
-    "Merchants request support for growth. Invest 1 Funding for Treasury +1.",
+    "Merchants request support for growth. Invest 2 Funding for Treasury +1.",
   "event.talentedAdministrator.name": "Talented Administrator",
   "event.talentedAdministrator.desc":
-    "A capable official can be elevated. Invest 1 Funding for Power +1.",
+    "A capable official can be elevated. Invest 2 Funding for Power +1.",
   "event.warWeariness.name": "War Weariness",
   "event.warWeariness.desc":
-    "Long conflict exhausts support. Pay 1 Funding or Royal Intervention, or lose 1 Legitimacy and gain Loss of Authority for 2 turns.",
+    "Long conflict exhausts support. Pay 3 Funding or Royal Intervention, or lose 1 Legitimacy and gain Loss of Authority for 2 turns.",
   "event.grainReliefCrisis.name": "Grain Relief Crisis",
   "event.grainReliefCrisis.desc":
     "Food insecurity surges. Spend 2 Funding to stabilize communities and gain Legitimacy +2; unresolved pressure causes Legitimacy -2.",

@@ -9,5 +9,6 @@ export type Effect =
   | { kind: "gainFunding"; amount: number }
   | { kind: "drawCards"; count: number }
   | { kind: "scheduleNextTurnDrawModifier"; delta: number }
+  | { kind: "scheduleDrawModifiers"; deltas: number[] }
   | { kind: "addPlayerStatus"; templateId: StatusTemplateId; turns: number }
   | { kind: "addCardsToDeck"; templateId: CardTemplateId; count: number };

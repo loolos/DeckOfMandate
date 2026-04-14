@@ -56,6 +56,7 @@ export function createInitialState(
     nextIds: { event: 0, status: 0, log: 0 },
     resources,
     nextTurnDrawModifier: 0,
+    scheduledDrawModifiers: [],
     deck: shuffled.map((c) => c.instanceId),
     discard: [],
     hand: [],

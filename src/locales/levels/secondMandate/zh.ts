@@ -13,7 +13,8 @@ export const messagesZhSecondMandate = {
   "level.gloryUnderStrain.ending.defeat":
     "霸权成本最终压垮了体制。财政失衡、社会不安与外交围堵超出了宫廷控制，王冠变得虚弱而孤立。",
   "status.europeAlert.name": "欧洲警觉",
-  "status.europeAlert.hint": "对外冲突类事件更易出现（部分战争事件权重 +1）；且每回合固定少抽 {n} 张。",
+  "status.europeAlert.hint":
+    "对外冲突压力持续（战争疲劳权重 +1）；且每回合固定少抽 {n} 张。欧洲警觉下每年还可能额外出现边境驻军/海贸受阻。",
   "event.nymwegenSettlement.name": "奈梅亨和约",
   "event.nymwegenSettlement.desc":
     "和约可帮助巩固阶段成果。投入 1 经费，获得财政 +1 与合法性 +1。",
@@ -37,7 +38,7 @@ export const messagesZhSecondMandate = {
     "宫廷与地方精英抵触情绪升高。支付 1 经费或王室干预，否则获得「权力流失」3 回合。",
   "event.provincialNoncompliance.name": "地方消极执行",
   "event.provincialNoncompliance.desc":
-    "地方官僚拖延政令。支付 2 经费，否则下一回合抽牌修正 -2。",
+    "地方官僚拖延政令。支付 2 经费，否则下一年抽牌 -2，之后两年每年抽牌 -1。",
   "event.risingGrainPrices.name": "粮价上涨",
   "event.risingGrainPrices.desc":
     "粮价推动社会不稳。支付 3 经费（或王室干预），否则合法性 -2。",
@@ -45,7 +46,7 @@ export const messagesZhSecondMandate = {
   "event.taxResistance.desc":
     "地方与社群抵制新税。支付 2 经费或王室干预，否则财政 -1 且合法性 -1。",
   "event.frontierGarrisons.name": "边境驻军消耗",
-  "event.frontierGarrisons.desc": "边防驻军持续消耗国库。支付 2 经费，否则财政 -1 且下一回合抽牌受罚。",
+  "event.frontierGarrisons.desc": "边防驻军持续消耗国库。支付 3 经费，否则财政 -1 且下一回合抽牌受罚。",
   "event.tradeDisruption.name": "海贸受阻",
   "event.tradeDisruption.desc":
     "航路受扰影响施政节奏。支付 1 经费，否则下一回合抽牌修正 -2。",
@@ -53,14 +54,14 @@ export const messagesZhSecondMandate = {
   "event.courtScandal.desc":
     "宫廷派系丑闻动摇威望。支付 3 经费或王室干预，否则下一回合无法打出王室牌。",
   "event.militaryPrestige.name": "军事声望",
-  "event.militaryPrestige.desc": "可将军功转化为统治威望。投入 1 经费，合法性 +1。",
+  "event.militaryPrestige.desc": "可将军功转化为统治威望。投入 2 经费，合法性 +1。",
   "event.commercialExpansion.name": "商业扩张",
-  "event.commercialExpansion.desc": "商人请求政策支持。投入 1 经费，财政 +1。",
+  "event.commercialExpansion.desc": "商人请求政策支持。投入 2 经费，财政 +1。",
   "event.talentedAdministrator.name": "能臣举荐",
-  "event.talentedAdministrator.desc": "可提拔能干官员。投入 1 经费，权力 +1。",
+  "event.talentedAdministrator.desc": "可提拔能干官员。投入 2 经费，权力 +1。",
   "event.warWeariness.name": "战争疲劳",
   "event.warWeariness.desc":
-    "长期战争削弱民意与服从。支付 1 经费或王室干预，否则合法性 -1 并获得「权力流失」2 回合。",
+    "长期战争削弱民意与服从。支付 3 经费或王室干预，否则合法性 -1 并获得「权力流失」2 回合。",
   "event.grainReliefCrisis.name": "赈济迟滞",
   "event.grainReliefCrisis.desc":
     "粮食调配迟滞导致社会压力升级。支付 2 经费可稳住局势并获得合法性 +2；若放任将损失合法性 -2。",

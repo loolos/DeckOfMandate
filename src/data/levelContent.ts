@@ -125,8 +125,6 @@ export const levelContentByLevelId = {
       "provincialNoncompliance",
       "risingGrainPrices",
       "taxResistance",
-      "frontierGarrisons",
-      "tradeDisruption",
       "courtScandal",
       "militaryPrestige",
       "commercialExpansion",
