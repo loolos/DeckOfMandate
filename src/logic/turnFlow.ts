@@ -1,6 +1,7 @@
 import { getEventRollWeight } from "../data/events";
 import { getLevelContent } from "../data/levelContent";
 import { getLevelDef } from "../data/levels";
+import type { CardTemplateId } from "../types/card";
 import { appendActionLog } from "./actionLog";
 import {
   EVENT_SLOT_ORDER,
@@ -291,6 +292,15 @@ export function beginYear(state: GameState): GameState {
     discard: drawn.discard,
   };
   s = applyInflationFromDeckRefill(s, drawn.refilledCardIds);
+  if (drawn.discardedCardIds.length > 0) {
+    const discardedTemplateIds = drawn.discardedCardIds
+      .map((id) => s.cardsById[id]?.templateId)
+      .filter((id): id is CardTemplateId => Boolean(id));
+    s = appendActionLog(s, {
+      kind: "drawOverflowDiscarded",
+      cardTemplateIds: discardedTemplateIds,
+    });
+  }
   for (const cardId of drawn.drawnCardIds) {
     s = applyOnDrawCardEffects(s, cardId);
   }

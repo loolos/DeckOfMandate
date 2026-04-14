@@ -88,6 +88,12 @@ export type ActionLogEntry =
       probabilityPct: number;
     }
   | {
+      kind: "drawOverflowDiscarded";
+      id: string;
+      turn: number;
+      cardTemplateIds: CardTemplateId[];
+    }
+  | {
       kind: "info";
       id: string;
       turn: number;

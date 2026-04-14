@@ -491,4 +491,46 @@ describe("beginYear + playerStatuses", () => {
     expect(s1.playerStatuses.find((s) => s.templateId === "religiousTolerance")?.turnsRemaining).toBe(99);
     expect(s1.playerStatuses.find((s) => s.templateId === "huguenotContainment")?.turnsRemaining).toBe(3);
   });
+
+  it("when draw attempts exceed hand cap, remaining undrawn cards are discarded and logged", () => {
+    const started = createInitialState(55_781, "firstMandate");
+    const cardsById: Record<string, CardInstance> = {
+      h0: { instanceId: "h0", templateId: "funding" },
+      h1: { instanceId: "h1", templateId: "funding" },
+      h2: { instanceId: "h2", templateId: "funding" },
+      h3: { instanceId: "h3", templateId: "funding" },
+      h4: { instanceId: "h4", templateId: "funding" },
+      h5: { instanceId: "h5", templateId: "funding" },
+      h6: { instanceId: "h6", templateId: "funding" },
+      h7: { instanceId: "h7", templateId: "funding" },
+      h8: { instanceId: "h8", templateId: "funding" },
+      h9: { instanceId: "h9", templateId: "funding" },
+      h10: { instanceId: "h10", templateId: "funding" },
+      d0: { instanceId: "d0", templateId: "ceremony" },
+      d1: { instanceId: "d1", templateId: "development" },
+      d2: { instanceId: "d2", templateId: "reform" },
+    };
+    const s0: GameState = {
+      ...started,
+      outcome: "playing",
+      phase: "action",
+      resources: { treasuryStat: 0, funding: 0, power: 3, legitimacy: 3 },
+      nextTurnDrawModifier: 0,
+      hand: ["h0", "h1", "h2", "h3", "h4", "h5", "h6", "h7", "h8", "h9", "h10"],
+      deck: ["d0", "d1", "d2"],
+      discard: [],
+      cardsById,
+      playerStatuses: [],
+      slots: { ...EMPTY_EVENT_SLOTS },
+    };
+    const s1 = beginYear(s0);
+    expect(s1.hand).toHaveLength(12);
+    expect(s1.hand).toContain("d0");
+    expect(s1.discard).toEqual(["d1", "d2"]);
+    const overflowEntry = s1.actionLog.find((e) => e.kind === "drawOverflowDiscarded");
+    expect(overflowEntry).toBeTruthy();
+    if (overflowEntry?.kind === "drawOverflowDiscarded") {
+      expect(overflowEntry.cardTemplateIds).toEqual(["development", "reform"]);
+    }
+  });
 });

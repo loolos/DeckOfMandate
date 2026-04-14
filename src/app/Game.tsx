@@ -127,7 +127,7 @@ export function Game() {
 
   const level = useMemo(() => getLevelDef(state.levelId), [state.levelId]);
 
-  const year = useMemo(
+  const turnCalendarLabel = useMemo(
     () => state.calendarStartYear + state.turn - 1,
     [state.calendarStartYear, state.turn],
   );
@@ -618,7 +618,7 @@ export function Game() {
           <h1>{t("app.title")}</h1>
           <p>{t(level.nameKey as MessageKey)}</p>
           <div className={styles.banner}>
-            {year}
+            {turnCalendarLabel}
             <span style={{ marginLeft: "0.65rem", color: "var(--muted)", fontSize: "0.95rem" }}>
               {t("banner.turn", { turn: state.turn, limit: level.turnLimit })}
             </span>

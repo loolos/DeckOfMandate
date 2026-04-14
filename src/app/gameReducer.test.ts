@@ -143,9 +143,9 @@ describe("gameReducer", () => {
     expect(after.resources.power).toBe(s.resources.power + cfg.attack.powerDelta);
     expect(after.warOfDevolutionAttacked).toBe(true);
     expect(after.antiFrenchLeague).not.toBeNull();
-    const years = cfg.antiCoalition.activeYearsAfterAttack;
+    const turnWindow = cfg.antiCoalition.activeYearsAfterAttack;
     const expectedUntil =
-      years === null ? getLevelDef("firstMandate").turnLimit : turn + years;
+      turnWindow === null ? getLevelDef("firstMandate").turnLimit : turn + turnWindow;
     expect(after.antiFrenchLeague!.untilTurn).toBe(expectedUntil);
   });
 

@@ -120,7 +120,7 @@ export const messagesEnCore = {
   "card.reform.name": "Administrative Reform",
   "card.reform.background":
     "Registers and reporting lines are redrawn; the bureaucracy tightens under royal direction.",
-  "card.reform.desc": "Power +1 (applies next draw phase). Draw 1 now (hand cap 10).",
+  "card.reform.desc": "Power +1 (applies next draw phase). Draw 1 now (hand cap 12).",
   "card.ceremony.name": "Versailles Ceremony",
   "card.ceremony.background":
     "Banners, oaths, and spectacle at court—majesty displayed so every faction remembers who stands at the center.",
@@ -201,6 +201,8 @@ export const messagesEnCore = {
   "log.crackdownCancelled": "[Turn {turn}] Royal Intervention cancelled; refunded {refund} {funding}.",
   "log.eventScriptedAttack.generic":
     "[Turn {turn}] Slot {slot}: {event} — military option. Paid {paid} {funding}.{treasury}",
+  "log.drawOverflowDiscarded.title":
+    "[Turn {turn}] Hand reached cap; discarded {count} undrawn card(s): {cards}.",
   "log.info.firstMandateInflationActivated":
     "[Turn {turn}] As Colbert-style reforms and Versailles court politics scale up together, the stronger the royal machine gets, the more expensive it is to keep running. Chapter 1 inflation is now active: from now on, only cards with the “Inflation” tag gain extra cost when they cycle from discard back into deck.",
   "log.info.cardTag.royal":

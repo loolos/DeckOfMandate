@@ -135,12 +135,12 @@ export function buildScriptedEventQuickFrameRows(levelId: LevelId, tmpl: EventTe
     labelKey: "ui.quickFrame.ifSolved",
     value: `${getResourceIcon("power")}+${cfg.attack.powerDelta} · ~${pctTreasury}% ${getResourceIcon("treasuryStat")}+${cfg.attack.extraTreasuryDelta} · ~${pctCoalition}%📜-1`,
   };
-  const yearRow: QuickFrameRow = {
+  const turnSpanRow: QuickFrameRow = {
     labelKey: "ui.quickFrame.yearEnd",
     value: `${cfg.presenceStartYear}–${cfg.presenceEndYear}`,
     muted: true,
   };
-  return [pay, solvedRow, yearRow];
+  return [pay, solvedRow, turnSpanRow];
 }
 
 export function buildEventQuickFrameRows(tmpl: EventTemplate): QuickFrameRow[] {
@@ -153,10 +153,10 @@ export function buildEventQuickFrameRows(tmpl: EventTemplate): QuickFrameRow[] {
     value: eventSolveOutcomeChips(tmpl),
   };
   const yEnd = eventYearEndChips(tmpl);
-  const yearRow: QuickFrameRow = {
+  const turnEndRow: QuickFrameRow = {
     labelKey: "ui.quickFrame.yearEnd",
     value: yEnd ?? "—",
     muted: yEnd === "∅",
   };
-  return [pay, solvedRow, yearRow];
+  return [pay, solvedRow, turnEndRow];
 }

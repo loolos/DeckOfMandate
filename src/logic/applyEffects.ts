@@ -1,10 +1,12 @@
 import { getStatusTemplate } from "../data/statusTemplates";
+import type { CardTemplateId } from "../types/card";
 import type { Effect } from "../types/effect";
 import type { GameState } from "../types/game";
 import type { PlayerStatusInstance } from "../types/status";
+import { appendActionLog } from "./actionLog";
 import { addCardsToDeck, applyOnDrawCardEffects } from "./cardRuntime";
 import { applyInflationFromDeckRefill } from "./cardCost";
-import { tryDrawOne } from "./draw";
+import { drawUpToPower } from "./draw";
 
 export function enforceLegitimacy(s: GameState): GameState {
   if (s.resources.legitimacy <= 0) {
@@ -33,13 +35,20 @@ export function applyEffect(state: GameState, e: Effect): GameState {
       };
     case "drawCards": {
       let s = state;
-      for (let i = 0; i < e.count; i++) {
-        const d = tryDrawOne(s.rng, s.hand, s.deck, s.discard);
-        s = { ...s, rng: d.rng, hand: d.hand, deck: d.deck, discard: d.discard };
-        s = applyInflationFromDeckRefill(s, d.refilledCardIds);
-        if (d.drewCardId) {
-          s = applyOnDrawCardEffects(s, d.drewCardId);
-        }
+      const drawn = drawUpToPower(s.rng, s.hand, s.deck, s.discard, e.count);
+      s = { ...s, rng: drawn.rng, hand: drawn.hand, deck: drawn.deck, discard: drawn.discard };
+      s = applyInflationFromDeckRefill(s, drawn.refilledCardIds);
+      if (drawn.discardedCardIds.length > 0) {
+        const discardedTemplateIds = drawn.discardedCardIds
+          .map((id) => s.cardsById[id]?.templateId)
+          .filter((id): id is CardTemplateId => Boolean(id));
+        s = appendActionLog(s, {
+          kind: "drawOverflowDiscarded",
+          cardTemplateIds: discardedTemplateIds,
+        });
+      }
+      for (const cardId of drawn.drawnCardIds) {
+        s = applyOnDrawCardEffects(s, cardId);
       }
       return s;
     }

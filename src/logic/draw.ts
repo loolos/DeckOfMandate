@@ -1,7 +1,7 @@
 import type { RngSerialized } from "../types/game";
 import { shuffle } from "./rng";
 
-const HAND_CAP = 10;
+const HAND_CAP = 12;
 
 export function refillDeckFromDiscard(
   rng: RngSerialized,
@@ -59,6 +59,7 @@ export function drawUpToPower(
   deck: string[];
   discard: string[];
   drawnCardIds: string[];
+  discardedCardIds: string[];
   refilledCardIds: string[];
 } {
   let r = rng;
@@ -66,8 +67,22 @@ export function drawUpToPower(
   let d = deck;
   let di = discard;
   const drawnCardIds: string[] = [];
+  const discardedCardIds: string[] = [];
   const refilledCardIds: string[] = [];
   for (let i = 0; i < attempts; i++) {
+    if (h.length >= HAND_CAP) {
+      const [r0, d0, di0, refilled] = refillDeckFromDiscard(r, d, di);
+      r = r0;
+      d = d0;
+      di = di0;
+      if (refilled.length > 0) refilledCardIds.push(...refilled);
+      if (d.length === 0) break;
+      const top = d[0]!;
+      d = d.slice(1);
+      di = [...di, top];
+      discardedCardIds.push(top);
+      continue;
+    }
     const step = tryDrawOne(r, h, d, di);
     r = step.rng;
     h = step.hand;
@@ -75,10 +90,9 @@ export function drawUpToPower(
     di = step.discard;
     if (step.drewCardId) drawnCardIds.push(step.drewCardId);
     if (step.refilledCardIds.length > 0) refilledCardIds.push(...step.refilledCardIds);
-    if (!step.drew && h.length >= HAND_CAP) continue;
     if (!step.drew && d.length === 0 && di.length === 0) break;
   }
-  return { rng: r, hand: h, deck: d, discard: di, drawnCardIds, refilledCardIds };
+  return { rng: r, hand: h, deck: d, discard: di, drawnCardIds, discardedCardIds, refilledCardIds };
 }
 
 export const handCap = HAND_CAP;
