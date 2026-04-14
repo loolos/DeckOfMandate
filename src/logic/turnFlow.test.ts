@@ -222,7 +222,10 @@ describe("beginYear + playerStatuses", () => {
       for (let st = 1; st < 2_000_000; st++) {
         const s0 = { ...started, rng: { state: st }, europeAlert: true, slots: { ...EMPTY_EVENT_SLOTS } };
         const s1 = maybeAddEuropeAlertSupplementalEvent(s0);
-        if (s1.slots.A?.templateId === "frontierGarrisons" || s1.slots.A?.templateId === "tradeDisruption") {
+        const injected = Object.values(s1.slots).find(
+          (ev) => ev?.templateId === "frontierGarrisons" || ev?.templateId === "tradeDisruption",
+        );
+        if (injected) {
           return st;
         }
       }
@@ -235,7 +238,10 @@ describe("beginYear + playerStatuses", () => {
       slots: { ...EMPTY_EVENT_SLOTS },
     };
     const s1 = maybeAddEuropeAlertSupplementalEvent(s0);
-    expect(["frontierGarrisons", "tradeDisruption"]).toContain(s1.slots.A?.templateId);
+    const injected = Object.values(s1.slots).find(
+      (ev) => ev?.templateId === "frontierGarrisons" || ev?.templateId === "tradeDisruption",
+    );
+    expect(injected).toBeTruthy();
   });
 
   it("does not add frontier/trade supplemental events without europe alert", () => {
@@ -249,6 +255,44 @@ describe("beginYear + playerStatuses", () => {
     expect(s1.slots.A).toBeNull();
     expect(s1.slots.B).toBeNull();
     expect(s1.slots.C).toBeNull();
+  });
+
+  it("can inject supplemental frontier/trade event outside A-C when procedural slots are full", () => {
+    const started = createInitialState(902_012, "secondMandate");
+    const unresolved = { resolved: false as const };
+    const pickState = (() => {
+      for (let st = 1; st < 2_000_000; st++) {
+        const s0: GameState = {
+          ...started,
+          rng: { state: st },
+          europeAlert: true,
+          slots: {
+            ...EMPTY_EVENT_SLOTS,
+            A: { instanceId: "evt_hold_a", templateId: "versaillesExpenditure", ...unresolved },
+            B: { instanceId: "evt_hold_b", templateId: "nobleResentment", ...unresolved },
+            C: { instanceId: "evt_hold_c", templateId: "warWeariness", ...unresolved },
+          },
+        };
+        const s1 = maybeAddEuropeAlertSupplementalEvent(s0);
+        if (s1.slots.D?.templateId === "frontierGarrisons" || s1.slots.D?.templateId === "tradeDisruption") {
+          return st;
+        }
+      }
+      throw new Error("failed to find deterministic rng state for D-slot supplemental event");
+    })();
+    const s0: GameState = {
+      ...started,
+      rng: { state: pickState },
+      europeAlert: true,
+      slots: {
+        ...EMPTY_EVENT_SLOTS,
+        A: { instanceId: "evt_hold_a", templateId: "versaillesExpenditure", ...unresolved },
+        B: { instanceId: "evt_hold_b", templateId: "nobleResentment", ...unresolved },
+        C: { instanceId: "evt_hold_c", templateId: "warWeariness", ...unresolved },
+      },
+    };
+    const s1 = maybeAddEuropeAlertSupplementalEvent(s0);
+    expect(["frontierGarrisons", "tradeDisruption"]).toContain(s1.slots.D?.templateId);
   });
 
   it("retentionCapacity includes temporary retention boost statuses", () => {

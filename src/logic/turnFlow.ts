@@ -119,7 +119,7 @@ function runEventPhase(state: GameState): GameState {
 
 export function maybeAddEuropeAlertSupplementalEvent(state: GameState): GameState {
   if (!state.europeAlert || state.levelId !== "secondMandate") return state;
-  const target = PROCEDURAL_EVENT_SLOT_ORDER.find((slot) => !state.slots[slot]);
+  const target = EVENT_SLOT_ORDER.find((slot) => !state.slots[slot]);
   if (!target) return state;
   let s = state;
   const [rngRoll, uRoll] = rngNext(s.rng);
