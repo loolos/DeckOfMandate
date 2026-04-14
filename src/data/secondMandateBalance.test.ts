@@ -12,7 +12,6 @@ describe("secondMandate balance data", () => {
       "diplomaticIntervention",
       "fiscalBurden",
       "patronageOffice",
-      "warBond",
     ] as const;
     const expectedCosts = {
       grainRelief: 3,
@@ -21,7 +20,6 @@ describe("secondMandate balance data", () => {
       diplomaticIntervention: 0,
       fiscalBurden: 2,
       patronageOffice: 4,
-      warBond: 0,
     } as const;
     for (const id of newIds) {
       expect(getCardTemplate(id).cost).toBe(expectedCosts[id]);
@@ -61,12 +59,6 @@ describe("secondMandate balance data", () => {
       { kind: "addPlayerStatus", templateId: "retentionBoost", turns: 3 },
     ]);
 
-    const warBond = getCardTemplate("warBond");
-    expect(warBond.effects).toEqual([
-      { kind: "gainFunding", amount: 3 },
-      { kind: "modResource", resource: "treasuryStat", delta: -1 },
-    ]);
-    expect(warBond.tags.includes("royal")).toBe(false);
     expect(getCardTemplate("funding").tags.includes("royal")).toBe(true);
     expect(getCardTemplate("crackdown").tags.includes("royal")).toBe(true);
     expect(getCardTemplate("patronageOffice").tags.includes("royal")).toBe(true);

@@ -72,7 +72,8 @@ export const messagesZhSecondMandate = {
   "event.cautiousCrown.desc": "此前克制路线带来有限缓冲。支付 2 经费处理；若不处理，每年权力 -1。",
   "card.grainRelief.name": "粮食赈济",
   "card.grainRelief.background": "赈济与粮食调拨先压住民怨，再争取改革时间。",
-  "card.grainRelief.desc": "获得「赈济调度」与「赈济信任」各 1 回合（下回合：抽牌 +1，合法性 +1）。",
+  "card.grainRelief.desc":
+    "获得「赈济调度」与「赈济信任」各 1 回合（下回合：抽牌 +1，合法性 +1）。若存在未解决的「粮价上涨」，则立即解决其中一个。",
   "card.taxRebalance.name": "税制重估",
   "card.taxRebalance.background": "重配税负与征收口径，让财政在高压期保持流动。",
   "card.taxRebalance.desc": "财政 +1，并获得「抽牌受限」2 回合（每回合抽牌 -1）。",
@@ -85,7 +86,4 @@ export const messagesZhSecondMandate = {
   "card.patronageOffice.name": "王室荐任",
   "card.patronageOffice.background": "把任命权重新收回宫廷，用仕途绑定忠诚。",
   "card.patronageOffice.desc": "权力 +1，并获得「荐任网络」3 回合（每回合保留上限 +1）。",
-  "card.warBond.name": "战时公债",
-  "card.warBond.background": "先借未来换当下，暂时撑住战争财政。",
-  "card.warBond.desc": "经费 +3，财政 -1。",
 } as const;

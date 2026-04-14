@@ -116,18 +116,6 @@ const templates: Record<CardTemplateId, CardTemplate> = {
       { kind: "addPlayerStatus", templateId: "retentionBoost", turns: 3 },
     ],
   },
-  warBond: {
-    id: "warBond",
-    cost: 0,
-    tags: [],
-    titleKey: "card.warBond.name",
-    backgroundKey: "card.warBond.background",
-    descriptionKey: "card.warBond.desc",
-    effects: [
-      { kind: "gainFunding", amount: 3 },
-      { kind: "modResource", resource: "treasuryStat", delta: -1 },
-    ],
-  },
 };
 
 export function getCardTemplate(id: CardTemplateId): CardTemplate {

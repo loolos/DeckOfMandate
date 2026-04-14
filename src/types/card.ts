@@ -12,8 +12,7 @@ export type CardTemplateId =
   | "grainRelief"
   | "taxRebalance"
   | "diplomaticCongress"
-  | "patronageOffice"
-  | "warBond";
+  | "patronageOffice";
 
 export type CardTemplate = {
   id: CardTemplateId;

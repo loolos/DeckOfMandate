@@ -381,4 +381,30 @@ describe("gameReducer", () => {
     const after = gameReducer(s0, { type: "END_YEAR" });
     expect(after.outcome).not.toBe("victory");
   });
+
+  it("grainRelief directly resolves one unresolved risingGrainPrices event when played", () => {
+    const base = createInitialState(202_902, "secondMandate");
+    const grainReliefCardId = "test_grain_relief";
+    const withCardInHand: typeof base = {
+      ...base,
+      cardsById: {
+        ...base.cardsById,
+        [grainReliefCardId]: {
+          instanceId: grainReliefCardId,
+          templateId: "grainRelief",
+        },
+      },
+      hand: [grainReliefCardId],
+      resources: { ...base.resources, funding: 3 },
+      slots: {
+        ...EMPTY_EVENT_SLOTS,
+        A: { instanceId: "e_rise_1", templateId: "risingGrainPrices", resolved: false },
+        B: { instanceId: "e_other", templateId: "nobleResentment", resolved: false },
+      },
+    };
+    const after = gameReducer(withCardInHand, { type: "PLAY_CARD", handIndex: 0 });
+    expect(after.resources.funding).toBe(0);
+    expect(after.slots.A?.resolved).toBe(true);
+    expect(after.slots.B?.resolved).toBe(false);
+  });
 });

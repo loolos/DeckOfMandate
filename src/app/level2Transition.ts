@@ -10,7 +10,6 @@ export const LEVEL2_NEW_IDS = [
   "taxRebalance",
   "diplomaticCongress",
   "patronageOffice",
-  "warBond",
 ] as const;
 const LEVEL2_REFIT_ORDER = [...LEVEL2_ADJUSTABLE_IDS, ...LEVEL2_NEW_IDS] as const;
 
@@ -65,7 +64,6 @@ function zeroCounts(): Level2RefitCounts {
     taxRebalance: 0,
     diplomaticCongress: 0,
     patronageOffice: 0,
-    warBond: 0,
   };
 }
 
@@ -154,7 +152,8 @@ export function buildWarPreset(baseCounts: Level2RefitCounts): Level2RefitCounts
   return {
     ...baseCounts,
     diplomaticCongress: 1,
-    warBond: 2,
+    patronageOffice: 1,
+    taxRebalance: 1,
   };
 }
 
