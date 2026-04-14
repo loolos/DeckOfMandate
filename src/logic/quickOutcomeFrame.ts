@@ -23,10 +23,16 @@ function formatSingleEffectChip(e: Effect): string {
       return `🃏+${e.count}`;
     case "scheduleNextTurnDrawModifier":
       return `📜${signedInt(e.delta)}`;
+    case "addCardsToDeck":
+      return `🧩+${e.count}`;
     case "addPlayerStatus": {
       const st = getStatusTemplate(e.templateId);
       if (st.kind === "drawAttemptsDelta") {
         return `📜${signedInt(st.delta ?? 0)}×${e.turns}⌛`;
+      }
+      if (st.kind === "beginYearResourceDelta") {
+        const resource = st.resource ?? "legitimacy";
+        return `${getResourceIcon(resource)}${signedInt(st.delta ?? 0)}×${e.turns}⌛`;
       }
       if (st.kind === "retentionCapacityDelta") {
         return `🖐️${signedInt(st.delta ?? 0)}×${e.turns}⌛`;
@@ -69,7 +75,7 @@ function eventSolveOutcomeChips(tmpl: EventTemplate): string {
 }
 
 function eventYearEndChips(tmpl: EventTemplate): string | null {
-  if (!tmpl.harmful) {
+  if (!tmpl.harmful && tmpl.penaltiesIfUnresolved.length === 0) {
     return "∅";
   }
   if (tmpl.id === "powerVacuum") {
@@ -89,7 +95,7 @@ export function buildCardQuickFrameRows(tmpl: CardTemplate): QuickFrameRow[] {
     labelKey: "ui.quickFrame.cost",
     value: `${getResourceIcon("funding")} ${tmpl.cost}`,
   };
-  if (tmpl.id === "crackdown") {
+  if (tmpl.id === "crackdown" || tmpl.id === "diplomaticIntervention") {
     return [
       cost,
       {

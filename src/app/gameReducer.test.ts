@@ -226,4 +226,78 @@ describe("gameReducer", () => {
     expect(tryKeep3.phase).toBe("action");
     expect(tryKeep3.turn).toBe(boosted.turn + 1);
   });
+
+  it("allows diplomatic intervention under royal ban and enters target-pick flow", () => {
+    const base = createInitialState(123_009, "secondMandate");
+    const diplomaticIntervention = base.deck.find(
+      (id) => base.cardsById[id]?.templateId === "diplomaticIntervention",
+    );
+    if (!diplomaticIntervention) {
+      throw new Error("expected diplomaticIntervention in secondMandate deck");
+    }
+    const withCardInHand: typeof base = {
+      ...base,
+      hand: [diplomaticIntervention],
+      deck: base.deck.filter((id) => id !== diplomaticIntervention),
+      resources: { ...base.resources, funding: 0 },
+      slots: {
+        ...base.slots,
+        A: { instanceId: "e_harm", templateId: "nobleResentment" as const, resolved: false },
+      },
+      playerStatuses: [
+        ...base.playerStatuses,
+        {
+          instanceId: "st_block_royal",
+          templateId: "royalBan" as const,
+          kind: "blockCardTag" as const,
+          blockedTag: "royal" as const,
+          turnsRemaining: 1,
+        },
+      ],
+    };
+    const afterPlay = gameReducer(withCardInHand, { type: "PLAY_CARD", handIndex: 0 });
+    expect(afterPlay.pendingInteraction?.type).toBe("crackdownPick");
+    expect(afterPlay.pendingInteraction?.cardInstanceId).toBe(diplomaticIntervention);
+    expect(afterPlay.resources.funding).toBe(0);
+  });
+
+  it("expansion remembered solved adds two fiscal burden cards to deck", () => {
+    const base = createInitialState(202_602, "secondMandate");
+    const beforeCardCount = Object.keys(base.cardsById).length;
+    const s0: typeof base = {
+      ...base,
+      resources: { ...base.resources, funding: 2 },
+      slots: {
+        ...base.slots,
+        A: { instanceId: "e_expansion", templateId: "expansionRemembered" as const, resolved: false },
+      },
+    };
+    const after = gameReducer(s0, { type: "SOLVE_EVENT", slot: "A" });
+    const burdenIds = Object.values(after.cardsById)
+      .filter((c) => c.templateId === "fiscalBurden")
+      .map((c) => c.instanceId);
+    expect(after.resources.funding).toBe(0);
+    expect(Object.keys(after.cardsById).length).toBe(beforeCardCount + 2);
+    expect(burdenIds.length).toBe(2);
+    expect(after.deck.slice(0, 2)).toEqual(burdenIds);
+  });
+
+  it("playing fiscal burden purges it without adding to discard", () => {
+    const base = createInitialState(202_603, "secondMandate");
+    const fiscalBurden = "fb_manual";
+    const withCard: typeof base = {
+      ...base,
+      cardsById: {
+        ...base.cardsById,
+        [fiscalBurden]: { instanceId: fiscalBurden, templateId: "fiscalBurden" as const },
+      },
+      hand: [fiscalBurden],
+      deck: base.deck.filter((id) => id !== fiscalBurden),
+      resources: { ...base.resources, funding: 2 },
+    };
+    const after = gameReducer(withCard, { type: "PLAY_CARD", handIndex: 0 });
+    expect(after.resources.funding).toBe(0);
+    expect(after.hand.includes(fiscalBurden)).toBe(false);
+    expect(after.discard.includes(fiscalBurden)).toBe(false);
+  });
 });

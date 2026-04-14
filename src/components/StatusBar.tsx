@@ -27,6 +27,13 @@ function statusDetail(
   if (status.kind === "retentionCapacityDelta") {
     return t("ui.statusDetail.retentionCapacityDelta", { delta: signedValue(status.delta ?? 0) });
   }
+  if (status.kind === "beginYearResourceDelta") {
+    const resource = status.resource ?? "legitimacy";
+    return t("ui.statusDetail.beginYearResourceDelta", {
+      resource: t(`resource.${resource}` as MessageKey),
+      delta: signedValue(status.delta ?? 0),
+    });
+  }
   const tagKey = `card.tag.${status.blockedTag ?? "royal"}` as MessageKey;
   return t("ui.statusDetail.blockCardTag", { tag: t(tagKey) });
 }

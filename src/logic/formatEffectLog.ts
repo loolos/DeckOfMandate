@@ -1,4 +1,5 @@
 import { getStatusTemplate } from "../data/statusTemplates";
+import { getCardTemplate } from "../data/cards";
 import { resourceLabelWithIcon } from "./icons";
 import type { Effect } from "../types/effect";
 import type { MessageKey } from "../locales";
@@ -30,6 +31,13 @@ export function formatEffectLogLine(
       return t("log.effect.addPlayerStatus", {
         status: t(tmpl.titleKey),
         turns: effect.turns,
+      });
+    }
+    case "addCardsToDeck": {
+      const card = getCardTemplate(effect.templateId);
+      return t("log.effect.addCardsToDeck", {
+        count: effect.count,
+        card: t(card.titleKey as MessageKey),
       });
     }
     default: {

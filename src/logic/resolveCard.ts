@@ -5,7 +5,7 @@ import { applyEffects, enforceLegitimacy } from "./applyEffects";
 
 /** Crackdown has no automated effect list — handled by interaction flow. */
 export function applyPlayedCardEffects(state: GameState, templateId: CardTemplateId): GameState {
-  if (templateId === "crackdown") return state;
+  if (templateId === "crackdown" || templateId === "diplomaticIntervention") return state;
   const t = getCardTemplate(templateId);
   let s = applyEffects(state, t.effects);
   s = enforceLegitimacy(s);

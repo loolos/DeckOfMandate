@@ -79,6 +79,7 @@ export const messagesEnCore = {
   "ui.statusTurnsRemaining": "{n} turn(s) left",
   "ui.statusDetail.drawAttemptsDelta": "Draw attempts modifier each turn: {delta}.",
   "ui.statusDetail.retentionCapacityDelta": "Retention cap modifier at turn end: {delta}.",
+  "ui.statusDetail.beginYearResourceDelta": "At turn start: {resource} {delta}.",
   "ui.statusDetail.blockCardTag": "Cards with the “{tag}” tag cannot be played.",
   "ui.actionLog": "Action log",
   "ui.actionLog.empty": "No effects yet this run.",
@@ -97,6 +98,11 @@ export const messagesEnCore = {
   "card.crackdown.background":
     "Edicts, troops, or police action—force applied where rumor and riot have already outpaced law.",
   "card.crackdown.desc": "Resolve one harmful event (not Colonial Trade Boom).",
+  "card.fiscalBurden.name": "Fiscal Burden",
+  "card.fiscalBurden.background":
+    "Debt obligations and emergency liabilities now crowd the books and constrain every cycle.",
+  "card.fiscalBurden.desc":
+    "When drawn, lose 1 Funding. You may pay 2 Funding to purge it (removed, not discarded).",
   "card.reform.name": "Administrative Reform",
   "card.reform.background":
     "Registers and reporting lines are redrawn; the bureaucracy tightens under royal direction.",
@@ -134,6 +140,8 @@ export const messagesEnCore = {
   "status.drawPenalty.name": "Draw Fatigue",
   "status.retentionBoost.name": "Court Storage",
   "status.royalBan.name": "Royal Access Frozen",
+  "status.grainReliefDrawBoost.name": "Relief Coordination",
+  "status.grainReliefLegitimacyBoost.name": "Relief Confidence",
   "card.tag.royal": "Royal",
   "log.cardPlayed.title": "[Turn {turn}] {card} — paid {cost} {funding}.",
   "log.cardPlayed.effectsLabel": "Effects:",
@@ -144,6 +152,7 @@ export const messagesEnCore = {
   "log.effect.scheduleNextTurnDrawModifier": "Next-year draw modifier {delta}",
   "log.effect.setCardTagBlocked": "Block {tag} cards ({turns} turns)",
   "log.effect.addPlayerStatus": "{status} ({turns} turns)",
+  "log.effect.addCardsToDeck": "Add {count} {card} to deck",
   "log.eventFundSolved": "[Turn {turn}] Slot {slot}: {event}. Paid {paid} {funding}{treasury}",
   "log.eventFundSolved.treasury": " Treasury +{gain}.",
   "log.eventCrackdownSolved":

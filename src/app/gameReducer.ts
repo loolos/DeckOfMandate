@@ -229,7 +229,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
         ...state,
         resources: { ...state.resources, funding: state.resources.funding - tmpl.cost },
       };
-      if (inst.templateId === "crackdown") {
+      if (inst.templateId === "crackdown" || inst.templateId === "diplomaticIntervention") {
         return appendActionLog(
           {
             ...paid,
@@ -237,6 +237,15 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
           },
           { kind: "crackdownPickPrompt" },
         );
+      }
+      if (inst.templateId === "fiscalBurden") {
+        const removed = removeHand(paid, id);
+        return appendActionLog(removed, {
+          kind: "cardPlayed",
+          templateId: inst.templateId,
+          fundingCost: tmpl.cost,
+          effects: tmpl.effects,
+        });
       }
       let s = applyPlayedCardEffects(paid, inst.templateId);
       s = removeHand(s, id);

@@ -4,19 +4,25 @@ import type { CardTag } from "./tags";
 export type PlayerStatusKind =
   | "drawAttemptsDelta"
   | "retentionCapacityDelta"
-  | "blockCardTag";
+  | "blockCardTag"
+  | "beginYearResourceDelta";
+
+export type BeginYearStatusResource = "treasuryStat" | "power" | "legitimacy";
 
 export type StatusTemplateId =
   | "powerLeak"
   | "drawPenalty"
   | "retentionBoost"
-  | "royalBan";
+  | "royalBan"
+  | "grainReliefDrawBoost"
+  | "grainReliefLegitimacyBoost";
 
 export type PlayerStatusInstance = {
   instanceId: string;
   templateId: StatusTemplateId;
   kind: PlayerStatusKind;
   delta?: number;
+  resource?: BeginYearStatusResource;
   blockedTag?: CardTag;
   turnsRemaining: number;
 };

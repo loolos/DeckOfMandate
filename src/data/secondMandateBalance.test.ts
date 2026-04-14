@@ -8,6 +8,8 @@ describe("secondMandate balance data", () => {
       "grainRelief",
       "taxRebalance",
       "diplomaticCongress",
+      "diplomaticIntervention",
+      "fiscalBurden",
       "patronageOffice",
       "warBond",
     ] as const;
@@ -15,6 +17,8 @@ describe("secondMandate balance data", () => {
       grainRelief: 3,
       taxRebalance: 2,
       diplomaticCongress: 3,
+      diplomaticIntervention: 0,
+      fiscalBurden: 2,
       patronageOffice: 4,
       warBond: 0,
     } as const;
@@ -32,9 +36,21 @@ describe("secondMandate balance data", () => {
 
     const grainRelief = getCardTemplate("grainRelief");
     expect(grainRelief.cost).toBe(3);
+    expect(grainRelief.effects).toEqual([
+      { kind: "addPlayerStatus", templateId: "grainReliefDrawBoost", turns: 1 },
+      { kind: "addPlayerStatus", templateId: "grainReliefLegitimacyBoost", turns: 1 },
+    ]);
 
     const congress = getCardTemplate("diplomaticCongress");
-    expect(congress.effects).toEqual([{ kind: "modResource", resource: "legitimacy", delta: 1 }]);
+    expect(congress.effects).toEqual([{ kind: "modResource", resource: "power", delta: 1 }]);
+
+    const diplomaticIntervention = getCardTemplate("diplomaticIntervention");
+    expect(diplomaticIntervention.effects).toEqual([]);
+    expect(diplomaticIntervention.tags.includes("royal")).toBe(false);
+
+    const fiscalBurden = getCardTemplate("fiscalBurden");
+    expect(fiscalBurden.effects).toEqual([]);
+    expect(fiscalBurden.tags.includes("royal")).toBe(false);
 
     const patronage = getCardTemplate("patronageOffice");
     expect(patronage.cost).toBe(4);
@@ -85,6 +101,16 @@ describe("secondMandate balance data", () => {
     expect(getEventTemplate("courtScandal").penaltiesIfUnresolved).toEqual([
       { kind: "addPlayerStatus", templateId: "royalBan", turns: 1 },
     ]);
+    expect(getEventTemplate("expansionRemembered").solve).toEqual({
+      kind: "funding",
+      amount: 2,
+    });
+    expect(getEventTemplate("expansionRemembered").onFundSolveEffects).toEqual([
+      { kind: "addCardsToDeck", templateId: "fiscalBurden", count: 2 },
+    ]);
+    expect(getEventTemplate("expansionRemembered").penaltiesIfUnresolved).toEqual([
+      { kind: "addCardsToDeck", templateId: "fiscalBurden", count: 3 },
+    ]);
   });
 
   it("uses status-driven effects for draw penalty, royal ban, and retention boost", () => {
@@ -92,6 +118,16 @@ describe("secondMandate balance data", () => {
       kind: "addPlayerStatus",
       templateId: "drawPenalty",
       turns: 2,
+    });
+    expect(getCardTemplate("grainRelief").effects).toContainEqual({
+      kind: "addPlayerStatus",
+      templateId: "grainReliefDrawBoost",
+      turns: 1,
+    });
+    expect(getCardTemplate("grainRelief").effects).toContainEqual({
+      kind: "addPlayerStatus",
+      templateId: "grainReliefLegitimacyBoost",
+      turns: 1,
     });
     expect(getCardTemplate("patronageOffice").effects).toContainEqual({
       kind: "addPlayerStatus",

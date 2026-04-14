@@ -22,6 +22,24 @@ const templates: Record<CardTemplateId, CardTemplate> = {
     descriptionKey: "card.crackdown.desc",
     effects: [],
   },
+  diplomaticIntervention: {
+    id: "diplomaticIntervention",
+    cost: 0,
+    tags: [],
+    titleKey: "card.diplomaticIntervention.name",
+    backgroundKey: "card.diplomaticIntervention.background",
+    descriptionKey: "card.diplomaticIntervention.desc",
+    effects: [],
+  },
+  fiscalBurden: {
+    id: "fiscalBurden",
+    cost: 2,
+    tags: [],
+    titleKey: "card.fiscalBurden.name",
+    backgroundKey: "card.fiscalBurden.background",
+    descriptionKey: "card.fiscalBurden.desc",
+    effects: [],
+  },
   reform: {
     id: "reform",
     cost: 2,
@@ -60,7 +78,8 @@ const templates: Record<CardTemplateId, CardTemplate> = {
     backgroundKey: "card.grainRelief.background",
     descriptionKey: "card.grainRelief.desc",
     effects: [
-      { kind: "modResource", resource: "legitimacy", delta: 1 },
+      { kind: "addPlayerStatus", templateId: "grainReliefDrawBoost", turns: 1 },
+      { kind: "addPlayerStatus", templateId: "grainReliefLegitimacyBoost", turns: 1 },
     ],
   },
   taxRebalance: {
@@ -82,7 +101,7 @@ const templates: Record<CardTemplateId, CardTemplate> = {
     titleKey: "card.diplomaticCongress.name",
     backgroundKey: "card.diplomaticCongress.background",
     descriptionKey: "card.diplomaticCongress.desc",
-    effects: [{ kind: "modResource", resource: "legitimacy", delta: 1 }],
+    effects: [{ kind: "modResource", resource: "power", delta: 1 }],
   },
   patronageOffice: {
     id: "patronageOffice",
