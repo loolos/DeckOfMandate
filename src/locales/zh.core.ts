@@ -97,6 +97,7 @@ export const messagesZhCore = {
   "ui.language": "语言",
   "ui.lang.en": "English",
   "ui.lang.zh": "中文",
+  "ui.lang.fr": "Français",
   "outcome.victory": "胜利 — 政权稳固。",
   "outcome.defeatLegitimacy": "失败 — 合法性崩溃。",
   "outcome.defeatTime": "失败 — 时限内未达成目标。",

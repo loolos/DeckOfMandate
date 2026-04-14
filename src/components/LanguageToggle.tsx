@@ -22,6 +22,14 @@ export function LanguageToggle() {
       >
         {t("ui.lang.zh")}
       </button>
+      <button
+        type="button"
+        className={styles.btn}
+        disabled={locale === "fr"}
+        onClick={() => setLocale("fr")}
+      >
+        {t("ui.lang.fr")}
+      </button>
     </div>
   );
 }
