@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useReducer, useState } from "react";
+import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from "react";
 import { ActionLog } from "../components/ActionLog";
 import { EventPanel } from "../components/EventPanel";
 import { Hand } from "../components/Hand";
@@ -109,6 +109,7 @@ export function Game() {
   const [isSmallRefitViewport, setIsSmallRefitViewport] = useState(() =>
     typeof window !== "undefined" ? window.matchMedia("(max-width: 800px)").matches : false,
   );
+  const mobileRefitRowLastTapAt = useRef<Record<string, number>>({});
 
   const menuSeedTrimmed = menuSeedText.trim();
   const menuSeedParsed =
@@ -187,6 +188,24 @@ export function Game() {
     setLevel2Draft(cloneLevel2Draft(level2DraftInitial));
     setExpandedRefitCardId(null);
   };
+
+  const toggleRefitRemoval = useCallback((cardId: string) => {
+    setLevel2Draft((prev) => (prev ? toggleContinuityCardRemoval(prev, cardId) : prev));
+  }, []);
+
+  const maybeToggleRemovalBySmallScreenDoubleTap = useCallback(
+    (cardId: string) => {
+      if (!isSmallRefitViewport) return;
+      const now = Date.now();
+      const lastTapAt = mobileRefitRowLastTapAt.current[cardId] ?? 0;
+      mobileRefitRowLastTapAt.current[cardId] = now;
+      if (now - lastTapAt <= 320) {
+        mobileRefitRowLastTapAt.current[cardId] = 0;
+        toggleRefitRemoval(cardId);
+      }
+    },
+    [isSmallRefitViewport, toggleRefitRemoval],
+  );
 
   const beginConfiguredRun = (seed: number | undefined, levelId: LevelId) => {
     if (levelId === "secondMandate") {
@@ -295,10 +314,9 @@ export function Game() {
         }}
         onDoubleClick={() => {
           if (!isSmallRefitViewport) return;
-          setLevel2Draft((prev) =>
-            prev ? toggleContinuityCardRemoval(prev, card.instanceId) : prev,
-          );
+          toggleRefitRemoval(card.instanceId);
         }}
+        onTouchEnd={() => maybeToggleRemovalBySmallScreenDoubleTap(card.instanceId)}
       >
         <div className={styles.retainCardInfo}>
           <span className={styles.retainCardTitle}>{title}</span>
@@ -311,16 +329,16 @@ export function Game() {
             </div>
           ) : null}
         </div>
-        <div className={styles.retainCounterControls} onClick={(e) => e.stopPropagation()}>
+        <div
+          className={styles.retainCounterControls}
+          onClick={(e) => e.stopPropagation()}
+          onTouchEnd={(e) => e.stopPropagation()}
+        >
           <label className={styles.startMenuMuted} style={{ display: "flex", alignItems: "center", gap: "0.35rem" }}>
             <input
               type="checkbox"
               checked={removed}
-              onChange={() =>
-                setLevel2Draft((prev) =>
-                  prev ? toggleContinuityCardRemoval(prev, card.instanceId) : prev,
-                )
-              }
+              onChange={() => toggleRefitRemoval(card.instanceId)}
             />
             {t("menu.refit.removeToggle")}
           </label>
