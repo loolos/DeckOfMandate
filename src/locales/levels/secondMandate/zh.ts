@@ -17,7 +17,7 @@ export const messagesZhSecondMandate = {
     "对外冲突压力持续（战争疲劳权重 +1）；且每回合固定少抽 {n} 张。欧洲警觉下每年还可能额外出现边境驻军/海贸受阻。",
   "event.nymwegenSettlement.name": "奈梅亨和约",
   "event.nymwegenSettlement.desc":
-    "和约可帮助巩固阶段成果。投入 1 经费，获得财政 +1 与合法性 +1。",
+    "这是必须尽快收束的长期事件：支付 6 经费可达成和约（权力 -3、合法性 -2），并结束「欧洲警觉」；若不处理，每年权力 -1。",
   "event.revocationNantes.name": "撤销南特敕令",
   "event.revocationNantes.desc":
     "宗教政策趋于强硬。支付 1 经费（或以王室干预处理）可获得合法性 +1；若放任，将损失财政与合法性。",
@@ -69,7 +69,7 @@ export const messagesZhSecondMandate = {
   "event.expansionRemembered.desc":
     "早年的强势扩张余波未散。支付 2 经费可压制风险并向抽牌堆加入 2 张「财政负担」；若不处理，则加入 3 张「财政负担」。",
   "event.cautiousCrown.name": "谨慎王权",
-  "event.cautiousCrown.desc": "此前克制路线带来缓冲。免费处理后继续本章。",
+  "event.cautiousCrown.desc": "此前克制路线带来有限缓冲。支付 2 经费处理；若不处理，每年权力 -1。",
   "card.grainRelief.name": "粮食赈济",
   "card.grainRelief.background": "赈济与粮食调拨先压住民怨，再争取改革时间。",
   "card.grainRelief.desc": "获得「赈济调度」与「赈济信任」各 1 回合（下回合：抽牌 +1，合法性 +1）。",

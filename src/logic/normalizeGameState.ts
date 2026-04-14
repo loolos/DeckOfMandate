@@ -54,6 +54,9 @@ export function normalizeGameState(state: GameState): GameState {
       europeAlertDrawPenalty: s.europeAlert ? computeEuropeAlertDrawPenalty(s.resources.power) : 0,
     };
   }
+  if (s.nymwegenSettlementAchieved === undefined) {
+    s = { ...s, nymwegenSettlementAchieved: false };
+  }
   if (typeof s.calendarStartYear !== "number") {
     s = { ...s, calendarStartYear: getLevelDef(s.levelId).calendarStartYear };
   }

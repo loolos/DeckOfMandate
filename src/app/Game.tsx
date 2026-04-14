@@ -558,6 +558,12 @@ export function Game() {
               tP: level.winTargets.power,
               tL: level.winTargets.legitimacy,
             })}
+            {state.levelId === "secondMandate" ? (
+              <>
+                <br />
+                {t("ui.targets.secondMandateExtra")}
+              </>
+            ) : null}
           </div>
         </div>
         <LanguageToggle />

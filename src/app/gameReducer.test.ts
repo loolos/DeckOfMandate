@@ -341,4 +341,44 @@ describe("gameReducer", () => {
     expect(after.hand.includes(fiscalBurden)).toBe(false);
     expect(after.discard.includes(fiscalBurden)).toBe(false);
   });
+
+  it("solving nymwegen settlement clears europe alert and marks chapter objective", () => {
+    const base = createInitialState(202_900, "secondMandate");
+    const s0: typeof base = {
+      ...base,
+      europeAlert: true,
+      nymwegenSettlementAchieved: false,
+      resources: { ...base.resources, funding: 6, power: 9, legitimacy: 9 },
+      slots: {
+        ...base.slots,
+        A: { instanceId: "e_nymwegen", templateId: "nymwegenSettlement" as const, resolved: false },
+      },
+    };
+    const after = gameReducer(s0, { type: "SOLVE_EVENT", slot: "A" });
+    expect(after.europeAlert).toBe(false);
+    expect(after.nymwegenSettlementAchieved).toBe(true);
+    expect(after.resources.funding).toBe(0);
+    expect(after.resources.power).toBe(6);
+    expect(after.resources.legitimacy).toBe(7);
+  });
+
+  it("chapter 2 cannot win before nymwegen objective is complete", () => {
+    const level = getLevelDef("secondMandate");
+    const base = createInitialState(202_901, "secondMandate");
+    const s0: typeof base = {
+      ...base,
+      nymwegenSettlementAchieved: false,
+      europeAlert: true,
+      hand: [],
+      resources: {
+        treasuryStat: level.winTargets.treasuryStat,
+        power: level.winTargets.power,
+        legitimacy: level.winTargets.legitimacy,
+        funding: 0,
+      },
+      slots: { ...EMPTY_EVENT_SLOTS },
+    };
+    const after = gameReducer(s0, { type: "END_YEAR" });
+    expect(after.outcome).not.toBe("victory");
+  });
 });

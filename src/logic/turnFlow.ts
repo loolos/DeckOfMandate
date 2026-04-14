@@ -232,10 +232,14 @@ export function beginYear(state: GameState): GameState {
 export function evaluateVictory(state: GameState): GameState {
   const t = getLevelDef(state.levelId).winTargets;
   const { treasuryStat, power, legitimacy } = state.resources;
+  const chapterObjectiveSatisfied =
+    state.levelId !== "secondMandate" ||
+    (!state.europeAlert && state.nymwegenSettlementAchieved);
   if (
     treasuryStat >= t.treasuryStat &&
     power >= t.power &&
-    legitimacy >= t.legitimacy
+    legitimacy >= t.legitimacy &&
+    chapterObjectiveSatisfied
   ) {
     return { ...state, phase: "gameOver", outcome: "victory" };
   }

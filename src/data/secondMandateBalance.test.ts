@@ -132,6 +132,25 @@ describe("secondMandate balance data", () => {
     expect(getEventTemplate("expansionRemembered").penaltiesIfUnresolved).toEqual([
       { kind: "addCardsToDeck", templateId: "fiscalBurden", count: 3 },
     ]);
+    expect(getEventTemplate("cautiousCrown").solve).toEqual({
+      kind: "funding",
+      amount: 2,
+    });
+    expect(getEventTemplate("cautiousCrown").penaltiesIfUnresolved).toEqual([
+      { kind: "modResource", resource: "power", delta: -1 },
+    ]);
+    expect(getEventTemplate("nymwegenSettlement").solve).toEqual({
+      kind: "funding",
+      amount: 6,
+    });
+    expect(getEventTemplate("nymwegenSettlement").crisisPersistence).toBe("continued");
+    expect(getEventTemplate("nymwegenSettlement").onFundSolveEffects).toEqual([
+      { kind: "modResource", resource: "power", delta: -3 },
+      { kind: "modResource", resource: "legitimacy", delta: -2 },
+    ]);
+    expect(getEventTemplate("nymwegenSettlement").penaltiesIfUnresolved).toEqual([
+      { kind: "modResource", resource: "power", delta: -1 },
+    ]);
   });
 
   it("keeps europe-alert extra events out of the normal chapter 2 random pool", () => {

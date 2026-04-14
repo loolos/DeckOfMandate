@@ -85,6 +85,7 @@ export const messagesZhCore = {
   "ui.actionLog": "行动记录",
   "ui.actionLog.empty": "本局尚无效果记录。",
   "ui.targets": "关卡目标 — {limit} 回合内：财政 {tT}，权力 {tP}，合法性 {tL}",
+  "ui.targets.secondMandateExtra": "第二关额外条件：必须结束「欧洲警觉」，并达成「奈梅亨和约」。",
   "ui.language": "语言",
   "ui.lang.en": "English",
   "ui.lang.zh": "中文",
