@@ -63,7 +63,7 @@ export const messagesEnCore = {
   "menu.refit.resources": "Starting resources — Treasury {treasury}, Power {power}, Legitimacy {legitimacy}",
   "menu.refit.startYear": "Chapter 2 start year: {year}",
   "menu.refit.europeAlertOn":
-    "Europe Alert: ON (coalition pressure events gain +1 weight; fixed draw reduction each year: -{n}).",
+    "Europe Alert: ON (War Weariness gains +1 weight; fixed draw reduction each year: -{n}; plus 50% chance each year to add either Frontier Garrisons or Trade Disruption).",
   "menu.refit.europeAlertOff": "Europe Alert: OFF (standard Chapter 2 pressure).",
   "menu.refit.totalCards": "Deck size: {current} (required {min}–{max})",
   "menu.refit.newCardTotal": "New cards chosen: {current} / {max}",
@@ -153,6 +153,7 @@ export const messagesEnCore = {
   "log.effect.gainFunding": "{funding} +{amount}",
   "log.effect.drawCards": "Draw {count}",
   "log.effect.scheduleNextTurnDrawModifier": "Next-year draw modifier {delta}",
+  "log.effect.scheduleDrawModifiers": "Multi-year draw modifiers {deltas}",
   "log.effect.setCardTagBlocked": "Block {tag} cards ({turns} turns)",
   "log.effect.addPlayerStatus": "{status} ({turns} turns)",
   "log.effect.addCardsToDeck": "Add {count} {card} to deck",

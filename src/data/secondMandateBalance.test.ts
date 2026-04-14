@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { getLevelContent } from "./levelContent";
 import { getCardTemplate } from "./cards";
 import { getEventTemplate } from "./events";
 
@@ -90,8 +91,27 @@ describe("secondMandate balance data", () => {
     });
     expect(getEventTemplate("frontierGarrisons").solve).toEqual({
       kind: "funding",
+      amount: 3,
+    });
+    expect(getEventTemplate("militaryPrestige").solve).toEqual({
+      kind: "funding",
       amount: 2,
     });
+    expect(getEventTemplate("commercialExpansion").solve).toEqual({
+      kind: "funding",
+      amount: 2,
+    });
+    expect(getEventTemplate("talentedAdministrator").solve).toEqual({
+      kind: "funding",
+      amount: 2,
+    });
+    expect(getEventTemplate("warWeariness").solve).toEqual({
+      kind: "fundingOrCrackdown",
+      amount: 3,
+    });
+    expect(getEventTemplate("provincialNoncompliance").penaltiesIfUnresolved).toEqual([
+      { kind: "scheduleDrawModifiers", deltas: [-2, -1, -1] },
+    ]);
     expect(getEventTemplate("courtScandal").solve).toEqual({
       kind: "funding",
       amount: 3,
@@ -112,6 +132,12 @@ describe("secondMandate balance data", () => {
     expect(getEventTemplate("expansionRemembered").penaltiesIfUnresolved).toEqual([
       { kind: "addCardsToDeck", templateId: "fiscalBurden", count: 3 },
     ]);
+  });
+
+  it("keeps europe-alert extra events out of the normal chapter 2 random pool", () => {
+    const pool = getLevelContent("secondMandate").rollableEventIds;
+    expect(pool.includes("frontierGarrisons")).toBe(false);
+    expect(pool.includes("tradeDisruption")).toBe(false);
   });
 
   it("uses status-driven effects for draw penalty, royal ban, and retention boost", () => {

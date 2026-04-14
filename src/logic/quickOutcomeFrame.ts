@@ -23,6 +23,8 @@ function formatSingleEffectChip(e: Effect): string {
       return `🃏+${e.count}`;
     case "scheduleNextTurnDrawModifier":
       return `📜${signedInt(e.delta)}`;
+    case "scheduleDrawModifiers":
+      return `📜${e.deltas.map((d) => signedInt(d)).join("/")}`;
     case "addCardsToDeck":
       return `🧩+${e.count}`;
     case "addPlayerStatus": {

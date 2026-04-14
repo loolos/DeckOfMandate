@@ -131,6 +131,8 @@ export type GameState = {
    * Draw attempts = max(1, power + this), then reset to 0.
    */
   nextTurnDrawModifier: number;
+  /** Queue of per-year draw modifiers; index 0 applies this year then is shifted. */
+  scheduledDrawModifiers: number[];
   deck: string[];
   discard: string[];
   hand: string[];

@@ -23,6 +23,9 @@ export const PROB_TRIPLE_EVENTS = 0.1;
 
 /** When every event slot is empty, P(only slot A is filled); remaining probability is two events (A+B). */
 export const PROB_SINGLE_EVENT_WHEN_ALL_EMPTY = 0.3;
+export const PROB_EUROPE_ALERT_SUPPLEMENTAL_EVENT = 0.5;
+
+const EUROPE_ALERT_SUPPLEMENTAL_POOL = ["frontierGarrisons", "tradeDisruption"] as const;
 
 export function rollNewEventForSlot(state: GameState, slot: SlotId): GameState {
   const pool = getLevelContent(state.levelId).rollableEventIds;
@@ -110,7 +113,31 @@ function runEventPhase(state: GameState): GameState {
   s = clearResolvedSlots(s);
   s = applyScriptedCalendarPhase(s);
   s = fillEmptySlots(s);
+  s = maybeAddEuropeAlertSupplementalEvent(s);
   return s;
+}
+
+export function maybeAddEuropeAlertSupplementalEvent(state: GameState): GameState {
+  if (!state.europeAlert || state.levelId !== "secondMandate") return state;
+  const target = EVENT_SLOT_ORDER.find((slot) => !state.slots[slot]);
+  if (!target) return state;
+  let s = state;
+  const [rngRoll, uRoll] = rngNext(s.rng);
+  s = { ...s, rng: rngRoll };
+  if (uRoll >= PROB_EUROPE_ALERT_SUPPLEMENTAL_EVENT) return s;
+  const [rngPick, uPick] = rngNext(s.rng);
+  s = { ...s, rng: rngPick };
+  const templateId = EUROPE_ALERT_SUPPLEMENTAL_POOL[uPick < 0.5 ? 0 : 1];
+  const instance: EventInstance = {
+    instanceId: `evt_${s.nextIds.event}`,
+    templateId,
+    resolved: false,
+  };
+  return {
+    ...s,
+    nextIds: { ...s.nextIds, event: s.nextIds.event + 1 },
+    slots: { ...s.slots, [target]: instance },
+  };
 }
 
 function sumDrawAttemptsStatusDelta(statuses: readonly PlayerStatusInstance[]): number {
@@ -170,9 +197,14 @@ export function beginYear(state: GameState): GameState {
       funding: s.resources.funding + s.resources.treasuryStat,
     },
   };
+  const scheduledDrawModifier = s.scheduledDrawModifiers[0] ?? 0;
+  s = { ...s, scheduledDrawModifiers: s.scheduledDrawModifiers.slice(1) };
   const statusDrawDelta = sumDrawAttemptsStatusDelta(s.playerStatuses);
   const europeAlertPenalty = s.europeAlert ? Math.max(0, s.europeAlertDrawPenalty) : 0;
-  let attempts = Math.max(1, s.resources.power + s.nextTurnDrawModifier + statusDrawDelta - europeAlertPenalty);
+  let attempts = Math.max(
+    1,
+    s.resources.power + s.nextTurnDrawModifier + scheduledDrawModifier + statusDrawDelta - europeAlertPenalty,
+  );
   const coalition = rollAntiFrenchLeagueDrawAdjustment(s.antiFrenchLeague, s.turn, s.rng);
   s = { ...s, rng: coalition.rng };
   if (coalition.adjustment < 0 && s.antiFrenchLeague && s.turn <= s.antiFrenchLeague.untilTurn) {

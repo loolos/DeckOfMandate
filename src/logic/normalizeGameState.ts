@@ -57,5 +57,8 @@ export function normalizeGameState(state: GameState): GameState {
   if (typeof s.calendarStartYear !== "number") {
     s = { ...s, calendarStartYear: getLevelDef(s.levelId).calendarStartYear };
   }
+  if (!Array.isArray(s.scheduledDrawModifiers)) {
+    s = { ...s, scheduledDrawModifiers: [] };
+  }
   return s;
 }

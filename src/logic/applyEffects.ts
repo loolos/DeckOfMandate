@@ -46,6 +46,11 @@ export function applyEffect(state: GameState, e: Effect): GameState {
         ...state,
         nextTurnDrawModifier: state.nextTurnDrawModifier + e.delta,
       };
+    case "scheduleDrawModifiers":
+      return {
+        ...state,
+        scheduledDrawModifiers: [...state.scheduledDrawModifiers, ...e.deltas],
+      };
     case "addPlayerStatus": {
       const tmpl = getStatusTemplate(e.templateId);
       const instanceId = `st_${state.nextIds.status}`;

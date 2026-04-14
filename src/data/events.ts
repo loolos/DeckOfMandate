@@ -164,7 +164,7 @@ export const eventTemplates: Record<EventTemplateId, EventTemplate> = {
     titleKey: "event.provincialNoncompliance.name",
     descriptionKey: "event.provincialNoncompliance.desc",
     solve: { kind: "funding", amount: 2 },
-    penaltiesIfUnresolved: [{ kind: "scheduleNextTurnDrawModifier", delta: -2 }],
+    penaltiesIfUnresolved: [{ kind: "scheduleDrawModifiers", deltas: [-2, -1, -1] }],
   },
   risingGrainPrices: {
     id: "risingGrainPrices",
@@ -193,7 +193,7 @@ export const eventTemplates: Record<EventTemplateId, EventTemplate> = {
     harmful: true,
     titleKey: "event.frontierGarrisons.name",
     descriptionKey: "event.frontierGarrisons.desc",
-    solve: { kind: "funding", amount: 2 },
+    solve: { kind: "funding", amount: 3 },
     penaltiesIfUnresolved: [
       { kind: "modResource", resource: "treasuryStat", delta: -1 },
       { kind: "scheduleNextTurnDrawModifier", delta: -1 },
@@ -223,7 +223,7 @@ export const eventTemplates: Record<EventTemplateId, EventTemplate> = {
     harmful: false,
     titleKey: "event.militaryPrestige.name",
     descriptionKey: "event.militaryPrestige.desc",
-    solve: { kind: "funding", amount: 1 },
+    solve: { kind: "funding", amount: 2 },
     onFundSolveEffects: [{ kind: "modResource", resource: "legitimacy", delta: 1 }],
     penaltiesIfUnresolved: [],
   },
@@ -233,7 +233,7 @@ export const eventTemplates: Record<EventTemplateId, EventTemplate> = {
     harmful: false,
     titleKey: "event.commercialExpansion.name",
     descriptionKey: "event.commercialExpansion.desc",
-    solve: { kind: "funding", amount: 1 },
+    solve: { kind: "funding", amount: 2 },
     onFundSolveEffects: [{ kind: "modResource", resource: "treasuryStat", delta: 1 }],
     penaltiesIfUnresolved: [],
   },
@@ -243,7 +243,7 @@ export const eventTemplates: Record<EventTemplateId, EventTemplate> = {
     harmful: false,
     titleKey: "event.talentedAdministrator.name",
     descriptionKey: "event.talentedAdministrator.desc",
-    solve: { kind: "funding", amount: 1 },
+    solve: { kind: "funding", amount: 2 },
     onFundSolveEffects: [{ kind: "modResource", resource: "power", delta: 1 }],
     penaltiesIfUnresolved: [],
   },
@@ -253,7 +253,7 @@ export const eventTemplates: Record<EventTemplateId, EventTemplate> = {
     harmful: true,
     titleKey: "event.warWeariness.name",
     descriptionKey: "event.warWeariness.desc",
-    solve: { kind: "fundingOrCrackdown", amount: 1 },
+    solve: { kind: "fundingOrCrackdown", amount: 3 },
     penaltiesIfUnresolved: [
       { kind: "modResource", resource: "legitimacy", delta: -1 },
       { kind: "addPlayerStatus", templateId: "powerLeak", turns: 2 },
@@ -299,7 +299,7 @@ export function getEventTemplate(id: EventTemplateId): EventTemplate {
 export function getEventRollWeight(state: GameState, id: EventTemplateId): number {
   const base = eventTemplates[id].weight;
   if (!state.europeAlert) return base;
-  if (id === "frontierGarrisons" || id === "tradeDisruption" || id === "warWeariness") {
+  if (id === "warWeariness") {
     return base + 1;
   }
   return base;
