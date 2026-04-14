@@ -9,6 +9,7 @@ import type { GameState } from "../types/game";
 import type { MessageKey } from "../locales";
 import { useI18n } from "../locales";
 import { getPlayableCardCost } from "../logic/cardCost";
+import { getCardTagsForInstance, hasCardTag } from "../logic/cardTags";
 import type { CardTag } from "../types/tags";
 import type { LogInfoKey } from "../types/game";
 import styles from "../app/Game.module.css";
@@ -49,7 +50,7 @@ export function Hand({
         const tmpl = getCardTemplate(inst.templateId);
         const cost = getPlayableCardCost(state, id);
         const affordable = state.resources.funding >= cost;
-        const blockedByStatus = blockedRoyal && tmpl.tags.includes("royal");
+        const blockedByStatus = blockedRoyal && hasCardTag(state, id, "royal");
         const playable = canPlay && affordable && !blockedByStatus;
         const title = cardLabelWithIcon(inst.templateId, t(tmpl.titleKey as MessageKey));
         const quickRows = buildCardQuickFrameRows(tmpl, cost);
@@ -60,10 +61,11 @@ export function Hand({
             type: "APPEND_LOG_INFO",
             infoKey: `cardTag.${tag}` as LogInfoKey,
           });
+        const tags = getCardTagsForInstance(state, id);
         const tagChips =
-          tmpl.tags.length > 0 ? (
+          tags.length > 0 ? (
             <div className={styles.badges}>
-              {tmpl.tags.map((tag) => (
+              {tags.map((tag) => (
                 <button
                   key={`${id}_${tag}`}
                   type="button"
