@@ -69,6 +69,7 @@ export function createInitialState(
     europeAlert,
     europeAlertDrawPenalty,
     nymwegenSettlementAchieved: false,
+    proceduralEventSequence: [],
     actionLog: [],
   };
 

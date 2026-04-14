@@ -221,6 +221,42 @@ describe("beginYear + playerStatuses", () => {
     expect(s1.slots.J).toBeNull();
   });
 
+  it("forces first-mandate year-1 opening events to trade opportunity + administrative delay", () => {
+    const s0 = createInitialState(424_242, "firstMandate");
+    expect(s0.turn).toBe(1);
+    expect(s0.slots.A?.templateId).toBe("tradeOpportunity");
+    expect(s0.slots.B?.templateId).toBe("administrativeDelay");
+  });
+
+  it("does not place duplicate procedural templates within the same all-empty refill", () => {
+    const started = createInitialState(9_090, "secondMandate");
+    const pickState = (() => {
+      for (let st = 1; st < 2_000_000; st++) {
+        const s0: GameState = {
+          ...started,
+          turn: 8,
+          rng: { state: st },
+          proceduralEventSequence: [],
+          slots: { ...EMPTY_EVENT_SLOTS },
+        };
+        const s1 = beginYear(s0);
+        if (s1.slots.C) return st;
+      }
+      throw new Error("failed to find deterministic rng state for triple refill");
+    })();
+    const s0: GameState = {
+      ...started,
+      turn: 8,
+      rng: { state: pickState },
+      proceduralEventSequence: [],
+      slots: { ...EMPTY_EVENT_SLOTS },
+    };
+    const s1 = beginYear(s0);
+    const ids = [s1.slots.A?.templateId, s1.slots.B?.templateId, s1.slots.C?.templateId].filter(Boolean);
+    expect(ids.length).toBe(3);
+    expect(new Set(ids).size).toBe(3);
+  });
+
   it("adds a europe-alert supplemental frontier/trade event with 50% yearly gate", () => {
     const started = createInitialState(902_010, "secondMandate");
     const pickState = (() => {
