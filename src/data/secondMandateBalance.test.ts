@@ -47,6 +47,7 @@ describe("secondMandate balance data", () => {
     const diplomaticIntervention = getCardTemplate("diplomaticIntervention");
     expect(diplomaticIntervention.effects).toEqual([]);
     expect(diplomaticIntervention.tags.includes("royal")).toBe(false);
+    expect(diplomaticIntervention.tags.includes("temp")).toBe(true);
 
     const fiscalBurden = getCardTemplate("fiscalBurden");
     expect(fiscalBurden.effects).toEqual([]);

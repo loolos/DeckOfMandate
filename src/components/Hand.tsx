@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { getCardTemplate } from "../data/cards";
 import type { GameAction } from "../app/gameReducer";
 import { OutcomeQuickFrame } from "./OutcomeQuickFrame";
@@ -20,12 +20,23 @@ export function Hand({
   const { t } = useI18n();
   const isSmallScreen = useSmallScreen();
   const [expandedCardId, setExpandedCardId] = useState<string | null>(null);
+  const collapseDelayMs = 450;
+  const lastTapRef = useRef<{ id: string; at: number } | null>(null);
+  const collapseTimerRef = useRef<number | null>(null);
   const crackPick = state.pendingInteraction?.type === "crackdownPick" ? state.pendingInteraction : null;
   const canPlay =
     state.outcome === "playing" && state.phase === "action" && !state.pendingInteraction;
 
   const blockedRoyal =
     state.playerStatuses.some((st) => st.kind === "blockCardTag" && st.blockedTag === "royal");
+
+  useEffect(() => {
+    return () => {
+      if (collapseTimerRef.current !== null) {
+        window.clearTimeout(collapseTimerRef.current);
+      }
+    };
+  }, []);
 
   return (
     <div className={styles.hand}>
@@ -85,6 +96,7 @@ export function Hand({
         const cardClassName = [styles.card, mobileHandWidthCls, isSmallScreen && !playable && styles.cardDisabled]
           .filter(Boolean)
           .join(" ");
+        const playCard = () => dispatch({ type: "PLAY_CARD", handIndex: index });
 
         if (crackPick && id === crackPick.cardInstanceId) {
           return (
@@ -99,7 +111,36 @@ export function Hand({
           );
         }
 
-        const onMobileTap = () => setExpandedCardId((prev) => (prev === id ? null : id));
+        const onMobileTap = () => {
+          const now = Date.now();
+          const prev = lastTapRef.current;
+          const isRapidSecondTap = prev && prev.id === id && now - prev.at <= collapseDelayMs;
+
+          if (collapseTimerRef.current !== null) {
+            window.clearTimeout(collapseTimerRef.current);
+            collapseTimerRef.current = null;
+          }
+
+          if (isRapidSecondTap) {
+            lastTapRef.current = null;
+            if (playable) playCard();
+            return;
+          }
+
+          lastTapRef.current = { id, at: now };
+
+          if (!showDetails) {
+            setExpandedCardId(id);
+            return;
+          }
+
+          // On expanded cards, defer collapse briefly so a quick second tap can count as "double-tap to play".
+          collapseTimerRef.current = window.setTimeout(() => {
+            setExpandedCardId((existing) => (existing === id ? null : existing));
+            if (lastTapRef.current?.id === id) lastTapRef.current = null;
+            collapseTimerRef.current = null;
+          }, collapseDelayMs);
+        };
 
         if (isSmallScreen) {
           return (
@@ -125,7 +166,7 @@ export function Hand({
                     type="button"
                     className={`${styles.btn} ${styles.btnPrimary}`}
                     disabled={!playable}
-                    onClick={() => dispatch({ type: "PLAY_CARD", handIndex: index })}
+                    onClick={playCard}
                   >
                     {t("ui.playThisCard")}
                   </button>
@@ -141,7 +182,7 @@ export function Hand({
             type="button"
             className={cardClassName}
             disabled={!playable}
-            onClick={() => dispatch({ type: "PLAY_CARD", handIndex: index })}
+            onDoubleClick={playCard}
           >
             {body}
           </button>

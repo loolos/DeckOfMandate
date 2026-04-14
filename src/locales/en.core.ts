@@ -37,7 +37,7 @@ export const messagesEnCore = {
   "ui.events": "Events",
   "ui.eventsResizeHint": "Drag the bottom-right corner to resize the events area.",
   "ui.mobileLogTapHint":
-    "Small screen: tap events, statuses, and hand cards to expand details; in hand details, tap “Play this card” to play.",
+    "Small screen: tap events, statuses, and hand cards to expand details; double-click any hand card (compact or expanded) to play it.",
   "ui.playThisCard": "Play this card",
   "log.crackdownPickPrompt":
     "[Turn {turn}] Choose a harmful event to resolve with Royal Intervention (not Colonial Trade Boom).",
@@ -61,7 +61,8 @@ export const messagesEnCore = {
   "menu.refit.mode.continuity": "Mode: continue from Chapter 1 victory",
   "menu.refit.resources": "Starting resources — Treasury {treasury}, Power {power}, Legitimacy {legitimacy}",
   "menu.refit.startYear": "Chapter 2 start year: {year}",
-  "menu.refit.europeAlertOn": "Europe Alert: ON (coalition pressure events gain +1 weight).",
+  "menu.refit.europeAlertOn":
+    "Europe Alert: ON (coalition pressure events gain +1 weight; fixed draw reduction each year: -{n}).",
   "menu.refit.europeAlertOff": "Europe Alert: OFF (standard Chapter 2 pressure).",
   "menu.refit.totalCards": "Deck size: {current} (required {min}–{max})",
   "menu.refit.newCardTotal": "New cards chosen: {current} / {max}",
@@ -143,6 +144,7 @@ export const messagesEnCore = {
   "status.grainReliefDrawBoost.name": "Relief Coordination",
   "status.grainReliefLegitimacyBoost.name": "Relief Confidence",
   "card.tag.royal": "Royal",
+  "card.tag.temp": "Temp",
   "log.cardPlayed.title": "[Turn {turn}] {card} — paid {cost} {funding}.",
   "log.cardPlayed.effectsLabel": "Effects:",
   "log.cardPlayed.noEffects": "No listed effects.",

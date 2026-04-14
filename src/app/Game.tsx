@@ -4,6 +4,7 @@ import { EventPanel } from "../components/EventPanel";
 import { Hand } from "../components/Hand";
 import { LanguageToggle } from "../components/LanguageToggle";
 import { LevelTutorialOverlay } from "../components/LevelTutorialOverlay";
+import { OutcomeQuickFrame } from "../components/OutcomeQuickFrame";
 import { ResourceBar } from "../components/ResourceBar";
 import { StatusBar } from "../components/StatusBar";
 import { getCardTemplate } from "../data/cards";
@@ -16,9 +17,11 @@ import {
   type LevelId,
 } from "../data/levels";
 import { cardLabelWithIcon, resourceLabelWithIcon } from "../logic/icons";
+import { computeEuropeAlertDrawPenalty } from "../logic/europeAlert";
 import { normalizeGameState } from "../logic/normalizeGameState";
 import { loadGame, saveGame } from "../logic/saveLoad";
 import { readTutorialOnLevelEntry, writeTutorialOnLevelEntry } from "../logic/tutorialPref";
+import { buildCardQuickFrameRows } from "../logic/quickOutcomeFrame";
 import type { MessageKey } from "../locales";
 import { useI18n } from "../locales";
 import type { GameState } from "../types/game";
@@ -36,6 +39,7 @@ import {
   createStandaloneLevel2Draft,
   updateRefitCount,
   validateLevel2Refit,
+  type Level2RefitCardId,
   type Level2StartDraft,
 } from "./level2Transition";
 import styles from "./Game.module.css";
@@ -94,6 +98,7 @@ export function Game() {
   const [tutorialOnEntryMenu, setTutorialOnEntryMenu] = useState(() => readTutorialOnLevelEntry());
   const [pendingLevelTutorial, setPendingLevelTutorial] = useState(false);
   const [level2Draft, setLevel2Draft] = useState<Level2StartDraft | null>(null);
+  const [expandedRefitCardId, setExpandedRefitCardId] = useState<Level2RefitCardId | null>(null);
 
   const menuSeedTrimmed = menuSeedText.trim();
   const menuSeedParsed =
@@ -124,6 +129,11 @@ export function Game() {
       setPendingLevelTutorial(false);
     }
   }, [state.outcome, state.phase, pendingLevelTutorial]);
+
+  useEffect(() => {
+    if (level2Draft) return;
+    setExpandedRefitCardId(null);
+  }, [level2Draft]);
 
   const canEndYear =
     state.outcome === "playing" &&
@@ -229,6 +239,79 @@ export function Game() {
     </div>
   ) : null;
 
+  const renderRefitCountRow = (
+    id: Level2RefitCardId,
+    opts: { min: number; max: number; decrement: number; increment: number },
+  ) => {
+    if (!level2Draft) return null;
+    const tmpl = getCardTemplate(id);
+    const title = cardLabelWithIcon(id, t(tmpl.titleKey as MessageKey));
+    const quickRows = buildCardQuickFrameRows(tmpl);
+    const compactSummary = quickRows.map((row) => row.value).join(" · ");
+    const expanded = expandedRefitCardId === id;
+    const countLabel = `${level2Draft.counts[id]} (${opts.min}–${opts.max})`;
+
+    return (
+      <div
+        key={id}
+        className={[styles.retainRow, styles.refitRow, expanded && styles.refitRowExpanded]
+          .filter(Boolean)
+          .join(" ")}
+        role="button"
+        tabIndex={0}
+        aria-expanded={expanded ? "true" : "false"}
+        onClick={() => setExpandedRefitCardId((prev) => (prev === id ? null : id))}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            setExpandedRefitCardId((prev) => (prev === id ? null : id));
+          }
+        }}
+      >
+        <div className={styles.retainCardInfo}>
+          <span className={styles.retainCardTitle}>{title}</span>
+          <span className={styles.retainCardSummary}>{compactSummary}</span>
+          {expanded ? (
+            <div className={styles.retainCardDetails}>
+              <OutcomeQuickFrame rows={quickRows} />
+              <div className={styles.cardBg}>{t(tmpl.backgroundKey as MessageKey)}</div>
+              <div className={styles.cardDesc}>{t(tmpl.descriptionKey as MessageKey)}</div>
+            </div>
+          ) : null}
+        </div>
+        <div className={styles.retainCounterControls} onClick={(e) => e.stopPropagation()}>
+          <button
+            type="button"
+            className={styles.btn}
+            onClick={() =>
+              setLevel2Draft((prev) =>
+                prev
+                  ? { ...prev, counts: updateRefitCount(prev.counts, prev.baseCounts, id, opts.decrement) }
+                  : prev,
+              )
+            }
+          >
+            -
+          </button>
+          <span className={styles.retainCounterValue}>{countLabel}</span>
+          <button
+            type="button"
+            className={styles.btn}
+            onClick={() =>
+              setLevel2Draft((prev) =>
+                prev
+                  ? { ...prev, counts: updateRefitCount(prev.counts, prev.baseCounts, id, opts.increment) }
+                  : prev,
+              )
+            }
+          >
+            +
+          </button>
+        </div>
+      </div>
+    );
+  };
+
   const level2RefitScreen = level2Draft ? (
     <div className={styles.startMenuScreen} role="dialog" aria-modal="true" aria-labelledby="level2-refit-title">
       <div className={styles.modal}>
@@ -257,83 +340,29 @@ export function Game() {
           </p>
           <p className={styles.startMenuMuted}>
             {level2Draft.europeAlert
-              ? t("menu.refit.europeAlertOn")
+              ? t("menu.refit.europeAlertOn", {
+                  n: computeEuropeAlertDrawPenalty(level2Draft.resources.power),
+                })
               : t("menu.refit.europeAlertOff")}
           </p>
           <h3 className={styles.statusSectionTitle}>{t("menu.refit.adjustable")}</h3>
-          {LEVEL2_ADJUSTABLE_IDS.map((id) => {
-            const min = 1;
-            const max = level2Draft.baseCounts[id] + LEVEL2_REFIT_RULES.maxAddedPerBaseCard;
-            return (
-              <div key={id} className={styles.retainRow}>
-                <span>{cardLabelWithIcon(id, t(getCardTemplate(id).titleKey as MessageKey))}</span>
-                <div style={{ display: "flex", gap: "0.35rem", alignItems: "center" }}>
-                  <button
-                    type="button"
-                    className={styles.btn}
-                    onClick={() =>
-                      setLevel2Draft((prev) =>
-                        prev
-                          ? { ...prev, counts: updateRefitCount(prev.counts, prev.baseCounts, id, -1) }
-                          : prev,
-                      )
-                    }
-                  >
-                    -
-                  </button>
-                  <span>
-                    {level2Draft.counts[id]} ({min}–{max})
-                  </span>
-                  <button
-                    type="button"
-                    className={styles.btn}
-                    onClick={() =>
-                      setLevel2Draft((prev) =>
-                        prev
-                          ? { ...prev, counts: updateRefitCount(prev.counts, prev.baseCounts, id, +1) }
-                          : prev,
-                      )
-                    }
-                  >
-                    +
-                  </button>
-                </div>
-              </div>
-            );
-          })}
+          {LEVEL2_ADJUSTABLE_IDS.map((id) =>
+            renderRefitCountRow(id, {
+              min: 1,
+              max: level2Draft.baseCounts[id] + LEVEL2_REFIT_RULES.maxAddedPerBaseCard,
+              decrement: -1,
+              increment: +1,
+            }),
+          )}
           <h3 className={styles.statusSectionTitle}>{t("menu.refit.newCards")}</h3>
-          {LEVEL2_NEW_IDS.map((id) => (
-            <div key={id} className={styles.retainRow}>
-              <span>{cardLabelWithIcon(id, t(getCardTemplate(id).titleKey as MessageKey))}</span>
-              <div style={{ display: "flex", gap: "0.35rem", alignItems: "center" }}>
-                <button
-                  type="button"
-                  className={styles.btn}
-                  onClick={() =>
-                    setLevel2Draft((prev) =>
-                      prev ? { ...prev, counts: updateRefitCount(prev.counts, prev.baseCounts, id, -1) } : prev,
-                    )
-                  }
-                >
-                  -
-                </button>
-                <span>
-                  {level2Draft.counts[id]} (0–{LEVEL2_REFIT_RULES.maxPerNewCard})
-                </span>
-                <button
-                  type="button"
-                  className={styles.btn}
-                  onClick={() =>
-                    setLevel2Draft((prev) =>
-                      prev ? { ...prev, counts: updateRefitCount(prev.counts, prev.baseCounts, id, +1) } : prev,
-                    )
-                  }
-                >
-                  +
-                </button>
-              </div>
-            </div>
-          ))}
+          {LEVEL2_NEW_IDS.map((id) =>
+            renderRefitCountRow(id, {
+              min: 0,
+              max: LEVEL2_REFIT_RULES.maxPerNewCard,
+              decrement: -1,
+              increment: +1,
+            }),
+          )}
           {level2Validation ? (
             <>
               <p className={styles.startMenuMuted}>
@@ -544,6 +573,7 @@ export function Game() {
           <StatusBar
             statuses={state.playerStatuses}
             europeAlertActive={state.europeAlert && state.outcome === "playing"}
+            europeAlertDrawPenalty={state.europeAlertDrawPenalty}
             coalitionActive={
               !!state.antiFrenchLeague &&
               state.turn <= state.antiFrenchLeague.untilTurn &&

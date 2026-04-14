@@ -632,6 +632,7 @@
 
 .actionLogScroll {
   height: 12rem;
+  min-height: 6rem;
   max-height: 40vh;
   overflow-y: auto;
   overscroll-behavior: contain;
@@ -750,9 +751,59 @@
   padding: 0.45rem 0.55rem;
 }
 
+.refitRow {
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+}
+
+.refitRowExpanded {
+  align-items: flex-start;
+}
+
 .retainRow label {
   flex: 1;
   cursor: pointer;
+}
+
+.retainCardInfo {
+  flex: 1;
+  display: grid;
+  gap: 0.18rem;
+  min-width: 0;
+}
+
+.retainCardTitle {
+  font-weight: 600;
+  word-break: break-word;
+}
+
+.retainCardSummary {
+  font-size: 0.78rem;
+  line-height: 1.28;
+  color: color-mix(in srgb, var(--text) 86%, var(--muted));
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.retainCardDetails {
+  margin-top: 0.15rem;
+  display: grid;
+  gap: 0.24rem;
+}
+
+.retainCounterControls {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex: 0 0 auto;
+}
+
+.retainCounterValue {
+  min-width: 4.8rem;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
 }
 
 .gameOver {
@@ -1220,8 +1271,9 @@
   }
 
   .actionLogScroll {
-    height: 4.8rem;
-    max-height: 4.8rem;
+    height: 6rem;
+    min-height: 6rem;
+    max-height: 6rem;
     font-size: 0.74rem;
     line-height: 1.3;
   }

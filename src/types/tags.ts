@@ -1,1 +1,1 @@
-export type CardTag = "royal";
+export type CardTag = "royal" | "temp";

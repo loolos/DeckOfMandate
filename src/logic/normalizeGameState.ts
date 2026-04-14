@@ -1,4 +1,5 @@
 import { defaultLevelId, getLevelDef, isLevelId } from "../data/levels";
+import { computeEuropeAlertDrawPenalty } from "./europeAlert";
 import { EMPTY_EVENT_SLOTS, EMPTY_PENDING_MAJOR_CRISIS, EVENT_SLOT_ORDER, type SlotId } from "../types/event";
 import type { GameState } from "../types/game";
 
@@ -45,6 +46,13 @@ export function normalizeGameState(state: GameState): GameState {
   }
   if (s.europeAlert === undefined) {
     s = { ...s, europeAlert: false };
+  }
+  if (s.europeAlertDrawPenalty === undefined) {
+    // Migration fallback for older saves: derive from current power if Europe Alert is active.
+    s = {
+      ...s,
+      europeAlertDrawPenalty: s.europeAlert ? computeEuropeAlertDrawPenalty(s.resources.power) : 0,
+    };
   }
   if (typeof s.calendarStartYear !== "number") {
     s = { ...s, calendarStartYear: getLevelDef(s.levelId).calendarStartYear };

@@ -229,16 +229,17 @@ describe("gameReducer", () => {
 
   it("allows diplomatic intervention under royal ban and enters target-pick flow", () => {
     const base = createInitialState(123_009, "secondMandate");
-    const diplomaticIntervention = base.deck.find(
-      (id) => base.cardsById[id]?.templateId === "diplomaticIntervention",
-    );
-    if (!diplomaticIntervention) {
-      throw new Error("expected diplomaticIntervention in secondMandate deck");
-    }
+    const diplomaticIntervention = "tmp_di";
     const withCardInHand: typeof base = {
       ...base,
+      cardsById: {
+        ...base.cardsById,
+        [diplomaticIntervention]: {
+          instanceId: diplomaticIntervention,
+          templateId: "diplomaticIntervention",
+        },
+      },
       hand: [diplomaticIntervention],
-      deck: base.deck.filter((id) => id !== diplomaticIntervention),
       resources: { ...base.resources, funding: 0 },
       slots: {
         ...base.slots,
@@ -259,6 +260,46 @@ describe("gameReducer", () => {
     expect(afterPlay.pendingInteraction?.type).toBe("crackdownPick");
     expect(afterPlay.pendingInteraction?.cardInstanceId).toBe(diplomaticIntervention);
     expect(afterPlay.resources.funding).toBe(0);
+  });
+
+  it("playing diplomatic congress adds a temporary diplomatic intervention to hand", () => {
+    const base = createInitialState(202_701, "secondMandate");
+    const congressId = "tmp_congress";
+    const withCongress: typeof base = {
+      ...base,
+      cardsById: {
+        ...base.cardsById,
+        [congressId]: { instanceId: congressId, templateId: "diplomaticCongress" as const },
+      },
+      hand: [congressId],
+      resources: { ...base.resources, funding: 3 },
+      playerStatuses: [],
+    };
+    const after = gameReducer(withCongress, { type: "PLAY_CARD", handIndex: 0 });
+    const tempInHand = after.hand.find((id) => after.cardsById[id]?.templateId === "diplomaticIntervention");
+    expect(tempInHand).toBeTruthy();
+    expect(after.discard).toContain(congressId);
+  });
+
+  it("temporary diplomatic intervention is purged at year end instead of entering discard", () => {
+    const base = createInitialState(202_702, "secondMandate");
+    const tempId = "tmp_di_purge";
+    const withTempInHand: typeof base = {
+      ...base,
+      hand: [tempId],
+      cardsById: {
+        ...base.cardsById,
+        [tempId]: { instanceId: tempId, templateId: "diplomaticIntervention" as const },
+      },
+      resources: { ...base.resources, funding: 0, legitimacy: 3 },
+      slots: {
+        ...EMPTY_EVENT_SLOTS,
+        A: { instanceId: "safe_evt", templateId: "tradeOpportunity" as const, resolved: true },
+      },
+    };
+    const after = gameReducer(withTempInHand, { type: "END_YEAR" });
+    expect(after.hand.includes(tempId)).toBe(false);
+    expect(after.discard.includes(tempId)).toBe(false);
   });
 
   it("expansion remembered solved adds two fiscal burden cards to deck", () => {
