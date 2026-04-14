@@ -61,6 +61,7 @@ export function createInitialState(
     discard: [],
     hand: [],
     cardsById,
+    cardInflationById: {},
     slots: { ...EMPTY_EVENT_SLOTS },
     pendingMajorCrisis: { ...EMPTY_PENDING_MAJOR_CRISIS },
     playerStatuses: [],

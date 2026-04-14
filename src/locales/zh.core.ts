@@ -154,6 +154,7 @@ export const messagesZhCore = {
   "event.religiousTension.desc": "宗教社群冲突再起。支付 2 经费平息，否则合法性 -1。",
   "card.tag.royal": "王室",
   "card.tag.temp": "临时",
+  "card.tag.inflation": "通胀",
   "log.cardPlayed.title": "[第 {turn} 年] {card} — 支付 {cost} {funding}。",
   "log.cardPlayed.effectsLabel": "效果：",
   "log.cardPlayed.noEffects": "无列表效果。",

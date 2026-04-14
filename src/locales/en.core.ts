@@ -173,6 +173,7 @@ export const messagesEnCore = {
   "event.religiousTension.desc": "Confessional conflict flares again. Pay 2 Funding or lose 1 Legitimacy.",
   "card.tag.royal": "Royal",
   "card.tag.temp": "Temp",
+  "card.tag.inflation": "Inflation",
   "log.cardPlayed.title": "[Turn {turn}] {card} — paid {cost} {funding}.",
   "log.cardPlayed.effectsLabel": "Effects:",
   "log.cardPlayed.noEffects": "No listed effects.",

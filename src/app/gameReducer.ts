@@ -4,6 +4,7 @@ import { getLevelDef, type LevelId } from "../data/levels";
 import { appendActionLog } from "../logic/actionLog";
 import { applyEffects, enforceLegitimacy } from "../logic/applyEffects";
 import { addCardsToHand } from "../logic/cardRuntime";
+import { getPlayableCardCost } from "../logic/cardCost";
 import { normalizeGameState } from "../logic/normalizeGameState";
 import { applyPlayedCardEffects } from "../logic/resolveCard";
 import { resolveEndOfYearPenalties } from "../logic/resolveEvents";
@@ -263,11 +264,16 @@ function removeCardsEverywhere(state: GameState, templateId: CardTemplateId): Ga
       .map((c) => c.instanceId),
   );
   if (toRemove.size === 0) return state;
+  const cardInflationById = { ...state.cardInflationById };
+  for (const id of toRemove) {
+    delete cardInflationById[id];
+  }
   return {
     ...state,
     hand: state.hand.filter((id) => !toRemove.has(id)),
     deck: state.deck.filter((id) => !toRemove.has(id)),
     discard: state.discard.filter((id) => !toRemove.has(id)),
+    cardInflationById,
   };
 }
 
@@ -287,16 +293,17 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       if (!inst) return state;
       if (!isCardPlayableUnderStatuses(state, inst.templateId)) return state;
       const tmpl = getCardTemplate(inst.templateId);
-      if (state.resources.funding < tmpl.cost) return state;
+      const cost = getPlayableCardCost(state, id);
+      if (state.resources.funding < cost) return state;
       const paid = {
         ...state,
-        resources: { ...state.resources, funding: state.resources.funding - tmpl.cost },
+        resources: { ...state.resources, funding: state.resources.funding - cost },
       };
       if (inst.templateId === "crackdown" || inst.templateId === "diplomaticIntervention") {
         return appendActionLog(
           {
             ...paid,
-            pendingInteraction: { type: "crackdownPick", cardInstanceId: id, fundingPaid: tmpl.cost },
+            pendingInteraction: { type: "crackdownPick", cardInstanceId: id, fundingPaid: cost },
           },
           { kind: "crackdownPickPrompt" },
         );
@@ -306,7 +313,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
         return appendActionLog(removed, {
           kind: "cardPlayed",
           templateId: inst.templateId,
-          fundingCost: tmpl.cost,
+          fundingCost: cost,
           effects: tmpl.effects,
         });
       }
@@ -332,7 +339,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
         s = appendActionLog(s, {
           kind: "cardPlayed",
           templateId: inst.templateId,
-          fundingCost: tmpl.cost,
+          fundingCost: cost,
           effects: tmpl.effects,
         });
         return s;
@@ -350,7 +357,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       s = appendActionLog(s, {
         kind: "cardPlayed",
         templateId: inst.templateId,
-        fundingCost: tmpl.cost,
+        fundingCost: cost,
         effects: tmpl.effects,
       });
       return s;

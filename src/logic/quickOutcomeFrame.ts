@@ -95,10 +95,10 @@ function eventYearEndChips(tmpl: EventTemplate): string | null {
 
 export type QuickFrameRow = { labelKey: MessageKey; value: string; muted?: boolean };
 
-export function buildCardQuickFrameRows(tmpl: CardTemplate): QuickFrameRow[] {
+export function buildCardQuickFrameRows(tmpl: CardTemplate, costValue = tmpl.cost): QuickFrameRow[] {
   const cost: QuickFrameRow = {
     labelKey: "ui.quickFrame.cost",
-    value: `${getResourceIcon("funding")} ${tmpl.cost}`,
+    value: `${getResourceIcon("funding")} ${costValue}`,
   };
   if (tmpl.id === "crackdown" || tmpl.id === "diplomaticIntervention") {
     return [

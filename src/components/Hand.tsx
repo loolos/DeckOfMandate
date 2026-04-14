@@ -8,6 +8,7 @@ import { useSmallScreen } from "../logic/useSmallScreen";
 import type { GameState } from "../types/game";
 import type { MessageKey } from "../locales";
 import { useI18n } from "../locales";
+import { getPlayableCardCost } from "../logic/cardCost";
 import styles from "../app/Game.module.css";
 
 export function Hand({
@@ -44,11 +45,12 @@ export function Hand({
         const inst = state.cardsById[id];
         if (!inst) return null;
         const tmpl = getCardTemplate(inst.templateId);
-        const affordable = state.resources.funding >= tmpl.cost;
+        const cost = getPlayableCardCost(state, id);
+        const affordable = state.resources.funding >= cost;
         const blockedByStatus = blockedRoyal && tmpl.tags.includes("royal");
         const playable = canPlay && affordable && !blockedByStatus;
         const title = cardLabelWithIcon(inst.templateId, t(tmpl.titleKey as MessageKey));
-        const quickRows = buildCardQuickFrameRows(tmpl);
+        const quickRows = buildCardQuickFrameRows(tmpl, cost);
         const compactSummary = quickRows.map((row) => row.value).join(" · ");
         const showDetails = !isSmallScreen || expandedCardId === id || (crackPick && id === crackPick.cardInstanceId);
         const body = isSmallScreen ? (

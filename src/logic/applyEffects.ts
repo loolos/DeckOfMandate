@@ -3,6 +3,7 @@ import type { Effect } from "../types/effect";
 import type { GameState } from "../types/game";
 import type { PlayerStatusInstance } from "../types/status";
 import { addCardsToDeck, applyOnDrawCardEffects } from "./cardRuntime";
+import { applyInflationFromDeckRefill } from "./cardCost";
 import { tryDrawOne } from "./draw";
 
 export function enforceLegitimacy(s: GameState): GameState {
@@ -35,6 +36,7 @@ export function applyEffect(state: GameState, e: Effect): GameState {
       for (let i = 0; i < e.count; i++) {
         const d = tryDrawOne(s.rng, s.hand, s.deck, s.discard);
         s = { ...s, rng: d.rng, hand: d.hand, deck: d.deck, discard: d.discard };
+        s = applyInflationFromDeckRefill(s, d.refilledCardIds);
         if (d.drewCardId) {
           s = applyOnDrawCardEffects(s, d.drewCardId);
         }
