@@ -9,14 +9,16 @@ import {
 } from "react";
 import type { MessageKey } from "./en";
 import { messagesEn } from "./en";
+import { messagesFr } from "./fr";
 import { messagesZh } from "./zh";
 
-export type LocaleId = "en" | "zh";
+export type LocaleId = "en" | "zh" | "fr";
 
 const STORAGE_KEY = "deck-of-mandate.locale";
 
 const bundles: Record<LocaleId, Record<MessageKey, string>> = {
   en: messagesEn,
+  fr: messagesFr,
   zh: messagesZh,
 };
 
@@ -26,7 +28,7 @@ export const DEFAULT_LOCALE: LocaleId = "en";
 function readStoredLocale(): LocaleId {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw === "zh" || raw === "en") return raw;
+    if (raw === "zh" || raw === "en" || raw === "fr") return raw;
   } catch {
     /* ignore */
   }
@@ -64,7 +66,7 @@ export function I18nProvider({ children }: { children: ReactNode }) {
   );
 
   useLayoutEffect(() => {
-    document.documentElement.lang = locale === "zh" ? "zh-Hans" : "en";
+    document.documentElement.lang = locale === "zh" ? "zh-Hans" : locale === "fr" ? "fr" : "en";
   }, [locale]);
 
   const setLocale = useCallback((next: LocaleId) => {

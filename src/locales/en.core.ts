@@ -101,6 +101,7 @@ export const messagesEnCore = {
   "ui.language": "Language",
   "ui.lang.en": "English",
   "ui.lang.zh": "中文",
+  "ui.lang.fr": "Français",
   "outcome.victory": "Victory — mandate secured.",
   "outcome.defeatLegitimacy": "Defeat — legitimacy collapsed.",
   "outcome.defeatTime": "Defeat — time ran out before targets were met.",
