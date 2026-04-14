@@ -2,6 +2,8 @@ import { getStatusTemplate } from "../data/statusTemplates";
 import type { Effect } from "../types/effect";
 import type { GameState } from "../types/game";
 import type { PlayerStatusInstance } from "../types/status";
+import { addCardsToDeck, applyOnDrawCardEffects } from "./cardRuntime";
+import { applyInflationFromDeckRefill } from "./cardCost";
 import { tryDrawOne } from "./draw";
 
 export function enforceLegitimacy(s: GameState): GameState {
@@ -34,6 +36,10 @@ export function applyEffect(state: GameState, e: Effect): GameState {
       for (let i = 0; i < e.count; i++) {
         const d = tryDrawOne(s.rng, s.hand, s.deck, s.discard);
         s = { ...s, rng: d.rng, hand: d.hand, deck: d.deck, discard: d.discard };
+        s = applyInflationFromDeckRefill(s, d.refilledCardIds);
+        if (d.drewCardId) {
+          s = applyOnDrawCardEffects(s, d.drewCardId);
+        }
       }
       return s;
     }
@@ -41,6 +47,11 @@ export function applyEffect(state: GameState, e: Effect): GameState {
       return {
         ...state,
         nextTurnDrawModifier: state.nextTurnDrawModifier + e.delta,
+      };
+    case "scheduleDrawModifiers":
+      return {
+        ...state,
+        scheduledDrawModifiers: [...state.scheduledDrawModifiers, ...e.deltas],
       };
     case "addPlayerStatus": {
       const tmpl = getStatusTemplate(e.templateId);
@@ -50,6 +61,8 @@ export function applyEffect(state: GameState, e: Effect): GameState {
         templateId: e.templateId,
         kind: tmpl.kind,
         delta: tmpl.delta,
+        resource: tmpl.resource,
+        blockedTag: tmpl.blockedTag,
         turnsRemaining: e.turns,
       };
       return {
@@ -58,6 +71,8 @@ export function applyEffect(state: GameState, e: Effect): GameState {
         nextIds: { ...state.nextIds, status: state.nextIds.status + 1 },
       };
     }
+    case "addCardsToDeck":
+      return addCardsToDeck(state, e.templateId, e.count);
     default: {
       const _exhaustive: never = e;
       return _exhaustive;

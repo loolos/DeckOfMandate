@@ -51,7 +51,7 @@ Use React for UI rendering and component structure.
 - Event Panel
 - Hand Area
 - Resource Bar
-- **Campaign date banner** (granularity from level data: *The First Mandate* is **year-only** because **1 turn = 1 year**; a **monthly** cadence level would show **year + month**—see `gameplay.md` / `levels.md`)
+- **Campaign date banner** (granularity from level data: *The Rising Sun* is **year-only** because **1 turn = 1 year**; a **monthly** cadence level would show **year + month**—see `gameplay.md` / `levels.md`)
 - Turn Button
 - Game Over Screen
 - **Language toggle** (switch `en` / `zh`; see **Localization**)
@@ -201,6 +201,7 @@ deck-of-mandate/
       cards.ts
       events.ts
       levels.ts
+      levelContent.ts
 
     logic/
       rng.ts
@@ -208,6 +209,7 @@ deck-of-mandate/
       resolveCard.ts
       resolveEvents.ts
       turnFlow.ts
+      scriptedCalendar.ts
       saveLoad.ts
 
     types/
@@ -216,9 +218,15 @@ deck-of-mandate/
       game.ts
 
     locales/
-      index.ts
+      index.tsx
       en.ts
       zh.ts
+      en.core.ts
+      zh.core.ts
+      levels/
+        firstMandate/
+          en.ts
+          zh.ts
 
     styles/
       Card.module.css
@@ -236,6 +244,8 @@ deck-of-mandate/
 #### Data layer
 
 Cards / events / levels are stored as JSON-like objects in `data/*.ts`, but **effects are not free-form strings**. Each effect is a **typed discriminated union** (a `kind` field plus payload) so the rules engine can exhaustively handle every case.
+
+**Level-driven lists:** [`src/data/levelContent.ts`](src/data/levelContent.ts) holds per-`levelId` **starter deck order**, **event roll pool**, **escalation rules** (slot transforms and year-end “schedule next crisis” hooks), and **`scriptedCalendarEvents`** (calendar inject / scripted military / anti-coalition tuning). The engine reads `GameState.levelId` and `getLevelContent(levelId)` in `initialState.ts`, `turnFlow.ts` (weighted rolls, scripted phase, scheduled slot transforms), and `resolveEvents.ts` (escalation schedulers). Shared **templates** (card/event ids and locale keys) remain in `cards.ts` / `events.ts`; **scripted balance** for a row is authored in `levelContent` for that level.
 
 **Example (TypeScript shape, not a string DSL):**
 
@@ -261,9 +271,10 @@ const reformCard = {
 
 Rules engine handles:
 
-- Draw cards (using the shared RNG; see **Randomness and persistence** below)
+- Draw cards (using the shared RNG; see **Randomness and persistence** below), including optional **anti-coalition** draw adjustment at **beginYear**
 - Spend **funding** (and adjust **Treasury stat** when effects say so)
 - Interpret and apply **typed** card/event effects (`resolveCard.ts`, `resolveEvents.ts`, and related helpers)
+- **Scripted calendar** inject / expiry and **scripted military** resolution (`scriptedCalendar.ts`, `gameReducer`)
 - Resolve event penalties
 - Turn transitions
 - Victory check
@@ -282,7 +293,7 @@ The prototype supports **two player-facing languages**: **English (`en`)** and *
 - **Stable keys:** content data (`data/cards.ts`, `data/events.ts`, and similar) should reference **message keys** (for example `titleKey: "card.funding.name"`) or equivalent typed keys. Components resolve text with **`t(key)`** (or a small hook) for the **active locale**.
 - **Runtime switch:** the game exposes a **always-visible or easy-to-reach control** (for example a header **Language** / **语言** toggle) to switch between `en` and `zh` **without restarting** the app.
 - **Persistence:** store the selected locale in **LocalStorage** (separate from run save is fine) so the choice survives reload.
-- **Implementation shape (recommended):** `src/locales/en.ts` and `src/locales/zh.ts` export nested or flat string maps; `src/locales/index.ts` exports `LocaleId`, `messages[locale]`, and helpers. A React **context** provides `{ locale, setLocale, t }` to the tree. **TypeScript** can enforce that keys exist in both locales (for example a shared `MessageKey` type or satisfies pattern).
+- **Implementation shape:** [`src/locales/en.core.ts`](../src/locales/en.core.ts) / [`zh.core.ts`](../src/locales/zh.core.ts) hold **shared** UI strings; [`src/locales/levels/firstMandate/`](../src/locales/levels/firstMandate/) holds **level-scoped** copy (intro, endings, War of Devolution, coalition logs). [`src/locales/en.ts`](../src/locales/en.ts) and [`zh.ts`](../src/locales/zh.ts) **merge** core + level bundles and export `MessageKey`. [`src/locales/index.tsx`](../src/locales/index.tsx) provides `{ locale, setLocale, t }`.
 - **What stays English:** **identifiers** in code (`cardId`, effect kinds), file paths, commit messages, and the canonical **`docs/`** rules remain English. Only **player-visible** strings are translated in locale files.
 
 ### Content effects (typed)
@@ -312,22 +323,22 @@ Build first version with:
 
 ### Systems
 
-- Draw cards each turn (**Power** at **Draw phase** start; **hand cap 10**; extra draws **skipped** if full—see `gameplay.md`)
-- 2 random events each turn (**weighted** picks; **numeric tunable weights** in data—see `levels.md`)
+- Draw cards each turn (**Power** at **Draw phase** start; optional **Anti-French coalition** hazard after scripted war choice; **hand cap 10**; extra draws **skipped** if full—see `gameplay.md`)
+- **Event phase:** weighted fills on procedural slots **`A`–`C`**, plus **scripted calendar** hooks and variable **1–3** fills when the full board is empty (see `levels.md`)
 - Play cards to solve events; **resolved** slots cannot be targeted again that turn
 - End turn discard; **player chooses** which cards to **retain** (up to **Legitimacy**)
 
 ### MVP product shell
 
-- **No main menu required for the first playable build:** load the app and **start a run immediately** (single scene / single screen flow). Menus, meta-progression, and save slots can come later.
-- **Persistence:** optional; **LocalStorage** is supported by the stack recommendation but **not** required to ship the first loop.
+- **Start menu:** new run (optional seed, level id), resume save, locale toggle, optional level-entry tutorial flag.
+- **Persistence:** **LocalStorage** auto-save during a run (and resume path from the menu).
 - **Localization:** player-facing copy in **English and Chinese** from **central locale bundles**; in-game **language switch** and **remembered locale** (see **Localization** above).
 
 ### Content
 
-- 4 card types × 3 copies
-- 5 events
-- 1 level
+- Starter deck: **13** cards across **5** card templates (counts in `levelContent.starterDeckTemplateOrder`—see `levels.md` / `card.md`)
+- Weighted **event** pool plus **scripted** War of Devolution row (*firstMandate*)
+- 1 playable level (`firstMandate`)
 
 ### Win / lose conditions
 

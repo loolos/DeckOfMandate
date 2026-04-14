@@ -1,0 +1,98 @@
+.root {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: auto;
+}
+
+.dim {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+}
+
+.spot {
+  position: absolute;
+  box-sizing: border-box;
+  border-radius: 10px;
+  border: 2px solid color-mix(in srgb, var(--accent, #c9a227) 70%, transparent);
+  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.5);
+  pointer-events: none;
+  transition: top 0.12s ease, left 0.12s ease, width 0.12s ease, height 0.12s ease;
+}
+
+.card {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(420px, calc(100vw - 2rem));
+  max-width: calc(100vw - 2rem);
+  padding: 1rem 1.1rem;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--panel);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+}
+
+.card h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.05rem;
+}
+
+.body {
+  margin: 0 0 1rem;
+  font-size: 0.92rem;
+  line-height: 1.45;
+  color: var(--text, #e8e4dc);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.btn {
+  font: inherit;
+  cursor: pointer;
+  padding: 0.45rem 0.85rem;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--panel-2, #2a2a32);
+  color: inherit;
+}
+
+.btn:hover {
+  filter: brightness(1.08);
+}
+
+.btnPrimary {
+  font: inherit;
+  cursor: pointer;
+  padding: 0.45rem 0.85rem;
+  border-radius: 8px;
+  border: 1px solid color-mix(in srgb, var(--accent, #c9a227) 50%, var(--border));
+  background: color-mix(in srgb, var(--accent, #c9a227) 22%, var(--panel));
+  color: inherit;
+}
+
+.btnPrimary:hover {
+  filter: brightness(1.08);
+}
+
+.skip {
+  margin-right: auto;
+  font-size: 0.85rem;
+  color: var(--muted);
+  background: transparent;
+  border: none;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 0.35rem 0;
+}
+
+.skip:hover {
+  color: var(--text, #e8e4dc);
+}

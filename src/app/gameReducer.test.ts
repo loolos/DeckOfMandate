@@ -1,4 +1,8 @@
 import { describe, expect, it } from "vitest";
+import { levelContentByLevelId } from "../data/levelContent";
+import { getLevelDef } from "../data/levels";
+import { getCardTemplate } from "../data/cards";
+import { EMPTY_EVENT_SLOTS } from "../types/event";
 import { createInitialState } from "./initialState";
 import { gameReducer } from "./gameReducer";
 
@@ -40,6 +44,7 @@ describe("gameReducer", () => {
       hand: [a, b, c],
       deck: base.deck.slice(1),
       slots: {
+        ...EMPTY_EVENT_SLOTS,
         A: { instanceId: "e_u1", templateId: "publicUnrest", resolved: false },
         B: { instanceId: "e_ok", templateId: "tradeOpportunity", resolved: true },
       },
@@ -68,6 +73,7 @@ describe("gameReducer", () => {
       deck,
       resources: { treasuryStat: 4, power: 4, legitimacy: 5, funding: 3 },
       slots: {
+        ...EMPTY_EVENT_SLOTS,
         A: { instanceId: "e1", templateId: "budgetStrain", resolved: false },
         B: { instanceId: "e2", templateId: "tradeOpportunity", resolved: true },
       },
@@ -100,8 +106,8 @@ describe("gameReducer", () => {
       ...s0,
       resources: { ...s0.resources, funding: 2 },
       slots: {
+        ...s0.slots,
         A: { instanceId: "e_trade", templateId: "tradeOpportunity", resolved: false },
-        B: s0.slots.B,
       },
     };
     const n0 = s1.actionLog.length;
@@ -115,6 +121,34 @@ describe("gameReducer", () => {
     }
   });
 
+  it("SCRIPTED_EVENT_ATTACK uses level scripted config (cost, power, coalition window)", () => {
+    const cfg = levelContentByLevelId.firstMandate.scriptedCalendarEvents.find(
+      (x) => x.templateId === "warOfDevolution",
+    )!;
+    const turn = cfg.presenceStartYear - getLevelDef("firstMandate").calendarStartYear + 1;
+    let s = createInitialState(100);
+    s = {
+      ...s,
+      turn,
+      phase: "action",
+      resources: { ...s.resources, funding: 5 },
+      slots: {
+        ...EMPTY_EVENT_SLOTS,
+        A: { instanceId: "e1", templateId: "warOfDevolution", resolved: false },
+      },
+    };
+    const after = gameReducer(s, { type: "SCRIPTED_EVENT_ATTACK", slot: "A" });
+    expect(after.slots.A?.resolved).toBe(true);
+    expect(after.resources.funding).toBe(5 - cfg.attack.fundingCost);
+    expect(after.resources.power).toBe(s.resources.power + cfg.attack.powerDelta);
+    expect(after.warOfDevolutionAttacked).toBe(true);
+    expect(after.antiFrenchLeague).not.toBeNull();
+    const years = cfg.antiCoalition.activeYearsAfterAttack;
+    const expectedUntil =
+      years === null ? getLevelDef("firstMandate").turnLimit : turn + years;
+    expect(after.antiFrenchLeague!.untilTurn).toBe(expectedUntil);
+  });
+
   it("skips retention phase when hand size is within Legitimacy (auto-keep all)", () => {
     const base = createInitialState(55_555);
     const keepOne = base.hand[0]!;
@@ -125,6 +159,7 @@ describe("gameReducer", () => {
       deck: [...base.deck, ...rest],
       resources: { ...base.resources, funding: 0, legitimacy: 3 },
       slots: {
+        ...EMPTY_EVENT_SLOTS,
         A: { instanceId: "test_e1", templateId: "tradeOpportunity", resolved: true },
         B: { instanceId: "test_e2", templateId: "tradeOpportunity", resolved: true },
       },
@@ -133,5 +168,448 @@ describe("gameReducer", () => {
     expect(after.phase).toBe("action");
     expect(after.turn).toBe(s0.turn + 1);
     expect(after.hand).toContain(keepOne);
+  });
+
+  it("blocks royal-tag cards when royal ban status is active", () => {
+    const base = createInitialState(778899);
+    const royalInDeck = base.deck.find((id) => getCardTemplate(base.cardsById[id]!.templateId).tags.includes("royal"));
+    if (!royalInDeck) throw new Error("expected at least one royal-tag card in deck");
+    const blockedState = {
+      ...base,
+      hand: [royalInDeck],
+      deck: base.deck.filter((id) => id !== royalInDeck),
+    };
+    const handIndex = 0;
+    const beforeFunding = base.resources.funding;
+    const beforeLog = base.actionLog.length;
+    const blocked = {
+      ...blockedState,
+      playerStatuses: [
+        ...blockedState.playerStatuses,
+        {
+          instanceId: "st_block_royal",
+          templateId: "royalBan" as const,
+          kind: "blockCardTag" as const,
+          blockedTag: "royal" as const,
+          turnsRemaining: 1,
+        },
+      ],
+    };
+    const after = gameReducer(blocked, { type: "PLAY_CARD", handIndex });
+    expect(after).toEqual(blocked);
+    expect(after.resources.funding).toBe(beforeFunding);
+    expect(after.actionLog.length).toBe(beforeLog);
+  });
+
+  it("retention boost status increases keep limit by +1", () => {
+    const base = createInitialState(990011);
+    const full = [...base.hand, ...base.deck];
+    if (full.length < 3) throw new Error("expected at least three cards total");
+    const hand = full.slice(0, 3);
+    const boosted = {
+      ...base,
+      phase: "retention" as const,
+      hand,
+      deck: full.slice(3),
+      playerStatuses: [
+        ...base.playerStatuses,
+        {
+          instanceId: "st_keep_boost",
+          templateId: "retentionBoost" as const,
+          kind: "retentionCapacityDelta" as const,
+          delta: 1,
+          turnsRemaining: 3,
+        },
+      ],
+    };
+    const tryKeep3 = gameReducer(boosted, { type: "CONFIRM_RETENTION", keepIds: hand.slice(0, 3) });
+    expect(tryKeep3.phase).toBe("action");
+    expect(tryKeep3.turn).toBe(boosted.turn + 1);
+  });
+
+  it("allows diplomatic intervention under royal ban and enters target-pick flow", () => {
+    const base = createInitialState(123_009, "secondMandate");
+    const diplomaticIntervention = "tmp_di";
+    const withCardInHand: typeof base = {
+      ...base,
+      cardsById: {
+        ...base.cardsById,
+        [diplomaticIntervention]: {
+          instanceId: diplomaticIntervention,
+          templateId: "diplomaticIntervention",
+        },
+      },
+      hand: [diplomaticIntervention],
+      resources: { ...base.resources, funding: 0 },
+      slots: {
+        ...base.slots,
+        A: { instanceId: "e_harm", templateId: "nobleResentment" as const, resolved: false },
+      },
+      playerStatuses: [
+        ...base.playerStatuses,
+        {
+          instanceId: "st_block_royal",
+          templateId: "royalBan" as const,
+          kind: "blockCardTag" as const,
+          blockedTag: "royal" as const,
+          turnsRemaining: 1,
+        },
+      ],
+    };
+    const afterPlay = gameReducer(withCardInHand, { type: "PLAY_CARD", handIndex: 0 });
+    expect(afterPlay.pendingInteraction?.type).toBe("crackdownPick");
+    expect(afterPlay.pendingInteraction?.cardInstanceId).toBe(diplomaticIntervention);
+    expect(afterPlay.resources.funding).toBe(0);
+  });
+
+  it("playing diplomatic congress adds a temporary diplomatic intervention to hand", () => {
+    const base = createInitialState(202_701, "secondMandate");
+    const congressId = "tmp_congress";
+    const withCongress: typeof base = {
+      ...base,
+      cardsById: {
+        ...base.cardsById,
+        [congressId]: { instanceId: congressId, templateId: "diplomaticCongress" as const },
+      },
+      hand: [congressId],
+      resources: { ...base.resources, funding: 3 },
+      playerStatuses: [],
+    };
+    const after = gameReducer(withCongress, { type: "PLAY_CARD", handIndex: 0 });
+    const tempInHand = after.hand.find((id) => after.cardsById[id]?.templateId === "diplomaticIntervention");
+    expect(tempInHand).toBeTruthy();
+    expect(after.discard).toContain(congressId);
+  });
+
+  it("temporary diplomatic intervention is purged at year end instead of entering discard", () => {
+    const base = createInitialState(202_702, "secondMandate");
+    const tempId = "tmp_di_purge";
+    const withTempInHand: typeof base = {
+      ...base,
+      hand: [tempId],
+      cardsById: {
+        ...base.cardsById,
+        [tempId]: { instanceId: tempId, templateId: "diplomaticIntervention" as const },
+      },
+      resources: { ...base.resources, funding: 0, legitimacy: 3 },
+      slots: {
+        ...EMPTY_EVENT_SLOTS,
+        A: { instanceId: "safe_evt", templateId: "tradeOpportunity" as const, resolved: true },
+      },
+    };
+    const after = gameReducer(withTempInHand, { type: "END_YEAR" });
+    expect(after.hand.includes(tempId)).toBe(false);
+    expect(after.discard.includes(tempId)).toBe(false);
+  });
+
+  it("expansion remembered solved adds two fiscal burden cards to deck", () => {
+    const base = createInitialState(202_602, "secondMandate");
+    const beforeCardCount = Object.keys(base.cardsById).length;
+    const s0: typeof base = {
+      ...base,
+      resources: { ...base.resources, funding: 2 },
+      slots: {
+        ...base.slots,
+        A: { instanceId: "e_expansion", templateId: "expansionRemembered" as const, resolved: false },
+      },
+    };
+    const after = gameReducer(s0, { type: "SOLVE_EVENT", slot: "A" });
+    const burdenIds = Object.values(after.cardsById)
+      .filter((c) => c.templateId === "fiscalBurden")
+      .map((c) => c.instanceId);
+    expect(after.resources.funding).toBe(0);
+    expect(Object.keys(after.cardsById).length).toBe(beforeCardCount + 2);
+    expect(burdenIds.length).toBe(2);
+    expect(after.deck.slice(0, 2)).toEqual(burdenIds);
+  });
+
+  it("playing fiscal burden purges it without adding to discard", () => {
+    const base = createInitialState(202_603, "secondMandate");
+    const fiscalBurden = "fb_manual";
+    const withCard: typeof base = {
+      ...base,
+      cardsById: {
+        ...base.cardsById,
+        [fiscalBurden]: { instanceId: fiscalBurden, templateId: "fiscalBurden" as const },
+      },
+      hand: [fiscalBurden],
+      deck: base.deck.filter((id) => id !== fiscalBurden),
+      resources: { ...base.resources, funding: 2 },
+    };
+    const after = gameReducer(withCard, { type: "PLAY_CARD", handIndex: 0 });
+    expect(after.resources.funding).toBe(0);
+    expect(after.hand.includes(fiscalBurden)).toBe(false);
+    expect(after.discard.includes(fiscalBurden)).toBe(false);
+  });
+
+  it("chapter 2 inflation stack increases playable card cost", () => {
+    const base = createInitialState(202_604, "secondMandate");
+    const ceremonyId = "ceremony_inflation";
+    const withCard: typeof base = {
+      ...base,
+      cardsById: {
+        ...base.cardsById,
+        [ceremonyId]: { instanceId: ceremonyId, templateId: "ceremony" as const },
+      },
+      hand: [ceremonyId],
+      deck: [],
+      discard: [],
+      resources: { ...base.resources, funding: 2, legitimacy: 3 },
+      cardInflationById: { ...base.cardInflationById, [ceremonyId]: 1 },
+      slots: { ...EMPTY_EVENT_SLOTS },
+    };
+    const blocked = gameReducer(withCard, { type: "PLAY_CARD", handIndex: 0 });
+    expect(blocked).toEqual(withCard);
+
+    const affordable = { ...withCard, resources: { ...withCard.resources, funding: 3 } };
+    const after = gameReducer(affordable, { type: "PLAY_CARD", handIndex: 0 });
+    expect(after.resources.funding).toBe(0);
+    expect(after.discard).toContain(ceremonyId);
+    const last = after.actionLog[after.actionLog.length - 1];
+    expect(last?.kind).toBe("cardPlayed");
+    if (last?.kind === "cardPlayed") {
+      expect(last.fundingCost).toBe(3);
+    }
+  });
+
+  it("chapter 1 below pressure threshold ignores inflation stacks for cost calculation", () => {
+    const base = createInitialState(202_605, "firstMandate");
+    const ceremonyId = "ceremony_no_inflation";
+    const withCard: typeof base = {
+      ...base,
+      cardsById: {
+        ...base.cardsById,
+        [ceremonyId]: { instanceId: ceremonyId, templateId: "ceremony" as const },
+      },
+      hand: [ceremonyId],
+      deck: [],
+      discard: [],
+      resources: { ...base.resources, funding: 2, legitimacy: 3 },
+      cardInflationById: { ...base.cardInflationById, [ceremonyId]: 5 },
+      slots: { ...EMPTY_EVENT_SLOTS },
+    };
+    const after = gameReducer(withCard, { type: "PLAY_CARD", handIndex: 0 });
+    expect(after.resources.funding).toBe(0);
+    expect(after.discard).toContain(ceremonyId);
+    const last = after.actionLog[after.actionLog.length - 1];
+    expect(last?.kind).toBe("cardPlayed");
+    if (last?.kind === "cardPlayed") {
+      expect(last.fundingCost).toBe(2);
+    }
+  });
+
+  it("chapter 1 at pressure threshold applies inflation stacks for cost calculation", () => {
+    const base = createInitialState(202_606, "firstMandate");
+    const ceremonyId = "ceremony_threshold_inflation";
+    const withCard: typeof base = {
+      ...base,
+      cardsById: {
+        ...base.cardsById,
+        [ceremonyId]: { instanceId: ceremonyId, templateId: "ceremony" as const },
+      },
+      hand: [ceremonyId],
+      deck: [],
+      discard: [],
+      resources: { treasuryStat: 5, funding: 2, power: 5, legitimacy: 4 },
+      cardInflationById: { ...base.cardInflationById, [ceremonyId]: 1 },
+      slots: { ...EMPTY_EVENT_SLOTS },
+    };
+    const blocked = gameReducer(withCard, { type: "PLAY_CARD", handIndex: 0 });
+    expect(blocked).toEqual(withCard);
+
+    const affordable = { ...withCard, resources: { ...withCard.resources, funding: 3 } };
+    const after = gameReducer(affordable, { type: "PLAY_CARD", handIndex: 0 });
+    expect(after.resources.funding).toBe(0);
+    expect(after.discard).toContain(ceremonyId);
+    const last = after.actionLog[after.actionLog.length - 1];
+    expect(last?.kind).toBe("cardPlayed");
+    if (last?.kind === "cardPlayed") {
+      expect(last.fundingCost).toBe(3);
+    }
+  });
+
+  it("chapter 1 reaching pressure threshold immediately appends inflation activation log", () => {
+    const base = createInitialState(202_607, "firstMandate");
+    const developmentId = "development_threshold_log";
+    const withCard: typeof base = {
+      ...base,
+      cardsById: {
+        ...base.cardsById,
+        [developmentId]: { instanceId: developmentId, templateId: "development" as const },
+      },
+      hand: [developmentId],
+      deck: [],
+      discard: [],
+      resources: { treasuryStat: 4, funding: 3, power: 5, legitimacy: 4 },
+      slots: { ...EMPTY_EVENT_SLOTS },
+    };
+    const after = gameReducer(withCard, { type: "PLAY_CARD", handIndex: 0 });
+    expect(after.resources.treasuryStat).toBe(5);
+    const infoEntries = after.actionLog.filter(
+      (entry) => entry.kind === "info" && entry.infoKey === "firstMandateInflationActivated",
+    );
+    expect(infoEntries).toHaveLength(1);
+  });
+
+  it("solving nymwegen settlement clears europe alert and marks chapter objective", () => {
+    const base = createInitialState(202_900, "secondMandate");
+    const s0: typeof base = {
+      ...base,
+      europeAlert: true,
+      nymwegenSettlementAchieved: false,
+      resources: { ...base.resources, funding: 6, power: 9, legitimacy: 9 },
+      slots: {
+        ...base.slots,
+        A: { instanceId: "e_nymwegen", templateId: "nymwegenSettlement" as const, resolved: false },
+      },
+    };
+    const after = gameReducer(s0, { type: "SOLVE_EVENT", slot: "A" });
+    expect(after.europeAlert).toBe(false);
+    expect(after.nymwegenSettlementAchieved).toBe(true);
+    expect(after.resources.funding).toBe(0);
+    expect(after.resources.power).toBe(6);
+    expect(after.resources.legitimacy).toBe(7);
+  });
+
+  it("chapter 2 cannot win before nymwegen objective is complete", () => {
+    const level = getLevelDef("secondMandate");
+    const base = createInitialState(202_901, "secondMandate");
+    const s0: typeof base = {
+      ...base,
+      nymwegenSettlementAchieved: false,
+      europeAlert: true,
+      hand: [],
+      resources: {
+        treasuryStat: level.winTargets.treasuryStat,
+        power: level.winTargets.power,
+        legitimacy: level.winTargets.legitimacy,
+        funding: 0,
+      },
+      slots: { ...EMPTY_EVENT_SLOTS },
+    };
+    const after = gameReducer(s0, { type: "END_YEAR" });
+    expect(after.outcome).not.toBe("victory");
+  });
+
+  it("chapter 2 cannot win while huguenot containment status exists", () => {
+    const level = getLevelDef("secondMandate");
+    const base = createInitialState(202_905, "secondMandate");
+    const s0: typeof base = {
+      ...base,
+      nymwegenSettlementAchieved: true,
+      europeAlert: false,
+      hand: [],
+      resources: {
+        treasuryStat: level.winTargets.treasuryStat,
+        power: level.winTargets.power,
+        legitimacy: level.winTargets.legitimacy,
+        funding: 0,
+      },
+      slots: { ...EMPTY_EVENT_SLOTS },
+      playerStatuses: [
+        {
+          instanceId: "st_hug",
+          templateId: "huguenotContainment" as const,
+          kind: "drawAttemptsDelta" as const,
+          delta: 0,
+          turnsRemaining: 2,
+        },
+      ],
+    };
+    const after = gameReducer(s0, { type: "END_YEAR" });
+    expect(after.outcome).not.toBe("victory");
+  });
+
+  it("grainRelief directly resolves one unresolved risingGrainPrices event when played", () => {
+    const base = createInitialState(202_902, "secondMandate");
+    const grainReliefCardId = "test_grain_relief";
+    const withCardInHand: typeof base = {
+      ...base,
+      cardsById: {
+        ...base.cardsById,
+        [grainReliefCardId]: {
+          instanceId: grainReliefCardId,
+          templateId: "grainRelief",
+        },
+      },
+      hand: [grainReliefCardId],
+      resources: { ...base.resources, funding: 3 },
+      slots: {
+        ...EMPTY_EVENT_SLOTS,
+        A: { instanceId: "e_rise_1", templateId: "risingGrainPrices", resolved: false },
+        B: { instanceId: "e_other", templateId: "nobleResentment", resolved: false },
+      },
+    };
+    const after = gameReducer(withCardInHand, { type: "PLAY_CARD", handIndex: 0 });
+    expect(after.resources.funding).toBe(0);
+    expect(after.slots.A?.resolved).toBe(true);
+    expect(after.slots.B?.resolved).toBe(false);
+  });
+
+  it("revocation nantes tolerance branch applies legitimacy -1 and permanent tolerance status", () => {
+    const base = createInitialState(333_001, "secondMandate");
+    const s0: typeof base = {
+      ...base,
+      resources: { ...base.resources, legitimacy: 5 },
+      slots: {
+        ...base.slots,
+        A: { instanceId: "e_nantes", templateId: "revocationNantes" as const, resolved: false },
+      },
+    };
+    const after = gameReducer(s0, { type: "PICK_NANTES_TOLERANCE", slot: "A" });
+    expect(after.resources.legitimacy).toBe(4);
+    expect(after.slots.A?.resolved).toBe(true);
+    expect(after.playerStatuses.some((s) => s.templateId === "religiousTolerance")).toBe(true);
+  });
+
+  it("revocation nantes crackdown branch adds containment status and three suppress cards", () => {
+    const base = createInitialState(333_002, "secondMandate");
+    const s0: typeof base = {
+      ...base,
+      slots: {
+        ...base.slots,
+        A: { instanceId: "e_nantes", templateId: "revocationNantes" as const, resolved: false },
+      },
+    };
+    const after = gameReducer(s0, { type: "PICK_NANTES_CRACKDOWN", slot: "A" });
+    const containment = after.playerStatuses.find((s) => s.templateId === "huguenotContainment");
+    expect(containment?.turnsRemaining).toBe(3);
+    const suppressCount = Object.values(after.cardsById).filter((c) => c.templateId === "suppressHuguenots").length;
+    expect(suppressCount).toBe(3);
+  });
+
+  it("playing suppress huguenots decrements containment and purges all suppress cards at zero", () => {
+    const base = createInitialState(333_003, "secondMandate");
+    const cardId = "tmp_sup_1";
+    const second = "tmp_sup_2";
+    const third = "tmp_sup_3";
+    const withCards: typeof base = {
+      ...base,
+      hand: [cardId],
+      deck: [second, ...base.deck],
+      discard: [third, ...base.discard],
+      cardsById: {
+        ...base.cardsById,
+        [cardId]: { instanceId: cardId, templateId: "suppressHuguenots" as const },
+        [second]: { instanceId: second, templateId: "suppressHuguenots" as const },
+        [third]: { instanceId: third, templateId: "suppressHuguenots" as const },
+      },
+      resources: { ...base.resources, funding: 3 },
+      playerStatuses: [
+        ...base.playerStatuses,
+        {
+          instanceId: "st_hug",
+          templateId: "huguenotContainment" as const,
+          kind: "drawAttemptsDelta" as const,
+          delta: 0,
+          turnsRemaining: 1,
+        },
+      ],
+    };
+    const after = gameReducer(withCards, { type: "PLAY_CARD", handIndex: 0 });
+    expect(after.playerStatuses.some((s) => s.templateId === "huguenotContainment")).toBe(false);
+    expect(after.hand.includes(cardId)).toBe(false);
+    expect(after.deck.includes(second)).toBe(false);
+    expect(after.discard.includes(third)).toBe(false);
   });
 });

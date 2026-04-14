@@ -1,9 +1,11 @@
 import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import { getCardTemplate } from "../data/cards";
 import { getEventTemplate } from "../data/events";
+import { cardLabelWithIcon, eventLabelWithIcon, resourceLabelWithIcon } from "../logic/icons";
 import { formatEffectLogLine } from "../logic/formatEffectLog";
 import type { MessageKey } from "../locales";
 import { useI18n } from "../locales";
+import { useSmallScreen } from "../logic/useSmallScreen";
 import type { ActionLogEntry } from "../types/game";
 import type { CardTemplateId } from "../types/card";
 import type { EventTemplateId } from "../types/event";
@@ -20,7 +22,7 @@ function eventTitleKey(id: EventTemplateId): MessageKey {
 }
 
 function renderEntry(e: ActionLogEntry, t: (key: MessageKey, vars?: Record<string, string | number>) => string) {
-  const fundingLabel = t("resource.funding");
+  const fundingLabel = resourceLabelWithIcon("funding", t("resource.funding"));
   switch (e.kind) {
     case "cardPlayed":
       return (
@@ -28,7 +30,7 @@ function renderEntry(e: ActionLogEntry, t: (key: MessageKey, vars?: Record<strin
           <div className={styles.actionLogHead}>
             {t("log.cardPlayed.title", {
               turn: e.turn,
-              card: t(cardTitleKey(e.templateId)),
+              card: cardLabelWithIcon(e.templateId, t(cardTitleKey(e.templateId))),
               cost: e.fundingCost,
               funding: fundingLabel,
             })}
@@ -55,7 +57,7 @@ function renderEntry(e: ActionLogEntry, t: (key: MessageKey, vars?: Record<strin
           {t("log.eventFundSolved", {
             turn: e.turn,
             slot: e.slot,
-            event: t(eventTitleKey(e.templateId)),
+            event: eventLabelWithIcon(e.templateId, t(eventTitleKey(e.templateId))),
             paid: e.fundingPaid,
             funding: fundingLabel,
             treasury,
@@ -69,7 +71,7 @@ function renderEntry(e: ActionLogEntry, t: (key: MessageKey, vars?: Record<strin
           {t("log.eventCrackdownSolved", {
             turn: e.turn,
             slot: e.slot,
-            event: t(eventTitleKey(e.harmfulEventTemplateId)),
+            event: eventLabelWithIcon(e.harmfulEventTemplateId, t(eventTitleKey(e.harmfulEventTemplateId))),
             paid: e.fundingPaid,
             funding: fundingLabel,
           })}
@@ -82,7 +84,7 @@ function renderEntry(e: ActionLogEntry, t: (key: MessageKey, vars?: Record<strin
             {t("log.eventYearEndPenalty.title", {
               turn: e.turn,
               slot: e.slot,
-              event: t(eventTitleKey(e.templateId)),
+              event: eventLabelWithIcon(e.templateId, t(eventTitleKey(e.templateId))),
             })}
           </div>
           {e.effects.length > 0 ? (
@@ -103,7 +105,7 @@ function renderEntry(e: ActionLogEntry, t: (key: MessageKey, vars?: Record<strin
           {t("log.eventPowerVacuumScheduled", {
             turn: e.turn,
             slot: e.slot,
-            event: t(eventTitleKey(e.templateId)),
+            event: eventLabelWithIcon(e.templateId, t(eventTitleKey(e.templateId))),
           })}
         </div>
       );
@@ -117,6 +119,72 @@ function renderEntry(e: ActionLogEntry, t: (key: MessageKey, vars?: Record<strin
           })}
         </div>
       );
+    case "crackdownPickPrompt":
+      return (
+        <div className={styles.actionLogHead}>
+          {t("log.crackdownPickPrompt", { turn: e.turn })}
+        </div>
+      );
+    case "eventScriptedAttack": {
+      if (e.templateId === "warOfDevolution") {
+        const powerDelta = e.powerDelta ?? 0;
+        const rollPct = e.extraTreasuryProbabilityPct ?? 0;
+        return (
+          <div>
+            <div className={styles.actionLogHead}>
+              {t("log.eventScriptedAttack.war.title", {
+                turn: e.turn,
+                slot: e.slot,
+                event: eventLabelWithIcon(e.templateId, t(eventTitleKey(e.templateId))),
+              })}
+            </div>
+            <div className={styles.actionLogSub}>
+              {t("log.eventScriptedAttack.war.summary", {
+                paid: e.fundingPaid,
+                funding: fundingLabel,
+                powerDelta,
+                power: resourceLabelWithIcon("power", t("resource.power")),
+              })}
+            </div>
+            <div className={styles.actionLogSub}>
+              {e.treasuryGain > 0
+                ? t("log.eventScriptedAttack.war.treasuryYes", {
+                    gain: e.treasuryGain,
+                    treasury: resourceLabelWithIcon("treasuryStat", t("resource.treasuryStat")),
+                    rollPct,
+                  })
+                : t("log.eventScriptedAttack.war.treasuryNo", { rollPct })}
+            </div>
+            <div className={styles.actionLogSubMuted}>{t("log.eventScriptedAttack.war.coalitionNote")}</div>
+          </div>
+        );
+      }
+      const treasury =
+        e.treasuryGain > 0 ? t("log.eventFundSolved.treasury", { gain: e.treasuryGain }) : "";
+      return (
+        <div className={styles.actionLogHead}>
+          {t("log.eventScriptedAttack.generic", {
+            turn: e.turn,
+            slot: e.slot,
+            event: eventLabelWithIcon(e.templateId, t(eventTitleKey(e.templateId))),
+            paid: e.fundingPaid,
+            funding: fundingLabel,
+            treasury,
+          })}
+        </div>
+      );
+    }
+    case "antiFrenchLeagueDraw":
+      return (
+        <div>
+          <div className={styles.actionLogHead}>
+            {t("log.antiFrenchLeagueDraw.title", { turn: e.turn, pct: e.probabilityPct })}
+          </div>
+          <div className={styles.actionLogSubMuted}>{t("log.antiFrenchLeagueDraw.history")}</div>
+        </div>
+      );
+    case "info":
+      return <div className={styles.actionLogHead}>{t(`log.info.${e.infoKey}` as MessageKey, { turn: e.turn })}</div>;
     default: {
       const _never: never = e;
       return _never;
@@ -124,8 +192,16 @@ function renderEntry(e: ActionLogEntry, t: (key: MessageKey, vars?: Record<strin
   }
 }
 
-export function ActionLog({ entries }: { entries: readonly ActionLogEntry[] }) {
+export function ActionLog({
+  entries,
+  showMobileTapGuide,
+}: {
+  entries: readonly ActionLogEntry[];
+  /** Action phase only — small-screen card/event tap hint lives in the log once. */
+  showMobileTapGuide?: boolean;
+}) {
   const { t } = useI18n();
+  const isSmallScreen = useSmallScreen();
   const wrapRef = useRef<HTMLDivElement>(null);
   const [followTail, setFollowTail] = useState(true);
   const lastEntryId = entries.length > 0 ? entries[entries.length - 1]!.id : "";
@@ -155,6 +231,13 @@ export function ActionLog({ entries }: { entries: readonly ActionLogEntry[] }) {
         aria-live="polite"
         aria-relevant="additions"
       >
+        {isSmallScreen && showMobileTapGuide ? (
+          <div className={styles.actionLogRow}>
+            <p className={styles.actionLogEmpty} style={{ marginTop: 0 }}>
+              {t("ui.mobileLogTapHint")}
+            </p>
+          </div>
+        ) : null}
         {entries.length === 0 ? (
           <p className={styles.actionLogEmpty}>{t("ui.actionLog.empty")}</p>
         ) : (

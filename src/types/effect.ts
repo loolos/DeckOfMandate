@@ -1,3 +1,4 @@
+import type { CardTemplateId } from "./card";
 import type { StatusTemplateId } from "./status";
 
 export type ResourceStat = "treasuryStat" | "power" | "legitimacy";
@@ -8,4 +9,6 @@ export type Effect =
   | { kind: "gainFunding"; amount: number }
   | { kind: "drawCards"; count: number }
   | { kind: "scheduleNextTurnDrawModifier"; delta: number }
-  | { kind: "addPlayerStatus"; templateId: StatusTemplateId; turns: number };
+  | { kind: "scheduleDrawModifiers"; deltas: number[] }
+  | { kind: "addPlayerStatus"; templateId: StatusTemplateId; turns: number }
+  | { kind: "addCardsToDeck"; templateId: CardTemplateId; count: number };

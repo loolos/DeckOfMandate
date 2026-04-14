@@ -4,6 +4,16 @@ import type { Effect } from "./effect";
 import type { EventInstance, EventTemplateId, SlotId } from "./event";
 import type { PlayerStatusInstance } from "./status";
 
+export type LogInfoKey =
+  | "firstMandateInflationActivated"
+  | "cardTag.royal"
+  | "cardTag.temp"
+  | "cardTag.inflation"
+  | "eventTag.harmful"
+  | "eventTag.opportunity"
+  | "eventTag.continued"
+  | "eventTag.resolved";
+
 /** Append-only player-facing log; newest entries at the end of the array. */
 export type ActionLogEntry =
   | {
@@ -51,6 +61,37 @@ export type ActionLogEntry =
       id: string;
       turn: number;
       refund: number;
+    }
+  | {
+      kind: "crackdownPickPrompt";
+      id: string;
+      turn: number;
+    }
+  | {
+      kind: "eventScriptedAttack";
+      id: string;
+      turn: number;
+      slot: SlotId;
+      templateId: EventTemplateId;
+      fundingPaid: number;
+      treasuryGain: number;
+      /** From level scripted config; shown in log. */
+      powerDelta: number;
+      /** Rounded percent; treasury roll used `extraTreasuryProbability` from config. */
+      extraTreasuryProbabilityPct: number;
+    }
+  | {
+      kind: "antiFrenchLeagueDraw";
+      id: string;
+      turn: number;
+      /** Rounded percent; hazard rolled at beginYear when league is active. */
+      probabilityPct: number;
+    }
+  | {
+      kind: "info";
+      id: string;
+      turn: number;
+      infoKey: LogInfoKey;
     };
 
 export type GamePhase = "action" | "retention" | "gameOver";
@@ -60,6 +101,13 @@ export type GameOutcome =
   | "victory"
   | "defeatLegitimacy"
   | "defeatTime";
+
+/** After a scripted military choice; each year’s draw may roll drawPenaltyProbability for drawPenaltyDelta (clamped with power). */
+export type AntiFrenchLeagueState = {
+  untilTurn: number;
+  drawPenaltyProbability: number;
+  drawPenaltyDelta: number;
+};
 
 export type PendingInteraction =
   | {
@@ -84,6 +132,8 @@ export type RngSerialized = {
 export type GameState = {
   /** Active level; drives turn limit, win targets, calendar, and starting layout on new runs. */
   levelId: LevelId;
+  /** Per-run calendar anchor; defaults to level start year but can be overridden for chapter continuity. */
+  calendarStartYear: number;
   runSeed: number;
   rng: RngSerialized;
   turn: number;
@@ -97,15 +147,34 @@ export type GameState = {
    * Draw attempts = max(1, power + this), then reset to 0.
    */
   nextTurnDrawModifier: number;
+  /** Queue of per-year draw modifiers; index 0 applies this year then is shifted. */
+  scheduledDrawModifiers: number[];
   deck: string[];
   discard: string[];
   hand: string[];
   /** All card instances keyed by id (includes played copies for lookup). */
   cardsById: Record<string, CardInstance>;
+  /** Inflation stacks per card instance (active in Chapter 2, and in Chapter 1 after pressure threshold). */
+  cardInflationById: Record<string, number>;
   slots: Record<SlotId, EventInstance | null>;
   /** If true, that slot must become Major Crisis at the next Event phase (before empty rolls). */
   pendingMajorCrisis: Record<SlotId, boolean>;
   /** Timed modifiers (e.g. draw penalty); turns tick after each beginYear draw phase. */
   playerStatuses: PlayerStatusInstance[];
+  /** Set when resolving a scripted attack (e.g. War of Devolution); cleared after `untilTurn`. */
+  antiFrenchLeague: AntiFrenchLeagueState | null;
+  /** True after the player chooses the military option on the War of Devolution event (affects victory epilogue). */
+  warOfDevolutionAttacked: boolean;
+  /** Continuity marker from Chapter 1 military overreach; increases selected war-pressure rolls in Chapter 2. */
+  europeAlert: boolean;
+  /** Fixed Chapter-2 Europe Alert draw reduction computed from chapter-start power (floor(power/2), min 1). */
+  europeAlertDrawPenalty: number;
+  /** Chapter-2 objective marker; set true once Treaties of Nijmegen is successfully resolved. */
+  nymwegenSettlementAchieved: boolean;
+  /**
+   * Deterministic procedural event queue (A–C random events only).
+   * Built as concatenated shuffled blocks where each template appears `weight` times.
+   */
+  proceduralEventSequence: EventTemplateId[];
   actionLog: readonly ActionLogEntry[];
 };

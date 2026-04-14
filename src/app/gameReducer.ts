@@ -1,30 +1,48 @@
 import { getCardTemplate } from "../data/cards";
 import { getEventTemplate } from "../data/events";
+import { getLevelDef, type LevelId } from "../data/levels";
 import { appendActionLog } from "../logic/actionLog";
-import { enforceLegitimacy } from "../logic/applyEffects";
+import { applyEffects, enforceLegitimacy } from "../logic/applyEffects";
+import { hasCardTag } from "../logic/cardTags";
+import { addCardsToHand } from "../logic/cardRuntime";
+import { appendInflationActivationLogIfNeeded, getPlayableCardCost } from "../logic/cardCost";
 import { normalizeGameState } from "../logic/normalizeGameState";
 import { applyPlayedCardEffects } from "../logic/resolveCard";
 import { resolveEndOfYearPenalties } from "../logic/resolveEvents";
-import { beginYear, evaluateTimeDefeat, evaluateVictory } from "../logic/turnFlow";
+import { coalitionUntilTurn, findScriptedCalendarConfig } from "../logic/scriptedCalendar";
+import { rngNext } from "../logic/rng";
+import { beginYear, evaluateTimeDefeat, evaluateVictory, retentionCapacity } from "../logic/turnFlow";
+import type { CardTemplateId } from "../types/card";
+import { EVENT_SLOT_ORDER, type EventTemplateId } from "../types/event";
 import type { SlotId } from "../types/event";
 import type { GameState } from "../types/game";
+import type { LogInfoKey } from "../types/game";
 import { createInitialState } from "./initialState";
 
 export type GameAction =
-  | { type: "NEW_GAME"; seed?: number }
+  | { type: "NEW_GAME"; seed?: number; levelId?: LevelId }
   | { type: "HYDRATE"; state: GameState }
   | { type: "PLAY_CARD"; handIndex: number }
   | { type: "END_YEAR" }
   | { type: "SOLVE_EVENT"; slot: SlotId }
+  | { type: "PICK_NANTES_TOLERANCE"; slot: SlotId }
+  | { type: "PICK_NANTES_CRACKDOWN"; slot: SlotId }
+  | { type: "SCRIPTED_EVENT_ATTACK"; slot: SlotId }
   | { type: "CRACKDOWN_TARGET"; slot: SlotId }
   | { type: "CRACKDOWN_CANCEL" }
+  | { type: "APPEND_LOG_INFO"; infoKey: LogInfoKey }
   | { type: "CONFIRM_RETENTION"; keepIds: readonly string[] };
 
 function removeHand(state: GameState, instanceId: string): GameState {
   return { ...state, hand: state.hand.filter((id) => id !== instanceId) };
 }
 
+function isTemporaryCardInstance(state: GameState, instanceId: string): boolean {
+  return hasCardTag(state, instanceId, "temp");
+}
+
 function pushDiscard(state: GameState, instanceId: string): GameState {
+  if (isTemporaryCardInstance(state, instanceId)) return state;
   return { ...state, discard: [...state.discard, instanceId] };
 }
 
@@ -37,6 +55,19 @@ function markSlotResolved(state: GameState, slot: SlotId): GameState {
   };
 }
 
+function resolveFirstUnresolvedEventByTemplate(
+  state: GameState,
+  templateId: EventTemplateId,
+): GameState {
+  for (const slot of EVENT_SLOT_ORDER) {
+    const ev = state.slots[slot];
+    if (!ev || ev.resolved) continue;
+    if (ev.templateId !== templateId) continue;
+    return markSlotResolved(state, slot);
+  }
+  return state;
+}
+
 function isCrackdownTarget(state: GameState, slot: SlotId): boolean {
   const ev = state.slots[slot];
   if (!ev || ev.resolved) return false;
@@ -45,11 +76,12 @@ function isCrackdownTarget(state: GameState, slot: SlotId): boolean {
 }
 
 function canFundSolve(state: GameState, slot: SlotId): boolean {
-  if (state.phase !== "action" || state.pendingInteraction) return false;
+  if (state.phase !== "action") return false;
   const ev = state.slots[slot];
   if (!ev || ev.resolved) return false;
   const tmpl = getEventTemplate(ev.templateId);
   if (tmpl.solve.kind === "crackdownOnly") return false;
+  if (tmpl.solve.kind === "nantesPolicyChoice") return false;
   if (tmpl.solve.kind === "funding") {
     return state.resources.funding >= tmpl.solve.amount;
   }
@@ -59,13 +91,95 @@ function canFundSolve(state: GameState, slot: SlotId): boolean {
   return false;
 }
 
-/** After funding is cleared: keep chosen cards, discard the rest, then EOY penalties, then win / time / next year. */
-function completeYearAfterRetention(state: GameState, keepIds: readonly string[]): GameState {
-  const keep = new Set(keepIds);
-  const discardIds = state.hand.filter((id) => !keep.has(id));
+function canScriptedAttack(state: GameState, slot: SlotId): boolean {
+  if (state.phase !== "action" || state.pendingInteraction?.type === "crackdownPick") return false;
+  const ev = state.slots[slot];
+  if (!ev || ev.resolved) return false;
+  const tmpl = getEventTemplate(ev.templateId);
+  if (tmpl.solve.kind !== "scriptedAttack") return false;
+  const cfg = findScriptedCalendarConfig(state.levelId, ev.templateId);
+  if (!cfg?.attack) return false;
+  return state.resources.funding >= cfg.attack.fundingCost;
+}
+
+function isCardPlayableUnderStatuses(state: GameState, cardInstanceId: string): boolean {
+  for (const st of state.playerStatuses) {
+    if (st.kind !== "blockCardTag") continue;
+    if (!st.blockedTag) continue;
+    if (hasCardTag(state, cardInstanceId, st.blockedTag)) return false;
+  }
+  return true;
+}
+
+function performScriptedAttack(state: GameState, slot: SlotId): GameState {
+  const ev = state.slots[slot];
+  if (!ev || ev.resolved) return state;
+  const tmpl = getEventTemplate(ev.templateId);
+  if (tmpl.solve.kind !== "scriptedAttack") return state;
+  const cfg = findScriptedCalendarConfig(state.levelId, ev.templateId);
+  if (!cfg?.attack || !cfg.antiCoalition) return state;
+  const cost = cfg.attack.fundingCost;
+  if (state.resources.funding < cost) return state;
+
   let s: GameState = {
     ...state,
-    hand: [...keepIds],
+    resources: {
+      ...state.resources,
+      funding: state.resources.funding - cost,
+      power: state.resources.power + cfg.attack.powerDelta,
+    },
+  };
+
+  let treasuryGain = 0;
+  const [rng1, u] = rngNext(s.rng);
+  s = { ...s, rng: rng1 };
+  if (u < cfg.attack.extraTreasuryProbability) {
+    treasuryGain = cfg.attack.extraTreasuryDelta;
+    s = {
+      ...s,
+      resources: {
+        ...s.resources,
+        treasuryStat: s.resources.treasuryStat + treasuryGain,
+      },
+    };
+  }
+
+  const turnLimit = getLevelDef(s.levelId).turnLimit;
+  const untilTurn = coalitionUntilTurn(s.turn, cfg, turnLimit);
+  s = {
+    ...s,
+    antiFrenchLeague: {
+      untilTurn,
+      drawPenaltyProbability: cfg.antiCoalition.drawPenaltyProbability,
+      drawPenaltyDelta: cfg.antiCoalition.drawPenaltyDelta,
+    },
+  };
+
+  s = markSlotResolved(s, slot);
+  if (ev.templateId === "warOfDevolution") {
+    s = { ...s, warOfDevolutionAttacked: true };
+  }
+  s = enforceLegitimacy(s);
+  s = appendActionLog(s, {
+    kind: "eventScriptedAttack",
+    slot,
+    templateId: ev.templateId,
+    fundingPaid: cost,
+    treasuryGain,
+    powerDelta: cfg.attack.powerDelta,
+    extraTreasuryProbabilityPct: Math.round(cfg.attack.extraTreasuryProbability * 100),
+  });
+  return s;
+}
+
+/** After funding is cleared: keep chosen cards, discard the rest, then EOY penalties, then win / time / next year. */
+function completeYearAfterRetention(state: GameState, keepIds: readonly string[]): GameState {
+  const retainedIds = keepIds.filter((id) => !isTemporaryCardInstance(state, id));
+  const keep = new Set(retainedIds);
+  const discardIds = state.hand.filter((id) => !keep.has(id) && !isTemporaryCardInstance(state, id));
+  let s: GameState = {
+    ...state,
+    hand: [...retainedIds],
     discard: [...state.discard, ...discardIds],
     phase: "action",
   };
@@ -98,20 +212,22 @@ function performFundSolve(state: GameState, slot: SlotId): GameState {
   } else {
     return state;
   }
-  if (tmpl.id === "tradeOpportunity") {
-    s = {
-      ...s,
-      resources: {
-        ...s.resources,
-        treasuryStat: s.resources.treasuryStat + 1,
-      },
-    };
+  let treasuryGain = 0;
+  if (tmpl.onFundSolveEffects && tmpl.onFundSolveEffects.length > 0) {
+    for (const effect of tmpl.onFundSolveEffects) {
+      if (effect.kind === "modResource" && effect.resource === "treasuryStat" && effect.delta > 0) {
+        treasuryGain += effect.delta;
+      }
+    }
+    s = applyEffects(s, tmpl.onFundSolveEffects);
+  }
+  if (ev.templateId === "nymwegenSettlement") {
+    s = { ...s, europeAlert: false, nymwegenSettlementAchieved: true };
   }
   s = markSlotResolved(s, slot);
   s = enforceLegitimacy(s);
   const fundingPaid =
     tmpl.solve.kind === "funding" || tmpl.solve.kind === "fundingOrCrackdown" ? tmpl.solve.amount : 0;
-  const treasuryGain = tmpl.id === "tradeOpportunity" ? 1 : 0;
   s = appendActionLog(s, {
     kind: "eventFundSolved",
     slot,
@@ -122,12 +238,53 @@ function performFundSolve(state: GameState, slot: SlotId): GameState {
   return s;
 }
 
+function addUniqueStatus(state: GameState, templateId: "religiousTolerance" | "huguenotContainment"): GameState {
+  const existing = state.playerStatuses.find((s) => s.templateId === templateId);
+  if (existing) return state;
+  return applyEffects(state, [{ kind: "addPlayerStatus", templateId, turns: 99 }]);
+}
+
+function setStatusTurns(
+  state: GameState,
+  templateId: "religiousTolerance" | "huguenotContainment",
+  turnsRemaining: number,
+): GameState {
+  return {
+    ...state,
+    playerStatuses: state.playerStatuses.map((st) =>
+      st.templateId === templateId ? { ...st, turnsRemaining } : st,
+    ),
+  };
+}
+
+function removeCardsEverywhere(state: GameState, templateId: CardTemplateId): GameState {
+  const toRemove = new Set(
+    Object.values(state.cardsById)
+      .filter((c) => c.templateId === templateId)
+      .map((c) => c.instanceId),
+  );
+  if (toRemove.size === 0) return state;
+  const cardInflationById = { ...state.cardInflationById };
+  for (const id of toRemove) {
+    delete cardInflationById[id];
+  }
+  return {
+    ...state,
+    hand: state.hand.filter((id) => !toRemove.has(id)),
+    deck: state.deck.filter((id) => !toRemove.has(id)),
+    discard: state.discard.filter((id) => !toRemove.has(id)),
+    cardInflationById,
+  };
+}
+
 export function gameReducer(state: GameState, action: GameAction): GameState {
   switch (action.type) {
     case "HYDRATE":
       return normalizeGameState(action.state);
     case "NEW_GAME":
-      return createInitialState(action.seed);
+      return createInitialState(action.seed, action.levelId ?? state.levelId);
+    case "APPEND_LOG_INFO":
+      return appendActionLog(state, { kind: "info", infoKey: action.infoKey });
     case "PLAY_CARD": {
       if (state.outcome !== "playing" || state.phase !== "action" || state.pendingInteraction) {
         return state;
@@ -136,36 +293,110 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       if (!id) return state;
       const inst = state.cardsById[id];
       if (!inst) return state;
+      if (!isCardPlayableUnderStatuses(state, id)) return state;
       const tmpl = getCardTemplate(inst.templateId);
-      if (state.resources.funding < tmpl.cost) return state;
+      const cost = getPlayableCardCost(state, id);
+      if (state.resources.funding < cost) return state;
       const paid = {
         ...state,
-        resources: { ...state.resources, funding: state.resources.funding - tmpl.cost },
+        resources: { ...state.resources, funding: state.resources.funding - cost },
       };
-      if (inst.templateId === "crackdown") {
-        return {
-          ...removeHand(paid, id),
-          pendingInteraction: { type: "crackdownPick", cardInstanceId: id, fundingPaid: tmpl.cost },
-        };
+      if (inst.templateId === "crackdown" || inst.templateId === "diplomaticIntervention") {
+        return appendActionLog(
+          {
+            ...paid,
+            pendingInteraction: { type: "crackdownPick", cardInstanceId: id, fundingPaid: cost },
+          },
+          { kind: "crackdownPickPrompt" },
+        );
+      }
+      if (inst.templateId === "fiscalBurden") {
+        const removed = removeHand(paid, id);
+        return appendActionLog(removed, {
+          kind: "cardPlayed",
+          templateId: inst.templateId,
+          fundingCost: cost,
+          effects: tmpl.effects,
+        });
+      }
+      if (inst.templateId === "suppressHuguenots") {
+        const removed = removeHand(paid, id);
+        let s: GameState = removed;
+        const status = s.playerStatuses.find((st) => st.templateId === "huguenotContainment");
+        if (status) {
+          const next = Math.max(0, status.turnsRemaining - 1);
+          s = {
+            ...s,
+            playerStatuses:
+              next > 0
+                ? s.playerStatuses.map((st) =>
+                    st.instanceId === status.instanceId ? { ...st, turnsRemaining: next } : st,
+                  )
+                : s.playerStatuses.filter((st) => st.instanceId !== status.instanceId),
+          };
+          if (next === 0) {
+            s = removeCardsEverywhere(s, "suppressHuguenots");
+          }
+        }
+        s = appendActionLog(s, {
+          kind: "cardPlayed",
+          templateId: inst.templateId,
+          fundingCost: cost,
+          effects: tmpl.effects,
+        });
+        return s;
       }
       let s = applyPlayedCardEffects(paid, inst.templateId);
+      if (inst.templateId === "grainRelief") {
+        s = resolveFirstUnresolvedEventByTemplate(s, "risingGrainPrices");
+      }
+      if (inst.templateId === "diplomaticCongress") {
+        s = addCardsToHand(s, "diplomaticIntervention", 1);
+      }
       s = removeHand(s, id);
       s = pushDiscard(s, id);
       s = enforceLegitimacy(s);
       s = appendActionLog(s, {
         kind: "cardPlayed",
         templateId: inst.templateId,
-        fundingCost: tmpl.cost,
+        fundingCost: cost,
         effects: tmpl.effects,
       });
-      return s;
+      return appendInflationActivationLogIfNeeded(state, s);
     }
     case "SOLVE_EVENT": {
       if (state.outcome !== "playing" || state.phase !== "action" || state.pendingInteraction) {
         return state;
       }
       if (!canFundSolve(state, action.slot)) return state;
-      return performFundSolve(state, action.slot);
+      return appendInflationActivationLogIfNeeded(state, performFundSolve(state, action.slot));
+    }
+    case "PICK_NANTES_TOLERANCE": {
+      if (state.outcome !== "playing" || state.phase !== "action" || state.pendingInteraction) return state;
+      const ev = state.slots[action.slot];
+      if (!ev || ev.resolved || ev.templateId !== "revocationNantes") return state;
+      let s: GameState = applyEffects(state, [{ kind: "modResource", resource: "legitimacy", delta: -1 }]);
+      s = addUniqueStatus(s, "religiousTolerance");
+      s = markSlotResolved(s, action.slot);
+      s = enforceLegitimacy(s);
+      return appendInflationActivationLogIfNeeded(state, s);
+    }
+    case "PICK_NANTES_CRACKDOWN": {
+      if (state.outcome !== "playing" || state.phase !== "action" || state.pendingInteraction) return state;
+      const ev = state.slots[action.slot];
+      if (!ev || ev.resolved || ev.templateId !== "revocationNantes") return state;
+      let s: GameState = addUniqueStatus(state, "huguenotContainment");
+      s = setStatusTurns(s, "huguenotContainment", 3);
+      s = applyEffects(s, [{ kind: "addCardsToDeck", templateId: "suppressHuguenots", count: 3 }]);
+      s = markSlotResolved(s, action.slot);
+      return s;
+    }
+    case "SCRIPTED_EVENT_ATTACK": {
+      if (state.outcome !== "playing" || state.phase !== "action" || state.pendingInteraction) {
+        return state;
+      }
+      if (!canScriptedAttack(state, action.slot)) return state;
+      return appendInflationActivationLogIfNeeded(state, performScriptedAttack(state, action.slot));
     }
     case "CRACKDOWN_TARGET": {
       const p = state.pendingInteraction;
@@ -174,6 +405,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       const cleared = state.slots[action.slot];
       if (!cleared) return state;
       let s = markSlotResolved(state, action.slot);
+      s = removeHand(s, p.cardInstanceId);
       s = pushDiscard(s, p.cardInstanceId);
       s = { ...s, pendingInteraction: null };
       s = enforceLegitimacy(s);
@@ -183,19 +415,21 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
         harmfulEventTemplateId: cleared.templateId,
         fundingPaid: p.fundingPaid,
       });
-      return s;
+      return appendInflationActivationLogIfNeeded(state, s);
     }
     case "CRACKDOWN_CANCEL": {
       const p = state.pendingInteraction;
       if (!p || p.type !== "crackdownPick") return state;
-      return appendActionLog(
+      return appendInflationActivationLogIfNeeded(
+        state,
+        appendActionLog(
         {
           ...state,
-          hand: [...state.hand, p.cardInstanceId],
           resources: { ...state.resources, funding: state.resources.funding + p.fundingPaid },
           pendingInteraction: null,
         },
         { kind: "crackdownCancelled", refund: p.fundingPaid },
+        ),
       );
     }
     case "END_YEAR": {
@@ -207,11 +441,12 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       }
       let s = { ...state, resources: { ...state.resources, funding: 0 } };
       s = evaluateVictory(s);
-      if (s.outcome === "victory") return s;
-      if (s.hand.length <= s.resources.legitimacy) {
-        return completeYearAfterRetention(s, s.hand);
+      if (s.outcome === "victory") return appendInflationActivationLogIfNeeded(state, s);
+      const cap = retentionCapacity(s);
+      if (s.hand.length <= cap) {
+        return appendInflationActivationLogIfNeeded(state, completeYearAfterRetention(s, s.hand));
       }
-      return { ...s, phase: "retention" };
+      return appendInflationActivationLogIfNeeded(state, { ...s, phase: "retention" });
     }
     case "CONFIRM_RETENTION": {
       if (state.outcome !== "playing" || state.phase !== "retention") return state;
@@ -220,8 +455,8 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       for (const id of action.keepIds) {
         if (!state.hand.includes(id)) return state;
       }
-      if (action.keepIds.length > state.resources.legitimacy) return state;
-      return completeYearAfterRetention(state, action.keepIds);
+      if (action.keepIds.length > retentionCapacity(state)) return state;
+      return appendInflationActivationLogIfNeeded(state, completeYearAfterRetention(state, action.keepIds));
     }
     default: {
       const _never: never = action;

@@ -7,17 +7,20 @@
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview",
-    "test": "vitest run"
+    "test": "vitest run",
+    "test:ai:first-mandate:1000": "npx tsx scripts/firstMandateReport.ts --seed-start 1 --runs 1000"
   },
   "dependencies": {
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },
   "devDependencies": {
+    "@emnapi/core": "1.9.2",
+    "@emnapi/runtime": "1.9.2",
     "@types/node": "^22.10.1",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
-    "@vitejs/plugin-react": "^4.3.4",
+    "@vitejs/plugin-react": "^6.0.1",
     "typescript": "~5.6.2",
     "vite": "^8.0.8",
     "vitest": "^4.1.4"

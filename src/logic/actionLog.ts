@@ -1,7 +1,7 @@
 import type { CardTemplateId } from "../types/card";
 import type { Effect } from "../types/effect";
 import type { EventTemplateId, SlotId } from "../types/event";
-import type { ActionLogEntry, GameState } from "../types/game";
+import type { ActionLogEntry, GameState, LogInfoKey } from "../types/game";
 
 export const MAX_ACTION_LOG = 150;
 
@@ -17,7 +17,19 @@ export type ActionLogPayload =
   | { kind: "eventCrackdownSolved"; slot: SlotId; harmfulEventTemplateId: EventTemplateId; fundingPaid: number }
   | { kind: "eventYearEndPenalty"; slot: SlotId; templateId: EventTemplateId; effects: readonly Effect[] }
   | { kind: "eventPowerVacuumScheduled"; slot: SlotId; templateId: "powerVacuum" }
-  | { kind: "crackdownCancelled"; refund: number };
+  | { kind: "crackdownCancelled"; refund: number }
+  | { kind: "crackdownPickPrompt" }
+  | {
+      kind: "eventScriptedAttack";
+      slot: SlotId;
+      templateId: EventTemplateId;
+      fundingPaid: number;
+      treasuryGain: number;
+      powerDelta: number;
+      extraTreasuryProbabilityPct: number;
+    }
+  | { kind: "antiFrenchLeagueDraw"; probabilityPct: number }
+  | { kind: "info"; infoKey: LogInfoKey };
 
 export function appendActionLog(state: GameState, payload: ActionLogPayload): GameState {
   const logSeq = state.nextIds.log ?? 0;

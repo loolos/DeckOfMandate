@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { createInitialState } from "../app/initialState";
+import { EMPTY_EVENT_SLOTS } from "../types/event";
 import { resolveEndOfYearPenalties } from "./resolveEvents";
 
 describe("resolveEndOfYearPenalties", () => {
@@ -8,8 +9,8 @@ describe("resolveEndOfYearPenalties", () => {
     const s0 = {
       ...base,
       slots: {
+        ...EMPTY_EVENT_SLOTS,
         A: { instanceId: "e1", templateId: "budgetStrain" as const, resolved: false },
-        B: null,
       },
     };
     const treasuryBefore = s0.resources.treasuryStat;
@@ -26,8 +27,8 @@ describe("resolveEndOfYearPenalties", () => {
     const s0 = {
       ...base,
       slots: {
+        ...EMPTY_EVENT_SLOTS,
         A: { instanceId: "e1", templateId: "majorCrisis" as const, resolved: false },
-        B: null,
       },
     };
     const legBefore = s0.resources.legitimacy;
@@ -41,8 +42,8 @@ describe("resolveEndOfYearPenalties", () => {
     const s0 = {
       ...base,
       slots: {
+        ...EMPTY_EVENT_SLOTS,
         A: { instanceId: "e1", templateId: "politicalGridlock" as const, resolved: false },
-        B: null,
       },
     };
     const s1 = resolveEndOfYearPenalties(s0);
@@ -57,8 +58,8 @@ describe("resolveEndOfYearPenalties", () => {
     const s0 = {
       ...base,
       slots: {
+        ...EMPTY_EVENT_SLOTS,
         A: { instanceId: "e1", templateId: "powerVacuum" as const, resolved: false },
-        B: null,
       },
     };
     const n0 = s0.actionLog.length;
@@ -67,5 +68,24 @@ describe("resolveEndOfYearPenalties", () => {
     expect(s1.pendingMajorCrisis.A).toBe(true);
     expect(s1.actionLog.length).toBe(n0 + 1);
     expect(s1.actionLog[s1.actionLog.length - 1]!.kind).toBe("eventPowerVacuumScheduled");
+  });
+
+  it("expansion remembered unresolved adds three fiscal burden cards to deck", () => {
+    const base = createInitialState(4_242, "secondMandate");
+    const beforeCardCount = Object.keys(base.cardsById).length;
+    const s0 = {
+      ...base,
+      slots: {
+        ...EMPTY_EVENT_SLOTS,
+        A: { instanceId: "e_expansion", templateId: "expansionRemembered" as const, resolved: false },
+      },
+    };
+    const s1 = resolveEndOfYearPenalties(s0);
+    const burdenIds = Object.values(s1.cardsById)
+      .filter((c) => c.templateId === "fiscalBurden")
+      .map((c) => c.instanceId);
+    expect(Object.keys(s1.cardsById).length).toBe(beforeCardCount + 3);
+    expect(burdenIds.length).toBe(3);
+    expect(s1.deck.slice(0, 3)).toEqual(burdenIds);
   });
 });

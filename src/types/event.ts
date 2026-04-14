@@ -7,12 +7,53 @@ export type EventTemplateId =
   | "tradeOpportunity"
   | "politicalGridlock"
   | "powerVacuum"
-  | "majorCrisis";
+  | "majorCrisis"
+  | "warOfDevolution"
+  | "nymwegenSettlement"
+  | "revocationNantes"
+  | "leagueOfAugsburg"
+  | "nineYearsWar"
+  | "ryswickPeace"
+  | "versaillesExpenditure"
+  | "nobleResentment"
+  | "provincialNoncompliance"
+  | "risingGrainPrices"
+  | "taxResistance"
+  | "frontierGarrisons"
+  | "tradeDisruption"
+  | "courtScandal"
+  | "militaryPrestige"
+  | "commercialExpansion"
+  | "talentedAdministrator"
+  | "warWeariness"
+  | "grainReliefCrisis"
+  | "expansionRemembered"
+  | "cautiousCrown"
+  | "religiousTension";
 
 export type EventSolve =
   | { kind: "funding"; amount: number }
   | { kind: "fundingOrCrackdown"; amount: number }
-  | { kind: "crackdownOnly" };
+  | { kind: "nantesPolicyChoice" }
+  | { kind: "crackdownOnly" }
+  /** Balance numbers come from level `scriptedCalendarEvents` (matched by template id). */
+  | { kind: "scriptedAttack" };
+
+/** Fixed event columns (max 10); procedural random rolls only fill {@link PROCEDURAL_EVENT_SLOT_ORDER}. */
+export const EVENT_SLOT_ORDER = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"] as const;
+
+export type SlotId = (typeof EVENT_SLOT_ORDER)[number];
+
+/** Each beginYear random fill only targets A–C; D–J stay empty unless scripted calendar or overflow places there. */
+export const PROCEDURAL_EVENT_SLOT_ORDER: readonly SlotId[] = ["A", "B", "C"];
+
+export const EMPTY_EVENT_SLOTS: Record<SlotId, null> = Object.fromEntries(
+  EVENT_SLOT_ORDER.map((id) => [id, null]),
+) as Record<SlotId, null>;
+
+export const EMPTY_PENDING_MAJOR_CRISIS: Record<SlotId, boolean> = Object.fromEntries(
+  EVENT_SLOT_ORDER.map((id) => [id, false]),
+) as Record<SlotId, boolean>;
 
 export type EventTemplate = {
   id: EventTemplateId;
@@ -21,7 +62,9 @@ export type EventTemplate = {
   titleKey: string;
   descriptionKey: string;
   solve: EventSolve;
-  /** Applied in slot order A then B at event resolution if still active and harmful. */
+  /** Applied when player resolves this event through the funding path. */
+  onFundSolveEffects?: readonly Effect[];
+  /** Applied in {@link EVENT_SLOT_ORDER} at event resolution if still active and harmful. */
   penaltiesIfUnresolved: Effect[];
   /**
    * If set to "continued", a harmful unresolved crisis stays on the slot after end-of-year
@@ -30,8 +73,6 @@ export type EventTemplate = {
    */
   crisisPersistence?: "continued";
 };
-
-export type SlotId = "A" | "B";
 
 export type EventInstance = {
   instanceId: string;
