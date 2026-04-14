@@ -99,14 +99,11 @@ export const eventTemplates: Record<EventTemplateId, EventTemplate> = {
     id: "revocationNantes",
     weight: 0,
     harmful: true,
+    crisisPersistence: "continued",
     titleKey: "event.revocationNantes.name",
     descriptionKey: "event.revocationNantes.desc",
-    solve: { kind: "fundingOrCrackdown", amount: 1 },
-    onFundSolveEffects: [{ kind: "modResource", resource: "legitimacy", delta: 1 }],
-    penaltiesIfUnresolved: [
-      { kind: "modResource", resource: "treasuryStat", delta: -1 },
-      { kind: "modResource", resource: "legitimacy", delta: -1 },
-    ],
+    solve: { kind: "nantesPolicyChoice" },
+    penaltiesIfUnresolved: [{ kind: "scheduleNextTurnDrawModifier", delta: -2 }],
   },
   leagueOfAugsburg: {
     id: "leagueOfAugsburg",
@@ -216,7 +213,10 @@ export const eventTemplates: Record<EventTemplateId, EventTemplate> = {
     titleKey: "event.courtScandal.name",
     descriptionKey: "event.courtScandal.desc",
     solve: { kind: "funding", amount: 3 },
-    penaltiesIfUnresolved: [{ kind: "addPlayerStatus", templateId: "royalBan", turns: 1 }],
+    penaltiesIfUnresolved: [
+      { kind: "modResource", resource: "legitimacy", delta: -1 },
+      { kind: "addPlayerStatus", templateId: "royalBan", turns: 1 },
+    ],
   },
   militaryPrestige: {
     id: "militaryPrestige",
@@ -288,6 +288,15 @@ export const eventTemplates: Record<EventTemplateId, EventTemplate> = {
     descriptionKey: "event.cautiousCrown.desc",
     solve: { kind: "funding", amount: 2 },
     penaltiesIfUnresolved: [{ kind: "modResource", resource: "power", delta: -1 }],
+  },
+  religiousTension: {
+    id: "religiousTension",
+    weight: 0,
+    harmful: true,
+    titleKey: "event.religiousTension.name",
+    descriptionKey: "event.religiousTension.desc",
+    solve: { kind: "funding", amount: 2 },
+    penaltiesIfUnresolved: [{ kind: "modResource", resource: "legitimacy", delta: -1 }],
   },
 };
 

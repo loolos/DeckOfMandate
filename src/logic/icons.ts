@@ -16,6 +16,7 @@ const CARD_ICONS: Record<CardTemplateId, string> = {
   taxRebalance: "🧾",
   diplomaticCongress: "🕊️",
   patronageOffice: "🏛️",
+  suppressHuguenots: "⚔️",
 };
 
 const EVENT_ICONS: Record<EventTemplateId, string> = {
@@ -47,6 +48,7 @@ const EVENT_ICONS: Record<EventTemplateId, string> = {
   grainReliefCrisis: "🌾",
   expansionRemembered: "🦅",
   cautiousCrown: "👑",
+  religiousTension: "☯️",
 };
 
 const RESOURCE_ICONS: Record<ResourceKey, string> = {

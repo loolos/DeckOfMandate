@@ -82,13 +82,21 @@ export function StatusBar({
     }
     for (const row of statuses) {
       const tmpl = getStatusTemplate(row.templateId);
-      const turnsText = t("ui.statusTurnsRemaining", { n: row.turnsRemaining });
+      const turnsText =
+        row.templateId === "religiousTolerance"
+          ? t("ui.statusPermanent")
+          : row.templateId === "huguenotContainment"
+            ? t("ui.statusHuguenotRemaining", { n: row.turnsRemaining })
+            : t("ui.statusTurnsRemaining", { n: row.turnsRemaining });
       next.push({
         id: row.instanceId,
         title: t(tmpl.titleKey),
         compactMeta: turnsText,
         meta: turnsText,
-        detail: statusDetail(row, t),
+        detail:
+          row.templateId === "huguenotContainment"
+            ? t("status.huguenotContainment.hint")
+            : statusDetail(row, t),
       });
     }
     return next;

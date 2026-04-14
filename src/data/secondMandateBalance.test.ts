@@ -112,6 +112,7 @@ describe("secondMandate balance data", () => {
       { kind: "modResource", resource: "treasuryStat", delta: -2 },
     ]);
     expect(getEventTemplate("courtScandal").penaltiesIfUnresolved).toEqual([
+      { kind: "modResource", resource: "legitimacy", delta: -1 },
       { kind: "addPlayerStatus", templateId: "royalBan", turns: 1 },
     ]);
     expect(getEventTemplate("expansionRemembered").solve).toEqual({
@@ -173,7 +174,18 @@ describe("secondMandate balance data", () => {
       turns: 3,
     });
     expect(getEventTemplate("courtScandal").penaltiesIfUnresolved).toEqual([
+      { kind: "modResource", resource: "legitimacy", delta: -1 },
       { kind: "addPlayerStatus", templateId: "royalBan", turns: 1 },
     ]);
+  });
+
+  it("uses chapter-2 revocation branch mechanics and religious tension event", () => {
+    expect(getEventTemplate("revocationNantes").solve).toEqual({ kind: "nantesPolicyChoice" });
+    expect(getEventTemplate("revocationNantes").crisisPersistence).toBe("continued");
+    expect(getEventTemplate("revocationNantes").penaltiesIfUnresolved).toEqual([
+      { kind: "scheduleNextTurnDrawModifier", delta: -2 },
+    ]);
+    expect(getEventTemplate("religiousTension").solve).toEqual({ kind: "funding", amount: 2 });
+    expect(getCardTemplate("suppressHuguenots").cost).toBe(3);
   });
 });

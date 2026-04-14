@@ -48,6 +48,18 @@ export const statusTemplates: Record<StatusTemplateId, StatusTemplate> = {
     delta: 1,
     titleKey: "status.grainReliefLegitimacyBoost.name",
   },
+  religiousTolerance: {
+    id: "religiousTolerance",
+    kind: "drawAttemptsDelta",
+    delta: 0,
+    titleKey: "status.religiousTolerance.name",
+  },
+  huguenotContainment: {
+    id: "huguenotContainment",
+    kind: "drawAttemptsDelta",
+    delta: 0,
+    titleKey: "status.huguenotContainment.name",
+  },
 };
 
 export function getStatusTemplate(id: StatusTemplateId): StatusTemplate {

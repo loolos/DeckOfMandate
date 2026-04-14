@@ -20,7 +20,7 @@ export const messagesEnSecondMandate = {
     "A mandatory long-running crisis: pay 6 Funding to secure the settlement (Power -3, Legitimacy -2) and end Europe Alert; if ignored, lose 1 Power each year.",
   "event.revocationNantes.name": "Revocation of the Edict of Nantes",
   "event.revocationNantes.desc":
-    "Religious policy hardens. Spend 1 Funding (or use Royal Intervention) to enforce order and gain Legitimacy +1; if left unresolved, both Treasury and Legitimacy suffer.",
+    "In 1598, Henry IV issued the Edict of Nantes to end the French Wars of Religion: Catholicism remained the state faith, while French Protestants (Huguenots) received limited worship rights, civil protections, and security guarantees. The crown now revokes it. This is a Continued event: if ignored, you draw 2 fewer cards each turn and it stays on the board. Resolve by choosing one policy: Religious Tolerance (immediate Legitimacy -1; gain permanent Religious Tolerance status that has a 30% yearly chance to spawn Religious Tension: pay 2 Funding or lose 1 Legitimacy), or Harsh Crackdown (no immediate numeric change; gain Contain Huguenot Remnants 3 and add 3 temporary “Suppress the Huguenots” cards to deck, cost 3 each; each play reduces remnants by 1; at 0, remove the status and purge those cards from hand/deck/discard). While that containment status exists, Chapter 2 victory is blocked.",
   "event.leagueOfAugsburg.name": "League of Augsburg Forms",
   "event.leagueOfAugsburg.desc":
     "European powers coordinate against France. Pay 2 Funding (or use Royal Intervention) to contain escalation, or suffer Loss of Authority for 3 turns.",
@@ -53,7 +53,7 @@ export const messagesEnSecondMandate = {
     "Sea lanes and convoy risk cut into policy bandwidth. Pay 1 Funding or take a -2 draw modifier next year.",
   "event.courtScandal.name": "Court Scandal",
   "event.courtScandal.desc":
-    "Factional intrigue weakens authority. Pay 3 Funding or use Royal Intervention; unresolved scandal blocks all Royal-tag cards next turn.",
+    "Factional intrigue weakens authority. Pay 3 Funding to contain it; if unresolved, Legitimacy -1 and all Royal-tag cards are blocked next turn.",
   "event.militaryPrestige.name": "Military Prestige",
   "event.militaryPrestige.desc":
     "A chance to convert battlefield image into authority. Invest 2 Funding for Legitimacy +1.",

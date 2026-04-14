@@ -23,6 +23,8 @@ export const messagesEnCore = {
   "ui.solveCrackdown": "Resolve (Royal Intervention)",
   "ui.solveFundingOrCrackdown": "Pay {cost} or Royal Intervention",
   "ui.scriptedAttack": "Attack ({cost})",
+  "ui.nantesTolerance": "Religious Tolerance",
+  "ui.nantesCrackdown": "Harsh Crackdown",
   "ui.resolved": "Resolved",
   "ui.harmful": "Harmful",
   "ui.opportunity": "Opportunity",
@@ -79,6 +81,8 @@ export const messagesEnCore = {
   "ui.statuses": "Ongoing effects",
   "ui.statuses.empty": "No ongoing effects.",
   "ui.statusTurnsRemaining": "{n} turn(s) left",
+  "ui.statusPermanent": "Permanent",
+  "ui.statusHuguenotRemaining": "Remnants {n}",
   "ui.statusDetail.drawAttemptsDelta": "Draw attempts modifier each turn: {delta}.",
   "ui.statusDetail.retentionCapacityDelta": "Retention cap modifier at turn end: {delta}.",
   "ui.statusDetail.beginYearResourceDelta": "At turn start: {resource} {delta}.",
@@ -119,6 +123,11 @@ export const messagesEnCore = {
   "card.development.background":
     "Colbert-era workshops, ports, and foundations—the slow lift of national wealth through royal industry.",
   "card.development.desc": "Treasury +1.",
+  "card.suppressHuguenots.name": "Suppress the Huguenots",
+  "card.suppressHuguenots.background":
+    "Royal troops, policing, and local courts are mobilized to break remaining Huguenot networks.",
+  "card.suppressHuguenots.desc":
+    "Temporary. Cost 3. On play, reduce “Contain Huguenot Remnants” by 1; at 0, remove that status and purge all Suppress the Huguenots cards.",
   "event.budgetStrain.name": "Court Overspending",
   "event.budgetStrain.desc":
     "Versailles expansion and court ritual push spending past the budget. Pay 2 Funding or lose 1 Treasury.",
@@ -146,6 +155,11 @@ export const messagesEnCore = {
   "status.royalBan.name": "Royal Access Frozen",
   "status.grainReliefDrawBoost.name": "Relief Coordination",
   "status.grainReliefLegitimacyBoost.name": "Relief Confidence",
+  "status.religiousTolerance.name": "Religious Tolerance (Permanent)",
+  "status.huguenotContainment.name": "Contain Huguenot Remnants",
+  "status.huguenotContainment.hint": "While active, Chapter 2 victory is blocked.",
+  "event.religiousTension.name": "Religious Tension",
+  "event.religiousTension.desc": "Confessional conflict flares again. Pay 2 Funding or lose 1 Legitimacy.",
   "card.tag.royal": "Royal",
   "card.tag.temp": "Temp",
   "log.cardPlayed.title": "[Turn {turn}] {card} — paid {cost} {funding}.",

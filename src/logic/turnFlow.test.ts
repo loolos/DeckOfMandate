@@ -3,7 +3,12 @@ import { createInitialState } from "../app/initialState";
 import type { CardInstance } from "../types/card";
 import { EMPTY_EVENT_SLOTS } from "../types/event";
 import type { GameState } from "../types/game";
-import { beginYear, maybeAddEuropeAlertSupplementalEvent, retentionCapacity } from "./turnFlow";
+import {
+  beginYear,
+  maybeAddEuropeAlertSupplementalEvent,
+  maybeAddReligiousTensionEvent,
+  retentionCapacity,
+} from "./turnFlow";
 
 describe("beginYear + playerStatuses", () => {
   it("applies drawAttemptsDelta to attempts then decrements turnsRemaining", () => {
@@ -311,5 +316,74 @@ describe("beginYear + playerStatuses", () => {
       ],
     };
     expect(retentionCapacity(s0)).toBe(3);
+  });
+
+  it("religious tolerance can inject religious tension with 30% gate", () => {
+    const started = createInitialState(444_001, "secondMandate");
+    const pickState = (() => {
+      for (let st = 1; st < 2_000_000; st++) {
+        const s0 = {
+          ...started,
+          rng: { state: st },
+          slots: { ...EMPTY_EVENT_SLOTS },
+          playerStatuses: [
+            {
+              instanceId: "st_rt",
+              templateId: "religiousTolerance" as const,
+              kind: "drawAttemptsDelta" as const,
+              delta: 0,
+              turnsRemaining: 99,
+            },
+          ],
+        };
+        const s1 = maybeAddReligiousTensionEvent(s0);
+        if (Object.values(s1.slots).some((ev) => ev?.templateId === "religiousTension")) return st;
+      }
+      throw new Error("failed to find rng state for religious tension injection");
+    })();
+    const s0: GameState = {
+      ...started,
+      rng: { state: pickState },
+      slots: { ...EMPTY_EVENT_SLOTS },
+      playerStatuses: [
+        {
+          instanceId: "st_rt",
+          templateId: "religiousTolerance",
+          kind: "drawAttemptsDelta",
+          delta: 0,
+          turnsRemaining: 99,
+        },
+      ],
+    };
+    const s1 = maybeAddReligiousTensionEvent(s0);
+    expect(Object.values(s1.slots).some((ev) => ev?.templateId === "religiousTension")).toBe(true);
+  });
+
+  it("religious tolerance and containment statuses do not auto-expire at beginYear", () => {
+    const started = createInitialState(444_002, "secondMandate");
+    const s0: GameState = {
+      ...started,
+      resources: { ...started.resources, power: 1 },
+      hand: [],
+      playerStatuses: [
+        {
+          instanceId: "st_rt",
+          templateId: "religiousTolerance",
+          kind: "drawAttemptsDelta",
+          delta: 0,
+          turnsRemaining: 99,
+        },
+        {
+          instanceId: "st_hg",
+          templateId: "huguenotContainment",
+          kind: "drawAttemptsDelta",
+          delta: 0,
+          turnsRemaining: 3,
+        },
+      ],
+    };
+    const s1 = beginYear(s0);
+    expect(s1.playerStatuses.find((s) => s.templateId === "religiousTolerance")?.turnsRemaining).toBe(99);
+    expect(s1.playerStatuses.find((s) => s.templateId === "huguenotContainment")?.turnsRemaining).toBe(3);
   });
 });

@@ -382,6 +382,35 @@ describe("gameReducer", () => {
     expect(after.outcome).not.toBe("victory");
   });
 
+  it("chapter 2 cannot win while huguenot containment status exists", () => {
+    const level = getLevelDef("secondMandate");
+    const base = createInitialState(202_905, "secondMandate");
+    const s0: typeof base = {
+      ...base,
+      nymwegenSettlementAchieved: true,
+      europeAlert: false,
+      hand: [],
+      resources: {
+        treasuryStat: level.winTargets.treasuryStat,
+        power: level.winTargets.power,
+        legitimacy: level.winTargets.legitimacy,
+        funding: 0,
+      },
+      slots: { ...EMPTY_EVENT_SLOTS },
+      playerStatuses: [
+        {
+          instanceId: "st_hug",
+          templateId: "huguenotContainment" as const,
+          kind: "drawAttemptsDelta" as const,
+          delta: 0,
+          turnsRemaining: 2,
+        },
+      ],
+    };
+    const after = gameReducer(s0, { type: "END_YEAR" });
+    expect(after.outcome).not.toBe("victory");
+  });
+
   it("grainRelief directly resolves one unresolved risingGrainPrices event when played", () => {
     const base = createInitialState(202_902, "secondMandate");
     const grainReliefCardId = "test_grain_relief";
@@ -406,5 +435,72 @@ describe("gameReducer", () => {
     expect(after.resources.funding).toBe(0);
     expect(after.slots.A?.resolved).toBe(true);
     expect(after.slots.B?.resolved).toBe(false);
+  });
+
+  it("revocation nantes tolerance branch applies legitimacy -1 and permanent tolerance status", () => {
+    const base = createInitialState(333_001, "secondMandate");
+    const s0: typeof base = {
+      ...base,
+      resources: { ...base.resources, legitimacy: 5 },
+      slots: {
+        ...base.slots,
+        A: { instanceId: "e_nantes", templateId: "revocationNantes" as const, resolved: false },
+      },
+    };
+    const after = gameReducer(s0, { type: "PICK_NANTES_TOLERANCE", slot: "A" });
+    expect(after.resources.legitimacy).toBe(4);
+    expect(after.slots.A?.resolved).toBe(true);
+    expect(after.playerStatuses.some((s) => s.templateId === "religiousTolerance")).toBe(true);
+  });
+
+  it("revocation nantes crackdown branch adds containment status and three suppress cards", () => {
+    const base = createInitialState(333_002, "secondMandate");
+    const s0: typeof base = {
+      ...base,
+      slots: {
+        ...base.slots,
+        A: { instanceId: "e_nantes", templateId: "revocationNantes" as const, resolved: false },
+      },
+    };
+    const after = gameReducer(s0, { type: "PICK_NANTES_CRACKDOWN", slot: "A" });
+    const containment = after.playerStatuses.find((s) => s.templateId === "huguenotContainment");
+    expect(containment?.turnsRemaining).toBe(3);
+    const suppressCount = Object.values(after.cardsById).filter((c) => c.templateId === "suppressHuguenots").length;
+    expect(suppressCount).toBe(3);
+  });
+
+  it("playing suppress huguenots decrements containment and purges all suppress cards at zero", () => {
+    const base = createInitialState(333_003, "secondMandate");
+    const cardId = "tmp_sup_1";
+    const second = "tmp_sup_2";
+    const third = "tmp_sup_3";
+    const withCards: typeof base = {
+      ...base,
+      hand: [cardId],
+      deck: [second, ...base.deck],
+      discard: [third, ...base.discard],
+      cardsById: {
+        ...base.cardsById,
+        [cardId]: { instanceId: cardId, templateId: "suppressHuguenots" as const },
+        [second]: { instanceId: second, templateId: "suppressHuguenots" as const },
+        [third]: { instanceId: third, templateId: "suppressHuguenots" as const },
+      },
+      resources: { ...base.resources, funding: 3 },
+      playerStatuses: [
+        ...base.playerStatuses,
+        {
+          instanceId: "st_hug",
+          templateId: "huguenotContainment" as const,
+          kind: "drawAttemptsDelta" as const,
+          delta: 0,
+          turnsRemaining: 1,
+        },
+      ],
+    };
+    const after = gameReducer(withCards, { type: "PLAY_CARD", handIndex: 0 });
+    expect(after.playerStatuses.some((s) => s.templateId === "huguenotContainment")).toBe(false);
+    expect(after.hand.includes(cardId)).toBe(false);
+    expect(after.deck.includes(second)).toBe(false);
+    expect(after.discard.includes(third)).toBe(false);
   });
 });

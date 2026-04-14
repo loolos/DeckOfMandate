@@ -116,6 +116,15 @@ const templates: Record<CardTemplateId, CardTemplate> = {
       { kind: "addPlayerStatus", templateId: "retentionBoost", turns: 3 },
     ],
   },
+  suppressHuguenots: {
+    id: "suppressHuguenots",
+    cost: 3,
+    tags: TEMP,
+    titleKey: "card.suppressHuguenots.name",
+    backgroundKey: "card.suppressHuguenots.background",
+    descriptionKey: "card.suppressHuguenots.desc",
+    effects: [],
+  },
 };
 
 export function getCardTemplate(id: CardTemplateId): CardTemplate {
