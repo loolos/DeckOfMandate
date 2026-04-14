@@ -11,6 +11,7 @@ import { coalitionUntilTurn, findScriptedCalendarConfig } from "../logic/scripte
 import { rngNext } from "../logic/rng";
 import { beginYear, evaluateTimeDefeat, evaluateVictory, retentionCapacity } from "../logic/turnFlow";
 import type { CardTemplateId } from "../types/card";
+import { EVENT_SLOT_ORDER, type EventTemplateId } from "../types/event";
 import type { SlotId } from "../types/event";
 import type { GameState } from "../types/game";
 import { createInitialState } from "./initialState";
@@ -48,6 +49,19 @@ function markSlotResolved(state: GameState, slot: SlotId): GameState {
     ...state,
     slots: { ...state.slots, [slot]: { ...ev, resolved: true } },
   };
+}
+
+function resolveFirstUnresolvedEventByTemplate(
+  state: GameState,
+  templateId: EventTemplateId,
+): GameState {
+  for (const slot of EVENT_SLOT_ORDER) {
+    const ev = state.slots[slot];
+    if (!ev || ev.resolved) continue;
+    if (ev.templateId !== templateId) continue;
+    return markSlotResolved(state, slot);
+  }
+  return state;
 }
 
 function isCrackdownTarget(state: GameState, slot: SlotId): boolean {
@@ -260,6 +274,9 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
         });
       }
       let s = applyPlayedCardEffects(paid, inst.templateId);
+      if (inst.templateId === "grainRelief") {
+        s = resolveFirstUnresolvedEventByTemplate(s, "risingGrainPrices");
+      }
       if (inst.templateId === "diplomaticCongress") {
         s = addCardsToHand(s, "diplomaticIntervention", 1);
       }

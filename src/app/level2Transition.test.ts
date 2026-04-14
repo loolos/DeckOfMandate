@@ -64,7 +64,7 @@ describe("level2Transition", () => {
 
   it("builds a playable chapter 2 state from refit counts", () => {
     const draft = createStandaloneLevel2Draft(321);
-    draft.counts.warBond = 1;
+    draft.counts.patronageOffice = 1;
     const st = buildLevel2StateFromDraft(draft);
     expect(st.levelId).toBe("secondMandate");
     expect(st.calendarStartYear).toBe(1676);
@@ -73,7 +73,7 @@ describe("level2Transition", () => {
     expect(st.resources.legitimacy).toBe(5);
     const allTemplateIds = Object.values(st.cardsById).map((c) => c.templateId);
     expect(allTemplateIds.includes("development")).toBe(false);
-    expect(allTemplateIds.includes("warBond")).toBe(true);
+    expect(allTemplateIds.includes("patronageOffice")).toBe(true);
     expect(allTemplateIds.includes("diplomaticIntervention")).toBe(false);
     expect(allTemplateIds.includes("diplomaticCongress")).toBe(true);
   });

@@ -79,7 +79,7 @@ export const messagesEnSecondMandate = {
   "card.grainRelief.background":
     "Emergency grain purchasing and provincial relief channels cool unrest before shortages become revolt.",
   "card.grainRelief.desc":
-    "Gain Relief Coordination and Relief Confidence for 1 turn (next turn: +1 draw attempt and Legitimacy +1).",
+    "Gain Relief Coordination and Relief Confidence for 1 turn (next turn: +1 draw attempt and Legitimacy +1). If an unresolved Rising Grain Prices event exists, immediately resolve one.",
   "card.taxRebalance.name": "Tax Rebalancing",
   "card.taxRebalance.background":
     "Reallocate burdens and close loopholes to keep revenue flowing without immediate breakdown.",
@@ -97,8 +97,4 @@ export const messagesEnSecondMandate = {
   "card.patronageOffice.background":
     "Centralized appointments rebuild obedience by tying careers directly to the crown.",
   "card.patronageOffice.desc": "Power +1. Gain Retention Boost (+1 keep cap) for 3 turns.",
-  "card.warBond.name": "War Bond",
-  "card.warBond.background":
-    "Borrow now to survive this year; the fiscal burden arrives later.",
-  "card.warBond.desc": "Funding +3, Treasury -1.",
 } as const;
