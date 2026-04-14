@@ -428,6 +428,29 @@ describe("gameReducer", () => {
     }
   });
 
+  it("chapter 1 reaching pressure threshold immediately appends inflation activation log", () => {
+    const base = createInitialState(202_607, "firstMandate");
+    const developmentId = "development_threshold_log";
+    const withCard: typeof base = {
+      ...base,
+      cardsById: {
+        ...base.cardsById,
+        [developmentId]: { instanceId: developmentId, templateId: "development" as const },
+      },
+      hand: [developmentId],
+      deck: [],
+      discard: [],
+      resources: { treasuryStat: 4, funding: 3, power: 5, legitimacy: 4 },
+      slots: { ...EMPTY_EVENT_SLOTS },
+    };
+    const after = gameReducer(withCard, { type: "PLAY_CARD", handIndex: 0 });
+    expect(after.resources.treasuryStat).toBe(5);
+    const infoEntries = after.actionLog.filter(
+      (entry) => entry.kind === "info" && entry.infoKey === "firstMandateInflationActivated",
+    );
+    expect(infoEntries).toHaveLength(1);
+  });
+
   it("solving nymwegen settlement clears europe alert and marks chapter objective", () => {
     const base = createInitialState(202_900, "secondMandate");
     const s0: typeof base = {

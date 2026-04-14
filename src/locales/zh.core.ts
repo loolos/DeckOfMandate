@@ -179,7 +179,7 @@ export const messagesZhCore = {
   "log.eventScriptedAttack.generic":
     "[第 {turn} 年] 槽位 {slot}：{event} — 采取军事进攻。已支付 {paid} {funding}。{treasury}",
   "log.info.firstMandateInflationActivated":
-    "[第 {turn} 年] 已触发第一关“卡牌通胀”机制：带有「通胀」标签的牌在洗回牌库后，后续每次再抽到费用会继续上升。",
+    "[第 {turn} 年] 科尔贝尔改革与凡尔赛宫廷同步扩张，王权机器越强，维持它的行政与仪式成本也越高。已触发第一关「卡牌通胀」：此后仅带「通胀」标签的牌，在从弃牌堆洗回抽牌堆时才会叠加费用。",
   "log.info.cardTag.royal": "[第 {turn} 年] 标签说明「王室」：该牌属于王室工具，部分事件只能靠此类手段处理。",
   "log.info.cardTag.temp": "[第 {turn} 年] 标签说明「临时」：该牌通常为一次性应急工具，打出后不会进入弃牌堆循环。",
   "log.info.cardTag.inflation":

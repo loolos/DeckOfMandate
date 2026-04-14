@@ -199,7 +199,7 @@ export const messagesEnCore = {
   "log.eventScriptedAttack.generic":
     "[Turn {turn}] Slot {slot}: {event} — military option. Paid {paid} {funding}.{treasury}",
   "log.info.firstMandateInflationActivated":
-    "[Turn {turn}] Chapter 1 card inflation is now active: cards with the “Inflation” tag gain extra cost each time they are reshuffled and redrawn.",
+    "[Turn {turn}] As Colbert-style reforms and Versailles court politics scale up together, the stronger the royal machine gets, the more expensive it is to keep running. Chapter 1 inflation is now active: from now on, only cards with the “Inflation” tag gain extra cost when they cycle from discard back into deck.",
   "log.info.cardTag.royal":
     "[Turn {turn}] Tag note “Royal”: this is a royal-command tool, and some crises can only be cleared through royal intervention routes.",
   "log.info.cardTag.temp":

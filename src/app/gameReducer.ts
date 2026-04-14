@@ -3,8 +3,9 @@ import { getEventTemplate } from "../data/events";
 import { getLevelDef, type LevelId } from "../data/levels";
 import { appendActionLog } from "../logic/actionLog";
 import { applyEffects, enforceLegitimacy } from "../logic/applyEffects";
+import { hasCardTag } from "../logic/cardTags";
 import { addCardsToHand } from "../logic/cardRuntime";
-import { getPlayableCardCost } from "../logic/cardCost";
+import { appendInflationActivationLogIfNeeded, getPlayableCardCost } from "../logic/cardCost";
 import { normalizeGameState } from "../logic/normalizeGameState";
 import { applyPlayedCardEffects } from "../logic/resolveCard";
 import { resolveEndOfYearPenalties } from "../logic/resolveEvents";
@@ -37,9 +38,7 @@ function removeHand(state: GameState, instanceId: string): GameState {
 }
 
 function isTemporaryCardInstance(state: GameState, instanceId: string): boolean {
-  const inst = state.cardsById[instanceId];
-  if (!inst) return false;
-  return getCardTemplate(inst.templateId).tags.includes("temp");
+  return hasCardTag(state, instanceId, "temp");
 }
 
 function pushDiscard(state: GameState, instanceId: string): GameState {
@@ -103,12 +102,11 @@ function canScriptedAttack(state: GameState, slot: SlotId): boolean {
   return state.resources.funding >= cfg.attack.fundingCost;
 }
 
-function isCardPlayableUnderStatuses(state: GameState, templateId: CardTemplateId): boolean {
-  const tmpl = getCardTemplate(templateId);
+function isCardPlayableUnderStatuses(state: GameState, cardInstanceId: string): boolean {
   for (const st of state.playerStatuses) {
     if (st.kind !== "blockCardTag") continue;
     if (!st.blockedTag) continue;
-    if (tmpl.tags.includes(st.blockedTag)) return false;
+    if (hasCardTag(state, cardInstanceId, st.blockedTag)) return false;
   }
   return true;
 }
@@ -295,7 +293,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       if (!id) return state;
       const inst = state.cardsById[id];
       if (!inst) return state;
-      if (!isCardPlayableUnderStatuses(state, inst.templateId)) return state;
+      if (!isCardPlayableUnderStatuses(state, id)) return state;
       const tmpl = getCardTemplate(inst.templateId);
       const cost = getPlayableCardCost(state, id);
       if (state.resources.funding < cost) return state;
@@ -364,14 +362,14 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
         fundingCost: cost,
         effects: tmpl.effects,
       });
-      return s;
+      return appendInflationActivationLogIfNeeded(state, s);
     }
     case "SOLVE_EVENT": {
       if (state.outcome !== "playing" || state.phase !== "action" || state.pendingInteraction) {
         return state;
       }
       if (!canFundSolve(state, action.slot)) return state;
-      return performFundSolve(state, action.slot);
+      return appendInflationActivationLogIfNeeded(state, performFundSolve(state, action.slot));
     }
     case "PICK_NANTES_TOLERANCE": {
       if (state.outcome !== "playing" || state.phase !== "action" || state.pendingInteraction) return state;
@@ -381,7 +379,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       s = addUniqueStatus(s, "religiousTolerance");
       s = markSlotResolved(s, action.slot);
       s = enforceLegitimacy(s);
-      return s;
+      return appendInflationActivationLogIfNeeded(state, s);
     }
     case "PICK_NANTES_CRACKDOWN": {
       if (state.outcome !== "playing" || state.phase !== "action" || state.pendingInteraction) return state;
@@ -398,7 +396,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
         return state;
       }
       if (!canScriptedAttack(state, action.slot)) return state;
-      return performScriptedAttack(state, action.slot);
+      return appendInflationActivationLogIfNeeded(state, performScriptedAttack(state, action.slot));
     }
     case "CRACKDOWN_TARGET": {
       const p = state.pendingInteraction;
@@ -417,18 +415,21 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
         harmfulEventTemplateId: cleared.templateId,
         fundingPaid: p.fundingPaid,
       });
-      return s;
+      return appendInflationActivationLogIfNeeded(state, s);
     }
     case "CRACKDOWN_CANCEL": {
       const p = state.pendingInteraction;
       if (!p || p.type !== "crackdownPick") return state;
-      return appendActionLog(
+      return appendInflationActivationLogIfNeeded(
+        state,
+        appendActionLog(
         {
           ...state,
           resources: { ...state.resources, funding: state.resources.funding + p.fundingPaid },
           pendingInteraction: null,
         },
         { kind: "crackdownCancelled", refund: p.fundingPaid },
+        ),
       );
     }
     case "END_YEAR": {
@@ -440,12 +441,12 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       }
       let s = { ...state, resources: { ...state.resources, funding: 0 } };
       s = evaluateVictory(s);
-      if (s.outcome === "victory") return s;
+      if (s.outcome === "victory") return appendInflationActivationLogIfNeeded(state, s);
       const cap = retentionCapacity(s);
       if (s.hand.length <= cap) {
-        return completeYearAfterRetention(s, s.hand);
+        return appendInflationActivationLogIfNeeded(state, completeYearAfterRetention(s, s.hand));
       }
-      return { ...s, phase: "retention" };
+      return appendInflationActivationLogIfNeeded(state, { ...s, phase: "retention" });
     }
     case "CONFIRM_RETENTION": {
       if (state.outcome !== "playing" || state.phase !== "retention") return state;
@@ -455,7 +456,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
         if (!state.hand.includes(id)) return state;
       }
       if (action.keepIds.length > retentionCapacity(state)) return state;
-      return completeYearAfterRetention(state, action.keepIds);
+      return appendInflationActivationLogIfNeeded(state, completeYearAfterRetention(state, action.keepIds));
     }
     default: {
       const _never: never = action;
