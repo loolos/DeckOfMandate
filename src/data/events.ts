@@ -45,7 +45,7 @@ export const eventTemplates: Record<EventTemplateId, EventTemplate> = {
     harmful: true,
     titleKey: "event.politicalGridlock.name",
     descriptionKey: "event.politicalGridlock.desc",
-    solve: { kind: "funding", amount: 1 },
+    solve: { kind: "funding", amount: 2 },
     penaltiesIfUnresolved: [{ kind: "addPlayerStatus", templateId: "powerLeak", turns: 3 }],
   },
   powerVacuum: {
@@ -154,7 +154,7 @@ export const eventTemplates: Record<EventTemplateId, EventTemplate> = {
     harmful: true,
     titleKey: "event.nobleResentment.name",
     descriptionKey: "event.nobleResentment.desc",
-    solve: { kind: "fundingOrCrackdown", amount: 1 },
+    solve: { kind: "fundingOrCrackdown", amount: 2 },
     penaltiesIfUnresolved: [{ kind: "addPlayerStatus", templateId: "powerLeak", turns: 3 }],
   },
   provincialNoncompliance: {

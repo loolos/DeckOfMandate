@@ -35,7 +35,7 @@ export const messagesZhSecondMandate = {
     "宫廷排场再次超预算。支付 3 经费（或王室干预），否则财政 -2。",
   "event.nobleResentment.name": "贵族怨气",
   "event.nobleResentment.desc":
-    "宫廷与地方精英抵触情绪升高。支付 1 经费或王室干预，否则获得「权力流失」3 回合。",
+    "宫廷与地方精英抵触情绪升高。支付 2 经费或王室干预，否则获得「权力流失」3 回合。",
   "event.provincialNoncompliance.name": "地方消极执行",
   "event.provincialNoncompliance.desc":
     "地方官僚拖延政令。支付 2 经费，否则下一年抽牌 -2，之后两年每年抽牌 -1。",

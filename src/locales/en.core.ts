@@ -26,6 +26,7 @@ export const messagesEnCore = {
   "ui.resolved": "Resolved",
   "ui.harmful": "Harmful",
   "ui.opportunity": "Opportunity",
+  "ui.continued": "Continued",
   "ui.deck": "Deck",
   "ui.discard": "Discard",
   "ui.quickFrame.cost": "Cost",
@@ -133,10 +134,10 @@ export const messagesEnCore = {
     "A governor bypasses the court. Pay 2 Funding or Royal Intervention, or escalate to Royal Crisis next turn.",
   "event.majorCrisis.name": "Royal Crisis",
   "event.majorCrisis.desc":
-    "Royal Intervention only. If unresolved: Legitimacy -1 and draw penalty next turn.",
+    "Royal Intervention only. Tagged Continued: if unresolved it remains into next turn and repeats Legitimacy -1 plus draw penalty each year until solved.",
   "event.politicalGridlock.name": "Noble Resistance",
   "event.politicalGridlock.desc":
-    "Great nobles unite against your fiscal scheme. Pay 1 Funding or suffer Loss of Authority for 3 turns (−1 draw attempt each turn, min 1 draw).",
+    "Great nobles unite against your fiscal scheme. Pay 2 Funding or suffer Loss of Authority for 3 turns (−1 draw attempt each turn, min 1 draw).",
   "status.powerLeak.name": "Loss of Authority",
   "status.drawPenalty.name": "Draw Fatigue",
   "status.retentionBoost.name": "Court Storage",
