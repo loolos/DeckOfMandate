@@ -35,7 +35,7 @@ export const messagesEnSecondMandate = {
     "Court spending rises again. Pay 3 Funding or use Royal Intervention; if unresolved, lose 2 Treasury.",
   "event.nobleResentment.name": "Noble Resentment",
   "event.nobleResentment.desc":
-    "Elite resistance grows at court and in the provinces. Pay 1 Funding or Royal Intervention, or gain Loss of Authority for 3 turns.",
+    "Elite resistance grows at court and in the provinces. Pay 2 Funding or Royal Intervention, or gain Loss of Authority for 3 turns.",
   "event.provincialNoncompliance.name": "Provincial Noncompliance",
   "event.provincialNoncompliance.desc":
     "Local officials stall implementation. Pay 2 Funding or suffer a -2 draw modifier next year.",

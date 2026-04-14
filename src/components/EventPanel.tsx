@@ -82,6 +82,9 @@ export function EventPanel({
                   ) : (
                     <span className={`${styles.badge} ${styles.badgeOk}`}>{t("ui.opportunity")}</span>
                   )}
+                  {tmpl.crisisPersistence === "continued" ? (
+                    <span className={`${styles.badge} ${styles.badgeHarm}`}>{t("ui.continued")}</span>
+                  ) : null}
                   {ev.resolved ? (
                     <span className={`${styles.badge} ${styles.badgeOk}`}>{t("ui.resolved")}</span>
                   ) : null}
