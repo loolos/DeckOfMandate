@@ -169,6 +169,75 @@ describe("beginYear + playerStatuses", () => {
     expect(s1.resources.funding).toBe(0);
   });
 
+  it("chapter 2 reshuffle applies inflation stack to inflation-tag cards", () => {
+    const started = createInitialState(55_778, "secondMandate");
+    const cardsById: Record<string, CardInstance> = {
+      c0: { instanceId: "c0", templateId: "ceremony" },
+    };
+    const s0: GameState = {
+      ...started,
+      outcome: "playing",
+      phase: "action",
+      resources: { treasuryStat: 0, funding: 0, power: 1, legitimacy: 2 },
+      nextTurnDrawModifier: 0,
+      hand: [],
+      deck: [],
+      discard: ["c0"],
+      cardsById,
+      playerStatuses: [],
+      slots: { ...EMPTY_EVENT_SLOTS },
+    };
+    const s1 = beginYear(s0);
+    expect(s1.hand).toContain("c0");
+    expect(s1.cardInflationById.c0).toBe(1);
+  });
+
+  it("chapter 1 reshuffle below pressure threshold does not apply inflation stacks", () => {
+    const started = createInitialState(55_779, "firstMandate");
+    const cardsById: Record<string, CardInstance> = {
+      c0: { instanceId: "c0", templateId: "ceremony" },
+    };
+    const s0: GameState = {
+      ...started,
+      outcome: "playing",
+      phase: "action",
+      resources: { treasuryStat: 0, funding: 0, power: 1, legitimacy: 2 },
+      nextTurnDrawModifier: 0,
+      hand: [],
+      deck: [],
+      discard: ["c0"],
+      cardsById,
+      playerStatuses: [],
+      slots: { ...EMPTY_EVENT_SLOTS },
+    };
+    const s1 = beginYear(s0);
+    expect(s1.hand).toContain("c0");
+    expect(s1.cardInflationById.c0).toBeUndefined();
+  });
+
+  it("chapter 1 reshuffle at pressure threshold applies inflation stacks", () => {
+    const started = createInitialState(55_780, "firstMandate");
+    const cardsById: Record<string, CardInstance> = {
+      c0: { instanceId: "c0", templateId: "ceremony" },
+    };
+    const s0: GameState = {
+      ...started,
+      outcome: "playing",
+      phase: "action",
+      resources: { treasuryStat: 5, funding: 0, power: 5, legitimacy: 4 },
+      nextTurnDrawModifier: 0,
+      hand: [],
+      deck: [],
+      discard: ["c0"],
+      cardsById,
+      playerStatuses: [],
+      slots: { ...EMPTY_EVENT_SLOTS },
+    };
+    const s1 = beginYear(s0);
+    expect(s1.hand).toContain("c0");
+    expect(s1.cardInflationById.c0).toBe(1);
+  });
+
   it("appends antiFrenchLeagueDraw to action log when coalition hazard triggers", () => {
     const started = createInitialState(11_111);
     const cardsById: Record<string, CardInstance> = {

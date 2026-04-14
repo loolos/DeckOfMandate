@@ -1,1 +1,1 @@
-export type CardTag = "royal" | "temp";
+export type CardTag = "royal" | "temp" | "inflation";

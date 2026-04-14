@@ -11,6 +11,7 @@ import {
 import type { GameState } from "../types/game";
 import type { PlayerStatusInstance } from "../types/status";
 import { applyOnDrawCardEffects } from "./cardRuntime";
+import { applyInflationFromDeckRefill } from "./cardCost";
 import { drawUpToPower } from "./draw";
 import { applyScriptedCalendarPhase, rollAntiFrenchLeagueDrawAdjustment } from "./scriptedCalendar";
 import { rngNext, shuffle } from "./rng";
@@ -289,6 +290,7 @@ export function beginYear(state: GameState): GameState {
     deck: drawn.deck,
     discard: drawn.discard,
   };
+  s = applyInflationFromDeckRefill(s, drawn.refilledCardIds);
   for (const cardId of drawn.drawnCardIds) {
     s = applyOnDrawCardEffects(s, cardId);
   }
