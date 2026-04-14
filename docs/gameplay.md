@@ -131,6 +131,24 @@ Exact string format is an implementation detail; the requirement is **correct gr
 
 If the **draw pile** is empty when a card must be drawn, **shuffle the discard pile** (excluding cards currently in hand or retained, per your engine’s piles) to form a new draw pile, then continue drawing. **Hand cap still applies** after a reshuffle.
 
+### Inflation mechanic (current implementation)
+
+- Cards with tag `inflation` (currently: **Administrative Reform**, **Versailles Ceremony**, **Royal Manufactories**) gain cost pressure over time.
+- Trigger: each time that card instance moves from **discard** back into **deck** during reshuffle, that instance’s inflation stack increases by `+1`.
+- Effective playable cost = `base cost + inflation stack` (tracked **per card instance**, not per template).
+- Activation gates:
+  - **Chapter 2 (`secondMandate`)**: always active.
+  - **Chapter 1 (`firstMandate`)**: active once `Power + Treasury stat + Legitimacy >= 14`.
+
+### Chapter transition refit (current implementation)
+
+- **Standalone Chapter 2 start** (from main menu): keeps count-based refit rules.
+- **Continuity transition from Chapter 1 victory**:
+  - carry over card pool by **instance** (including per-instance inflation stack),
+  - refit is **remove-only**,
+  - can remove **0–3** carryover cards total,
+  - cannot add cards during continuity refit.
+
 ### Hand size (MVP)
 
 - **Maximum cards in hand:** **10**.
