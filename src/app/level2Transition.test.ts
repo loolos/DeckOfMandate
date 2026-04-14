@@ -17,7 +17,9 @@ describe("level2Transition", () => {
     expect(draft.calendarStartYear).toBe(1676);
     expect(draft.warOfDevolutionAttacked).toBe(true);
     expect(draft.europeAlert).toBe(true);
-    expect(draft.resources.treasuryStat).toBe(3);
+    expect(draft.resources.treasuryStat).toBe(7);
+    expect(draft.resources.power).toBe(7);
+    expect(draft.resources.legitimacy).toBe(5);
     expect(draft.counts.grainRelief).toBe(1);
     expect(draft.counts.taxRebalance).toBe(1);
     expect(draft.counts.diplomaticCongress).toBe(1);
@@ -67,9 +69,9 @@ describe("level2Transition", () => {
     const st = buildLevel2StateFromDraft(draft);
     expect(st.levelId).toBe("secondMandate");
     expect(st.calendarStartYear).toBe(1676);
-    expect(st.resources.treasuryStat).toBe(3);
-    expect(st.resources.power).toBe(3);
-    expect(st.resources.legitimacy).toBe(3);
+    expect(st.resources.treasuryStat).toBe(7);
+    expect(st.resources.power).toBe(7);
+    expect(st.resources.legitimacy).toBe(5);
     const allTemplateIds = Object.values(st.cardsById).map((c) => c.templateId);
     expect(allTemplateIds.includes("development")).toBe(false);
     expect(allTemplateIds.includes("warBond")).toBe(true);
