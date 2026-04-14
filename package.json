@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview",
-    "test": "vitest run"
+    "test": "vitest run",
+    "test:ai:first-mandate:1000": "npx tsx scripts/firstMandateReport.ts --seed-start 1 --runs 1000"
   },
   "dependencies": {
     "react": "^18.3.1",
