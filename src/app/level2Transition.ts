@@ -120,19 +120,19 @@ export function createContinuityLevel2Draft(from: GameState, seed?: number): Lev
   };
 }
 
-export function toggleContinuityCardRemoval(
-  draft: Level2StartDraft,
+export function toggleContinuityCardRemoval<T extends Level2StartDraft>(
+  draft: T,
   instanceId: string,
-): Level2StartDraft {
+): T {
   if (!draft.carryoverCards.some((card) => card.instanceId === instanceId)) return draft;
   const removed = new Set(draft.removedCarryoverIds);
   if (removed.has(instanceId)) {
     removed.delete(instanceId);
-    return { ...draft, removedCarryoverIds: [...removed] };
+    return { ...draft, removedCarryoverIds: [...removed] } as T;
   }
   if (removed.size >= LEVEL2_CONTINUITY_MAX_REMOVALS) return draft;
   removed.add(instanceId);
-  return { ...draft, removedCarryoverIds: [...removed] };
+  return { ...draft, removedCarryoverIds: [...removed] } as T;
 }
 
 export function validateLevel2ContinuityRefit(draft: Level2StartDraft): Level2Validation {
