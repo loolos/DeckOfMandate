@@ -3,7 +3,7 @@ import { appendActionLog } from "./actionLog";
 import { hasCardTag } from "./cardTags";
 import type { GameState } from "../types/game";
 
-const FIRST_CHAPTER_INFLATION_THRESHOLD = 14;
+const FIRST_CHAPTER_INFLATION_THRESHOLD = 12;
 
 export function isInflationEnabled(state: GameState): boolean {
   if (state.levelId === "secondMandate") return true;

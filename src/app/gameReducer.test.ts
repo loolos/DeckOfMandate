@@ -440,11 +440,11 @@ describe("gameReducer", () => {
       hand: [developmentId],
       deck: [],
       discard: [],
-      resources: { treasuryStat: 4, funding: 3, power: 5, legitimacy: 4 },
+      resources: { treasuryStat: 3, funding: 3, power: 5, legitimacy: 3 },
       slots: { ...EMPTY_EVENT_SLOTS },
     };
     const after = gameReducer(withCard, { type: "PLAY_CARD", handIndex: 0 });
-    expect(after.resources.treasuryStat).toBe(5);
+    expect(after.resources.treasuryStat).toBe(4);
     const infoEntries = after.actionLog.filter(
       (entry) => entry.kind === "info" && entry.infoKey === "firstMandateInflationActivated",
     );
