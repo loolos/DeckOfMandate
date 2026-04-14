@@ -15,6 +15,7 @@ import type { CardTemplateId } from "../types/card";
 import { EVENT_SLOT_ORDER, type EventTemplateId } from "../types/event";
 import type { SlotId } from "../types/event";
 import type { GameState } from "../types/game";
+import type { LogInfoKey } from "../types/game";
 import { createInitialState } from "./initialState";
 
 export type GameAction =
@@ -28,6 +29,7 @@ export type GameAction =
   | { type: "SCRIPTED_EVENT_ATTACK"; slot: SlotId }
   | { type: "CRACKDOWN_TARGET"; slot: SlotId }
   | { type: "CRACKDOWN_CANCEL" }
+  | { type: "APPEND_LOG_INFO"; infoKey: LogInfoKey }
   | { type: "CONFIRM_RETENTION"; keepIds: readonly string[] };
 
 function removeHand(state: GameState, instanceId: string): GameState {
@@ -283,6 +285,8 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       return normalizeGameState(action.state);
     case "NEW_GAME":
       return createInitialState(action.seed, action.levelId ?? state.levelId);
+    case "APPEND_LOG_INFO":
+      return appendActionLog(state, { kind: "info", infoKey: action.infoKey });
     case "PLAY_CARD": {
       if (state.outcome !== "playing" || state.phase !== "action" || state.pendingInteraction) {
         return state;

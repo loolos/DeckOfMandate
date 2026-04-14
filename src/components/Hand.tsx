@@ -9,6 +9,8 @@ import type { GameState } from "../types/game";
 import type { MessageKey } from "../locales";
 import { useI18n } from "../locales";
 import { getPlayableCardCost } from "../logic/cardCost";
+import type { CardTag } from "../types/tags";
+import type { LogInfoKey } from "../types/game";
 import styles from "../app/Game.module.css";
 
 export function Hand({
@@ -53,10 +55,34 @@ export function Hand({
         const quickRows = buildCardQuickFrameRows(tmpl, cost);
         const compactSummary = quickRows.map((row) => row.value).join(" · ");
         const showDetails = !isSmallScreen || expandedCardId === id || (crackPick && id === crackPick.cardInstanceId);
+        const explainCardTag = (tag: CardTag) =>
+          dispatch({
+            type: "APPEND_LOG_INFO",
+            infoKey: `cardTag.${tag}` as LogInfoKey,
+          });
+        const tagChips =
+          tmpl.tags.length > 0 ? (
+            <div className={styles.badges}>
+              {tmpl.tags.map((tag) => (
+                <button
+                  key={`${id}_${tag}`}
+                  type="button"
+                  className={`${styles.badge} ${styles.tagButton}`}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    explainCardTag(tag);
+                  }}
+                >
+                  {t(`card.tag.${tag}` as MessageKey)}
+                </button>
+              ))}
+            </div>
+          ) : null;
         const body = isSmallScreen ? (
           showDetails ? (
             <>
               <div className={styles.cardTitle}>{title}</div>
+              {tagChips}
               <div className={styles.compactSummary}>{compactSummary}</div>
               <div className={styles.compactDetails}>
                 <OutcomeQuickFrame rows={quickRows} />
@@ -82,6 +108,7 @@ export function Hand({
         ) : (
           <>
             <div className={styles.cardTitle}>{title}</div>
+            {tagChips}
             <OutcomeQuickFrame rows={quickRows} />
             <div className={styles.cardBg}>{t(tmpl.backgroundKey as MessageKey)}</div>
             <div className={styles.cardDesc}>{t(tmpl.descriptionKey as MessageKey)}</div>
@@ -179,15 +206,24 @@ export function Hand({
         }
 
         return (
-          <button
+          <div
             key={id}
-            type="button"
             className={cardClassName}
-            disabled={!playable}
-            onDoubleClick={playCard}
+            role="button"
+            tabIndex={0}
+            aria-disabled={!playable ? "true" : undefined}
+            onDoubleClick={() => {
+              if (playable) playCard();
+            }}
+            onKeyDown={(e) => {
+              if ((e.key === "Enter" || e.key === " ") && playable) {
+                e.preventDefault();
+                playCard();
+              }
+            }}
           >
             {body}
-          </button>
+          </div>
         );
       })}
     </div>

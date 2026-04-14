@@ -4,6 +4,16 @@ import type { Effect } from "./effect";
 import type { EventInstance, EventTemplateId, SlotId } from "./event";
 import type { PlayerStatusInstance } from "./status";
 
+export type LogInfoKey =
+  | "firstMandateInflationActivated"
+  | "cardTag.royal"
+  | "cardTag.temp"
+  | "cardTag.inflation"
+  | "eventTag.harmful"
+  | "eventTag.opportunity"
+  | "eventTag.continued"
+  | "eventTag.resolved";
+
 /** Append-only player-facing log; newest entries at the end of the array. */
 export type ActionLogEntry =
   | {
@@ -76,6 +86,12 @@ export type ActionLogEntry =
       turn: number;
       /** Rounded percent; hazard rolled at beginYear when league is active. */
       probabilityPct: number;
+    }
+  | {
+      kind: "info";
+      id: string;
+      turn: number;
+      infoKey: LogInfoKey;
     };
 
 export type GamePhase = "action" | "retention" | "gameOver";

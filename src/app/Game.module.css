@@ -511,6 +511,11 @@
   color: var(--muted);
 }
 
+.tagButton {
+  background: transparent;
+  cursor: pointer;
+}
+
 .badgeHarm {
   border-color: #5a3030;
   color: #ffb4b4;

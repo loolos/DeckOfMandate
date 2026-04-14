@@ -1,7 +1,7 @@
 import type { CardTemplateId } from "../types/card";
 import type { Effect } from "../types/effect";
 import type { EventTemplateId, SlotId } from "../types/event";
-import type { ActionLogEntry, GameState } from "../types/game";
+import type { ActionLogEntry, GameState, LogInfoKey } from "../types/game";
 
 export const MAX_ACTION_LOG = 150;
 
@@ -28,7 +28,8 @@ export type ActionLogPayload =
       powerDelta: number;
       extraTreasuryProbabilityPct: number;
     }
-  | { kind: "antiFrenchLeagueDraw"; probabilityPct: number };
+  | { kind: "antiFrenchLeagueDraw"; probabilityPct: number }
+  | { kind: "info"; infoKey: LogInfoKey };
 
 export function appendActionLog(state: GameState, payload: ActionLogPayload): GameState {
   const logSeq = state.nextIds.log ?? 0;
