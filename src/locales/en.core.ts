@@ -198,6 +198,22 @@ export const messagesEnCore = {
   "log.crackdownCancelled": "[Turn {turn}] Royal Intervention cancelled; refunded {refund} {funding}.",
   "log.eventScriptedAttack.generic":
     "[Turn {turn}] Slot {slot}: {event} — military option. Paid {paid} {funding}.{treasury}",
+  "log.info.firstMandateInflationActivated":
+    "[Turn {turn}] Chapter 1 card inflation is now active: cards with the “Inflation” tag gain extra cost each time they are reshuffled and redrawn.",
+  "log.info.cardTag.royal":
+    "[Turn {turn}] Tag note “Royal”: this is a royal-command tool, and some crises can only be cleared through royal intervention routes.",
+  "log.info.cardTag.temp":
+    "[Turn {turn}] Tag note “Temp”: this card is temporary and usually does not cycle back through discard after play.",
+  "log.info.cardTag.inflation":
+    "[Turn {turn}] Tag note “Inflation”: once inflation is active, this card’s cost stacks upward whenever it cycles through reshuffle and redraw.",
+  "log.info.eventTag.harmful":
+    "[Turn {turn}] Tag note “Harmful”: if unresolved at year end, this event applies penalties.",
+  "log.info.eventTag.opportunity":
+    "[Turn {turn}] Tag note “Opportunity”: this is an optional upside event and usually has no penalty if ignored.",
+  "log.info.eventTag.continued":
+    "[Turn {turn}] Tag note “Continued”: if unresolved, this event remains into the next year and repeats its negative effects.",
+  "log.info.eventTag.resolved":
+    "[Turn {turn}] Tag note “Resolved”: this event has already been handled this year and will not apply year-end penalties.",
   "help.short":
     "Treasury sets turnly income to Funding. Funding pays for cards and event solves. Power sets draw attempts. Legitimacy sets retention limit. Unresolved harmful events are settled in sequence.",
 } as const;

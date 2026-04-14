@@ -1,9 +1,10 @@
 import { getCardTemplate } from "../data/cards";
+import { appendActionLog } from "./actionLog";
 import type { GameState } from "../types/game";
 
 const FIRST_CHAPTER_INFLATION_THRESHOLD = 14;
 
-function isInflationEnabled(state: GameState): boolean {
+export function isInflationEnabled(state: GameState): boolean {
   if (state.levelId === "secondMandate") return true;
   if (state.levelId !== "firstMandate") return false;
   const pressureScore =
@@ -39,5 +40,12 @@ export function applyInflationFromDeckRefill(state: GameState, movedCardIds: rea
     nextMap[id] = (nextMap[id] ?? 0) + 1;
   }
   if (!nextMap) return state;
-  return { ...state, cardInflationById: nextMap };
+  const nextState = { ...state, cardInflationById: nextMap };
+  if (
+    nextState.levelId === "firstMandate" &&
+    !nextState.actionLog.some((entry) => entry.kind === "info" && entry.infoKey === "firstMandateInflationActivated")
+  ) {
+    return appendActionLog(nextState, { kind: "info", infoKey: "firstMandateInflationActivated" });
+  }
+  return nextState;
 }

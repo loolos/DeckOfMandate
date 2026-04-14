@@ -178,6 +178,17 @@ export const messagesZhCore = {
   "log.crackdownCancelled": "[第 {turn} 年] 已取消王室干预；退回 {refund} {funding}。",
   "log.eventScriptedAttack.generic":
     "[第 {turn} 年] 槽位 {slot}：{event} — 采取军事进攻。已支付 {paid} {funding}。{treasury}",
+  "log.info.firstMandateInflationActivated":
+    "[第 {turn} 年] 已触发第一关“卡牌通胀”机制：带有「通胀」标签的牌在洗回牌库后，后续每次再抽到费用会继续上升。",
+  "log.info.cardTag.royal": "[第 {turn} 年] 标签说明「王室」：该牌属于王室工具，部分事件只能靠此类手段处理。",
+  "log.info.cardTag.temp": "[第 {turn} 年] 标签说明「临时」：该牌通常为一次性应急工具，打出后不会进入弃牌堆循环。",
+  "log.info.cardTag.inflation":
+    "[第 {turn} 年] 标签说明「通胀」：当卡牌通胀机制生效后，该牌每次经过洗牌回抽都会叠加费用。",
+  "log.info.eventTag.harmful": "[第 {turn} 年] 标签说明「有害」：若年末仍未解决，会触发惩罚。",
+  "log.info.eventTag.opportunity": "[第 {turn} 年] 标签说明「机遇」：属于可投资机会，不处理通常不会受到惩罚。",
+  "log.info.eventTag.continued":
+    "[第 {turn} 年] 标签说明「持续」：事件若未解决会保留到下一年，并重复结算其负面后果。",
+  "log.info.eventTag.resolved": "[第 {turn} 年] 标签说明「已解决」：该事件已在本年被处理，不会在年末触发惩罚。",
   "help.short":
     "财政决定每回合转入的经费；经费用于打牌与事件处理。权力决定抽牌次数。合法性决定回合末可保留手牌数。未处理的有害事件依次结算。",
 } as const;

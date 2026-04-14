@@ -183,6 +183,8 @@ function renderEntry(e: ActionLogEntry, t: (key: MessageKey, vars?: Record<strin
           <div className={styles.actionLogSubMuted}>{t("log.antiFrenchLeagueDraw.history")}</div>
         </div>
       );
+    case "info":
+      return <div className={styles.actionLogHead}>{t(`log.info.${e.infoKey}` as MessageKey, { turn: e.turn })}</div>;
     default: {
       const _never: never = e;
       return _never;

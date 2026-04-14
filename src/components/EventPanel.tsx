@@ -52,6 +52,8 @@ export function EventPanel({
         const compactSummary = quickRows.map((row) => row.value).join(" · ");
         const showDetails = !isSmallScreen || expandedSlot === slot || crack;
         const toggleCard = () => setExpandedSlot((prev) => (prev === slot ? null : slot));
+        const logEventTag = (infoKey: "eventTag.harmful" | "eventTag.opportunity" | "eventTag.continued" | "eventTag.resolved") =>
+          dispatch({ type: "APPEND_LOG_INFO", infoKey });
 
         return (
           <div
@@ -78,15 +80,51 @@ export function EventPanel({
               <>
                 <div className={styles.badges}>
                   {tmpl.harmful ? (
-                    <span className={`${styles.badge} ${styles.badgeHarm}`}>{t("ui.harmful")}</span>
+                    <button
+                      type="button"
+                      className={`${styles.badge} ${styles.badgeHarm} ${styles.tagButton}`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        logEventTag("eventTag.harmful");
+                      }}
+                    >
+                      {t("ui.harmful")}
+                    </button>
                   ) : (
-                    <span className={`${styles.badge} ${styles.badgeOk}`}>{t("ui.opportunity")}</span>
+                    <button
+                      type="button"
+                      className={`${styles.badge} ${styles.badgeOk} ${styles.tagButton}`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        logEventTag("eventTag.opportunity");
+                      }}
+                    >
+                      {t("ui.opportunity")}
+                    </button>
                   )}
                   {tmpl.crisisPersistence === "continued" ? (
-                    <span className={`${styles.badge} ${styles.badgeHarm}`}>{t("ui.continued")}</span>
+                    <button
+                      type="button"
+                      className={`${styles.badge} ${styles.badgeHarm} ${styles.tagButton}`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        logEventTag("eventTag.continued");
+                      }}
+                    >
+                      {t("ui.continued")}
+                    </button>
                   ) : null}
                   {ev.resolved ? (
-                    <span className={`${styles.badge} ${styles.badgeOk}`}>{t("ui.resolved")}</span>
+                    <button
+                      type="button"
+                      className={`${styles.badge} ${styles.badgeOk} ${styles.tagButton}`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        logEventTag("eventTag.resolved");
+                      }}
+                    >
+                      {t("ui.resolved")}
+                    </button>
                   ) : null}
                 </div>
                 <div className={styles.eventBody}>{desc}</div>
