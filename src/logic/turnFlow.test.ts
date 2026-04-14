@@ -224,7 +224,7 @@ describe("beginYear + playerStatuses", () => {
       ...started,
       outcome: "playing",
       phase: "action",
-      resources: { treasuryStat: 6, funding: 0, power: 6, legitimacy: 6 },
+      resources: { treasuryStat: 5, funding: 0, power: 5, legitimacy: 4 },
       nextTurnDrawModifier: 0,
       hand: [],
       deck: [],

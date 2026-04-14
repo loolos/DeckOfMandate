@@ -1,7 +1,7 @@
 import { getCardTemplate } from "../data/cards";
 import type { GameState } from "../types/game";
 
-const FIRST_CHAPTER_INFLATION_THRESHOLD = 18;
+const FIRST_CHAPTER_INFLATION_THRESHOLD = 14;
 
 function isInflationEnabled(state: GameState): boolean {
   if (state.levelId === "secondMandate") return true;

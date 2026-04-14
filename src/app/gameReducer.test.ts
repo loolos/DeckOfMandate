@@ -410,7 +410,7 @@ describe("gameReducer", () => {
       hand: [ceremonyId],
       deck: [],
       discard: [],
-      resources: { treasuryStat: 6, funding: 2, power: 6, legitimacy: 6 },
+      resources: { treasuryStat: 5, funding: 2, power: 5, legitimacy: 4 },
       cardInflationById: { ...base.cardInflationById, [ceremonyId]: 1 },
       slots: { ...EMPTY_EVENT_SLOTS },
     };
