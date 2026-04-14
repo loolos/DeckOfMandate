@@ -82,6 +82,15 @@ function hasValidStoredSave(): boolean {
   return Boolean(loaded && isValidSave(loaded));
 }
 
+function cloneLevel2Draft(draft: Level2StartDraft): Level2StartDraft {
+  return {
+    ...draft,
+    resources: { ...draft.resources },
+    carryoverCards: draft.carryoverCards.map((card) => ({ ...card })),
+    removedCarryoverIds: [...draft.removedCarryoverIds],
+  };
+}
+
 export function Game() {
   const { t } = useI18n();
   const [state, dispatch] = useReducer(gameReducer, undefined, initFreshForStartMenu);
@@ -95,7 +104,11 @@ export function Game() {
   const [tutorialOnEntryMenu, setTutorialOnEntryMenu] = useState(() => readTutorialOnLevelEntry());
   const [pendingLevelTutorial, setPendingLevelTutorial] = useState(false);
   const [level2Draft, setLevel2Draft] = useState<Level2StartDraft | null>(null);
+  const [level2DraftInitial, setLevel2DraftInitial] = useState<Level2StartDraft | null>(null);
   const [expandedRefitCardId, setExpandedRefitCardId] = useState<string | null>(null);
+  const [isSmallRefitViewport, setIsSmallRefitViewport] = useState(() =>
+    typeof window !== "undefined" ? window.matchMedia("(max-width: 800px)").matches : false,
+  );
 
   const menuSeedTrimmed = menuSeedText.trim();
   const menuSeedParsed =
@@ -132,6 +145,17 @@ export function Game() {
     setExpandedRefitCardId(null);
   }, [level2Draft]);
 
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const media = window.matchMedia("(max-width: 800px)");
+    const onChange = (event: MediaQueryListEvent) => {
+      setIsSmallRefitViewport(event.matches);
+    };
+    setIsSmallRefitViewport(media.matches);
+    media.addEventListener("change", onChange);
+    return () => media.removeEventListener("change", onChange);
+  }, []);
+
   const canEndYear =
     state.outcome === "playing" &&
     state.phase === "action" &&
@@ -152,9 +176,21 @@ export function Game() {
     setPendingLevelTutorial(false);
   }, []);
 
+  const openLevel2Refit = (draft: Level2StartDraft) => {
+    const snapshot = cloneLevel2Draft(draft);
+    setLevel2Draft(snapshot);
+    setLevel2DraftInitial(cloneLevel2Draft(snapshot));
+  };
+
+  const resetLevel2Refit = () => {
+    if (!level2DraftInitial) return;
+    setLevel2Draft(cloneLevel2Draft(level2DraftInitial));
+    setExpandedRefitCardId(null);
+  };
+
   const beginConfiguredRun = (seed: number | undefined, levelId: LevelId) => {
     if (levelId === "secondMandate") {
-      setLevel2Draft(createStandaloneLevel2Draft(seed));
+      openLevel2Refit(createStandaloneLevel2Draft(seed));
       setLevelIntroOpen(false);
       setPendingNewRun(null);
       return;
@@ -185,6 +221,7 @@ export function Game() {
   const resumeFromStoredSave = () => {
     setPendingLevelTutorial(false);
     setLevel2Draft(null);
+    setLevel2DraftInitial(null);
     const loaded = loadGame();
     if (!loaded || !isValidSave(loaded)) return;
     dispatchSafe({ type: "HYDRATE", state: normalizeLoadedSave(loaded as GameState) });
@@ -202,12 +239,13 @@ export function Game() {
     dispatchSafe({ type: "HYDRATE", state: nextState });
     setStartMenuOpen(false);
     setLevel2Draft(null);
+    setLevel2DraftInitial(null);
     setLevelIntroOpen(false);
     setPendingNewRun(null);
   };
 
   const openChapter2Continuity = () => {
-    setLevel2Draft(createContinuityLevel2Draft(state));
+    openLevel2Refit(createContinuityLevel2Draft(state));
   };
 
   const introLevelDef =
@@ -254,6 +292,12 @@ export function Game() {
             e.preventDefault();
             setExpandedRefitCardId((prev) => (prev === card.instanceId ? null : card.instanceId));
           }
+        }}
+        onDoubleClick={() => {
+          if (!isSmallRefitViewport) return;
+          setLevel2Draft((prev) =>
+            prev ? toggleContinuityCardRemoval(prev, card.instanceId) : prev,
+          );
         }}
       >
         <div className={styles.retainCardInfo}>
@@ -361,6 +405,9 @@ export function Game() {
             <p className={styles.startMenuMuted}>
               {t("menu.refit.continuityRule", { max: LEVEL2_CONTINUITY_MAX_REMOVALS })}
             </p>
+            {isSmallRefitViewport ? (
+              <p className={styles.startMenuMuted}>{t("menu.refit.mobileDoubleToggleHint")}</p>
+            ) : null}
             {level2Draft.carryoverCards.map((card) => renderContinuityCardRow(card))}
             <h3 className={styles.statusSectionTitle}>{t("menu.refit.newCards")}</h3>
             {LEVEL2_FIXED_NEW_IDS.map((id) => renderFixedNewCardPreviewRow(id))}
@@ -388,6 +435,9 @@ export function Game() {
             </>
           ) : null}
           <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
+            <button type="button" className={styles.btn} onClick={resetLevel2Refit}>
+              {t("menu.refit.reset")}
+            </button>
             <button
               type="button"
               className={`${styles.btn} ${styles.btnPrimary}`}
@@ -396,7 +446,14 @@ export function Game() {
             >
               {t("menu.refit.start")}
             </button>
-            <button type="button" className={styles.btn} onClick={() => setLevel2Draft(null)}>
+            <button
+              type="button"
+              className={styles.btn}
+              onClick={() => {
+                setLevel2Draft(null);
+                setLevel2DraftInitial(null);
+              }}
+            >
               {t("menu.refit.back")}
             </button>
           </div>
