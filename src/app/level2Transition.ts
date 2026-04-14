@@ -57,11 +57,13 @@ export const LEVEL2_CONTINUITY_MAX_REMOVALS = 3;
 
 export function createStandaloneLevel2Draft(seed?: number): Level2StandaloneDraft {
   const level = getLevelDef("secondMandate");
-  const carryoverCards = getLevelContent("firstMandate").starterDeckTemplateOrder.map((templateId, i) => ({
-    instanceId: `standalone_old_${i}_${templateId}`,
-    templateId,
-    inflationDelta: 0,
-  }));
+  const carryoverCards = getLevelContent("firstMandate").starterDeckTemplateOrder
+    .filter((templateId) => templateId !== "development")
+    .map((templateId, i) => ({
+      instanceId: `standalone_old_${i}_${templateId}`,
+      templateId,
+      inflationDelta: templateId === "reform" || templateId === "ceremony" ? 1 : 0,
+    }));
   return {
     mode: "standalone",
     seed,

@@ -135,7 +135,6 @@ describe("secondMandate balance data", () => {
       { kind: "modResource", resource: "power", delta: -1 },
     ]);
   });
-
   it("keeps europe-alert extra events out of the normal chapter 2 random pool", () => {
     const pool = getLevelContent("secondMandate").rollableEventIds;
     expect(pool.includes("frontierGarrisons")).toBe(false);

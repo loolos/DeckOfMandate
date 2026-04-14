@@ -22,7 +22,12 @@ describe("level2Transition", () => {
     expect(draft.resources.treasuryStat).toBe(7);
     expect(draft.resources.power).toBe(7);
     expect(draft.resources.legitimacy).toBe(5);
-    expect(draft.carryoverCards.length).toBe(13);
+    expect(draft.carryoverCards.length).toBe(11);
+    expect(draft.carryoverCards.some((card) => card.templateId === "development")).toBe(false);
+    const standaloneReform = draft.carryoverCards.find((card) => card.templateId === "reform");
+    const standaloneCeremony = draft.carryoverCards.find((card) => card.templateId === "ceremony");
+    expect(standaloneReform?.inflationDelta).toBe(1);
+    expect(standaloneCeremony?.inflationDelta).toBe(1);
     expect(draft.removedCarryoverIds).toEqual([]);
     expect(v.totalNewCards).toBe(LEVEL2_FIXED_NEW_IDS.length);
     expect(v.isValid).toBe(true);
@@ -62,7 +67,12 @@ describe("level2Transition", () => {
     expect(st.resources.power).toBe(7);
     expect(st.resources.legitimacy).toBe(5);
     const allTemplateIds = Object.values(st.cardsById).map((c) => c.templateId);
-    expect(allTemplateIds.includes("development")).toBe(true);
+    expect(allTemplateIds.includes("development")).toBe(false);
+    const reformInstanceId = Object.keys(st.cardsById).find((id) => st.cardsById[id]?.templateId === "reform");
+    const ceremonyInstanceId = Object.keys(st.cardsById).find((id) => st.cardsById[id]?.templateId === "ceremony");
+    if (!reformInstanceId || !ceremonyInstanceId) throw new Error("expected reform and ceremony in standalone deck");
+    expect(st.cardInflationById[reformInstanceId]).toBe(1);
+    expect(st.cardInflationById[ceremonyInstanceId]).toBe(1);
     expect((allTemplateIds as string[]).includes("patronageOffice")).toBe(false);
     expect(allTemplateIds.includes("diplomaticIntervention")).toBe(false);
     for (const id of LEVEL2_FIXED_NEW_IDS) {
