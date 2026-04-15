@@ -25,28 +25,28 @@ export const messagesZhSecondMandate = {
     "1598 年亨利四世颁布《南特敕令》，原为在宗教战争后恢复秩序：在保持天主教国教地位的前提下，给予法国新教徒（胡格诺派）有限礼拜自由、民事权利与若干安全保障。如今王权决定撤销它。此事件带「持续」标签：若不处理，将每回合额外少抽 2 张，且事件会保留在列表中。处理时二选一：\n- 宗教宽容：立刻合法性 -1，并获得永久状态「宗教宽容」（每回合 30% 概率触发「宗教矛盾」事件，需支付 2 经费，否则合法性 -1）。\n- 严厉镇压：无立刻数值变化，但获得状态「遏制胡格诺-剩余势力 3」，并向抽牌堆加入 3 张临时牌「镇压胡格诺派」（费用 3）。每打出 1 张，「剩余势力」-1；降到 0 时，移除该状态并清除抽牌堆/弃牌堆/手牌中的全部「镇压胡格诺派」。注意：该状态存在时，第二关无法胜利。",
   "event.leagueOfAugsburg.name": "奥格斯堡同盟形成",
   "event.leagueOfAugsburg.desc":
-    "欧洲列强开始系统围堵法国。支付 2 经费（或王室干预）压制升级，否则将承受「权力流失」3 回合。",
+    "欧洲列强开始系统围堵法国。支付 2 经费（或干预）压制升级，否则将承受「权力流失」3 回合。",
   "event.nineYearsWar.name": "九年战争",
   "event.nineYearsWar.desc":
-    "大战压力全面到来。支付 2 经费（或王室干预）稳住局势；若未处理，将持续侵蚀财政与抽牌能力。",
+    "大战压力全面到来。支付 2 经费（或干预）稳住局势；若未处理，将持续侵蚀财政与抽牌能力。",
   "event.ryswickPeace.name": "里斯维克和约",
   "event.ryswickPeace.desc":
     "和约提供秩序重建窗口。投入 1 经费可获得合法性 +1。",
   "event.versaillesExpenditure.name": "凡尔赛开支",
   "event.versaillesExpenditure.desc":
-    "宫廷排场再次超预算。支付 3 经费（或王室干预），否则财政 -2。",
+    "宫廷排场再次超预算。支付 3 经费（或干预），否则财政 -2。",
   "event.nobleResentment.name": "贵族怨气",
   "event.nobleResentment.desc":
-    "宫廷与地方精英抵触情绪升高。支付 2 经费或王室干预，否则获得「权力流失」3 回合。",
+    "宫廷与地方精英抵触情绪升高。支付 2 经费或干预，否则获得「权力流失」3 回合。",
   "event.provincialNoncompliance.name": "地方消极执行",
   "event.provincialNoncompliance.desc":
     "地方官僚拖延政令。支付 2 经费，否则下一年抽牌 -2，之后两年每年抽牌 -1。",
   "event.risingGrainPrices.name": "粮价上涨",
   "event.risingGrainPrices.desc":
-    "粮价推动社会不稳。支付 3 经费（或王室干预），否则合法性 -2。",
+    "粮价推动社会不稳。支付 3 经费（或干预），否则合法性 -2。",
   "event.taxResistance.name": "税收反弹",
   "event.taxResistance.desc":
-    "地方与社群抵制新税。支付 2 经费或王室干预，否则财政 -1 且合法性 -1。",
+    "地方与社群抵制新税。支付 2 经费或干预，否则财政 -1 且合法性 -1。",
   "event.frontierGarrisons.name": "边境驻军消耗",
   "event.frontierGarrisons.desc": "边防驻军持续消耗国库。支付 3 经费，否则财政 -1 且下一回合抽牌受罚。",
   "event.tradeDisruption.name": "海贸受阻",
@@ -63,7 +63,7 @@ export const messagesZhSecondMandate = {
   "event.talentedAdministrator.desc": "可提拔能干官员。投入 2 经费，权力 +1。",
   "event.warWeariness.name": "战争疲劳",
   "event.warWeariness.desc":
-    "长期战争削弱民意与服从。支付 3 经费或王室干预，否则合法性 -1 并获得「权力流失」2 回合。",
+    "长期战争削弱民意与服从。支付 3 经费或干预，否则合法性 -1 并获得「权力流失」2 回合。",
   "event.grainReliefCrisis.name": "赈济迟滞",
   "event.grainReliefCrisis.desc":
     "粮食调配迟滞导致社会压力升级。支付 2 经费可稳住局势并获得合法性 +2；若放任将损失合法性 -2。",
