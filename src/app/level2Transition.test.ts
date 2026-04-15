@@ -30,8 +30,10 @@ describe("level2Transition", () => {
     const standaloneCrackdown = draft.carryoverCards.find((card) => card.templateId === "crackdown");
     expect(standaloneReform?.inflationDelta).toBe(1);
     expect(standaloneCeremony?.inflationDelta).toBe(1);
-    expect(standaloneFunding?.remainingUses).toBe(1);
-    expect(standaloneCrackdown?.remainingUses).toBe(1);
+    expect(standaloneFunding?.remainingUses).toBe(2);
+    expect(standaloneCrackdown?.remainingUses).toBe(2);
+    expect(standaloneFunding?.totalUses).toBe(2);
+    expect(standaloneCrackdown?.totalUses).toBe(2);
     expect(draft.removedCarryoverIds).toEqual([]);
     expect(v.totalNewCards).toBe(LEVEL2_FIXED_NEW_IDS.length);
     expect(v.isValid).toBe(true);
@@ -75,6 +77,7 @@ describe("level2Transition", () => {
     const draft = createContinuityLevel2Draft(withAdjustedUses);
     const carried = draft.carryoverCards.find((card) => card.instanceId === targetId);
     expect(carried?.remainingUses).toBe(1);
+    expect(carried?.totalUses).toBe(3);
   });
 
   it("builds a playable chapter 2 state from standalone removals", () => {
@@ -146,6 +149,16 @@ describe("level2Transition", () => {
     for (const id of LEVEL2_FIXED_NEW_IDS) {
       expect(allTemplateIds.includes(id)).toBe(true);
     }
+  });
+
+  it("standalone chapter 2 keeps royal limited-use cards at 2/2", () => {
+    const draft = createStandaloneLevel2Draft(2_024);
+    const st = buildLevel2StateFromDraft(draft);
+    const fundingId = Object.keys(st.cardsById).find((id) => st.cardsById[id]?.templateId === "funding");
+    const crackdownId = Object.keys(st.cardsById).find((id) => st.cardsById[id]?.templateId === "crackdown");
+    if (!fundingId || !crackdownId) throw new Error("expected funding and crackdown in standalone deck");
+    expect(st.cardUsesById[fundingId]).toEqual({ remaining: 2, total: 2 });
+    expect(st.cardUsesById[crackdownId]).toEqual({ remaining: 2, total: 2 });
   });
 
   it("includes non-temp cards still present in cardsById even if they are outside deck/discard/hand", () => {

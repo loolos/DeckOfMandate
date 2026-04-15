@@ -21,6 +21,7 @@ export type Level2CarryoverCard = {
   templateId: CardTemplateId;
   inflationDelta: number;
   remainingUses: number | null;
+  totalUses: number | null;
 };
 
 export type Level2StandaloneDraft = {
@@ -61,12 +62,17 @@ export function createStandaloneLevel2Draft(seed?: number): Level2StandaloneDraf
   const level = getLevelDef("secondMandate");
   const carryoverCards = getLevelContent("firstMandate").starterDeckTemplateOrder
     .filter((templateId) => templateId !== "development")
-    .map((templateId, i) => ({
-      instanceId: `standalone_old_${i}_${templateId}`,
-      templateId,
-      inflationDelta: templateId === "reform" || templateId === "ceremony" ? 1 : 0,
-      remainingUses: createInitialCardUseState("secondMandate", templateId)?.remaining ?? null,
-    }));
+    .map((templateId, i) => {
+      const usage = createInitialCardUseState("secondMandate", templateId);
+      const standaloneRoyalUses = templateId === "funding" || templateId === "crackdown" ? 2 : null;
+      return {
+        instanceId: `standalone_old_${i}_${templateId}`,
+        templateId,
+        inflationDelta: templateId === "reform" || templateId === "ceremony" ? 1 : 0,
+        remainingUses: standaloneRoyalUses ?? usage?.remaining ?? null,
+        totalUses: standaloneRoyalUses ?? usage?.total ?? null,
+      };
+    });
   return {
     mode: "standalone",
     seed,
@@ -100,8 +106,8 @@ function buildContinuityCarryoverCards(from: GameState): Level2CarryoverCard[] {
       instanceId: id,
       templateId: inst.templateId,
       inflationDelta: Math.max(0, from.cardInflationById[id] ?? 0),
-      remainingUses:
-        from.cardUsesById[id]?.remaining ?? createInitialCardUseState(from.levelId, inst.templateId)?.remaining ?? null,
+      remainingUses: from.cardUsesById[id]?.remaining ?? createInitialCardUseState(from.levelId, inst.templateId)?.remaining ?? null,
+      totalUses: from.cardUsesById[id]?.total ?? createInitialCardUseState(from.levelId, inst.templateId)?.total ?? null,
     });
   };
   for (const id of orderedPoolIds) {
@@ -205,7 +211,11 @@ function buildContinuityLevel2State(draft: Level2StartDraft): GameState {
       cardInflationById[card.instanceId] = card.inflationDelta;
     }
     const usage = createInitialCardUseState("secondMandate", card.templateId, card.remainingUses ?? undefined);
-    if (usage) cardUsesById[card.instanceId] = usage;
+    if (usage) {
+      const total = card.totalUses ?? usage.total;
+      const remaining = Math.max(0, Math.min(total, card.remainingUses ?? usage.remaining));
+      cardUsesById[card.instanceId] = { total, remaining };
+    }
   }
   const europeAlertDrawPenalty = draft.europeAlert
     ? computeEuropeAlertDrawPenalty(draft.resources.power)
