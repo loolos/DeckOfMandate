@@ -115,11 +115,11 @@ export const messagesFrCore: Record<keyof typeof messagesEnCore, string> = {
   "card.funding.name": "Prélèvement royal",
   "card.funding.background":
     "Levées extraordinaires et collecte accélérée — des liquidités à court terme pour les urgences de la couronne.",
-  "card.funding.desc": "Gagnez +1 Financement ce tour (pas Trésor).",
+  "card.funding.desc": "Gagnez +1 Financement ce tour (pas Trésor). Si « Restant » est épuisé : Trésor -1.",
   "card.crackdown.name": "Intervention royale",
   "card.crackdown.background":
     "Édits, troupes ou action policière — la force appliquée là où rumeur et émeute dépassent déjà la loi.",
-  "card.crackdown.desc": "Résolvez un événement néfaste.",
+  "card.crackdown.desc": "Résolvez un événement néfaste. Si « Restant » est épuisé : Pouvoir -1.",
   "card.fiscalBurden.name": "Fardeau fiscal",
   "card.fiscalBurden.background":
     "Dettes et passifs d'urgence encombrent désormais les comptes et contraignent chaque cycle.",
