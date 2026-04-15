@@ -28,28 +28,28 @@ export const messagesFrSecondMandate: Record<keyof typeof messagesEnSecondMandat
     "En 1598, Henri IV publia l'édit de Nantes pour mettre fin aux guerres de Religion : le catholicisme demeurait la foi d'État, tandis que les protestants français (huguenots) recevaient des droits de culte limités, des protections civiles et des garanties de sécurité. La couronne le révoque désormais. C'est un événement Continu : si ignoré, vous piochez 2 cartes de moins à chaque tour et il reste sur le plateau. Résolvez en choisissant une politique : Tolérance religieuse (Légitimité -1 immédiat ; gagnez le statut permanent Tolérance religieuse qui a 30% de chance annuelle de générer Tension religieuse : payez 2 Financement ou perdez 1 Légitimité), ou Répression sévère (pas de variation numérique immédiate ; gagnez Contenir les restes huguenots 3 et ajoutez 3 cartes temporaires « Réprimer les huguenots » au deck, coût 3 chacune ; chaque activation réduit les restes de 1 ; à 0, retirez le statut et purgez ces cartes de la main/du deck/de la défausse). Tant que ce statut de containment existe, la victoire du Chapitre 2 est bloquée.",
   "event.leagueOfAugsburg.name": "Formation de la Ligue d'Augsbourg",
   "event.leagueOfAugsburg.desc":
-    "Les puissances européennes se coordonnent contre la France. Payez 2 Financement (ou utilisez Intervention royale) pour contenir l'escalade, sinon subissez Perte d'autorité pendant 3 tours.",
+    "Les puissances européennes se coordonnent contre la France. Payez 2 Financement (ou utilisez Intervention) pour contenir l'escalade, sinon subissez Perte d'autorité pendant 3 tours.",
   "event.nineYearsWar.name": "Guerre de Neuf Ans",
   "event.nineYearsWar.desc":
-    "La pression d'une grande guerre s'installe. Payez 2 Financement (ou Intervention royale) pour stabiliser le front ; les années non résolues érodent le Trésor et le flux de cartes.",
+    "La pression d'une grande guerre s'installe. Payez 2 Financement (ou Intervention) pour stabiliser le front ; les années non résolues érodent le Trésor et le flux de cartes.",
   "event.ryswickPeace.name": "Paix de Ryswick",
   "event.ryswickPeace.desc":
     "Les termes de paix peuvent restaurer l'ordre. Investissez 1 Financement pour gagner Légitimité +1 et sécuriser un atterrissage plus doux.",
   "event.versaillesExpenditure.name": "Dépenses de Versailles",
   "event.versaillesExpenditure.desc":
-    "Les dépenses de cour montent encore. Payez 3 Financement ou utilisez Intervention royale ; si non résolu, perdez 2 Trésor.",
+    "Les dépenses de cour montent encore. Payez 3 Financement ou utilisez Intervention ; si non résolu, perdez 2 Trésor.",
   "event.nobleResentment.name": "Ressentiment nobiliaire",
   "event.nobleResentment.desc":
-    "La résistance des élites grandit à la cour et en province. Payez 2 Financement ou Intervention royale, sinon gagnez Perte d'autorité pendant 3 tours.",
+    "La résistance des élites grandit à la cour et en province. Payez 2 Financement ou Intervention, sinon gagnez Perte d'autorité pendant 3 tours.",
   "event.provincialNoncompliance.name": "Non-conformité provinciale",
   "event.provincialNoncompliance.desc":
     "Les officiels locaux ralentissent l'application. Payez 2 Financement ou subissez pioche -2 l'an prochain, puis pioche -1 chacune des deux années suivantes.",
   "event.risingGrainPrices.name": "Hausse des prix du grain",
   "event.risingGrainPrices.desc":
-    "La pression alimentaire provoque des troubles. Payez 3 Financement ou Intervention royale ; si non résolu, perdez 2 Légitimité.",
+    "La pression alimentaire provoque des troubles. Payez 3 Financement ou Intervention ; si non résolu, perdez 2 Légitimité.",
   "event.taxResistance.name": "Résistance fiscale",
   "event.taxResistance.desc":
-    "Communautés et élites résistent aux levées. Payez 2 Financement ou Intervention royale ; si non résolu, perdez 1 Trésor et 1 Légitimité.",
+    "Communautés et élites résistent aux levées. Payez 2 Financement ou Intervention ; si non résolu, perdez 1 Trésor et 1 Légitimité.",
   "event.frontierGarrisons.name": "Garnisons frontalières",
   "event.frontierGarrisons.desc":
     "Les garnisons frontalières absorbent les recettes. Payez 3 Financement ou perdez 1 Trésor et subissez une pénalité de pioche l'an prochain.",
@@ -70,7 +70,7 @@ export const messagesFrSecondMandate: Record<keyof typeof messagesEnSecondMandat
     "Un officier capable peut être promu. Investissez 2 Financement pour Pouvoir +1.",
   "event.warWeariness.name": "Lassitude de guerre",
   "event.warWeariness.desc":
-    "Le conflit prolongé épuise le soutien. Payez 3 Financement ou Intervention royale, sinon perdez 1 Légitimité et gagnez Perte d'autorité pour 2 tours.",
+    "Le conflit prolongé épuise le soutien. Payez 3 Financement ou Intervention, sinon perdez 1 Légitimité et gagnez Perte d'autorité pour 2 tours.",
   "event.grainReliefCrisis.name": "Crise des secours céréaliers",
   "event.grainReliefCrisis.desc":
     "L'insécurité alimentaire s'aggrave. Dépensez 2 Financement pour stabiliser les communautés et gagner Légitimité +2 ; sinon la pression non résolue cause Légitimité -2.",

@@ -25,28 +25,28 @@ export const messagesEnSecondMandate = {
     "In 1598, Henry IV issued the Edict of Nantes to end the French Wars of Religion: Catholicism remained the state faith, while French Protestants (Huguenots) received limited worship rights, civil protections, and security guarantees. The crown now revokes it. This is a Continued event: if ignored, you draw 2 fewer cards each turn and it stays on the board. Resolve by choosing one policy: Religious Tolerance (immediate Legitimacy -1; gain permanent Religious Tolerance status that has a 30% yearly chance to spawn Religious Tension: pay 2 Funding or lose 1 Legitimacy), or Harsh Crackdown (no immediate numeric change; gain Contain Huguenot Remnants 3 and add 3 temporary “Suppress the Huguenots” cards to deck, cost 3 each; each play reduces remnants by 1; at 0, remove the status and purge those cards from hand/deck/discard). While that containment status exists, Chapter 2 victory is blocked.",
   "event.leagueOfAugsburg.name": "League of Augsburg Forms",
   "event.leagueOfAugsburg.desc":
-    "European powers coordinate against France. Pay 2 Funding (or use Royal Intervention) to contain escalation, or suffer Loss of Authority for 3 turns.",
+    "European powers coordinate against France. Pay 2 Funding (or use Intervention) to contain escalation, or suffer Loss of Authority for 3 turns.",
   "event.nineYearsWar.name": "The Nine Years' War",
   "event.nineYearsWar.desc":
-    "Major war pressure settles in. Pay 2 Funding (or use Royal Intervention) to stabilize the front; unresolved years erode Treasury and card flow.",
+    "Major war pressure settles in. Pay 2 Funding (or use Intervention) to stabilize the front; unresolved years erode Treasury and card flow.",
   "event.ryswickPeace.name": "Peace of Ryswick",
   "event.ryswickPeace.desc":
     "Peace terms can restore order. Invest 1 Funding to gain Legitimacy +1 and lock in a softer landing.",
   "event.versaillesExpenditure.name": "Versailles Expenditure",
   "event.versaillesExpenditure.desc":
-    "Court spending rises again. Pay 3 Funding or use Royal Intervention; if unresolved, lose 2 Treasury.",
+    "Court spending rises again. Pay 3 Funding or use Intervention; if unresolved, lose 2 Treasury.",
   "event.nobleResentment.name": "Noble Resentment",
   "event.nobleResentment.desc":
-    "Elite resistance grows at court and in the provinces. Pay 2 Funding or Royal Intervention, or gain Loss of Authority for 3 turns.",
+    "Elite resistance grows at court and in the provinces. Pay 2 Funding or Intervention, or gain Loss of Authority for 3 turns.",
   "event.provincialNoncompliance.name": "Provincial Noncompliance",
   "event.provincialNoncompliance.desc":
     "Local officials stall implementation. Pay 2 Funding or suffer draw -2 next year, then draw -1 in each of the next two years.",
   "event.risingGrainPrices.name": "Rising Grain Prices",
   "event.risingGrainPrices.desc":
-    "Food pressure drives unrest. Pay 3 Funding or use Royal Intervention; if unresolved, lose 2 Legitimacy.",
+    "Food pressure drives unrest. Pay 3 Funding or use Intervention; if unresolved, lose 2 Legitimacy.",
   "event.taxResistance.name": "Tax Resistance",
   "event.taxResistance.desc":
-    "Communities and elites resist levies. Pay 2 Funding or use Royal Intervention; if unresolved, lose 1 Treasury and 1 Legitimacy.",
+    "Communities and elites resist levies. Pay 2 Funding or use Intervention; if unresolved, lose 1 Treasury and 1 Legitimacy.",
   "event.frontierGarrisons.name": "Frontier Garrisons",
   "event.frontierGarrisons.desc":
     "Border garrisons consume revenue. Pay 3 Funding or lose 1 Treasury and take a draw penalty next year.",
@@ -67,7 +67,7 @@ export const messagesEnSecondMandate = {
     "A capable official can be elevated. Invest 2 Funding for Power +1.",
   "event.warWeariness.name": "War Weariness",
   "event.warWeariness.desc":
-    "Long conflict exhausts support. Pay 3 Funding or Royal Intervention, or lose 1 Legitimacy and gain Loss of Authority for 2 turns.",
+    "Long conflict exhausts support. Pay 3 Funding or Intervention, or lose 1 Legitimacy and gain Loss of Authority for 2 turns.",
   "event.grainReliefCrisis.name": "Grain Relief Crisis",
   "event.grainReliefCrisis.desc":
     "Food insecurity surges. Spend 2 Funding to stabilize communities and gain Legitimacy +2; unresolved pressure causes Legitimacy -2.",

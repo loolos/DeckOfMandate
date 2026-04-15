@@ -20,8 +20,8 @@ export const messagesEnCore = {
   "ui.resourceMobileCollapse": "Tap to collapse resource details",
   "ui.endTurn": "End turn",
   "ui.solve": "Solve ({cost})",
-  "ui.solveCrackdown": "Resolve (Royal Intervention)",
-  "ui.solveFundingOrCrackdown": "Pay {cost} or Royal Intervention",
+  "ui.solveCrackdown": "Resolve (Intervention)",
+  "ui.solveFundingOrCrackdown": "Pay {cost} or Intervention",
   "ui.scriptedAttack": "Attack ({cost})",
   "ui.nantesTolerance": "Religious Tolerance",
   "ui.nantesCrackdown": "Harsh Crackdown",
@@ -43,7 +43,7 @@ export const messagesEnCore = {
     "Small screen: tap events, statuses, and hand cards to expand details; double-click any hand card (compact or expanded) to play it.",
   "ui.playThisCard": "Play this card",
   "log.crackdownPickPrompt":
-    "[Turn {turn}] Choose a harmful event to resolve with Royal Intervention (not Colonial Trade Boom).",
+    "[Turn {turn}] Choose a harmful event to resolve with Intervention (not Colonial Trade Boom).",
   "ui.cancel": "Cancel",
   "ui.confirmRetention": "Confirm retention",
   "ui.newGame": "New run",
@@ -140,7 +140,7 @@ export const messagesEnCore = {
     "Versailles expansion and court ritual push spending past the budget. Pay 2 Funding or lose 1 Treasury.",
   "event.publicUnrest.name": "Paris Unrest",
   "event.publicUnrest.desc":
-    "Bread prices and rumor fill the streets. Royal Intervention only, or lose 1 Legitimacy.",
+    "Bread prices and rumor fill the streets. Intervention only, or lose 1 Legitimacy.",
   "event.administrativeDelay.name": "Bureaucratic Delay",
   "event.administrativeDelay.desc":
     "Provincial officials slow-walk new orders from the court. Pay 1 Funding or draw one fewer next turn (min 1 draw).",
@@ -149,10 +149,10 @@ export const messagesEnCore = {
     "Sea lanes and merchants ask for crown support. Pay 1 Funding to gain +1 Treasury. No penalty if ignored.",
   "event.powerVacuum.name": "Provincial Governor Ascendant",
   "event.powerVacuum.desc":
-    "A governor bypasses the court. Pay 2 Funding or Royal Intervention, or escalate to Royal Crisis next turn.",
+    "A governor bypasses the court. Pay 2 Funding or Intervention, or escalate to Royal Crisis next turn.",
   "event.majorCrisis.name": "Royal Crisis",
   "event.majorCrisis.desc":
-    "Royal Intervention only. Tagged Continued: if unresolved it remains into next turn and repeats Legitimacy -1 plus draw penalty each year until solved.",
+    "Intervention only. Tagged Continued: if unresolved it remains into next turn and repeats Legitimacy -1 plus draw penalty each year until solved.",
   "event.politicalGridlock.name": "Noble Resistance",
   "event.politicalGridlock.desc":
     "Great nobles unite against your fiscal scheme. Pay 2 Funding or suffer Loss of Authority for 3 turns (−1 draw attempt each turn, min 1 draw).",
@@ -197,11 +197,11 @@ export const messagesEnCore = {
   "log.eventFundSolved": "[Turn {turn}] Slot {slot}: {event}. Paid {paid} {funding}{treasury}",
   "log.eventFundSolved.treasury": " Treasury +{gain}.",
   "log.eventCrackdownSolved":
-    "[Turn {turn}] Slot {slot}: Royal Intervention cleared {event} (spent {paid} {funding}).",
+    "[Turn {turn}] Slot {slot}: Intervention cleared {event} (spent {paid} {funding}).",
   "log.eventYearEndPenalty.title": "[Turn {turn}] Year-end slot {slot}: {event} unresolved.",
   "log.eventYearEndPenalty.effectsLabel": "Penalties:",
   "log.eventPowerVacuumScheduled": "[Turn {turn}] Year-end slot {slot}: {event} — Royal Crisis next year.",
-  "log.crackdownCancelled": "[Turn {turn}] Royal Intervention cancelled; refunded {refund} {funding}.",
+  "log.crackdownCancelled": "[Turn {turn}] Intervention cancelled; refunded {refund} {funding}.",
   "log.eventScriptedAttack.generic":
     "[Turn {turn}] Slot {slot}: {event} — military option. Paid {paid} {funding}.{treasury}",
   "log.drawCards.title": "[Turn {turn}] Drew {count} card(s): {cards}.",

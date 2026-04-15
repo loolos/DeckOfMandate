@@ -25,8 +25,8 @@ export const messagesFrCore: Record<keyof typeof messagesEnCore, string> = {
   "ui.resourceMobileCollapse": "Touchez pour réduire les détails des ressources",
   "ui.endTurn": "Terminer le tour",
   "ui.solve": "Résoudre ({cost})",
-  "ui.solveCrackdown": "Résoudre (Intervention royale)",
-  "ui.solveFundingOrCrackdown": "Payer {cost} ou Intervention royale",
+  "ui.solveCrackdown": "Résoudre (Intervention)",
+  "ui.solveFundingOrCrackdown": "Payer {cost} ou Intervention",
   "ui.scriptedAttack": "Attaquer ({cost})",
   "ui.nantesTolerance": "Tolérance religieuse",
   "ui.nantesCrackdown": "Répression sévère",
@@ -48,7 +48,7 @@ export const messagesFrCore: Record<keyof typeof messagesEnCore, string> = {
     "Petit écran : touchez les événements, statuts et cartes en main pour afficher les détails ; double-cliquez une carte en main (compacte ou étendue) pour la jouer.",
   "ui.playThisCard": "Jouer cette carte",
   "log.crackdownPickPrompt":
-    "[Tour {turn}] Choisissez un événement néfaste à résoudre via Intervention royale (pas Boom du commerce colonial).",
+    "[Tour {turn}] Choisissez un événement néfaste à résoudre via Intervention (pas Boom du commerce colonial).",
   "ui.cancel": "Annuler",
   "ui.confirmRetention": "Confirmer la conservation",
   "ui.newGame": "Nouvelle partie",
@@ -147,7 +147,7 @@ export const messagesFrCore: Record<keyof typeof messagesEnCore, string> = {
     "L'expansion de Versailles et le rituel de cour poussent les dépenses au-delà du budget. Payez 2 Financement ou perdez 1 Trésor.",
   "event.publicUnrest.name": "Troubles à Paris",
   "event.publicUnrest.desc":
-    "Prix du pain et rumeurs envahissent les rues. Intervention royale uniquement, sinon perdez 1 Légitimité.",
+    "Prix du pain et rumeurs envahissent les rues. Intervention uniquement, sinon perdez 1 Légitimité.",
   "event.administrativeDelay.name": "Retard administratif",
   "event.administrativeDelay.desc":
     "Les officiels provinciaux ralentissent l'application des nouveaux ordres de la cour. Payez 1 Financement ou piochez une carte de moins au prochain tour (min 1).",
@@ -156,10 +156,10 @@ export const messagesFrCore: Record<keyof typeof messagesEnCore, string> = {
     "Routes maritimes et marchands demandent le soutien de la couronne. Payez 1 Financement pour gagner +1 Trésor. Aucune pénalité si ignoré.",
   "event.powerVacuum.name": "Gouverneur provincial ascendant",
   "event.powerVacuum.desc":
-    "Un gouverneur contourne la cour. Payez 2 Financement ou Intervention royale, sinon cela escalade en Crise royale au prochain tour.",
+    "Un gouverneur contourne la cour. Payez 2 Financement ou Intervention, sinon cela escalade en Crise royale au prochain tour.",
   "event.majorCrisis.name": "Crise royale",
   "event.majorCrisis.desc":
-    "Intervention royale uniquement. Tag Continu : si non résolu, il reste au tour suivant et répète Légitimité -1 plus pénalité de pioche chaque année jusqu'à résolution.",
+    "Intervention uniquement. Tag Continu : si non résolu, il reste au tour suivant et répète Légitimité -1 plus pénalité de pioche chaque année jusqu'à résolution.",
   "event.politicalGridlock.name": "Résistance nobiliaire",
   "event.politicalGridlock.desc":
     "Les grands nobles s'unissent contre votre plan fiscal. Payez 2 Financement ou subissez Perte d'autorité pendant 3 tours (−1 tentative de pioche par tour, min 1).",
