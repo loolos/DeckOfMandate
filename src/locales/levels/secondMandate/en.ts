@@ -89,10 +89,10 @@ export const messagesEnSecondMandate = {
   "card.diplomaticCongress.name": "Diplomatic Congress",
   "card.diplomaticCongress.background":
     "Envoys, conferences, and guarantees buy breathing room while rivals test your frontiers.",
-  "card.diplomaticCongress.desc": "Power +1. Add 1 temporary Diplomatic Intervention to your hand.",
+  "card.diplomaticCongress.desc": "Power +1. Add 1 extra Diplomatic Intervention to your hand.",
   "card.diplomaticIntervention.name": "Diplomatic Intervention",
   "card.diplomaticIntervention.background":
     "Apply pressure through envoys and treaty leverage rather than direct royal command.",
   "card.diplomaticIntervention.desc":
-    "Temporary card. Resolve one harmful event (not Colonial Trade Boom). Not a Royal-tag card.",
+    "Extra card. Resolve one harmful event (not Colonial Trade Boom). Not a Royal-tag card; excluded from chapter refit and removed when the chapter ends.",
 } as const;

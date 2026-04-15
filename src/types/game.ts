@@ -8,6 +8,7 @@ export type LogInfoKey =
   | "firstMandateInflationActivated"
   | "cardTag.royal"
   | "cardTag.temp"
+  | "cardTag.extra"
   | "cardTag.inflation"
   | "eventTag.harmful"
   | "eventTag.opportunity"
