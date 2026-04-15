@@ -112,7 +112,7 @@ export const messagesEnCore = {
   "card.crackdown.name": "Royal Intervention",
   "card.crackdown.background":
     "Edicts, troops, or police action—force applied where rumor and riot have already outpaced law.",
-  "card.crackdown.desc": "Resolve one harmful event (not Colonial Trade Boom).",
+  "card.crackdown.desc": "Resolve one harmful event.",
   "card.fiscalBurden.name": "Fiscal Burden",
   "card.fiscalBurden.background":
     "Debt obligations and emergency liabilities now crowd the books and constrain every cycle.",
@@ -202,6 +202,7 @@ export const messagesEnCore = {
   "log.crackdownCancelled": "[Turn {turn}] Royal Intervention cancelled; refunded {refund} {funding}.",
   "log.eventScriptedAttack.generic":
     "[Turn {turn}] Slot {slot}: {event} — military option. Paid {paid} {funding}.{treasury}",
+  "log.drawCards.title": "[Turn {turn}] Drew {count} card(s): {cards}.",
   "log.drawOverflowDiscarded.title":
     "[Turn {turn}] Hand reached cap; discarded {count} undrawn card(s): {cards}.",
   "log.info.firstMandateInflationActivated":

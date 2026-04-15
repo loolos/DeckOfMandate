@@ -94,6 +94,12 @@ export type ActionLogEntry =
       cardTemplateIds: CardTemplateId[];
     }
   | {
+      kind: "drawCards";
+      id: string;
+      turn: number;
+      cardTemplateIds: CardTemplateId[];
+    }
+  | {
       kind: "info";
       id: string;
       turn: number;

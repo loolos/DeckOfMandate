@@ -292,6 +292,15 @@ export function beginYear(state: GameState): GameState {
     discard: drawn.discard,
   };
   s = applyInflationFromDeckRefill(s, drawn.refilledCardIds);
+  if (drawn.drawnCardIds.length > 0) {
+    const drawnTemplateIds = drawn.drawnCardIds
+      .map((id) => s.cardsById[id]?.templateId)
+      .filter((id): id is CardTemplateId => Boolean(id));
+    s = appendActionLog(s, {
+      kind: "drawCards",
+      cardTemplateIds: drawnTemplateIds,
+    });
+  }
   if (drawn.discardedCardIds.length > 0) {
     const discardedTemplateIds = drawn.discardedCardIds
       .map((id) => s.cardsById[id]?.templateId)
