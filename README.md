@@ -12,7 +12,7 @@ Single-player, turn-based strategy card game about governance, crisis management
 - **Commit messages** and technical change descriptions
 - **Authoritative design and rules text** under `docs/` (English)
 
-**Player-facing UI copy** is **localized**: the shipped app supports **English** and **Chinese** for all user-visible strings (labels, card text, event text, onboarding or rules summaries shown in the UI). Copy is **not** hard-coded in components; it lives in **central locale bundles** (see [docs/design.md](docs/design.md) — **Localization**). The player can **switch language at any time** from an in-game control; the chosen locale should be **remembered** (for example LocalStorage).
+**Player-facing UI copy** is **localized**: the shipped app supports **English**, **Chinese**, and **French** for all user-visible strings (labels, card text, event text, onboarding or rules summaries shown in the UI). Copy is **not** hard-coded in components; it lives in **central locale bundles** (see [docs/design.md](docs/design.md) — **Localization**). The player can **switch language at any time** from an in-game control; the chosen locale should be **remembered** (for example LocalStorage).
 
 Informal design discussion may use other languages if your team prefers.
 
@@ -21,10 +21,9 @@ Informal design discussion may use other languages if your team prefers.
 | Document | Description |
 | --- | --- |
 | [docs/design.md](docs/design.md) | Tech stack, architecture, prototype scope |
-| [docs/gameplay.md](docs/gameplay.md) | Core loop, resources (Treasury stat vs funding), turn flow, win/lose |
-| [docs/card.md](docs/card.md) | Starter deck (prototype) |
-| [docs/levels.md](docs/levels.md) | Level 1 — *The Rising Sun* (Louis XIV, 1661–1675 campaign calendar), events, pacing |
-| [docs/RisingSun.md](docs/RisingSun.md) | Theme notes, bilingual event/card tables, War of Devolution background |
+| [docs/gameplay.md](docs/gameplay.md) | Core loop, resources, turn flow, win/lose, chapter mechanics |
+| [docs/card.md](docs/card.md) | Card system and chapter card pools |
+| [docs/太阳王战役.md](docs/太阳王战役.md) | Full campaign data reference (Chapter 1 + Chapter 2, script events, statuses) |
 
 ## Intended tech stack (MVP)
 
@@ -36,4 +35,4 @@ Design docs and rules are in place. A playable **MVP web client** (Vite + React 
 
 **MVP app shell:** opening the app shows a **start menu** (new run with optional seed, level choice, resume save). After starting, the run auto-saves to LocalStorage; see [docs/design.md](docs/design.md) (**MVP product shell**).
 
-**Player-facing copy:** strings are localized (**English** / **Chinese**). Shared UI text lives in [`src/locales/en.core.ts`](src/locales/en.core.ts) / [`zh.core.ts`](src/locales/zh.core.ts); level *firstMandate* narrative (intro, endings, War of Devolution, anti-coalition logs) lives under [`src/locales/levels/firstMandate/`](src/locales/levels/firstMandate/).
+**Player-facing copy:** strings are localized (**English** / **Chinese** / **French**). Shared UI text lives in [`src/locales/en.core.ts`](src/locales/en.core.ts), [`zh.core.ts`](src/locales/zh.core.ts), and [`fr.core.ts`](src/locales/fr.core.ts); chapter narratives live under [`src/locales/levels/`](src/locales/levels/).

@@ -1,5 +1,5 @@
 /**
- * 中文文案：关卡 `firstMandate`（旭日，法兰西 1661–1676）。
+ * 中文文案：关卡 `firstMandate`（旭日，法兰西 1661–1675）。
  * 与 {@link messagesEnFirstMandate} 键一致，供 `zh.ts` 合并。
  */
 export const messagesZhFirstMandate = {

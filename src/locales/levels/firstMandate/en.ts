@@ -1,5 +1,5 @@
 /**
- * English copy for level `firstMandate` (The Rising Sun, France 1661–1676).
+ * English copy for level `firstMandate` (The Rising Sun, France 1661–1675).
  * Keys mirror `levels.ts` / scripted content for this scenario.
  */
 export const messagesEnFirstMandate = {

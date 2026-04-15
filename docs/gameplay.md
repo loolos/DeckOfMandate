@@ -97,7 +97,7 @@ If Legitimacy reaches **0** or below: **Game Over** **immediately** (any phase�
 
 ## Turn Structure
 
-Each turn represents **one year** unless a level overrides the cadence (see `levels.md` — **calendar** and **years per turn**).
+Each turn represents **one year** unless a level overrides the cadence (see `docs/太阳王战役.md` — **calendar** and **years per turn**).
 
 **Calendar display (MVP):** Each level declares **how much calendar time one turn represents** (for example **1 year** or **1 month** per turn) and a **campaign start** instant on that same scale.
 
@@ -117,12 +117,12 @@ Exact string format is an implementation detail; the requirement is **correct gr
 **Turn index:** There is **no separate “setup year 0”** — the first **Income → … → End** cycle is **turn 1** and uses the level’s **first** campaign year.
 
 1. **Income phase** — Add **funding** equal to the current **Treasury stat**. (Then apply any “this turn” grants from effects that trigger at income, if the implementation uses that ordering.)
-2. **Draw phase** — Apply **scheduled draw-attempt modifiers** from the **previous** turn’s unresolved penalties (for example **Bureaucratic Delay** or **Royal Crisis**) and **ongoing status** effects (for example **Loss of Authority**), then compute a base **draw attempts** = `max(1, Power + modifiers + status deltas)`. If **Anti-French coalition** is active for this year, roll the configured hazard; on hit, apply the configured draw delta (still re-clamp so **attempts ≥ 1**). Perform **up to that many** draw attempts: for each attempt, if the hand has **fewer than 10** cards (**hand cap**), draw one card from the draw pile; otherwise **skip** further draws for that turn (remaining attempts are wasted).
-3. **Event phase** — **First**, apply any **scheduled slot transforms** (for example **Provincial Governor Ascendant** → **Royal Crisis** on the same slot; see `levels.md`). **Then**, clear **resolved** instances from slots. **Then**, apply **scripted calendar events** from `levelContent.scriptedCalendarEvents` (calendar inject / expiry; not part of the procedural pool). **Then**, **fill empty procedural slots** (`A`–`C` only) using the deterministic weighted-sequence system:
+2. **Draw phase** — Apply **scheduled draw-attempt modifiers** from the **previous** turn’s unresolved penalties (for example **Bureaucratic Delay** or **Royal Crisis**) and **ongoing status** effects (for example **Loss of Authority**), then compute a base **draw attempts** = `max(1, Power + modifiers + status deltas)`. If **Anti-French coalition** is active for this year, roll the configured hazard; on hit, apply the configured draw delta (still re-clamp so **attempts ≥ 1**). Perform **up to that many** draw attempts: for each attempt, if the hand has **fewer than 12** cards (**hand cap**), draw one card from the draw pile; if already at cap, the engine still consumes attempts by moving would-be draws to discard (visible in log as overflow discard).
+3. **Event phase** — **First**, apply any **scheduled slot transforms** (for example **Provincial Governor Ascendant** → **Royal Crisis** on the same slot; see `docs/太阳王战役.md`). **Then**, clear **resolved** instances from slots. **Then**, apply **scripted calendar events** from `levelContent.scriptedCalendarEvents` (calendar inject / expiry; not part of the procedural pool). **Then**, **fill empty procedural slots** (`A`–`C` only) using the deterministic weighted-sequence system:
    - The engine maintains a hidden **procedural event sequence**.
    - A sequence block is built by expanding each event template by its current roll **weight** (so each template appears exactly `weight` times in that block), then shuffling.
    - If the remaining sequence is low, a new shuffled block is appended to the tail.
-   - Each year still uses probability to decide whether an all-empty board gets **1 / 2 / 3** events (rules vary by turn index—see `levels.md`), then consumes that many entries from the sequence.
+   - Each year still uses probability to decide whether an all-empty board gets **1 / 2 / 3** events (rules vary by turn index—see `docs/太阳王战役.md`), then consumes that many entries from the sequence.
    - If a duplicate template would appear in the same refill batch, skip forward to the next later non-duplicate template.
    - Slots **D**–**J** exist for future/script overflow but are **not** filled by routine procedural rolls.
    - **Chapter 1 special opening:** on **turn 1**, slots **A/B** are fixed to **Colonial Trade Boom** then **Bureaucratic Delay** (implementation ids: `tradeOpportunity`, `administrativeDelay`); this is injected as the first sequence prefix before normal shuffling continues.
@@ -145,7 +145,7 @@ If the **draw pile** is empty when a card must be drawn, **shuffle the discard p
 - Effective playable cost = `base cost + inflation stack` (tracked **per card instance**, not per template).
 - Activation gates:
   - **Chapter 2 (`secondMandate`)**: always active.
-  - **Chapter 1 (`firstMandate`)**: active once `Power + Treasury stat + Legitimacy >= 14`.
+  - **Chapter 1 (`firstMandate`)**: active once `Power + Treasury stat + Legitimacy >= 12`.
 
 ### Chapter transition refit (current implementation)
 
@@ -158,9 +158,9 @@ If the **draw pile** is empty when a card must be drawn, **shuffle the discard p
 
 ### Hand size (MVP)
 
-- **Maximum cards in hand:** **10**.
-- **Draw phase** and **immediate draws** (for example from **Administrative Reform**) **cannot** raise the hand above **10**; excess draws are **skipped** (no mill / no damage for overdraw in MVP).
-- **Retention** cannot end the turn with more than **10** cards in hand (with cap 10 and retain ≤ Legitimacy, this normally binds only on draws).
+- **Maximum cards in hand:** **12**.
+- **Draw phase** and **immediate draws** (for example from **Administrative Reform**) **cannot** raise the hand above **12**. In Draw phase, overflow attempts move cards to discard; immediate card-effect draws at cap simply fail to add a card.
+- **Retention** cannot end the turn with more than **12** cards in hand (with cap 12 and retain ≤ Legitimacy, this normally binds only on draws).
 
 ### Resolved events and next turn’s slots (MVP)
 
@@ -204,7 +204,7 @@ Represents: collapse, removal from office, coup, revolution, regime failure.
 
 Cards are the player's tools.
 
-**Initial prototype deck (level 1 implementation):** **13** cards — **Royal Levy** ×4, **Royal Intervention** ×3, **Administrative Reform** ×2, **Versailles Ceremony** ×2, **Royal Manufactories** ×2 (see `levels.md` / `src/data/levelContent.ts` — `starterDeckTemplateOrder` for `firstMandate`).
+**Initial prototype deck (level 1 implementation):** **13** cards — **Royal Levy** ×4, **Royal Intervention** ×3, **Administrative Reform** ×2, **Versailles Ceremony** ×2, **Royal Manufactories** ×2 (see `docs/太阳王战役.md` / `src/data/levelContent.ts` — `starterDeckTemplateOrder` for `firstMandate`).
 
 ### Example cards
 
@@ -217,14 +217,14 @@ Cards are the player's tools.
 **Royal Intervention** (implementation id: `crackdown`)
 
 - **Cost:** 1 **funding**
-- **Effect (MVP):** Resolve **one harmful event** you choose among the two current events. **Colonial Trade Boom** cannot be chosen (it is not harmful: no penalty if ignored).
+- **Effect (MVP):** Resolve **one unresolved harmful event** in the event slots. **Colonial Trade Boom** cannot be chosen (it is not harmful: no penalty if ignored).
 - **Purpose:** Short-term control tool. Later versions may narrow this to tag-based targeting (Unrest/Crisis, and so on).
 
 **Administrative Reform** (implementation id: `reform`)
 
 - **Cost:** 2 **funding**
 - **Effect:** **Power +1** (stat updates immediately; each **+1** stacks and counts toward **next** turn’s **Draw phase** size). **Draw 1** **immediately** when played (**Action phase**), respecting the **hand cap** (if the hand is already full, **no card** is drawn; Power +1 still applies).
-- **Stacking (MVP):** Playing **multiple Administrative Reform** cards in the **same** Action phase is allowed: resolve each card in order—each grants **Power +1** (all stack for **next** turn’s draw count) and each **Draw 1** now (each skipped independently if the hand is already at **10** cards).
+- **Stacking (MVP):** Playing **multiple Administrative Reform** cards in the **same** Action phase is allowed: resolve each card in order—each grants **Power +1** (all stack for **next** turn’s draw count) and each **Draw 1** now (each skipped independently if the hand is already at **12** cards).
 - **Purpose:** Long-term scaling plus occasional **same-turn** tempo from the bonus draw.
 
 **Versailles Ceremony** (implementation id: `ceremony`)
@@ -245,7 +245,7 @@ Cards are the player's tools.
 
 Events are the main source of challenge.
 
-- Each **Event phase** refills **empty procedural slots** `A`–`C` from a hidden **weighted sequence** built from the level pool (event count per turn still follows the **1–3** probability rule when the board is fully empty; see `levels.md`). This guarantees long-run frequencies match configured weights block-by-block. **Scripted** rows (for example **War of Devolution**) are **not** in the procedural pool; they are injected by **calendar rules** in `levelContent.scriptedCalendarEvents`.
+- Each **Event phase** refills **empty procedural slots** `A`–`C` from a hidden **weighted sequence** built from the level pool (event count per turn still follows the **1–3** probability rule when the board is fully empty; see `docs/太阳王战役.md`). This guarantees long-run frequencies match configured weights block-by-block. **Scripted** rows (for example **War of Devolution**) are **not** in the procedural pool; they are injected by **calendar rules** in `levelContent.scriptedCalendarEvents`.
 - Multiple simultaneous events force prioritization.
 
 ### Example events
@@ -277,7 +277,7 @@ Events are the main source of challenge.
 
 **Royal Crisis** (implementation id: `majorCrisis`)
 
-- Usually reached by escalation from **Provincial Governor Ascendant**. Tagged **Continued**: if unresolved it **stays on the slot into next turn** and repeats Legitimacy **-1** plus a **draw-attempt penalty** each year (same modifier pipeline as **Bureaucratic Delay**) until solved. **Royal Intervention** only for the MVP solve path (see `levels.md`).
+- Usually reached by escalation from **Provincial Governor Ascendant**. Tagged **Continued**: if unresolved it **stays on the slot into next turn** and repeats Legitimacy **-1** plus a **draw-attempt penalty** each year (same modifier pipeline as **Bureaucratic Delay**) until solved. **Royal Intervention** only for the MVP solve path (see `docs/太阳王战役.md`).
 
 **War of Devolution** (implementation id: `warOfDevolution`; *The Rising Sun*)
 
