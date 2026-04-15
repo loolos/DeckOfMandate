@@ -307,12 +307,8 @@ export function getEventTemplate(id: EventTemplateId): EventTemplate {
 }
 
 export function getEventRollWeight(state: GameState, id: EventTemplateId): number {
-  const base = eventTemplates[id].weight;
-  if (!state.europeAlert) return base;
-  if (id === "warWeariness") {
-    return base + 1;
-  }
-  return base;
+  void state;
+  return eventTemplates[id].weight;
 }
 
 /** Continued crises persist or transform; all other harmful crises clear after their EOY strike. */
