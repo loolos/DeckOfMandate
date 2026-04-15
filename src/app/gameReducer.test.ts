@@ -100,6 +100,117 @@ describe("gameReducer", () => {
     }
   });
 
+  it("first mandate starts royal intervention at 3/3 uses", () => {
+    const s0 = createInitialState(1002, "firstMandate");
+    const crackdownId = Object.keys(s0.cardsById).find((id) => s0.cardsById[id]?.templateId === "crackdown");
+    if (!crackdownId) throw new Error("expected crackdown in chapter 1 deck");
+    expect(s0.cardUsesById[crackdownId]).toEqual({ remaining: 3, total: 3 });
+  });
+
+  it("second mandate starts royal cards at 1/3 uses", () => {
+    const s0 = createInitialState(1003, "secondMandate");
+    const crackdownId = Object.keys(s0.cardsById).find((id) => s0.cardsById[id]?.templateId === "crackdown");
+    const fundingId = Object.keys(s0.cardsById).find((id) => s0.cardsById[id]?.templateId === "funding");
+    if (!crackdownId || !fundingId) throw new Error("expected royal cards in chapter 2 deck");
+    expect(s0.cardUsesById[crackdownId]).toEqual({ remaining: 1, total: 3 });
+    expect(s0.cardUsesById[fundingId]).toEqual({ remaining: 1, total: 3 });
+  });
+
+  it("playing funding decrements uses and on depletion removes card with treasury penalty log", () => {
+    const base = createInitialState(1004, "firstMandate");
+    const fundingId = "funding_limited";
+    const withCard: typeof base = {
+      ...base,
+      cardsById: {
+        ...base.cardsById,
+        [fundingId]: { instanceId: fundingId, templateId: "funding" as const },
+      },
+      cardUsesById: {
+        ...base.cardUsesById,
+        [fundingId]: { remaining: 1, total: 3 },
+      },
+      hand: [fundingId],
+      deck: [],
+      discard: [],
+      resources: { ...base.resources, treasuryStat: 4, funding: 0 },
+    };
+    const after = gameReducer(withCard, { type: "PLAY_CARD", handIndex: 0 });
+    expect(after.cardUsesById[fundingId]).toBeUndefined();
+    expect(after.hand.includes(fundingId)).toBe(false);
+    expect(after.discard.includes(fundingId)).toBe(false);
+    expect(after.resources.treasuryStat).toBe(3);
+    const penaltyLog = after.actionLog.find(
+      (entry) => entry.kind === "info" && entry.infoKey === "cardUse.depleted.fundingPenalty",
+    );
+    expect(penaltyLog).toBeTruthy();
+  });
+
+  it("discarding at retention does not decrement limited uses", () => {
+    const base = createInitialState(1005, "firstMandate");
+    const fundingId = "funding_retention";
+    const safe = "safe_card";
+    const withCard: typeof base = {
+      ...base,
+      cardsById: {
+        ...base.cardsById,
+        [fundingId]: { instanceId: fundingId, templateId: "funding" as const },
+        [safe]: { instanceId: safe, templateId: "reform" as const },
+      },
+      cardUsesById: {
+        ...base.cardUsesById,
+        [fundingId]: { remaining: 3, total: 3 },
+      },
+      hand: [fundingId, safe],
+      deck: [],
+      discard: [],
+      phase: "retention",
+      resources: { ...base.resources, legitimacy: 1 },
+      slots: {
+        ...EMPTY_EVENT_SLOTS,
+        A: { instanceId: "safe_evt", templateId: "tradeOpportunity" as const, resolved: true },
+      },
+    };
+    const after = gameReducer(withCard, { type: "CONFIRM_RETENTION", keepIds: [safe] });
+    expect(after.discard.includes(fundingId)).toBe(true);
+    expect(after.cardUsesById[fundingId]).toEqual({ remaining: 3, total: 3 });
+  });
+
+  it("crackdown uses decrement only when target confirmed, and depletion applies power penalty", () => {
+    const base = createInitialState(1006, "firstMandate");
+    const crackdownId = "crackdown_limited";
+    const withCard: typeof base = {
+      ...base,
+      cardsById: {
+        ...base.cardsById,
+        [crackdownId]: { instanceId: crackdownId, templateId: "crackdown" as const },
+      },
+      cardUsesById: {
+        ...base.cardUsesById,
+        [crackdownId]: { remaining: 1, total: 3 },
+      },
+      hand: [crackdownId],
+      deck: [],
+      discard: [],
+      resources: { ...base.resources, funding: 1, power: 4 },
+      slots: {
+        ...EMPTY_EVENT_SLOTS,
+        A: { instanceId: "harm_evt", templateId: "publicUnrest", resolved: false },
+      },
+    };
+    const afterPlay = gameReducer(withCard, { type: "PLAY_CARD", handIndex: 0 });
+    expect(afterPlay.pendingInteraction?.type).toBe("crackdownPick");
+    expect(afterPlay.cardUsesById[crackdownId]).toEqual({ remaining: 1, total: 3 });
+
+    const afterTarget = gameReducer(afterPlay, { type: "CRACKDOWN_TARGET", slot: "A" });
+    expect(afterTarget.cardUsesById[crackdownId]).toBeUndefined();
+    expect(afterTarget.discard.includes(crackdownId)).toBe(false);
+    expect(afterTarget.resources.power).toBe(3);
+    const penaltyLog = afterTarget.actionLog.find(
+      (entry) => entry.kind === "info" && entry.infoKey === "cardUse.depleted.crackdownPenalty",
+    );
+    expect(penaltyLog).toBeTruthy();
+  });
+
   it("appends eventFundSolved to actionLog when paying to solve an event", () => {
     const s0 = createInitialState(31415);
     const s1: typeof s0 = {
@@ -260,6 +371,41 @@ describe("gameReducer", () => {
     expect(afterPlay.pendingInteraction?.type).toBe("crackdownPick");
     expect(afterPlay.pendingInteraction?.cardInstanceId).toBe(diplomaticIntervention);
     expect(afterPlay.resources.funding).toBe(0);
+  });
+
+  it("diplomatic intervention starts at 3/3 and is removed on depletion without penalty", () => {
+    const base = createInitialState(123_010, "secondMandate");
+    const diplomaticIntervention = "tmp_di_limited";
+    const withCardInHand: typeof base = {
+      ...base,
+      cardsById: {
+        ...base.cardsById,
+        [diplomaticIntervention]: {
+          instanceId: diplomaticIntervention,
+          templateId: "diplomaticIntervention",
+        },
+      },
+      cardUsesById: {
+        ...base.cardUsesById,
+        [diplomaticIntervention]: { remaining: 1, total: 3 },
+      },
+      hand: [diplomaticIntervention],
+      resources: { ...base.resources, funding: 0, power: 5, treasuryStat: 5 },
+      slots: {
+        ...base.slots,
+        A: { instanceId: "e_harm2", templateId: "nobleResentment" as const, resolved: false },
+      },
+    };
+    const afterPlay = gameReducer(withCardInHand, { type: "PLAY_CARD", handIndex: 0 });
+    const afterTarget = gameReducer(afterPlay, { type: "CRACKDOWN_TARGET", slot: "A" });
+    expect(afterTarget.cardUsesById[diplomaticIntervention]).toBeUndefined();
+    expect(afterTarget.discard.includes(diplomaticIntervention)).toBe(false);
+    expect(afterTarget.resources.power).toBe(5);
+    expect(afterTarget.resources.treasuryStat).toBe(5);
+    const infoLog = afterTarget.actionLog.find(
+      (entry) => entry.kind === "info" && entry.infoKey === "cardUse.depleted.diplomaticIntervention",
+    );
+    expect(infoLog).toBeTruthy();
   });
 
   it("playing diplomatic congress adds a temporary diplomatic intervention to hand", () => {

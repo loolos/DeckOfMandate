@@ -193,6 +193,13 @@ export const messagesFrCore: Record<keyof typeof messagesEnCore, string> = {
   "card.tag.royal": "Royal",
   "card.tag.temp": "Temp",
   "card.tag.inflation": "Inflation",
+  "card.tag.remainingUses": "Restant {remaining}/{total}",
+  "log.info.cardUse.depleted.crackdownPenalty":
+    "[Tour {turn}] Intervention royale atteint 0/3 et est retirée du cycle ; la capacité de contrainte de la cour recule (Pouvoir -1).",
+  "log.info.cardUse.depleted.fundingPenalty":
+    "[Tour {turn}] Prélèvement royal atteint 0/3 et est retiré du cycle ; les canaux d'extraction d'urgence s'épuisent (Trésor -1).",
+  "log.info.cardUse.depleted.diplomaticIntervention":
+    "[Tour {turn}] Intervention diplomatique atteint 0/3 et est retirée du cycle (sans pénalité).",
   "help.short":
     "Le Trésor fixe le revenu en Financement par tour. Le Financement paie les cartes et résolutions d'événements. Le Pouvoir fixe les tentatives de pioche. La Légitimité fixe la limite de conservation. Les événements néfastes non résolus sont réglés en séquence.",
 };

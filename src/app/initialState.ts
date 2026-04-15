@@ -1,5 +1,6 @@
 import { getLevelContent } from "../data/levelContent";
 import { defaultLevelId, getLevelDef } from "../data/levels";
+import { buildDefaultCardUsesById } from "../logic/cardUsage";
 import { computeEuropeAlertDrawPenalty } from "../logic/europeAlert";
 import { createRngFromSeed, shuffle } from "../logic/rng";
 import { beginYear } from "../logic/turnFlow";
@@ -43,6 +44,7 @@ export function createInitialState(
   for (const c of shuffled) {
     cardsById[c.instanceId] = { instanceId: c.instanceId, templateId: c.templateId };
   }
+  const cardUsesById = buildDefaultCardUsesById(levelId, cardsById);
 
   const base: GameState = {
     levelId,
@@ -61,6 +63,7 @@ export function createInitialState(
     discard: [],
     hand: [],
     cardsById,
+    cardUsesById,
     cardInflationById: {},
     slots: { ...EMPTY_EVENT_SLOTS },
     pendingMajorCrisis: { ...EMPTY_PENDING_MAJOR_CRISIS },

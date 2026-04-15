@@ -160,6 +160,7 @@ export const messagesZhCore = {
   "card.tag.royal": "王室",
   "card.tag.temp": "临时",
   "card.tag.inflation": "通胀",
+  "card.tag.remainingUses": "剩余{remaining}/{total}",
   "log.cardPlayed.title": "[第 {turn} 年] {card} — 支付 {cost} {funding}。",
   "log.cardPlayed.effectsLabel": "效果：",
   "log.cardPlayed.noEffects": "无列表效果。",
@@ -188,6 +189,12 @@ export const messagesZhCore = {
   "log.info.cardTag.temp": "[第 {turn} 年] 标签说明「临时」：该牌通常为一次性应急工具，打出后不会进入弃牌堆循环。",
   "log.info.cardTag.inflation":
     "[第 {turn} 年] 标签说明「通胀」：当卡牌通胀机制生效后，该牌每次经过洗牌回抽都会叠加费用。",
+  "log.info.cardUse.depleted.crackdownPenalty":
+    "[第 {turn} 年]「王室干预」次数耗尽（0/3），已从牌库循环中移除；王室强制力受损，权力 -1。",
+  "log.info.cardUse.depleted.fundingPenalty":
+    "[第 {turn} 年]「王室征收」次数耗尽（0/3），已从牌库循环中移除；非常规筹资渠道枯竭，财政 -1。",
+  "log.info.cardUse.depleted.diplomaticIntervention":
+    "[第 {turn} 年]「外交干预」次数耗尽（0/3），已从牌库循环中移除（无额外惩罚）。",
   "log.info.eventTag.harmful": "[第 {turn} 年] 标签说明「有害」：若年末仍未解决，会触发惩罚。",
   "log.info.eventTag.opportunity": "[第 {turn} 年] 标签说明「机遇」：属于可投资机会，不处理通常不会受到惩罚。",
   "log.info.eventTag.continued":
