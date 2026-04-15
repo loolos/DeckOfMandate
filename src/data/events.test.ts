@@ -11,11 +11,11 @@ describe("getEventRollWeight", () => {
     expect(getEventRollWeight(st, "risingGrainPrices")).toBe(3);
   });
 
-  it("adds +1 only for war weariness when europe alert is on", () => {
+  it("keeps base weights when europe alert is on", () => {
     const st = { ...createInitialState(222, "secondMandate"), europeAlert: true };
     expect(getEventRollWeight(st, "frontierGarrisons")).toBe(2);
     expect(getEventRollWeight(st, "tradeDisruption")).toBe(1);
-    expect(getEventRollWeight(st, "warWeariness")).toBe(3);
+    expect(getEventRollWeight(st, "warWeariness")).toBe(2);
     expect(getEventRollWeight(st, "risingGrainPrices")).toBe(3);
   });
 });

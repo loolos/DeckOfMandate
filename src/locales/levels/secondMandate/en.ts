@@ -14,7 +14,7 @@ export const messagesEnSecondMandate = {
     "The burdens of hegemony break the regime. Fiscal strain, social unrest, and diplomatic pressure outpace royal control, leaving the crown weakened and isolated.",
   "status.europeAlert.name": "Europe Alert",
   "status.europeAlert.hint":
-    "War-weariness pressure rolls with +1 weight. Fixed draw reduction each year: -{n}. Europe Alert may also add an extra Frontier Garrisons/Trade Disruption event each year.",
+    "Fixed draw reduction each year: -{n}. Treasury income scales down every two turns (turns 1-2: -1, turns 3-4: -2, turns 5-6: -3, etc.). Europe Alert may also add an extra Frontier Garrisons/Trade Disruption event each year.",
   "status.europeAlert.history":
     "Earlier French offensives hardened long-run coalition vigilance across Europe.",
   "event.nymwegenSettlement.name": "Treaties of Nijmegen",

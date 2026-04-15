@@ -71,7 +71,7 @@ export const messagesFrCore: Record<keyof typeof messagesEnCore, string> = {
   "menu.refit.resources": "Ressources de départ — Trésor {treasury}, Pouvoir {power}, Légitimité {legitimacy}",
   "menu.refit.startYear": "Année de départ du Chapitre 2 : {year}",
   "menu.refit.europeAlertOn":
-    "Alerte Europe : ACTIVÉE (Poids de Lassitude de guerre +1 ; réduction fixe de pioche chaque année : -{n} ; plus 50% de chance chaque année d'ajouter Garnisons frontalières ou Perturbation commerciale).",
+    "Alerte Europe : ACTIVÉE (réduction fixe de pioche chaque année : -{n} ; le revenu du Trésor baisse par paliers de 2 tours : tours 1-2 : -1, tours 3-4 : -2, tours 5-6 : -3, etc. ; plus 50% de chance chaque année d'ajouter Garnisons frontalières ou Perturbation commerciale).",
   "menu.refit.europeAlertOff": "Alerte Europe : DÉSACTIVÉE (pression standard du Chapitre 2).",
   "menu.refit.totalCards": "Taille du deck : {current} (requis {min}–{max})",
   "menu.refit.totalCards.simple": "Taille du deck après retraits : {current}",

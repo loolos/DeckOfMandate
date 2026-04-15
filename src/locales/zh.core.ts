@@ -64,7 +64,7 @@ export const messagesZhCore = {
   "menu.refit.resources": "开局资源 — 财政 {treasury}，权力 {power}，合法性 {legitimacy}",
   "menu.refit.startYear": "第二关起始年份：{year}",
   "menu.refit.europeAlertOn":
-    "欧洲警觉：开启（战争疲劳权重 +1；每回合固定少抽 {n} 张；且每年有 50% 额外出现边境驻军/海贸受阻其一）。",
+    "欧洲警觉：开启（每回合固定少抽 {n} 张；资金收入按两回合阶梯递减：第1-2回合-1，第3-4回合-2，第5-6回合-3……；且每年有50%额外出现边境驻军/海贸受阻其一）。",
   "menu.refit.europeAlertOff": "欧洲警觉：关闭（标准第二关压力）。",
   "menu.refit.totalCards": "总牌数：{current}（需在 {min}–{max}）",
   "menu.refit.totalCards.simple": "删牌后总牌数：{current}",

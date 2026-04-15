@@ -17,7 +17,7 @@ export const messagesFrSecondMandate: Record<keyof typeof messagesEnSecondMandat
     "Le coût de l'hégémonie brise le régime. Pression fiscale, agitation sociale et contrainte diplomatique dépassent le contrôle royal, laissant la couronne affaiblie et isolée.",
   "status.europeAlert.name": "Alerte Europe",
   "status.europeAlert.hint":
-    "Les jets de pression de lassitude de guerre ont +1 de poids. Réduction fixe de pioche chaque année : -{n}. Alerte Europe peut aussi ajouter chaque année un événement supplémentaire Garnisons frontalières / Perturbation commerciale.",
+    "Réduction fixe de pioche chaque année : -{n}. Le revenu du Trésor baisse par paliers de 2 tours (tours 1-2 : -1, tours 3-4 : -2, tours 5-6 : -3, etc.). Alerte Europe peut aussi ajouter chaque année un événement supplémentaire Garnisons frontalières / Perturbation commerciale.",
   "status.europeAlert.history":
     "Les offensives françaises antérieures ont durci la vigilance de coalition à long terme en Europe.",
   "event.nymwegenSettlement.name": "Traités de Nimègue",
