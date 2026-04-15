@@ -119,7 +119,7 @@ export const messagesFrCore: Record<keyof typeof messagesEnCore, string> = {
   "card.crackdown.name": "Intervention royale",
   "card.crackdown.background":
     "Édits, troupes ou action policière — la force appliquée là où rumeur et émeute dépassent déjà la loi.",
-  "card.crackdown.desc": "Résolvez un événement néfaste (pas Boom du commerce colonial).",
+  "card.crackdown.desc": "Résolvez un événement néfaste.",
   "card.fiscalBurden.name": "Fardeau fiscal",
   "card.fiscalBurden.background":
     "Dettes et passifs d'urgence encombrent désormais les comptes et contraignent chaque cycle.",

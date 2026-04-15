@@ -42,6 +42,12 @@ describe("beginYear + playerStatuses", () => {
     const s1 = beginYear(s0);
     expect(s1.hand.length).toBe(2);
     expect(s1.deck.length).toBe(2);
+    const drawLog = s1.actionLog.find((e) => e.kind === "drawCards");
+    expect(drawLog).toBeTruthy();
+    if (drawLog?.kind === "drawCards") {
+      expect(drawLog.cardTemplateIds).toHaveLength(2);
+      expect(drawLog.cardTemplateIds).toContain("funding");
+    }
     expect(s1.playerStatuses).toHaveLength(1);
     expect(s1.playerStatuses[0]!.turnsRemaining).toBe(1);
   });

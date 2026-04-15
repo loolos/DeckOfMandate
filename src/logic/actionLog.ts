@@ -30,6 +30,7 @@ export type ActionLogPayload =
     }
   | { kind: "antiFrenchLeagueDraw"; probabilityPct: number }
   | { kind: "drawOverflowDiscarded"; cardTemplateIds: CardTemplateId[] }
+  | { kind: "drawCards"; cardTemplateIds: CardTemplateId[] }
   | { kind: "info"; infoKey: LogInfoKey };
 
 export function appendActionLog(state: GameState, payload: ActionLogPayload): GameState {

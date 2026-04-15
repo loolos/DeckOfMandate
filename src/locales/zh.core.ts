@@ -106,7 +106,7 @@ export const messagesZhCore = {
   "card.funding.desc": "本回合 +1 经费（不增加财政能力）。",
   "card.crackdown.name": "王室干预",
   "card.crackdown.background": "敕令、驻军或警察行动——在流言与骚动已快于法律之处强行落实。",
-  "card.crackdown.desc": "解决一个有害事件（不能选殖民贸易机遇）。",
+  "card.crackdown.desc": "解决一个有害事件。",
   "card.fiscalBurden.name": "财政负担",
   "card.fiscalBurden.background": "债务与紧急开支挤入账册，持续拖慢每个回合的财政回旋。",
   "card.fiscalBurden.desc": "抽到时经费 -1。可支付 2 经费打出并消除（不会进入弃牌堆）。",
@@ -180,6 +180,7 @@ export const messagesZhCore = {
   "log.crackdownCancelled": "[第 {turn} 年] 已取消王室干预；退回 {refund} {funding}。",
   "log.eventScriptedAttack.generic":
     "[第 {turn} 年] 槽位 {slot}：{event} — 采取军事进攻。已支付 {paid} {funding}。{treasury}",
+  "log.drawCards.title": "[第 {turn} 年] 本回合抓取 {count} 张牌：{cards}。",
   "log.drawOverflowDiscarded.title":
     "[第 {turn} 年] 手牌已达上限；将剩余未摸的 {count} 张牌直接置入弃牌堆：{cards}。",
   "log.info.firstMandateInflationActivated":
