@@ -428,25 +428,48 @@ describe("gameReducer", () => {
     expect(after.discard).toContain(congressId);
   });
 
-  it("temporary diplomatic intervention is purged at year end instead of entering discard", () => {
+  it("extra diplomatic intervention can enter discard during year-end retention", () => {
     const base = createInitialState(202_702, "secondMandate");
     const tempId = "tmp_di_purge";
+    const keepId = "keep_funding";
     const withTempInHand: typeof base = {
       ...base,
-      hand: [tempId],
+      hand: [tempId, keepId],
       cardsById: {
         ...base.cardsById,
         [tempId]: { instanceId: tempId, templateId: "diplomaticIntervention" as const },
+        [keepId]: { instanceId: keepId, templateId: "funding" as const },
       },
-      resources: { ...base.resources, funding: 0, legitimacy: 3 },
+      resources: { ...base.resources, funding: 0, legitimacy: 1 },
       slots: {
         ...EMPTY_EVENT_SLOTS,
         A: { instanceId: "safe_evt", templateId: "tradeOpportunity" as const, resolved: true },
       },
     };
-    const after = gameReducer(withTempInHand, { type: "END_YEAR" });
+    const inRetention = gameReducer(withTempInHand, { type: "END_YEAR" });
+    expect(inRetention.phase).toBe("retention");
+    const after = gameReducer(inRetention, { type: "CONFIRM_RETENTION", keepIds: [keepId] });
     expect(after.hand.includes(tempId)).toBe(false);
-    expect(after.discard.includes(tempId)).toBe(false);
+    expect(after.discard.includes(tempId)).toBe(true);
+  });
+
+  it("extra cards are purged when the level ends (defeat)", () => {
+    const base = createInitialState(202_703, "secondMandate");
+    const extraId = "tmp_di_end";
+    const withExtraInDiscard: typeof base = {
+      ...base,
+      discard: [extraId],
+      cardsById: {
+        ...base.cardsById,
+        [extraId]: { instanceId: extraId, templateId: "diplomaticIntervention" as const },
+      },
+      resources: { ...base.resources, legitimacy: 0 },
+    };
+    const after = gameReducer(withExtraInDiscard, { type: "END_YEAR" });
+    expect(after.outcome).toBe("defeatLegitimacy");
+    expect(after.phase).toBe("gameOver");
+    expect(after.discard.includes(extraId)).toBe(false);
+    expect(after.cardsById[extraId]).toBeUndefined();
   });
 
   it("expansion remembered solved adds two fiscal burden cards to deck", () => {

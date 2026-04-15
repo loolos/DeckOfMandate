@@ -197,6 +197,20 @@ function renderEntry(e: ActionLogEntry, t: (key: MessageKey, vars?: Record<strin
         </div>
       );
     }
+    case "drawCards": {
+      const cardList = e.cardTemplateIds
+        .map((id) => cardLabelWithIcon(id, t(cardTitleKey(id))))
+        .join("、");
+      return (
+        <div className={styles.actionLogHead}>
+          {t("log.drawCards.title", {
+            turn: e.turn,
+            count: e.cardTemplateIds.length,
+            cards: cardList,
+          })}
+        </div>
+      );
+    }
     case "info":
       return <div className={styles.actionLogHead}>{t(`log.info.${e.infoKey}` as MessageKey, { turn: e.turn })}</div>;
     default: {

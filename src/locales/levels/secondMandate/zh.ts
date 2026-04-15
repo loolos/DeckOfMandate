@@ -81,8 +81,9 @@ export const messagesZhSecondMandate = {
   "card.taxRebalance.desc": "财政 +1，并获得「抽牌受限」2 回合（每回合抽牌 -1）。",
   "card.diplomaticCongress.name": "外交会议",
   "card.diplomaticCongress.background": "通过使节与会议换取喘息，减轻短期外部压力。",
-  "card.diplomaticCongress.desc": "权力 +1。向手牌加入 1 张临时的「外交干预」。",
+  "card.diplomaticCongress.desc": "权力 +1。向手牌加入 1 张额外的「外交干预」。",
   "card.diplomaticIntervention.name": "外交干预",
   "card.diplomaticIntervention.background": "通过使节施压与条约操作解决危机，而非直接动用王室强制力。",
-  "card.diplomaticIntervention.desc": "临时牌。解决一个有害事件（不能选殖民贸易机遇），且不带王室标签。",
+  "card.diplomaticIntervention.desc":
+    "额外牌。解决一个有害事件（不能选殖民贸易机遇），且不带王室标签；不会出现在过关整编中，本关结束后会移除。",
 } as const;

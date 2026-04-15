@@ -92,10 +92,10 @@ export const messagesFrSecondMandate: Record<keyof typeof messagesEnSecondMandat
   "card.diplomaticCongress.name": "Congrès diplomatique",
   "card.diplomaticCongress.background":
     "Émissaires, conférences et garanties achètent du répit pendant que vos rivaux testent vos frontières.",
-  "card.diplomaticCongress.desc": "Pouvoir +1. Ajoutez 1 Intervention diplomatique temporaire à votre main.",
+  "card.diplomaticCongress.desc": "Pouvoir +1. Ajoutez 1 Intervention diplomatique supplémentaire à votre main.",
   "card.diplomaticIntervention.name": "Intervention diplomatique",
   "card.diplomaticIntervention.background":
     "Exercez une pression via émissaires et leviers de traité plutôt que par commandement royal direct.",
   "card.diplomaticIntervention.desc":
-    "Carte temporaire. Résolvez un événement néfaste (pas Boom du commerce colonial). N'est pas une carte taguée Royal.",
+    "Carte supplémentaire. Résolvez un événement néfaste (pas Boom du commerce colonial). N'est pas une carte taguée Royal ; exclue du réajustement inter-chapitre et retirée à la fin du chapitre.",
 };

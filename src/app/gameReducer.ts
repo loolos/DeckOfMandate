@@ -41,6 +41,29 @@ function isTemporaryCardInstance(state: GameState, instanceId: string): boolean 
   return hasCardTag(state, instanceId, "temp");
 }
 
+function purgeExtraCardsIfLevelEnded(state: GameState): GameState {
+  if (state.outcome === "playing") return state;
+  const isExtraCardId = (id: string): boolean => {
+    const inst = state.cardsById[id];
+    if (!inst) return false;
+    return getCardTemplate(inst.templateId).tags.includes("extra");
+  };
+  const nextCardsById = Object.fromEntries(
+    Object.entries(state.cardsById).filter(([id]) => !isExtraCardId(id)),
+  );
+  const nextCardInflationById = Object.fromEntries(
+    Object.entries(state.cardInflationById).filter(([id]) => !isExtraCardId(id)),
+  );
+  return {
+    ...state,
+    hand: state.hand.filter((id) => !isExtraCardId(id)),
+    deck: state.deck.filter((id) => !isExtraCardId(id)),
+    discard: state.discard.filter((id) => !isExtraCardId(id)),
+    cardsById: nextCardsById,
+    cardInflationById: nextCardInflationById,
+  };
+}
+
 function pushDiscard(state: GameState, instanceId: string): GameState {
   if (isTemporaryCardInstance(state, instanceId)) return state;
   return { ...state, discard: [...state.discard, instanceId] };
@@ -227,11 +250,11 @@ function completeYearAfterRetention(state: GameState, keepIds: readonly string[]
     phase: "action",
   };
   s = resolveEndOfYearPenalties(s);
-  if (s.outcome !== "playing") return s;
+  if (s.outcome !== "playing") return purgeExtraCardsIfLevelEnded(s);
   s = evaluateVictory(s);
-  if (s.outcome === "victory") return s;
+  if (s.outcome === "victory") return purgeExtraCardsIfLevelEnded(s);
   s = evaluateTimeDefeat(s);
-  if (s.outcome === "defeatTime") return s;
+  if (s.outcome === "defeatTime") return purgeExtraCardsIfLevelEnded(s);
   s = { ...s, turn: s.turn + 1 };
   s = beginYear(s);
   return s;
@@ -491,11 +514,13 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
         return state;
       }
       if (state.resources.legitimacy <= 0) {
-        return { ...state, phase: "gameOver", outcome: "defeatLegitimacy" };
+        return purgeExtraCardsIfLevelEnded({ ...state, phase: "gameOver", outcome: "defeatLegitimacy" });
       }
       let s = { ...state, resources: { ...state.resources, funding: 0 } };
       s = evaluateVictory(s);
-      if (s.outcome === "victory") return appendInflationActivationLogIfNeeded(state, s);
+      if (s.outcome === "victory") {
+        return appendInflationActivationLogIfNeeded(state, purgeExtraCardsIfLevelEnded(s));
+      }
       const cap = retentionCapacity(s);
       if (s.hand.length <= cap) {
         return appendInflationActivationLogIfNeeded(state, completeYearAfterRetention(s, s.hand));

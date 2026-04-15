@@ -3,6 +3,7 @@ import type { CardTag } from "../types/tags";
 
 const ROYAL: readonly CardTag[] = ["royal"];
 const TEMP: readonly CardTag[] = ["temp"];
+const EXTRA: readonly CardTag[] = ["extra"];
 const INFLATION: readonly CardTag[] = ["inflation"];
 
 const templates: Record<CardTemplateId, CardTemplate> = {
@@ -27,7 +28,7 @@ const templates: Record<CardTemplateId, CardTemplate> = {
   diplomaticIntervention: {
     id: "diplomaticIntervention",
     cost: 0,
-    tags: TEMP,
+    tags: EXTRA,
     titleKey: "card.diplomaticIntervention.name",
     backgroundKey: "card.diplomaticIntervention.background",
     descriptionKey: "card.diplomaticIntervention.desc",

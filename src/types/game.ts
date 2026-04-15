@@ -8,6 +8,7 @@ export type LogInfoKey =
   | "firstMandateInflationActivated"
   | "cardTag.royal"
   | "cardTag.temp"
+  | "cardTag.extra"
   | "cardTag.inflation"
   | "cardUse.depleted.crackdownPenalty"
   | "cardUse.depleted.fundingPenalty"
@@ -92,6 +93,12 @@ export type ActionLogEntry =
     }
   | {
       kind: "drawOverflowDiscarded";
+      id: string;
+      turn: number;
+      cardTemplateIds: CardTemplateId[];
+    }
+  | {
+      kind: "drawCards";
       id: string;
       turn: number;
       cardTemplateIds: CardTemplateId[];

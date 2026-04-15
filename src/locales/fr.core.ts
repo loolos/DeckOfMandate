@@ -119,7 +119,7 @@ export const messagesFrCore: Record<keyof typeof messagesEnCore, string> = {
   "card.crackdown.name": "Intervention royale",
   "card.crackdown.background":
     "Édits, troupes ou action policière — la force appliquée là où rumeur et émeute dépassent déjà la loi.",
-  "card.crackdown.desc": "Résolvez un événement néfaste (pas Boom du commerce colonial).",
+  "card.crackdown.desc": "Résolvez un événement néfaste.",
   "card.fiscalBurden.name": "Fardeau fiscal",
   "card.fiscalBurden.background":
     "Dettes et passifs d'urgence encombrent désormais les comptes et contraignent chaque cycle.",
@@ -192,6 +192,7 @@ export const messagesFrCore: Record<keyof typeof messagesEnCore, string> = {
     "Le conflit confessionnel s'embrase de nouveau. Payez 2 Financement ou perdez 1 Légitimité.",
   "card.tag.royal": "Royal",
   "card.tag.temp": "Temp",
+  "card.tag.extra": "Supplémentaire",
   "card.tag.inflation": "Inflation",
   "card.tag.remainingUses": "Restant {remaining}/{total}",
   "log.info.cardUse.depleted.crackdownPenalty":
@@ -200,6 +201,8 @@ export const messagesFrCore: Record<keyof typeof messagesEnCore, string> = {
     "[Tour {turn}] Prélèvement royal atteint 0/3 et est retiré du cycle ; les canaux d'extraction d'urgence s'épuisent (Trésor -1).",
   "log.info.cardUse.depleted.diplomaticIntervention":
     "[Tour {turn}] Intervention diplomatique atteint 0/3 et est retirée du cycle (sans pénalité).",
+  "log.info.cardTag.extra":
+    "[Tour {turn}] Note de tag « Supplémentaire » : cette carte est ajoutée par d'autres effets, exclue du réajustement inter-chapitre et retirée à la fin du chapitre.",
   "help.short":
     "Le Trésor fixe le revenu en Financement par tour. Le Financement paie les cartes et résolutions d'événements. Le Pouvoir fixe les tentatives de pioche. La Légitimité fixe la limite de conservation. Les événements néfastes non résolus sont réglés en séquence.",
 };

@@ -112,7 +112,7 @@ export const messagesEnCore = {
   "card.crackdown.name": "Royal Intervention",
   "card.crackdown.background":
     "Edicts, troops, or police action—force applied where rumor and riot have already outpaced law.",
-  "card.crackdown.desc": "Resolve one harmful event (not Colonial Trade Boom).",
+  "card.crackdown.desc": "Resolve one harmful event.",
   "card.fiscalBurden.name": "Fiscal Burden",
   "card.fiscalBurden.background":
     "Debt obligations and emergency liabilities now crowd the books and constrain every cycle.",
@@ -180,6 +180,7 @@ export const messagesEnCore = {
   "event.religiousTension.desc": "Confessional conflict flares again. Pay 2 Funding or lose 1 Legitimacy.",
   "card.tag.royal": "Royal",
   "card.tag.temp": "Temp",
+  "card.tag.extra": "Extra",
   "card.tag.inflation": "Inflation",
   "card.tag.remainingUses": "Remaining {remaining}/{total}",
   "log.cardPlayed.title": "[Turn {turn}] {card} — paid {cost} {funding}.",
@@ -203,6 +204,7 @@ export const messagesEnCore = {
   "log.crackdownCancelled": "[Turn {turn}] Royal Intervention cancelled; refunded {refund} {funding}.",
   "log.eventScriptedAttack.generic":
     "[Turn {turn}] Slot {slot}: {event} — military option. Paid {paid} {funding}.{treasury}",
+  "log.drawCards.title": "[Turn {turn}] Drew {count} card(s): {cards}.",
   "log.drawOverflowDiscarded.title":
     "[Turn {turn}] Hand reached cap; discarded {count} undrawn card(s): {cards}.",
   "log.info.firstMandateInflationActivated":
@@ -211,6 +213,8 @@ export const messagesEnCore = {
     "[Turn {turn}] Tag note “Royal”: this is a royal-command tool, and some crises can only be cleared through royal intervention routes.",
   "log.info.cardTag.temp":
     "[Turn {turn}] Tag note “Temp”: this card is temporary and usually does not cycle back through discard after play.",
+  "log.info.cardTag.extra":
+    "[Turn {turn}] Tag note “Extra”: this card was added by other effects, is excluded from chapter refit, and is removed when the chapter ends.",
   "log.info.cardTag.inflation":
     "[Turn {turn}] Tag note “Inflation”: once inflation is active, this card’s cost stacks upward whenever it cycles through reshuffle and redraw.",
   "log.info.cardUse.depleted.crackdownPenalty":

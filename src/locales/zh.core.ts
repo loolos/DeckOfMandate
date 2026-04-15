@@ -106,7 +106,7 @@ export const messagesZhCore = {
   "card.funding.desc": "本回合 +1 经费（不增加财政能力）。",
   "card.crackdown.name": "王室干预",
   "card.crackdown.background": "敕令、驻军或警察行动——在流言与骚动已快于法律之处强行落实。",
-  "card.crackdown.desc": "解决一个有害事件（不能选殖民贸易机遇）。",
+  "card.crackdown.desc": "解决一个有害事件。",
   "card.fiscalBurden.name": "财政负担",
   "card.fiscalBurden.background": "债务与紧急开支挤入账册，持续拖慢每个回合的财政回旋。",
   "card.fiscalBurden.desc": "抽到时经费 -1。可支付 2 经费打出并消除（不会进入弃牌堆）。",
@@ -159,6 +159,7 @@ export const messagesZhCore = {
   "event.religiousTension.desc": "宗教社群冲突再起。支付 2 经费平息，否则合法性 -1。",
   "card.tag.royal": "王室",
   "card.tag.temp": "临时",
+  "card.tag.extra": "额外",
   "card.tag.inflation": "通胀",
   "card.tag.remainingUses": "剩余{remaining}/{total}",
   "log.cardPlayed.title": "[第 {turn} 年] {card} — 支付 {cost} {funding}。",
@@ -181,12 +182,15 @@ export const messagesZhCore = {
   "log.crackdownCancelled": "[第 {turn} 年] 已取消王室干预；退回 {refund} {funding}。",
   "log.eventScriptedAttack.generic":
     "[第 {turn} 年] 槽位 {slot}：{event} — 采取军事进攻。已支付 {paid} {funding}。{treasury}",
+  "log.drawCards.title": "[第 {turn} 年] 本回合抓取 {count} 张牌：{cards}。",
   "log.drawOverflowDiscarded.title":
     "[第 {turn} 年] 手牌已达上限；将剩余未摸的 {count} 张牌直接置入弃牌堆：{cards}。",
   "log.info.firstMandateInflationActivated":
     "[第 {turn} 年] 科尔贝尔改革与凡尔赛宫廷同步扩张，王权机器越强，维持它的行政与仪式成本也越高。已触发第一关「卡牌通胀」：此后仅带「通胀」标签的牌，在从弃牌堆洗回抽牌堆时才会叠加费用。",
   "log.info.cardTag.royal": "[第 {turn} 年] 标签说明「王室」：该牌属于王室工具，部分事件只能靠此类手段处理。",
   "log.info.cardTag.temp": "[第 {turn} 年] 标签说明「临时」：该牌通常为一次性应急工具，打出后不会进入弃牌堆循环。",
+  "log.info.cardTag.extra":
+    "[第 {turn} 年] 标签说明「额外」：该牌由其他效果临时加入，不会出现在过关整编中，并会在本关结束时从牌堆移除。",
   "log.info.cardTag.inflation":
     "[第 {turn} 年] 标签说明「通胀」：当卡牌通胀机制生效后，该牌每次经过洗牌回抽都会叠加费用。",
   "log.info.cardUse.depleted.crackdownPenalty":
