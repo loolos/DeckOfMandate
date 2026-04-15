@@ -68,12 +68,23 @@ export function Hand({
           tags.length > 0 || cardUse ? (
             <div className={styles.badges}>
               {cardUse ? (
-                <span key={`${id}_remaining_uses`} className={styles.badge}>
+                <button
+                  key={`${id}_remaining_uses`}
+                  type="button"
+                  className={`${styles.badge} ${styles.tagButton}`}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    dispatch({
+                      type: "APPEND_LOG_INFO",
+                      infoKey: "cardUse.remainingUses",
+                    });
+                  }}
+                >
                   {t("card.tag.remainingUses", {
                     remaining: cardUse.remaining,
                     total: cardUse.total,
                   })}
-                </span>
+                </button>
               ) : null}
               {tags.map((tag) => (
                 <button

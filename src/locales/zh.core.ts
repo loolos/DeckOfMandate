@@ -193,6 +193,7 @@ export const messagesZhCore = {
     "[第 {turn} 年] 标签说明「额外」：该牌由其他效果临时加入，不会出现在过关整编中，并会在本关结束时从牌堆移除。",
   "log.info.cardTag.inflation":
     "[第 {turn} 年] 标签说明「通胀」：当卡牌通胀机制生效后，该牌每次经过洗牌回抽都会叠加费用。",
+  "log.info.cardUse.remainingUses": "[第 {turn} 年] 标签说明「剩余」：该卡可用次数为 X/Y；每次打出会消耗 1 次，用尽后将从牌库循环中移除。",
   "log.info.cardUse.depleted.crackdownPenalty":
     "[第 {turn} 年]「王室干预」次数耗尽（0/3），已从牌库循环中移除；王室强制力受损，权力 -1。",
   "log.info.cardUse.depleted.fundingPenalty":

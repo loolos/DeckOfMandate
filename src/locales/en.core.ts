@@ -217,6 +217,7 @@ export const messagesEnCore = {
     "[Turn {turn}] Tag note “Extra”: this card was added by other effects, is excluded from chapter refit, and is removed when the chapter ends.",
   "log.info.cardTag.inflation":
     "[Turn {turn}] Tag note “Inflation”: once inflation is active, this card’s cost stacks upward whenever it cycles through reshuffle and redraw.",
+  "log.info.cardUse.remainingUses": "[Turn {turn}] Tag note “Remaining”: this card currently has X/Y uses left; each play spends one, and it leaves circulation at 0.",
   "log.info.cardUse.depleted.crackdownPenalty":
     "[Turn {turn}] Royal Intervention reached 0/3 and was removed from circulation; court coercive leverage slips (Power -1).",
   "log.info.cardUse.depleted.fundingPenalty":
