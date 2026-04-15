@@ -51,7 +51,7 @@ Use React for UI rendering and component structure.
 - Event Panel
 - Hand Area
 - Resource Bar
-- **Campaign date banner** (granularity from level data: *The Rising Sun* is **year-only** because **1 turn = 1 year**; a **monthly** cadence level would show **year + month**—see `gameplay.md` / `levels.md`)
+- **Campaign date banner** (granularity from level data: *The Rising Sun* is **year-only** because **1 turn = 1 year**; a **monthly** cadence level would show **year + month**—see `gameplay.md` / `太阳王战役.md`)
 - Turn Button
 - Game Over Screen
 - **Language toggle** (switch `en` / `zh`; see **Localization**)
@@ -285,7 +285,7 @@ React components only display state.
 
 ### Localization (MVP)
 
-The prototype supports **two player-facing languages**: **English (`en`)** and **Chinese (`zh`)**.
+The current build supports **three player-facing languages**: **English (`en`)**, **Chinese (`zh`)**, and **French (`fr`)**.
 
 **Requirements:**
 
@@ -323,8 +323,8 @@ Build first version with:
 
 ### Systems
 
-- Draw cards each turn (**Power** at **Draw phase** start; optional **Anti-French coalition** hazard after scripted war choice; **hand cap 10**; extra draws **skipped** if full—see `gameplay.md`)
-- **Event phase:** weighted fills on procedural slots **`A`–`C`**, plus **scripted calendar** hooks and variable **1–3** fills when the full board is empty (see `levels.md`)
+- Draw cards each turn (**Power** at **Draw phase** start; optional **Anti-French coalition** hazard after scripted war choice; **hand cap 12**; extra draws are **discarded** if full—see `gameplay.md`)
+- **Event phase:** weighted fills on procedural slots **`A`–`C`**, plus **scripted calendar** hooks and variable **1–3** fills when the full board is empty (see `太阳王战役.md`)
 - Play cards to solve events; **resolved** slots cannot be targeted again that turn
 - End turn discard; **player chooses** which cards to **retain** (up to **Legitimacy**)
 
@@ -332,11 +332,11 @@ Build first version with:
 
 - **Start menu:** new run (optional seed, level id), resume save, locale toggle, optional level-entry tutorial flag.
 - **Persistence:** **LocalStorage** auto-save during a run (and resume path from the menu).
-- **Localization:** player-facing copy in **English and Chinese** from **central locale bundles**; in-game **language switch** and **remembered locale** (see **Localization** above).
+- **Localization:** player-facing copy in **English / Chinese / French** from **central locale bundles**; in-game **language switch** and **remembered locale** (see **Localization** above).
 
 ### Content
 
-- Starter deck: **13** cards across **5** card templates (counts in `levelContent.starterDeckTemplateOrder`—see `levels.md` / `card.md`)
+- Starter deck: **13** cards across **5** card templates (counts in `levelContent.starterDeckTemplateOrder`—see `太阳王战役.md` / `card.md`)
 - Weighted **event** pool plus **scripted** War of Devolution row (*firstMandate*)
 - 1 playable level (`firstMandate`)
 

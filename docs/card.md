@@ -18,7 +18,7 @@ Goals:
 
 ---
 
-## Prototype Deck Size
+## Chapter 1 Deck Size
 
 Initial deck for **level `firstMandate`** (see [`src/data/levelContent.ts`](../src/data/levelContent.ts) `starterDeckTemplateOrder`):
 
@@ -27,7 +27,17 @@ Initial deck for **level `firstMandate`** (see [`src/data/levelContent.ts`](../s
 5 card templates (Royal Levy ×4, Royal Intervention ×3, Administrative Reform ×2, Versailles Ceremony ×2, Royal Manufactories ×2)
 ```
 
-This is enough for early testing.
+This is the baseline chapter deck.
+
+---
+
+## Chapter 2 deck differences (current implementation)
+
+- **Standalone Chapter 2** starts from a 14-card list:
+  - `funding×4`, `crackdown×3`, `reform×2`, `ceremony×2`, `grainRelief×1`, `taxRebalance×1`, `diplomaticCongress×1`.
+- **Continuity Chapter 2** (after Chapter 1 victory) carries over card **instances** from Chapter 1, keeps their per-instance inflation stacks, and allows **remove-only refit** (remove 0–3 cards, no additions).
+- `diplomaticCongress` adds one temporary `diplomaticIntervention` directly to hand.
+- `suppressHuguenots` and `fiscalBurden` are scripted cards injected by Chapter 2 events, not starter cards.
 
 ---
 
@@ -35,7 +45,7 @@ This is enough for early testing.
 
 - **Treasury stat:** persistent fiscal capacity; each **Income phase** adds **funding** equal to this stat.
 - **Funding:** spendable money **this turn** only (MVP: unspent funding is cleared at **End phase**). **Card costs** and most **event solve** spends use **funding**.
-- **Hand cap (MVP):** **10** cards max in hand; draws that would exceed the cap are **skipped** (see `gameplay.md`).
+- **Hand cap (MVP):** **12** cards max in hand; draws that would exceed the cap are **skipped** (see `gameplay.md`).
 
 ---
 
@@ -82,7 +92,7 @@ This ensures strategic diversity even with a small deck.
 | --- | --- |
 | **Role** | Growth |
 | **Cost** | 2 funding |
-| **Effect** | **Power +1** (immediate; affects **next** turn’s **Draw phase** size). **Draw 1** **immediately** when played (**Action phase**), respecting **hand cap 10** (no draw if the hand is full). |
+| **Effect** | **Power +1** (immediate; affects **next** turn’s **Draw phase** size). **Draw 1** **immediately** when played (**Action phase**), respecting **hand cap 12** (no draw if the hand is full). |
 | **Copies** | 2 |
 | **Purpose** | Long-term scaling; better future turns; improves consistency |
 | **Notes** | Key strategic card. **Multiple Reform** plays in one Action phase **stack** **Power +1** for the **next** turn’s draws and each triggers its own **immediate Draw 1** in play order (hand cap). See `gameplay.md` (**Turn structure**, **Hand size**). |
@@ -117,7 +127,7 @@ This ensures strategic diversity even with a small deck.
 | --- | --- | --- | --- | --- |
 | Royal Levy | 0 | Gain +1 funding this turn | Economy | 4 |
 | Royal Intervention | 1 | MVP: resolve one harmful event (not Colonial Trade Boom) | Control | 3 |
-| Administrative Reform | 2 | Power +1 (next turn draw size); Draw 1 now (hand cap 10) | Growth | 2 |
+| Administrative Reform | 2 | Power +1 (next turn draw size); Draw 1 now (hand cap 12) | Growth | 2 |
 | Versailles Ceremony | 2 | Legitimacy +1 | Stability | 2 |
 | Royal Manufactories | 3 | Treasury stat +1 | Economy | 2 |
 

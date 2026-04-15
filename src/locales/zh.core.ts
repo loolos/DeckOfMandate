@@ -112,7 +112,7 @@ export const messagesZhCore = {
   "card.fiscalBurden.desc": "抽到时经费 -1。可支付 2 经费打出并消除（不会进入弃牌堆）。",
   "card.reform.name": "行政整编",
   "card.reform.background": "册籍与汇报线重划，官僚体系在王权下收得更紧。",
-  "card.reform.desc": "权力 +1。立即抽 1（手牌上限 12）。",
+  "card.reform.desc": "权力 +1（影响下回合抽牌阶段）。立即抽 1（手牌上限 12）。",
   "card.ceremony.name": "凡尔赛庆典",
   "card.ceremony.background": "仪仗、誓词与排场——让各派都看清谁仍站在中心。",
   "card.ceremony.desc": "合法性 +1。",

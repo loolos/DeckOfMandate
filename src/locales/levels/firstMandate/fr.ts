@@ -1,7 +1,7 @@
 import { messagesEnFirstMandate } from "./en";
 
 /**
- * Texte français pour le niveau `firstMandate` (Le Soleil levant, France 1661–1676).
+ * Texte français pour le niveau `firstMandate` (Le Soleil levant, France 1661–1675).
  */
 export const messagesFrFirstMandate: Record<keyof typeof messagesEnFirstMandate, string> = {
   ...messagesEnFirstMandate,
