@@ -180,6 +180,7 @@ export const messagesEnCore = {
   "event.religiousTension.desc": "Confessional conflict flares again. Pay 2 Funding or lose 1 Legitimacy.",
   "card.tag.royal": "Royal",
   "card.tag.temp": "Temp",
+  "card.tag.extra": "Extra",
   "card.tag.inflation": "Inflation",
   "log.cardPlayed.title": "[Turn {turn}] {card} — paid {cost} {funding}.",
   "log.cardPlayed.effectsLabel": "Effects:",
@@ -211,6 +212,8 @@ export const messagesEnCore = {
     "[Turn {turn}] Tag note “Royal”: this is a royal-command tool, and some crises can only be cleared through royal intervention routes.",
   "log.info.cardTag.temp":
     "[Turn {turn}] Tag note “Temp”: this card is temporary and usually does not cycle back through discard after play.",
+  "log.info.cardTag.extra":
+    "[Turn {turn}] Tag note “Extra”: this card was added by other effects, is excluded from chapter refit, and is removed when the chapter ends.",
   "log.info.cardTag.inflation":
     "[Turn {turn}] Tag note “Inflation”: once inflation is active, this card’s cost stacks upward whenever it cycles through reshuffle and redraw.",
   "log.info.eventTag.harmful":

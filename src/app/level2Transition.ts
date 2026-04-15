@@ -91,7 +91,8 @@ function buildContinuityCarryoverCards(from: GameState): Level2CarryoverCard[] {
     seen.add(id);
     const inst = from.cardsById[id];
     if (!inst) return;
-    if (getCardTemplate(inst.templateId).tags.includes("temp")) return;
+    const tags = getCardTemplate(inst.templateId).tags;
+    if (tags.includes("temp") || tags.includes("extra")) return;
     out.push({
       instanceId: id,
       templateId: inst.templateId,

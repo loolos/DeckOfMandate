@@ -192,7 +192,10 @@ export const messagesFrCore: Record<keyof typeof messagesEnCore, string> = {
     "Le conflit confessionnel s'embrase de nouveau. Payez 2 Financement ou perdez 1 Légitimité.",
   "card.tag.royal": "Royal",
   "card.tag.temp": "Temp",
+  "card.tag.extra": "Supplémentaire",
   "card.tag.inflation": "Inflation",
+  "log.info.cardTag.extra":
+    "[Tour {turn}] Note de tag « Supplémentaire » : cette carte est ajoutée par d'autres effets, exclue du réajustement inter-chapitre et retirée à la fin du chapitre.",
   "help.short":
     "Le Trésor fixe le revenu en Financement par tour. Le Financement paie les cartes et résolutions d'événements. Le Pouvoir fixe les tentatives de pioche. La Légitimité fixe la limite de conservation. Les événements néfastes non résolus sont réglés en séquence.",
 };
