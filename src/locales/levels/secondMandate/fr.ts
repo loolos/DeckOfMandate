@@ -97,5 +97,5 @@ export const messagesFrSecondMandate: Record<keyof typeof messagesEnSecondMandat
   "card.diplomaticIntervention.background":
     "Exercez une pression via émissaires et leviers de traité plutôt que par commandement royal direct.",
   "card.diplomaticIntervention.desc":
-    "Carte supplémentaire. Résolvez un événement néfaste (pas Boom du commerce colonial). N'est pas une carte taguée Royal ; exclue du réajustement inter-chapitre et retirée à la fin du chapitre.",
+    "Carte supplémentaire. Résolvez un événement néfaste (pas Boom du commerce colonial). N'est pas une carte taguée Royal ; quand « Restant » est épuisé, il n'y a pas de pénalité supplémentaire et elle quitte simplement le cycle. Exclue du réajustement inter-chapitre et retirée à la fin du chapitre.",
 };

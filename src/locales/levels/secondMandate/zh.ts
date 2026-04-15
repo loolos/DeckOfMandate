@@ -85,5 +85,5 @@ export const messagesZhSecondMandate = {
   "card.diplomaticIntervention.name": "外交干预",
   "card.diplomaticIntervention.background": "通过使节施压与条约操作解决危机，而非直接动用王室强制力。",
   "card.diplomaticIntervention.desc":
-    "额外牌。解决一个有害事件（不能选殖民贸易机遇），且不带王室标签；不会出现在过关整编中，本关结束后会移除。",
+    "额外牌。解决一个有害事件（不能选殖民贸易机遇），且不带王室标签；「剩余」用尽后无额外惩罚，仅会从牌库循环中移除。不会出现在过关整编中，本关结束后会移除。",
 } as const;

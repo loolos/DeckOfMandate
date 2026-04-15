@@ -94,5 +94,5 @@ export const messagesEnSecondMandate = {
   "card.diplomaticIntervention.background":
     "Apply pressure through envoys and treaty leverage rather than direct royal command.",
   "card.diplomaticIntervention.desc":
-    "Extra card. Resolve one harmful event (not Colonial Trade Boom). Not a Royal-tag card; excluded from chapter refit and removed when the chapter ends.",
+    "Extra card. Resolve one harmful event (not Colonial Trade Boom). Not a Royal-tag card; when Remaining is exhausted there is no extra penalty, it simply leaves circulation. Excluded from chapter refit and removed when the chapter ends.",
 } as const;

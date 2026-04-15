@@ -108,11 +108,11 @@ export const messagesEnCore = {
   "card.funding.name": "Royal Levy",
   "card.funding.background":
     "Extraordinary tallies and accelerated collection—short-term cash for the crown’s urgent line items.",
-  "card.funding.desc": "Gain +1 Funding this turn (not Treasury).",
+  "card.funding.desc": "Gain +1 Funding this turn (not Treasury). If Remaining is exhausted: Treasury -1.",
   "card.crackdown.name": "Royal Intervention",
   "card.crackdown.background":
     "Edicts, troops, or police action—force applied where rumor and riot have already outpaced law.",
-  "card.crackdown.desc": "Resolve one harmful event.",
+  "card.crackdown.desc": "Resolve one harmful event. If Remaining is exhausted: Power -1.",
   "card.fiscalBurden.name": "Fiscal Burden",
   "card.fiscalBurden.background":
     "Debt obligations and emergency liabilities now crowd the books and constrain every cycle.",
