@@ -194,6 +194,13 @@ export const messagesFrCore: Record<keyof typeof messagesEnCore, string> = {
   "card.tag.temp": "Temp",
   "card.tag.extra": "Supplémentaire",
   "card.tag.inflation": "Inflation",
+  "card.tag.remainingUses": "Restant {remaining}/{total}",
+  "log.info.cardUse.depleted.crackdownPenalty":
+    "[Tour {turn}] Intervention royale atteint 0/3 et est retirée du cycle ; la capacité de contrainte de la cour recule (Pouvoir -1).",
+  "log.info.cardUse.depleted.fundingPenalty":
+    "[Tour {turn}] Prélèvement royal atteint 0/3 et est retiré du cycle ; les canaux d'extraction d'urgence s'épuisent (Trésor -1).",
+  "log.info.cardUse.depleted.diplomaticIntervention":
+    "[Tour {turn}] Intervention diplomatique atteint 0/3 et est retirée du cycle (sans pénalité).",
   "log.info.cardTag.extra":
     "[Tour {turn}] Note de tag « Supplémentaire » : cette carte est ajoutée par d'autres effets, exclue du réajustement inter-chapitre et retirée à la fin du chapitre.",
   "help.short":

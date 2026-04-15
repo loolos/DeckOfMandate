@@ -1,4 +1,5 @@
 import { defaultLevelId, getLevelDef, isLevelId } from "../data/levels";
+import { normalizeCardUsesById } from "./cardUsage";
 import { computeEuropeAlertDrawPenalty } from "./europeAlert";
 import { EMPTY_EVENT_SLOTS, EMPTY_PENDING_MAJOR_CRISIS, EVENT_SLOT_ORDER, type SlotId } from "../types/event";
 import type { GameState } from "../types/game";
@@ -65,6 +66,20 @@ export function normalizeGameState(state: GameState): GameState {
   }
   if (!Array.isArray(s.proceduralEventSequence)) {
     s = { ...s, proceduralEventSequence: [] };
+  }
+  if (!s.cardUsesById || typeof s.cardUsesById !== "object") {
+    s = { ...s, cardUsesById: {} };
+  }
+  const normalizedCardUsesById = normalizeCardUsesById(s);
+  const sameCardUseKeys =
+    Object.keys(normalizedCardUsesById).length === Object.keys(s.cardUsesById).length &&
+    Object.keys(normalizedCardUsesById).every((id) => {
+      const left = normalizedCardUsesById[id];
+      const right = s.cardUsesById[id];
+      return !!left && !!right && left.remaining === right.remaining && left.total === right.total;
+    });
+  if (!sameCardUseKeys) {
+    s = { ...s, cardUsesById: normalizedCardUsesById };
   }
   if (!s.cardInflationById || typeof s.cardInflationById !== "object") {
     s = { ...s, cardInflationById: {} };

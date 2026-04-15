@@ -26,8 +26,12 @@ describe("level2Transition", () => {
     expect(draft.carryoverCards.some((card) => card.templateId === "development")).toBe(false);
     const standaloneReform = draft.carryoverCards.find((card) => card.templateId === "reform");
     const standaloneCeremony = draft.carryoverCards.find((card) => card.templateId === "ceremony");
+    const standaloneFunding = draft.carryoverCards.find((card) => card.templateId === "funding");
+    const standaloneCrackdown = draft.carryoverCards.find((card) => card.templateId === "crackdown");
     expect(standaloneReform?.inflationDelta).toBe(1);
     expect(standaloneCeremony?.inflationDelta).toBe(1);
+    expect(standaloneFunding?.remainingUses).toBe(1);
+    expect(standaloneCrackdown?.remainingUses).toBe(1);
     expect(draft.removedCarryoverIds).toEqual([]);
     expect(v.totalNewCards).toBe(LEVEL2_FIXED_NEW_IDS.length);
     expect(v.isValid).toBe(true);
@@ -55,6 +59,22 @@ describe("level2Transition", () => {
     expect(draft.calendarStartYear).toBe(1672);
     expect(draft.carryoverCards.length).toBeGreaterThan(0);
     expect(draft.removedCarryoverIds).toEqual([]);
+  });
+
+  it("continuity draft keeps remaining uses from chapter 1 cards", () => {
+    const chapter1Win = createInitialState(7788, "firstMandate");
+    const targetId = chapter1Win.deck.find((id) => chapter1Win.cardsById[id]?.templateId === "crackdown");
+    if (!targetId) throw new Error("expected crackdown card");
+    const withAdjustedUses = {
+      ...chapter1Win,
+      cardUsesById: {
+        ...chapter1Win.cardUsesById,
+        [targetId]: { total: 3, remaining: 1 },
+      },
+    };
+    const draft = createContinuityLevel2Draft(withAdjustedUses);
+    const carried = draft.carryoverCards.find((card) => card.instanceId === targetId);
+    expect(carried?.remainingUses).toBe(1);
   });
 
   it("builds a playable chapter 2 state from standalone removals", () => {

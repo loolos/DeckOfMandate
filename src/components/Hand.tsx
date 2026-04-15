@@ -10,6 +10,7 @@ import type { MessageKey } from "../locales";
 import { useI18n } from "../locales";
 import { getPlayableCardCost } from "../logic/cardCost";
 import { getCardTagsForInstance, hasCardTag } from "../logic/cardTags";
+import { getCardUseStateForInstance } from "../logic/cardUsage";
 import type { CardTag } from "../types/tags";
 import type { LogInfoKey } from "../types/game";
 import styles from "../app/Game.module.css";
@@ -62,9 +63,18 @@ export function Hand({
             infoKey: `cardTag.${tag}` as LogInfoKey,
           });
         const tags = getCardTagsForInstance(state, id);
+        const cardUse = getCardUseStateForInstance(state, id);
         const tagChips =
-          tags.length > 0 ? (
+          tags.length > 0 || cardUse ? (
             <div className={styles.badges}>
+              {cardUse ? (
+                <span key={`${id}_remaining_uses`} className={styles.badge}>
+                  {t("card.tag.remainingUses", {
+                    remaining: cardUse.remaining,
+                    total: cardUse.total,
+                  })}
+                </span>
+              ) : null}
               {tags.map((tag) => (
                 <button
                   key={`${id}_${tag}`}

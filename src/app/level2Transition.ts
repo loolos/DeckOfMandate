@@ -1,6 +1,7 @@
 import { getCardTemplate } from "../data/cards";
 import { getLevelContent } from "../data/levelContent";
 import { getLevelDef } from "../data/levels";
+import { createInitialCardUseState } from "../logic/cardUsage";
 import { computeEuropeAlertDrawPenalty } from "../logic/europeAlert";
 import { createRngFromSeed, shuffle } from "../logic/rng";
 import { beginYear } from "../logic/turnFlow";
@@ -19,6 +20,7 @@ export type Level2CarryoverCard = {
   instanceId: string;
   templateId: CardTemplateId;
   inflationDelta: number;
+  remainingUses: number | null;
 };
 
 export type Level2StandaloneDraft = {
@@ -63,6 +65,7 @@ export function createStandaloneLevel2Draft(seed?: number): Level2StandaloneDraf
       instanceId: `standalone_old_${i}_${templateId}`,
       templateId,
       inflationDelta: templateId === "reform" || templateId === "ceremony" ? 1 : 0,
+      remainingUses: createInitialCardUseState("secondMandate", templateId)?.remaining ?? null,
     }));
   return {
     mode: "standalone",
@@ -97,6 +100,8 @@ function buildContinuityCarryoverCards(from: GameState): Level2CarryoverCard[] {
       instanceId: id,
       templateId: inst.templateId,
       inflationDelta: Math.max(0, from.cardInflationById[id] ?? 0),
+      remainingUses:
+        from.cardUsesById[id]?.remaining ?? createInitialCardUseState(from.levelId, inst.templateId)?.remaining ?? null,
     });
   };
   for (const id of orderedPoolIds) {
@@ -194,10 +199,13 @@ function buildContinuityLevel2State(draft: Level2StartDraft): GameState {
     cardsById[c.instanceId] = { instanceId: c.instanceId, templateId: c.templateId };
   }
   const cardInflationById: Record<string, number> = {};
+  const cardUsesById: GameState["cardUsesById"] = {};
   for (const card of keptCards) {
     if (card.inflationDelta > 0) {
       cardInflationById[card.instanceId] = card.inflationDelta;
     }
+    const usage = createInitialCardUseState("secondMandate", card.templateId, card.remainingUses ?? undefined);
+    if (usage) cardUsesById[card.instanceId] = usage;
   }
   const europeAlertDrawPenalty = draft.europeAlert
     ? computeEuropeAlertDrawPenalty(draft.resources.power)
@@ -220,6 +228,7 @@ function buildContinuityLevel2State(draft: Level2StartDraft): GameState {
     discard: [],
     hand: [],
     cardsById,
+    cardUsesById,
     cardInflationById,
     slots: { ...EMPTY_EVENT_SLOTS },
     pendingMajorCrisis: { ...EMPTY_PENDING_MAJOR_CRISIS },

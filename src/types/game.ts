@@ -10,6 +10,9 @@ export type LogInfoKey =
   | "cardTag.temp"
   | "cardTag.extra"
   | "cardTag.inflation"
+  | "cardUse.depleted.crackdownPenalty"
+  | "cardUse.depleted.fundingPenalty"
+  | "cardUse.depleted.diplomaticIntervention"
   | "eventTag.harmful"
   | "eventTag.opportunity"
   | "eventTag.continued"
@@ -137,6 +140,11 @@ export type Resources = {
   legitimacy: number;
 };
 
+export type CardUseState = {
+  remaining: number;
+  total: number;
+};
+
 export type RngSerialized = {
   /** Mulberry32 internal state (uint32). */
   state: number;
@@ -167,6 +175,8 @@ export type GameState = {
   hand: string[];
   /** All card instances keyed by id (includes played copies for lookup). */
   cardsById: Record<string, CardInstance>;
+  /** Limited-use cards store remaining uses for "Remaining X/Y" hand tags and depletion effects. */
+  cardUsesById: Record<string, CardUseState>;
   /** Inflation stacks per card instance (active in Chapter 2, and in Chapter 1 after pressure threshold). */
   cardInflationById: Record<string, number>;
   slots: Record<SlotId, EventInstance | null>;

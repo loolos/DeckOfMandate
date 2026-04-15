@@ -182,6 +182,7 @@ export const messagesEnCore = {
   "card.tag.temp": "Temp",
   "card.tag.extra": "Extra",
   "card.tag.inflation": "Inflation",
+  "card.tag.remainingUses": "Remaining {remaining}/{total}",
   "log.cardPlayed.title": "[Turn {turn}] {card} — paid {cost} {funding}.",
   "log.cardPlayed.effectsLabel": "Effects:",
   "log.cardPlayed.noEffects": "No listed effects.",
@@ -216,6 +217,12 @@ export const messagesEnCore = {
     "[Turn {turn}] Tag note “Extra”: this card was added by other effects, is excluded from chapter refit, and is removed when the chapter ends.",
   "log.info.cardTag.inflation":
     "[Turn {turn}] Tag note “Inflation”: once inflation is active, this card’s cost stacks upward whenever it cycles through reshuffle and redraw.",
+  "log.info.cardUse.depleted.crackdownPenalty":
+    "[Turn {turn}] Royal Intervention reached 0/3 and was removed from circulation; court coercive leverage slips (Power -1).",
+  "log.info.cardUse.depleted.fundingPenalty":
+    "[Turn {turn}] Royal Levy reached 0/3 and was removed from circulation; emergency extraction channels dry up (Treasury -1).",
+  "log.info.cardUse.depleted.diplomaticIntervention":
+    "[Turn {turn}] Diplomatic Intervention reached 0/3 and was removed from circulation.",
   "log.info.eventTag.harmful":
     "[Turn {turn}] Tag note “Harmful”: if unresolved at year end, this event applies penalties.",
   "log.info.eventTag.opportunity":

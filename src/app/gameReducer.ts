@@ -69,6 +69,49 @@ function pushDiscard(state: GameState, instanceId: string): GameState {
   return { ...state, discard: [...state.discard, instanceId] };
 }
 
+function consumeLimitedUseCard(
+  state: GameState,
+  instanceId: string,
+): { state: GameState; exhausted: boolean } {
+  const usage = state.cardUsesById[instanceId];
+  if (!usage) return { state, exhausted: false };
+  const cardUsesById = { ...state.cardUsesById };
+  const nextRemaining = Math.max(0, usage.remaining - 1);
+  if (nextRemaining > 0) {
+    cardUsesById[instanceId] = { ...usage, remaining: nextRemaining };
+    return { state: { ...state, cardUsesById }, exhausted: false };
+  }
+  delete cardUsesById[instanceId];
+  const inst = state.cardsById[instanceId];
+  let s: GameState = { ...state, cardUsesById };
+  let infoKey: LogInfoKey | null = null;
+  if (inst?.templateId === "crackdown") {
+    s = {
+      ...s,
+      resources: {
+        ...s.resources,
+        power: Math.max(0, s.resources.power - 1),
+      },
+    };
+    infoKey = "cardUse.depleted.crackdownPenalty";
+  } else if (inst?.templateId === "funding") {
+    s = {
+      ...s,
+      resources: {
+        ...s.resources,
+        treasuryStat: Math.max(0, s.resources.treasuryStat - 1),
+      },
+    };
+    infoKey = "cardUse.depleted.fundingPenalty";
+  } else if (inst?.templateId === "diplomaticIntervention") {
+    infoKey = "cardUse.depleted.diplomaticIntervention";
+  }
+  if (infoKey) {
+    s = appendActionLog(s, { kind: "info", infoKey });
+  }
+  return { state: s, exhausted: true };
+}
+
 function markSlotResolved(state: GameState, slot: SlotId): GameState {
   const ev = state.slots[slot];
   if (!ev) return state;
@@ -288,14 +331,17 @@ function removeCardsEverywhere(state: GameState, templateId: CardTemplateId): Ga
   );
   if (toRemove.size === 0) return state;
   const cardInflationById = { ...state.cardInflationById };
+  const cardUsesById = { ...state.cardUsesById };
   for (const id of toRemove) {
     delete cardInflationById[id];
+    delete cardUsesById[id];
   }
   return {
     ...state,
     hand: state.hand.filter((id) => !toRemove.has(id)),
     deck: state.deck.filter((id) => !toRemove.has(id)),
     discard: state.discard.filter((id) => !toRemove.has(id)),
+    cardUsesById,
     cardInflationById,
   };
 }
@@ -377,7 +423,11 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
         s = addCardsToHand(s, "diplomaticIntervention", 1);
       }
       s = removeHand(s, id);
-      s = pushDiscard(s, id);
+      const consumed = consumeLimitedUseCard(s, id);
+      s = consumed.state;
+      if (!consumed.exhausted) {
+        s = pushDiscard(s, id);
+      }
       s = enforceLegitimacy(s);
       s = appendActionLog(s, {
         kind: "cardPlayed",
@@ -429,7 +479,11 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       if (!cleared) return state;
       let s = markSlotResolved(state, action.slot);
       s = removeHand(s, p.cardInstanceId);
-      s = pushDiscard(s, p.cardInstanceId);
+      const consumed = consumeLimitedUseCard(s, p.cardInstanceId);
+      s = consumed.state;
+      if (!consumed.exhausted) {
+        s = pushDiscard(s, p.cardInstanceId);
+      }
       s = { ...s, pendingInteraction: null };
       s = enforceLegitimacy(s);
       s = appendActionLog(s, {
