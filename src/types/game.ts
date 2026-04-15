@@ -10,6 +10,7 @@ export type LogInfoKey =
   | "cardTag.temp"
   | "cardTag.extra"
   | "cardTag.inflation"
+  | "cardUse.remainingUses"
   | "cardUse.depleted.crackdownPenalty"
   | "cardUse.depleted.fundingPenalty"
   | "cardUse.depleted.diplomaticIntervention"
