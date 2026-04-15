@@ -14,6 +14,7 @@ import type { PlayerStatusInstance } from "../types/status";
 import { applyOnDrawCardEffects } from "./cardRuntime";
 import { applyInflationFromDeckRefill } from "./cardCost";
 import { drawUpToPower } from "./draw";
+import { drawAttemptsFromPower } from "./drawScaling";
 import { applyScriptedCalendarPhase, rollAntiFrenchLeagueDrawAdjustment } from "./scriptedCalendar";
 import { rngNext, shuffle } from "./rng";
 
@@ -277,10 +278,8 @@ export function beginYear(state: GameState): GameState {
   s = { ...s, scheduledDrawModifiers: s.scheduledDrawModifiers.slice(1) };
   const statusDrawDelta = sumDrawAttemptsStatusDelta(s.playerStatuses);
   const europeAlertPenalty = s.europeAlert ? Math.max(0, s.europeAlertDrawPenalty) : 0;
-  let attempts = Math.max(
-    1,
-    s.resources.power + s.nextTurnDrawModifier + scheduledDrawModifier + statusDrawDelta - europeAlertPenalty,
-  );
+  const baseAttempts = drawAttemptsFromPower(s.resources.power);
+  let attempts = Math.max(1, baseAttempts + s.nextTurnDrawModifier + scheduledDrawModifier + statusDrawDelta - europeAlertPenalty);
   const coalition = rollAntiFrenchLeagueDrawAdjustment(s.antiFrenchLeague, s.turn, s.rng);
   s = { ...s, rng: coalition.rng };
   if (coalition.adjustment < 0 && s.antiFrenchLeague && s.turn <= s.antiFrenchLeague.untilTurn) {

@@ -40,8 +40,8 @@ describe("beginYear + playerStatuses", () => {
       ],
     };
     const s1 = beginYear(s0);
-    expect(s1.hand.length).toBe(2);
-    expect(s1.deck.length).toBe(2);
+    expect(s1.hand.length).toBe(1);
+    expect(s1.deck.length).toBe(3);
     const drawLog = s1.actionLog.find((e) => e.kind === "drawCards");
     expect(drawLog).toBeTruthy();
     if (drawLog?.kind === "drawCards") {
@@ -149,7 +149,7 @@ describe("beginYear + playerStatuses", () => {
       slots: { ...EMPTY_EVENT_SLOTS },
     };
     const s1 = beginYear(s0);
-    expect(s1.hand.length).toBe(2);
+    expect(s1.hand.length).toBe(1);
   });
 
   it("applies Europe Alert treasury income penalty at turn 1-2 as -1", () => {
@@ -572,11 +572,11 @@ describe("beginYear + playerStatuses", () => {
     const s1 = beginYear(s0);
     expect(s1.hand).toHaveLength(12);
     expect(s1.hand).toContain("d0");
-    expect(s1.discard).toEqual(["d1", "d2"]);
+    expect(s1.discard).toEqual(["d1"]);
     const overflowEntry = s1.actionLog.find((e) => e.kind === "drawOverflowDiscarded");
     expect(overflowEntry).toBeTruthy();
     if (overflowEntry?.kind === "drawOverflowDiscarded") {
-      expect(overflowEntry.cardTemplateIds).toEqual(["development", "reform"]);
+      expect(overflowEntry.cardTemplateIds).toEqual(["development"]);
     }
   });
 });
