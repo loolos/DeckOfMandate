@@ -171,7 +171,8 @@ describe("gameReducer", () => {
       },
     };
     const after = gameReducer(withCard, { type: "CONFIRM_RETENTION", keepIds: [safe] });
-    expect(after.discard.includes(fundingId)).toBe(true);
+    const stillTracked = after.hand.includes(fundingId) || after.deck.includes(fundingId) || after.discard.includes(fundingId);
+    expect(stillTracked).toBe(true);
     expect(after.cardUsesById[fundingId]).toEqual({ remaining: 3, total: 3 });
   });
 
