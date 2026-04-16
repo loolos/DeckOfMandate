@@ -124,7 +124,7 @@ describe("beginYear + playerStatuses", () => {
     expect(s1.playerStatuses).toHaveLength(0);
   });
 
-  it("applies fixed Europe Alert draw reduction from chapter-start power", () => {
+  it("does not apply extra draw reduction from Europe Alert during beginYear", () => {
     const started = createInitialState(55_002);
     const cardsById: Record<string, CardInstance> = {
       c0: { instanceId: "c0", templateId: "funding" },
@@ -144,12 +144,12 @@ describe("beginYear + playerStatuses", () => {
       cardsById,
       playerStatuses: [],
       europeAlert: true,
-      europeAlertDrawPenalty: 2,
+      europeAlertPowerLoss: 2,
       antiFrenchLeague: null,
       slots: { ...EMPTY_EVENT_SLOTS },
     };
     const s1 = beginYear(s0);
-    expect(s1.hand.length).toBe(1);
+    expect(s1.hand.length).toBe(3);
   });
 
   it("applies Europe Alert treasury income penalty at turn 1-2 as -1", () => {

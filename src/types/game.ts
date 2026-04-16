@@ -191,8 +191,8 @@ export type GameState = {
   warOfDevolutionAttacked: boolean;
   /** Continuity marker from Chapter 1 military overreach; increases selected war-pressure rolls in Chapter 2. */
   europeAlert: boolean;
-  /** Fixed Chapter-2 Europe Alert draw reduction computed from chapter-start power (floor(power/2), min 1). */
-  europeAlertDrawPenalty: number;
+  /** Fixed Chapter-2 Europe Alert immediate power loss computed from chapter-start power (floor(power/2)). */
+  europeAlertPowerLoss: number;
   /** Chapter-2 objective marker; set true once Treaties of Nijmegen is successfully resolved. */
   nymwegenSettlementAchieved: boolean;
   /**

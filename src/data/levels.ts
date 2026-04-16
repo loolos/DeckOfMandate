@@ -26,8 +26,8 @@ const firstMandate = {
     legitimacy: 2,
   },
   winTargets: {
-    treasuryStat: 4,
-    power: 4,
+    treasuryStat: 6,
+    power: 6,
     legitimacy: 5,
   },
 } as const;

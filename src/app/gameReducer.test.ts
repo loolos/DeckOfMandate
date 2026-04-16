@@ -71,7 +71,7 @@ describe("gameReducer", () => {
       ...base,
       hand,
       deck,
-      resources: { treasuryStat: 4, power: 4, legitimacy: 5, funding: 3 },
+      resources: { treasuryStat: 6, power: 6, legitimacy: 5, funding: 3 },
       slots: {
         ...EMPTY_EVENT_SLOTS,
         A: { instanceId: "e1", templateId: "budgetStrain", resolved: false },

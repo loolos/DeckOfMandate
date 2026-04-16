@@ -65,7 +65,7 @@ export const messagesEnCore = {
   "menu.refit.resources": "Starting resources — Treasury {treasury}, Power {power}, Legitimacy {legitimacy}",
   "menu.refit.startYear": "Chapter 2 start year: {year}",
   "menu.refit.europeAlertOn":
-    "Europe Alert: ON (fixed draw reduction each year: -{n}; treasury income scales down every two turns: turns 1-2: -1, turns 3-4: -2, turns 5-6: -3, etc.; plus 50% chance each year to add either Frontier Garrisons or Trade Disruption).",
+    "Europe Alert: ON (at chapter start, immediate Power -{n}, i.e. floor(current Power / 2); treasury income scales down every two turns: turns 1-2: -1, turns 3-4: -2, turns 5-6: -3, etc.; plus 50% chance each year to add either Frontier Garrisons or Trade Disruption).",
   "menu.refit.europeAlertOff": "Europe Alert: OFF (standard Chapter 2 pressure).",
   "menu.refit.totalCards": "Deck size: {current} (required {min}–{max})",
   "menu.refit.totalCards.simple": "Deck size after removals: {current}",

@@ -1,7 +1,7 @@
 import { getLevelContent } from "../data/levelContent";
 import { defaultLevelId, getLevelDef } from "../data/levels";
 import { buildDefaultCardUsesById } from "../logic/cardUsage";
-import { computeEuropeAlertDrawPenalty } from "../logic/europeAlert";
+import { computeEuropeAlertPowerLoss } from "../logic/europeAlert";
 import { createRngFromSeed, shuffle } from "../logic/rng";
 import { beginYear } from "../logic/turnFlow";
 import type { CardInstance, CardTemplateId } from "../types/card";
@@ -14,7 +14,7 @@ type InitialStateOptions = {
   calendarStartYearOverride?: number;
   warOfDevolutionAttacked?: boolean;
   europeAlert?: boolean;
-  europeAlertDrawPenalty?: number;
+  europeAlertPowerLoss?: number;
 };
 
 export function createInitialState(
@@ -25,11 +25,13 @@ export function createInitialState(
   const level = getLevelDef(levelId);
   const runSeed = ((seed ?? Math.floor(Math.random() * 0x7fffffff)) >>> 0) || 0x9e3779b9;
   let rng = createRngFromSeed(runSeed);
-  const resources = { ...level.startingResources, ...options?.startingResourcesOverride };
+  const baseResources = { ...level.startingResources, ...options?.startingResourcesOverride };
   const europeAlert = options?.europeAlert ?? false;
-  const europeAlertDrawPenalty =
-    options?.europeAlertDrawPenalty ??
-    (europeAlert ? computeEuropeAlertDrawPenalty(resources.power) : 0);
+  const europeAlertPowerLoss =
+    options?.europeAlertPowerLoss ?? (europeAlert ? computeEuropeAlertPowerLoss(baseResources.power) : 0);
+  const resources = europeAlert
+    ? { ...baseResources, power: Math.max(0, baseResources.power - europeAlertPowerLoss) }
+    : baseResources;
 
   const starterDeckTemplateOrder =
     options?.starterDeckTemplateOrder ?? getLevelContent(levelId).starterDeckTemplateOrder;
@@ -71,7 +73,7 @@ export function createInitialState(
     antiFrenchLeague: null,
     warOfDevolutionAttacked: options?.warOfDevolutionAttacked ?? false,
     europeAlert,
-    europeAlertDrawPenalty,
+    europeAlertPowerLoss,
     nymwegenSettlementAchieved: false,
     proceduralEventSequence: [],
     actionLog: [],
