@@ -12,7 +12,8 @@ export const messagesZhCore = {
   "resource.funding": "剩余经费",
   "resource.funding.hint": "用于打牌与事件处理",
   "resource.power": "权力",
-  "resource.power.hint": "每回合抽牌次数",
+  "resource.power.hint":
+    "抽牌按权力阈值阶梯增长（1/2/4/7/11/16…）：达到下一阈值才多 1 次；低于当前阈值就少 1 次。展开资源详情可看完整规则与示例。",
   "resource.legitimacy": "合法性",
   "resource.legitimacy.hint": "回合末保留上限；归零即败",
   "ui.resources": "资源",
