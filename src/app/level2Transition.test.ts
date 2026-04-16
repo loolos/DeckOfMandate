@@ -22,8 +22,8 @@ describe("level2Transition", () => {
     expect(draft.resources.treasuryStat).toBe(7);
     expect(draft.resources.power).toBe(7);
     expect(draft.resources.legitimacy).toBe(5);
-    expect(draft.carryoverCards.length).toBe(11);
-    expect(draft.carryoverCards.some((card) => card.templateId === "development")).toBe(false);
+    expect(draft.carryoverCards.length).toBe(13);
+    expect(draft.carryoverCards.some((card) => card.templateId === "development")).toBe(true);
     const standaloneReform = draft.carryoverCards.find((card) => card.templateId === "reform");
     const standaloneCeremony = draft.carryoverCards.find((card) => card.templateId === "ceremony");
     const standaloneFunding = draft.carryoverCards.find((card) => card.templateId === "funding");
@@ -32,8 +32,11 @@ describe("level2Transition", () => {
     expect(standaloneCeremony?.inflationDelta).toBe(1);
     expect(standaloneFunding?.remainingUses).toBe(1);
     expect(standaloneCrackdown?.remainingUses).toBe(1);
+    const standaloneDevelopment = draft.carryoverCards.find((card) => card.templateId === "development");
+    expect(standaloneDevelopment?.remainingUses).toBe(1);
     expect(standaloneFunding?.totalUses).toBe(1);
     expect(standaloneCrackdown?.totalUses).toBe(1);
+    expect(standaloneDevelopment?.totalUses).toBe(1);
     expect(draft.removedCarryoverIds).toEqual([]);
     expect(v.totalNewCards).toBe(LEVEL2_FIXED_NEW_IDS.length);
     expect(v.isValid).toBe(true);
@@ -91,7 +94,7 @@ describe("level2Transition", () => {
     expect(st.resources.legitimacy).toBe(5);
     expect(st.europeAlertPowerLoss).toBe(3);
     const allTemplateIds = Object.values(st.cardsById).map((c) => c.templateId);
-    expect(allTemplateIds.includes("development")).toBe(false);
+    expect(allTemplateIds.includes("development")).toBe(true);
     const reformInstanceId = Object.keys(st.cardsById).find((id) => st.cardsById[id]?.templateId === "reform");
     const ceremonyInstanceId = Object.keys(st.cardsById).find((id) => st.cardsById[id]?.templateId === "ceremony");
     if (!reformInstanceId || !ceremonyInstanceId) throw new Error("expected reform and ceremony in standalone deck");
@@ -164,14 +167,16 @@ describe("level2Transition", () => {
     }
   });
 
-  it("standalone chapter 2 keeps royal limited-use cards at 1/1", () => {
+  it("standalone chapter 2 keeps limited-use carryovers at 1/1", () => {
     const draft = createStandaloneLevel2Draft(2_024);
     const st = buildLevel2StateFromDraft(draft);
     const fundingId = Object.keys(st.cardsById).find((id) => st.cardsById[id]?.templateId === "funding");
     const crackdownId = Object.keys(st.cardsById).find((id) => st.cardsById[id]?.templateId === "crackdown");
-    if (!fundingId || !crackdownId) throw new Error("expected funding and crackdown in standalone deck");
+    const developmentId = Object.keys(st.cardsById).find((id) => st.cardsById[id]?.templateId === "development");
+    if (!fundingId || !crackdownId || !developmentId) throw new Error("expected limited-use carryover cards");
     expect(st.cardUsesById[fundingId]).toEqual({ remaining: 1, total: 1 });
     expect(st.cardUsesById[crackdownId]).toEqual({ remaining: 1, total: 1 });
+    expect(st.cardUsesById[developmentId]).toEqual({ remaining: 1, total: 1 });
   });
 
   it("includes non-temp cards still present in cardsById even if they are outside deck/discard/hand", () => {
