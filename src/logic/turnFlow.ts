@@ -277,9 +277,8 @@ export function beginYear(state: GameState): GameState {
   const scheduledDrawModifier = s.scheduledDrawModifiers[0] ?? 0;
   s = { ...s, scheduledDrawModifiers: s.scheduledDrawModifiers.slice(1) };
   const statusDrawDelta = sumDrawAttemptsStatusDelta(s.playerStatuses);
-  const europeAlertPenalty = s.europeAlert ? Math.max(0, s.europeAlertDrawPenalty) : 0;
   const baseAttempts = drawAttemptsFromPower(s.resources.power);
-  let attempts = Math.max(1, baseAttempts + s.nextTurnDrawModifier + scheduledDrawModifier + statusDrawDelta - europeAlertPenalty);
+  let attempts = Math.max(1, baseAttempts + s.nextTurnDrawModifier + scheduledDrawModifier + statusDrawDelta);
   const coalition = rollAntiFrenchLeagueDrawAdjustment(s.antiFrenchLeague, s.turn, s.rng);
   s = { ...s, rng: coalition.rng };
   if (coalition.adjustment < 0 && s.antiFrenchLeague && s.turn <= s.antiFrenchLeague.untilTurn) {

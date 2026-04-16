@@ -1,4 +1,4 @@
-/** Europe Alert draw reduction is fixed at chapter start: floor(power / 2), at least 1. */
-export function computeEuropeAlertDrawPenalty(startingPower: number): number {
-  return Math.max(1, Math.floor(startingPower / 2));
+/** Europe Alert immediate power loss at chapter start: floor(current power / 2). */
+export function computeEuropeAlertPowerLoss(currentPower: number): number {
+  return Math.max(0, Math.floor(currentPower / 2));
 }

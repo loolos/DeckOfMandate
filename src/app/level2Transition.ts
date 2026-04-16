@@ -2,7 +2,7 @@ import { getCardTemplate } from "../data/cards";
 import { getLevelContent } from "../data/levelContent";
 import { getLevelDef } from "../data/levels";
 import { createInitialCardUseState } from "../logic/cardUsage";
-import { computeEuropeAlertDrawPenalty } from "../logic/europeAlert";
+import { computeEuropeAlertPowerLoss } from "../logic/europeAlert";
 import { createRngFromSeed, shuffle } from "../logic/rng";
 import { beginYear } from "../logic/turnFlow";
 import type { CardInstance, CardTemplateId } from "../types/card";
@@ -217,9 +217,10 @@ function buildContinuityLevel2State(draft: Level2StartDraft): GameState {
       cardUsesById[card.instanceId] = { total, remaining };
     }
   }
-  const europeAlertDrawPenalty = draft.europeAlert
-    ? computeEuropeAlertDrawPenalty(draft.resources.power)
-    : 0;
+  const europeAlertPowerLoss = draft.europeAlert ? computeEuropeAlertPowerLoss(draft.resources.power) : 0;
+  const resources = draft.europeAlert
+    ? { ...draft.resources, power: Math.max(0, draft.resources.power - europeAlertPowerLoss) }
+    : draft.resources;
 
   const base: GameState = {
     levelId: "secondMandate",
@@ -231,7 +232,7 @@ function buildContinuityLevel2State(draft: Level2StartDraft): GameState {
     outcome: "playing",
     pendingInteraction: null,
     nextIds: { event: 0, status: 0, log: 0 },
-    resources: draft.resources,
+    resources,
     nextTurnDrawModifier: 0,
     scheduledDrawModifiers: [],
     deck: shuffled.map((c) => c.instanceId),
@@ -246,7 +247,7 @@ function buildContinuityLevel2State(draft: Level2StartDraft): GameState {
     antiFrenchLeague: null,
     warOfDevolutionAttacked: draft.warOfDevolutionAttacked,
     europeAlert: draft.europeAlert,
-    europeAlertDrawPenalty,
+    europeAlertPowerLoss,
     nymwegenSettlementAchieved: false,
     proceduralEventSequence: [],
     actionLog: [],

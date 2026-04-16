@@ -1,6 +1,6 @@
 import { defaultLevelId, getLevelDef, isLevelId } from "../data/levels";
 import { normalizeCardUsesById } from "./cardUsage";
-import { computeEuropeAlertDrawPenalty } from "./europeAlert";
+import { computeEuropeAlertPowerLoss } from "./europeAlert";
 import { EMPTY_EVENT_SLOTS, EMPTY_PENDING_MAJOR_CRISIS, EVENT_SLOT_ORDER, type SlotId } from "../types/event";
 import type { GameState } from "../types/game";
 
@@ -48,11 +48,15 @@ export function normalizeGameState(state: GameState): GameState {
   if (s.europeAlert === undefined) {
     s = { ...s, europeAlert: false };
   }
-  if (s.europeAlertDrawPenalty === undefined) {
-    // Migration fallback for older saves: derive from current power if Europe Alert is active.
+  if (s.europeAlertPowerLoss === undefined) {
+    const legacyDrawPenalty =
+      typeof (s as GameState & { europeAlertDrawPenalty?: unknown }).europeAlertDrawPenalty === "number"
+        ? Math.max(0, (s as GameState & { europeAlertDrawPenalty: number }).europeAlertDrawPenalty)
+        : undefined;
+    // Migration fallback for older saves: reuse legacy value when present; otherwise derive from current power.
     s = {
       ...s,
-      europeAlertDrawPenalty: s.europeAlert ? computeEuropeAlertDrawPenalty(s.resources.power) : 0,
+      europeAlertPowerLoss: legacyDrawPenalty ?? (s.europeAlert ? computeEuropeAlertPowerLoss(s.resources.power) : 0),
     };
   }
   if (s.nymwegenSettlementAchieved === undefined) {

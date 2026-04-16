@@ -17,7 +17,7 @@ import {
   type LevelId,
 } from "../data/levels";
 import { cardLabelWithIcon, resourceLabelWithIcon } from "../logic/icons";
-import { computeEuropeAlertDrawPenalty } from "../logic/europeAlert";
+import { computeEuropeAlertPowerLoss } from "../logic/europeAlert";
 import { normalizeGameState } from "../logic/normalizeGameState";
 import { loadGame, saveGame } from "../logic/saveLoad";
 import { readTutorialOnLevelEntry, writeTutorialOnLevelEntry } from "../logic/tutorialPref";
@@ -444,7 +444,7 @@ export function Game() {
           <p className={styles.startMenuMuted}>
             {level2Draft.europeAlert
               ? t("menu.refit.europeAlertOn", {
-                  n: computeEuropeAlertDrawPenalty(level2Draft.resources.power),
+                  n: computeEuropeAlertPowerLoss(level2Draft.resources.power),
                 })
               : t("menu.refit.europeAlertOff")}
           </p>
@@ -651,7 +651,7 @@ export function Game() {
           <StatusBar
             statuses={state.playerStatuses}
             europeAlertActive={state.europeAlert && state.outcome === "playing"}
-            europeAlertDrawPenalty={state.europeAlertDrawPenalty}
+            europeAlertPowerLoss={state.europeAlertPowerLoss}
             coalitionActive={
               !!state.antiFrenchLeague &&
               state.turn <= state.antiFrenchLeague.untilTurn &&

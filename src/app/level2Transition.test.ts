@@ -87,8 +87,9 @@ describe("level2Transition", () => {
     expect(st.levelId).toBe("secondMandate");
     expect(st.calendarStartYear).toBe(1676);
     expect(st.resources.treasuryStat).toBe(7);
-    expect(st.resources.power).toBe(7);
+    expect(st.resources.power).toBe(4);
     expect(st.resources.legitimacy).toBe(5);
+    expect(st.europeAlertPowerLoss).toBe(3);
     const allTemplateIds = Object.values(st.cardsById).map((c) => c.templateId);
     expect(allTemplateIds.includes("development")).toBe(false);
     const reformInstanceId = Object.keys(st.cardsById).find((id) => st.cardsById[id]?.templateId === "reform");
