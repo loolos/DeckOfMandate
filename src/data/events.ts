@@ -98,7 +98,7 @@ export const eventTemplates: Record<EventTemplateId, EventTemplate> = {
   revocationNantes: {
     id: "revocationNantes",
     weight: 0,
-    harmful: true,
+    harmful: false,
     crisisPersistence: "continued",
     titleKey: "event.revocationNantes.name",
     descriptionKey: "event.revocationNantes.desc",
@@ -108,7 +108,7 @@ export const eventTemplates: Record<EventTemplateId, EventTemplate> = {
   leagueOfAugsburg: {
     id: "leagueOfAugsburg",
     weight: 0,
-    harmful: true,
+    harmful: false,
     titleKey: "event.leagueOfAugsburg.name",
     descriptionKey: "event.leagueOfAugsburg.desc",
     solve: { kind: "fundingOrCrackdown", amount: 2 },
@@ -117,7 +117,7 @@ export const eventTemplates: Record<EventTemplateId, EventTemplate> = {
   nineYearsWar: {
     id: "nineYearsWar",
     weight: 0,
-    harmful: true,
+    harmful: false,
     crisisPersistence: "continued",
     titleKey: "event.nineYearsWar.name",
     descriptionKey: "event.nineYearsWar.desc",
@@ -263,7 +263,7 @@ export const eventTemplates: Record<EventTemplateId, EventTemplate> = {
   grainReliefCrisis: {
     id: "grainReliefCrisis",
     weight: 0,
-    harmful: true,
+    harmful: false,
     titleKey: "event.grainReliefCrisis.name",
     descriptionKey: "event.grainReliefCrisis.desc",
     solve: { kind: "funding", amount: 2 },
@@ -283,7 +283,7 @@ export const eventTemplates: Record<EventTemplateId, EventTemplate> = {
   cautiousCrown: {
     id: "cautiousCrown",
     weight: 0,
-    harmful: true,
+    harmful: false,
     titleKey: "event.cautiousCrown.name",
     descriptionKey: "event.cautiousCrown.desc",
     solve: { kind: "funding", amount: 2 },
