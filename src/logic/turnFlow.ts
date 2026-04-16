@@ -18,14 +18,6 @@ import { drawAttemptsFromPower } from "./drawScaling";
 import { applyScriptedCalendarPhase, rollAntiFrenchLeagueDrawAdjustment } from "./scriptedCalendar";
 import { rngNext, shuffle } from "./rng";
 
-/** First calendar turn on which a full empty-board roll may produce three events (turns 1–5 never triple). */
-export const FIRST_TURN_ELIGIBLE_FOR_TRIPLE_EVENTS = 6;
-
-/** When every event slot is empty, P(three new events) for turn >= {@link FIRST_TURN_ELIGIBLE_FOR_TRIPLE_EVENTS}. */
-export const PROB_TRIPLE_EVENTS = 0.1;
-
-/** When every event slot is empty, P(only slot A is filled); remaining probability is two events (A+B). */
-export const PROB_SINGLE_EVENT_WHEN_ALL_EMPTY = 0.3;
 export const PROB_EUROPE_ALERT_SUPPLEMENTAL_EVENT = 0.5;
 
 const EUROPE_ALERT_SUPPLEMENTAL_POOL = ["frontierGarrisons", "tradeDisruption"] as const;
@@ -36,6 +28,56 @@ const FIRST_MANDATE_OPENING_EVENTS: readonly EventInstance["templateId"][] = [
   "tradeOpportunity",
   "administrativeDelay",
 ];
+type EventCountOption = {
+  count: number;
+  weight: number;
+};
+
+type EventCountRule = {
+  /** Sum(resources) > minExclusive when present. */
+  minExclusive?: number;
+  /** Sum(resources) <= maxInclusive when present. */
+  maxInclusive?: number;
+  options: readonly EventCountOption[];
+};
+
+/**
+ * Rules for full-empty procedural event refill.
+ * Keep table-driven so level balancing can extend with more resource thresholds later.
+ */
+const EMPTY_BOARD_EVENT_COUNT_RULES: readonly EventCountRule[] = [
+  {
+    maxInclusive: 5,
+    options: [{ count: 1, weight: 1 }],
+  },
+  {
+    minExclusive: 5,
+    maxInclusive: 15,
+    options: [
+      { count: 1, weight: 0.2 },
+      { count: 2, weight: 0.7 },
+      { count: 3, weight: 0.1 },
+    ],
+  },
+  {
+    minExclusive: 15,
+    maxInclusive: 25,
+    options: [
+      { count: 1, weight: 0.1 },
+      { count: 2, weight: 0.4 },
+      { count: 3, weight: 0.4 },
+      { count: 4, weight: 0.1 },
+    ],
+  },
+  {
+    minExclusive: 25,
+    options: [
+      { count: 2, weight: 0.3 },
+      { count: 3, weight: 0.5 },
+      { count: 4, weight: 0.2 },
+    ],
+  },
+] as const;
 
 function buildProceduralSequenceBlock(state: GameState): [GameState["rng"], EventInstance["templateId"][]] {
   const pool = getLevelContent(state.levelId).rollableEventIds;
@@ -140,14 +182,32 @@ function allSlotsEmpty(st: GameState): boolean {
   return EVENT_SLOT_ORDER.every((id) => !st.slots[id]);
 }
 
-function desiredProceduralEventCountWhenAllEmpty(state: GameState, roll: number): number {
-  if (state.levelId === "firstMandate" && state.turn === 1) return 2;
-  if (state.turn < FIRST_TURN_ELIGIBLE_FOR_TRIPLE_EVENTS) {
-    return roll < PROB_SINGLE_EVENT_WHEN_ALL_EMPTY ? 1 : 2;
+function sumCoreResources(state: GameState): number {
+  return state.resources.treasuryStat + state.resources.power + state.resources.legitimacy;
+}
+
+function inRange(sum: number, rule: EventCountRule): boolean {
+  const minOk = rule.minExclusive === undefined || sum > rule.minExclusive;
+  const maxOk = rule.maxInclusive === undefined || sum <= rule.maxInclusive;
+  return minOk && maxOk;
+}
+
+function pickWeightedEventCount(options: readonly EventCountOption[], roll: number): number {
+  if (options.length === 0) return 1;
+  let cumulative = 0;
+  for (const option of options) {
+    cumulative += Math.max(0, option.weight);
+    if (roll < cumulative) return option.count;
   }
-  if (roll < PROB_TRIPLE_EVENTS) return 3;
-  if (roll < PROB_TRIPLE_EVENTS + PROB_SINGLE_EVENT_WHEN_ALL_EMPTY) return 1;
-  return 2;
+  return options[options.length - 1]!.count;
+}
+
+export function desiredProceduralEventCountWhenAllEmpty(state: GameState, roll: number): number {
+  if (state.levelId === "firstMandate" && state.turn === 1) return 2;
+  const resourceSum = sumCoreResources(state);
+  const matchedRule = EMPTY_BOARD_EVENT_COUNT_RULES.find((rule) => inRange(resourceSum, rule));
+  if (!matchedRule) return 1;
+  return pickWeightedEventCount(matchedRule.options, roll);
 }
 
 function fillEmptySlots(state: GameState): GameState {

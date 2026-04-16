@@ -5,10 +5,69 @@ import { EMPTY_EVENT_SLOTS } from "../types/event";
 import type { GameState } from "../types/game";
 import {
   beginYear,
+  desiredProceduralEventCountWhenAllEmpty,
   maybeAddEuropeAlertSupplementalEvent,
   maybeAddReligiousTensionEvent,
   retentionCapacity,
 } from "./turnFlow";
+
+describe("desiredProceduralEventCountWhenAllEmpty", () => {
+  it("returns exactly one event when treasury+power+legitimacy is 5 or less", () => {
+    const s0 = createInitialState(101_001, "secondMandate");
+    const state: GameState = {
+      ...s0,
+      levelId: "secondMandate",
+      turn: 3,
+      resources: { ...s0.resources, treasuryStat: 1, power: 2, legitimacy: 2 },
+    };
+    expect(desiredProceduralEventCountWhenAllEmpty(state, 0.0)).toBe(1);
+    expect(desiredProceduralEventCountWhenAllEmpty(state, 0.99)).toBe(1);
+  });
+
+  it("uses 20%/70%/10% for sums in (5, 15]", () => {
+    const s0 = createInitialState(101_002, "secondMandate");
+    const state: GameState = {
+      ...s0,
+      levelId: "secondMandate",
+      turn: 3,
+      resources: { ...s0.resources, treasuryStat: 5, power: 4, legitimacy: 1 },
+    };
+    expect(desiredProceduralEventCountWhenAllEmpty(state, 0.19)).toBe(1);
+    expect(desiredProceduralEventCountWhenAllEmpty(state, 0.2)).toBe(2);
+    expect(desiredProceduralEventCountWhenAllEmpty(state, 0.89)).toBe(2);
+    expect(desiredProceduralEventCountWhenAllEmpty(state, 0.9)).toBe(3);
+  });
+
+  it("uses 10%/40%/40%/10% for sums in (15, 25]", () => {
+    const s0 = createInitialState(101_003, "secondMandate");
+    const state: GameState = {
+      ...s0,
+      levelId: "secondMandate",
+      turn: 3,
+      resources: { ...s0.resources, treasuryStat: 10, power: 8, legitimacy: 2 },
+    };
+    expect(desiredProceduralEventCountWhenAllEmpty(state, 0.09)).toBe(1);
+    expect(desiredProceduralEventCountWhenAllEmpty(state, 0.1)).toBe(2);
+    expect(desiredProceduralEventCountWhenAllEmpty(state, 0.49)).toBe(2);
+    expect(desiredProceduralEventCountWhenAllEmpty(state, 0.5)).toBe(3);
+    expect(desiredProceduralEventCountWhenAllEmpty(state, 0.89)).toBe(3);
+    expect(desiredProceduralEventCountWhenAllEmpty(state, 0.9)).toBe(4);
+  });
+
+  it("uses 30%/50%/20% for sums above 25", () => {
+    const s0 = createInitialState(101_004, "secondMandate");
+    const state: GameState = {
+      ...s0,
+      levelId: "secondMandate",
+      turn: 3,
+      resources: { ...s0.resources, treasuryStat: 10, power: 10, legitimacy: 8 },
+    };
+    expect(desiredProceduralEventCountWhenAllEmpty(state, 0.29)).toBe(2);
+    expect(desiredProceduralEventCountWhenAllEmpty(state, 0.3)).toBe(3);
+    expect(desiredProceduralEventCountWhenAllEmpty(state, 0.79)).toBe(3);
+    expect(desiredProceduralEventCountWhenAllEmpty(state, 0.8)).toBe(4);
+  });
+});
 
 describe("beginYear + playerStatuses", () => {
   it("applies drawAttemptsDelta to attempts then decrements turnsRemaining", () => {
