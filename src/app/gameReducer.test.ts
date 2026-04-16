@@ -691,6 +691,48 @@ describe("gameReducer", () => {
     expect(after.outcome).not.toBe("victory");
   });
 
+  it("chapter 2 cannot win before year 1696 even when all other objectives are complete", () => {
+    const level = getLevelDef("secondMandate");
+    const base = createInitialState(202_906, "secondMandate");
+    const s0: typeof base = {
+      ...base,
+      turn: 20, // 1695
+      nymwegenSettlementAchieved: true,
+      europeAlert: false,
+      hand: [],
+      resources: {
+        treasuryStat: level.winTargets.treasuryStat,
+        power: level.winTargets.power,
+        legitimacy: level.winTargets.legitimacy,
+        funding: 0,
+      },
+      slots: { ...EMPTY_EVENT_SLOTS },
+    };
+    const after = gameReducer(s0, { type: "END_YEAR" });
+    expect(after.outcome).not.toBe("victory");
+  });
+
+  it("chapter 2 can win from year 1696 onward when all objectives are complete", () => {
+    const level = getLevelDef("secondMandate");
+    const base = createInitialState(202_907, "secondMandate");
+    const s0: typeof base = {
+      ...base,
+      turn: 21, // 1696
+      nymwegenSettlementAchieved: true,
+      europeAlert: false,
+      hand: [],
+      resources: {
+        treasuryStat: level.winTargets.treasuryStat,
+        power: level.winTargets.power,
+        legitimacy: level.winTargets.legitimacy,
+        funding: 0,
+      },
+      slots: { ...EMPTY_EVENT_SLOTS },
+    };
+    const after = gameReducer(s0, { type: "END_YEAR" });
+    expect(after.outcome).toBe("victory");
+  });
+
   it("grainRelief directly resolves one unresolved risingGrainPrices event when played", () => {
     const base = createInitialState(202_902, "secondMandate");
     const grainReliefCardId = "test_grain_relief";
