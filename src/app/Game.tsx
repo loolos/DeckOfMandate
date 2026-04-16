@@ -105,6 +105,8 @@ export function Game() {
   const [menuLevelId, setMenuLevelId] = useState<LevelId>(defaultLevelId);
   const [menuSeedText, setMenuSeedText] = useState("");
   const [pendingNewRun, setPendingNewRun] = useState<PendingNewRun | null>(null);
+  const [pendingHydrateState, setPendingHydrateState] = useState<GameState | null>(null);
+  const [pendingIntroLevelId, setPendingIntroLevelId] = useState<LevelId | null>(null);
   const [levelIntroOpen, setLevelIntroOpen] = useState(false);
   const [tutorialOnEntryMenu, setTutorialOnEntryMenu] = useState(() => readTutorialOnLevelEntry());
   const [pendingLevelTutorial, setPendingLevelTutorial] = useState(false);
@@ -213,6 +215,8 @@ export function Game() {
   );
 
   const beginConfiguredRun = (seed: number | undefined, levelId: LevelId) => {
+    setPendingHydrateState(null);
+    setPendingIntroLevelId(null);
     if (levelId === "secondMandate") {
       openLevel2Refit(createStandaloneLevel2Draft(seed));
       setLevelIntroOpen(false);
@@ -231,6 +235,8 @@ export function Game() {
     const def = getLevelDef(menuLevelId);
     if (levelDefHasIntro(def)) {
       setPendingNewRun({ seed, levelId: menuLevelId });
+      setPendingHydrateState(null);
+      setPendingIntroLevelId(menuLevelId);
       setLevelIntroOpen(true);
     } else {
       beginConfiguredRun(seed, menuLevelId);
@@ -238,12 +244,26 @@ export function Game() {
   };
 
   const confirmLevelIntro = () => {
+    if (pendingHydrateState && pendingIntroLevelId) {
+      setPendingLevelTutorial(tutorialOnEntryMenu);
+      dispatchSafe({ type: "HYDRATE", state: pendingHydrateState });
+      setStartMenuOpen(false);
+      setLevel2Draft(null);
+      setLevel2DraftInitial(null);
+      setLevelIntroOpen(false);
+      setPendingHydrateState(null);
+      setPendingIntroLevelId(null);
+      setPendingNewRun(null);
+      return;
+    }
     if (!pendingNewRun) return;
     beginConfiguredRun(pendingNewRun.seed, pendingNewRun.levelId);
   };
 
   const resumeFromStoredSave = () => {
     setPendingLevelTutorial(false);
+    setPendingHydrateState(null);
+    setPendingIntroLevelId(null);
     setLevel2Draft(null);
     setLevel2DraftInitial(null);
     const loaded = loadGame();
@@ -259,13 +279,22 @@ export function Game() {
     const v = validateLevel2Draft(level2Draft);
     if (!v.isValid) return;
     const nextState = buildLevel2StateFromDraft(level2Draft);
+    setLevel2Draft(null);
+    setLevel2DraftInitial(null);
+    setPendingNewRun(null);
+    const def = getLevelDef(nextState.levelId);
+    if (levelDefHasIntro(def)) {
+      setPendingHydrateState(nextState);
+      setPendingIntroLevelId(nextState.levelId);
+      setLevelIntroOpen(true);
+      return;
+    }
     setPendingLevelTutorial(tutorialOnEntryMenu);
     dispatchSafe({ type: "HYDRATE", state: nextState });
     setStartMenuOpen(false);
-    setLevel2Draft(null);
-    setLevel2DraftInitial(null);
     setLevelIntroOpen(false);
-    setPendingNewRun(null);
+    setPendingHydrateState(null);
+    setPendingIntroLevelId(null);
   };
 
   const openChapter2Continuity = () => {
@@ -273,8 +302,8 @@ export function Game() {
   };
 
   const introLevelDef =
-    levelIntroOpen && pendingNewRun && levelDefHasIntro(getLevelDef(pendingNewRun.levelId))
-      ? getLevelDef(pendingNewRun.levelId)
+    levelIntroOpen && pendingIntroLevelId && levelDefHasIntro(getLevelDef(pendingIntroLevelId))
+      ? getLevelDef(pendingIntroLevelId)
       : null;
 
   const levelIntro = introLevelDef ? (
@@ -306,8 +335,16 @@ export function Game() {
     const expanded = expandedRefitCardId === card.instanceId;
     const removed = level2Draft.removedCarryoverIds.includes(card.instanceId);
     const tagChips =
-      visibleTags.length > 0 ? (
+      visibleTags.length > 0 || (card.remainingUses != null && card.totalUses != null) ? (
         <div className={styles.badgeRow}>
+          {card.remainingUses != null && card.totalUses != null ? (
+            <span key={`${card.instanceId}_remaining_uses`} className={`${styles.badge} ${styles.tagButton}`}>
+              {t("card.tag.remainingUses", {
+                remaining: card.remainingUses,
+                total: card.totalUses,
+              })}
+            </span>
+          ) : null}
           {visibleTags.map((tag) => (
             <span key={`${card.instanceId}_${tag}`} className={`${styles.badge} ${styles.tagButton}`}>
               {t(`card.tag.${tag}` as MessageKey)}
