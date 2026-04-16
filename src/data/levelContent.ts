@@ -95,7 +95,7 @@ export const levelContentByLevelId = {
           extraTreasuryDelta: 1,
         },
         antiCoalition: {
-          drawPenaltyProbability: 0.6,
+          drawPenaltyProbability: 0.4,
           drawPenaltyDelta: -1,
           activeYearsAfterAttack: 5,
         },

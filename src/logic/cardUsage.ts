@@ -2,7 +2,8 @@ import type { LevelId } from "../data/levels";
 import type { CardInstance, CardTemplateId } from "../types/card";
 import type { CardUseState, GameState } from "../types/game";
 
-const LIMITED_CARD_TOTAL_USES = 3;
+const DEFAULT_LIMITED_CARD_TOTAL_USES = 3;
+const FIRST_MANDATE_ROYAL_TOTAL_USES = 4;
 const CHAPTER2_STARTING_ROYAL_REMAINING_USES = 1;
 
 type LimitedUseTemplateId = "funding" | "crackdown" | "diplomaticIntervention";
@@ -11,11 +12,18 @@ export function isLimitedUseTemplateId(templateId: CardTemplateId): templateId i
   return templateId === "funding" || templateId === "crackdown" || templateId === "diplomaticIntervention";
 }
 
+function getLimitedCardTotalUses(levelId: LevelId, templateId: LimitedUseTemplateId): number {
+  if (levelId === "firstMandate" && (templateId === "funding" || templateId === "crackdown")) {
+    return FIRST_MANDATE_ROYAL_TOTAL_USES;
+  }
+  return DEFAULT_LIMITED_CARD_TOTAL_USES;
+}
+
 function getDefaultRemainingUses(levelId: LevelId, templateId: LimitedUseTemplateId): number {
   if ((templateId === "funding" || templateId === "crackdown") && levelId === "secondMandate") {
     return CHAPTER2_STARTING_ROYAL_REMAINING_USES;
   }
-  return LIMITED_CARD_TOTAL_USES;
+  return getLimitedCardTotalUses(levelId, templateId);
 }
 
 export function createInitialCardUseState(
@@ -24,17 +32,12 @@ export function createInitialCardUseState(
   remainingOverride?: number,
 ): CardUseState | null {
   if (!isLimitedUseTemplateId(templateId)) return null;
+  const total = getLimitedCardTotalUses(levelId, templateId);
   const defaultRemaining = getDefaultRemainingUses(levelId, templateId);
-  const remaining = Math.max(
-    0,
-    Math.min(
-      LIMITED_CARD_TOTAL_USES,
-      Number.isFinite(remainingOverride) ? Number(remainingOverride) : defaultRemaining,
-    ),
-  );
+  const remaining = Math.max(0, Math.min(total, Number.isFinite(remainingOverride) ? Number(remainingOverride) : defaultRemaining));
   return {
     remaining,
-    total: LIMITED_CARD_TOTAL_USES,
+    total,
   };
 }
 

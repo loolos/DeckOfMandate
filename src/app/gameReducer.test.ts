@@ -100,11 +100,11 @@ describe("gameReducer", () => {
     }
   });
 
-  it("first mandate starts royal intervention at 3/3 uses", () => {
+  it("first mandate starts royal intervention at 4/4 uses", () => {
     const s0 = createInitialState(1002, "firstMandate");
     const crackdownId = Object.keys(s0.cardsById).find((id) => s0.cardsById[id]?.templateId === "crackdown");
     if (!crackdownId) throw new Error("expected crackdown in chapter 1 deck");
-    expect(s0.cardUsesById[crackdownId]).toEqual({ remaining: 3, total: 3 });
+    expect(s0.cardUsesById[crackdownId]).toEqual({ remaining: 4, total: 4 });
   });
 
   it("second mandate starts royal cards at 1/3 uses", () => {
@@ -626,6 +626,7 @@ describe("gameReducer", () => {
     const s0: typeof base = {
       ...base,
       europeAlert: true,
+      europeAlertPowerLoss: 1,
       nymwegenSettlementAchieved: false,
       resources: { ...base.resources, funding: 6, power: 9, legitimacy: 9 },
       slots: {
@@ -637,7 +638,7 @@ describe("gameReducer", () => {
     expect(after.europeAlert).toBe(false);
     expect(after.nymwegenSettlementAchieved).toBe(true);
     expect(after.resources.funding).toBe(0);
-    expect(after.resources.power).toBe(6);
+    expect(after.resources.power).toBe(7);
     expect(after.resources.legitimacy).toBe(7);
   });
 
