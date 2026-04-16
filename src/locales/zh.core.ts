@@ -193,6 +193,10 @@ export const messagesZhCore = {
     "[第 {turn} 年] 第二关以「欧洲警觉：开启」开局：章节开始时的权力即时减值（按开局权力的一半向下取整）已生效；且每年有50%概率额外出现「边境驻军」或「海贸受阻」。",
   "log.info.chapter2EuropeAlertOff":
     "[第 {turn} 年] 第二关以「欧洲警觉：关闭」开局：不会触发章节开始时的权力即时减值，且不会进行每年50%的「边境驻军 / 海贸受阻」额外事件判定。",
+  "log.info.antiFrenchSentimentActivated":
+    "[第 {turn} 年]「反法情绪」升温：法国财政与权力过度集中，引发周边国家共同警觉与制衡协同。此后将按“权力+财政”阈值额外触发通用压力事件。",
+  "log.info.antiFrenchSentimentEnded":
+    "[第 {turn} 年]「反法情绪」缓和：法国财政与权力强度回落，列强的即时联动警戒减弱；由该状态带来的额外通用压力事件停止触发。",
   "log.info.cardTag.royal": "[第 {turn} 年] 标签说明「王室」：该牌属于王室工具，部分事件只能靠此类手段处理。",
   "log.info.cardTag.temp": "[第 {turn} 年] 标签说明「临时」：该牌通常为一次性应急工具，打出后不会进入弃牌堆循环。",
   "log.info.cardTag.extra":

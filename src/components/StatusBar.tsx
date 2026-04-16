@@ -90,6 +90,7 @@ export function StatusBar({
       const tmpl = getStatusTemplate(row.templateId);
       const turnsText =
         row.templateId === "religiousTolerance"
+          || row.templateId === "antiFrenchSentiment"
           ? t("ui.statusPermanent")
           : row.templateId === "huguenotContainment"
             ? t("ui.statusHuguenotRemaining", { n: row.turnsRemaining })

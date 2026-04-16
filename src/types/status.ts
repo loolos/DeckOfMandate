@@ -17,7 +17,8 @@ export type StatusTemplateId =
   | "grainReliefDrawBoost"
   | "grainReliefLegitimacyBoost"
   | "religiousTolerance"
-  | "huguenotContainment";
+  | "huguenotContainment"
+  | "antiFrenchSentiment";
 
 export type PlayerStatusInstance = {
   instanceId: string;

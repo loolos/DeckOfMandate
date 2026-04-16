@@ -90,7 +90,7 @@ export const eventTemplates: Record<EventTemplateId, EventTemplate> = {
     descriptionKey: "event.nymwegenSettlement.desc",
     solve: { kind: "funding", amount: 6 },
     onFundSolveEffects: [
-      { kind: "modResource", resource: "power", delta: -3 },
+      { kind: "modResource", resource: "power", delta: -2 },
       { kind: "modResource", resource: "legitimacy", delta: -2 },
     ],
     penaltiesIfUnresolved: [{ kind: "modResource", resource: "power", delta: -1 }],

@@ -6,6 +6,7 @@ import type { GameState } from "../types/game";
 import {
   beginYear,
   desiredProceduralEventCountWhenAllEmpty,
+  extraProceduralEventsFromAntiFrenchSentiment,
   maybeAddEuropeAlertSupplementalEvent,
   maybeAddReligiousTensionEvent,
   retentionCapacity,
@@ -24,7 +25,7 @@ describe("desiredProceduralEventCountWhenAllEmpty", () => {
     expect(desiredProceduralEventCountWhenAllEmpty(state, 0.99)).toBe(1);
   });
 
-  it("uses 20%/70%/10% for sums in (5, 15]", () => {
+  it("uses 35%/55%/10% for sums in (5, 15]", () => {
     const s0 = createInitialState(101_002, "secondMandate");
     const state: GameState = {
       ...s0,
@@ -32,8 +33,8 @@ describe("desiredProceduralEventCountWhenAllEmpty", () => {
       turn: 3,
       resources: { ...s0.resources, treasuryStat: 5, power: 4, legitimacy: 1 },
     };
-    expect(desiredProceduralEventCountWhenAllEmpty(state, 0.19)).toBe(1);
-    expect(desiredProceduralEventCountWhenAllEmpty(state, 0.2)).toBe(2);
+    expect(desiredProceduralEventCountWhenAllEmpty(state, 0.34)).toBe(1);
+    expect(desiredProceduralEventCountWhenAllEmpty(state, 0.35)).toBe(2);
     expect(desiredProceduralEventCountWhenAllEmpty(state, 0.89)).toBe(2);
     expect(desiredProceduralEventCountWhenAllEmpty(state, 0.9)).toBe(3);
   });
@@ -66,6 +67,33 @@ describe("desiredProceduralEventCountWhenAllEmpty", () => {
     expect(desiredProceduralEventCountWhenAllEmpty(state, 0.3)).toBe(3);
     expect(desiredProceduralEventCountWhenAllEmpty(state, 0.79)).toBe(3);
     expect(desiredProceduralEventCountWhenAllEmpty(state, 0.8)).toBe(4);
+  });
+});
+
+describe("extraProceduralEventsFromAntiFrenchSentiment", () => {
+  it("adds one extra event when treasury+power is 21-24", () => {
+    const s0 = createInitialState(700_001, "secondMandate");
+    const state: GameState = {
+      ...s0,
+      resources: { ...s0.resources, treasuryStat: 12, power: 10 },
+    };
+    expect(extraProceduralEventsFromAntiFrenchSentiment(state)).toBe(1);
+  });
+
+  it("adds scaling extras every +5 above 20", () => {
+    const s0 = createInitialState(700_002, "secondMandate");
+    expect(
+      extraProceduralEventsFromAntiFrenchSentiment({
+        ...s0,
+        resources: { ...s0.resources, treasuryStat: 15, power: 10 },
+      }),
+    ).toBe(2);
+    expect(
+      extraProceduralEventsFromAntiFrenchSentiment({
+        ...s0,
+        resources: { ...s0.resources, treasuryStat: 18, power: 12 },
+      }),
+    ).toBe(3);
   });
 });
 
@@ -488,6 +516,46 @@ describe("beginYear + playerStatuses", () => {
     };
     const s1 = maybeAddEuropeAlertSupplementalEvent(s0);
     expect(["frontierGarrisons", "tradeDisruption"]).toContain(s1.slots.D?.templateId);
+  });
+
+  it("adds anti-french sentiment status and at least one extra procedural event when treasury+power > 20", () => {
+    const started = createInitialState(902_013, "secondMandate");
+    const s0: GameState = {
+      ...started,
+      resources: { ...started.resources, treasuryStat: 12, power: 10 },
+      slots: { ...EMPTY_EVENT_SLOTS },
+      proceduralEventSequence: [],
+    };
+    const s1 = beginYear(s0);
+    expect(s1.playerStatuses.some((st) => st.templateId === "antiFrenchSentiment")).toBe(true);
+    const nonNullCount = Object.values(s1.slots).filter(Boolean).length;
+    expect(nonNullCount).toBeGreaterThanOrEqual(2);
+    expect(
+      s1.actionLog.some((entry) => entry.kind === "info" && entry.infoKey === "antiFrenchSentimentActivated"),
+    ).toBe(true);
+  });
+
+  it("removes anti-french sentiment when treasury+power <= 20 and appends end-history log", () => {
+    const started = createInitialState(902_014, "secondMandate");
+    const s0: GameState = {
+      ...started,
+      resources: { ...started.resources, treasuryStat: 8, power: 9 },
+      slots: { ...EMPTY_EVENT_SLOTS },
+      playerStatuses: [
+        {
+          instanceId: "st_af",
+          templateId: "antiFrenchSentiment",
+          kind: "drawAttemptsDelta",
+          delta: 0,
+          turnsRemaining: 99,
+        },
+      ],
+    };
+    const s1 = beginYear(s0);
+    expect(s1.playerStatuses.some((st) => st.templateId === "antiFrenchSentiment")).toBe(false);
+    expect(s1.actionLog.some((entry) => entry.kind === "info" && entry.infoKey === "antiFrenchSentimentEnded")).toBe(
+      true,
+    );
   });
 
   it("retentionCapacity includes temporary retention boost statuses", () => {

@@ -139,7 +139,7 @@ describe("secondMandate balance data", () => {
     expect(getEventTemplate("ryswickPeace").harmful).toBe(false);
     expect(getEventTemplate("nymwegenSettlement").crisisPersistence).toBe("continued");
     expect(getEventTemplate("nymwegenSettlement").onFundSolveEffects).toEqual([
-      { kind: "modResource", resource: "power", delta: -3 },
+      { kind: "modResource", resource: "power", delta: -2 },
       { kind: "modResource", resource: "legitimacy", delta: -2 },
     ]);
     expect(getEventTemplate("nymwegenSettlement").penaltiesIfUnresolved).toEqual([

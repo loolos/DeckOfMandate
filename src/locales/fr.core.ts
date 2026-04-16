@@ -199,6 +199,10 @@ export const messagesFrCore: Record<keyof typeof messagesEnCore, string> = {
     "[Tour {turn}] Le Chapitre 2 commence avec l'Alerte Europe active : la perte immédiate de Pouvoir au début du chapitre (plancher(Pouvoir initial / 2)) est déjà appliquée ; et chaque année a 50% de chance d'ajouter soit Garnisons frontalières, soit Perturbation commerciale.",
   "log.info.chapter2EuropeAlertOff":
     "[Tour {turn}] Le Chapitre 2 commence avec l'Alerte Europe inactive : aucune perte immédiate de Pouvoir au début du chapitre, et aucun tirage annuel supplémentaire à 50% (Garnisons frontalières / Perturbation commerciale).",
+  "log.info.antiFrenchSentimentActivated":
+    "[Tour {turn}] Le sentiment anti-français monte : la concentration de puissance et de finances françaises alarme les cours voisines, qui renforcent leur vigilance commune. Des événements de pression procéduraux supplémentaires sont désormais déclenchés selon Pouvoir+Trésor.",
+  "log.info.antiFrenchSentimentEnded":
+    "[Tour {turn}] Le sentiment anti-français retombe : la concentration de puissance française recule, la coordination d'alerte immédiate des rivaux se relâche, et les événements de pression supplémentaires liés à ce statut cessent.",
   "log.info.cardUse.depleted.crackdownPenalty":
     "[Tour {turn}] Intervention royale atteint 0/3 et est retirée du cycle ; la capacité de contrainte de la cour recule (Pouvoir -1).",
   "log.info.cardUse.depleted.fundingPenalty":

@@ -69,6 +69,13 @@ export const statusTemplates: Record<StatusTemplateId, StatusTemplate> = {
     titleKey: "status.huguenotContainment.name",
     historyKey: "status.huguenotContainment.history",
   },
+  antiFrenchSentiment: {
+    id: "antiFrenchSentiment",
+    kind: "drawAttemptsDelta",
+    delta: 0,
+    titleKey: "status.antiFrenchSentiment.name",
+    historyKey: "status.antiFrenchSentiment.history",
+  },
 };
 
 export function getStatusTemplate(id: StatusTemplateId): StatusTemplate {
