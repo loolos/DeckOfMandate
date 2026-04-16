@@ -65,7 +65,7 @@ export const messagesEnCore = {
   "menu.refit.resources": "Starting resources — Treasury {treasury}, Power {power}, Legitimacy {legitimacy}",
   "menu.refit.startYear": "Chapter 2 start year: {year}",
   "menu.refit.europeAlertOn":
-    "Europe Alert: ON (at chapter start, immediate Power -{n}, i.e. floor(current Power / 2); treasury income scales down every two turns: turns 1-2: -1, turns 3-4: -2, turns 5-6: -3, etc.; plus 50% chance each year to add either Frontier Garrisons or Trade Disruption).",
+    "Europe Alert: ON (at chapter start, immediate Power -{n}, i.e. floor(current Power / 2); plus 50% chance each year to add either Frontier Garrisons or Trade Disruption).",
   "menu.refit.europeAlertOff": "Europe Alert: OFF (standard Chapter 2 pressure).",
   "menu.refit.totalCards": "Deck size: {current} (required {min}–{max})",
   "menu.refit.totalCards.simple": "Deck size after removals: {current}",
@@ -210,9 +210,9 @@ export const messagesEnCore = {
   "log.info.firstMandateInflationActivated":
     "[Turn {turn}] As Colbert-style reforms and Versailles court politics scale up together, the stronger the royal machine gets, the more expensive it is to keep running. Chapter 1 inflation is now active: from now on, only cards with the “Inflation” tag gain extra cost when they cycle from discard back into deck.",
   "log.info.chapter2EuropeAlertOn":
-    "[Turn {turn}] Chapter 2 starts with Europe Alert active: immediate Power loss has already been applied at chapter start (floor(starting Power / 2)); treasury income now declines by one additional step every two turns (turns 1-2: -1, turns 3-4: -2, turns 5-6: -3, etc.); and each year has a 50% chance to add either Frontier Garrisons or Trade Disruption.",
+    "[Turn {turn}] Chapter 2 starts with Europe Alert active: immediate Power loss has already been applied at chapter start (floor(starting Power / 2)); and each year has a 50% chance to add either Frontier Garrisons or Trade Disruption.",
   "log.info.chapter2EuropeAlertOff":
-    "[Turn {turn}] Chapter 2 starts with Europe Alert inactive: no chapter-start immediate Power loss, no Europe-Alert treasury income penalty ladder, and no 50% yearly supplemental Frontier Garrisons / Trade Disruption roll.",
+    "[Turn {turn}] Chapter 2 starts with Europe Alert inactive: no chapter-start immediate Power loss, and no 50% yearly supplemental Frontier Garrisons / Trade Disruption roll.",
   "log.info.cardTag.royal":
     "[Turn {turn}] Tag note “Royal”: this is a royal-command tool, and some crises can only be cleared through royal intervention routes.",
   "log.info.cardTag.temp":

@@ -152,28 +152,8 @@ describe("beginYear + playerStatuses", () => {
     expect(s1.hand.length).toBe(3);
   });
 
-  it("applies Europe Alert treasury income penalty at turn 1-2 as -1", () => {
+  it("Europe Alert no longer reduces treasury-to-funding income", () => {
     const started = createInitialState(55_003, "secondMandate");
-    const s0: GameState = {
-      ...started,
-      outcome: "playing",
-      phase: "action",
-      turn: 1,
-      resources: { treasuryStat: 4, funding: 0, power: 1, legitimacy: 2 },
-      hand: [],
-      deck: [],
-      discard: [],
-      cardsById: {},
-      playerStatuses: [],
-      europeAlert: true,
-      slots: { ...EMPTY_EVENT_SLOTS },
-    };
-    const s1 = beginYear(s0);
-    expect(s1.resources.funding).toBe(3);
-  });
-
-  it("applies Europe Alert treasury income penalty at turn 3-4 as -2", () => {
-    const started = createInitialState(55_004, "secondMandate");
     const s0: GameState = {
       ...started,
       outcome: "playing",
@@ -189,7 +169,7 @@ describe("beginYear + playerStatuses", () => {
       slots: { ...EMPTY_EVENT_SLOTS },
     };
     const s1 = beginYear(s0);
-    expect(s1.resources.funding).toBe(2);
+    expect(s1.resources.funding).toBe(4);
   });
 
   it("reduces funding by 1 when fiscal burden is drawn", () => {
