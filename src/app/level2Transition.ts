@@ -1,6 +1,7 @@
 import { getCardTemplate } from "../data/cards";
 import { getLevelContent } from "../data/levelContent";
 import { getLevelDef } from "../data/levels";
+import { appendActionLog } from "../logic/actionLog";
 import { createInitialCardUseState } from "../logic/cardUsage";
 import { computeEuropeAlertPowerLoss } from "../logic/europeAlert";
 import { createRngFromSeed, shuffle } from "../logic/rng";
@@ -252,6 +253,9 @@ function buildContinuityLevel2State(draft: Level2StartDraft): GameState {
     proceduralEventSequence: [],
     actionLog: [],
   };
-
-  return beginYear(base);
+  const withEuropeAlertIntro = appendActionLog(base, {
+    kind: "info",
+    infoKey: draft.europeAlert ? "chapter2EuropeAlertOn" : "chapter2EuropeAlertOff",
+  });
+  return beginYear(withEuropeAlertIntro);
 }

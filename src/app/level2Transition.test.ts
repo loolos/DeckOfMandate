@@ -102,6 +102,18 @@ describe("level2Transition", () => {
     for (const id of LEVEL2_FIXED_NEW_IDS) {
       expect(allTemplateIds.includes(id)).toBe(true);
     }
+    expect(st.actionLog.some((entry) => entry.kind === "info" && entry.infoKey === "chapter2EuropeAlertOn")).toBe(true);
+  });
+
+  it("writes a chapter-start Europe Alert status note into action log", () => {
+    const chapter1Win = {
+      ...createInitialState(42, "firstMandate"),
+      warOfDevolutionAttacked: false,
+    };
+    const draft = createContinuityLevel2Draft(chapter1Win, 4242);
+    expect(draft.europeAlert).toBe(false);
+    const st = buildLevel2StateFromDraft(draft);
+    expect(st.actionLog.some((entry) => entry.kind === "info" && entry.infoKey === "chapter2EuropeAlertOff")).toBe(true);
   });
 
   it("continuity refit removes cards per-instance up to the configured cap", () => {

@@ -195,6 +195,10 @@ export const messagesFrCore: Record<keyof typeof messagesEnCore, string> = {
   "card.tag.extra": "Supplémentaire",
   "card.tag.inflation": "Inflation",
   "card.tag.remainingUses": "Restant {remaining}/{total}",
+  "log.info.chapter2EuropeAlertOn":
+    "[Tour {turn}] Le Chapitre 2 commence avec l'Alerte Europe active : la perte immédiate de Pouvoir au début du chapitre (plancher(Pouvoir initial / 2)) est déjà appliquée ; le revenu du Trésor baisse ensuite par paliers de 2 tours (tours 1-2 : -1, tours 3-4 : -2, tours 5-6 : -3, etc.) ; et chaque année a 50% de chance d'ajouter soit Garnisons frontalières, soit Perturbation commerciale.",
+  "log.info.chapter2EuropeAlertOff":
+    "[Tour {turn}] Le Chapitre 2 commence avec l'Alerte Europe inactive : aucune perte immédiate de Pouvoir au début du chapitre, aucune pénalité en paliers sur le revenu du Trésor liée à l'Alerte Europe, et aucun tirage annuel supplémentaire à 50% (Garnisons frontalières / Perturbation commerciale).",
   "log.info.cardUse.depleted.crackdownPenalty":
     "[Tour {turn}] Intervention royale atteint 0/3 et est retirée du cycle ; la capacité de contrainte de la cour recule (Pouvoir -1).",
   "log.info.cardUse.depleted.fundingPenalty":

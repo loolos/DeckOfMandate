@@ -65,7 +65,7 @@ export const messagesZhCore = {
   "menu.refit.resources": "开局资源 — 财政 {treasury}，权力 {power}，合法性 {legitimacy}",
   "menu.refit.startYear": "第二关起始年份：{year}",
   "menu.refit.europeAlertOn":
-    "欧洲警觉：开启（开局时权力立即 -{n}，即按当前权力的一半向下取整；资金收入按两回合阶梯递减：第1-2回合-1，第3-4回合-2，第5-6回合-3……；且每年有50%额外出现边境驻军/海贸受阻其一）。",
+    "欧洲警觉：开启（章节开始时权力立即 -{n}，即按当前权力的一半向下取整；财政收入按两回合阶梯递减：第1-2回合 -1，第3-4回合 -2，第5-6回合 -3……；且每年有50%概率额外出现「边境驻军」或「海贸受阻」之一）。",
   "menu.refit.europeAlertOff": "欧洲警觉：关闭（标准第二关压力）。",
   "menu.refit.totalCards": "总牌数：{current}（需在 {min}–{max}）",
   "menu.refit.totalCards.simple": "删牌后总牌数：{current}",
@@ -188,6 +188,10 @@ export const messagesZhCore = {
     "[第 {turn} 年] 手牌已达上限；将剩余未摸的 {count} 张牌直接置入弃牌堆：{cards}。",
   "log.info.firstMandateInflationActivated":
     "[第 {turn} 年] 科尔贝尔改革与凡尔赛宫廷同步扩张，王权机器越强，维持它的行政与仪式成本也越高。已触发第一关「卡牌通胀」：此后仅带「通胀」标签的牌，在从弃牌堆洗回抽牌堆时才会叠加费用。",
+  "log.info.chapter2EuropeAlertOn":
+    "[第 {turn} 年] 第二关以「欧洲警觉：开启」开局：章节开始时的权力即时减值（按开局权力的一半向下取整）已生效；财政收入将按两回合一档持续下调（第1-2回合 -1，第3-4回合 -2，第5-6回合 -3……）；且每年有50%概率额外出现「边境驻军」或「海贸受阻」。",
+  "log.info.chapter2EuropeAlertOff":
+    "[第 {turn} 年] 第二关以「欧洲警觉：关闭」开局：不会触发章节开始时的权力即时减值，也不会生效欧洲警觉的财政收入阶梯惩罚，且不会进行每年50%的「边境驻军 / 海贸受阻」额外事件判定。",
   "log.info.cardTag.royal": "[第 {turn} 年] 标签说明「王室」：该牌属于王室工具，部分事件只能靠此类手段处理。",
   "log.info.cardTag.temp": "[第 {turn} 年] 标签说明「临时」：该牌通常为一次性应急工具，打出后不会进入弃牌堆循环。",
   "log.info.cardTag.extra":
