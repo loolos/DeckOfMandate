@@ -10,8 +10,11 @@ export function refillDeckFromDiscard(
 ): [RngSerialized, string[], string[], string[]] {
   if (deck.length > 0) return [rng, deck, discard, []];
   if (discard.length === 0) return [rng, deck, discard, []];
-  const [r, newDeck] = shuffle(rng, discard);
-  return [r, newDeck, [], discard];
+  const [r, shuffled] = shuffle(rng, discard);
+  const sameOrder = shuffled.length > 1 && shuffled.every((id, i) => id === discard[i]);
+  if (!sameOrder) return [r, shuffled, [], discard];
+  // If shuffle returns the same order by chance, rotate once so each refill is visibly reshuffled.
+  return [r, [...shuffled.slice(1), shuffled[0]!], [], discard];
 }
 
 export function tryDrawOne(
