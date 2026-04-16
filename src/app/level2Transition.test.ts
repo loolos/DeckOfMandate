@@ -179,7 +179,7 @@ describe("level2Transition", () => {
     expect(st.cardUsesById[developmentId]).toEqual({ remaining: 1, total: 1 });
   });
 
-  it("includes non-temp cards still present in cardsById even if they are outside deck/discard/hand", () => {
+  it("only snapshots cards in deck/discard/hand for continuity refit", () => {
     const chapter1Win = createInitialState(1_903, "firstMandate");
     const offPoolId = "off_pool_development";
     const sourceDevelopment = Object.values(chapter1Win.cardsById).find((card) => card.templateId === "development");
@@ -197,9 +197,23 @@ describe("level2Transition", () => {
     };
     const draft = createContinuityLevel2Draft(withOffPoolCard);
     const carried = draft.carryoverCards.find((card) => card.instanceId === offPoolId);
-    expect(carried).toBeDefined();
-    expect(carried?.templateId).toBe("development");
-    expect(carried?.inflationDelta).toBe(2);
+    expect(carried).toBeUndefined();
+  });
+
+  it("filters out extra-tag cards during continuity refit snapshot", () => {
+    const chapter1Win = createInitialState(2_001, "firstMandate");
+    const extraId = "extra_card_in_pool";
+    const withExtraCardInDeck = {
+      ...chapter1Win,
+      deck: [extraId, ...chapter1Win.deck],
+      cardsById: {
+        ...chapter1Win.cardsById,
+        [extraId]: { instanceId: extraId, templateId: "diplomaticIntervention" as const },
+      },
+    };
+    const draft = createContinuityLevel2Draft(withExtraCardInDeck);
+    const carried = draft.carryoverCards.find((card) => card.instanceId === extraId);
+    expect(carried).toBeUndefined();
   });
 
   it("validateLevel2Draft supports both standalone and continuity flows", () => {

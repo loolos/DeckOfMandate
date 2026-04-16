@@ -94,7 +94,9 @@ export function createStandaloneLevel2Draft(seed?: number): Level2StandaloneDraf
   };
 }
 
-function buildContinuityCarryoverCards(from: GameState): Level2CarryoverCard[] {
+function createDeckRefitCarryoverSnapshot(from: GameState): Level2CarryoverCard[] {
+  // Continuity mode should snapshot the exact chapter-end card pool as-is:
+  // keep per-instance inflation / remaining uses, and only strip temporary/extra cards.
   const orderedPoolIds = [...from.deck, ...from.discard, ...from.hand];
   const seen = new Set<string>();
   const out: Level2CarryoverCard[] = [];
@@ -116,9 +118,6 @@ function buildContinuityCarryoverCards(from: GameState): Level2CarryoverCard[] {
   for (const id of orderedPoolIds) {
     appendIfEligible(id);
   }
-  for (const id of Object.keys(from.cardsById)) {
-    appendIfEligible(id);
-  }
   return out;
 }
 
@@ -130,7 +129,7 @@ export function createContinuityLevel2Draft(from: GameState, seed?: number): Lev
     legitimacy: from.resources.legitimacy + (from.warOfDevolutionAttacked ? 1 : 0),
     funding: 0,
   };
-  const carryoverCards = buildContinuityCarryoverCards(from);
+  const carryoverCards = createDeckRefitCarryoverSnapshot(from);
   return {
     mode: "continuity",
     seed,
