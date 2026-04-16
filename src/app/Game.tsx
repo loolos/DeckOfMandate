@@ -633,8 +633,12 @@ export function Game() {
     </div>
   );
 
+  if (levelIntro) {
+    return levelIntro;
+  }
+
   if (startMenuOpen) {
-    return levelIntro ?? level2RefitScreen ?? startMenu;
+    return level2RefitScreen ?? startMenu;
   }
 
   if (level2Draft) {
