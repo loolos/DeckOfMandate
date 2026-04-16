@@ -84,7 +84,7 @@ export const eventTemplates: Record<EventTemplateId, EventTemplate> = {
   nymwegenSettlement: {
     id: "nymwegenSettlement",
     weight: 0,
-    harmful: true,
+    harmful: false,
     crisisPersistence: "continued",
     titleKey: "event.nymwegenSettlement.name",
     descriptionKey: "event.nymwegenSettlement.desc",
