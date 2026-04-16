@@ -126,6 +126,7 @@ describe("secondMandate balance data", () => {
       kind: "funding",
       amount: 6,
     });
+    expect(getEventTemplate("nymwegenSettlement").harmful).toBe(false);
     expect(getEventTemplate("nymwegenSettlement").crisisPersistence).toBe("continued");
     expect(getEventTemplate("nymwegenSettlement").onFundSolveEffects).toEqual([
       { kind: "modResource", resource: "power", delta: -3 },
