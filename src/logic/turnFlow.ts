@@ -54,8 +54,8 @@ const EMPTY_BOARD_EVENT_COUNT_RULES: readonly EventCountRule[] = [
     minExclusive: 5,
     maxInclusive: 15,
     options: [
-      { count: 1, weight: 0.2 },
-      { count: 2, weight: 0.7 },
+      { count: 1, weight: 0.35 },
+      { count: 2, weight: 0.55 },
       { count: 3, weight: 0.1 },
     ],
   },
