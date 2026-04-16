@@ -12,6 +12,8 @@ import type { GameState, Resources } from "../types/game";
 
 export const LEVEL2_FIXED_NEW_IDS = [
   "grainRelief",
+  "grainRelief",
+  "taxRebalance",
   "taxRebalance",
   "diplomaticCongress",
 ] as const;
@@ -62,10 +64,10 @@ export const LEVEL2_CONTINUITY_MAX_REMOVALS = 3;
 export function createStandaloneLevel2Draft(seed?: number): Level2StandaloneDraft {
   const level = getLevelDef("secondMandate");
   const carryoverCards = getLevelContent("firstMandate").starterDeckTemplateOrder
-    .filter((templateId) => templateId !== "development")
     .map((templateId, i) => {
       const usage = createInitialCardUseState("secondMandate", templateId);
-      const standaloneRoyalUses = templateId === "funding" || templateId === "crackdown" ? 1 : null;
+      const standaloneRoyalUses =
+        templateId === "funding" || templateId === "crackdown" || templateId === "development" ? 1 : null;
       return {
         instanceId: `standalone_old_${i}_${templateId}`,
         templateId,

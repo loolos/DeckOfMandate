@@ -4,23 +4,35 @@ import type { CardUseState, GameState } from "../types/game";
 
 const DEFAULT_LIMITED_CARD_TOTAL_USES = 3;
 const FIRST_MANDATE_ROYAL_TOTAL_USES = 4;
+const FIRST_MANDATE_DEVELOPMENT_TOTAL_USES = 2;
 const CHAPTER2_STARTING_ROYAL_REMAINING_USES = 1;
 
-type LimitedUseTemplateId = "funding" | "crackdown" | "diplomaticIntervention";
+type LimitedUseTemplateId = "funding" | "crackdown" | "diplomaticIntervention" | "development";
 
 export function isLimitedUseTemplateId(templateId: CardTemplateId): templateId is LimitedUseTemplateId {
-  return templateId === "funding" || templateId === "crackdown" || templateId === "diplomaticIntervention";
+  return (
+    templateId === "funding" ||
+    templateId === "crackdown" ||
+    templateId === "diplomaticIntervention" ||
+    templateId === "development"
+  );
 }
 
 function getLimitedCardTotalUses(levelId: LevelId, templateId: LimitedUseTemplateId): number {
   if (levelId === "firstMandate" && (templateId === "funding" || templateId === "crackdown")) {
     return FIRST_MANDATE_ROYAL_TOTAL_USES;
   }
+  if (levelId === "firstMandate" && templateId === "development") {
+    return FIRST_MANDATE_DEVELOPMENT_TOTAL_USES;
+  }
   return DEFAULT_LIMITED_CARD_TOTAL_USES;
 }
 
 function getDefaultRemainingUses(levelId: LevelId, templateId: LimitedUseTemplateId): number {
-  if ((templateId === "funding" || templateId === "crackdown") && levelId === "secondMandate") {
+  if (
+    (templateId === "funding" || templateId === "crackdown" || templateId === "development") &&
+    levelId === "secondMandate"
+  ) {
     return CHAPTER2_STARTING_ROYAL_REMAINING_USES;
   }
   return getLimitedCardTotalUses(levelId, templateId);

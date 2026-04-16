@@ -76,7 +76,7 @@ const templates: Record<CardTemplateId, CardTemplate> = {
   grainRelief: {
     id: "grainRelief",
     cost: 3,
-    tags: [],
+    tags: INFLATION,
     titleKey: "card.grainRelief.name",
     backgroundKey: "card.grainRelief.background",
     descriptionKey: "card.grainRelief.desc",
@@ -88,7 +88,7 @@ const templates: Record<CardTemplateId, CardTemplate> = {
   taxRebalance: {
     id: "taxRebalance",
     cost: 2,
-    tags: [],
+    tags: INFLATION,
     titleKey: "card.taxRebalance.name",
     backgroundKey: "card.taxRebalance.background",
     descriptionKey: "card.taxRebalance.desc",

@@ -116,6 +116,13 @@ describe("gameReducer", () => {
     expect(s0.cardUsesById[fundingId]).toEqual({ remaining: 1, total: 3 });
   });
 
+  it("first mandate starts development at 2/2 uses", () => {
+    const s0 = createInitialState(10031, "firstMandate");
+    const developmentId = Object.keys(s0.cardsById).find((id) => s0.cardsById[id]?.templateId === "development");
+    if (!developmentId) throw new Error("expected development in chapter 1 deck");
+    expect(s0.cardUsesById[developmentId]).toEqual({ remaining: 2, total: 2 });
+  });
+
   it("playing funding decrements uses and on depletion removes card with treasury penalty log", () => {
     const base = createInitialState(1004, "firstMandate");
     const fundingId = "funding_limited";
@@ -174,6 +181,35 @@ describe("gameReducer", () => {
     const stillTracked = after.hand.includes(fundingId) || after.deck.includes(fundingId) || after.discard.includes(fundingId);
     expect(stillTracked).toBe(true);
     expect(after.cardUsesById[fundingId]).toEqual({ remaining: 3, total: 3 });
+  });
+
+  it("development depletion removes card without depletion penalty", () => {
+    const base = createInitialState(10051, "firstMandate");
+    const developmentId = "development_limited";
+    const withCard: typeof base = {
+      ...base,
+      cardsById: {
+        ...base.cardsById,
+        [developmentId]: { instanceId: developmentId, templateId: "development" as const },
+      },
+      cardUsesById: {
+        ...base.cardUsesById,
+        [developmentId]: { remaining: 1, total: 2 },
+      },
+      hand: [developmentId],
+      deck: [],
+      discard: [],
+      resources: { ...base.resources, treasuryStat: 4, funding: 3 },
+    };
+    const after = gameReducer(withCard, { type: "PLAY_CARD", handIndex: 0 });
+    expect(after.cardUsesById[developmentId]).toBeUndefined();
+    expect(after.hand.includes(developmentId)).toBe(false);
+    expect(after.discard.includes(developmentId)).toBe(false);
+    expect(after.resources.treasuryStat).toBe(5);
+    const depletedInfo = after.actionLog.find(
+      (entry) => entry.kind === "info" && entry.infoKey.startsWith("cardUse.depleted."),
+    );
+    expect(depletedInfo).toBeUndefined();
   });
 
   it("crackdown uses decrement only when target confirmed, and depletion applies power penalty", () => {

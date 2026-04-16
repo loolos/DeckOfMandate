@@ -33,10 +33,13 @@ describe("secondMandate balance data", () => {
 
     const grainRelief = getCardTemplate("grainRelief");
     expect(grainRelief.cost).toBe(3);
+    expect(grainRelief.tags.includes("inflation")).toBe(true);
     expect(grainRelief.effects).toEqual([
       { kind: "addPlayerStatus", templateId: "grainReliefDrawBoost", turns: 1 },
       { kind: "addPlayerStatus", templateId: "grainReliefLegitimacyBoost", turns: 1 },
     ]);
+
+    expect(taxRebalance.tags.includes("inflation")).toBe(true);
 
     const congress = getCardTemplate("diplomaticCongress");
     expect(congress.effects).toEqual([{ kind: "modResource", resource: "power", delta: 1 }]);
@@ -147,6 +150,14 @@ describe("secondMandate balance data", () => {
     const pool = getLevelContent("secondMandate").rollableEventIds;
     expect(pool.includes("frontierGarrisons")).toBe(false);
     expect(pool.includes("tradeDisruption")).toBe(false);
+  });
+
+  it("chapter 2 starter deck includes two grain relief and two tax rebalance cards", () => {
+    const starter = getLevelContent("secondMandate").starterDeckTemplateOrder;
+    const grainCount = starter.filter((id) => id === "grainRelief").length;
+    const taxCount = starter.filter((id) => id === "taxRebalance").length;
+    expect(grainCount).toBe(2);
+    expect(taxCount).toBe(2);
   });
 
   it("uses status-driven effects for draw penalty and royal ban", () => {

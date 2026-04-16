@@ -116,6 +116,8 @@ export const levelContentByLevelId = {
       "ceremony",
       "ceremony",
       "grainRelief",
+      "grainRelief",
+      "taxRebalance",
       "taxRebalance",
       "diplomaticCongress",
     ],
