@@ -202,12 +202,12 @@ This is desired gameplay tension.
 
 ---
 
-## Why Only Four Cards?
+## Why Only Five Templates?
 
 Small pools reveal system quality.
 
-- If four cards are fun: game foundation works.
-- If four cards are boring: need system redesign before adding content.
+- If the five-template starter pool is fun: the foundation works.
+- If this pool is boring: redesign core systems before expanding content.
 
 ---
 
