@@ -216,10 +216,6 @@ function sumDrawAttemptsStatusDelta(statuses: readonly PlayerStatusInstance[]): 
   return sum;
 }
 
-function europeAlertIncomePenalty(turn: number): number {
-  return Math.floor((turn + 1) / 2);
-}
-
 function applyBeginYearResourceStatusEffects(state: GameState): GameState {
   let s = state;
   for (const p of s.playerStatuses) {
@@ -265,13 +261,11 @@ export function beginYear(state: GameState): GameState {
   }
   s = { ...s, antiFrenchLeague: league };
   s = applyBeginYearResourceStatusEffects(s);
-  const treasuryIncomePenalty = s.europeAlert ? europeAlertIncomePenalty(s.turn) : 0;
-  const treasuryIncome = Math.max(0, s.resources.treasuryStat - treasuryIncomePenalty);
   s = {
     ...s,
     resources: {
       ...s.resources,
-      funding: s.resources.funding + treasuryIncome,
+      funding: s.resources.funding + s.resources.treasuryStat,
     },
   };
   const scheduledDrawModifier = s.scheduledDrawModifiers[0] ?? 0;

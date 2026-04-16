@@ -6,6 +6,8 @@ import type { PlayerStatusInstance } from "./status";
 
 export type LogInfoKey =
   | "firstMandateInflationActivated"
+  | "chapter2EuropeAlertOn"
+  | "chapter2EuropeAlertOff"
   | "cardTag.royal"
   | "cardTag.temp"
   | "cardTag.extra"

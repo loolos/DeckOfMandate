@@ -1,6 +1,7 @@
 import { getCardTemplate } from "../data/cards";
 import { getLevelContent } from "../data/levelContent";
 import { getLevelDef } from "../data/levels";
+import { appendActionLog } from "../logic/actionLog";
 import { createInitialCardUseState } from "../logic/cardUsage";
 import { computeEuropeAlertPowerLoss } from "../logic/europeAlert";
 import { createRngFromSeed, shuffle } from "../logic/rng";
@@ -64,7 +65,7 @@ export function createStandaloneLevel2Draft(seed?: number): Level2StandaloneDraf
     .filter((templateId) => templateId !== "development")
     .map((templateId, i) => {
       const usage = createInitialCardUseState("secondMandate", templateId);
-      const standaloneRoyalUses = templateId === "funding" || templateId === "crackdown" ? 2 : null;
+      const standaloneRoyalUses = templateId === "funding" || templateId === "crackdown" ? 1 : null;
       return {
         instanceId: `standalone_old_${i}_${templateId}`,
         templateId,
@@ -252,6 +253,9 @@ function buildContinuityLevel2State(draft: Level2StartDraft): GameState {
     proceduralEventSequence: [],
     actionLog: [],
   };
-
-  return beginYear(base);
+  const withEuropeAlertIntro = appendActionLog(base, {
+    kind: "info",
+    infoKey: draft.europeAlert ? "chapter2EuropeAlertOn" : "chapter2EuropeAlertOff",
+  });
+  return beginYear(withEuropeAlertIntro);
 }
