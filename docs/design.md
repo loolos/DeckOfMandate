@@ -291,7 +291,7 @@ The current build supports **three player-facing languages**: **English (`en`)**
 
 - **Single source of truth for display text:** all strings the player reads (chrome labels, buttons, phase hints, **card names and descriptions**, **event titles and descriptions**, solve-button labels, win/lose copy, retention instructions, and any short **mechanism help** text shown in the UI) live in **locale modules**, not scattered as literals inside components.
 - **Stable keys:** content data (`data/cards.ts`, `data/events.ts`, and similar) should reference **message keys** (for example `titleKey: "card.funding.name"`) or equivalent typed keys. Components resolve text with **`t(key)`** (or a small hook) for the **active locale**.
-- **Runtime switch:** the game exposes a **always-visible or easy-to-reach control** (for example a header **Language** / **语言** toggle) to switch between `en` and `zh` **without restarting** the app.
+- **Runtime switch:** the game exposes a **always-visible or easy-to-reach control** (for example a header **Language** / **语言** / **Langue** toggle) to switch between `en`, `zh`, and `fr` **without restarting** the app.
 - **Persistence:** store the selected locale in **LocalStorage** (separate from run save is fine) so the choice survives reload.
 - **Implementation shape:** [`src/locales/en.core.ts`](../src/locales/en.core.ts) / [`zh.core.ts`](../src/locales/zh.core.ts) hold **shared** UI strings; [`src/locales/levels/firstMandate/`](../src/locales/levels/firstMandate/) holds **level-scoped** copy (intro, endings, War of Devolution, coalition logs). [`src/locales/en.ts`](../src/locales/en.ts) and [`zh.ts`](../src/locales/zh.ts) **merge** core + level bundles and export `MessageKey`. [`src/locales/index.tsx`](../src/locales/index.tsx) provides `{ locale, setLocale, t }`.
 - **What stays English:** **identifiers** in code (`cardId`, effect kinds), file paths, commit messages, and the canonical **`docs/`** rules remain English. Only **player-visible** strings are translated in locale files.
@@ -323,7 +323,7 @@ Build first version with:
 
 ### Systems
 
-- Draw cards each turn (**Power** at **Draw phase** start; optional **Anti-French coalition** hazard after scripted war choice; **hand cap 12**; extra draws are **discarded** if full—see `gameplay.md`)
+- Draw cards each turn (**Power** converts to base draw attempts via `drawAttemptsFromPower` thresholds; optional **Anti-French coalition** hazard after scripted war choice; **hand cap 12**; extra draws are **discarded** if full—see `gameplay.md`)
 - **Event phase:** weighted fills on procedural slots **`A`–`C`**, plus **scripted calendar** hooks and variable **1–3** fills when the full board is empty (see `太阳王战役.md`)
 - Play cards to solve events; **resolved** slots cannot be targeted again that turn
 - End turn discard; **player chooses** which cards to **retain** (up to **Legitimacy**)
@@ -338,7 +338,7 @@ Build first version with:
 
 - Starter deck: **13** cards across **5** card templates (counts in `levelContent.starterDeckTemplateOrder`—see `太阳王战役.md` / `card.md`)
 - Weighted **event** pool plus **scripted** War of Devolution row (*firstMandate*)
-- 1 playable level (`firstMandate`)
+- 2 playable levels (`firstMandate`, `secondMandate`)
 
 ### Win / lose conditions
 

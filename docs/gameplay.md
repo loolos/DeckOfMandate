@@ -46,7 +46,7 @@ A **persistent** value: long-term financial capacity and fiscal base.
 - **Income:** At the start of each turn’s **Income phase**, add **funding** equal to the current **Treasury stat**.
 - **Growth / shocks:** Some effects raise or lower the **Treasury stat** (for example, event rewards or penalties).
 - **Floor (MVP):** **Treasury stat** may reach **0** (income then adds **0 funding** from that stat until it rises again).
-- **Victory (level 1):** One win target is **Treasury stat ≥ 4** (see **Win condition**).
+- **Victory (level 1):** One win target is **Treasury stat ≥ 6** (see **Win condition**).
 
 ```text
 Income funding gained = current Treasury stat
@@ -73,9 +73,11 @@ Represents governing authority and decision-making capacity.
 
 - **Draw phase:** how many **draw attempts** the player gets **this turn** (see **Turn structure** for timing vs deferred penalties).
 
-**Example:** Power = 2 → up to **2** successful draws in the **Draw phase**, each skipped if the **hand cap** is already reached.
+**Example:** Power = 2 → base **2** draw attempts in the **Draw phase** (before scheduled/status/branch modifiers).
 
 Higher Power means more options and flexibility.
+
+**Power-to-draw scaling (implementation):** draw attempts are non-linear by threshold: **1, 2, 4, 7, 11, 16, ...** power grants **1, 2, 3, 4, 5, 6, ...** base draw attempts.
 
 **MVP timing:** **Power** at the **start of the Draw phase** (after applying **scheduled draw-attempt modifiers** from the previous turn—such as **Bureaucratic Delay** or **Royal Crisis**—and ongoing status effects like **Loss of Authority**) determines how many **draw attempts** that turn allows (still **minimum 1**). If the player previously launched the **War of Devolution** military option, **Anti-French coalition** pressure may apply: each year the engine rolls a **level-configured hazard** (for *The Rising Sun*: chance each year while the effect lasts); on success, **one fewer draw attempt** for that year, still **clamped to at least 1**. **Administrative Reform** is played later in the **Action phase**: its **Power +1** applies immediately to the stat and therefore affects **the next turn’s** Draw phase size; its **Draw 1** is resolved **immediately** when the card is played (same turn), not in the Draw phase.
 
@@ -117,7 +119,7 @@ Exact string format is an implementation detail; the requirement is **correct gr
 **Turn index:** There is **no separate “setup year 0”** — the first **Income → … → End** cycle is **turn 1** and uses the level’s **first** campaign year.
 
 1. **Income phase** — Add **funding** equal to the current **Treasury stat**. (Then apply any “this turn” grants from effects that trigger at income, if the implementation uses that ordering.)
-2. **Draw phase** — Apply **scheduled draw-attempt modifiers** from the **previous** turn’s unresolved penalties (for example **Bureaucratic Delay** or **Royal Crisis**) and **ongoing status** effects (for example **Loss of Authority**), then compute a base **draw attempts** = `max(1, Power + modifiers + status deltas)`. If **Anti-French coalition** is active for this year, roll the configured hazard; on hit, apply the configured draw delta (still re-clamp so **attempts ≥ 1**). Perform **up to that many** draw attempts: for each attempt, if the hand has **fewer than 12** cards (**hand cap**), draw one card from the draw pile; if already at cap, the engine still consumes attempts by moving would-be draws to discard (visible in log as overflow discard).
+2. **Draw phase** — Apply **scheduled draw-attempt modifiers** from the **previous** turn’s unresolved penalties (for example **Bureaucratic Delay** or **Royal Crisis**) and **ongoing status** effects (for example **Loss of Authority**), then compute base draw attempts from power via `drawAttemptsFromPower(power)` (thresholds: **1, 2, 4, 7, 11, 16, ...** power → **1, 2, 3, 4, 5, 6, ...** attempts). Final attempts = `max(1, base + nextTurnDrawModifier + scheduled + status + antiFrenchRoll)` where the Anti-French roll is applied only while that pressure is active. Perform **up to that many** draw attempts: for each attempt, if the hand has **fewer than 12** cards (**hand cap**), draw one card from the draw pile; if already at cap, the engine still consumes attempts by moving would-be draws to discard (visible in log as overflow discard).
 3. **Event phase** — **First**, apply any **scheduled slot transforms** (for example **Provincial Governor Ascendant** → **Royal Crisis** on the same slot; see `docs/太阳王战役.md`). **Then**, clear **resolved** instances from slots. **Then**, apply **scripted calendar events** from `levelContent.scriptedCalendarEvents` (calendar inject / expiry; not part of the procedural pool). **Then**, **fill empty procedural slots** (`A`–`C` only) using the deterministic weighted-sequence system:
    - The engine maintains a hidden **procedural event sequence**.
    - A sequence block is built by expanding each event template by its current roll **weight** (so each template appears exactly `weight` times in that block), then shuffling.
@@ -173,10 +175,12 @@ If the **draw pile** is empty when a card must be drawn, **shuffle the discard p
 For the first level: reach **all three** targets **at or above** the stated thresholds **before** you fail the **turn limit** check (see **Turn structure** — *The Rising Sun*: **15** turns).
 
 - Legitimacy **≥ 5**
-- Treasury stat **≥ 4**
-- Power **≥ 4**
+- Treasury stat **≥ 6**
+- Power **≥ 6**
 
 If all are true on the **end-of-turn** check: **Victory**. Values **may exceed** targets; there is no “exactly equal” requirement in MVP.
+
+**Second mandate (level 2) extra gates:** numeric targets alone are not enough. Current implementation also requires: current year **≥ 1696**, **Europe Alert cleared**, **Treaties of Nijmegen achieved**, and **no active Huguenot Containment** status.
 
 ---
 
