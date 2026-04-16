@@ -31,6 +31,7 @@ export const PROB_EUROPE_ALERT_SUPPLEMENTAL_EVENT = 0.5;
 const EUROPE_ALERT_SUPPLEMENTAL_POOL = ["frontierGarrisons", "tradeDisruption"] as const;
 const RELIGIOUS_TENSION_TRIGGER_PROBABILITY = 0.3;
 const PROCEDURAL_SEQUENCE_LOW_WATERMARK = 3;
+const SECOND_MANDATE_EARLIEST_VICTORY_YEAR = 1696;
 const FIRST_MANDATE_OPENING_EVENTS: readonly EventInstance["templateId"][] = [
   "tradeOpportunity",
   "administrativeDelay",
@@ -319,6 +320,9 @@ export function beginYear(state: GameState): GameState {
 export function evaluateVictory(state: GameState): GameState {
   const t = getLevelDef(state.levelId).winTargets;
   const { treasuryStat, power, legitimacy } = state.resources;
+  const currentYear = state.calendarStartYear + state.turn - 1;
+  const reachedSecondMandateVictoryYear =
+    state.levelId !== "secondMandate" || currentYear >= SECOND_MANDATE_EARLIEST_VICTORY_YEAR;
   const chapterObjectiveSatisfied =
     state.levelId !== "secondMandate" ||
     (!state.europeAlert &&
@@ -328,6 +332,7 @@ export function evaluateVictory(state: GameState): GameState {
     treasuryStat >= t.treasuryStat &&
     power >= t.power &&
     legitimacy >= t.legitimacy &&
+    reachedSecondMandateVictoryYear &&
     chapterObjectiveSatisfied
   ) {
     return { ...state, phase: "gameOver", outcome: "victory" };
