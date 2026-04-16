@@ -127,6 +127,13 @@ describe("secondMandate balance data", () => {
       amount: 6,
     });
     expect(getEventTemplate("nymwegenSettlement").harmful).toBe(false);
+    expect(getEventTemplate("expansionRemembered").harmful).toBe(false);
+    expect(getEventTemplate("cautiousCrown").harmful).toBe(false);
+    expect(getEventTemplate("revocationNantes").harmful).toBe(false);
+    expect(getEventTemplate("grainReliefCrisis").harmful).toBe(false);
+    expect(getEventTemplate("leagueOfAugsburg").harmful).toBe(false);
+    expect(getEventTemplate("nineYearsWar").harmful).toBe(false);
+    expect(getEventTemplate("ryswickPeace").harmful).toBe(false);
     expect(getEventTemplate("nymwegenSettlement").crisisPersistence).toBe("continued");
     expect(getEventTemplate("nymwegenSettlement").onFundSolveEffects).toEqual([
       { kind: "modResource", resource: "power", delta: -3 },
