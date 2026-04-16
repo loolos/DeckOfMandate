@@ -65,7 +65,7 @@ export function createStandaloneLevel2Draft(seed?: number): Level2StandaloneDraf
     .filter((templateId) => templateId !== "development")
     .map((templateId, i) => {
       const usage = createInitialCardUseState("secondMandate", templateId);
-      const standaloneRoyalUses = templateId === "funding" || templateId === "crackdown" ? 2 : null;
+      const standaloneRoyalUses = templateId === "funding" || templateId === "crackdown" ? 1 : null;
       return {
         instanceId: `standalone_old_${i}_${templateId}`,
         templateId,
