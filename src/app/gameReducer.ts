@@ -288,15 +288,9 @@ function performFundSolve(state: GameState, slot: SlotId): GameState {
     s = applyEffects(s, tmpl.onFundSolveEffects);
   }
   if (ev.templateId === "nymwegenSettlement") {
-    const restoredPower = s.europeAlert ? s.europeAlertPowerLoss : 0;
     s = {
       ...s,
-      europeAlert: false,
       nymwegenSettlementAchieved: true,
-      resources: {
-        ...s.resources,
-        power: s.resources.power + restoredPower,
-      },
     };
   }
   s = markSlotResolved(s, slot);

@@ -213,6 +213,10 @@ export const messagesEnCore = {
     "[Turn {turn}] Chapter 2 starts with Europe Alert active: immediate Power loss has already been applied at chapter start (floor(starting Power / 2)); and each year has a 50% chance to add either Frontier Garrisons or Trade Disruption.",
   "log.info.chapter2EuropeAlertOff":
     "[Turn {turn}] Chapter 2 starts with Europe Alert inactive: no chapter-start immediate Power loss, and no 50% yearly supplemental Frontier Garrisons / Trade Disruption roll.",
+  "log.info.antiFrenchSentimentActivated":
+    "[Turn {turn}] Anti-French Sentiment rises: French fiscal-military concentration alarms neighboring courts, and coalition vigilance hardens. Extra procedural pressure events now increase with Power+Treasury.",
+  "log.info.antiFrenchSentimentEnded":
+    "[Turn {turn}] Anti-French Sentiment recedes: with French power and treasury no longer at peak concentration, immediate balancing pressure eases and extra procedural pressure events stop.",
   "log.info.cardTag.royal":
     "[Turn {turn}] Tag note “Royal”: this is a royal-command tool, and some crises can only be cleared through royal intervention routes.",
   "log.info.cardTag.temp":

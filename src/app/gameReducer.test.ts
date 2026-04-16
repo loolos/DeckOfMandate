@@ -657,7 +657,7 @@ describe("gameReducer", () => {
     expect(infoEntries).toHaveLength(1);
   });
 
-  it("solving nymwegen settlement clears europe alert and marks chapter objective", () => {
+  it("solving nymwegen settlement keeps europe alert and marks chapter objective", () => {
     const base = createInitialState(202_900, "secondMandate");
     const s0: typeof base = {
       ...base,
@@ -671,7 +671,7 @@ describe("gameReducer", () => {
       },
     };
     const after = gameReducer(s0, { type: "SOLVE_EVENT", slot: "A" });
-    expect(after.europeAlert).toBe(false);
+    expect(after.europeAlert).toBe(true);
     expect(after.nymwegenSettlementAchieved).toBe(true);
     expect(after.resources.funding).toBe(0);
     expect(after.resources.power).toBe(7);

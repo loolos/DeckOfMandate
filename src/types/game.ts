@@ -8,6 +8,8 @@ export type LogInfoKey =
   | "firstMandateInflationActivated"
   | "chapter2EuropeAlertOn"
   | "chapter2EuropeAlertOff"
+  | "antiFrenchSentimentActivated"
+  | "antiFrenchSentimentEnded"
   | "cardTag.royal"
   | "cardTag.temp"
   | "cardTag.extra"

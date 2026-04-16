@@ -20,9 +20,12 @@ export const messagesFrSecondMandate: Record<keyof typeof messagesEnSecondMandat
     "Au début du Chapitre 2, perte immédiate de Pouvoir : -{n} (plancher(Pouvoir actuel / 2)). Alerte Europe peut aussi ajouter chaque année un événement supplémentaire Garnisons frontalières / Perturbation commerciale.",
   "status.europeAlert.history":
     "Les offensives françaises antérieures ont durci la vigilance de coalition à long terme en Europe.",
+  "status.antiFrenchSentiment.name": "Sentiment anti-français",
+  "status.antiFrenchSentiment.history":
+    "Quand la puissance française paraît excessive, les voisins coordonnent plus vite leur vigilance et les crises se multiplient.",
   "event.nymwegenSettlement.name": "Traités de Nimègue",
   "event.nymwegenSettlement.desc":
-    "Crise obligatoire de longue durée : payez 6 Financement pour sécuriser l'accord (Pouvoir -3, Légitimité -2) et mettre fin à Alerte Europe ; si ignoré, perdez 1 Pouvoir chaque année.",
+    "Crise obligatoire de longue durée : payez 6 Financement pour sécuriser l'accord (Pouvoir -2, Légitimité -2). Cela ne met plus fin à Alerte Europe ; si ignoré, perdez 1 Pouvoir chaque année.",
   "event.revocationNantes.name": "Révocation de l'édit de Nantes",
   "event.revocationNantes.desc":
     "En 1598, Henri IV publia l'édit de Nantes pour mettre fin aux guerres de Religion : le catholicisme demeurait la foi d'État, tandis que les protestants français (huguenots) recevaient des droits de culte limités, des protections civiles et des garanties de sécurité. La couronne le révoque désormais. C'est un événement Continu : si ignoré, vous piochez 2 cartes de moins à chaque tour et il reste sur le plateau. Résolvez en choisissant une politique : Tolérance religieuse (Légitimité -1 immédiat ; gagnez le statut permanent Tolérance religieuse qui a 30% de chance annuelle de générer Tension religieuse : payez 2 Financement ou perdez 1 Légitimité), ou Répression sévère (pas de variation numérique immédiate ; gagnez Contenir les restes huguenots 3 et ajoutez 3 cartes temporaires « Réprimer les huguenots » au deck, coût 3 chacune ; chaque activation réduit les restes de 1 ; à 0, retirez le statut et purgez ces cartes de la main/du deck/de la défausse). Tant que ce statut de containment existe, la victoire du Chapitre 2 est bloquée.",
