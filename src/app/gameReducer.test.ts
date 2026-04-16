@@ -490,7 +490,7 @@ describe("gameReducer", () => {
     expect(after.resources.funding).toBe(0);
     expect(Object.keys(after.cardsById).length).toBe(beforeCardCount + 2);
     expect(burdenIds.length).toBe(2);
-    expect(after.deck.slice(0, 2)).toEqual(burdenIds);
+    expect(after.deck).toEqual(expect.arrayContaining(burdenIds));
   });
 
   it("playing fiscal burden purges it without adding to discard", () => {

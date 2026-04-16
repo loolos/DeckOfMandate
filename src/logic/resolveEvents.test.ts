@@ -86,6 +86,6 @@ describe("resolveEndOfYearPenalties", () => {
       .map((c) => c.instanceId);
     expect(Object.keys(s1.cardsById).length).toBe(beforeCardCount + 3);
     expect(burdenIds.length).toBe(3);
-    expect(s1.deck.slice(0, 3)).toEqual(burdenIds);
+    expect(s1.deck).toEqual(expect.arrayContaining(burdenIds));
   });
 });

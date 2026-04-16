@@ -1,6 +1,7 @@
 import type { CardTemplateId } from "../types/card";
 import type { GameState } from "../types/game";
 import { createInitialCardUseState } from "./cardUsage";
+import { rngNextInt } from "./rng";
 
 function makeGeneratedCardId(state: GameState, templateId: CardTemplateId, offset: number): string {
   let seq = Object.keys(state.cardsById).length + offset;
@@ -10,6 +11,21 @@ function makeGeneratedCardId(state: GameState, templateId: CardTemplateId, offse
     id = `gen_${templateId}_${seq}`;
   }
   return id;
+}
+
+function insertCardsIntoDeckAtRandomPositions(
+  rng: GameState["rng"],
+  deck: readonly string[],
+  addedIds: readonly string[]
+): { rng: GameState["rng"]; deck: string[] } {
+  let nextRng = rng;
+  const nextDeck = [...deck];
+  for (const id of addedIds) {
+    const [r2, idx] = rngNextInt(nextRng, nextDeck.length + 1);
+    nextRng = r2;
+    nextDeck.splice(idx, 0, id);
+  }
+  return { rng: nextRng, deck: nextDeck };
 }
 
 export function addCardsToDeck(state: GameState, templateId: CardTemplateId, count: number): GameState {
@@ -24,11 +40,13 @@ export function addCardsToDeck(state: GameState, templateId: CardTemplateId, cou
     if (usage) cardUsesById[id] = usage;
     addedIds.push(id);
   }
+  const inserted = insertCardsIntoDeckAtRandomPositions(state.rng, state.deck, addedIds);
   return {
     ...state,
+    rng: inserted.rng,
     cardsById,
     cardUsesById,
-    deck: [...addedIds, ...state.deck],
+    deck: inserted.deck,
   };
 }
 
