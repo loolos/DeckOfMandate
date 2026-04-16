@@ -54,27 +54,54 @@ function unresolvedSlots(state: GameState): SlotId[] {
   });
 }
 
+function unresolvedHarmfulSlots(state: GameState): SlotId[] {
+  return unresolvedSlots(state).filter((slot) => {
+    const ev = state.slots[slot];
+    return !!ev && getEventTemplate(ev.templateId).harmful;
+  });
+}
+
+function eventDangerScore(state: GameState, slot: SlotId): number {
+  const ev = state.slots[slot];
+  if (!ev || ev.resolved) return 0;
+  const tmpl = getEventTemplate(ev.templateId);
+  let score = tmpl.harmful ? 5 : 0;
+  switch (ev.templateId) {
+    case "majorCrisis":
+      score += 10;
+      break;
+    case "publicUnrest":
+      score += 7;
+      break;
+    case "powerVacuum":
+      score += 6;
+      break;
+    case "politicalGridlock":
+      score += 4;
+      break;
+    case "budgetStrain":
+      score += 3;
+      break;
+    default:
+      break;
+  }
+  if (tmpl.solve.kind === "crackdownOnly") score += 3;
+  return score;
+}
+
 function pickCrackdownTarget(state: GameState): SlotId | null {
-  const unresolved = unresolvedSlots(state);
-  if (unresolved.length === 0) return null;
-  const ranked = [...unresolved].sort((a, b) => {
-    const ta = getEventTemplate(state.slots[a]!.templateId);
-    const tb = getEventTemplate(state.slots[b]!.templateId);
-    if (ta.harmful !== tb.harmful) return ta.harmful ? -1 : 1;
+  const harmful = unresolvedHarmfulSlots(state);
+  if (harmful.length === 0) return null;
+  const ranked = [...harmful].sort((a, b) => {
+    const dangerDiff = eventDangerScore(state, b) - eventDangerScore(state, a);
+    if (dangerDiff !== 0) return dangerDiff;
     return a.localeCompare(b);
   });
-  for (const slot of ranked) {
-    const tmpl = getEventTemplate(state.slots[slot]!.templateId);
-    if (tmpl.harmful) return slot;
-  }
   return ranked[0] ?? null;
 }
 
 function pickFundSolveActions(state: GameState): GameAction[] {
-  const hasUnresolvedHarmful = unresolvedSlots(state).some((slot) => {
-    const ev = state.slots[slot];
-    return !!ev && !ev.resolved && getEventTemplate(ev.templateId).harmful;
-  });
+  const hasUnresolvedHarmful = unresolvedHarmfulSlots(state).length > 0;
   const candidates: Array<{ slot: SlotId; harmful: boolean; amount: number }> = [];
   for (const slot of EVENT_SLOT_ORDER) {
     const ev = state.slots[slot];
