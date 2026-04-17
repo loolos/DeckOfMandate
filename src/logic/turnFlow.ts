@@ -56,27 +56,27 @@ const EMPTY_BOARD_EVENT_COUNT_RULES: readonly EventCountRule[] = [
     minExclusive: 5,
     maxInclusive: 15,
     options: [
-      { count: 1, weight: 0.35 },
+      { count: 1, weight: 0.4 },
       { count: 2, weight: 0.55 },
-      { count: 3, weight: 0.1 },
+      { count: 3, weight: 0.05 },
     ],
   },
   {
     minExclusive: 15,
-    maxInclusive: 25,
+    maxInclusive: 30,
     options: [
-      { count: 1, weight: 0.1 },
-      { count: 2, weight: 0.4 },
-      { count: 3, weight: 0.4 },
-      { count: 4, weight: 0.1 },
+      { count: 1, weight: 0.15 },
+      { count: 2, weight: 0.5 },
+      { count: 3, weight: 0.3 },
+      { count: 4, weight: 0.05 },
     ],
   },
   {
-    minExclusive: 25,
+    minExclusive: 30,
     options: [
-      { count: 2, weight: 0.3 },
+      { count: 2, weight: 0.4 },
       { count: 3, weight: 0.5 },
-      { count: 4, weight: 0.2 },
+      { count: 4, weight: 0.1 },
     ],
   },
 ] as const;
