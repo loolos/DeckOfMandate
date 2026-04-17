@@ -293,6 +293,12 @@ function performFundSolve(state: GameState, slot: SlotId): GameState {
       nymwegenSettlementAchieved: true,
     };
   }
+  if (ev.templateId === "ryswickPeace") {
+    s = {
+      ...s,
+      europeAlert: false,
+    };
+  }
   s = markSlotResolved(s, slot);
   s = enforceLegitimacy(s);
   const fundingPaid =

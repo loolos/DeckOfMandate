@@ -678,68 +678,53 @@ describe("gameReducer", () => {
     expect(after.resources.legitimacy).toBe(7);
   });
 
-  it("chapter 2 cannot win before nymwegen objective is complete", () => {
-    const level = getLevelDef("secondMandate");
-    const base = createInitialState(202_901, "secondMandate");
+  it("solving ryswick peace clears europe alert", () => {
+    const base = createInitialState(202_904, "secondMandate");
     const s0: typeof base = {
       ...base,
-      nymwegenSettlementAchieved: false,
       europeAlert: true,
-      hand: [],
-      resources: {
-        treasuryStat: level.winTargets.treasuryStat,
-        power: level.winTargets.power,
-        legitimacy: level.winTargets.legitimacy,
-        funding: 0,
+      resources: { ...base.resources, funding: 1 },
+      slots: {
+        ...base.slots,
+        A: { instanceId: "e_ryswick", templateId: "ryswickPeace" as const, resolved: false },
       },
-      slots: { ...EMPTY_EVENT_SLOTS },
     };
-    const after = gameReducer(s0, { type: "END_YEAR" });
-    expect(after.outcome).not.toBe("victory");
+    const after = gameReducer(s0, { type: "SOLVE_EVENT", slot: "A" });
+    expect(after.europeAlert).toBe(false);
+    expect(after.resources.funding).toBe(0);
+    expect(after.resources.legitimacy).toBe(base.resources.legitimacy + 1);
   });
 
-  it("chapter 2 cannot win while huguenot containment status exists", () => {
-    const level = getLevelDef("secondMandate");
+  it("chapter 2 cannot win from 1696 onward while europe alert is still active", () => {
     const base = createInitialState(202_905, "secondMandate");
     const s0: typeof base = {
       ...base,
-      nymwegenSettlementAchieved: true,
-      europeAlert: false,
+      turn: 21, // 1696
+      europeAlert: true,
       hand: [],
       resources: {
-        treasuryStat: level.winTargets.treasuryStat,
-        power: level.winTargets.power,
-        legitimacy: level.winTargets.legitimacy,
+        treasuryStat: 0,
+        power: 0,
+        legitimacy: 1,
         funding: 0,
       },
       slots: { ...EMPTY_EVENT_SLOTS },
-      playerStatuses: [
-        {
-          instanceId: "st_hug",
-          templateId: "huguenotContainment" as const,
-          kind: "drawAttemptsDelta" as const,
-          delta: 0,
-          turnsRemaining: 2,
-        },
-      ],
     };
     const after = gameReducer(s0, { type: "END_YEAR" });
     expect(after.outcome).not.toBe("victory");
   });
 
-  it("chapter 2 cannot win before year 1696 even when all other objectives are complete", () => {
-    const level = getLevelDef("secondMandate");
+  it("chapter 2 cannot win before year 1696 even when europe alert is resolved", () => {
     const base = createInitialState(202_906, "secondMandate");
     const s0: typeof base = {
       ...base,
       turn: 20, // 1695
-      nymwegenSettlementAchieved: true,
       europeAlert: false,
       hand: [],
       resources: {
-        treasuryStat: level.winTargets.treasuryStat,
-        power: level.winTargets.power,
-        legitimacy: level.winTargets.legitimacy,
+        treasuryStat: 0,
+        power: 0,
+        legitimacy: 1,
         funding: 0,
       },
       slots: { ...EMPTY_EVENT_SLOTS },
@@ -748,19 +733,17 @@ describe("gameReducer", () => {
     expect(after.outcome).not.toBe("victory");
   });
 
-  it("chapter 2 can win from year 1696 onward when all objectives are complete", () => {
-    const level = getLevelDef("secondMandate");
+  it("chapter 2 can win from year 1696 onward when europe alert is resolved", () => {
     const base = createInitialState(202_907, "secondMandate");
     const s0: typeof base = {
       ...base,
       turn: 21, // 1696
-      nymwegenSettlementAchieved: true,
       europeAlert: false,
       hand: [],
       resources: {
-        treasuryStat: level.winTargets.treasuryStat,
-        power: level.winTargets.power,
-        legitimacy: level.winTargets.legitimacy,
+        treasuryStat: 0,
+        power: 0,
+        legitimacy: 1,
         funding: 0,
       },
       slots: { ...EMPTY_EVENT_SLOTS },

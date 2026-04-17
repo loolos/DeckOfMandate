@@ -425,22 +425,20 @@ export function beginYear(state: GameState): GameState {
 }
 
 export function evaluateVictory(state: GameState): GameState {
+  const currentYear = state.calendarStartYear + state.turn - 1;
+
+  if (state.levelId === "secondMandate") {
+    const reachedVictoryYear = currentYear >= SECOND_MANDATE_EARLIEST_VICTORY_YEAR;
+    const europeAlertResolved = !state.europeAlert;
+    if (reachedVictoryYear && europeAlertResolved) {
+      return { ...state, phase: "gameOver", outcome: "victory" };
+    }
+    return state;
+  }
+
   const t = getLevelDef(state.levelId).winTargets;
   const { treasuryStat, power, legitimacy } = state.resources;
-  const currentYear = state.calendarStartYear + state.turn - 1;
-  const reachedSecondMandateVictoryYear =
-    state.levelId !== "secondMandate" || currentYear >= SECOND_MANDATE_EARLIEST_VICTORY_YEAR;
-  const chapterObjectiveSatisfied =
-    state.levelId !== "secondMandate" ||
-    (state.nymwegenSettlementAchieved &&
-      !state.playerStatuses.some((s) => s.templateId === "huguenotContainment"));
-  if (
-    treasuryStat >= t.treasuryStat &&
-    power >= t.power &&
-    legitimacy >= t.legitimacy &&
-    reachedSecondMandateVictoryYear &&
-    chapterObjectiveSatisfied
-  ) {
+  if (treasuryStat >= t.treasuryStat && power >= t.power && legitimacy >= t.legitimacy) {
     return { ...state, phase: "gameOver", outcome: "victory" };
   }
   return state;

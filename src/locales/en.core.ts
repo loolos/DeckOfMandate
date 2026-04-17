@@ -98,7 +98,7 @@ export const messagesEnCore = {
   "ui.actionLog.empty": "No effects yet this run.",
   "ui.targets": "Level goals — within {limit} turns: Treasury {tT}, Power {tP}, Legitimacy {tL}",
   "ui.targets.secondMandateExtra":
-    "Chapter 2 extra objectives: Europe Alert must be cleared, the Treaties of Nijmegen must be secured, and victory is blocked before 1696.",
+    "Chapter 2 victory has only two conditions: Europe Alert must be cleared, and victory is blocked before 1696.",
   "ui.language": "Language",
   "ui.lang.en": "English",
   "ui.lang.zh": "中文",

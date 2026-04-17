@@ -105,7 +105,7 @@ export const messagesFrCore: Record<keyof typeof messagesEnCore, string> = {
   "ui.actionLog.empty": "Aucun effet enregistré dans cette partie.",
   "ui.targets": "Objectifs du niveau — en {limit} tours : Trésor {tT}, Pouvoir {tP}, Légitimité {tL}",
   "ui.targets.secondMandateExtra":
-    "Objectifs supplémentaires du Chapitre 2 : l'Alerte Europe doit être levée, les Traités de Nimègue doivent être obtenus, et la victoire est bloquée avant 1696.",
+    "La victoire du Chapitre 2 n'a plus que deux conditions : l'Alerte Europe doit être levée, et la victoire reste bloquée avant 1696.",
   "ui.language": "Langue",
   "ui.lang.en": "English",
   "ui.lang.zh": "中文",

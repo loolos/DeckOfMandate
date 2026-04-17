@@ -96,7 +96,7 @@ export const messagesZhCore = {
   "ui.actionLog.empty": "本局尚无效果记录。",
   "ui.targets": "关卡目标 — {limit} 回合内：财政 {tT}，权力 {tP}，合法性 {tL}",
   "ui.targets.secondMandateExtra":
-    "第二关额外条件：必须结束「欧洲警觉」、达成「奈梅亨和约」，且至少存活至 1696 年（此前不会直接获胜）。",
+    "第二关胜利条件仅有两项：必须结束「欧洲警觉」，且至少存活至 1696 年（此前不会直接获胜）。",
   "ui.language": "语言",
   "ui.lang.en": "English",
   "ui.lang.zh": "中文",
