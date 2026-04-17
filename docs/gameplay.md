@@ -1,379 +1,158 @@
-# Deck of Mandate
+# Deck of Mandate — Gameplay Rules (Code-Aligned)
 
-## Core Gameplay Design Document
+This document reflects current runtime behavior in `src/app/*`, `src/logic/*`, and `src/data/*`.
 
----
+## 1. Core resources
 
-## Game Summary
+- **Treasury stat**: persistent economic strength.
+- **Funding**: spendable money this turn only; cleared at year-end.
+- **Power**: governs draw attempts via threshold scaling, and chapter objectives.
+- **Legitimacy**: political stability, retention capacity baseline, and hard fail resource.
 
-Deck of Mandate is a single-player turn-based strategy card game about governance, crisis management, and political growth.
-
-The player leads a political entity and must manage limited resources while responding to recurring internal and external events.
-
-Victory is achieved by strengthening the regime and reaching development milestones.
-
-Failure occurs when legitimacy collapses.
-
----
-
-## Core Design Philosophy
-
-This is **not** a combat game.
-
-Instead of fighting monsters, the player fights:
-
-- instability
-- shortages
-- unrest
-- inefficiency
-- political crises
-- missed opportunities
-
-Cards represent actions, reforms, policies, and emergency responses.
-
-Events represent real pressures placed on leadership.
-
----
-
-## Core Resources
-
-The economy uses **two linked values** (do not conflate them in code or UI labels):
-
-### Treasury (stat)
-
-A **persistent** value: long-term financial capacity and fiscal base.
-
-- **Income:** At the start of each turn’s **Income phase**, add **funding** equal to the current **Treasury stat**.
-- **Growth / shocks:** Some effects raise or lower the **Treasury stat** (for example, event rewards or penalties).
-- **Floor (MVP):** **Treasury stat** may reach **0** (income then adds **0 funding** from that stat until it rises again).
-- **Victory (level 1):** One win target is **Treasury stat ≥ 6** (see **Win condition**).
+At begin-year:
 
 ```text
-Income funding gained = current Treasury stat
+funding += treasuryStat
 ```
 
-**Example:** Treasury stat = 3 → this turn’s income adds **3 funding** (before card effects such as the **Funding** card).
+## 2. Turn pipeline (beginYear + action + retention)
+
+Each turn is one year in both current chapters.
+
+1. **Begin-year status effects**: `beginYearResourceDelta` statuses apply first (e.g. temporary legitimacy boost).
+2. **Income**: add funding from current treasury stat.
+3. **Draw attempts calculation**:
+   - base = `drawAttemptsFromPower(power)` (threshold ladder)
+   - plus `nextTurnDrawModifier`
+   - plus first queued `scheduledDrawModifiers[0]` (then queue shifts)
+   - plus sum of active `drawAttemptsDelta` statuses
+   - plus possible anti-coalition yearly roll adjustment
+   - final attempts clamped to at least 1
+4. **Draw resolution**:
+   - draw attempts run with hand cap 12
+   - overflow draws are discarded and logged
+   - if deck empties, refill from discard (shuffle) and continue
+   - on deck refill, inflation stacks may increase for qualifying instances
+5. **Status tick-down**: most timed statuses decrement after draw; long-lived branch statuses do not auto-tick.
+6. **Event phase**:
+   - apply scheduled slot transforms (e.g. `powerVacuum -> majorCrisis`)
+   - clear resolved events from slots
+   - inject scripted calendar rows for this year
+   - fill empty procedural slots (`A–C`) from deterministic weighted sequence
+   - optional extra injections (Europe Alert pool, religious tension, anti-French-sentiment extras)
+7. **Action phase**:
+   - play cards, solve events by funding, crackdowns, scripted attacks, policy choices
+8. **Retention phase trigger**:
+   - player ends year manually
+   - choose cards to keep (up to retention capacity)
+   - unkept hand cards discard
+9. **End-of-year penalties**: unresolved harmful events strike in slot order.
+10. **Outcome checks**:
+   - immediate fail if legitimacy <= 0 at any enforced point
+   - then victory check
+   - then time defeat on last turn if not victorious
+   - otherwise `turn + 1` and repeat
 
-### Funding (spendable)
+## 3. Draw scaling (Power -> base draw attempts)
 
-**Temporary money available this turn**, used for:
+Current threshold progression:
 
-- Paying **card costs**
-- Paying **event solve** costs (treasury/fiscal spends written on events)
+- Power `1` => 1 attempt
+- Power `2-3` => 2 attempts
+- Power `4-6` => 3 attempts
+- Power `7-10` => 4 attempts
+- Power `11-15` => 5 attempts
+- Power `16+` => 6+ by same pattern
 
-**MVP rule:** Funding is granted by the **Income phase** (and by a few **this-turn** effects such as the **Funding** card). **Unspent funding is lost at end of turn** (it does not carry to the next year). The **Treasury stat** persists.
+Equivalent thresholds: `1, 2, 4, 7, 11, 16, ...`.
 
-In short: **Treasury stat** sets how much **funding** you receive each turn; **funding** is what you actually **spend**.
+## 4. Event generation model
 
-### Power
+### Procedural pool
 
-Represents governing authority and decision-making capacity.
+- Built from level `rollableEventIds` and template weights.
+- Engine creates shuffled sequence blocks with each template repeated by weight.
+- Sequence persists in state; draws consume head entries.
+- Same refill batch avoids duplicate template picks.
 
-**Uses:**
+### Chapter 1 opening bias
 
-- **Draw phase:** how many **draw attempts** the player gets **this turn** (see **Turn structure** for timing vs deferred penalties).
+Turn 1 first block is prefixed with:
+1) `tradeOpportunity`
+2) `administrativeDelay`
 
-**Example:** Power = 2 → base **2** draw attempts in the **Draw phase** (before scheduled/status/branch modifiers).
+### All-empty board count rules
 
-Higher Power means more options and flexibility.
+When all slots are empty, event count depends on `treasuryStat + power + legitimacy` with weighted bands; Chapter 1 turn 1 is forced to 2 events.
 
-**Power-to-draw scaling (implementation):** draw attempts are non-linear by threshold: **1, 2, 4, 7, 11, 16, ...** power grants **1, 2, 3, 4, 5, 6, ...** base draw attempts.
+### Extra injections
 
-**MVP timing:** **Power** at the **start of the Draw phase** (after applying **scheduled draw-attempt modifiers** from the previous turn—such as **Bureaucratic Delay** or **Royal Crisis**—and ongoing status effects like **Loss of Authority**) determines how many **draw attempts** that turn allows (still **minimum 1**). If the player previously launched the **War of Devolution** military option, **Anti-French coalition** pressure may apply: each year the engine rolls a **level-configured hazard** (for *The Rising Sun*: chance each year while the effect lasts); on success, **one fewer draw attempt** for that year, still **clamped to at least 1**. **Administrative Reform** is played later in the **Action phase**: its **Power +1** applies immediately to the stat and therefore affects **the next turn’s** Draw phase size; its **Draw 1** is resolved **immediately** when the card is played (same turn), not in the Draw phase.
+- **Europe Alert (Chapter 2)**: each year, 50% chance to inject one of `{frontierGarrisons, tradeDisruption}` if there is empty space.
+- **Religious Tolerance status**: each year 30% chance to inject `religiousTension` if absent and space exists.
+- **Anti-French Sentiment status**: if `power + treasuryStat > 20`, gains extra procedural events (scales by +1 per 5 over threshold) and status marker.
 
-### Legitimacy
+### Event badges (UI tags)
 
-Represents political acceptance and regime stability.
+- **Harmful**: unresolved at year-end can apply penalties.
+- **Opportunity**: optional upside event, usually low/no ignore penalty.
+- **Historical**: shown on mainline scripted-history events (e.g. War of Devolution / Revocation of Nantes / Treaties of Nijmegen). This badge itself has **no extra gameplay effect**; it is narrative classification only.
+- **Continued**: unresolved event can persist into the next year.
+- **Resolved**: already handled this year.
 
-**Uses:**
+## 5. Solving events
 
-- Number of cards that may be retained at end of turn
-- Lose condition when reduced to **0** or below
-- Win condition when raised to target level
+Supported solve channels in current build:
 
-**Example:** Legitimacy = 2 → at end of turn, player may keep up to 2 cards.
+- funding
+- funding-or-crackdown
+- crackdown-only
+- scripted attack
+- Nantes policy choice (tolerance vs crackdown)
 
-If Legitimacy reaches **0** or below: **Game Over** **immediately** (any phase—after a penalty, card effect, or any rules step). **Lose-first** vs **Victory** is defined under **Lose condition**.
+`crackdown` and `diplomaticIntervention` only target unresolved **harmful** events.
 
----
+## 6. Win / lose checks
 
-## Turn Structure
+### Global lose
 
-Each turn represents **one year** unless a level overrides the cadence (see `docs/太阳王战役.md` — **calendar** and **years per turn**).
+- **Legitimacy <= 0** => immediate defeat.
 
-**Calendar display (MVP):** Each level declares **how much calendar time one turn represents** (for example **1 year** or **1 month** per turn) and a **campaign start** instant on that same scale.
+### Chapter 1 victory (`firstMandate`)
 
-**UI granularity rule:** The **date line must match the turn length**, not a fixed format for every level.
+By end-of-year checks within 15 turns:
 
-| Turn length (example) | What the player should see |
-| --- | --- |
-| **1 turn = 1 year** | **Year only** (no month/day fiction). Example: **1661**, **1662**, … |
-| **1 turn = 1 month** | **At least year + month** (month-level date). Example: **April 1661**, **May 1661**, or a locale-appropriate **1661-04** style. |
-| **1 turn = 1 season** | **Year + season** (or equivalent quarter label). |
-| **1 turn = multiple years** | Advance the calendar by that span; show **year** (or a **year range** if clearer). |
+- Treasury >= 6
+- Power >= 6
+- Legitimacy >= 5
 
-For *The Rising Sun* (level 1): **1 turn = 1 year**, start **1661**, so the banner shows **only the current campaign year** (**1675** on turn **15**). Optionally also **turn `t` of limit**.
+### Chapter 2 victory (`secondMandate`)
 
-Exact string format is an implementation detail; the requirement is **correct granularity** for the level’s **turn duration**.
+Need all:
 
-**Turn index:** There is **no separate “setup year 0”** — the first **Income → … → End** cycle is **turn 1** and uses the level’s **first** campaign year.
+- Treasury >= 10
+- Power >= 8
+- Legitimacy >= 10
+- Current calendar year >= 1696
+- `nymwegenSettlementAchieved = true`
+- No active `huguenotContainment` status
 
-1. **Income phase** — Add **funding** equal to the current **Treasury stat**. (Then apply any “this turn” grants from effects that trigger at income, if the implementation uses that ordering.)
-2. **Draw phase** — Apply **scheduled draw-attempt modifiers** from the **previous** turn’s unresolved penalties (for example **Bureaucratic Delay** or **Royal Crisis**) and **ongoing status** effects (for example **Loss of Authority**), then compute base draw attempts from power via `drawAttemptsFromPower(power)` (thresholds: **1, 2, 4, 7, 11, 16, ...** power → **1, 2, 3, 4, 5, 6, ...** attempts). Final attempts = `max(1, base + nextTurnDrawModifier + scheduled + status + antiFrenchRoll)` where the Anti-French roll is applied only while that pressure is active. Perform **up to that many** draw attempts: for each attempt, if the hand has **fewer than 12** cards (**hand cap**), draw one card from the draw pile; if already at cap, the engine still consumes attempts by moving would-be draws to discard (visible in log as overflow discard).
-3. **Event phase** — **First**, apply any **scheduled slot transforms** (for example **Provincial Governor Ascendant** → **Royal Crisis** on the same slot; see `docs/太阳王战役.md`). **Then**, clear **resolved** instances from slots. **Then**, apply **scripted calendar events** from `levelContent.scriptedCalendarEvents` (calendar inject / expiry; not part of the procedural pool). **Then**, **fill empty procedural slots** (`A`–`C` only) using the deterministic weighted-sequence system:
-   - The engine maintains a hidden **procedural event sequence**.
-   - A sequence block is built by expanding each event template by its current roll **weight** (so each template appears exactly `weight` times in that block), then shuffling.
-   - If the remaining sequence is low, a new shuffled block is appended to the tail.
-   - Each year still uses probability to decide whether an all-empty board gets **1 / 2 / 3** events (rules vary by turn index—see `docs/太阳王战役.md`), then consumes that many entries from the sequence.
-   - If a duplicate template would appear in the same refill batch, skip forward to the next later non-duplicate template.
-   - Slots **D**–**J** exist for future/script overflow but are **not** filled by routine procedural rolls.
-   - **Chapter 1 special opening:** on **turn 1**, slots **A/B** are fixed to **Colonial Trade Boom** then **Bureaucratic Delay** (implementation ids: `tradeOpportunity`, `administrativeDelay`); this is injected as the first sequence prefix before normal shuffling continues.
-4. **Action phase** — Player may play cards by paying **funding** costs, pay **funding** to solve events where allowed, use **scripted attack** buttons on events that define them (for example **War of Devolution**—costs and rewards come from `scriptedCalendarEvents`, not from the generic funding-solve path), and play **Royal Intervention** (the **Crackdown**-class card) to resolve one **harmful** event per **Royal Intervention** played. **A given event instance may be resolved at most once**; once resolved, it cannot be targeted again this turn. **Funding solves**, **scripted attacks**, and **Royal Intervention** are separate valid actions; order is player-chosen within the phase budget of **funding** / rules. The player may **end the Action phase at any time** (for example an **End year** / **Proceed** control), even if **funding** remains or further plays are legal—then continue to **Event resolution**.
-5. **Event resolution** — Any **still-unresolved harmful** events apply their penalties in **fixed slot order** along the full column list (**A** through **J** as implemented). Penalties that set **Legitimacy** to **0** end the game **immediately** (see **Lose condition**).
-6. **End phase** — Clear unspent **funding**. **Retention:** the player **chooses** which **up to `Legitimacy`** cards from the current **hand** to **retain** for next turn; **every other card still in hand** is discarded. (Cards played earlier this turn are already in the discard pile.) Then begin next turn.
+If last turn ends without victory => time defeat.
 
-**Win check (MVP):** After **End phase**, if **Legitimacy** is still **above 0** and the turn is still within the level’s **turn limit**, evaluate **Victory** if **Treasury stat**, **Power**, and **Legitimacy** are all **≥** their targets (see **Win condition**). For *The Rising Sun*, this includes the **end of turn 15** check. The **game-over modal** shows a short outcome headline plus **level-authored epilogue** text from locale keys declared on the level def (for *The Rising Sun*, victory includes an **extra paragraph** if the player chose the **War of Devolution** military option during the run).
+## 7. Retention and hand rules
 
-**Defeat (MVP, turn limit):** If the **End phase** win check runs on the **last allowed turn** (for example **turn 15** on *The Rising Sun*) and **not** all targets are met, the run ends in **defeat** (“time’s up” / mandate failed).
+- Hard hand cap: **12**.
+- Retention capacity = `legitimacy + retentionCapacityDelta statuses`, minimum 0.
+- End-year: player picks retained hand cards (up to capacity), rest discard.
+- Unspent funding is always cleared before retention confirmation.
 
-### Deck / draw pile (MVP)
+## 8. Chapter transition behavior (to Chapter 2)
 
-If the **draw pile** is empty when a card must be drawn, **shuffle the discard pile** (excluding cards currently in hand or retained, per your engine’s piles) to form a new draw pile, then continue drawing. **Hand cap still applies** after a reshuffle.
+Two start modes:
 
-### Inflation mechanic (current implementation)
-
-- Cards with tag `inflation` (currently: **Administrative Reform**, **Versailles Ceremony**, **Royal Manufactories**) gain cost pressure over time.
-- Trigger: each time that card instance moves from **discard** back into **deck** during reshuffle, that instance’s inflation stack increases by `+1`.
-- Effective playable cost = `base cost + inflation stack` (tracked **per card instance**, not per template).
-- Activation gates:
-  - **Chapter 2 (`secondMandate`)**: always active.
-  - **Chapter 1 (`firstMandate`)**: active once `Power + Treasury stat + Legitimacy >= 12`.
-
-### Chapter transition refit (current implementation)
-
-- **Standalone Chapter 2 start** (from main menu): keeps count-based refit rules.
-- **Continuity transition from Chapter 1 victory**:
-  - carry over card pool by **instance** (including per-instance inflation stack),
-  - refit is **remove-only**,
-  - can remove **0–3** carryover cards total,
-  - cannot add cards during continuity refit.
-
-### Hand size (MVP)
-
-- **Maximum cards in hand:** **12**.
-- **Draw phase** and **immediate draws** (for example from **Administrative Reform**) **cannot** raise the hand above **12**. In Draw phase, overflow attempts move cards to discard; immediate card-effect draws at cap simply fail to add a card.
-- **Retention** cannot end the turn with more than **12** cards in hand (with cap 12 and retain ≤ Legitimacy, this normally binds only on draws).
-
-### Resolved events and next turn’s slots (MVP)
-
-- An event slot that was **fully resolved** this turn (paid solve, **Royal Intervention**, or other allowed resolution) is **empty** when the next **Event phase** begins and must be **filled with a new random** pick from the pool (same rules as other empty slots). This applies to **Royal Crisis** as well: if resolved, next year that slot is a normal new roll—not a lingering crisis state.
-
----
-
-## Win Condition
-
-For the first level: reach **all three** targets **at or above** the stated thresholds **before** you fail the **turn limit** check (see **Turn structure** — *The Rising Sun*: **15** turns).
-
-- Legitimacy **≥ 5**
-- Treasury stat **≥ 6**
-- Power **≥ 6**
-
-If all are true on the **end-of-turn** check: **Victory**. Values **may exceed** targets; there is no “exactly equal” requirement in MVP.
-
-**Second mandate (level 2) extra gates:** numeric targets alone are not enough. Current implementation also requires: current year **≥ 1696**, **Europe Alert cleared**, **Treaties of Nijmegen achieved**, and **no active Huguenot Containment** status.
-
----
-
-## Lose Condition
-
-**Legitimacy ≤ 0** at **any** time.
-
-Represents: collapse, removal from office, coup, revolution, regime failure.
-
-**MVP:** As soon as Legitimacy hits **0** or below, stop the run (**game over**). **Lose-first:** if **Legitimacy** and **Victory** could both be evaluated in the same step, **resolve the loss** and **do not** award **Victory**.
-
----
-
-## Core Gameplay Loop
-
-1. Face pressure
-2. Spend resources
-3. Improve systems
-4. Survive instability
-5. Reach strength targets
-
----
-
-## Card System
-
-Cards are the player's tools.
-
-**Initial prototype deck (level 1 implementation):** **13** cards — **Royal Levy** ×4, **Royal Intervention** ×3, **Administrative Reform** ×2, **Versailles Ceremony** ×2, **Royal Manufactories** ×2 (see `docs/太阳王战役.md` / `src/data/levelContent.ts` — `starterDeckTemplateOrder` for `firstMandate`).
-
-### Example cards
-
-**Royal Levy**
-
-- **Cost:** 0 **funding**
-- **Effect:** Gain +1 **funding** this turn (spendable pool only; does not change **Treasury stat**)
-- **Purpose:** Starter economy card.
-
-**Royal Intervention** (implementation id: `crackdown`)
-
-- **Cost:** 1 **funding**
-- **Effect (MVP):** Resolve **one unresolved harmful event** in the event slots. **Colonial Trade Boom** cannot be chosen (it is not harmful: no penalty if ignored).
-- **Purpose:** Short-term control tool. Later versions may narrow this to tag-based targeting (Unrest/Crisis, and so on).
-
-**Administrative Reform** (implementation id: `reform`)
-
-- **Cost:** 2 **funding**
-- **Effect:** **Power +1** (stat updates immediately; each **+1** stacks and counts toward **next** turn’s **Draw phase** size). **Draw 1** **immediately** when played (**Action phase**), respecting the **hand cap** (if the hand is already full, **no card** is drawn; Power +1 still applies).
-- **Stacking (MVP):** Playing **multiple Administrative Reform** cards in the **same** Action phase is allowed: resolve each card in order—each grants **Power +1** (all stack for **next** turn’s draw count) and each **Draw 1** now (each skipped independently if the hand is already at **12** cards).
-- **Purpose:** Long-term scaling plus occasional **same-turn** tempo from the bonus draw.
-
-**Versailles Ceremony** (implementation id: `ceremony`)
-
-- **Cost:** 2 **funding**
-- **Effect:** Legitimacy +1
-- **Purpose:** Progress toward victory and card retention.
-
-**Royal Manufactories** (implementation id: `development`)
-
-- **Cost:** 3 **funding**
-- **Effect:** **Treasury stat +1**
-- **Purpose:** Long-term fiscal growth.
-
----
-
-## Event System
-
-Events are the main source of challenge.
-
-- Each **Event phase** refills **empty procedural slots** `A`–`C` from a hidden **weighted sequence** built from the level pool (event count per turn still follows the **1–3** probability rule when the board is fully empty; see `docs/太阳王战役.md`). This guarantees long-run frequencies match configured weights block-by-block. **Scripted** rows (for example **War of Devolution**) are **not** in the procedural pool; they are injected by **calendar rules** in `levelContent.scriptedCalendarEvents`.
-- Multiple simultaneous events force prioritization.
-
-### Example events
-
-**Court Overspending** (implementation id: `budgetStrain`)
-
-- If unresolved: **Treasury stat -1**
-
-**Paris Unrest** (implementation id: `publicUnrest`)
-
-- If unresolved: Legitimacy -1
-
-**Bureaucratic Delay** (implementation id: `administrativeDelay`)
-
-- If unresolved: **one fewer draw attempt** on the **following** turn. **MVP:** treat this as a **scheduled draw-attempt modifier** applied **at the start of the next turn**, **before** the **Draw phase** (still **minimum 1** draw attempt).
-
-**Colonial Trade Boom** (implementation id: `tradeOpportunity`)
-
-- Resolve by spending **funding** → reward **Treasury stat +1** (see level doc for exact cost). **Each slot is independent:** two **Colonial Trade Boom** rolls the same turn mean **two** optional purchases if the player can pay.
-- No penalty if ignored (not a **harmful** event).
-
-**Provincial Governor Ascendant** (implementation id: `powerVacuum`)
-
-- If unresolved: transforms into **Royal Crisis** on that slot next turn.
-
-**Noble Resistance** (implementation id: `politicalGridlock`)
-
-- If unresolved: applies **Loss of Authority** for **3** turns (reduces draw attempts while active; still **minimum 1** per turn).
-
-**Royal Crisis** (implementation id: `majorCrisis`)
-
-- Usually reached by escalation from **Provincial Governor Ascendant**. Tagged **Continued**: if unresolved it **stays on the slot into next turn** and repeats Legitimacy **-1** plus a **draw-attempt penalty** each year (same modifier pipeline as **Bureaucratic Delay**) until solved. **Royal Intervention** only for the MVP solve path (see `docs/太阳王战役.md`).
-
-**War of Devolution** (implementation id: `warOfDevolution`; *The Rising Sun*)
-
-- **Not** in `rollableEventIds`. Injected once on the configured **campaign start year** (see `levelContent.ts` / `scriptedCalendar.ts`); stays on the board through the configured **presence window** unless the player resolves it via the **scripted military** action (pays **funding** from level data, gains **Power** and a **chance** at extra **Treasury stat**). That choice sets **Anti-French coalition** pressure (probabilistic **−1 draw** per eligible year while active, still **≥ 1** draw). **Royal Intervention** does not apply to this row (it is not flagged **harmful**).
-
----
-
-## Strategic Decisions
-
-The player constantly chooses between:
-
-- **Short-term survival** — Use cards to remove dangerous events now.
-- **Long-term growth** — Increase **Treasury stat** and Power for future turns.
-- **Political stability** — Raise Legitimacy to avoid collapse and retain more cards.
-- **Opportunity cost** — Every **funding** spent on one problem cannot be spent elsewhere this year.
-
----
-
-## Intended Game Feel
-
-The player should feel:
-
-- pressured but not helpless
-- weak early, stronger later
-- punished for greed
-- rewarded for planning
-- constantly choosing priorities
-
----
-
-## First Level Flow
-
-### Early game
-
-Low Power, low **Treasury stat** and tight **funding**. Main goal: survive events and stabilize.
-
-### Mid game
-
-Use **Administrative Reform** and economy cards; increase Power and **Treasury stat**.
-
-### Late game
-
-Use **Versailles Ceremony** and efficient plays; reach all victory targets before deadline.
-
----
-
-## Difficulty Sources
-
-Difficulty should come from:
-
-- too many simultaneous problems
-- limited card draw
-- expensive choices
-- timing mistakes
-
-Not from randomness alone.
-
----
-
-## Expansion Possibilities
-
-Later versions may add:
-
-- factions
-- ideology systems
-- different governments
-- historical campaigns
-- leader traits
-- persistent upgrades
-- branching maps
-- card upgrades
-
----
-
-## Minimum Prototype Goal
-
-The prototype succeeds if players say:
-
-- One more run.
-- I almost stabilized.
-- Next time I’ll build economy earlier.
-
-That means the core loop works.
-
----
-
-## Final Summary
-
-Deck of Mandate is a governance strategy card game where:
-
-- **Treasury stat** sets yearly **funding** income; **funding** pays for actions this turn
-- **Power** controls options
-- **Legitimacy** controls survival and planning
-
-The player grows a fragile regime into a stable state while surviving yearly crises.
+1. **Standalone Chapter 2**
+   - Uses transformed Chapter 1-style carryover baseline + fixed Chapter 2 additions.
+   - Starts with Europe Alert on and war branch treated as taken.
+2. **Continuity from Chapter 1 victory**
+   - Carries real card instances, inflation stacks, and remaining uses.
+   - Refit is remove-only, max 3 removals.
+   - Adds fixed Chapter 2 new cards.

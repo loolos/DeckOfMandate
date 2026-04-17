@@ -33,6 +33,7 @@ export const messagesFrCore: Record<keyof typeof messagesEnCore, string> = {
   "ui.resolved": "Résolu",
   "ui.harmful": "Néfaste",
   "ui.opportunity": "Opportunité",
+  "ui.historical": "Historique",
   "ui.continued": "Continu",
   "ui.deck": "Pioche",
   "ui.discard": "Défausse",
@@ -209,6 +210,8 @@ export const messagesFrCore: Record<keyof typeof messagesEnCore, string> = {
     "[Tour {turn}] Prélèvement royal atteint 0/3 et est retiré du cycle ; les canaux d'extraction d'urgence s'épuisent (Trésor -1).",
   "log.info.cardUse.depleted.diplomaticIntervention":
     "[Tour {turn}] Intervention diplomatique atteint 0/3 et est retirée du cycle (sans pénalité).",
+  "log.info.eventTag.historical":
+    "[Tour {turn}] Note de tag « Historique » : cet événement renvoie à un fait historique réel et ce tag n'ajoute aucun effet de jeu.",
   "log.info.cardTag.extra":
     "[Tour {turn}] Note de tag « Supplémentaire » : cette carte est ajoutée par d'autres effets, exclue du réajustement inter-chapitre et retirée à la fin du chapitre.",
   "log.info.cardUse.remainingUses": "[Tour {turn}] Note de tag « Restant » : cette carte a X/Y utilisations restantes ; chaque activation en consomme 1 et elle quitte le cycle à 0.",
