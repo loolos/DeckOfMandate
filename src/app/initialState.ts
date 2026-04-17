@@ -31,9 +31,7 @@ export function createInitialState(
   const europeAlertPowerLoss =
     options?.europeAlertPowerLoss ?? (europeAlert ? computeEuropeAlertPowerLoss(baseResources.power) : 0);
   const europeAlertProgress = options?.europeAlertProgress ?? (europeAlert ? 3 : 0);
-  const resources = europeAlert
-    ? { ...baseResources, power: Math.max(0, baseResources.power - europeAlertPowerLoss) }
-    : baseResources;
+  const resources = baseResources;
 
   const starterDeckTemplateOrder =
     options?.starterDeckTemplateOrder ?? getLevelContent(levelId).starterDeckTemplateOrder;

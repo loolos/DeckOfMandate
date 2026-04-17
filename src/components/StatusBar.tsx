@@ -79,7 +79,7 @@ export function StatusBar({
     if (europeAlertActive) {
       const progress = Math.max(1, Math.min(10, europeAlertProgress ?? 3));
       const stage = europeAlertStage(progress);
-      const hint = t("status.europeAlert.hint", { n: europeAlertPowerLoss ?? 0 });
+      const hint = t("status.europeAlert.hint");
       const history = t("status.europeAlert.history");
       const stageName = t(`status.europeAlert.stage.${stage}.name` as MessageKey);
       const stageDesc = t(`status.europeAlert.stage.${stage}.desc` as MessageKey);
