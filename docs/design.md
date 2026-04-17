@@ -31,7 +31,7 @@ Core state lives in `GameState` and includes:
 - per-instance inflation and limited-use trackers
 - event slots + pending transforms
 - status list
-- chapter flags (`warOfDevolutionAttacked`, `europeAlert`, `nymwegenSettlementAchieved`)
+- chapter flags (`warOfDevolutionAttacked`, `europeAlert`, `europeAlertProgress`, `nymwegenSettlementAchieved`)
 - deterministic RNG internal state
 - procedural event sequence queue
 - append-only action log
@@ -63,6 +63,7 @@ Templates are immutable references. Runtime uses **instances** (cards/events/sta
 - Scripted calendar windows and overflow slots.
 - Escalation transforms (`powerVacuum` to `majorCrisis`).
 - Branch persistence into chapter 2 (war branch -> Europe Alert).
+- Europe Alert yearly base drift at begin-year (`k = x - 12 - y*3`) and progress-gated supplemental event injection.
 - Additional chapter-2 win gates.
 
 ## 8. Persistence
@@ -94,4 +95,3 @@ npm run build
 - backend persistence
 - server-authoritative anti-cheat model
 - real-time combat or physics systems
-
