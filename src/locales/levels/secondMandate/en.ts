@@ -14,15 +14,30 @@ export const messagesEnSecondMandate = {
     "The burdens of hegemony break the regime. Fiscal strain, social unrest, and diplomatic pressure outpace royal control, leaving the crown weakened and isolated.",
   "status.europeAlert.name": "Europe Alert",
   "status.europeAlert.hint":
-    "At Chapter 2 start, immediate Power -{n} (floor(current Power / 2)). Europe Alert may also add an extra Frontier Garrisons/Trade Disruption event each year.",
+    "At Chapter 2 start, immediate Power -{n} (floor(current Power / 2)). Europe Alert now tracks progress (1-10): start at 3; at 1-5, extra-event chance is progress×20%; at 6-10, at least 1 event is guaranteed and second-event chance is (progress-5)×20%.",
   "status.europeAlert.history":
     "Earlier French offensives hardened long-run coalition vigilance across Europe.",
+  "status.europeAlert.stage.eased.name": "Eased (1-2)",
+  "status.europeAlert.stage.eased.desc":
+    "Rival coordination is present but measured; pressure channels are still mostly diplomatic.",
+  "status.europeAlert.stage.alert.name": "Alert (3-4)",
+  "status.europeAlert.stage.alert.desc":
+    "Monitoring and signaling intensify as neighboring courts test French commitments.",
+  "status.europeAlert.stage.containment.name": "Containment (5-6)",
+  "status.europeAlert.stage.containment.desc":
+    "Neighbors coordinate practical balancing steps to slow French room for maneuver.",
+  "status.europeAlert.stage.hostile.name": "Hostile (7-8)",
+  "status.europeAlert.stage.hostile.desc":
+    "Economic and military pressure shifts from warning to active obstruction.",
+  "status.europeAlert.stage.conflict.name": "Conflict (9-10)",
+  "status.europeAlert.stage.conflict.desc":
+    "The system enters overt confrontation and dual-crisis pressure becomes routine.",
   "status.antiFrenchSentiment.name": "Anti-French Sentiment",
   "status.antiFrenchSentiment.history":
     "When French power appears excessive, neighboring states align more quickly and crisis signals multiply.",
   "event.nymwegenSettlement.name": "Treaties of Nijmegen",
   "event.nymwegenSettlement.desc":
-    "A mandatory long-running crisis: pay 6 Funding to secure the settlement (Power -2, Legitimacy -2). This no longer removes Europe Alert; if ignored, lose 1 Power each year.",
+    "A mandatory long-running crisis: pay (Europe Alert progress + 3) Funding to secure the settlement (Power -2, Legitimacy -2). This no longer removes Europe Alert; if ignored, lose 1 Power each year.",
   "event.revocationNantes.name": "Revocation of the Edict of Nantes",
   "event.revocationNantes.desc":
     "In 1598, Henry IV issued the Edict of Nantes to end the French Wars of Religion: Catholicism remained the state faith, while French Protestants (Huguenots) received limited worship rights, civil protections, and security guarantees. The crown now revokes it. This is a Continued event: if ignored, you draw 2 fewer cards each turn and it stays on the board. Resolve by choosing one policy: Religious Tolerance (immediate Legitimacy -1; gain permanent Religious Tolerance status that has a 30% yearly chance to spawn Religious Tension: pay 2 Funding or lose 1 Legitimacy), or Harsh Crackdown (no immediate numeric change; gain Contain Huguenot Remnants 3 and add 3 temporary “Suppress the Huguenots” cards to deck, cost 3 each; each play reduces remnants by 1; at 0, remove the status and purge those cards from hand/deck/discard). While that containment status exists, Chapter 2 victory is blocked.",
@@ -56,6 +71,12 @@ export const messagesEnSecondMandate = {
   "event.tradeDisruption.name": "Trade Disruption",
   "event.tradeDisruption.desc":
     "Sea lanes and convoy risk cut into policy bandwidth. Pay 1 Funding or take a -2 draw modifier next year.",
+  "event.embargoCoalition.name": "Embargo Coalition",
+  "event.embargoCoalition.desc":
+    "Maritime restrictions tighten around French commerce. Pay 2 Funding, or lose 1 Treasury and suffer a draw penalty next year.",
+  "event.mercenaryRaiders.name": "Mercenary Raiders",
+  "event.mercenaryRaiders.desc":
+    "Paid border raiders disrupt local order and crown authority. Pay 2 Funding, or lose 1 Power and 1 Legitimacy.",
   "event.courtScandal.name": "Court Scandal",
   "event.courtScandal.desc":
     "Factional intrigue weakens authority. Pay 3 Funding to contain it; if unresolved, Legitimacy -1 and all Royal-tag cards are blocked next turn.",

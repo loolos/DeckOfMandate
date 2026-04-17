@@ -21,6 +21,8 @@ export type EventTemplateId =
   | "taxResistance"
   | "frontierGarrisons"
   | "tradeDisruption"
+  | "embargoCoalition"
+  | "mercenaryRaiders"
   | "courtScandal"
   | "militaryPrestige"
   | "commercialExpansion"

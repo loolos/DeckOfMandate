@@ -14,15 +14,25 @@ export const messagesZhSecondMandate = {
     "霸权成本最终压垮了体制。财政失衡、社会不安与外交围堵超出了宫廷控制，王冠变得虚弱而孤立。",
   "status.europeAlert.name": "欧洲警觉",
   "status.europeAlert.hint":
-    "对外冲突压力持续：第二关开局时权力立即 -{n}（按当前权力的一半向下取整）。欧洲警觉下每年还可能额外出现边境驻军/海贸受阻。",
+    "对外冲突压力持续：第二关开局时权力立即 -{n}（按当前权力的一半向下取整）。欧洲警觉改为 1-10 进度：开局为 3；进度 1-5 时额外事件概率=进度×20%；进度 6-10 时必出至少 1 个，且第二个事件概率=(进度-5)×20%。",
   "status.europeAlert.history":
     "法国早期扩张刺激了欧陆列强的长期戒备，外交与军事压力转入制度化阶段。",
+  "status.europeAlert.stage.eased.name": "缓和（1-2）",
+  "status.europeAlert.stage.eased.desc": "列强仍在观望，联动压力以外交试探为主。",
+  "status.europeAlert.stage.alert.name": "警觉（3-4）",
+  "status.europeAlert.stage.alert.desc": "周边国家加强监测与信号施压，试探法国承诺边界。",
+  "status.europeAlert.stage.containment.name": "遏制（5-6）",
+  "status.europeAlert.stage.containment.desc": "外部协调进入实操层面，持续压缩法国的政策回旋空间。",
+  "status.europeAlert.stage.hostile.name": "敌视（7-8）",
+  "status.europeAlert.stage.hostile.desc": "围堵由警告转向实质阻断，经济与军事压力并行。",
+  "status.europeAlert.stage.conflict.name": "冲突（9-10）",
+  "status.europeAlert.stage.conflict.desc": "体系进入公开对抗，双重危机与高频冲击成为常态。",
   "status.antiFrenchSentiment.name": "反法情绪",
   "status.antiFrenchSentiment.history":
     "当法国权势过强时，邻国会形成共同警觉，危机信号与外部压力将更频繁出现。",
   "event.nymwegenSettlement.name": "奈梅亨和约",
   "event.nymwegenSettlement.desc":
-    "这是必须尽快收束的长期事件：支付 6 经费可达成和约（权力 -2、合法性 -2），但不会结束「欧洲警觉」；若不处理，每年权力 -1。",
+    "这是必须尽快收束的长期事件：支付「欧洲警觉进度 + 3」经费可达成和约（权力 -2、合法性 -2），但不会结束「欧洲警觉」；若不处理，每年权力 -1。",
   "event.revocationNantes.name": "撤销南特敕令",
   "event.revocationNantes.desc":
     "1598 年亨利四世颁布《南特敕令》，原为在宗教战争后恢复秩序：在保持天主教国教地位的前提下，给予法国新教徒（胡格诺派）有限礼拜自由、民事权利与若干安全保障。如今王权决定撤销它。此事件带「持续」标签：若不处理，将每回合额外少抽 2 张，且事件会保留在列表中。处理时二选一：\n- 宗教宽容：立刻合法性 -1，并获得永久状态「宗教宽容」（每回合 30% 概率触发「宗教矛盾」事件，需支付 2 经费，否则合法性 -1）。\n- 严厉镇压：无立刻数值变化，但获得状态「遏制胡格诺-剩余势力 3」，并向抽牌堆加入 3 张临时牌「镇压胡格诺派」（费用 3）。每打出 1 张，「剩余势力」-1；降到 0 时，移除该状态并清除抽牌堆/弃牌堆/手牌中的全部「镇压胡格诺派」。注意：该状态存在时，第二关无法胜利。",
@@ -55,6 +65,12 @@ export const messagesZhSecondMandate = {
   "event.tradeDisruption.name": "海贸受阻",
   "event.tradeDisruption.desc":
     "航路受扰影响施政节奏。支付 1 经费，否则下一回合抽牌修正 -2。",
+  "event.embargoCoalition.name": "禁运协同",
+  "event.embargoCoalition.desc":
+    "海上限制与关税协同压迫法国贸易。支付 2 经费，否则财政 -1 且下一回合抽牌受罚。",
+  "event.mercenaryRaiders.name": "雇佣兵劫掠",
+  "event.mercenaryRaiders.desc":
+    "边境雇佣兵袭扰削弱王权控制。支付 2 经费，否则权力 -1 且合法性 -1。",
   "event.courtScandal.name": "宫廷丑闻",
   "event.courtScandal.desc":
     "宫廷派系丑闻动摇威望。支付 3 经费处理；若不处理，立刻合法性 -1，且下一回合无法打出王室牌。",

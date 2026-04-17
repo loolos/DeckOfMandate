@@ -20,34 +20,39 @@ funding += treasuryStat
 Each turn is one year in both current chapters.
 
 1. **Begin-year status effects**: `beginYearResourceDelta` statuses apply first (e.g. temporary legitimacy boost).
-2. **Income**: add funding from current treasury stat.
-3. **Draw attempts calculation**:
+2. **Europe Alert base drift (Chapter 2 only, if active)**:
+   - Let `x = treasuryStat + power + legitimacy`, `y = europeAlertProgress`, `k = x - 12 - y*3`.
+   - If `k > 0`, progress increases by 1 with probability `min(100%, k*10%)`.
+   - If `k < 0`, progress decreases by 1 with probability `min(100%, (-k)*10%)`.
+   - Drift result is logged when it actually changes.
+3. **Income**: add funding from current treasury stat.
+4. **Draw attempts calculation**:
    - base = `drawAttemptsFromPower(power)` (threshold ladder)
    - plus `nextTurnDrawModifier`
    - plus first queued `scheduledDrawModifiers[0]` (then queue shifts)
    - plus sum of active `drawAttemptsDelta` statuses
    - plus possible anti-coalition yearly roll adjustment
    - final attempts clamped to at least 1
-4. **Draw resolution**:
+5. **Draw resolution**:
    - draw attempts run with hand cap 12
    - overflow draws are discarded and logged
    - if deck empties, refill from discard (shuffle) and continue
    - on deck refill, inflation stacks may increase for qualifying instances
-5. **Status tick-down**: most timed statuses decrement after draw; long-lived branch statuses do not auto-tick.
-6. **Event phase**:
+6. **Status tick-down**: most timed statuses decrement after draw; long-lived branch statuses do not auto-tick.
+7. **Event phase**:
    - apply scheduled slot transforms (e.g. `powerVacuum -> majorCrisis`)
    - clear resolved events from slots
    - inject scripted calendar rows for this year
    - fill empty procedural slots (`A–C`) from deterministic weighted sequence
    - optional extra injections (Europe Alert pool, religious tension, anti-French-sentiment extras)
-7. **Action phase**:
+8. **Action phase**:
    - play cards, solve events by funding, crackdowns, scripted attacks, policy choices
-8. **Retention phase trigger**:
+9. **Retention phase trigger**:
    - player ends year manually
    - choose cards to keep (up to retention capacity)
    - unkept hand cards discard
-9. **End-of-year penalties**: unresolved harmful events strike in slot order.
-10. **Outcome checks**:
+10. **End-of-year penalties**: unresolved harmful events strike in slot order.
+11. **Outcome checks**:
    - immediate fail if legitimacy <= 0 at any enforced point
    - then victory check
    - then time defeat on last turn if not victorious
@@ -87,7 +92,12 @@ When all slots are empty, event count depends on `treasuryStat + power + legitim
 
 ### Extra injections
 
-- **Europe Alert (Chapter 2)**: each year, 50% chance to inject one of `{frontierGarrisons, tradeDisruption}` if there is empty space.
+- **Europe Alert (Chapter 2)**:
+  - Supplemental pool: `{frontierGarrisons, tradeDisruption, embargoCoalition, mercenaryRaiders}`.
+  - Progress-gated yearly injection:
+    - progress `1..5`: chance `progress * 20%` to inject **1** supplemental event
+    - progress `6..10`: guaranteed **1**, plus chance `(progress-5) * 20%` to inject a **2nd** supplemental event
+  - `Treaties of Nijmegen` funding solve amount is dynamic: `europeAlertProgress + 3`.
 - **Religious Tolerance status**: each year 30% chance to inject `religiousTension` if absent and space exists.
 - **Anti-French Sentiment status**: if `power + treasuryStat > 20`, gains extra procedural events (scales by +1 per 5 over threshold) and status marker.
 
@@ -127,14 +137,10 @@ By end-of-year checks within 15 turns:
 
 ### Chapter 2 victory (`secondMandate`)
 
-Need all:
+Need both:
 
-- Treasury >= 10
-- Power >= 8
-- Legitimacy >= 10
 - Current calendar year >= 1696
-- `nymwegenSettlementAchieved = true`
-- No active `huguenotContainment` status
+- `europeAlert === false` (typically cleared by resolving `ryswickPeace`)
 
 If last turn ends without victory => time defeat.
 

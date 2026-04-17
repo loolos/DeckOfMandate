@@ -183,6 +183,18 @@ function renderEntry(e: ActionLogEntry, t: (key: MessageKey, vars?: Record<strin
           <div className={styles.actionLogSubMuted}>{t("log.antiFrenchLeagueDraw.history")}</div>
         </div>
       );
+    case "europeAlertProgressShift":
+      return (
+        <div className={styles.actionLogHead}>
+          {t("log.europeAlertProgressShift", {
+            turn: e.turn,
+            from: e.from,
+            to: e.to,
+            pct: e.probabilityPct,
+            k: e.pressureDeltaK,
+          })}
+        </div>
+      );
     case "drawOverflowDiscarded": {
       const cardList = e.cardTemplateIds
         .map((id) => cardLabelWithIcon(id, t(cardTitleKey(id))))

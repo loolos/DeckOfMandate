@@ -14,8 +14,18 @@ type StatusViewRow = {
   hideMetaWhenExpandedOnMobile?: boolean;
 };
 
+type EuropeAlertStage = "eased" | "alert" | "containment" | "hostile" | "conflict";
+
 function signedValue(n: number): string {
   return n > 0 ? `+${n}` : `${n}`;
+}
+
+function europeAlertStage(progress: number): EuropeAlertStage {
+  if (progress <= 2) return "eased";
+  if (progress <= 4) return "alert";
+  if (progress <= 6) return "containment";
+  if (progress <= 8) return "hostile";
+  return "conflict";
 }
 
 function statusDetail(
@@ -45,6 +55,7 @@ export function StatusBar({
   coalitionProbabilityPct,
   europeAlertActive,
   europeAlertPowerLoss,
+  europeAlertProgress,
 }: {
   statuses: readonly PlayerStatusInstance[];
   /** Anti-French League pressure (scripted war follow-up); draw risk is rolled each year in engine. */
@@ -55,6 +66,8 @@ export function StatusBar({
   europeAlertActive?: boolean;
   /** Immediate power loss applied when Europe Alert is activated at chapter start. */
   europeAlertPowerLoss?: number;
+  /** Chapter-2 Europe Alert progress (1-10 while active). */
+  europeAlertProgress?: number;
 }) {
   const { t } = useI18n();
   const isSmallScreen = useSmallScreen();
@@ -64,14 +77,18 @@ export function StatusBar({
   const rows = useMemo<StatusViewRow[]>(() => {
     const next: StatusViewRow[] = [];
     if (europeAlertActive) {
+      const progress = Math.max(1, Math.min(10, europeAlertProgress ?? 3));
+      const stage = europeAlertStage(progress);
       const hint = t("status.europeAlert.hint", { n: europeAlertPowerLoss ?? 0 });
       const history = t("status.europeAlert.history");
+      const stageName = t(`status.europeAlert.stage.${stage}.name` as MessageKey);
+      const stageDesc = t(`status.europeAlert.stage.${stage}.desc` as MessageKey);
       next.push({
         id: "europeAlert",
-        title: t("status.europeAlert.name"),
+        title: `${t("status.europeAlert.name")} ${progress}/10`,
         compactMeta: "",
         meta: "",
-        detail: `${hint} ${history}`.trim(),
+        detail: `${stageName}：${stageDesc} ${hint} ${history}`.trim(),
         hideMetaWhenExpandedOnMobile: true,
       });
     }
@@ -109,7 +126,7 @@ export function StatusBar({
       });
     }
     return next;
-  }, [coalitionActive, europeAlertActive, europeAlertPowerLoss, pct, statuses, t]);
+  }, [coalitionActive, europeAlertActive, europeAlertPowerLoss, europeAlertProgress, pct, statuses, t]);
 
   useEffect(() => {
     if (!isSmallScreen) setExpandedStatusId(null);
@@ -142,6 +159,14 @@ export function StatusBar({
             <li key={row.id} className={rowCls}>
               <span className={styles.statusTitle}>{row.title}</span>
               <span className={styles.statusMeta}>{row.meta}</span>
+              {row.id === "europeAlert" ? (
+                <span className={styles.europeAlertProgressTrack} aria-hidden="true">
+                  <span
+                    className={styles.europeAlertProgressFill}
+                    style={{ width: `${Math.max(1, Math.min(10, europeAlertProgress ?? 3)) * 10}%` }}
+                  />
+                </span>
+              ) : null}
               {row.detail ? <span className={styles.statusDetail}>{row.detail}</span> : null}
             </li>
           );
@@ -166,6 +191,14 @@ export function StatusBar({
             <span className={`${styles.statusMeta} ${styles.statusCompactMeta}`}>
               {showDetails && row.hideMetaWhenExpandedOnMobile ? "" : showDetails ? row.meta : row.compactMeta}
             </span>
+            {row.id === "europeAlert" ? (
+              <span className={styles.europeAlertProgressTrack} aria-hidden="true">
+                <span
+                  className={styles.europeAlertProgressFill}
+                  style={{ width: `${Math.max(1, Math.min(10, europeAlertProgress ?? 3)) * 10}%` }}
+                />
+              </span>
+            ) : null}
             {showDetails && row.detail ? <span className={styles.statusDetail}>{row.detail}</span> : null}
           </li>
         );

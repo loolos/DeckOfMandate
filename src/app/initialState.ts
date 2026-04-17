@@ -15,6 +15,7 @@ type InitialStateOptions = {
   warOfDevolutionAttacked?: boolean;
   europeAlert?: boolean;
   europeAlertPowerLoss?: number;
+  europeAlertProgress?: number;
 };
 
 export function createInitialState(
@@ -29,6 +30,7 @@ export function createInitialState(
   const europeAlert = options?.europeAlert ?? false;
   const europeAlertPowerLoss =
     options?.europeAlertPowerLoss ?? (europeAlert ? computeEuropeAlertPowerLoss(baseResources.power) : 0);
+  const europeAlertProgress = options?.europeAlertProgress ?? (europeAlert ? 3 : 0);
   const resources = europeAlert
     ? { ...baseResources, power: Math.max(0, baseResources.power - europeAlertPowerLoss) }
     : baseResources;
@@ -74,6 +76,7 @@ export function createInitialState(
     warOfDevolutionAttacked: options?.warOfDevolutionAttacked ?? false,
     europeAlert,
     europeAlertPowerLoss,
+    europeAlertProgress,
     nymwegenSettlementAchieved: false,
     proceduralEventSequence: [],
     actionLog: [],
