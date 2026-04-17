@@ -15,13 +15,21 @@ import { applyOnDrawCardEffects } from "./cardRuntime";
 import { applyInflationFromDeckRefill } from "./cardCost";
 import { drawUpToPower } from "./draw";
 import { drawAttemptsFromPower } from "./drawScaling";
+import {
+  clampEuropeAlertProgress,
+  europeAlertPressureDeltaK,
+  europeAlertProgressShiftProbability,
+  rollEuropeAlertSupplementalEventCount,
+} from "./europeAlert";
 import { applyScriptedCalendarPhase, rollAntiFrenchLeagueDrawAdjustment } from "./scriptedCalendar";
 import { rngNext, shuffle } from "./rng";
 import { applyEffects } from "./applyEffects";
-
-export const PROB_EUROPE_ALERT_SUPPLEMENTAL_EVENT = 0.5;
-
-const EUROPE_ALERT_SUPPLEMENTAL_POOL = ["frontierGarrisons", "tradeDisruption"] as const;
+const EUROPE_ALERT_SUPPLEMENTAL_POOL = [
+  "frontierGarrisons",
+  "tradeDisruption",
+  "embargoCoalition",
+  "mercenaryRaiders",
+] as const;
 const RELIGIOUS_TENSION_TRIGGER_PROBABILITY = 0.3;
 const PROCEDURAL_SEQUENCE_LOW_WATERMARK = 3;
 const SECOND_MANDATE_EARLIEST_VICTORY_YEAR = 1696;
@@ -295,25 +303,35 @@ function runEventPhase(state: GameState): GameState {
 
 export function maybeAddEuropeAlertSupplementalEvent(state: GameState): GameState {
   if (!state.europeAlert || state.levelId !== "secondMandate") return state;
-  const target = EVENT_SLOT_ORDER.find((slot) => !state.slots[slot]);
-  if (!target) return state;
   let s = state;
-  const [rngRoll, uRoll] = rngNext(s.rng);
-  s = { ...s, rng: rngRoll };
-  if (uRoll >= PROB_EUROPE_ALERT_SUPPLEMENTAL_EVENT) return s;
-  const [rngPick, uPick] = rngNext(s.rng);
-  s = { ...s, rng: rngPick };
-  const templateId = EUROPE_ALERT_SUPPLEMENTAL_POOL[uPick < 0.5 ? 0 : 1];
-  const instance: EventInstance = {
-    instanceId: `evt_${s.nextIds.event}`,
-    templateId,
-    resolved: false,
-  };
-  return {
-    ...s,
-    nextIds: { ...s.nextIds, event: s.nextIds.event + 1 },
-    slots: { ...s.slots, [target]: instance },
-  };
+  const [rngPrimary, uPrimary] = rngNext(s.rng);
+  s = { ...s, rng: rngPrimary };
+  const [rngSecondary, uSecondary] = rngNext(s.rng);
+  s = { ...s, rng: rngSecondary };
+  const totalToAdd = rollEuropeAlertSupplementalEventCount(state.europeAlertProgress, uPrimary, uSecondary);
+  if (totalToAdd <= 0) return s;
+  for (let i = 0; i < totalToAdd; i++) {
+    const target = EVENT_SLOT_ORDER.find((slot) => !s.slots[slot]);
+    if (!target) break;
+    const [rngPick, uPick] = rngNext(s.rng);
+    s = { ...s, rng: rngPick };
+    const index = Math.min(
+      EUROPE_ALERT_SUPPLEMENTAL_POOL.length - 1,
+      Math.floor(uPick * EUROPE_ALERT_SUPPLEMENTAL_POOL.length),
+    );
+    const templateId = EUROPE_ALERT_SUPPLEMENTAL_POOL[index]!;
+    const instance: EventInstance = {
+      instanceId: `evt_${s.nextIds.event}`,
+      templateId,
+      resolved: false,
+    };
+    s = {
+      ...s,
+      nextIds: { ...s.nextIds, event: s.nextIds.event + 1 },
+      slots: { ...s.slots, [target]: instance },
+    };
+  }
+  return s;
 }
 
 function sumDrawAttemptsStatusDelta(statuses: readonly PlayerStatusInstance[]): number {
@@ -340,6 +358,34 @@ function applyBeginYearResourceStatusEffects(state: GameState): GameState {
     };
   }
   return s;
+}
+
+function maybeAdjustEuropeAlertProgressAtYearStart(state: GameState): GameState {
+  if (!state.europeAlert || state.levelId !== "secondMandate") return state;
+  const from = clampEuropeAlertProgress(state.europeAlertProgress);
+  const k = europeAlertPressureDeltaK(
+    state.resources.treasuryStat,
+    state.resources.power,
+    state.resources.legitimacy,
+    from,
+  );
+  if (k === 0) return { ...state, europeAlertProgress: from };
+  const probability = europeAlertProgressShiftProbability(k);
+  if (probability <= 0) return { ...state, europeAlertProgress: from };
+  const [rng, u] = rngNext(state.rng);
+  let s: GameState = { ...state, rng, europeAlertProgress: from };
+  if (u >= probability) return s;
+  const delta = k > 0 ? 1 : -1;
+  const to = Math.min(10, Math.max(1, from + delta));
+  if (to === from) return s;
+  s = { ...s, europeAlertProgress: to };
+  return appendActionLog(s, {
+    kind: "europeAlertProgressShift",
+    from,
+    to,
+    probabilityPct: Math.round(probability * 100),
+    pressureDeltaK: k,
+  });
 }
 
 export function retentionCapacity(state: GameState): number {
@@ -369,6 +415,7 @@ export function beginYear(state: GameState): GameState {
   }
   s = { ...s, antiFrenchLeague: league };
   s = applyBeginYearResourceStatusEffects(s);
+  s = maybeAdjustEuropeAlertProgressAtYearStart(s);
   s = {
     ...s,
     resources: {

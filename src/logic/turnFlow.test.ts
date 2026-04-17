@@ -439,15 +439,20 @@ describe("beginYear + playerStatuses", () => {
     expect(new Set(ids).size).toBe(3);
   });
 
-  it("adds a europe-alert supplemental frontier/trade event with 50% yearly gate", () => {
+  it("adds a europe-alert supplemental event when progress-gated roll succeeds", () => {
     const started = createInitialState(902_010, "secondMandate");
+    const supplementalPool = ["frontierGarrisons", "tradeDisruption", "embargoCoalition", "mercenaryRaiders"];
     const pickState = (() => {
       for (let st = 1; st < 2_000_000; st++) {
-        const s0 = { ...started, rng: { state: st }, europeAlert: true, slots: { ...EMPTY_EVENT_SLOTS } };
+        const s0 = {
+          ...started,
+          rng: { state: st },
+          europeAlert: true,
+          europeAlertProgress: 5,
+          slots: { ...EMPTY_EVENT_SLOTS },
+        };
         const s1 = maybeAddEuropeAlertSupplementalEvent(s0);
-        const injected = Object.values(s1.slots).find(
-          (ev) => ev?.templateId === "frontierGarrisons" || ev?.templateId === "tradeDisruption",
-        );
+        const injected = Object.values(s1.slots).find((ev) => supplementalPool.includes(ev?.templateId ?? ""));
         if (injected) {
           return st;
         }
@@ -458,16 +463,15 @@ describe("beginYear + playerStatuses", () => {
       ...started,
       rng: { state: pickState },
       europeAlert: true,
+      europeAlertProgress: 5,
       slots: { ...EMPTY_EVENT_SLOTS },
     };
     const s1 = maybeAddEuropeAlertSupplementalEvent(s0);
-    const injected = Object.values(s1.slots).find(
-      (ev) => ev?.templateId === "frontierGarrisons" || ev?.templateId === "tradeDisruption",
-    );
+    const injected = Object.values(s1.slots).find((ev) => supplementalPool.includes(ev?.templateId ?? ""));
     expect(injected).toBeTruthy();
   });
 
-  it("does not add frontier/trade supplemental events without europe alert", () => {
+  it("does not add europe-alert supplemental events without europe alert", () => {
     const started = createInitialState(902_011, "secondMandate");
     const s0: GameState = {
       ...started,
@@ -480,7 +484,7 @@ describe("beginYear + playerStatuses", () => {
     expect(s1.slots.C).toBeNull();
   });
 
-  it("can inject supplemental frontier/trade event outside A-C when procedural slots are full", () => {
+  it("can inject supplemental europe-alert event outside A-C when procedural slots are full", () => {
     const started = createInitialState(902_012, "secondMandate");
     const unresolved = { resolved: false as const };
     const pickState = (() => {
@@ -497,7 +501,11 @@ describe("beginYear + playerStatuses", () => {
           },
         };
         const s1 = maybeAddEuropeAlertSupplementalEvent(s0);
-        if (s1.slots.D?.templateId === "frontierGarrisons" || s1.slots.D?.templateId === "tradeDisruption") {
+        if (
+          ["frontierGarrisons", "tradeDisruption", "embargoCoalition", "mercenaryRaiders"].includes(
+            s1.slots.D?.templateId ?? "",
+          )
+        ) {
           return st;
         }
       }
@@ -515,7 +523,83 @@ describe("beginYear + playerStatuses", () => {
       },
     };
     const s1 = maybeAddEuropeAlertSupplementalEvent(s0);
-    expect(["frontierGarrisons", "tradeDisruption"]).toContain(s1.slots.D?.templateId);
+    expect(["frontierGarrisons", "tradeDisruption", "embargoCoalition", "mercenaryRaiders"]).toContain(
+      s1.slots.D?.templateId,
+    );
+  });
+
+  it("guarantees at least one europe-alert event at progress 6+", () => {
+    const started = createInitialState(902_015, "secondMandate");
+    const s0: GameState = {
+      ...started,
+      rng: { state: 17 },
+      europeAlert: true,
+      europeAlertProgress: 6,
+      slots: { ...EMPTY_EVENT_SLOTS },
+    };
+    const s1 = maybeAddEuropeAlertSupplementalEvent(s0);
+    const injectedCount = Object.values(s1.slots).filter((ev) => !!ev).length;
+    expect(injectedCount).toBeGreaterThanOrEqual(1);
+  });
+
+  it("can add two europe-alert events at progress 10", () => {
+    const started = createInitialState(902_016, "secondMandate");
+    const s0: GameState = {
+      ...started,
+      rng: { state: 12345 },
+      europeAlert: true,
+      europeAlertProgress: 10,
+      slots: { ...EMPTY_EVENT_SLOTS },
+    };
+    const s1 = maybeAddEuropeAlertSupplementalEvent(s0);
+    const injectedCount = Object.values(s1.slots).filter((ev) => !!ev).length;
+    expect(injectedCount).toBe(2);
+  });
+
+  it("adjusts europe-alert progress up at begin-year and writes a log entry when k>0 roll passes", () => {
+    const started = createInitialState(902_017, "secondMandate");
+    const s0: GameState = {
+      ...started,
+      rng: { state: 11 },
+      europeAlert: true,
+      europeAlertProgress: 3,
+      resources: { ...started.resources, treasuryStat: 12, power: 12, legitimacy: 12 },
+      slots: { ...EMPTY_EVENT_SLOTS },
+    };
+    const s1 = beginYear(s0);
+    expect(s1.europeAlertProgress).toBe(4);
+    expect(
+      s1.actionLog.some(
+        (entry) =>
+          entry.kind === "europeAlertProgressShift"
+          && entry.from === 3
+          && entry.to === 4
+          && entry.pressureDeltaK > 0,
+      ),
+    ).toBe(true);
+  });
+
+  it("adjusts europe-alert progress down at begin-year and writes a log entry when k<0 roll passes", () => {
+    const started = createInitialState(902_018, "secondMandate");
+    const s0: GameState = {
+      ...started,
+      rng: { state: 11 },
+      europeAlert: true,
+      europeAlertProgress: 6,
+      resources: { ...started.resources, treasuryStat: 1, power: 1, legitimacy: 1 },
+      slots: { ...EMPTY_EVENT_SLOTS },
+    };
+    const s1 = beginYear(s0);
+    expect(s1.europeAlertProgress).toBe(5);
+    expect(
+      s1.actionLog.some(
+        (entry) =>
+          entry.kind === "europeAlertProgressShift"
+          && entry.from === 6
+          && entry.to === 5
+          && entry.pressureDeltaK < 0,
+      ),
+    ).toBe(true);
   });
 
   it("adds anti-french sentiment status and at least one extra procedural event when treasury+power > 20", () => {

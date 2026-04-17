@@ -693,6 +693,7 @@ export function Game() {
             statuses={state.playerStatuses}
             europeAlertActive={state.europeAlert && state.outcome === "playing"}
             europeAlertPowerLoss={state.europeAlertPowerLoss}
+            europeAlertProgress={state.europeAlertProgress}
             coalitionActive={
               !!state.antiFrenchLeague &&
               state.turn <= state.antiFrenchLeague.untilTurn &&

@@ -1,7 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { getLevelContent } from "./levelContent";
 import { getCardTemplate } from "./cards";
-import { getEventTemplate } from "./events";
+import { getEventSolveFundingAmount, getEventTemplate } from "./events";
+import { createInitialState } from "../app/initialState";
 
 describe("secondMandate balance data", () => {
   it("applies requested chapter 2 new-card costs", () => {
@@ -125,10 +126,9 @@ describe("secondMandate balance data", () => {
     expect(getEventTemplate("cautiousCrown").penaltiesIfUnresolved).toEqual([
       { kind: "modResource", resource: "power", delta: -1 },
     ]);
-    expect(getEventTemplate("nymwegenSettlement").solve).toEqual({
-      kind: "funding",
-      amount: 6,
-    });
+    expect(getEventTemplate("nymwegenSettlement").solve).toEqual({ kind: "funding", amount: 6 });
+    const st = { ...createInitialState(1_234, "secondMandate"), europeAlert: true, europeAlertProgress: 7 };
+    expect(getEventSolveFundingAmount(st, "nymwegenSettlement")).toBe(10);
     expect(getEventTemplate("nymwegenSettlement").harmful).toBe(false);
     expect(getEventTemplate("expansionRemembered").harmful).toBe(false);
     expect(getEventTemplate("cautiousCrown").harmful).toBe(false);
@@ -150,6 +150,8 @@ describe("secondMandate balance data", () => {
     const pool = getLevelContent("secondMandate").rollableEventIds;
     expect(pool.includes("frontierGarrisons")).toBe(false);
     expect(pool.includes("tradeDisruption")).toBe(false);
+    expect(pool.includes("embargoCoalition")).toBe(false);
+    expect(pool.includes("mercenaryRaiders")).toBe(false);
   });
 
   it("chapter 2 starter deck includes two grain relief and two tax rebalance cards", () => {

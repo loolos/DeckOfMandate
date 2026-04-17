@@ -29,6 +29,7 @@ export type ActionLogPayload =
       extraTreasuryProbabilityPct: number;
     }
   | { kind: "antiFrenchLeagueDraw"; probabilityPct: number }
+  | { kind: "europeAlertProgressShift"; from: number; to: number; probabilityPct: number; pressureDeltaK: number }
   | { kind: "drawOverflowDiscarded"; cardTemplateIds: CardTemplateId[] }
   | { kind: "drawCards"; cardTemplateIds: CardTemplateId[] }
   | { kind: "info"; infoKey: LogInfoKey };

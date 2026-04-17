@@ -663,6 +663,7 @@ describe("gameReducer", () => {
       ...base,
       europeAlert: true,
       europeAlertPowerLoss: 1,
+      europeAlertProgress: 3,
       nymwegenSettlementAchieved: false,
       resources: { ...base.resources, funding: 6, power: 9, legitimacy: 9 },
       slots: {
@@ -683,6 +684,7 @@ describe("gameReducer", () => {
     const s0: typeof base = {
       ...base,
       europeAlert: true,
+      europeAlertProgress: 5,
       resources: { ...base.resources, funding: 1 },
       slots: {
         ...base.slots,
@@ -691,6 +693,7 @@ describe("gameReducer", () => {
     };
     const after = gameReducer(s0, { type: "SOLVE_EVENT", slot: "A" });
     expect(after.europeAlert).toBe(false);
+    expect(after.europeAlertProgress).toBe(0);
     expect(after.resources.funding).toBe(0);
     expect(after.resources.legitimacy).toBe(base.resources.legitimacy + 1);
   });

@@ -1,5 +1,5 @@
 import { getCardTemplate } from "../data/cards";
-import { getEventTemplate } from "../data/events";
+import { getEventSolveFundingAmount, getEventTemplate } from "../data/events";
 import { getLevelDef, type LevelId } from "../data/levels";
 import { appendActionLog } from "../logic/actionLog";
 import { applyEffects, enforceLegitimacy } from "../logic/applyEffects";
@@ -149,10 +149,12 @@ function canFundSolve(state: GameState, slot: SlotId): boolean {
   if (tmpl.solve.kind === "crackdownOnly") return false;
   if (tmpl.solve.kind === "nantesPolicyChoice") return false;
   if (tmpl.solve.kind === "funding") {
-    return state.resources.funding >= tmpl.solve.amount;
+    const amount = getEventSolveFundingAmount(state, ev.templateId);
+    return amount !== null && state.resources.funding >= amount;
   }
   if (tmpl.solve.kind === "fundingOrCrackdown") {
-    return state.resources.funding >= tmpl.solve.amount;
+    const amount = getEventSolveFundingAmount(state, ev.templateId);
+    return amount !== null && state.resources.funding >= amount;
   }
   return false;
 }
@@ -264,16 +266,19 @@ function performFundSolve(state: GameState, slot: SlotId): GameState {
   const ev = state.slots[slot];
   if (!ev || ev.resolved) return state;
   const tmpl = getEventTemplate(ev.templateId);
+  const fundingAmount = getEventSolveFundingAmount(state, ev.templateId);
   let s = state;
   if (tmpl.solve.kind === "funding") {
+    if (fundingAmount === null) return state;
     s = {
       ...s,
-      resources: { ...s.resources, funding: s.resources.funding - tmpl.solve.amount },
+      resources: { ...s.resources, funding: s.resources.funding - fundingAmount },
     };
   } else if (tmpl.solve.kind === "fundingOrCrackdown") {
+    if (fundingAmount === null) return state;
     s = {
       ...s,
-      resources: { ...s.resources, funding: s.resources.funding - tmpl.solve.amount },
+      resources: { ...s.resources, funding: s.resources.funding - fundingAmount },
     };
   } else {
     return state;
@@ -297,12 +302,13 @@ function performFundSolve(state: GameState, slot: SlotId): GameState {
     s = {
       ...s,
       europeAlert: false,
+      europeAlertProgress: 0,
     };
   }
   s = markSlotResolved(s, slot);
   s = enforceLegitimacy(s);
   const fundingPaid =
-    tmpl.solve.kind === "funding" || tmpl.solve.kind === "fundingOrCrackdown" ? tmpl.solve.amount : 0;
+    tmpl.solve.kind === "funding" || tmpl.solve.kind === "fundingOrCrackdown" ? (fundingAmount ?? 0) : 0;
   s = appendActionLog(s, {
     kind: "eventFundSolved",
     slot,

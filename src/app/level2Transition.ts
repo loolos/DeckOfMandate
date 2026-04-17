@@ -220,6 +220,7 @@ function buildContinuityLevel2State(draft: Level2StartDraft): GameState {
     }
   }
   const europeAlertPowerLoss = draft.europeAlert ? computeEuropeAlertPowerLoss(draft.resources.power) : 0;
+  const europeAlertProgress = draft.europeAlert ? 3 : 0;
   const resources = draft.europeAlert
     ? { ...draft.resources, power: Math.max(0, draft.resources.power - europeAlertPowerLoss) }
     : draft.resources;
@@ -250,6 +251,7 @@ function buildContinuityLevel2State(draft: Level2StartDraft): GameState {
     warOfDevolutionAttacked: draft.warOfDevolutionAttacked,
     europeAlert: draft.europeAlert,
     europeAlertPowerLoss,
+    europeAlertProgress,
     nymwegenSettlementAchieved: false,
     proceduralEventSequence: [],
     actionLog: [],

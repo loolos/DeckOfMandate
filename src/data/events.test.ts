@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { getEventRollWeight } from "./events";
+import { getEventRollWeight, getEventSolveFundingAmount } from "./events";
 import { createInitialState } from "../app/initialState";
 
 describe("getEventRollWeight", () => {
@@ -17,5 +17,11 @@ describe("getEventRollWeight", () => {
     expect(getEventRollWeight(st, "tradeDisruption")).toBe(1);
     expect(getEventRollWeight(st, "warWeariness")).toBe(2);
     expect(getEventRollWeight(st, "risingGrainPrices")).toBe(3);
+  });
+
+  it("scales nymwegen settlement funding cost by europe alert progress", () => {
+    const st = { ...createInitialState(333, "secondMandate"), europeAlert: true, europeAlertProgress: 3 };
+    expect(getEventSolveFundingAmount(st, "nymwegenSettlement")).toBe(6);
+    expect(getEventSolveFundingAmount({ ...st, europeAlertProgress: 10 }, "nymwegenSettlement")).toBe(13);
   });
 });

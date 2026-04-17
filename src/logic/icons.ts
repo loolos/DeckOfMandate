@@ -39,6 +39,8 @@ const EVENT_ICONS: Record<EventTemplateId, string> = {
   taxResistance: "🧨",
   frontierGarrisons: "🪖",
   tradeDisruption: "🚢",
+  embargoCoalition: "⛔",
+  mercenaryRaiders: "🏴‍☠️",
   courtScandal: "🎭",
   militaryPrestige: "🎖️",
   commercialExpansion: "📈",

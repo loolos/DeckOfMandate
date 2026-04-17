@@ -66,7 +66,7 @@ export const messagesZhCore = {
   "menu.refit.resources": "开局资源 — 财政 {treasury}，权力 {power}，合法性 {legitimacy}",
   "menu.refit.startYear": "第二关起始年份：{year}",
   "menu.refit.europeAlertOn":
-    "欧洲警觉：开启（章节开始时权力立即 -{n}，即按当前权力的一半向下取整；且每年有50%概率额外出现「边境驻军」或「海贸受阻」之一）。",
+    "欧洲警觉：开启（章节开始时权力立即 -{n}，即按当前权力的一半向下取整；进度条开局为 3/10。进度 1-5 时，额外事件概率=进度×20%；进度 6-10 时至少触发 1 个，且第二个事件概率=(进度-5)×20%）。",
   "menu.refit.europeAlertOff": "欧洲警觉：关闭（标准第二关压力）。",
   "menu.refit.totalCards": "总牌数：{current}（需在 {min}–{max}）",
   "menu.refit.totalCards.simple": "删牌后总牌数：{current}",
@@ -188,12 +188,14 @@ export const messagesZhCore = {
   "log.drawCards.title": "[第 {turn} 年] 本回合抓取 {count} 张牌：{cards}。",
   "log.drawOverflowDiscarded.title":
     "[第 {turn} 年] 手牌已达上限；将剩余未摸的 {count} 张牌直接置入弃牌堆：{cards}。",
+  "log.europeAlertProgressShift":
+    "[第 {turn} 年] 欧洲警觉进度调整 {from}→{to}（k={k}，触发概率 {pct}%）。",
   "log.info.firstMandateInflationActivated":
     "[第 {turn} 年] 科尔贝尔改革与凡尔赛宫廷同步扩张，王权机器越强，维持它的行政与仪式成本也越高。已触发第一关「卡牌通胀」：此后仅带「通胀」标签的牌，在从弃牌堆洗回抽牌堆时才会叠加费用。",
   "log.info.chapter2EuropeAlertOn":
-    "[第 {turn} 年] 第二关以「欧洲警觉：开启」开局：章节开始时的权力即时减值（按开局权力的一半向下取整）已生效；且每年有50%概率额外出现「边境驻军」或「海贸受阻」。",
+    "[第 {turn} 年] 第二关以「欧洲警觉：开启」开局：章节开始时的权力即时减值（按开局权力的一半向下取整）已生效。警觉进度从 3/10 起，并据此判定每年额外事件（1-5：进度×20%；6-10：保底 1 个并可能第 2 个）。",
   "log.info.chapter2EuropeAlertOff":
-    "[第 {turn} 年] 第二关以「欧洲警觉：关闭」开局：不会触发章节开始时的权力即时减值，且不会进行每年50%的「边境驻军 / 海贸受阻」额外事件判定。",
+    "[第 {turn} 年] 第二关以「欧洲警觉：关闭」开局：不会触发章节开始时的权力即时减值，也不会进行欧洲警觉额外事件判定。",
   "log.info.antiFrenchSentimentActivated":
     "[第 {turn} 年]「反法情绪」升温：法国财政与权力过度集中，引发周边国家共同警觉与制衡协同。此后将按“权力+财政”阈值额外触发通用压力事件。",
   "log.info.antiFrenchSentimentEnded":

@@ -1,7 +1,7 @@
 import { createInitialState } from "../app/initialState";
 import { gameReducer, type GameAction } from "../app/gameReducer";
 import { getCardTemplate } from "../data/cards";
-import { getEventTemplate } from "../data/events";
+import { getEventSolveFundingAmount, getEventTemplate } from "../data/events";
 import { getLevelDef } from "../data/levels";
 import type { CardTemplateId } from "../types/card";
 import { EVENT_SLOT_ORDER, type SlotId } from "../types/event";
@@ -82,7 +82,8 @@ function pickFundSolveActions(state: GameState): GameAction[] {
     const tmpl = getEventTemplate(ev.templateId);
     if (tmpl.solve.kind !== "funding" && tmpl.solve.kind !== "fundingOrCrackdown") continue;
     if (hasUnresolvedHarmful && !tmpl.harmful) continue;
-    const amount = tmpl.solve.amount;
+    const amount = getEventSolveFundingAmount(state, ev.templateId);
+    if (amount === null) continue;
     if (state.resources.funding < amount) continue;
     candidates.push({ slot, harmful: tmpl.harmful, amount });
   }

@@ -59,6 +59,14 @@ export function normalizeGameState(state: GameState): GameState {
       europeAlertPowerLoss: legacyDrawPenalty ?? (s.europeAlert ? computeEuropeAlertPowerLoss(s.resources.power) : 0),
     };
   }
+  if (s.europeAlertProgress === undefined) {
+    s = { ...s, europeAlertProgress: s.europeAlert ? 3 : 0 };
+  } else {
+    const clamped = s.europeAlert ? Math.min(10, Math.max(1, Math.floor(s.europeAlertProgress))) : 0;
+    if (clamped !== s.europeAlertProgress) {
+      s = { ...s, europeAlertProgress: clamped };
+    }
+  }
   if (s.nymwegenSettlementAchieved === undefined) {
     s = { ...s, nymwegenSettlementAchieved: false };
   }

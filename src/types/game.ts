@@ -98,6 +98,17 @@ export type ActionLogEntry =
       probabilityPct: number;
     }
   | {
+      kind: "europeAlertProgressShift";
+      id: string;
+      turn: number;
+      from: number;
+      to: number;
+      /** Rounded percent of this turn's roll gate. */
+      probabilityPct: number;
+      /** x-12-y*3 using this turn's pre-adjust resources/progress baseline. */
+      pressureDeltaK: number;
+    }
+  | {
       kind: "drawOverflowDiscarded";
       id: string;
       turn: number;
@@ -198,6 +209,8 @@ export type GameState = {
   europeAlert: boolean;
   /** Fixed Chapter-2 Europe Alert immediate power loss computed from chapter-start power (floor(power/2)). */
   europeAlertPowerLoss: number;
+  /** Europe Alert pressure progress in Chapter 2 (1-10 while active; defaults to 3 when it starts). */
+  europeAlertProgress: number;
   /** Chapter-2 objective marker; set true once Treaties of Nijmegen is successfully resolved. */
   nymwegenSettlementAchieved: boolean;
   /**

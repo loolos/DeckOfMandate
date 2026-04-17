@@ -72,7 +72,7 @@ export const messagesFrCore: Record<keyof typeof messagesEnCore, string> = {
   "menu.refit.resources": "Ressources de départ — Trésor {treasury}, Pouvoir {power}, Légitimité {legitimacy}",
   "menu.refit.startYear": "Année de départ du Chapitre 2 : {year}",
   "menu.refit.europeAlertOn":
-    "Alerte Europe : ACTIVÉE (au début du chapitre, Pouvoir -{n} immédiatement, soit plancher(Pouvoir actuel / 2) ; plus 50% de chance chaque année d'ajouter Garnisons frontalières ou Perturbation commerciale).",
+    "Alerte Europe : ACTIVÉE (au début du chapitre, Pouvoir -{n} immédiatement, soit plancher(Pouvoir actuel / 2) ; la jauge commence à 3/10. Progression 1-5 : chance d'événement supplémentaire = progression×20% ; 6-10 : au moins 1 événement, puis un 2e avec (progression-5)×20%).",
   "menu.refit.europeAlertOff": "Alerte Europe : DÉSACTIVÉE (pression standard du Chapitre 2).",
   "menu.refit.totalCards": "Taille du deck : {current} (requis {min}–{max})",
   "menu.refit.totalCards.simple": "Taille du deck après retraits : {current}",
@@ -196,10 +196,12 @@ export const messagesFrCore: Record<keyof typeof messagesEnCore, string> = {
   "card.tag.extra": "Supplémentaire",
   "card.tag.inflation": "Inflation",
   "card.tag.remainingUses": "Restant {remaining}/{total}",
+  "log.europeAlertProgressShift":
+    "[Tour {turn}] Alerte Europe ajustée {from}→{to} (k={k}, chance de déclenchement {pct}%).",
   "log.info.chapter2EuropeAlertOn":
-    "[Tour {turn}] Le Chapitre 2 commence avec l'Alerte Europe active : la perte immédiate de Pouvoir au début du chapitre (plancher(Pouvoir initial / 2)) est déjà appliquée ; et chaque année a 50% de chance d'ajouter soit Garnisons frontalières, soit Perturbation commerciale.",
+    "[Tour {turn}] Le Chapitre 2 commence avec l'Alerte Europe active : la perte immédiate de Pouvoir au début du chapitre (plancher(Pouvoir initial / 2)) est déjà appliquée. La jauge démarre à 3/10 et pilote les événements supplémentaires annuels (1-5 : progression×20% ; 6-10 : 1 garanti + possible 2e).",
   "log.info.chapter2EuropeAlertOff":
-    "[Tour {turn}] Le Chapitre 2 commence avec l'Alerte Europe inactive : aucune perte immédiate de Pouvoir au début du chapitre, et aucun tirage annuel supplémentaire à 50% (Garnisons frontalières / Perturbation commerciale).",
+    "[Tour {turn}] Le Chapitre 2 commence avec l'Alerte Europe inactive : aucune perte immédiate de Pouvoir au début du chapitre, et aucune vérification d'événements supplémentaires liée à l'Alerte Europe.",
   "log.info.antiFrenchSentimentActivated":
     "[Tour {turn}] Le sentiment anti-français monte : la concentration de puissance et de finances françaises alarme les cours voisines, qui renforcent leur vigilance commune. Des événements de pression procéduraux supplémentaires sont désormais déclenchés selon Pouvoir+Trésor.",
   "log.info.antiFrenchSentimentEnded":

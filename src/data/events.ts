@@ -1,5 +1,6 @@
 import type { EventTemplate, EventTemplateId } from "../types/event";
 import type { GameState } from "../types/game";
+import { nymwegenSettlementFundingCost } from "../logic/europeAlert";
 
 export const eventTemplates: Record<EventTemplateId, EventTemplate> = {
   budgetStrain: {
@@ -206,6 +207,30 @@ export const eventTemplates: Record<EventTemplateId, EventTemplate> = {
     solve: { kind: "funding", amount: 1 },
     penaltiesIfUnresolved: [{ kind: "scheduleNextTurnDrawModifier", delta: -2 }],
   },
+  embargoCoalition: {
+    id: "embargoCoalition",
+    weight: 1,
+    harmful: true,
+    titleKey: "event.embargoCoalition.name",
+    descriptionKey: "event.embargoCoalition.desc",
+    solve: { kind: "funding", amount: 2 },
+    penaltiesIfUnresolved: [
+      { kind: "modResource", resource: "treasuryStat", delta: -1 },
+      { kind: "scheduleNextTurnDrawModifier", delta: -1 },
+    ],
+  },
+  mercenaryRaiders: {
+    id: "mercenaryRaiders",
+    weight: 1,
+    harmful: true,
+    titleKey: "event.mercenaryRaiders.name",
+    descriptionKey: "event.mercenaryRaiders.desc",
+    solve: { kind: "funding", amount: 2 },
+    penaltiesIfUnresolved: [
+      { kind: "modResource", resource: "power", delta: -1 },
+      { kind: "modResource", resource: "legitimacy", delta: -1 },
+    ],
+  },
   courtScandal: {
     id: "courtScandal",
     weight: 1,
@@ -309,6 +334,15 @@ export function getEventTemplate(id: EventTemplateId): EventTemplate {
 export function getEventRollWeight(state: GameState, id: EventTemplateId): number {
   void state;
   return eventTemplates[id].weight;
+}
+
+export function getEventSolveFundingAmount(state: GameState, id: EventTemplateId): number | null {
+  const tmpl = eventTemplates[id];
+  if (tmpl.solve.kind !== "funding" && tmpl.solve.kind !== "fundingOrCrackdown") return null;
+  if (id === "nymwegenSettlement") {
+    return nymwegenSettlementFundingCost(state.europeAlertProgress);
+  }
+  return tmpl.solve.amount;
 }
 
 /** Continued crises persist or transform; all other harmful crises clear after their EOY strike. */
