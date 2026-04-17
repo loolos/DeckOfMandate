@@ -37,7 +37,7 @@ export const messagesFrSecondMandate: Record<keyof typeof messagesEnSecondMandat
     "La pression d'une grande guerre s'installe. Payez 2 Financement (ou Intervention) pour stabiliser le front ; les années non résolues érodent le Trésor et le flux de cartes.",
   "event.ryswickPeace.name": "Paix de Ryswick",
   "event.ryswickPeace.desc":
-    "Les termes de paix peuvent restaurer l'ordre. Investissez 1 Financement pour gagner Légitimité +1 et sécuriser un atterrissage plus doux.",
+    "Les termes de paix peuvent restaurer l'ordre. Investissez 1 Financement pour gagner Légitimité +1 et lever l'Alerte Europe.",
   "event.versaillesExpenditure.name": "Dépenses de Versailles",
   "event.versaillesExpenditure.desc":
     "Les dépenses de cour montent encore. Payez 3 Financement ou utilisez Intervention ; si non résolu, perdez 2 Trésor.",

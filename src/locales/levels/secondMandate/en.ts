@@ -34,7 +34,7 @@ export const messagesEnSecondMandate = {
     "Major war pressure settles in. Pay 2 Funding (or use Intervention) to stabilize the front; unresolved years erode Treasury and card flow.",
   "event.ryswickPeace.name": "Peace of Ryswick",
   "event.ryswickPeace.desc":
-    "Peace terms can restore order. Invest 1 Funding to gain Legitimacy +1 and lock in a softer landing.",
+    "Peace terms can restore order. Invest 1 Funding to gain Legitimacy +1 and clear Europe Alert.",
   "event.versaillesExpenditure.name": "Versailles Expenditure",
   "event.versaillesExpenditure.desc":
     "Court spending rises again. Pay 3 Funding or use Intervention; if unresolved, lose 2 Treasury.",

@@ -34,7 +34,7 @@ export const messagesZhSecondMandate = {
     "大战压力全面到来。支付 2 经费（或干预）稳住局势；若未处理，将持续侵蚀财政与抽牌能力。",
   "event.ryswickPeace.name": "里斯维克和约",
   "event.ryswickPeace.desc":
-    "和约提供秩序重建窗口。投入 1 经费可获得合法性 +1。",
+    "和约提供秩序重建窗口。投入 1 经费可获得合法性 +1，并结束「欧洲警觉」。",
   "event.versaillesExpenditure.name": "凡尔赛开支",
   "event.versaillesExpenditure.desc":
     "宫廷排场再次超预算。支付 3 经费（或干预），否则财政 -2。",
