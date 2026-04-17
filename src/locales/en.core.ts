@@ -195,16 +195,15 @@ export const messagesEnCore = {
   "log.effect.setCardTagBlocked": "Block {tag} cards ({turns} turns)",
   "log.effect.addPlayerStatus": "{status} ({turns} turns)",
   "log.effect.addCardsToDeck": "Add {count} {card} to deck",
-  "log.eventFundSolved": "[Turn {turn}] Slot {slot}: {event}. Paid {paid} {funding}{treasury}",
+  "log.eventFundSolved": "[Turn {turn}] {event}. Paid {paid} {funding}{treasury}",
   "log.eventFundSolved.treasury": " Treasury +{gain}.",
-  "log.eventCrackdownSolved":
-    "[Turn {turn}] Slot {slot}: Intervention cleared {event} (spent {paid} {funding}).",
-  "log.eventYearEndPenalty.title": "[Turn {turn}] Year-end slot {slot}: {event} unresolved.",
+  "log.eventCrackdownSolved": "[Turn {turn}] Intervention cleared {event} (spent {paid} {funding}).",
+  "log.eventYearEndPenalty.title": "[Turn {turn}] Year-end: {event} unresolved.",
   "log.eventYearEndPenalty.effectsLabel": "Penalties:",
-  "log.eventPowerVacuumScheduled": "[Turn {turn}] Year-end slot {slot}: {event} — Royal Crisis next year.",
+  "log.eventPowerVacuumScheduled": "[Turn {turn}] Year-end: {event} — Royal Crisis next year.",
   "log.crackdownCancelled": "[Turn {turn}] Intervention cancelled; refunded {refund} {funding}.",
   "log.eventScriptedAttack.generic":
-    "[Turn {turn}] Slot {slot}: {event} — military option. Paid {paid} {funding}.{treasury}",
+    "[Turn {turn}] {event} — military option. Paid {paid} {funding}.{treasury}",
   "log.drawCards.title": "[Turn {turn}] Drew {count} card(s): {cards}.",
   "log.drawOverflowDiscarded.title":
     "[Turn {turn}] Hand reached cap; discarded {count} undrawn card(s): {cards}.",
