@@ -21,7 +21,7 @@ export const messagesEnFirstMandate = {
   "status.antiFrenchLeague.history":
     "French expansion provokes balancing diplomacy that hardens into sustained war pressure.",
   "log.eventScriptedAttack.war.title":
-    "[Turn {turn}] Slot {slot}: {event} — campaign in the Spanish Netherlands and Franche-Comté.",
+    "[Turn {turn}] {event} — campaign in the Spanish Netherlands and Franche-Comté.",
   "log.eventScriptedAttack.war.summary":
     "French arms push the devolution claim (1667–1668). Paid {paid} {funding}. {power} +{powerDelta}.",
   "log.eventScriptedAttack.war.treasuryYes":

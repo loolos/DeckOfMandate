@@ -23,7 +23,7 @@ export const messagesFrFirstMandate: Record<keyof typeof messagesEnFirstMandate,
   "status.antiFrenchLeague.history":
     "L'expansion française provoque une diplomatie d'équilibrage qui se durcit en pression de guerre durable.",
   "log.eventScriptedAttack.war.title":
-    "[Tour {turn}] Emplacement {slot} : {event} — campagne dans les Pays-Bas espagnols et en Franche-Comté.",
+    "[Tour {turn}] {event} — campagne dans les Pays-Bas espagnols et en Franche-Comté.",
   "log.eventScriptedAttack.war.summary":
     "Les armes françaises poussent la revendication de dévolution (1667–1668). Coût {paid} {funding}. {power} +{powerDelta}.",
   "log.eventScriptedAttack.war.treasuryYes":

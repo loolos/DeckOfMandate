@@ -20,7 +20,7 @@ export const messagesZhFirstMandate = {
   "status.antiFrenchLeague.hint": "每年：{pct}% 几率本年少抽 1 张牌（仍至少抽 1）。",
   "status.antiFrenchLeague.history": "法国扩张引发列强制衡，外交围堵转化为长期战争压力。",
   "log.eventScriptedAttack.war.title":
-    "[第 {turn} 年] 槽位 {slot}：{event} — 西属尼德兰与弗朗什孔泰方向开战。",
+    "[第 {turn} 年] {event} — 西属尼德兰与弗朗什孔泰方向开战。",
   "log.eventScriptedAttack.war.summary":
     "法军推进「遗产」主张（史实 1667–1668）。已支付 {paid} {funding}。{power} +{powerDelta}。",
   "log.eventScriptedAttack.war.treasuryYes":
