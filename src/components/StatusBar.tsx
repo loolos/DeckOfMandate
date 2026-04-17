@@ -70,7 +70,7 @@ export function StatusBar({
         id: "europeAlert",
         title: t("status.europeAlert.name"),
         compactMeta: "",
-        meta: hint,
+        meta: "",
         detail: `${hint} ${history}`.trim(),
         hideMetaWhenExpandedOnMobile: true,
       });
