@@ -66,7 +66,7 @@ export const messagesEnCore = {
   "menu.refit.resources": "Starting resources — Treasury {treasury}, Power {power}, Legitimacy {legitimacy}",
   "menu.refit.startYear": "Chapter 2 start year: {year}",
   "menu.refit.europeAlertOn":
-    "Europe Alert: ON (at chapter start, immediate Power -{n}, i.e. floor(current Power / 2); progress starts at 3/10. At progress 1-5, extra-event chance is progress×20%; at 6-10, at least 1 extra event is guaranteed and second-event chance is (progress-5)×20%).",
+    "Europe Alert: ON (progress starts at 3/10. At progress 1-5, extra-event chance is progress×20%; at 6-10, at least 1 extra event is guaranteed and second-event chance is (progress-5)×20%).",
   "menu.refit.europeAlertOff": "Europe Alert: OFF (standard Chapter 2 pressure).",
   "menu.refit.totalCards": "Deck size: {current} (required {min}–{max})",
   "menu.refit.totalCards.simple": "Deck size after removals: {current}",
@@ -212,9 +212,9 @@ export const messagesEnCore = {
   "log.info.firstMandateInflationActivated":
     "[Turn {turn}] As Colbert-style reforms and Versailles court politics scale up together, the stronger the royal machine gets, the more expensive it is to keep running. Chapter 1 inflation is now active: from now on, only cards with the “Inflation” tag gain extra cost when they cycle from discard back into deck.",
   "log.info.chapter2EuropeAlertOn":
-    "[Turn {turn}] Chapter 2 starts with Europe Alert active: immediate Power loss has already been applied at chapter start (floor(starting Power / 2)). Alert progress starts at 3/10 and controls yearly extra events (1-5: progress×20%; 6-10: guaranteed 1 + possible second event).",
+    "[Turn {turn}] Chapter 2 starts with Europe Alert active: alert progress starts at 3/10 and controls yearly extra events (1-5: progress×20%; 6-10: guaranteed 1 + possible second event).",
   "log.info.chapter2EuropeAlertOff":
-    "[Turn {turn}] Chapter 2 starts with Europe Alert inactive: no chapter-start immediate Power loss, and no Europe-Alert supplemental event checks.",
+    "[Turn {turn}] Chapter 2 starts with Europe Alert inactive: no Europe-Alert supplemental event checks.",
   "log.info.antiFrenchSentimentActivated":
     "[Turn {turn}] Anti-French Sentiment rises: French fiscal-military concentration alarms neighboring courts, and coalition vigilance hardens. Extra procedural pressure events now increase with Power+Treasury.",
   "log.info.antiFrenchSentimentEnded":

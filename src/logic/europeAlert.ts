@@ -1,6 +1,6 @@
-/** Europe Alert immediate power loss at chapter start: floor(current power / 2). */
-export function computeEuropeAlertPowerLoss(currentPower: number): number {
-  return Math.max(0, Math.floor(currentPower / 2));
+/** Europe Alert no longer applies an immediate chapter-start power loss. */
+export function computeEuropeAlertPowerLoss(_currentPower: number): number {
+  return 0;
 }
 
 export const EUROPE_ALERT_PROGRESS_MIN = 1;

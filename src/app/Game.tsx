@@ -17,7 +17,6 @@ import {
   type LevelId,
 } from "../data/levels";
 import { cardLabelWithIcon, resourceLabelWithIcon } from "../logic/icons";
-import { computeEuropeAlertPowerLoss } from "../logic/europeAlert";
 import { normalizeGameState } from "../logic/normalizeGameState";
 import { loadGame, saveGame } from "../logic/saveLoad";
 import { readTutorialOnLevelEntry, writeTutorialOnLevelEntry } from "../logic/tutorialPref";
@@ -480,9 +479,7 @@ export function Game() {
           </p>
           <p className={styles.startMenuMuted}>
             {level2Draft.europeAlert
-              ? t("menu.refit.europeAlertOn", {
-                  n: computeEuropeAlertPowerLoss(level2Draft.resources.power),
-                })
+              ? t("menu.refit.europeAlertOn")
               : t("menu.refit.europeAlertOff")}
           </p>
           <>

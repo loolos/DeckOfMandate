@@ -92,7 +92,8 @@ export const eventTemplates: Record<EventTemplateId, EventTemplate> = {
     solve: { kind: "funding", amount: 6 },
     onFundSolveEffects: [
       { kind: "modResource", resource: "power", delta: -2 },
-      { kind: "modResource", resource: "legitimacy", delta: -2 },
+      { kind: "modResource", resource: "treasuryStat", delta: -1 },
+      { kind: "modResource", resource: "legitimacy", delta: -1 },
     ],
     penaltiesIfUnresolved: [{ kind: "modResource", resource: "power", delta: -1 }],
   },

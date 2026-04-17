@@ -665,7 +665,7 @@ describe("gameReducer", () => {
       europeAlertPowerLoss: 1,
       europeAlertProgress: 3,
       nymwegenSettlementAchieved: false,
-      resources: { ...base.resources, funding: 6, power: 9, legitimacy: 9 },
+      resources: { ...base.resources, treasuryStat: 5, funding: 6, power: 9, legitimacy: 9 },
       slots: {
         ...base.slots,
         A: { instanceId: "e_nymwegen", templateId: "nymwegenSettlement" as const, resolved: false },
@@ -676,7 +676,8 @@ describe("gameReducer", () => {
     expect(after.nymwegenSettlementAchieved).toBe(true);
     expect(after.resources.funding).toBe(0);
     expect(after.resources.power).toBe(7);
-    expect(after.resources.legitimacy).toBe(7);
+    expect(after.resources.treasuryStat).toBe(4);
+    expect(after.resources.legitimacy).toBe(8);
   });
 
   it("solving ryswick peace clears europe alert", () => {

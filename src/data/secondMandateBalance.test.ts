@@ -140,7 +140,8 @@ describe("secondMandate balance data", () => {
     expect(getEventTemplate("nymwegenSettlement").crisisPersistence).toBe("continued");
     expect(getEventTemplate("nymwegenSettlement").onFundSolveEffects).toEqual([
       { kind: "modResource", resource: "power", delta: -2 },
-      { kind: "modResource", resource: "legitimacy", delta: -2 },
+      { kind: "modResource", resource: "treasuryStat", delta: -1 },
+      { kind: "modResource", resource: "legitimacy", delta: -1 },
     ]);
     expect(getEventTemplate("nymwegenSettlement").penaltiesIfUnresolved).toEqual([
       { kind: "modResource", resource: "power", delta: -1 },

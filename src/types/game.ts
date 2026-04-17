@@ -207,7 +207,7 @@ export type GameState = {
   warOfDevolutionAttacked: boolean;
   /** Continuity marker from Chapter 1 military overreach; increases selected war-pressure rolls in Chapter 2. */
   europeAlert: boolean;
-  /** Fixed Chapter-2 Europe Alert immediate power loss computed from chapter-start power (floor(power/2)). */
+  /** Legacy/compat field; Europe Alert no longer applies chapter-start power loss (kept as 0). */
   europeAlertPowerLoss: number;
   /** Europe Alert pressure progress in Chapter 2 (1-10 while active; defaults to 3 when it starts). */
   europeAlertProgress: number;
