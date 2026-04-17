@@ -28,6 +28,7 @@ export const messagesEnCore = {
   "ui.resolved": "Resolved",
   "ui.harmful": "Harmful",
   "ui.opportunity": "Opportunity",
+  "ui.historical": "Historical",
   "ui.continued": "Continued",
   "ui.deck": "Deck",
   "ui.discard": "Discard",
@@ -236,6 +237,8 @@ export const messagesEnCore = {
     "[Turn {turn}] Tag note “Harmful”: if unresolved at year end, this event applies penalties.",
   "log.info.eventTag.opportunity":
     "[Turn {turn}] Tag note “Opportunity”: this is an optional upside event and usually has no penalty if ignored.",
+  "log.info.eventTag.historical":
+    "[Turn {turn}] Tag note “Historical”: this event is based on real history and has no extra gameplay effect by itself.",
   "log.info.eventTag.continued":
     "[Turn {turn}] Tag note “Continued”: if unresolved, this event remains into the next year and repeats its negative effects.",
   "log.info.eventTag.resolved":

@@ -29,6 +29,7 @@ export const messagesZhCore = {
   "ui.resolved": "已处理",
   "ui.harmful": "有害",
   "ui.opportunity": "机遇",
+  "ui.historical": "史实",
   "ui.continued": "持续",
   "ui.deck": "牌库",
   "ui.discard": "弃牌堆",
@@ -212,6 +213,8 @@ export const messagesZhCore = {
     "[第 {turn} 年]「外交干预」次数耗尽（0/3），已从牌库循环中移除（无额外惩罚）。",
   "log.info.eventTag.harmful": "[第 {turn} 年] 标签说明「有害」：若年末仍未解决，会触发惩罚。",
   "log.info.eventTag.opportunity": "[第 {turn} 年] 标签说明「机遇」：属于可投资机会，不处理通常不会受到惩罚。",
+  "log.info.eventTag.historical":
+    "[第 {turn} 年] 标签说明「史实」：该事件基于历史真实发生，用于叙事说明，本标签本身不附带额外机制效果。",
   "log.info.eventTag.continued":
     "[第 {turn} 年] 标签说明「持续」：事件若未解决会保留到下一年，并重复结算其负面后果。",
   "log.info.eventTag.resolved": "[第 {turn} 年] 标签说明「已解决」：该事件已在本年被处理，不会在年末触发惩罚。",

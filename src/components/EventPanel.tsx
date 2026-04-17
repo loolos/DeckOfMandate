@@ -18,6 +18,7 @@ import { EVENT_SLOT_ORDER } from "../types/event";
 import type { MessageKey } from "../locales";
 import { useI18n } from "../locales";
 import styles from "../app/Game.module.css";
+import { isHistoricalEventTemplateId } from "../logic/eventTags";
 
 export function EventPanel({
   state,
@@ -52,8 +53,16 @@ export function EventPanel({
         const compactSummary = quickRows.map((row) => row.value).join(" · ");
         const showDetails = !isSmallScreen || expandedSlot === slot || crack;
         const toggleCard = () => setExpandedSlot((prev) => (prev === slot ? null : slot));
-        const logEventTag = (infoKey: "eventTag.harmful" | "eventTag.opportunity" | "eventTag.continued" | "eventTag.resolved") =>
+        const logEventTag = (
+          infoKey:
+            | "eventTag.harmful"
+            | "eventTag.opportunity"
+            | "eventTag.historical"
+            | "eventTag.continued"
+            | "eventTag.resolved",
+        ) =>
           dispatch({ type: "APPEND_LOG_INFO", infoKey });
+        const historical = isHistoricalEventTemplateId(tmpl.id);
 
         return (
           <div
@@ -79,7 +88,18 @@ export function EventPanel({
             {!isSmallScreen || showDetails ? (
               <>
                 <div className={styles.badges}>
-                  {tmpl.harmful ? (
+                  {historical ? (
+                    <button
+                      type="button"
+                      className={`${styles.badge} ${styles.badgeOk} ${styles.tagButton}`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        logEventTag("eventTag.historical");
+                      }}
+                    >
+                      {t("ui.historical")}
+                    </button>
+                  ) : tmpl.harmful ? (
                     <button
                       type="button"
                       className={`${styles.badge} ${styles.badgeHarm} ${styles.tagButton}`}

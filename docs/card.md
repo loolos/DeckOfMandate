@@ -1,246 +1,83 @@
-# Deck of Mandate
+# Deck of Mandate — Card System Reference (Current)
 
-## Starter Card Design Document (Prototype Version)
+## 1. Card templates in current code
 
----
+| ID | Cost | Tags | Core effect |
+| --- | ---: | --- | --- |
+| `funding` | 0 | `royal` | gain funding +1 |
+| `crackdown` | 1 | `royal` | enter harmful-event target selection |
+| `reform` | 2 | `inflation` | power +1, draw 1 |
+| `ceremony` | 2 | `inflation` | legitimacy +1 |
+| `development` | 3 | `inflation` | treasuryStat +1 |
+| `grainRelief` | 3 | `inflation` | add 1-turn draw+ and legitimacy+ statuses; may auto-resolve one `risingGrainPrices` |
+| `taxRebalance` | 2 | `inflation` | treasuryStat +1, add 2-turn draw penalty status |
+| `diplomaticCongress` | 3 | *(none)* | power +1, also generates `diplomaticIntervention` to hand |
+| `diplomaticIntervention` | 0 | `extra` | harmful-event target selection (like crackdown channel) |
+| `fiscalBurden` | 2 | *(none)* | on draw: funding -1; can be played to purge itself |
+| `suppressHuguenots` | 3 | `temp` | consumes huguenot containment stacks; may clear self-family cards when finished |
 
-## Purpose of This Document
+## 2. Tags semantics
 
-This document defines the first minimal player card set for the prototype.
+- `royal`: can be blocked by `royalBan` status.
+- `inflation`: eligible for per-instance inflation cost growth (with chapter-specific activation rules).
+- `temp`: temporary card type; generally not retained/discard-cycled like normal permanent pool cards.
+- `extra`: generated helper cards, cleaned when level ends.
 
-Goals:
+## 3. Limited-use system
 
-- Keep the card pool small
-- Support core gameplay loop
-- Allow meaningful decisions
-- Test economy / scaling / crisis management
-- Easy to balance
+Limited-use templates:
 
----
+- `funding`
+- `crackdown`
+- `diplomaticIntervention`
+- `development`
 
-## Chapter 1 Deck Size
+Usage rules:
 
-Initial deck for **level `firstMandate`** (see [`src/data/levelContent.ts`](../src/data/levelContent.ts) `starterDeckTemplateOrder`):
+- Each instance stores `remaining/total`.
+- Playing decrements remaining.
+- At 0 remaining, instance is exhausted and removed from future use.
+- Depletion side-effects:
+  - exhausted `crackdown` => power -1
+  - exhausted `funding` => treasuryStat -1
+  - exhausted `diplomaticIntervention` => no stat penalty (log only)
+
+Chapter defaults:
+
+- Chapter 1: `funding` and `crackdown` total uses = 4; `development` total uses = 2.
+- Chapter 2 defaults for these templates initialize with reduced remaining uses (notably many royal/economic carry-ins start at remaining 1 unless overridden by carried state).
+
+## 4. Inflation system
+
+- Inflation tracked **per card instance**.
+- Trigger: when discard is reshuffled into deck, qualifying instance gets +1 inflation stack.
+- Playable cost:
 
 ```text
-13 cards total
-5 card templates (Royal Levy ×4, Royal Intervention ×3, Administrative Reform ×2, Versailles Ceremony ×2, Royal Manufactories ×2)
+effectiveCost = baseCost + inflationStack(instance)
 ```
 
-This is the baseline chapter deck.
+Activation:
 
----
+- Chapter 2: always active.
+- Chapter 1: activates once `power + treasuryStat + legitimacy >= 12`.
 
-## Chapter 2 deck differences (current implementation)
+## 5. Chapter starter composition
 
-- **Standalone Chapter 2** starts from a 14-card list:
-  - `funding×4`, `crackdown×3`, `reform×2`, `ceremony×2`, `grainRelief×1`, `taxRebalance×1`, `diplomaticCongress×1`.
-- **Continuity Chapter 2** (after Chapter 1 victory) carries over card **instances** from Chapter 1, keeps their per-instance inflation stacks, and allows **remove-only refit** (remove 0–3 cards, no additions).
-- `diplomaticCongress` adds one temporary `diplomaticIntervention` directly to hand.
-- `suppressHuguenots` and `fiscalBurden` are scripted cards injected by Chapter 2 events, not starter cards.
+### Chapter 1 (`firstMandate`)
 
----
+`funding x4`, `crackdown x3`, `reform x2`, `ceremony x2`, `development x2`.
 
-## Economy terms (prototype)
+### Chapter 2 (`secondMandate`, fixed added package)
 
-- **Treasury stat:** persistent fiscal capacity; each **Income phase** adds **funding** equal to this stat.
-- **Funding:** spendable money **this turn** only (MVP: unspent funding is cleared at **End phase**). **Card costs** and most **event solve** spends use **funding**.
-- **Hand cap (MVP):** **12** cards max in hand; draws that would exceed the cap are **skipped** (see `gameplay.md`).
+`grainRelief x2`, `taxRebalance x2`, `diplomaticCongress x1` are always added to the chapter-2 pool build.
 
----
+(Continuity mode also carries chapter-1 instances, subject to remove-only refit and max 3 removals.)
 
-## Core Card Design Philosophy
+## 6. Special runtime card interactions
 
-Each card should belong to one of four roles:
+- `fiscalBurden`: draw-time funding drain is immediate on draw, not on play.
+- `diplomaticCongress`: besides template effects, reducer adds one `diplomaticIntervention` into hand.
+- `grainRelief`: besides status adds, reducer resolves one unresolved `risingGrainPrices` if present.
+- `suppressHuguenots`: decrements `huguenotContainment` status counter and cleans related temporary cards when counter finishes.
 
-- **Economy**
-- **Control**
-- **Growth**
-- **Stability**
-
-This ensures strategic diversity even with a small deck.
-
----
-
-## Starter Cards
-
-### 1. Funding (Royal Levy)
-
-| Field | Value |
-| --- | --- |
-| **Role** | Economy |
-| **Cost** | 0 funding |
-| **Effect** | Gain +1 funding this turn (not +1 Treasury stat) |
-| **Copies** | 4 |
-| **Purpose** | Prevent dead turns; enable combo turns; smooth bad draws; helps expensive cards |
-| **Notes** | Simple and necessary starter resource card. |
-
-### 2. Crackdown (Royal Intervention)
-
-| Field | Value |
-| --- | --- |
-| **Role** | Control |
-| **Cost** | 1 funding |
-| **Effect** | **MVP:** Resolve **one harmful** event among those currently shown (**Colonial Trade Boom** cannot be chosen) |
-| **Copies** | 3 |
-| **Purpose** | Immediate danger removal; protect Legitimacy; strong against pressure turns |
-| **Notes** | Later versions may restrict this to tag-based events (Unrest/Crisis, and so on). |
-
-### 3. Reform (Administrative Reform)
-
-| Field | Value |
-| --- | --- |
-| **Role** | Growth |
-| **Cost** | 2 funding |
-| **Effect** | **Power +1** (immediate; affects **next** turn’s **Draw phase** size). **Draw 1** **immediately** when played (**Action phase**), respecting **hand cap 12** (no draw if the hand is full). |
-| **Copies** | 2 |
-| **Purpose** | Long-term scaling; better future turns; improves consistency |
-| **Notes** | Key strategic card. **Multiple Reform** plays in one Action phase **stack** **Power +1** for the **next** turn’s draws and each triggers its own **immediate Draw 1** in play order (hand cap). See `gameplay.md` (**Turn structure**, **Hand size**). |
-
-### 4. Ceremony (Versailles Ceremony)
-
-| Field | Value |
-| --- | --- |
-| **Role** | Stability / Victory |
-| **Cost** | 2 funding |
-| **Effect** | Legitimacy +1 |
-| **Copies** | 2 |
-| **Purpose** | Progress toward win condition; increase retained hand size; recover after crises |
-| **Notes** | Slow but essential card. |
-
-### 5. Development (Royal Manufactories)
-
-| Field | Value |
-| --- | --- |
-| **Role** | Economy / growth |
-| **Cost** | 3 funding |
-| **Effect** | **Treasury stat +1** |
-| **Copies** | 2 |
-| **Purpose** | Long-term fiscal scaling toward the Treasury win target |
-| **Notes** | Matches `development` in `levelContent` / `cards.ts`. |
-
----
-
-## Full Starter Deck Summary
-
-| Card name (UI) | Cost | Effect | Role | Copies |
-| --- | --- | --- | --- | --- |
-| Royal Levy | 0 | Gain +1 funding this turn | Economy | 4 |
-| Royal Intervention | 1 | MVP: resolve one harmful event (not Colonial Trade Boom) | Control | 3 |
-| Administrative Reform | 2 | Power +1 (next turn draw size); Draw 1 now (hand cap 12) | Growth | 2 |
-| Versailles Ceremony | 2 | Legitimacy +1 | Stability | 2 |
-| Royal Manufactories | 3 | Treasury stat +1 | Economy | 2 |
-
----
-
-## Intended Strategic Tension
-
-The player should constantly choose:
-
-### Use funding for immediate survival
-
-Play **Crackdown** or pay event solve costs to defuse harmful events.
-
-### Use funding for long-term growth
-
-Play **Reform** to improve future turns.
-
-### Use funding for political stability
-
-Play **Ceremony** to move toward victory and retain more cards.
-
-### Use funding for tempo
-
-Play **Funding** to enable bigger turns.
-
----
-
-## Example Turn Decisions
-
-**Current state:**
-
-- Treasury stat = 3 (so income adds **3 funding** this turn, before other effects)
-- Funding available this turn: assume **3** after income (example)
-- Power = 2
-- Legitimacy = 2
-
-**Hand:** Funding, Reform, Ceremony
-
-**Events:** Public Unrest, Budget Strain
-
-**Choices:**
-
-- **Safe play:** Funding → Ceremony (protect legitimacy).
-- **Greedy play:** Funding → Reform (risk event penalty, scale future turns).
-
-This is desired gameplay tension.
-
----
-
-## Balance Notes
-
-### Funding
-
-- If too weak: gain +2 **funding** this turn instead.
-- If too strong: exhaust after use.
-
-### Crackdown
-
-- If mandatory every turn: lower event pressure or reduce copies.
-
-### Reform
-
-- Very important benchmark card.
-- If too strong: remove draw 1.
-- If too weak: cost becomes 1.
-
-### Ceremony
-
-- Should feel valuable but not automatic.
-- If weak: add draw 1.
-- If too strong: cap legitimacy gain per turn.
-
----
-
-## Why Only Five Templates?
-
-Small pools reveal system quality.
-
-- If the five-template starter pool is fun: the foundation works.
-- If this pool is boring: redesign core systems before expanding content.
-
----
-
-## Future Card Expansion Categories
-
-Later add cards such as:
-
-**Economy:** Taxation, Investment, Loan, Trade Deal
-
-**Control:** Surveillance, Martial Law, Emergency Decree
-
-**Growth:** Bureaucratic Reform, Education Program, Infrastructure
-
-**Stability:** Festival, Public Speech, Election Victory
-
-**Manipulation:** Propaganda, Bribery, Scandal
-
----
-
-## Prototype Success Test
-
-The starter deck succeeds if players naturally say:
-
-- I need more economy first.
-- I should have used Reform earlier.
-- I got greedy and legitimacy collapsed.
-
-That means cards are creating decisions.
-
----
-
-## Final Summary
-
-Starter deck uses **five** templates (**Royal Levy**, **Royal Intervention**, **Administrative Reform**, **Versailles Ceremony**, **Royal Manufactories**) totaling **13** cards—enough to test economy, survival, scaling, legitimacy, and Treasury growth.
-
-If this works, larger card systems can be built safely.

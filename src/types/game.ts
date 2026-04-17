@@ -20,6 +20,7 @@ export type LogInfoKey =
   | "cardUse.depleted.diplomaticIntervention"
   | "eventTag.harmful"
   | "eventTag.opportunity"
+  | "eventTag.historical"
   | "eventTag.continued"
   | "eventTag.resolved";
 
