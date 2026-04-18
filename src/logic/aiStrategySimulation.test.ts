@@ -15,21 +15,21 @@ describe("aiStrategySimulation", () => {
     const report = simulateFirstMandateBatch({ seedStart: 1, runCount: 200 });
     expect(report).toMatchInlineSnapshot(`
       {
-        "averageEndTurn": 12.725,
-        "averageEndTurnOnLoss": 12.5,
-        "averageEndTurnOnWin": 13.438,
+        "averageEndTurn": 13.23,
+        "averageEndTurnOnLoss": 13.201,
+        "averageEndTurnOnWin": 13.295,
         "averageEndingResources": {
           "funding": 0,
-          "legitimacy": 3.585,
-          "power": 5.19,
-          "treasuryStat": 5.34,
+          "legitimacy": 4.01,
+          "power": 5.44,
+          "treasuryStat": 5.53,
         },
         "levelId": "firstMandate",
-        "losses": 152,
+        "losses": 139,
         "runCount": 200,
         "strategyId": "event-first-retain-royal-funding-and-intervention",
-        "winRate": 0.24,
-        "wins": 48,
+        "winRate": 0.305,
+        "wins": 61,
       }
     `);
   });

@@ -2,7 +2,8 @@ import { describe, expect, it } from "vitest";
 import { levelContentByLevelId } from "../data/levelContent";
 import { getLevelDef } from "../data/levels";
 import { getCardTemplate } from "../data/cards";
-import { EMPTY_EVENT_SLOTS } from "../types/event";
+import { getEventTemplate } from "../data/events";
+import { EMPTY_EVENT_SLOTS, type SlotId } from "../types/event";
 import { createInitialState } from "./initialState";
 import { gameReducer } from "./gameReducer";
 
@@ -31,6 +32,44 @@ describe("gameReducer", () => {
     const s1 = gameReducer(doomed, { type: "END_YEAR" });
     expect(s1.outcome).toBe("defeatLegitimacy");
     expect(s1.phase).toBe("gameOver");
+  });
+
+  it("lose-first: treasury collapse also ends the run", () => {
+    const s0 = createInitialState(223);
+    const doomed: typeof s0 = {
+      ...s0,
+      resources: { ...s0.resources, treasuryStat: 0 },
+    };
+    const s1 = gameReducer(doomed, { type: "END_YEAR" });
+    expect(s1.outcome).toBe("defeatLegitimacy");
+    expect(s1.phase).toBe("gameOver");
+  });
+
+  it("lose-first: power collapse from card depletion ends the run immediately", () => {
+    const base = createInitialState(224);
+    const crackdownId = base.hand.find((id) => base.cardsById[id]?.templateId === "crackdown");
+    if (!crackdownId) throw new Error("expected crackdown in opening hand");
+    const harmfulSlot = (Object.entries(base.slots) as [SlotId, (typeof base.slots)[SlotId]][]).find(
+      ([, ev]) => ev && !ev.resolved && getEventTemplate(ev.templateId).harmful,
+    )?.[0];
+    if (!harmfulSlot) throw new Error("expected a solvable opening event");
+    const prepared: typeof base = {
+      ...base,
+      resources: { ...base.resources, funding: 5, power: 1 },
+      hand: [crackdownId, ...base.hand.filter((id) => id !== crackdownId)],
+      cardUsesById: {
+        ...base.cardUsesById,
+        [crackdownId]: { remaining: 1, total: 4 },
+      },
+    };
+    const afterPlay = gameReducer(prepared, { type: "PLAY_CARD", handIndex: 0 });
+    const afterTarget = gameReducer(afterPlay, {
+      type: "CRACKDOWN_TARGET",
+      slot: harmfulSlot as SlotId,
+    });
+    expect(afterTarget.resources.power).toBe(0);
+    expect(afterTarget.outcome).toBe("defeatLegitimacy");
+    expect(afterTarget.phase).toBe("gameOver");
   });
 
   it("retention cap uses Legitimacy before end-of-year event penalties, not after", () => {
@@ -707,9 +746,9 @@ describe("gameReducer", () => {
       europeAlert: true,
       hand: [],
       resources: {
-        treasuryStat: 0,
-        power: 0,
-        legitimacy: 1,
+        treasuryStat: 3,
+        power: 3,
+        legitimacy: 3,
         funding: 0,
       },
       slots: { ...EMPTY_EVENT_SLOTS },
@@ -726,9 +765,9 @@ describe("gameReducer", () => {
       europeAlert: false,
       hand: [],
       resources: {
-        treasuryStat: 0,
-        power: 0,
-        legitimacy: 1,
+        treasuryStat: 3,
+        power: 3,
+        legitimacy: 3,
         funding: 0,
       },
       slots: { ...EMPTY_EVENT_SLOTS },
@@ -745,9 +784,9 @@ describe("gameReducer", () => {
       europeAlert: false,
       hand: [],
       resources: {
-        treasuryStat: 0,
-        power: 0,
-        legitimacy: 1,
+        treasuryStat: 3,
+        power: 3,
+        legitimacy: 3,
         funding: 0,
       },
       slots: { ...EMPTY_EVENT_SLOTS },

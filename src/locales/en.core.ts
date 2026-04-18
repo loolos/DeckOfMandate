@@ -104,7 +104,7 @@ export const messagesEnCore = {
   "ui.lang.zh": "中文",
   "ui.lang.fr": "Français",
   "outcome.victory": "Victory — mandate secured.",
-  "outcome.defeatLegitimacy": "Defeat — legitimacy collapsed.",
+  "outcome.defeatLegitimacy": "Defeat — a core resource collapsed.",
   "outcome.defeatTime": "Defeat — time ran out before targets were met.",
   "card.funding.name": "Royal Levy",
   "card.funding.background":
