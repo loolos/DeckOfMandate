@@ -21,14 +21,14 @@ describe("aiStrategySimulation", () => {
     const report = simulateFirstMandateBatch({ seedStart: 1, runCount: 200 });
     expect(report).toMatchInlineSnapshot(`
       {
-        "averageEndTurn": 13.585,
-        "averageEndTurnOnLoss": 13.583,
-        "averageEndTurnOnWin": 13.591,
+        "averageEndTurn": 13.615,
+        "averageEndTurnOnLoss": 13.615,
+        "averageEndTurnOnWin": 13.614,
         "averageEndingResources": {
-          "funding": 0,
-          "legitimacy": 4.285,
-          "power": 5.32,
-          "treasuryStat": 4.76,
+          "funding": 0.01,
+          "legitimacy": 4.31,
+          "power": 5.355,
+          "treasuryStat": 4.785,
         },
         "levelId": "firstMandate",
         "losses": 156,
@@ -58,22 +58,22 @@ describe("aiStrategySimulation", () => {
     const report = simulateSecondMandateStandaloneBatch({ seedStart: 1, runCount: 200 });
     expect(report).toMatchInlineSnapshot(`
       {
-        "averageEndTurn": 9.105,
-        "averageEndTurnOnLoss": 8.637,
-        "averageEndTurnOnWin": 22,
+        "averageEndTurn": 11.68,
+        "averageEndTurnOnLoss": 9.918,
+        "averageEndTurnOnWin": 22.069,
         "averageEndingResources": {
-          "funding": 0.24,
-          "legitimacy": 2.715,
-          "power": 2.33,
-          "treasuryStat": 1.445,
+          "funding": 0.135,
+          "legitimacy": 4.875,
+          "power": 1.055,
+          "treasuryStat": 3.51,
         },
         "levelId": "secondMandate",
-        "losses": 193,
+        "losses": 171,
         "runCount": 200,
         "startMode": "standalone",
         "strategyId": "a-strategy-i",
-        "winRate": 0.035,
-        "wins": 7,
+        "winRate": 0.145,
+        "wins": 29,
       }
     `);
   });
@@ -82,18 +82,18 @@ describe("aiStrategySimulation", () => {
     const report = simulateFirstToSecondCampaignBatch({ seedStart: 1, runCount: 200 });
     expect(report).toMatchInlineSnapshot(`
       {
-        "averageChapter1EndTurn": 13.585,
-        "averageChapter2EndTurnOnReached": 15.091,
-        "averageChapter2EndTurnOnWin": 23.375,
+        "averageChapter1EndTurn": 13.615,
+        "averageChapter2EndTurnOnReached": 17.977,
+        "averageChapter2EndTurnOnWin": 23.706,
         "chapter1Losses": 156,
         "chapter1WinRate": 0.22,
         "chapter1Wins": 44,
-        "chapter2Losses": 36,
+        "chapter2Losses": 27,
         "chapter2Runs": 44,
-        "chapter2WinRateAfterCarryover": 0.1818,
-        "chapter2Wins": 8,
-        "fullCampaignWinRate": 0.04,
-        "fullCampaignWins": 8,
+        "chapter2WinRateAfterCarryover": 0.3864,
+        "chapter2Wins": 17,
+        "fullCampaignWinRate": 0.085,
+        "fullCampaignWins": 17,
         "runCount": 200,
         "strategyId": "a-strategy-i",
       }

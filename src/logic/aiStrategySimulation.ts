@@ -113,6 +113,41 @@ function unresolvedSlots(state: GameState): SlotId[] {
   });
 }
 
+function harmfulUrgencyScore(templateId: string): number {
+  switch (templateId) {
+    case "versaillesExpenditure":
+      return 120;
+    case "taxResistance":
+      return 110;
+    case "frontierGarrisons":
+      return 105;
+    case "warWeariness":
+      return 100;
+    case "risingGrainPrices":
+      return 96;
+    case "courtScandal":
+      return 92;
+    case "provincialNoncompliance":
+      return 88;
+    case "nobleResentment":
+      return 84;
+    case "politicalGridlock":
+      return 82;
+    case "administrativeDelay":
+      return 78;
+    case "budgetStrain":
+      return 76;
+    case "publicUnrest":
+      return 74;
+    case "majorCrisis":
+      return 122;
+    case "powerVacuum":
+      return 108;
+    default:
+      return 70;
+  }
+}
+
 function pickCrackdownTarget(state: GameState): SlotId | null {
   const unresolved = unresolvedSlots(state);
   if (unresolved.length === 0) return null;
@@ -120,6 +155,11 @@ function pickCrackdownTarget(state: GameState): SlotId | null {
     const ta = getEventTemplate(state.slots[a]!.templateId);
     const tb = getEventTemplate(state.slots[b]!.templateId);
     if (ta.harmful !== tb.harmful) return ta.harmful ? -1 : 1;
+    if (ta.harmful && tb.harmful) {
+      const sa = harmfulUrgencyScore(state.slots[a]!.templateId);
+      const sb = harmfulUrgencyScore(state.slots[b]!.templateId);
+      if (sa !== sb) return sb - sa;
+    }
     return a.localeCompare(b);
   });
   for (const slot of ranked) {
@@ -170,6 +210,24 @@ function firstUnresolvedSlotByTemplate(state: GameState, templateId: string): Sl
   return null;
 }
 
+function minFundingSolveAmount(
+  state: GameState,
+  predicate: (templateId: string, harmful: boolean) => boolean,
+): number | null {
+  let best: number | null = null;
+  for (const slot of EVENT_SLOT_ORDER) {
+    const ev = state.slots[slot];
+    if (!ev || ev.resolved) continue;
+    const tmpl = getEventTemplate(ev.templateId);
+    if (!predicate(ev.templateId, tmpl.harmful)) continue;
+    if (tmpl.solve.kind !== "funding" && tmpl.solve.kind !== "fundingOrCrackdown") continue;
+    const amount = getEventSolveFundingAmount(state, ev.templateId);
+    if (amount === null) continue;
+    best = best === null ? amount : Math.min(best, amount);
+  }
+  return best;
+}
+
 function isCriticalOpportunityEventTemplate(templateId: string): boolean {
   return (
     templateId === "ryswickPeace" ||
@@ -186,12 +244,18 @@ function strategyISolvePriority(state: GameState, slot: SlotId, amount: number):
   const ev = state.slots[slot];
   if (!ev) return 1_000_000;
   const id = ev.templateId;
-  const tmpl = getEventTemplate(id);
-  if (id === "ryswickPeace") return -20_000 + amount;
-  if (id === "nymwegenSettlement") return -18_000 + amount;
-  if (id === "grainReliefCrisis") return -16_000 + amount;
-  if (id === "leagueOfAugsburg" || id === "nineYearsWar") return -15_000 + amount;
-  if (tmpl.harmful) return -17_000 + amount;
+  if (id === "ryswickPeace") return -30_000 + amount;
+  if (id === "versaillesExpenditure") return -28_000 + amount;
+  if (id === "taxResistance") return -27_500 + amount;
+  if (id === "frontierGarrisons") return -27_000 + amount;
+  if (id === "warWeariness") return -26_500 + amount;
+  if (id === "risingGrainPrices") return -26_000 + amount;
+  if (id === "courtScandal") return -25_500 + amount;
+  if (id === "provincialNoncompliance") return -25_000 + amount;
+  if (id === "grainReliefCrisis") return -24_500 + amount;
+  if (id === "nymwegenSettlement") return -24_000 + amount;
+  if (id === "leagueOfAugsburg" || id === "nineYearsWar") return -23_000 + amount;
+  if (getEventTemplate(id).harmful) return -22_000 + amount;
   if (isCriticalOpportunityEventTemplate(id)) return -14_000 + amount;
   return -8_000 + amount;
 }
@@ -281,27 +345,40 @@ function cardPlayPriorityStrategyI(state: GameState, cardInstanceId: string): nu
   const unresolvedRyswickPeace = !!firstUnresolvedSlotByTemplate(state, "ryswickPeace");
   const unresolvedRisingGrain = !!firstUnresolvedSlotByTemplate(state, "risingGrainPrices");
   const hasContainmentStatus = state.playerStatuses.some((st) => st.templateId === "huguenotContainment");
+  const minimumHarmfulSolveAmount = minFundingSolveAmount(state, (_templateId, harmful) => harmful);
+  const currentFunding = state.resources.funding;
+  const canFundingUnlockHarmfulSolve =
+    minimumHarmfulSolveAmount !== null &&
+    currentFunding < minimumHarmfulSolveAmount &&
+    currentFunding + 1 >= minimumHarmfulSolveAmount;
+  const ryswickSolveAmount = unresolvedRyswickPeace ? getEventSolveFundingAmount(state, "ryswickPeace") : null;
+  const canFundingUnlockRyswick =
+    ryswickSolveAmount !== null && currentFunding < ryswickSolveAmount && currentFunding + 1 >= ryswickSolveAmount;
 
   if (tmpl === "fiscalBurden") return 10_000;
   if (state.levelId === "secondMandate") {
     switch (tmpl) {
       case "funding":
-        return unresolvedHarmful || unresolvedRyswickPeace ? 0 : 4;
+        if (canFundingUnlockRyswick) return 0;
+        if (canFundingUnlockHarmfulSolve) return 1;
+        if (unresolvedRyswickPeace) return 8;
+        if (unresolvedHarmful) return 10;
+        return 16;
       case "crackdown":
       case "diplomaticIntervention":
-        return unresolvedHarmful ? 1 : 70;
+        return unresolvedHarmful ? (state.resources.power <= 2 ? 7 : 2) : 70;
       case "grainRelief":
         return unresolvedRisingGrain ? 2 : state.resources.legitimacy <= 6 ? 4 : 22;
       case "diplomaticCongress":
         return state.resources.power < 8 ? 3 : 24;
       case "taxRebalance":
-        return state.resources.treasuryStat < 8 ? 5 : 25;
+        return state.resources.treasuryStat < 4 ? 5 : state.resources.treasuryStat < 6 ? 9 : 30;
       case "development":
-        return state.resources.treasuryStat < 9 ? 6 : 26;
+        return state.resources.treasuryStat < 7 ? 4 : state.resources.treasuryStat < 9 ? 8 : 26;
       case "reform":
-        return state.resources.power < 8 ? 6 : 26;
+        return state.resources.power < 6 ? 4 : state.resources.power < 8 ? 8 : 26;
       case "ceremony":
-        return state.resources.legitimacy < 9 ? 6 : 26;
+        return state.resources.legitimacy < 6 ? 3 : state.resources.legitimacy < 9 ? 7 : 26;
       case "suppressHuguenots":
         return hasContainmentStatus ? 7 : 90;
       default:
@@ -394,8 +471,7 @@ function pickSpecialChoiceActionsStrategyI(state: GameState): GameAction[] {
   const localWarSlot = firstUnresolvedSlotByTemplate(state, "localWar");
   if (localWarSlot) {
     const cost = state.europeAlertProgress;
-    const reserve = hasUnresolvedHarmfulEvents(state) ? 2 : 0;
-    if (state.resources.funding >= cost + reserve) {
+    if (state.resources.funding >= cost) {
       return [{ type: "PICK_LOCAL_WAR_ATTACK", slot: localWarSlot }];
     }
     const canPlayFundingCardNow = state.hand.some((id) => {
@@ -406,11 +482,8 @@ function pickSpecialChoiceActionsStrategyI(state: GameState): GameAction[] {
     if (canPlayFundingCardNow) {
       return [];
     }
-    if (state.resources.legitimacy > 2) {
+    if (state.resources.legitimacy > 1) {
       return [{ type: "PICK_LOCAL_WAR_APPEASE", slot: localWarSlot }];
-    }
-    if (state.resources.funding >= cost) {
-      return [{ type: "PICK_LOCAL_WAR_ATTACK", slot: localWarSlot }];
     }
     return [{ type: "PICK_LOCAL_WAR_APPEASE", slot: localWarSlot }];
   }
