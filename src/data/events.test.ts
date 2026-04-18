@@ -24,4 +24,10 @@ describe("getEventRollWeight", () => {
     expect(getEventSolveFundingAmount(st, "nymwegenSettlement")).toBe(6);
     expect(getEventSolveFundingAmount({ ...st, europeAlertProgress: 10 }, "nymwegenSettlement")).toBe(13);
   });
+
+  it("scales ryswick peace funding cost by europe alert progress (+2)", () => {
+    const st = { ...createInitialState(334, "secondMandate"), europeAlert: true, europeAlertProgress: 3 };
+    expect(getEventSolveFundingAmount(st, "ryswickPeace")).toBe(5);
+    expect(getEventSolveFundingAmount({ ...st, europeAlertProgress: 10 }, "ryswickPeace")).toBe(12);
+  });
 });

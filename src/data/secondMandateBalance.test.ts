@@ -129,6 +129,7 @@ describe("secondMandate balance data", () => {
     expect(getEventTemplate("nymwegenSettlement").solve).toEqual({ kind: "funding", amount: 6 });
     const st = { ...createInitialState(1_234, "secondMandate"), europeAlert: true, europeAlertProgress: 7 };
     expect(getEventSolveFundingAmount(st, "nymwegenSettlement")).toBe(10);
+    expect(getEventSolveFundingAmount(st, "ryswickPeace")).toBe(9);
     expect(getEventTemplate("nymwegenSettlement").harmful).toBe(false);
     expect(getEventTemplate("expansionRemembered").harmful).toBe(false);
     expect(getEventTemplate("cautiousCrown").harmful).toBe(false);
@@ -137,6 +138,12 @@ describe("secondMandate balance data", () => {
     expect(getEventTemplate("leagueOfAugsburg").harmful).toBe(false);
     expect(getEventTemplate("nineYearsWar").harmful).toBe(false);
     expect(getEventTemplate("ryswickPeace").harmful).toBe(false);
+    expect(getEventTemplate("leagueOfAugsburg").crisisPersistence).toBe("continued");
+    expect(getEventTemplate("leagueOfAugsburg").continuedDurationTurns).toBe(3);
+    expect(getEventTemplate("ryswickPeace").crisisPersistence).toBe("continued");
+    expect(getEventTemplate("ryswickPeace").penaltiesIfUnresolved).toEqual([
+      { kind: "modResource", resource: "legitimacy", delta: -1 },
+    ]);
     expect(getEventTemplate("nymwegenSettlement").crisisPersistence).toBe("continued");
     expect(getEventTemplate("nymwegenSettlement").onFundSolveEffects).toEqual([
       { kind: "modResource", resource: "power", delta: -2 },

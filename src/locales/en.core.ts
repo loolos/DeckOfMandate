@@ -32,6 +32,7 @@ export const messagesEnCore = {
   "ui.opportunity": "Opportunity",
   "ui.historical": "Historical",
   "ui.continued": "Continued",
+  "ui.continuedTurns": "Continued {n}",
   "ui.deck": "Deck",
   "ui.discard": "Discard",
   "ui.quickFrame.cost": "Cost",

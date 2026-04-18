@@ -1,4 +1,5 @@
 import { getLevelContent, type ScriptedCalendarEventConfig } from "../data/levelContent";
+import { getEventTemplate } from "../data/events";
 import { EVENT_SLOT_ORDER, type EventInstance, type EventTemplateId, type SlotId } from "../types/event";
 import type { AntiFrenchLeagueState, GameState } from "../types/game";
 import { rngNext } from "./rng";
@@ -40,10 +41,12 @@ export function rollAntiFrenchLeagueDrawAdjustment(
 }
 
 function placeScriptedEvent(state: GameState, templateId: EventTemplateId, slot: SlotId): GameState {
+  const tmpl = getEventTemplate(templateId);
   const instance: EventInstance = {
     instanceId: `evt_${state.nextIds.event}`,
     templateId,
     resolved: false,
+    remainingTurns: tmpl.continuedDurationTurns,
   };
   return {
     ...state,

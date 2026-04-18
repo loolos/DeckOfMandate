@@ -76,6 +76,8 @@ export type EventTemplate = {
    * strike so the next year rolls a new event there.
    */
   crisisPersistence?: "continued";
+  /** For continued events with a finite duration, unresolved instances auto-expire after this many year-end checks. */
+  continuedDurationTurns?: number;
 };
 
 export type EventInstance = {
@@ -83,4 +85,6 @@ export type EventInstance = {
   templateId: EventTemplateId;
   /** True after funding solve or Crackdown (card or event option) this turn. */
   resolved: boolean;
+  /** Remaining unresolved year-end cycles for finite continued events (e.g., League of Augsburg). */
+  remainingTurns?: number;
 };

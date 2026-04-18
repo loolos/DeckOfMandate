@@ -114,7 +114,9 @@ export const eventTemplates: Record<EventTemplateId, EventTemplate> = {
     titleKey: "event.leagueOfAugsburg.name",
     descriptionKey: "event.leagueOfAugsburg.desc",
     solve: { kind: "fundingOrCrackdown", amount: 2 },
-    penaltiesIfUnresolved: [{ kind: "addPlayerStatus", templateId: "powerLeak", turns: 3 }],
+    crisisPersistence: "continued",
+    continuedDurationTurns: 3,
+    penaltiesIfUnresolved: [],
   },
   nineYearsWar: {
     id: "nineYearsWar",
@@ -133,11 +135,12 @@ export const eventTemplates: Record<EventTemplateId, EventTemplate> = {
     id: "ryswickPeace",
     weight: 0,
     harmful: false,
+    crisisPersistence: "continued",
     titleKey: "event.ryswickPeace.name",
     descriptionKey: "event.ryswickPeace.desc",
     solve: { kind: "funding", amount: 1 },
     onFundSolveEffects: [{ kind: "modResource", resource: "legitimacy", delta: 1 }],
-    penaltiesIfUnresolved: [],
+    penaltiesIfUnresolved: [{ kind: "modResource", resource: "legitimacy", delta: -1 }],
   },
   versaillesExpenditure: {
     id: "versaillesExpenditure",
@@ -352,6 +355,9 @@ export function getEventSolveFundingAmount(state: GameState, id: EventTemplateId
   if (tmpl.solve.kind !== "funding" && tmpl.solve.kind !== "fundingOrCrackdown") return null;
   if (id === "nymwegenSettlement") {
     return nymwegenSettlementFundingCost(state.europeAlertProgress);
+  }
+  if (id === "ryswickPeace") {
+    return state.europeAlertProgress + 2;
   }
   return tmpl.solve.amount;
 }

@@ -758,7 +758,7 @@ describe("gameReducer", () => {
       ...base,
       europeAlert: true,
       europeAlertProgress: 5,
-      resources: { ...base.resources, funding: 1 },
+      resources: { ...base.resources, funding: 7 },
       slots: {
         ...base.slots,
         A: { instanceId: "e_ryswick", templateId: "ryswickPeace" as const, resolved: false },
