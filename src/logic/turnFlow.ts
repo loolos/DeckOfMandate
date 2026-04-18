@@ -187,7 +187,12 @@ function clearResolvedSlots(state: GameState): GameState {
   const slots = { ...state.slots };
   for (const slot of EVENT_SLOT_ORDER) {
     const ev = slots[slot];
-    if (ev?.resolved) slots[slot] = null;
+    if (!ev?.resolved) continue;
+    if (ev.templateId === "leagueOfAugsburg" && (ev.remainingTurns ?? 0) > 0) {
+      slots[slot] = { ...ev, resolved: false };
+      continue;
+    }
+    slots[slot] = null;
   }
   return { ...state, slots };
 }
