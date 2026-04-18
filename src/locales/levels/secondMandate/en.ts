@@ -34,7 +34,7 @@ export const messagesEnSecondMandate = {
     "The system enters overt confrontation and dual-crisis pressure becomes routine.",
   "status.antiFrenchSentiment.name": "Anti-French Sentiment",
   "status.antiFrenchSentiment.history":
-    "When French power appears excessive, neighboring states align more quickly and crisis signals multiply.",
+    "When Power+Treasury exceeds 20, every full +5 overflow raises all funding-based event solve costs by +1 until the sum returns to 20 or below.",
   "event.nymwegenSettlement.name": "Treaties of Nijmegen",
   "event.nymwegenSettlement.desc":
     "A mandatory long-running crisis: pay (Europe Alert progress + 3) Funding to secure the settlement (Power -2, Treasury -1, Legitimacy -1). This does not remove Europe Alert; if ignored, lose 1 Power each year.",

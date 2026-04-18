@@ -21,6 +21,7 @@ import {
   europeAlertProgressShiftProbability,
   rollEuropeAlertSupplementalEventCount,
 } from "./europeAlert";
+import { antiFrenchSentimentActive } from "./antiFrenchSentiment";
 import { applyScriptedCalendarPhase, rollAntiFrenchLeagueDrawAdjustment } from "./scriptedCalendar";
 import { rngNext, shuffle } from "./rng";
 import { applyEffects } from "./applyEffects";
@@ -34,7 +35,6 @@ const EUROPE_ALERT_SUPPLEMENTAL_POOL = [
 const RELIGIOUS_TENSION_TRIGGER_PROBABILITY = 0.3;
 const PROCEDURAL_SEQUENCE_LOW_WATERMARK = 3;
 const SECOND_MANDATE_EARLIEST_VICTORY_YEAR = 1696;
-const ANTI_FRENCH_SENTIMENT_TRIGGER_SUM = 20;
 const FIRST_MANDATE_OPENING_EVENTS: readonly EventInstance["templateId"][] = [
   "tradeOpportunity",
   "administrativeDelay",
@@ -200,10 +200,6 @@ function sumCoreResources(state: GameState): number {
   return state.resources.treasuryStat + state.resources.power + state.resources.legitimacy;
 }
 
-function sumPowerAndTreasury(state: GameState): number {
-  return state.resources.power + state.resources.treasuryStat;
-}
-
 function inRange(sum: number, rule: EventCountRule): boolean {
   const minOk = rule.minExclusive === undefined || sum > rule.minExclusive;
   const maxOk = rule.maxInclusive === undefined || sum <= rule.maxInclusive;
@@ -228,21 +224,14 @@ export function desiredProceduralEventCountWhenAllEmpty(state: GameState, roll: 
   return pickWeightedEventCount(matchedRule.options, roll);
 }
 
-export function extraProceduralEventsFromAntiFrenchSentiment(state: GameState): number {
-  if (state.levelId !== "secondMandate") return 0;
-  const total = sumPowerAndTreasury(state);
-  if (total <= ANTI_FRENCH_SENTIMENT_TRIGGER_SUM) return 0;
-  return 1 + Math.floor((total - ANTI_FRENCH_SENTIMENT_TRIGGER_SUM) / 5);
-}
-
 function syncAntiFrenchSentimentStatus(state: GameState): GameState {
-  const extraEvents = extraProceduralEventsFromAntiFrenchSentiment(state);
+  const active = antiFrenchSentimentActive(state);
   const hasStatus = state.playerStatuses.some((s) => s.templateId === "antiFrenchSentiment");
-  if (extraEvents > 0 && !hasStatus) {
+  if (active && !hasStatus) {
     const s = applyEffects(state, [{ kind: "addPlayerStatus", templateId: "antiFrenchSentiment", turns: 99 }]);
     return appendActionLog(s, { kind: "info", infoKey: "antiFrenchSentimentActivated" });
   }
-  if (extraEvents === 0 && hasStatus) {
+  if (!active && hasStatus) {
     const s = {
       ...state,
       playerStatuses: state.playerStatuses.filter((s) => s.templateId !== "antiFrenchSentiment"),
@@ -250,22 +239,6 @@ function syncAntiFrenchSentimentStatus(state: GameState): GameState {
     return appendActionLog(s, { kind: "info", infoKey: "antiFrenchSentimentEnded" });
   }
   return state;
-}
-
-function maybeAddAntiFrenchSentimentProceduralEvents(state: GameState): GameState {
-  let s = syncAntiFrenchSentimentStatus(state);
-  const extra = extraProceduralEventsFromAntiFrenchSentiment(s);
-  if (extra <= 0) return s;
-  for (let i = 0; i < extra; i++) {
-    const target = EVENT_SLOT_ORDER.find((slot) => !s.slots[slot]);
-    if (!target) break;
-    const [afterDraw, picked] = drawFromProceduralSequence(s, 1);
-    s = afterDraw;
-    const templateId = picked[0];
-    if (!templateId) break;
-    s = placeEventTemplateOnSlot(s, target, templateId);
-  }
-  return s;
 }
 
 function fillEmptySlots(state: GameState): GameState {
@@ -299,7 +272,7 @@ function runEventPhase(state: GameState): GameState {
   s = clearResolvedSlots(s);
   s = applyScriptedCalendarPhase(s);
   s = fillEmptySlots(s);
-  s = maybeAddAntiFrenchSentimentProceduralEvents(s);
+  s = syncAntiFrenchSentimentStatus(s);
   s = maybeAddEuropeAlertSupplementalEvent(s);
   s = maybeAddReligiousTensionEvent(s);
   return s;

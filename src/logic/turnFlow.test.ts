@@ -6,7 +6,6 @@ import type { GameState } from "../types/game";
 import {
   beginYear,
   desiredProceduralEventCountWhenAllEmpty,
-  extraProceduralEventsFromAntiFrenchSentiment,
   maybeAddEuropeAlertSupplementalEvent,
   maybeAddReligiousTensionEvent,
   retentionCapacity,
@@ -67,33 +66,6 @@ describe("desiredProceduralEventCountWhenAllEmpty", () => {
     expect(desiredProceduralEventCountWhenAllEmpty(state, 0.4)).toBe(3);
     expect(desiredProceduralEventCountWhenAllEmpty(state, 0.89)).toBe(3);
     expect(desiredProceduralEventCountWhenAllEmpty(state, 0.9)).toBe(4);
-  });
-});
-
-describe("extraProceduralEventsFromAntiFrenchSentiment", () => {
-  it("adds one extra event when treasury+power is 21-24", () => {
-    const s0 = createInitialState(700_001, "secondMandate");
-    const state: GameState = {
-      ...s0,
-      resources: { ...s0.resources, treasuryStat: 12, power: 10 },
-    };
-    expect(extraProceduralEventsFromAntiFrenchSentiment(state)).toBe(1);
-  });
-
-  it("adds scaling extras every +5 above 20", () => {
-    const s0 = createInitialState(700_002, "secondMandate");
-    expect(
-      extraProceduralEventsFromAntiFrenchSentiment({
-        ...s0,
-        resources: { ...s0.resources, treasuryStat: 15, power: 10 },
-      }),
-    ).toBe(2);
-    expect(
-      extraProceduralEventsFromAntiFrenchSentiment({
-        ...s0,
-        resources: { ...s0.resources, treasuryStat: 18, power: 12 },
-      }),
-    ).toBe(3);
   });
 });
 
@@ -616,7 +588,7 @@ describe("beginYear + playerStatuses", () => {
     ).toBe(true);
   });
 
-  it("adds anti-french sentiment status and at least one extra procedural event when treasury+power > 20", () => {
+  it("adds anti-french sentiment status when treasury+power > 20", () => {
     const started = createInitialState(902_013, "secondMandate");
     const s0: GameState = {
       ...started,
@@ -626,8 +598,6 @@ describe("beginYear + playerStatuses", () => {
     };
     const s1 = beginYear(s0);
     expect(s1.playerStatuses.some((st) => st.templateId === "antiFrenchSentiment")).toBe(true);
-    const nonNullCount = Object.values(s1.slots).filter(Boolean).length;
-    expect(nonNullCount).toBeGreaterThanOrEqual(2);
     expect(
       s1.actionLog.some((entry) => entry.kind === "info" && entry.infoKey === "antiFrenchSentimentActivated"),
     ).toBe(true);
