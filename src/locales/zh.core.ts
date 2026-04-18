@@ -33,6 +33,7 @@ export const messagesZhCore = {
   "ui.opportunity": "机遇",
   "ui.historical": "史实",
   "ui.continued": "持续",
+  "ui.continuedTurns": "持续{n}",
   "ui.deck": "牌库",
   "ui.discard": "弃牌堆",
   "ui.quickFrame.cost": "费用",

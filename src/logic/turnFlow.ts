@@ -1,4 +1,4 @@
-import { getEventRollWeight } from "../data/events";
+import { getEventRollWeight, getEventTemplate } from "../data/events";
 import { getLevelContent } from "../data/levelContent";
 import { getLevelDef } from "../data/levels";
 import type { CardTemplateId } from "../types/card";
@@ -143,10 +143,12 @@ function drawFromProceduralSequence(
 }
 
 function placeEventTemplateOnSlot(state: GameState, slot: SlotId, templateId: EventInstance["templateId"]): GameState {
+  const tmpl = getEventTemplate(templateId);
   const instance: EventInstance = {
     instanceId: `evt_${state.nextIds.event}`,
     templateId,
     resolved: false,
+    remainingTurns: tmpl.continuedDurationTurns,
   };
   return {
     ...state,
@@ -167,6 +169,7 @@ function applyScheduledTransforms(state: GameState): GameState {
         instanceId: `evt_${st.nextIds.event}`,
         templateId: esc.to,
         resolved: false,
+        remainingTurns: getEventTemplate(esc.to).continuedDurationTurns,
       };
       st = {
         ...st,

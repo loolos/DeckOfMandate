@@ -131,7 +131,7 @@ export function EventPanel({
                         logEventTag("eventTag.continued");
                       }}
                     >
-                      {t("ui.continued")}
+                      {ev.remainingTurns != null ? t("ui.continuedTurns", { n: ev.remainingTurns }) : t("ui.continued")}
                     </button>
                   ) : null}
                   {ev.resolved ? (
