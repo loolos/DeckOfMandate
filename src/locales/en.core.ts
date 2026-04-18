@@ -219,9 +219,9 @@ export const messagesEnCore = {
   "log.info.chapter2EuropeAlertOff":
     "[Turn {turn}] Chapter 2 starts with Europe Alert inactive: no Europe-Alert supplemental event checks.",
   "log.info.antiFrenchSentimentActivated":
-    "[Turn {turn}] Anti-French Sentiment rises: French fiscal-military concentration alarms neighboring courts, and coalition vigilance hardens. Extra procedural pressure events now increase with Power+Treasury.",
+    "[Turn {turn}] Anti-French Sentiment rises: when Power+Treasury exceeds 20, every full +5 overflow raises all funding-based event solve costs by +1.",
   "log.info.antiFrenchSentimentEnded":
-    "[Turn {turn}] Anti-French Sentiment recedes: with French power and treasury no longer at peak concentration, immediate balancing pressure eases and extra procedural pressure events stop.",
+    "[Turn {turn}] Anti-French Sentiment recedes: once Power+Treasury returns to 20 or below, the extra event-cost pressure is removed.",
   "log.info.cardTag.royal":
     "[Turn {turn}] Tag note “Royal”: this is a royal-command tool, and some crises can only be cleared through royal intervention routes.",
   "log.info.cardTag.temp":

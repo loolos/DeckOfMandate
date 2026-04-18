@@ -29,7 +29,7 @@ export const messagesZhSecondMandate = {
   "status.europeAlert.stage.conflict.desc": "体系进入公开对抗，双重危机与高频冲击成为常态。",
   "status.antiFrenchSentiment.name": "反法情绪",
   "status.antiFrenchSentiment.history":
-    "当法国权势过强时，邻国会形成共同警觉，危机信号与外部压力将更频繁出现。",
+    "当“权力+财政”大于 20 时，每满超出 5 点会使所有需经费解决的事件费用 +1；当总和回到 20 或以下时该效果移除。",
   "event.nymwegenSettlement.name": "奈梅亨和约",
   "event.nymwegenSettlement.desc":
     "这是必须尽快收束的长期事件：支付「欧洲警觉进度 + 3」经费可达成和约（权力 -2、财政 -1、合法性 -1），但不会结束「欧洲警觉」；若不处理，每年权力 -1。",

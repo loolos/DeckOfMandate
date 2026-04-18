@@ -22,7 +22,7 @@ export const messagesFrSecondMandate: Record<keyof typeof messagesEnSecondMandat
     "Les offensives françaises antérieures ont durci la vigilance de coalition à long terme en Europe.",
   "status.antiFrenchSentiment.name": "Sentiment anti-français",
   "status.antiFrenchSentiment.history":
-    "Quand la puissance française paraît excessive, les voisins coordonnent plus vite leur vigilance et les crises se multiplient.",
+    "Quand Pouvoir+Trésor dépasse 20, chaque tranche complète de +5 augmente de +1 le coût de résolution de tous les événements payés en Financement, jusqu'au retour à 20 ou moins.",
   "event.nymwegenSettlement.name": "Traités de Nimègue",
   "event.nymwegenSettlement.desc":
     "Crise obligatoire de longue durée : payez (progression d'Alerte Europe + 3) Financement pour sécuriser l'accord (Pouvoir -2, Trésor -1, Légitimité -1). Cela ne met pas fin à Alerte Europe ; si ignoré, perdez 1 Pouvoir chaque année.",

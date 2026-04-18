@@ -206,9 +206,9 @@ export const messagesFrCore: Record<keyof typeof messagesEnCore, string> = {
   "log.info.chapter2EuropeAlertOff":
     "[Tour {turn}] Le Chapitre 2 commence avec l'Alerte Europe inactive : aucune vérification d'événements supplémentaires liée à l'Alerte Europe.",
   "log.info.antiFrenchSentimentActivated":
-    "[Tour {turn}] Le sentiment anti-français monte : la concentration de puissance et de finances françaises alarme les cours voisines, qui renforcent leur vigilance commune. Des événements de pression procéduraux supplémentaires sont désormais déclenchés selon Pouvoir+Trésor.",
+    "[Tour {turn}] Le sentiment anti-français monte : quand Pouvoir+Trésor dépasse 20, chaque tranche complète de +5 augmente de +1 le coût de résolution de tous les événements payés en Financement.",
   "log.info.antiFrenchSentimentEnded":
-    "[Tour {turn}] Le sentiment anti-français retombe : la concentration de puissance française recule, la coordination d'alerte immédiate des rivaux se relâche, et les événements de pression supplémentaires liés à ce statut cessent.",
+    "[Tour {turn}] Le sentiment anti-français retombe : dès que Pouvoir+Trésor revient à 20 ou moins, ce surcoût de résolution d'événements est retiré.",
   "log.info.cardUse.depleted.crackdownPenalty":
     "[Tour {turn}] Intervention royale atteint 0/3 et est retirée du cycle ; la capacité de contrainte de la cour recule (Pouvoir -1).",
   "log.info.cardUse.depleted.fundingPenalty":

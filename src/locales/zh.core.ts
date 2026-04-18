@@ -200,9 +200,9 @@ export const messagesZhCore = {
   "log.info.chapter2EuropeAlertOff":
     "[第 {turn} 年] 第二关以「欧洲警觉：关闭」开局：不会进行欧洲警觉额外事件判定。",
   "log.info.antiFrenchSentimentActivated":
-    "[第 {turn} 年]「反法情绪」升温：法国财政与权力过度集中，引发周边国家共同警觉与制衡协同。此后将按“权力+财政”阈值额外触发通用压力事件。",
+    "[第 {turn} 年]「反法情绪」升温：当“权力+财政”大于 20 时，每超出满 5 点，所有需经费解决的事件费用 +1。",
   "log.info.antiFrenchSentimentEnded":
-    "[第 {turn} 年]「反法情绪」缓和：法国财政与权力强度回落，列强的即时联动警戒减弱；由该状态带来的额外通用压力事件停止触发。",
+    "[第 {turn} 年]「反法情绪」缓和：当“权力+财政”回到 20 或以下时，由该状态带来的额外事件费用加成被取消。",
   "log.info.cardTag.royal": "[第 {turn} 年] 标签说明「王室」：该牌属于王室工具，部分事件只能靠此类手段处理。",
   "log.info.cardTag.temp": "[第 {turn} 年] 标签说明「临时」：该牌通常为一次性应急工具，打出后不会进入弃牌堆循环。",
   "log.info.cardTag.extra":

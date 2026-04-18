@@ -1,5 +1,6 @@
 import type { EventTemplate, EventTemplateId } from "../types/event";
 import type { GameState } from "../types/game";
+import { antiFrenchSentimentEventSolveCostPenalty } from "../logic/antiFrenchSentiment";
 import { nymwegenSettlementFundingCost } from "../logic/europeAlert";
 
 export const eventTemplates: Record<EventTemplateId, EventTemplate> = {
@@ -353,13 +354,14 @@ export function getEventRollWeight(state: GameState, id: EventTemplateId): numbe
 export function getEventSolveFundingAmount(state: GameState, id: EventTemplateId): number | null {
   const tmpl = eventTemplates[id];
   if (tmpl.solve.kind !== "funding" && tmpl.solve.kind !== "fundingOrCrackdown") return null;
+  const antiFrenchPenalty = antiFrenchSentimentEventSolveCostPenalty(state);
   if (id === "nymwegenSettlement") {
-    return nymwegenSettlementFundingCost(state.europeAlertProgress);
+    return nymwegenSettlementFundingCost(state.europeAlertProgress) + antiFrenchPenalty;
   }
   if (id === "ryswickPeace") {
-    return state.europeAlertProgress + 2;
+    return state.europeAlertProgress + 2 + antiFrenchPenalty;
   }
-  return tmpl.solve.amount;
+  return tmpl.solve.amount + antiFrenchPenalty;
 }
 
 /** Continued crises persist or transform; all other harmful crises clear after their EOY strike. */
