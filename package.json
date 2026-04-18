@@ -8,7 +8,8 @@
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview",
     "test": "node scripts/runVitest.mjs",
-    "test:ai:first-mandate:1000": "npx tsx scripts/firstMandateReport.ts --seed-start 1 --runs 1000"
+    "test:ai:first-mandate:1000": "npx tsx scripts/firstMandateReport.ts --seed-start 1 --runs 1000",
+    "test:ai:a-strategy-i:1000": "npx tsx scripts/secondMandateAndCampaignReport.ts --seed-start 1 --runs 1000"
   },
   "dependencies": {
     "react": "^18.3.1",
