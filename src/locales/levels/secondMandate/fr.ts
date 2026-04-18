@@ -59,6 +59,9 @@ export const messagesFrSecondMandate: Record<keyof typeof messagesEnSecondMandat
   "event.tradeDisruption.name": "Perturbation commerciale",
   "event.tradeDisruption.desc":
     "Les risques sur routes maritimes et convois réduisent la marge de gouvernance. Payez 1 Financement ou subissez un modificateur de pioche -2 l'an prochain.",
+  "event.localWar.name": "Guerre locale",
+  "event.localWar.desc":
+    "L'Alerte Europe alimente un conflit régional. Intervention ne peut pas résoudre cet événement. Choisissez Attaquer (payez un coût en Financement égal à la progression d'Alerte Europe ; trois issues équiprobables : Victoire locale [Pouvoir +1, Légitimité +1], Enlisement [aucun effet], Pertes limitées [Pouvoir -1]) ou Apaiser (sans coût, mais Légitimité -1). C'est un événement Continu : s'il reste non résolu, le revenu de Financement du prochain tour est réduit de 2 (minimum 0).",
   "event.courtScandal.name": "Scandale de cour",
   "event.courtScandal.desc":
     "Les intrigues de faction affaiblissent l'autorité. Payez 3 Financement pour contenir ; sinon, Légitimité -1 et toutes les cartes taguées Royal sont bloquées au prochain tour.",

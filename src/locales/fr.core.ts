@@ -30,6 +30,8 @@ export const messagesFrCore: Record<keyof typeof messagesEnCore, string> = {
   "ui.scriptedAttack": "Attaquer ({cost})",
   "ui.nantesTolerance": "Tolérance religieuse",
   "ui.nantesCrackdown": "Répression sévère",
+  "ui.localWarAttack": "Attaquer ({cost})",
+  "ui.localWarAppease": "Apaiser",
   "ui.resolved": "Résolu",
   "ui.harmful": "Néfaste",
   "ui.opportunity": "Opportunité",

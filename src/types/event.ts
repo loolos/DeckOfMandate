@@ -31,13 +31,15 @@ export type EventTemplateId =
   | "grainReliefCrisis"
   | "expansionRemembered"
   | "cautiousCrown"
-  | "religiousTension";
+  | "religiousTension"
+  | "localWar";
 
 export type EventSolve =
   | { kind: "funding"; amount: number }
   | { kind: "fundingOrCrackdown"; amount: number }
   | { kind: "nantesPolicyChoice" }
   | { kind: "crackdownOnly" }
+  | { kind: "localWarChoice" }
   /** Balance numbers come from level `scriptedCalendarEvents` (matched by template id). */
   | { kind: "scriptedAttack" };
 

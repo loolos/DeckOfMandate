@@ -88,4 +88,30 @@ describe("resolveEndOfYearPenalties", () => {
     expect(burdenIds.length).toBe(3);
     expect(s1.deck).toEqual(expect.arrayContaining(burdenIds));
   });
+
+  it("clears unresolved opportunity events at year end by default", () => {
+    const base = createInitialState(5_001);
+    const s0 = {
+      ...base,
+      slots: {
+        ...EMPTY_EVENT_SLOTS,
+        A: { instanceId: "e_trade", templateId: "tradeOpportunity" as const, resolved: false },
+      },
+    };
+    const s1 = resolveEndOfYearPenalties(s0);
+    expect(s1.slots.A).toBeNull();
+  });
+
+  it("keeps unresolved continued opportunity events on the slot", () => {
+    const base = createInitialState(5_002, "secondMandate");
+    const s0 = {
+      ...base,
+      slots: {
+        ...EMPTY_EVENT_SLOTS,
+        A: { instanceId: "e_local_war", templateId: "localWar" as const, resolved: false },
+      },
+    };
+    const s1 = resolveEndOfYearPenalties(s0);
+    expect(s1.slots.A).toEqual(s0.slots.A);
+  });
 });

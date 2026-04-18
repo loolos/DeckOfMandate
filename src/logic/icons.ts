@@ -50,6 +50,7 @@ const EVENT_ICONS: Record<EventTemplateId, string> = {
   expansionRemembered: "🦅",
   cautiousCrown: "👑",
   religiousTension: "☯️",
+  localWar: "⚔️",
 };
 
 const RESOURCE_ICONS: Record<ResourceKey, string> = {

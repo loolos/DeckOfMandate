@@ -77,6 +77,9 @@ export const messagesEnSecondMandate = {
   "event.mercenaryRaiders.name": "Mercenary Raiders",
   "event.mercenaryRaiders.desc":
     "Paid border raiders disrupt local order and crown authority. Pay 2 Funding, or lose 1 Power and 1 Legitimacy.",
+  "event.localWar.name": "Local War",
+  "event.localWar.desc":
+    "Europe Alert fuels a regional conflict. Intervention cannot resolve this event. Choose Attack (pay Funding equal to Europe Alert progress; equal 1/3 outcomes: Local Victory [Power +1, Legitimacy +1], Stalemate [no change], Minor Loss [Power -1]) or Appease (no Funding cost, Legitimacy -1). This is a Continued event: if left unresolved, next turn's Funding income is reduced by 2 (not below 0).",
   "event.courtScandal.name": "Court Scandal",
   "event.courtScandal.desc":
     "Factional intrigue weakens authority. Pay 3 Funding to contain it; if unresolved, Legitimacy -1 and all Royal-tag cards are blocked next turn.",

@@ -71,6 +71,9 @@ export const messagesZhSecondMandate = {
   "event.mercenaryRaiders.name": "雇佣兵劫掠",
   "event.mercenaryRaiders.desc":
     "边境雇佣兵袭扰削弱王权控制。支付 2 经费，否则权力 -1 且合法性 -1。",
+  "event.localWar.name": "局部战争",
+  "event.localWar.desc":
+    "欧洲警觉引发的边境冲突升级。不可干预：你可选择进攻（支付等同欧洲警觉进度的经费，结果三选一且各 1/3：局部胜利〔权力+1、合法性+1〕/僵持不下〔无变化〕/少量损失〔权力-1〕）或绥靖（无需经费，但合法性 -1）。该事件为持续事件，若回合末仍未处理，则下一回合经费收入 -2（最低为 0）。",
   "event.courtScandal.name": "宫廷丑闻",
   "event.courtScandal.desc":
     "宫廷派系丑闻动摇威望。支付 3 经费处理；若不处理，立刻合法性 -1，且下一回合无法打出王室牌。",

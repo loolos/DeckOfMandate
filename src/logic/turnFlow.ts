@@ -29,6 +29,7 @@ const EUROPE_ALERT_SUPPLEMENTAL_POOL = [
   "tradeDisruption",
   "embargoCoalition",
   "mercenaryRaiders",
+  "localWar",
 ] as const;
 const RELIGIOUS_TENSION_TRIGGER_PROBABILITY = 0.3;
 const PROCEDURAL_SEQUENCE_LOW_WATERMARK = 3;
@@ -360,6 +361,13 @@ function applyBeginYearResourceStatusEffects(state: GameState): GameState {
   return s;
 }
 
+function hasUnresolvedLocalWar(state: GameState): boolean {
+  return EVENT_SLOT_ORDER.some((slot) => {
+    const event = state.slots[slot];
+    return event?.templateId === "localWar" && !event.resolved;
+  });
+}
+
 function maybeAdjustEuropeAlertProgressAtYearStart(state: GameState): GameState {
   if (!state.europeAlert || state.levelId !== "secondMandate") return state;
   const from = clampEuropeAlertProgress(state.europeAlertProgress);
@@ -416,11 +424,13 @@ export function beginYear(state: GameState): GameState {
   s = { ...s, antiFrenchLeague: league };
   s = applyBeginYearResourceStatusEffects(s);
   s = maybeAdjustEuropeAlertProgressAtYearStart(s);
+  const localWarIncomePenalty = hasUnresolvedLocalWar(s) ? 2 : 0;
+  const fundingIncome = Math.max(0, s.resources.treasuryStat - localWarIncomePenalty);
   s = {
     ...s,
     resources: {
       ...s.resources,
-      funding: s.resources.funding + s.resources.treasuryStat,
+      funding: s.resources.funding + fundingIncome,
     },
   };
   const scheduledDrawModifier = s.scheduledDrawModifiers[0] ?? 0;

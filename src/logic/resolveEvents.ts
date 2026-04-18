@@ -15,7 +15,6 @@ export function resolveEndOfYearPenalties(state: GameState): GameState {
     const ev = s.slots[slot];
     if (!ev || ev.resolved) continue;
     const tmpl = getEventTemplate(ev.templateId);
-    if (!tmpl.harmful && tmpl.penaltiesIfUnresolved.length === 0) continue;
     if (schedulers.includes(ev.templateId)) {
       if (ev.templateId === "powerVacuum") {
         s = appendActionLog(s, { kind: "eventPowerVacuumScheduled", slot, templateId: "powerVacuum" });
@@ -23,15 +22,17 @@ export function resolveEndOfYearPenalties(state: GameState): GameState {
       s = { ...s, pendingMajorCrisis: { ...s.pendingMajorCrisis, [slot]: true } };
       continue;
     }
-    s = appendActionLog(s, {
-      kind: "eventYearEndPenalty",
-      slot,
-      templateId: ev.templateId,
-      effects: tmpl.penaltiesIfUnresolved,
-    });
-    s = applyEffects(s, tmpl.penaltiesIfUnresolved);
-    s = enforceLegitimacy(s);
-    if (s.outcome !== "playing") return s;
+    if (tmpl.harmful || tmpl.penaltiesIfUnresolved.length > 0) {
+      s = appendActionLog(s, {
+        kind: "eventYearEndPenalty",
+        slot,
+        templateId: ev.templateId,
+        effects: tmpl.penaltiesIfUnresolved,
+      });
+      s = applyEffects(s, tmpl.penaltiesIfUnresolved);
+      s = enforceLegitimacy(s);
+      if (s.outcome !== "playing") return s;
+    }
     if (!isContinuedCrisis(tmpl)) {
       s = { ...s, slots: { ...s.slots, [slot]: null } };
     }

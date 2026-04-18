@@ -69,10 +69,16 @@ function eventPayChips(tmpl: EventTemplate): string {
   if (sk.kind === "nantesPolicyChoice") {
     return `☯️ | ⚔️`;
   }
+  if (sk.kind === "localWarChoice") {
+    return `⚔️ | 🕊️`;
+  }
   return `🛡️ · ${getResourceIcon("funding")}1`;
 }
 
 function eventSolveOutcomeChips(tmpl: EventTemplate): string {
+  if (tmpl.solve.kind === "localWarChoice") {
+    return `${getResourceIcon("power")}+1/${signedInt(-1)} · ${getResourceIcon("legitimacy")}+1/${signedInt(-1)}`;
+  }
   const solvedEffects = tmpl.onFundSolveEffects ?? [];
   const chips = formatEffectChips(solvedEffects);
   if (chips !== "") return chips;
@@ -88,6 +94,9 @@ function eventYearEndChips(tmpl: EventTemplate): string | null {
   }
   if (tmpl.id === "grainReliefCrisis") {
     return `👑-2`;
+  }
+  if (tmpl.id === "localWar") {
+    return `${getResourceIcon("funding")}-2`;
   }
   const p = formatEffectChips(tmpl.penaltiesIfUnresolved);
   return p === "" ? "—" : p;
