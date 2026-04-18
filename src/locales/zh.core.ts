@@ -26,6 +26,8 @@ export const messagesZhCore = {
   "ui.scriptedAttack": "进攻（{cost}）",
   "ui.nantesTolerance": "宗教宽容",
   "ui.nantesCrackdown": "严厉镇压",
+  "ui.localWarAttack": "进攻（{cost}）",
+  "ui.localWarAppease": "绥靖",
   "ui.resolved": "已处理",
   "ui.harmful": "有害",
   "ui.opportunity": "机遇",

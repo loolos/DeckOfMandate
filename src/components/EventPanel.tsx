@@ -200,6 +200,28 @@ export function EventPanel({
                       </button>
                     </>
                   ) : null}
+                  {!ev.resolved && solveKind === "localWarChoice" ? (
+                    <>
+                      <button
+                        type="button"
+                        className={styles.btn}
+                        disabled={Boolean(state.pendingInteraction) || state.resources.funding < state.europeAlertProgress}
+                        onClick={() => dispatch({ type: "PICK_LOCAL_WAR_ATTACK", slot })}
+                      >
+                        {t("ui.localWarAttack", {
+                          cost: `${getResourceIcon("funding")} ${state.europeAlertProgress}`,
+                        })}
+                      </button>
+                      <button
+                        type="button"
+                        className={styles.btn}
+                        disabled={Boolean(state.pendingInteraction)}
+                        onClick={() => dispatch({ type: "PICK_LOCAL_WAR_APPEASE", slot })}
+                      >
+                        {t("ui.localWarAppease")}
+                      </button>
+                    </>
+                  ) : null}
                   {!ev.resolved && solveKind === "crackdownOnly" && !pending ? (
                     <span className={styles.eventCardCrackdownHint}>{t("ui.solveCrackdown")}</span>
                   ) : null}

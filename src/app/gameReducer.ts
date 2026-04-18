@@ -27,6 +27,8 @@ export type GameAction =
   | { type: "SOLVE_EVENT"; slot: SlotId }
   | { type: "PICK_NANTES_TOLERANCE"; slot: SlotId }
   | { type: "PICK_NANTES_CRACKDOWN"; slot: SlotId }
+  | { type: "PICK_LOCAL_WAR_ATTACK"; slot: SlotId }
+  | { type: "PICK_LOCAL_WAR_APPEASE"; slot: SlotId }
   | { type: "SCRIPTED_EVENT_ATTACK"; slot: SlotId }
   | { type: "CRACKDOWN_TARGET"; slot: SlotId }
   | { type: "CRACKDOWN_CANCEL" }
@@ -170,6 +172,13 @@ function canScriptedAttack(state: GameState, slot: SlotId): boolean {
   return state.resources.funding >= cfg.attack.fundingCost;
 }
 
+function canLocalWarAttack(state: GameState, slot: SlotId): boolean {
+  if (state.phase !== "action" || state.pendingInteraction?.type === "crackdownPick") return false;
+  const ev = state.slots[slot];
+  if (!ev || ev.resolved || ev.templateId !== "localWar") return false;
+  return state.resources.funding >= state.europeAlertProgress;
+}
+
 function isCardPlayableUnderStatuses(state: GameState, cardInstanceId: string): boolean {
   for (const st of state.playerStatuses) {
     if (st.kind !== "blockCardTag") continue;
@@ -238,6 +247,50 @@ function performScriptedAttack(state: GameState, slot: SlotId): GameState {
     extraTreasuryProbabilityPct: Math.round(cfg.attack.extraTreasuryProbability * 100),
   });
   return s;
+}
+
+function performLocalWarAttack(state: GameState, slot: SlotId): GameState {
+  const ev = state.slots[slot];
+  if (!ev || ev.resolved || ev.templateId !== "localWar") return state;
+  const cost = state.europeAlertProgress;
+  if (state.resources.funding < cost) return state;
+  let s: GameState = {
+    ...state,
+    resources: {
+      ...state.resources,
+      funding: state.resources.funding - cost,
+    },
+  };
+  const [rng, roll] = rngNext(s.rng);
+  s = { ...s, rng };
+  if (roll < 1 / 3) {
+    s = {
+      ...s,
+      resources: {
+        ...s.resources,
+        power: s.resources.power + 1,
+        legitimacy: s.resources.legitimacy + 1,
+      },
+    };
+  } else if (roll >= 2 / 3) {
+    s = {
+      ...s,
+      resources: {
+        ...s.resources,
+        power: Math.max(0, s.resources.power - 1),
+      },
+    };
+  }
+  s = markSlotResolved(s, slot);
+  return enforceLegitimacy(s);
+}
+
+function performLocalWarAppease(state: GameState, slot: SlotId): GameState {
+  const ev = state.slots[slot];
+  if (!ev || ev.resolved || ev.templateId !== "localWar") return state;
+  let s: GameState = applyEffects(state, [{ kind: "modResource", resource: "legitimacy", delta: -1 }]);
+  s = markSlotResolved(s, slot);
+  return enforceLegitimacy(s);
 }
 
 /** After funding is cleared: keep chosen cards, discard the rest, then EOY penalties, then win / time / next year. */
@@ -478,6 +531,17 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       s = applyEffects(s, [{ kind: "addCardsToDeck", templateId: "suppressHuguenots", count: 3 }]);
       s = markSlotResolved(s, action.slot);
       return s;
+    }
+    case "PICK_LOCAL_WAR_ATTACK": {
+      if (state.outcome !== "playing" || state.phase !== "action" || state.pendingInteraction) return state;
+      if (!canLocalWarAttack(state, action.slot)) return state;
+      return appendInflationActivationLogIfNeeded(state, performLocalWarAttack(state, action.slot));
+    }
+    case "PICK_LOCAL_WAR_APPEASE": {
+      if (state.outcome !== "playing" || state.phase !== "action" || state.pendingInteraction) return state;
+      const ev = state.slots[action.slot];
+      if (!ev || ev.resolved || ev.templateId !== "localWar") return state;
+      return appendInflationActivationLogIfNeeded(state, performLocalWarAppease(state, action.slot));
     }
     case "SCRIPTED_EVENT_ATTACK": {
       if (state.outcome !== "playing" || state.phase !== "action" || state.pendingInteraction) {

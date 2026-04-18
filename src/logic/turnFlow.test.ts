@@ -441,7 +441,7 @@ describe("beginYear + playerStatuses", () => {
 
   it("adds a europe-alert supplemental event when progress-gated roll succeeds", () => {
     const started = createInitialState(902_010, "secondMandate");
-    const supplementalPool = ["frontierGarrisons", "tradeDisruption", "embargoCoalition", "mercenaryRaiders"];
+    const supplementalPool = ["frontierGarrisons", "tradeDisruption", "embargoCoalition", "mercenaryRaiders", "localWar"];
     const pickState = (() => {
       for (let st = 1; st < 2_000_000; st++) {
         const s0 = {
@@ -502,7 +502,7 @@ describe("beginYear + playerStatuses", () => {
         };
         const s1 = maybeAddEuropeAlertSupplementalEvent(s0);
         if (
-          ["frontierGarrisons", "tradeDisruption", "embargoCoalition", "mercenaryRaiders"].includes(
+          ["frontierGarrisons", "tradeDisruption", "embargoCoalition", "mercenaryRaiders", "localWar"].includes(
             s1.slots.D?.templateId ?? "",
           )
         ) {
@@ -523,7 +523,7 @@ describe("beginYear + playerStatuses", () => {
       },
     };
     const s1 = maybeAddEuropeAlertSupplementalEvent(s0);
-    expect(["frontierGarrisons", "tradeDisruption", "embargoCoalition", "mercenaryRaiders"]).toContain(
+    expect(["frontierGarrisons", "tradeDisruption", "embargoCoalition", "mercenaryRaiders", "localWar"]).toContain(
       s1.slots.D?.templateId,
     );
   });
@@ -554,6 +554,20 @@ describe("beginYear + playerStatuses", () => {
     const s1 = maybeAddEuropeAlertSupplementalEvent(s0);
     const injectedCount = Object.values(s1.slots).filter((ev) => !!ev).length;
     expect(injectedCount).toBe(2);
+  });
+
+  it("reduces begin-year funding income by 2 (min 0) while local war is unresolved", () => {
+    const started = createInitialState(902_019, "secondMandate");
+    const s0: GameState = {
+      ...started,
+      resources: { ...started.resources, funding: 0, treasuryStat: 1 },
+      slots: {
+        ...EMPTY_EVENT_SLOTS,
+        A: { instanceId: "evt_local_war", templateId: "localWar", resolved: false },
+      },
+    };
+    const s1 = beginYear(s0);
+    expect(s1.resources.funding).toBe(0);
   });
 
   it("adjusts europe-alert progress up at begin-year and writes a log entry when k>0 roll passes", () => {

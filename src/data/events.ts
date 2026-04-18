@@ -324,6 +324,16 @@ export const eventTemplates: Record<EventTemplateId, EventTemplate> = {
     solve: { kind: "funding", amount: 2 },
     penaltiesIfUnresolved: [{ kind: "modResource", resource: "legitimacy", delta: -1 }],
   },
+  localWar: {
+    id: "localWar",
+    weight: 0,
+    harmful: false,
+    crisisPersistence: "continued",
+    titleKey: "event.localWar.name",
+    descriptionKey: "event.localWar.desc",
+    solve: { kind: "localWarChoice" },
+    penaltiesIfUnresolved: [],
+  },
 };
 
 /** Weighted roll pool is per-level; see `levelContent.ts` (`rollableEventIds`). */

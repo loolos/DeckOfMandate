@@ -25,6 +25,8 @@ export const messagesEnCore = {
   "ui.scriptedAttack": "Attack ({cost})",
   "ui.nantesTolerance": "Religious Tolerance",
   "ui.nantesCrackdown": "Harsh Crackdown",
+  "ui.localWarAttack": "Attack ({cost})",
+  "ui.localWarAppease": "Appease",
   "ui.resolved": "Resolved",
   "ui.harmful": "Harmful",
   "ui.opportunity": "Opportunity",

@@ -336,6 +336,39 @@ describe("gameReducer", () => {
     expect(after.antiFrenchLeague!.untilTurn).toBe(expectedUntil);
   });
 
+  it("local war attack pays europe-alert-progress cost and resolves the event", () => {
+    const base = createInitialState(8_001, "secondMandate");
+    const s0 = {
+      ...base,
+      resources: { ...base.resources, funding: 8, power: 4, legitimacy: 4 },
+      europeAlert: true,
+      europeAlertProgress: 5,
+      slots: {
+        ...EMPTY_EVENT_SLOTS,
+        A: { instanceId: "e_local_war", templateId: "localWar" as const, resolved: false },
+      },
+    };
+    const s1 = gameReducer(s0, { type: "PICK_LOCAL_WAR_ATTACK", slot: "A" });
+    expect(s1.resources.funding).toBe(3);
+    expect(s1.slots.A?.resolved).toBe(true);
+  });
+
+  it("local war appease resolves with legitimacy -1 and no funding cost", () => {
+    const base = createInitialState(8_002, "secondMandate");
+    const s0 = {
+      ...base,
+      resources: { ...base.resources, funding: 4, legitimacy: 4 },
+      slots: {
+        ...EMPTY_EVENT_SLOTS,
+        A: { instanceId: "e_local_war", templateId: "localWar" as const, resolved: false },
+      },
+    };
+    const s1 = gameReducer(s0, { type: "PICK_LOCAL_WAR_APPEASE", slot: "A" });
+    expect(s1.resources.funding).toBe(4);
+    expect(s1.resources.legitimacy).toBe(3);
+    expect(s1.slots.A?.resolved).toBe(true);
+  });
+
   it("skips retention phase when hand size is within Legitimacy (auto-keep all)", () => {
     const base = createInitialState(55_555);
     const keepOne = base.hand[0]!;

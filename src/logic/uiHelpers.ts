@@ -59,5 +59,8 @@ export function fundSolveLabelAmount(state: GameState, slot: SlotId): number | n
     const cfg = findScriptedCalendarConfig(state.levelId, ev.templateId);
     return cfg?.attack?.fundingCost ?? null;
   }
+  if (tmpl.solve.kind === "localWarChoice") {
+    return state.europeAlertProgress;
+  }
   return null;
 }
