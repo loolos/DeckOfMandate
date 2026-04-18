@@ -528,7 +528,11 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       if (state.outcome !== "playing" || state.phase !== "action" || state.pendingInteraction) {
         return state;
       }
-      if (state.resources.legitimacy <= 0) {
+      if (
+        state.resources.legitimacy <= 0 ||
+        state.resources.treasuryStat <= 0 ||
+        state.resources.power <= 0
+      ) {
         return purgeExtraCardsIfLevelEnded({ ...state, phase: "gameOver", outcome: "defeatLegitimacy" });
       }
       let s = { ...state, resources: { ...state.resources, funding: 0 } };

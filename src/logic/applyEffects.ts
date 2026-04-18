@@ -9,7 +9,11 @@ import { applyInflationFromDeckRefill } from "./cardCost";
 import { drawUpToPower } from "./draw";
 
 export function enforceLegitimacy(s: GameState): GameState {
-  if (s.resources.legitimacy <= 0) {
+  if (
+    s.resources.legitimacy <= 0 ||
+    s.resources.treasuryStat <= 0 ||
+    s.resources.power <= 0
+  ) {
     return { ...s, phase: "gameOver", outcome: "defeatLegitimacy" };
   }
   return s;

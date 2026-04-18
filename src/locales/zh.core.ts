@@ -102,7 +102,7 @@ export const messagesZhCore = {
   "ui.lang.zh": "中文",
   "ui.lang.fr": "Français",
   "outcome.victory": "胜利 — 政权稳固。",
-  "outcome.defeatLegitimacy": "失败 — 合法性崩溃。",
+  "outcome.defeatLegitimacy": "失败 — 核心资源崩溃。",
   "outcome.defeatTime": "失败 — 时限内未达成目标。",
   "card.funding.name": "王室征收",
   "card.funding.background": "非常规征收与加急催缴——为宫廷燃眉之急凑出的短期现金。",

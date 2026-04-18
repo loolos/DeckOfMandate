@@ -25,7 +25,7 @@ describe("desiredProceduralEventCountWhenAllEmpty", () => {
     expect(desiredProceduralEventCountWhenAllEmpty(state, 0.99)).toBe(1);
   });
 
-  it("uses 35%/55%/10% for sums in (5, 15]", () => {
+  it("uses 40%/55%/5% for sums in (5, 15]", () => {
     const s0 = createInitialState(101_002, "secondMandate");
     const state: GameState = {
       ...s0,
@@ -33,13 +33,13 @@ describe("desiredProceduralEventCountWhenAllEmpty", () => {
       turn: 3,
       resources: { ...s0.resources, treasuryStat: 5, power: 4, legitimacy: 1 },
     };
-    expect(desiredProceduralEventCountWhenAllEmpty(state, 0.34)).toBe(1);
-    expect(desiredProceduralEventCountWhenAllEmpty(state, 0.35)).toBe(2);
-    expect(desiredProceduralEventCountWhenAllEmpty(state, 0.89)).toBe(2);
-    expect(desiredProceduralEventCountWhenAllEmpty(state, 0.9)).toBe(3);
+    expect(desiredProceduralEventCountWhenAllEmpty(state, 0.39)).toBe(1);
+    expect(desiredProceduralEventCountWhenAllEmpty(state, 0.4)).toBe(2);
+    expect(desiredProceduralEventCountWhenAllEmpty(state, 0.94)).toBe(2);
+    expect(desiredProceduralEventCountWhenAllEmpty(state, 0.951)).toBe(3);
   });
 
-  it("uses 10%/40%/40%/10% for sums in (15, 25]", () => {
+  it("uses 15%/50%/30%/5% for sums in (15, 30]", () => {
     const s0 = createInitialState(101_003, "secondMandate");
     const state: GameState = {
       ...s0,
@@ -47,26 +47,26 @@ describe("desiredProceduralEventCountWhenAllEmpty", () => {
       turn: 3,
       resources: { ...s0.resources, treasuryStat: 10, power: 8, legitimacy: 2 },
     };
-    expect(desiredProceduralEventCountWhenAllEmpty(state, 0.09)).toBe(1);
-    expect(desiredProceduralEventCountWhenAllEmpty(state, 0.1)).toBe(2);
-    expect(desiredProceduralEventCountWhenAllEmpty(state, 0.49)).toBe(2);
-    expect(desiredProceduralEventCountWhenAllEmpty(state, 0.5)).toBe(3);
-    expect(desiredProceduralEventCountWhenAllEmpty(state, 0.89)).toBe(3);
-    expect(desiredProceduralEventCountWhenAllEmpty(state, 0.9)).toBe(4);
+    expect(desiredProceduralEventCountWhenAllEmpty(state, 0.14)).toBe(1);
+    expect(desiredProceduralEventCountWhenAllEmpty(state, 0.15)).toBe(2);
+    expect(desiredProceduralEventCountWhenAllEmpty(state, 0.64)).toBe(2);
+    expect(desiredProceduralEventCountWhenAllEmpty(state, 0.65)).toBe(3);
+    expect(desiredProceduralEventCountWhenAllEmpty(state, 0.94)).toBe(3);
+    expect(desiredProceduralEventCountWhenAllEmpty(state, 0.95)).toBe(4);
   });
 
-  it("uses 30%/50%/20% for sums above 25", () => {
+  it("uses 40%/50%/10% for sums above 30", () => {
     const s0 = createInitialState(101_004, "secondMandate");
     const state: GameState = {
       ...s0,
       levelId: "secondMandate",
       turn: 3,
-      resources: { ...s0.resources, treasuryStat: 10, power: 10, legitimacy: 8 },
+      resources: { ...s0.resources, treasuryStat: 12, power: 11, legitimacy: 8 },
     };
-    expect(desiredProceduralEventCountWhenAllEmpty(state, 0.29)).toBe(2);
-    expect(desiredProceduralEventCountWhenAllEmpty(state, 0.3)).toBe(3);
-    expect(desiredProceduralEventCountWhenAllEmpty(state, 0.79)).toBe(3);
-    expect(desiredProceduralEventCountWhenAllEmpty(state, 0.8)).toBe(4);
+    expect(desiredProceduralEventCountWhenAllEmpty(state, 0.39)).toBe(2);
+    expect(desiredProceduralEventCountWhenAllEmpty(state, 0.4)).toBe(3);
+    expect(desiredProceduralEventCountWhenAllEmpty(state, 0.89)).toBe(3);
+    expect(desiredProceduralEventCountWhenAllEmpty(state, 0.9)).toBe(4);
   });
 });
 

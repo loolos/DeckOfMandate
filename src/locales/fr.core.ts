@@ -111,7 +111,7 @@ export const messagesFrCore: Record<keyof typeof messagesEnCore, string> = {
   "ui.lang.zh": "中文",
   "ui.lang.fr": "Français",
   "outcome.victory": "Victoire — mandat sécurisé.",
-  "outcome.defeatLegitimacy": "Défaite — la légitimité s'est effondrée.",
+  "outcome.defeatLegitimacy": "Défaite — une ressource clé s'est effondrée.",
   "outcome.defeatTime": "Défaite — le temps est écoulé avant d'atteindre les objectifs.",
   "card.funding.name": "Prélèvement royal",
   "card.funding.background":
