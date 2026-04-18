@@ -85,6 +85,6 @@ export type EventInstance = {
   templateId: EventTemplateId;
   /** True after funding solve or Crackdown (card or event option) this turn. */
   resolved: boolean;
-  /** Remaining unresolved year-end cycles for finite continued events (e.g., League of Augsburg). */
+  /** Remaining cycles/counters for finite events (e.g., League of Augsburg remaining solves). */
   remainingTurns?: number;
 };

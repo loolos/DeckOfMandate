@@ -123,6 +123,21 @@ function markSlotResolved(state: GameState, slot: SlotId): GameState {
   };
 }
 
+function markSlotResolvedWithLeagueProgress(state: GameState, slot: SlotId): GameState {
+  const ev = state.slots[slot];
+  if (!ev) return state;
+  if (ev.templateId !== "leagueOfAugsburg") return markSlotResolved(state, slot);
+  const totalNeeded = getEventTemplate("leagueOfAugsburg").continuedDurationTurns ?? 3;
+  const remainingAfterSolve = Math.max(0, (ev.remainingTurns ?? totalNeeded) - 1);
+  return {
+    ...state,
+    slots: {
+      ...state.slots,
+      [slot]: { ...ev, resolved: true, remainingTurns: remainingAfterSolve },
+    },
+  };
+}
+
 function resolveFirstUnresolvedEventByTemplate(
   state: GameState,
   templateId: EventTemplateId,
@@ -358,7 +373,7 @@ function performFundSolve(state: GameState, slot: SlotId): GameState {
       europeAlertProgress: 0,
     };
   }
-  s = markSlotResolved(s, slot);
+  s = markSlotResolvedWithLeagueProgress(s, slot);
   s = enforceLegitimacy(s);
   const fundingPaid =
     tmpl.solve.kind === "funding" || tmpl.solve.kind === "fundingOrCrackdown" ? (fundingAmount ?? 0) : 0;
@@ -556,7 +571,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       if (!isCrackdownTarget(state, action.slot)) return state;
       const cleared = state.slots[action.slot];
       if (!cleared) return state;
-      let s = markSlotResolved(state, action.slot);
+      let s = markSlotResolvedWithLeagueProgress(state, action.slot);
       s = removeHand(s, p.cardInstanceId);
       const consumed = consumeLimitedUseCard(s, p.cardInstanceId);
       s = consumed.state;

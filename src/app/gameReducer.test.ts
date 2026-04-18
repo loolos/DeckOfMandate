@@ -308,6 +308,33 @@ describe("gameReducer", () => {
     }
   });
 
+  it("league of augsburg requires 3 resolves and persists between years until remaining reaches zero", () => {
+    const base = createInitialState(31_416, "secondMandate");
+    const s0: typeof base = {
+      ...base,
+      resources: { ...base.resources, funding: 6, legitimacy: 5 },
+      slots: {
+        ...base.slots,
+        A: {
+          instanceId: "e_augsburg",
+          templateId: "leagueOfAugsburg",
+          resolved: false,
+          remainingTurns: 3,
+        },
+      },
+    };
+    const s1 = gameReducer(s0, { type: "SOLVE_EVENT", slot: "A" });
+    expect(s1.resources.funding).toBe(4);
+    expect(s1.slots.A?.resolved).toBe(true);
+    expect(s1.slots.A?.remainingTurns).toBe(2);
+
+    const s2 = gameReducer(s1, { type: "END_YEAR" });
+    expect(s2.turn).toBe(s1.turn + 1);
+    expect(s2.slots.A?.templateId).toBe("leagueOfAugsburg");
+    expect(s2.slots.A?.resolved).toBe(false);
+    expect(s2.slots.A?.remainingTurns).toBe(2);
+  });
+
   it("SCRIPTED_EVENT_ATTACK uses level scripted config (cost, power, coalition window)", () => {
     const cfg = levelContentByLevelId.firstMandate.scriptedCalendarEvents.find(
       (x) => x.templateId === "warOfDevolution",

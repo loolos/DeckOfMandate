@@ -45,18 +45,6 @@ export function resolveEndOfYearPenalties(state: GameState): GameState {
           ]);
         }
       }
-      const remainingTurns = (ev.remainingTurns ?? tmpl.continuedDurationTurns ?? 0) - 1;
-      if (remainingTurns <= 0) {
-        s = { ...s, slots: { ...s.slots, [slot]: null } };
-        continue;
-      }
-      s = {
-        ...s,
-        slots: {
-          ...s.slots,
-          [slot]: { ...ev, remainingTurns },
-        },
-      };
       continue;
     }
     if (!isContinuedCrisis(tmpl)) {
