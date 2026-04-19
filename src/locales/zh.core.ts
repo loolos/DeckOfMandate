@@ -117,6 +117,10 @@ export const messagesZhCore = {
   "card.fiscalBurden.name": "财政负担",
   "card.fiscalBurden.background": "债务与紧急开支挤入账册，持续拖慢每个回合的财政回旋。",
   "card.fiscalBurden.desc": "抽到时经费 -1。可支付 2 经费打出并消除（不会进入弃牌堆）。",
+  "card.antiFrenchContainment.name": "反法遏制",
+  "card.antiFrenchContainment.background":
+    "欧洲宫廷以关税、信用与海上执法协同掣肘法国，任何对抗都要先吞下政治代价。",
+  "card.antiFrenchContainment.desc": "抽到时合法性 -1。可支付 2 经费打出并消除（不会进入弃牌堆）。",
   "card.reform.name": "行政整编",
   "card.reform.background": "册籍与汇报线重划，官僚体系在王权下收得更紧。",
   "card.reform.desc": "权力 +1（影响下回合抽牌阶段）。立即抽 1（手牌上限 12）。",

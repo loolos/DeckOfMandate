@@ -320,6 +320,9 @@ function completeYearAfterRetention(state: GameState, keepIds: readonly string[]
     discard: [...state.discard, ...discardIds],
     phase: "action",
   };
+  if (s.playerStatuses.some((st) => st.templateId === "antiFrenchSentiment")) {
+    s = applyEffects(s, [{ kind: "addCardsToDeck", templateId: "antiFrenchContainment", count: 1 }]);
+  }
   s = resolveEndOfYearPenalties(s);
   if (s.outcome !== "playing") return purgeExtraCardsIfLevelEnded(s);
   s = evaluateVictory(s);
@@ -464,6 +467,15 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
         );
       }
       if (inst.templateId === "fiscalBurden") {
+        const removed = removeHand(paid, id);
+        return appendActionLog(removed, {
+          kind: "cardPlayed",
+          templateId: inst.templateId,
+          fundingCost: cost,
+          effects: tmpl.effects,
+        });
+      }
+      if (inst.templateId === "antiFrenchContainment") {
         const removed = removeHand(paid, id);
         return appendActionLog(removed, {
           kind: "cardPlayed",

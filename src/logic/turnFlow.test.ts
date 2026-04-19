@@ -254,6 +254,29 @@ describe("beginYear + playerStatuses", () => {
     expect(s1.resources.funding).toBe(0);
   });
 
+  it("reduces legitimacy by 1 when anti-french containment is drawn", () => {
+    const started = createInitialState(55_779, "secondMandate");
+    const cardsById: Record<string, CardInstance> = {
+      a0: { instanceId: "a0", templateId: "antiFrenchContainment" },
+    };
+    const s0: GameState = {
+      ...started,
+      outcome: "playing",
+      phase: "action",
+      resources: { treasuryStat: 1, funding: 0, power: 1, legitimacy: 2 },
+      nextTurnDrawModifier: 0,
+      hand: [],
+      deck: ["a0"],
+      discard: [],
+      cardsById,
+      playerStatuses: [],
+      slots: { ...EMPTY_EVENT_SLOTS },
+    };
+    const s1 = beginYear(s0);
+    expect(s1.hand).toContain("a0");
+    expect(s1.resources.legitimacy).toBe(1);
+  });
+
   it("chapter 2 reshuffle applies inflation stack to inflation-tag cards", () => {
     const started = createInitialState(55_778, "secondMandate");
     const cardsById: Record<string, CardInstance> = {

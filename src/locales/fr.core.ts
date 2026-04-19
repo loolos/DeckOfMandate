@@ -130,6 +130,11 @@ export const messagesFrCore: Record<keyof typeof messagesEnCore, string> = {
     "Dettes et passifs d'urgence encombrent désormais les comptes et contraignent chaque cycle.",
   "card.fiscalBurden.desc":
     "Quand piochée, perdez 1 Financement. Vous pouvez payer 2 Financement pour l'épurer (retirée, pas défaussée).",
+  "card.antiFrenchContainment.name": "Endiguement anti-français",
+  "card.antiFrenchContainment.background":
+    "Les cours européennes coordonnent tarifs, crédit et contrôle maritime pour restreindre la marge française.",
+  "card.antiFrenchContainment.desc":
+    "Quand piochée, perdez 1 Légitimité. Vous pouvez payer 2 Financement pour l'épurer (retirée, pas défaussée).",
   "card.reform.name": "Réforme administrative",
   "card.reform.background":
     "Registres et chaînes de rapport sont redessinés ; la bureaucratie se resserre sous la direction royale.",

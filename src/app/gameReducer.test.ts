@@ -664,8 +664,55 @@ describe("gameReducer", () => {
     expect(after.discard.includes(fiscalBurden)).toBe(false);
   });
 
-  it("chapter 2 inflation stack increases playable card cost", () => {
+  it("playing anti-french containment purges it without adding to discard", () => {
     const base = createInitialState(202_604, "secondMandate");
+    const containment = "afc_manual";
+    const withCard: typeof base = {
+      ...base,
+      cardsById: {
+        ...base.cardsById,
+        [containment]: { instanceId: containment, templateId: "antiFrenchContainment" as const },
+      },
+      hand: [containment],
+      deck: base.deck.filter((id) => id !== containment),
+      resources: { ...base.resources, funding: 2 },
+    };
+    const after = gameReducer(withCard, { type: "PLAY_CARD", handIndex: 0 });
+    expect(after.resources.funding).toBe(0);
+    expect(after.hand.includes(containment)).toBe(false);
+    expect(after.discard.includes(containment)).toBe(false);
+  });
+
+  it("anti-french sentiment injects one anti-french containment card at turn end", () => {
+    const base = createInitialState(202_607, "secondMandate");
+    const s0: typeof base = {
+      ...base,
+      phase: "action",
+      hand: [],
+      deck: [],
+      discard: [],
+      playerStatuses: [
+        {
+          instanceId: "st_af",
+          templateId: "antiFrenchSentiment",
+          kind: "drawAttemptsDelta",
+          delta: 0,
+          turnsRemaining: 99,
+        },
+      ],
+      slots: { ...EMPTY_EVENT_SLOTS },
+      resources: { ...base.resources, legitimacy: 3, funding: 0 },
+    };
+    const after = gameReducer(s0, { type: "END_YEAR" });
+    const injected = Object.values(after.cardsById).filter((c) => c.templateId === "antiFrenchContainment");
+    expect(injected).toHaveLength(1);
+    const injectedId = injected[0]!.instanceId;
+    const inCirculation = after.deck.includes(injectedId) || after.hand.includes(injectedId) || after.discard.includes(injectedId);
+    expect(inCirculation).toBe(true);
+  });
+
+  it("chapter 2 inflation stack increases playable card cost", () => {
+    const base = createInitialState(202_608, "secondMandate");
     const ceremonyId = "ceremony_inflation";
     const withCard: typeof base = {
       ...base,
