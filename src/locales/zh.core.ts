@@ -200,16 +200,22 @@ export const messagesZhCore = {
     "[第 {turn} 年] {event} — 选择进攻，支付 {paid} {funding}；后果：{outcome}。",
   "log.eventLocalWarChoice.appease":
     "[第 {turn} 年] {event} — 选择绥靖；后果：{legitimacy} -1。",
-  "log.eventLocalWarChoice.attackOutcome.success": "{power} +1，{legitimacy} +1",
-  "log.eventLocalWarChoice.attackOutcome.stalemate": "战果有限，本年无额外资源变化",
-  "log.eventLocalWarChoice.attackOutcome.setback": "{power} -1",
+  "log.eventLocalWarChoice.attackOutcome.success":
+    "{power} +1，{legitimacy} +1。前线捷报短暂提振宫廷威望，边境诸邦也暂缓试探法国底线。",
+  "log.eventLocalWarChoice.attackOutcome.stalemate":
+    "战果有限，本年无额外资源变化。围城与补给线拉锯重演了“大战间隙小战”的消耗逻辑，声势有余而收益不足。",
+  "log.eventLocalWarChoice.attackOutcome.setback":
+    "{power} -1。突袭受挫后，地方军政协调暴露裂缝，列强更确信法国难以长期维持高压动员。",
   "log.eventNineYearsWarCampaign.title":
     "[第 {turn} 年] {event}：以「{method}」推进战事（支付 {paid} {funding}）——{outcome}。",
   "log.eventNineYearsWarCampaign.method.funding": "经费",
   "log.eventNineYearsWarCampaign.method.intervention": "干预",
-  "log.eventNineYearsWarCampaign.outcome.decisiveVictory": "决定性胜利，战争压力终结",
-  "log.eventNineYearsWarCampaign.outcome.stalemate": "僵持不下，前线局势未改",
-  "log.eventNineYearsWarCampaign.outcome.limitedGains": "取得局部战果，{legitimacy} +1",
+  "log.eventNineYearsWarCampaign.outcome.decisiveVictory":
+    "决定性胜利，战争压力终结。自莱茵到低地的战线终于松动，奥格斯堡同盟短期内难再组织同等强度的协同攻势。",
+  "log.eventNineYearsWarCampaign.outcome.stalemate":
+    "僵持不下，前线局势未改。欧洲均势博弈继续把冲突拖入财政与信用的耐力战，谁都无法迅速脱身。",
+  "log.eventNineYearsWarCampaign.outcome.limitedGains":
+    "取得局部战果，{legitimacy} +1。局部胜利稳住了国内观感，但尚不足以改写九年战争的长期消耗格局。",
   "log.eventNineYearsWarCampaign.history":
     "史实背景：九年战争（1688–1697）从莱茵兰、低地到海上战场全面延伸，长期动员几乎压垮各国财政。",
   "log.eventNineYearsWarFiscalBurden.title":
