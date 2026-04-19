@@ -7,6 +7,7 @@ import { eventLabelWithIcon, getResourceIcon } from "../logic/icons";
 import { useSmallScreen } from "../logic/useSmallScreen";
 import {
   fundSolveLabelAmount,
+  slotIsHandledOrNoFurtherAction,
   slotAllowsCrackdownTarget,
   slotAllowsFundSolve,
   slotAllowsScriptedAttack,
@@ -51,6 +52,10 @@ export function EventPanel({
         const solveKind = tmpl.solve.kind;
         const quickRows = buildScriptedEventQuickFrameRows(state.levelId, tmpl) ?? buildEventQuickFrameRows(tmpl);
         const compactSummary = quickRows.map((row) => row.value).join(" · ");
+        const handledOrNoFurtherAction = slotIsHandledOrNoFurtherAction(state, slot);
+        const handledMark = handledOrNoFurtherAction ? " 👌" : "";
+        const compactSummaryWithHandledMark = `${compactSummary}${handledMark}`;
+        const descWithHandledMark = `${desc}${handledMark}`;
         const showDetails = !isSmallScreen || expandedSlot === slot || crack;
         const toggleCard = () => setExpandedSlot((prev) => (prev === slot ? null : slot));
         const logEventTag = (
@@ -84,7 +89,7 @@ export function EventPanel({
             }
           >
             <div className={styles.eventTitle}>{title}</div>
-            {isSmallScreen ? <div className={styles.compactSummary}>{compactSummary}</div> : null}
+            {isSmallScreen ? <div className={styles.compactSummary}>{compactSummaryWithHandledMark}</div> : null}
             {!isSmallScreen || showDetails ? (
               <>
                 <div className={styles.badges}>
@@ -151,7 +156,7 @@ export function EventPanel({
                     </button>
                   ) : null}
                 </div>
-                <div className={styles.eventBody}>{desc}</div>
+                <div className={styles.eventBody}>{descWithHandledMark}</div>
                 <OutcomeQuickFrame rows={quickRows} />
                 <div className={styles.actions} onClick={(e) => e.stopPropagation()}>
                   {!ev.resolved && solveKind === "scriptedAttack" && amount !== null ? (
