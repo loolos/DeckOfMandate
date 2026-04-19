@@ -224,6 +224,12 @@ export const messagesZhCore = {
     "[第 {turn} 年]「王室征收」次数耗尽（0/3），已从牌库循环中移除；非常规筹资渠道枯竭，财政 -1。",
   "log.info.cardUse.depleted.diplomaticIntervention":
     "[第 {turn} 年]「外交干预」次数耗尽（0/3），已从牌库循环中移除（无额外惩罚）。",
+  "log.info.cardDraw.fiscalBurdenTriggered":
+    "[第 {turn} 年] 抓到「财政负担」并触发：剩余经费 -1。",
+  "log.info.cardDraw.antiFrenchContainmentPowerLoss":
+    "[第 {turn} 年] 抓到「反法遏制」并触发：权力 -1。",
+  "log.info.cardDraw.antiFrenchContainmentLegitimacyLoss":
+    "[第 {turn} 年] 抓到「反法遏制」并触发：合法性 -1。",
   "log.info.eventTag.harmful": "[第 {turn} 年] 标签说明「有害」：若年末仍未解决，会触发惩罚。",
   "log.info.eventTag.opportunity": "[第 {turn} 年] 标签说明「机遇」：属于可投资机会，不处理通常不会受到惩罚。",
   "log.info.eventTag.historical":

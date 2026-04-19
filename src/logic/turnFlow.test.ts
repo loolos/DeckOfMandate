@@ -253,6 +253,9 @@ describe("beginYear + playerStatuses", () => {
     const s1 = beginYear(s0);
     expect(s1.hand).toContain("b0");
     expect(s1.resources.funding).toBe(0);
+    expect(
+      s1.actionLog.some((entry) => entry.kind === "info" && entry.infoKey === "cardDraw.fiscalBurdenTriggered"),
+    ).toBe(true);
   });
 
   it("when anti-french containment is drawn, it randomly reduces power or legitimacy by 1", () => {
@@ -279,6 +282,14 @@ describe("beginYear + playerStatuses", () => {
     const powerDropped = s1.resources.power === 1 && s1.resources.legitimacy === 2;
     const legitimacyDropped = s1.resources.power === 2 && s1.resources.legitimacy === 1;
     expect(powerDropped || legitimacyDropped).toBe(true);
+    expect(
+      s1.actionLog.some(
+        (entry) =>
+          entry.kind === "info" &&
+          (entry.infoKey === "cardDraw.antiFrenchContainmentPowerLoss" ||
+            entry.infoKey === "cardDraw.antiFrenchContainmentLegitimacyLoss"),
+      ),
+    ).toBe(true);
   });
 
   it("chapter 2 reshuffle applies inflation stack to inflation-tag cards", () => {
