@@ -2,6 +2,7 @@ import { getLevelContent, type ScriptedCalendarEventConfig } from "../data/level
 import { getEventTemplate } from "../data/events";
 import { EVENT_SLOT_ORDER, type EventInstance, type EventTemplateId, type SlotId } from "../types/event";
 import type { AntiFrenchLeagueState, GameState } from "../types/game";
+import { appendActionLog } from "./actionLog";
 import { rngNext } from "./rng";
 
 export function currentCalendarYear(state: GameState): number {
@@ -95,6 +96,9 @@ export function applyScriptedCalendarPhase(state: GameState): GameState {
       target = cfg.overflowSlot ?? "C";
     }
     s = placeScriptedEvent(s, cfg.templateId, target);
+    if (cfg.templateId === "nineYearsWar") {
+      s = appendActionLog(s, { kind: "eventNineYearsWarBegins", slot: target });
+    }
   }
 
   return s;

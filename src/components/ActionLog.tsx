@@ -200,6 +200,33 @@ function renderEntry(e: ActionLogEntry, t: (key: MessageKey, vars?: Record<strin
         </div>
       );
     }
+    case "eventNineYearsWarBegins":
+      return (
+        <div>
+          <div className={styles.actionLogHead}>
+            {t("log.eventNineYearsWarBegins.title", {
+              turn: e.turn,
+              slot: e.slot,
+              event: eventLabelWithIcon("nineYearsWar", t(eventTitleKey("nineYearsWar"))),
+            })}
+          </div>
+          <div className={styles.actionLogSubMuted}>{t("log.eventNineYearsWarBegins.history")}</div>
+        </div>
+      );
+    case "eventNineYearsWarEndedByRyswick":
+      return (
+        <div>
+          <div className={styles.actionLogHead}>
+            {t("log.eventNineYearsWarEndedByRyswick.title", {
+              turn: e.turn,
+              removed: e.removedCount,
+              ryswick: eventLabelWithIcon("ryswickPeace", t(eventTitleKey("ryswickPeace"))),
+              war: eventLabelWithIcon("nineYearsWar", t(eventTitleKey("nineYearsWar"))),
+            })}
+          </div>
+          <div className={styles.actionLogSubMuted}>{t("log.eventNineYearsWarEndedByRyswick.history")}</div>
+        </div>
+      );
     case "eventNineYearsWarBurden":
       return (
         <div>

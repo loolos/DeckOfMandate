@@ -105,6 +105,18 @@ export type ActionLogEntry =
       outcome: "majorVictory" | "stalemate" | "minorGains";
     }
   | {
+      kind: "eventNineYearsWarBegins";
+      id: string;
+      turn: number;
+      slot: SlotId;
+    }
+  | {
+      kind: "eventNineYearsWarEndedByRyswick";
+      id: string;
+      turn: number;
+      removedCount: number;
+    }
+  | {
       kind: "eventNineYearsWarBurden";
       id: string;
       turn: number;

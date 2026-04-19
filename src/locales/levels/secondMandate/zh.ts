@@ -120,6 +120,14 @@ export const messagesZhSecondMandate = {
     "历史回响：边境与要塞方向取得有限战果，{legitimacy} +1，但不足以终结大战。",
   "log.eventNineYearsWarAttempt.history":
     "背景：九年战争（1688-1697）是法国与大同盟的长期消耗战，战果常呈阶段性与局部性。",
+  "log.eventNineYearsWarBegins.title":
+    "[第 {turn} 年] {event}（{slot}）按历史时间线于 1689 年固定登场。",
+  "log.eventNineYearsWarBegins.history":
+    "背景：1689 年起，反法同盟范围扩大，战争由边境冲突升级为欧陆多线长期对抗。",
+  "log.eventNineYearsWarEndedByRyswick.title":
+    "[第 {turn} 年] {ryswick} 达成 — {war} 被彻底结束并移除（共 {removed} 个）。",
+  "log.eventNineYearsWarEndedByRyswick.history":
+    "背景：1697 年《里斯维克和约》总体收束九年战争战事，欧洲外交秩序进入重整期。",
   "log.eventNineYearsWarBurden.title":
     "[第 {turn} 年] {event}（{slot}）仍在持续 — 战争财政继续加压：向抽牌堆加入 1 张「财政负担」。",
   "log.eventNineYearsWarBurden.history":

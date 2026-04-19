@@ -152,16 +152,22 @@ function resolveFirstUnresolvedEventByTemplate(
   return state;
 }
 
-function removeEventsByTemplate(state: GameState, templateId: EventTemplateId): GameState {
+function removeEventsByTemplate(
+  state: GameState,
+  templateId: EventTemplateId,
+): { state: GameState; removedCount: number } {
   const slots = { ...state.slots };
-  let changed = false;
+  let removedCount = 0;
   for (const slot of EVENT_SLOT_ORDER) {
     const ev = slots[slot];
     if (!ev || ev.templateId !== templateId) continue;
     slots[slot] = null;
-    changed = true;
+    removedCount += 1;
   }
-  return changed ? { ...state, slots } : state;
+  return {
+    state: removedCount > 0 ? { ...state, slots } : state,
+    removedCount,
+  };
 }
 
 function isCrackdownTarget(state: GameState, slot: SlotId): boolean {
@@ -431,7 +437,11 @@ function performFundSolve(state: GameState, slot: SlotId): GameState {
       europeAlert: false,
       europeAlertProgress: 0,
     };
-    s = removeEventsByTemplate(s, "nineYearsWar");
+    const removed = removeEventsByTemplate(s, "nineYearsWar");
+    s = removed.state;
+    if (removed.removedCount > 0) {
+      s = appendActionLog(s, { kind: "eventNineYearsWarEndedByRyswick", removedCount: removed.removedCount });
+    }
   }
   s = markSlotResolvedWithLeagueProgress(s, slot);
   s = enforceLegitimacy(s);

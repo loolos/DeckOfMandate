@@ -887,6 +887,7 @@ describe("gameReducer", () => {
     expect(after.resources.funding).toBe(0);
     expect(after.resources.legitimacy).toBe(base.resources.legitimacy + 1);
     expect(after.slots.B).toBeNull();
+    expect(after.actionLog.some((entry) => entry.kind === "eventNineYearsWarEndedByRyswick")).toBe(true);
   });
 
   it("chapter 2 cannot win from 1696 onward while europe alert is still active", () => {

@@ -36,6 +36,8 @@ export type ActionLogPayload =
       roll: number;
       outcome: "majorVictory" | "stalemate" | "minorGains";
     }
+  | { kind: "eventNineYearsWarBegins"; slot: SlotId }
+  | { kind: "eventNineYearsWarEndedByRyswick"; removedCount: number }
   | { kind: "eventNineYearsWarBurden"; slot: SlotId }
   | { kind: "antiFrenchLeagueDraw"; probabilityPct: number }
   | { kind: "europeAlertProgressShift"; from: number; to: number; probabilityPct: number; pressureDeltaK: number }

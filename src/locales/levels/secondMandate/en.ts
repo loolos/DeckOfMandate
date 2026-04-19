@@ -134,6 +134,14 @@ export const messagesEnSecondMandate = {
     "Historical note: localized fortress/front gains improve crown standing; {legitimacy} +1, but war pressure continues.",
   "log.eventNineYearsWarAttempt.history":
     "Background: the Nine Years' War (1688-1697) was a long coalition war of attrition with intermittent, limited gains.",
+  "log.eventNineYearsWarBegins.title":
+    "[Turn {turn}] {event} ({slot}) begins as a fixed calendar crisis (1689).",
+  "log.eventNineYearsWarBegins.history":
+    "Background: from 1689, the war widened into a pan-European coalition struggle against Louis XIV.",
+  "log.eventNineYearsWarEndedByRyswick.title":
+    "[Turn {turn}] {ryswick} is concluded — {war} is fully ended and removed ({removed} instance(s)).",
+  "log.eventNineYearsWarEndedByRyswick.history":
+    "Background: the 1697 Peace of Ryswick broadly settled the Nine Years' War and reset the diplomatic order.",
   "log.eventNineYearsWarBurden.title":
     "[Turn {turn}] {event} ({slot}) continues — war finance strain adds 1 Fiscal Burden to the draw pile.",
   "log.eventNineYearsWarBurden.history":
