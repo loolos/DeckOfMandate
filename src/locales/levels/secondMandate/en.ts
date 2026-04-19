@@ -46,7 +46,7 @@ export const messagesEnSecondMandate = {
     "European powers coordinate against France. Tagged Remaining 3: it must be resolved 3 times total before it is fully removed. On any turn it is not resolved, you must pay floor(Europe Alert progress/2) Funding to keep talks alive; if unpaid, lose 1 Power and 1 Treasury. Each time you pay 2 Funding (or use Intervention), that counts as one resolve: this turn avoids the unresolved penalty, but the event remains next turn until Remaining reaches 0.",
   "event.nineYearsWar.name": "The Nine Years' War",
   "event.nineYearsWar.desc":
-    "From 1688, the Nine Years' War grew out of the League of Augsburg system into a continent-wide struggle over the European balance of power. Fighting stretched from the Rhineland and the Low Countries to maritime routes and colonial fronts, turning fiscal endurance into the core test of state capacity. In game terms, this is a Continued crisis: you can campaign each turn at a Europe-Alert-scaled cost, while delay risks legitimacy setbacks and ongoing fiscal drag.",
+    "From 1688, the Nine Years' War grew out of the League of Augsburg system into a continent-wide struggle over the European balance of power. Fighting stretched from the Rhineland and the Low Countries to maritime routes and colonial fronts, turning fiscal endurance into the core test of state capacity. In game terms, this is a Continued crisis: you can campaign each turn by paying floor(Europe Alert progress / 2) + 1 Funding (or using Intervention), while delay risks legitimacy setbacks and ongoing fiscal drag.",
   "event.ryswickPeace.name": "Peace of Ryswick",
   "event.ryswickPeace.desc":
     "Peace terms can restore order. Invest (Europe Alert progress + 2) Funding to gain Legitimacy +1 and clear Europe Alert. If the Nine Years' War is still active, this solve cost gains an additional +4. Resolving this event also ends the Nine Years' War completely. This event is Continued: if unresolved, Legitimacy -1 each turn.",
@@ -79,7 +79,7 @@ export const messagesEnSecondMandate = {
     "Paid border raiders disrupt local order and crown authority. Pay 2 Funding, or lose 1 Power and 1 Legitimacy.",
   "event.localWar.name": "Local War",
   "event.localWar.desc":
-    "Europe Alert fuels a regional conflict. Intervention cannot resolve this event. Choose Attack (pay Funding equal to Europe Alert progress; equal 1/3 outcomes: Local Victory [Power +1, Legitimacy +1], Stalemate [no change], Minor Loss [Power -1]) or Appease (no Funding cost, Legitimacy -1). This is a Continued event: if left unresolved, next turn's Funding income is reduced by 2 (not below 0).",
+    "Europe Alert fuels a regional conflict. Intervention cannot resolve this event. Choose Attack (pay floor(Europe Alert progress / 2) Funding, then apply Anti-French Sentiment surcharge if active; equal 1/3 outcomes: Local Victory [Power +1, Legitimacy +1], Stalemate [no change], Minor Loss [Power -1]) or Appease (no Funding cost, Legitimacy -1). This is a Continued event: if left unresolved, next turn's Funding income is reduced by 2 (not below 0).",
   "event.courtScandal.name": "Court Scandal",
   "event.courtScandal.desc":
     "Factional intrigue weakens authority. Pay 3 Funding to contain it; if unresolved, Legitimacy -1 and all Royal-tag cards are blocked next turn.",

@@ -373,7 +373,7 @@ export function getEventSolveFundingAmount(state: GameState, id: EventTemplateId
     return state.europeAlertProgress + 2 + antiFrenchPenalty + warSurcharge;
   }
   if (id === "nineYearsWar") {
-    return Math.max(1, Math.floor(state.europeAlertProgress / 2));
+    return Math.floor(state.europeAlertProgress / 2) + 1;
   }
   return tmpl.solve.amount + antiFrenchPenalty;
 }

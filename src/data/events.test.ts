@@ -44,12 +44,12 @@ describe("getEventRollWeight", () => {
     expect(getEventSolveFundingAmount(st, "ryswickPeace")).toBe(9);
   });
 
-  it("scales nine years war solve funding to floor(progress/2) with minimum 1", () => {
+  it("scales nine years war solve funding to floor(progress/2) + 1", () => {
     const base = createInitialState(3_341, "secondMandate");
     expect(getEventSolveFundingAmount({ ...base, europeAlertProgress: 1 }, "nineYearsWar")).toBe(1);
-    expect(getEventSolveFundingAmount({ ...base, europeAlertProgress: 3 }, "nineYearsWar")).toBe(1);
-    expect(getEventSolveFundingAmount({ ...base, europeAlertProgress: 4 }, "nineYearsWar")).toBe(2);
-    expect(getEventSolveFundingAmount({ ...base, europeAlertProgress: 9 }, "nineYearsWar")).toBe(4);
+    expect(getEventSolveFundingAmount({ ...base, europeAlertProgress: 3 }, "nineYearsWar")).toBe(2);
+    expect(getEventSolveFundingAmount({ ...base, europeAlertProgress: 4 }, "nineYearsWar")).toBe(3);
+    expect(getEventSolveFundingAmount({ ...base, europeAlertProgress: 9 }, "nineYearsWar")).toBe(5);
   });
 
   it("adds anti-french sentiment solve-cost penalty to europe-alert supplemental pool events only", () => {
