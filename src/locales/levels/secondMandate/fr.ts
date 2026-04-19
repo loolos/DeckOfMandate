@@ -21,6 +21,9 @@ export const messagesFrSecondMandate: Record<keyof typeof messagesEnSecondMandat
   "status.europeAlert.history":
     "Les offensives françaises antérieures ont durci la vigilance de coalition à long terme en Europe.",
   "status.antiFrenchSentiment.name": "Sentiment anti-français",
+  "status.antiFrenchSentiment.emotionLabel": "Émotion {x}",
+  "status.antiFrenchSentiment.detail":
+    "Émotion {x} : nombre actuel de cartes Endiguement anti-français dans toute votre bibliothèque. Tant que ce statut est actif, la Paix de Ryswick coûte aussi +{n} Financement.",
   "status.antiFrenchSentiment.history":
     "Après les années 1670, l'expansion militaire et fiscale de la France convainc les cours rivales que les trêves ponctuelles ne suffisent plus. Un consensus anti-français plus large se forme : coordination diplomatique, pression commerciale et préparation militaire se combinent pour contenir l'influence bourbonienne. Côté mécanique : quand le total Pouvoir+Trésor devient trop élevé, les solutions payées liées à l'Alerte Europe coûtent davantage, et ce statut ajoute aussi une pression récurrente via le deck jusqu'au retour à un niveau de puissance plus bas.",
   "event.nymwegenSettlement.name": "Traités de Nimègue",
@@ -37,7 +40,7 @@ export const messagesFrSecondMandate: Record<keyof typeof messagesEnSecondMandat
     "À partir de 1688, la Guerre de Neuf Ans prolonge la logique de la Ligue d'Augsbourg en un affrontement continental sur l'équilibre européen. Les combats s'étendent du Rhin et des Pays-Bas aux routes maritimes et aux espaces coloniaux, faisant de l'endurance financière la véritable mesure de la puissance d'État. En jeu, c'est une crise Continue : vous pouvez lancer des campagnes chaque tour en payant floor(progression Alerte Europe/2)+1 Financement (ou via Intervention), tandis que l'inaction expose à des pertes de légitimité et à une pression budgétaire durable.",
   "event.ryswickPeace.name": "Paix de Ryswick",
   "event.ryswickPeace.desc":
-    "Les termes de paix peuvent restaurer l'ordre. Investissez (progression Alerte Europe + 2) Financement pour gagner Légitimité +1 et lever l'Alerte Europe. Si la Guerre de Neuf Ans n'est pas encore terminée, ce coût gagne +4 supplémentaire. Résoudre cet événement met aussi fin définitivement à la Guerre de Neuf Ans. Cet événement est Continu : s'il n'est pas résolu, Légitimité -1 chaque tour.",
+    "Les termes de paix peuvent restaurer l'ordre. Investissez (progression Alerte Europe + 2) Financement pour gagner Légitimité +1 et lever l'Alerte Europe. Si la Guerre de Neuf Ans n'est pas encore terminée, ce coût gagne +4 supplémentaire. Tant que le Sentiment anti-français est actif, ce coût gagne aussi +2x (x = nombre actuel de cartes Endiguement anti-français dans toute votre bibliothèque). Résoudre cet événement met aussi fin définitivement à la Guerre de Neuf Ans. Cet événement est Continu : s'il n'est pas résolu, Légitimité -1 chaque tour.",
   "event.versaillesExpenditure.name": "Dépenses de Versailles",
   "event.versaillesExpenditure.desc":
     "Les dépenses de cour montent encore. Payez 3 Financement ou utilisez Intervention ; si non résolu, perdez 2 Trésor.",

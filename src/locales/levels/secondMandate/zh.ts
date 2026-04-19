@@ -28,6 +28,9 @@ export const messagesZhSecondMandate = {
   "status.europeAlert.stage.conflict.name": "冲突（9-10）",
   "status.europeAlert.stage.conflict.desc": "体系进入公开对抗，双重危机与高频冲击成为常态。",
   "status.antiFrenchSentiment.name": "反法情绪",
+  "status.antiFrenchSentiment.emotionLabel": "情绪{x}",
+  "status.antiFrenchSentiment.detail":
+    "情绪{x}：表示你当前整个牌库中的「反法遏制」数量。该状态存在时，「里斯维克和约」还会额外增加 +{n} 经费。",
   "status.antiFrenchSentiment.history":
     "1670 年代后，法国在军事与财政上的持续扩张，使周边宫廷逐渐形成“单独妥协已不足够”的共识。反法协同从临时联盟转向更稳定的围堵逻辑：外交联动、贸易施压与战争准备并行，以限制波旁王朝的外部影响力。机制上：当“权力+财政”过高时，和「欧洲警觉」相关的经费解法会变贵，并且该状态会持续带来牌库层面的遏制压力；直到这项综合实力回落，压力才会解除。",
   "event.nymwegenSettlement.name": "奈梅亨和约",
@@ -44,7 +47,7 @@ export const messagesZhSecondMandate = {
     "自 1688 年起，奥格斯堡同盟的对抗升级为横跨欧洲的九年战争，其核心不只是战场胜负，更是围绕“欧洲均势”的长期消耗。战线从莱茵与低地延伸到海上航路和殖民据点，迫使各国在军费、信用与行政动员上持续透支。机制上：这是「持续」危机；你可每回合投入「floor(欧洲警觉进度/2)+1」经费（或使用干预）发动战役，若长期拖延，将承受合法性回落与财政负担累积。",
   "event.ryswickPeace.name": "里斯维克和约",
   "event.ryswickPeace.desc":
-    "和约提供秩序重建窗口。投入「欧洲警觉进度 + 2」经费可获得合法性 +1，并结束「欧洲警觉」。若「九年战争」尚未结束，处理费用额外 +4。成功解决该事件时，也会一并彻底结束「九年战争」。该事件带持续标签：若未处理，每回合合法性 -1。",
+    "和约提供秩序重建窗口。投入「欧洲警觉进度 + 2」经费可获得合法性 +1，并结束「欧洲警觉」。若「九年战争」尚未结束，处理费用额外 +4。若「反法情绪」状态存在，费用再额外 +2x（x 为当前整个牌库中的「反法遏制」数量）。成功解决该事件时，也会一并彻底结束「九年战争」。该事件带持续标签：若未处理，每回合合法性 -1。",
   "event.versaillesExpenditure.name": "凡尔赛开支",
   "event.versaillesExpenditure.desc":
     "宫廷排场再次超预算。支付 3 经费（或干预），否则财政 -2。",
