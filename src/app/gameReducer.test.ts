@@ -689,6 +689,7 @@ describe("gameReducer", () => {
       },
       hand: [containment],
       deck: base.deck.filter((id) => id !== containment),
+      europeAlert: true,
       europeAlertProgress: 4,
       resources: { ...base.resources, funding: 2 },
     };
@@ -698,7 +699,7 @@ describe("gameReducer", () => {
     expect(after.discard.includes(containment)).toBe(false);
   });
 
-  it("anti-french containment cost follows floor(europe alert progress / 2)", () => {
+  it("anti-french containment cost follows floor(europe alert progress / 2) with minimum 1", () => {
     const base = createInitialState(202_609, "secondMandate");
     const containment = "afc_cost";
     const withCard: typeof base = {
@@ -709,6 +710,7 @@ describe("gameReducer", () => {
       },
       hand: [containment],
       deck: base.deck.filter((id) => id !== containment),
+      europeAlert: true,
       europeAlertProgress: 5,
       resources: { ...base.resources, funding: 1 },
     };
@@ -716,6 +718,31 @@ describe("gameReducer", () => {
     expect(blocked).toEqual(withCard);
 
     const affordable = { ...withCard, resources: { ...withCard.resources, funding: 2 } };
+    const after = gameReducer(affordable, { type: "PLAY_CARD", handIndex: 0 });
+    expect(after.resources.funding).toBe(0);
+    expect(after.hand.includes(containment)).toBe(false);
+    expect(after.discard.includes(containment)).toBe(false);
+  });
+
+  it("anti-french containment still costs at least 1 once Europe Alert is cleared", () => {
+    const base = createInitialState(202_610, "secondMandate");
+    const containment = "afc_min_after_clear";
+    const withCard: typeof base = {
+      ...base,
+      cardsById: {
+        ...base.cardsById,
+        [containment]: { instanceId: containment, templateId: "antiFrenchContainment" as const },
+      },
+      hand: [containment],
+      deck: base.deck.filter((id) => id !== containment),
+      europeAlert: false,
+      europeAlertProgress: 0,
+      resources: { ...base.resources, funding: 0 },
+    };
+    const blocked = gameReducer(withCard, { type: "PLAY_CARD", handIndex: 0 });
+    expect(blocked).toEqual(withCard);
+
+    const affordable = { ...withCard, resources: { ...withCard.resources, funding: 1 } };
     const after = gameReducer(affordable, { type: "PLAY_CARD", handIndex: 0 });
     expect(after.resources.funding).toBe(0);
     expect(after.hand.includes(containment)).toBe(false);
