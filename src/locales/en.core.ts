@@ -247,6 +247,12 @@ export const messagesEnCore = {
     "[Turn {turn}] Royal Levy reached 0/3 and was removed from circulation; emergency extraction channels dry up (Treasury -1).",
   "log.info.cardUse.depleted.diplomaticIntervention":
     "[Turn {turn}] Diplomatic Intervention reached 0/3 and was removed from circulation.",
+  "log.info.cardDraw.fiscalBurdenTriggered":
+    "[Turn {turn}] On draw, Fiscal Burden triggered: Funding -1.",
+  "log.info.cardDraw.antiFrenchContainmentPowerLoss":
+    "[Turn {turn}] On draw, Anti-French Containment triggered: Power -1.",
+  "log.info.cardDraw.antiFrenchContainmentLegitimacyLoss":
+    "[Turn {turn}] On draw, Anti-French Containment triggered: Legitimacy -1.",
   "log.info.eventTag.harmful":
     "[Turn {turn}] Tag note “Harmful”: if unresolved at year end, this event applies penalties.",
   "log.info.eventTag.opportunity":

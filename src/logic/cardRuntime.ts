@@ -1,5 +1,6 @@
 import type { CardTemplateId } from "../types/card";
 import type { GameState } from "../types/game";
+import { appendActionLog } from "./actionLog";
 import { createInitialCardUseState } from "./cardUsage";
 import { rngNext, rngNextInt } from "./rng";
 
@@ -74,18 +75,19 @@ export function applyOnDrawCardEffects(state: GameState, drawnCardId: string): G
   const inst = state.cardsById[drawnCardId];
   if (!inst) return state;
   if (inst.templateId === "fiscalBurden") {
-    return {
+    const nextState = {
       ...state,
       resources: {
         ...state.resources,
         funding: Math.max(0, state.resources.funding - 1),
       },
     };
+    return appendActionLog(nextState, { kind: "info", infoKey: "cardDraw.fiscalBurdenTriggered" });
   }
   if (inst.templateId === "antiFrenchContainment") {
     const [rng, u] = rngNext(state.rng);
     if (u < 0.5) {
-      return {
+      const nextState = {
         ...state,
         rng,
         resources: {
@@ -93,8 +95,9 @@ export function applyOnDrawCardEffects(state: GameState, drawnCardId: string): G
           power: Math.max(0, state.resources.power - 1),
         },
       };
+      return appendActionLog(nextState, { kind: "info", infoKey: "cardDraw.antiFrenchContainmentPowerLoss" });
     }
-    return {
+    const nextState = {
       ...state,
       rng,
       resources: {
@@ -102,6 +105,7 @@ export function applyOnDrawCardEffects(state: GameState, drawnCardId: string): G
         legitimacy: Math.max(0, state.resources.legitimacy - 1),
       },
     };
+    return appendActionLog(nextState, { kind: "info", infoKey: "cardDraw.antiFrenchContainmentLegitimacyLoss" });
   }
   return state;
 }
