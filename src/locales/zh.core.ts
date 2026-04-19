@@ -55,6 +55,8 @@ export const messagesZhCore = {
   "menu.title": "主菜单",
   "menu.resumeSave": "读取本地存档",
   "menu.levelLabel": "关卡",
+  "menu.levelBrief.firstMandate": "1661–1675（太阳王前期）：巩固王权、稳步扩张，在可控压力下建立统治基础。",
+  "menu.levelBrief.secondMandate": "1676–1700（太阳王后期）：在宗教与对外高压并行下，维持霸权并避免国家失序。",
   "menu.seedLabel": "随机种子（可选）",
   "menu.seedPlaceholder": "留空则随机",
   "menu.seedHint": "留空会随机生成种子；相同种子可复现开局牌库与事件。",

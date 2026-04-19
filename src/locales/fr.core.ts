@@ -60,6 +60,10 @@ export const messagesFrCore: Record<keyof typeof messagesEnCore, string> = {
   "menu.title": "Menu principal",
   "menu.resumeSave": "Reprendre la sauvegarde",
   "menu.levelLabel": "Niveau",
+  "menu.levelBrief.firstMandate":
+    "1661–1675, début de l’ère du Roi-Soleil : consolidez l’autorité royale et l’expansion sous pression maîtrisable.",
+  "menu.levelBrief.secondMandate":
+    "1676–1700, fin de l’ère du Roi-Soleil : maintenez l’hégémonie sous forte pression religieuse et géopolitique.",
   "menu.seedLabel": "Graine de partie (optionnelle)",
   "menu.seedPlaceholder": "Aléatoire si vide",
   "menu.seedHint":
