@@ -11,6 +11,7 @@ import { getCardTemplate } from "../data/cards";
 import {
   defaultLevelId,
   getLevelDef,
+  getTurnLimitForRun,
   isLevelId,
   levelDefs,
   type LevelEndingCopyKeys,
@@ -120,6 +121,7 @@ export function Game() {
   const menuSeedTrimmed = menuSeedText.trim();
   const menuSeedParsed =
     menuSeedTrimmed === "" ? ("empty" as const) : Number.isFinite(Number(menuSeedTrimmed)) ? Number(menuSeedTrimmed) : ("invalid" as const);
+  const selectedMenuLevelDef = useMemo(() => getLevelDef(menuLevelId), [menuLevelId]);
 
   useEffect(() => {
     if (startMenuOpen) return;
@@ -127,6 +129,10 @@ export function Game() {
   }, [state, startMenuOpen]);
 
   const level = useMemo(() => getLevelDef(state.levelId), [state.levelId]);
+  const runTurnLimit = useMemo(
+    () => getTurnLimitForRun(state.levelId, state.calendarStartYear),
+    [state.levelId, state.calendarStartYear],
+  );
 
   const turnCalendarLabel = useMemo(
     () => state.calendarStartYear + state.turn - 1,
@@ -575,6 +581,7 @@ export function Game() {
               );
             })}
           </select>
+          <p className={styles.startMenuMuted}>{t(`menu.levelBrief.${selectedMenuLevelDef.id}` as MessageKey)}</p>
           <label className={styles.startMenuLabel} htmlFor="start-menu-seed">
             {t("menu.seedLabel")}
           </label>
@@ -658,12 +665,12 @@ export function Game() {
           <div className={styles.banner}>
             {turnCalendarLabel}
             <span style={{ marginLeft: "0.65rem", color: "var(--muted)", fontSize: "0.95rem" }}>
-              {t("banner.turn", { turn: state.turn, limit: level.turnLimit })}
+              {t("banner.turn", { turn: state.turn, limit: runTurnLimit })}
             </span>
           </div>
           <div className={styles.targets} id="tutorial-targets">
             {t("ui.targets", {
-              limit: level.turnLimit,
+              limit: runTurnLimit,
               tT: level.winTargets.treasuryStat,
               tP: level.winTargets.power,
               tL: level.winTargets.legitimacy,

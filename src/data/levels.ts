@@ -63,12 +63,21 @@ export const levelDefs = {
   secondMandate,
 } as const;
 
+export const SECOND_MANDATE_END_YEAR = 1701;
+
 export type LevelId = keyof typeof levelDefs;
 
 export const defaultLevelId: LevelId = "firstMandate";
 
 export function getLevelDef(id: LevelId) {
   return levelDefs[id];
+}
+
+export function getTurnLimitForRun(levelId: LevelId, calendarStartYear: number): number {
+  if (levelId === "secondMandate") {
+    return Math.max(1, SECOND_MANDATE_END_YEAR - calendarStartYear);
+  }
+  return getLevelDef(levelId).turnLimit;
 }
 
 export function isLevelId(x: unknown): x is LevelId {

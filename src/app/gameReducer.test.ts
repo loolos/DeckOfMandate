@@ -308,6 +308,33 @@ describe("gameReducer", () => {
     }
   });
 
+  it("league of augsburg requires 3 resolves and persists between years until remaining reaches zero", () => {
+    const base = createInitialState(31_416, "secondMandate");
+    const s0: typeof base = {
+      ...base,
+      resources: { ...base.resources, funding: 6, legitimacy: 5 },
+      slots: {
+        ...base.slots,
+        A: {
+          instanceId: "e_augsburg",
+          templateId: "leagueOfAugsburg",
+          resolved: false,
+          remainingTurns: 3,
+        },
+      },
+    };
+    const s1 = gameReducer(s0, { type: "SOLVE_EVENT", slot: "A" });
+    expect(s1.resources.funding).toBe(4);
+    expect(s1.slots.A?.resolved).toBe(true);
+    expect(s1.slots.A?.remainingTurns).toBe(2);
+
+    const s2 = gameReducer(s1, { type: "END_YEAR" });
+    expect(s2.turn).toBe(s1.turn + 1);
+    expect(s2.slots.A?.templateId).toBe("leagueOfAugsburg");
+    expect(s2.slots.A?.resolved).toBe(false);
+    expect(s2.slots.A?.remainingTurns).toBe(2);
+  });
+
   it("SCRIPTED_EVENT_ATTACK uses level scripted config (cost, power, coalition window)", () => {
     const cfg = levelContentByLevelId.firstMandate.scriptedCalendarEvents.find(
       (x) => x.templateId === "warOfDevolution",
@@ -336,7 +363,7 @@ describe("gameReducer", () => {
     expect(after.antiFrenchLeague!.untilTurn).toBe(expectedUntil);
   });
 
-  it("local war attack pays europe-alert-progress cost and resolves the event", () => {
+  it("local war attack pays floor(europe-alert-progress/2) cost and resolves the event", () => {
     const base = createInitialState(8_001, "secondMandate");
     const s0 = {
       ...base,
@@ -349,7 +376,30 @@ describe("gameReducer", () => {
       },
     };
     const s1 = gameReducer(s0, { type: "PICK_LOCAL_WAR_ATTACK", slot: "A" });
-    expect(s1.resources.funding).toBe(3);
+    expect(s1.resources.funding).toBe(6);
+    expect(s1.slots.A?.resolved).toBe(true);
+    const last = s1.actionLog[s1.actionLog.length - 1];
+    expect(last?.kind).toBe("eventLocalWarChoice");
+    if (last?.kind === "eventLocalWarChoice") {
+      expect(last.choice).toBe("attack");
+      expect(last.fundingPaid).toBe(2);
+    }
+  });
+
+  it("local war attack includes anti-french sentiment penalty in funding cost", () => {
+    const base = createInitialState(8_003, "secondMandate");
+    const s0 = {
+      ...base,
+      resources: { ...base.resources, funding: 8, treasuryStat: 13, power: 12, legitimacy: 4 },
+      europeAlert: true,
+      europeAlertProgress: 5,
+      slots: {
+        ...EMPTY_EVENT_SLOTS,
+        A: { instanceId: "e_local_war", templateId: "localWar" as const, resolved: false },
+      },
+    };
+    const s1 = gameReducer(s0, { type: "PICK_LOCAL_WAR_ATTACK", slot: "A" });
+    expect(s1.resources.funding).toBe(5);
     expect(s1.slots.A?.resolved).toBe(true);
   });
 
@@ -367,6 +417,14 @@ describe("gameReducer", () => {
     expect(s1.resources.funding).toBe(4);
     expect(s1.resources.legitimacy).toBe(3);
     expect(s1.slots.A?.resolved).toBe(true);
+    const last = s1.actionLog[s1.actionLog.length - 1];
+    expect(last).toMatchObject({
+      kind: "eventLocalWarChoice",
+      choice: "appease",
+      fundingPaid: 0,
+      legitimacyDelta: -1,
+      powerDelta: 0,
+    });
   });
 
   it("skips retention phase when hand size is within Legitimacy (auto-keep all)", () => {
@@ -620,8 +678,80 @@ describe("gameReducer", () => {
     expect(after.discard.includes(fiscalBurden)).toBe(false);
   });
 
-  it("chapter 2 inflation stack increases playable card cost", () => {
+  it("playing anti-french containment purges it without adding to discard", () => {
     const base = createInitialState(202_604, "secondMandate");
+    const containment = "afc_manual";
+    const withCard: typeof base = {
+      ...base,
+      cardsById: {
+        ...base.cardsById,
+        [containment]: { instanceId: containment, templateId: "antiFrenchContainment" as const },
+      },
+      hand: [containment],
+      deck: base.deck.filter((id) => id !== containment),
+      europeAlertProgress: 4,
+      resources: { ...base.resources, funding: 2 },
+    };
+    const after = gameReducer(withCard, { type: "PLAY_CARD", handIndex: 0 });
+    expect(after.resources.funding).toBe(0);
+    expect(after.hand.includes(containment)).toBe(false);
+    expect(after.discard.includes(containment)).toBe(false);
+  });
+
+  it("anti-french containment cost follows floor(europe alert progress / 2)", () => {
+    const base = createInitialState(202_609, "secondMandate");
+    const containment = "afc_cost";
+    const withCard: typeof base = {
+      ...base,
+      cardsById: {
+        ...base.cardsById,
+        [containment]: { instanceId: containment, templateId: "antiFrenchContainment" as const },
+      },
+      hand: [containment],
+      deck: base.deck.filter((id) => id !== containment),
+      europeAlertProgress: 5,
+      resources: { ...base.resources, funding: 1 },
+    };
+    const blocked = gameReducer(withCard, { type: "PLAY_CARD", handIndex: 0 });
+    expect(blocked).toEqual(withCard);
+
+    const affordable = { ...withCard, resources: { ...withCard.resources, funding: 2 } };
+    const after = gameReducer(affordable, { type: "PLAY_CARD", handIndex: 0 });
+    expect(after.resources.funding).toBe(0);
+    expect(after.hand.includes(containment)).toBe(false);
+    expect(after.discard.includes(containment)).toBe(false);
+  });
+
+  it("anti-french sentiment injects one anti-french containment card at turn end", () => {
+    const base = createInitialState(202_607, "secondMandate");
+    const s0: typeof base = {
+      ...base,
+      phase: "action",
+      hand: [],
+      deck: [],
+      discard: [],
+      playerStatuses: [
+        {
+          instanceId: "st_af",
+          templateId: "antiFrenchSentiment",
+          kind: "drawAttemptsDelta",
+          delta: 0,
+          turnsRemaining: 99,
+        },
+      ],
+      slots: { ...EMPTY_EVENT_SLOTS },
+      resources: { ...base.resources, legitimacy: 3, funding: 0 },
+    };
+    const after = gameReducer(s0, { type: "END_YEAR" });
+    const injected = Object.values(after.cardsById).filter((c) => c.templateId === "antiFrenchContainment");
+    expect(injected).toHaveLength(1);
+    const injectedId = injected[0]!.instanceId;
+    const inCirculation = after.deck.includes(injectedId) || after.hand.includes(injectedId) || after.discard.includes(injectedId);
+    expect(inCirculation).toBe(true);
+  });
+
+  it("chapter 2 inflation stack increases playable card cost", () => {
+    const base = createInitialState(202_608, "secondMandate");
     const ceremonyId = "ceremony_inflation";
     const withCard: typeof base = {
       ...base,
@@ -769,6 +899,62 @@ describe("gameReducer", () => {
     expect(after.europeAlertProgress).toBe(0);
     expect(after.resources.funding).toBe(0);
     expect(after.resources.legitimacy).toBe(base.resources.legitimacy + 1);
+  });
+
+  it("ryswick peace costs +4 and also clears nine years war when that war is still active", () => {
+    const base = createInitialState(202_904_1, "secondMandate");
+    const s0: typeof base = {
+      ...base,
+      europeAlert: true,
+      europeAlertProgress: 5,
+      resources: { ...base.resources, funding: 11 },
+      slots: {
+        ...base.slots,
+        A: { instanceId: "e_ryswick", templateId: "ryswickPeace" as const, resolved: false },
+        B: { instanceId: "e_nine", templateId: "nineYearsWar" as const, resolved: false },
+      },
+    };
+    const after = gameReducer(s0, { type: "SOLVE_EVENT", slot: "A" });
+    expect(after.resources.funding).toBe(0);
+    expect(after.slots.B).toBeNull();
+  });
+
+  it("keeps nine years war as plain continued (no continued-turn counter) after a non-decisive campaign", () => {
+    const base = createInitialState(202_904_2, "secondMandate");
+    const rngState = (() => {
+      for (let st = 1; st < 200_000; st++) {
+        const s0: typeof base = {
+          ...base,
+          rng: { state: st },
+          europeAlert: true,
+          europeAlertProgress: 5,
+          resources: { ...base.resources, funding: 6 },
+          slots: {
+            ...base.slots,
+            A: { instanceId: "e_nine", templateId: "nineYearsWar" as const, resolved: false },
+          },
+        };
+        const after = gameReducer(s0, { type: "SOLVE_EVENT", slot: "A" });
+        if (after.slots.A?.templateId === "nineYearsWar" && after.slots.A.remainingTurns === undefined) {
+          return st;
+        }
+      }
+      throw new Error("failed to find deterministic rng state for non-decisive nine years war campaign");
+    })();
+    const s0: typeof base = {
+      ...base,
+      rng: { state: rngState },
+      europeAlert: true,
+      europeAlertProgress: 5,
+      resources: { ...base.resources, funding: 6 },
+      slots: {
+        ...base.slots,
+        A: { instanceId: "e_nine", templateId: "nineYearsWar" as const, resolved: false },
+      },
+    };
+    const after = gameReducer(s0, { type: "SOLVE_EVENT", slot: "A" });
+    expect(after.slots.A?.templateId).toBe("nineYearsWar");
+    expect(after.slots.A?.remainingTurns).toBeUndefined();
   });
 
   it("chapter 2 cannot win from 1696 onward while europe alert is still active", () => {

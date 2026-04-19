@@ -22,7 +22,7 @@ export const messagesFrSecondMandate: Record<keyof typeof messagesEnSecondMandat
     "Les offensives françaises antérieures ont durci la vigilance de coalition à long terme en Europe.",
   "status.antiFrenchSentiment.name": "Sentiment anti-français",
   "status.antiFrenchSentiment.history":
-    "Quand la puissance française paraît excessive, les voisins coordonnent plus vite leur vigilance et les crises se multiplient.",
+    "Après les années 1670, l'expansion militaire et fiscale de la France convainc les cours rivales que les trêves ponctuelles ne suffisent plus. Un consensus anti-français plus large se forme : coordination diplomatique, pression commerciale et préparation militaire se combinent pour contenir l'influence bourbonienne. Côté mécanique : quand le total Pouvoir+Trésor devient trop élevé, les solutions payées liées à l'Alerte Europe coûtent davantage, et ce statut ajoute aussi une pression récurrente via le deck jusqu'au retour à un niveau de puissance plus bas.",
   "event.nymwegenSettlement.name": "Traités de Nimègue",
   "event.nymwegenSettlement.desc":
     "Crise obligatoire de longue durée : payez (progression d'Alerte Europe + 3) Financement pour sécuriser l'accord (Pouvoir -2, Trésor -1, Légitimité -1). Cela ne met pas fin à Alerte Europe ; si ignoré, perdez 1 Pouvoir chaque année.",
@@ -34,10 +34,10 @@ export const messagesFrSecondMandate: Record<keyof typeof messagesEnSecondMandat
     "Les puissances européennes se coordonnent contre la France. Tag Continu 3 : chaque tour, payez floor(progression Alerte Europe/2) Financement pour maintenir les négociations ; si impayé, perdez 1 Pouvoir et 1 Trésor. Vous pouvez toujours résoudre plus tôt en payant 2 Financement (ou via Intervention).",
   "event.nineYearsWar.name": "Guerre de Neuf Ans",
   "event.nineYearsWar.desc":
-    "La pression d'une grande guerre s'installe. Payez 2 Financement (ou Intervention) pour stabiliser le front ; les années non résolues érodent le Trésor et le flux de cartes.",
+    "À partir de 1688, la Guerre de Neuf Ans prolonge la logique de la Ligue d'Augsbourg en un affrontement continental sur l'équilibre européen. Les combats s'étendent du Rhin et des Pays-Bas aux routes maritimes et aux espaces coloniaux, faisant de l'endurance financière la véritable mesure de la puissance d'État. En jeu, c'est une crise Continue : vous pouvez lancer des campagnes chaque tour en payant floor(progression Alerte Europe/2)+1 Financement (ou via Intervention), tandis que l'inaction expose à des pertes de légitimité et à une pression budgétaire durable.",
   "event.ryswickPeace.name": "Paix de Ryswick",
   "event.ryswickPeace.desc":
-    "Les termes de paix peuvent restaurer l'ordre. Investissez (progression Alerte Europe + 2) Financement pour gagner Légitimité +1 et lever l'Alerte Europe. Cet événement est Continu : s'il n'est pas résolu, Légitimité -1 chaque tour.",
+    "Les termes de paix peuvent restaurer l'ordre. Investissez (progression Alerte Europe + 2) Financement pour gagner Légitimité +1 et lever l'Alerte Europe. Si la Guerre de Neuf Ans n'est pas encore terminée, ce coût gagne +4 supplémentaire. Résoudre cet événement met aussi fin définitivement à la Guerre de Neuf Ans. Cet événement est Continu : s'il n'est pas résolu, Légitimité -1 chaque tour.",
   "event.versaillesExpenditure.name": "Dépenses de Versailles",
   "event.versaillesExpenditure.desc":
     "Les dépenses de cour montent encore. Payez 3 Financement ou utilisez Intervention ; si non résolu, perdez 2 Trésor.",
@@ -61,7 +61,7 @@ export const messagesFrSecondMandate: Record<keyof typeof messagesEnSecondMandat
     "Les risques sur routes maritimes et convois réduisent la marge de gouvernance. Payez 1 Financement ou subissez un modificateur de pioche -2 l'an prochain.",
   "event.localWar.name": "Guerre locale",
   "event.localWar.desc":
-    "L'Alerte Europe alimente un conflit régional. Intervention ne peut pas résoudre cet événement. Choisissez Attaquer (payez un coût en Financement égal à la progression d'Alerte Europe ; trois issues équiprobables : Victoire locale [Pouvoir +1, Légitimité +1], Enlisement [aucun effet], Pertes limitées [Pouvoir -1]) ou Apaiser (sans coût, mais Légitimité -1). C'est un événement Continu : s'il reste non résolu, le revenu de Financement du prochain tour est réduit de 2 (minimum 0).",
+    "L'Alerte Europe alimente un conflit régional. Intervention ne peut pas résoudre cet événement. Choisissez Attaquer (payez floor(progression Alerte Europe/2) Financement, puis appliquez le surcoût Sentiment anti-français si actif ; trois issues équiprobables : Victoire locale [Pouvoir +1, Légitimité +1], Enlisement [aucun effet], Pertes limitées [Pouvoir -1]) ou Apaiser (sans coût, mais Légitimité -1). C'est un événement Continu : s'il reste non résolu, le revenu de Financement du prochain tour est réduit de 2 (minimum 0).",
   "event.courtScandal.name": "Scandale de cour",
   "event.courtScandal.desc":
     "Les intrigues de faction affaiblissent l'autorité. Payez 3 Financement pour contenir ; sinon, Légitimité -1 et toutes les cartes taguées Royal sont bloquées au prochain tour.",

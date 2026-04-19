@@ -33,6 +33,7 @@ export const messagesEnCore = {
   "ui.historical": "Historical",
   "ui.continued": "Continued",
   "ui.continuedTurns": "Continued {n}",
+  "ui.remainingTurns": "Remaining {n}",
   "ui.deck": "Deck",
   "ui.discard": "Discard",
   "ui.quickFrame.cost": "Cost",
@@ -54,6 +55,10 @@ export const messagesEnCore = {
   "menu.title": "Main menu",
   "menu.resumeSave": "Resume saved run",
   "menu.levelLabel": "Level",
+  "menu.levelBrief.firstMandate":
+    "1661–1675, early Sun King era: centralize royal power and expand while pressure is still manageable.",
+  "menu.levelBrief.secondMandate":
+    "1676–1700, late Sun King era: hold hegemony as religious conflict and coalition pressure intensify.",
   "menu.seedLabel": "Run seed (optional)",
   "menu.seedPlaceholder": "Random if empty",
   "menu.seedHint": "Leave blank for a random seed. The same seed reproduces deck order and early events.",
@@ -122,6 +127,11 @@ export const messagesEnCore = {
     "Debt obligations and emergency liabilities now crowd the books and constrain every cycle.",
   "card.fiscalBurden.desc":
     "When drawn, lose 1 Funding. You may pay 2 Funding to purge it (removed, not discarded).",
+  "card.antiFrenchContainment.name": "Anti-French Containment",
+  "card.antiFrenchContainment.background":
+    "European courts coordinate tariffs, credit pressure, and maritime checks to narrow French options.",
+  "card.antiFrenchContainment.desc":
+    "When drawn, 50/50: lose 1 Power or lose 1 Legitimacy. You may pay floor(Europe Alert progress/2) Funding to purge it (removed, not discarded).",
   "card.reform.name": "Administrative Reform",
   "card.reform.background":
     "Registers and reporting lines are redrawn; the bureaucracy tightens under royal direction.",
@@ -207,6 +217,26 @@ export const messagesEnCore = {
   "log.crackdownCancelled": "[Turn {turn}] Intervention cancelled; refunded {refund} {funding}.",
   "log.eventScriptedAttack.generic":
     "[Turn {turn}] {event} — military option. Paid {paid} {funding}.{treasury}",
+  "log.eventLocalWarChoice.attack":
+    "[Turn {turn}] {event} — chose attack, paid {paid} {funding}; impact: {outcome}.",
+  "log.eventLocalWarChoice.appease":
+    "[Turn {turn}] {event} — chose appeasement; impact: {legitimacy} -1.",
+  "log.eventLocalWarChoice.attackOutcome.success": "{power} +1 and {legitimacy} +1",
+  "log.eventLocalWarChoice.attackOutcome.stalemate": "limited gains; no immediate resource swing",
+  "log.eventLocalWarChoice.attackOutcome.setback": "{power} -1",
+  "log.eventNineYearsWarCampaign.title":
+    "[Turn {turn}] {event}: used {method} (paid {paid} {funding}) — {outcome}.",
+  "log.eventNineYearsWarCampaign.method.funding": "Funding",
+  "log.eventNineYearsWarCampaign.method.intervention": "Intervention",
+  "log.eventNineYearsWarCampaign.outcome.decisiveVictory": "decisive victory; war pressure ends",
+  "log.eventNineYearsWarCampaign.outcome.stalemate": "stalemate; front remains unchanged",
+  "log.eventNineYearsWarCampaign.outcome.limitedGains": "limited gains; {legitimacy} +1",
+  "log.eventNineYearsWarCampaign.history":
+    "Historical note: the Nine Years' War (1688–1697) stretched from the Rhineland and Low Countries to maritime theaters, exhausting state finances across Europe.",
+  "log.eventNineYearsWarFiscalBurden.title":
+    "[Turn {turn}] {event} remains active at year-end: add 1 {card} to your deck.",
+  "log.eventNineYearsWarFiscalBurden.history":
+    "Historical note: prolonged mobilization forced extraordinary loans, arrears, and tax pressure that kept compounding fiscal strain.",
   "log.drawCards.title": "[Turn {turn}] Drew {count} card(s): {cards}.",
   "log.drawOverflowDiscarded.title":
     "[Turn {turn}] Hand reached cap; discarded {count} undrawn card(s): {cards}.",
@@ -219,9 +249,9 @@ export const messagesEnCore = {
   "log.info.chapter2EuropeAlertOff":
     "[Turn {turn}] Chapter 2 starts with Europe Alert inactive: no Europe-Alert supplemental event checks.",
   "log.info.antiFrenchSentimentActivated":
-    "[Turn {turn}] Anti-French Sentiment rises: French fiscal-military concentration alarms neighboring courts, and coalition vigilance hardens. Extra procedural pressure events now increase with Power+Treasury.",
+    "[Turn {turn}] Anti-French Sentiment rises: when Power+Treasury exceeds 20, every full +5 overflow raises all funding-based event solve costs by +1.",
   "log.info.antiFrenchSentimentEnded":
-    "[Turn {turn}] Anti-French Sentiment recedes: with French power and treasury no longer at peak concentration, immediate balancing pressure eases and extra procedural pressure events stop.",
+    "[Turn {turn}] Anti-French Sentiment recedes: once Power+Treasury returns to 20 or below, the extra event-cost pressure is removed.",
   "log.info.cardTag.royal":
     "[Turn {turn}] Tag note “Royal”: this is a royal-command tool, and some crises can only be cleared through royal intervention routes.",
   "log.info.cardTag.temp":
@@ -237,6 +267,12 @@ export const messagesEnCore = {
     "[Turn {turn}] Royal Levy reached 0/3 and was removed from circulation; emergency extraction channels dry up (Treasury -1).",
   "log.info.cardUse.depleted.diplomaticIntervention":
     "[Turn {turn}] Diplomatic Intervention reached 0/3 and was removed from circulation.",
+  "log.info.cardDraw.fiscalBurdenTriggered":
+    "[Turn {turn}] On draw, Fiscal Burden triggered: Funding -1.",
+  "log.info.cardDraw.antiFrenchContainmentPowerLoss":
+    "[Turn {turn}] On draw, Anti-French Containment triggered: Power -1.",
+  "log.info.cardDraw.antiFrenchContainmentLegitimacyLoss":
+    "[Turn {turn}] On draw, Anti-French Containment triggered: Legitimacy -1.",
   "log.info.eventTag.harmful":
     "[Turn {turn}] Tag note “Harmful”: if unresolved at year end, this event applies penalties.",
   "log.info.eventTag.opportunity":

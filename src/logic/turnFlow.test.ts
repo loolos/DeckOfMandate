@@ -1,12 +1,12 @@
 import { describe, expect, it } from "vitest";
 import { createInitialState } from "../app/initialState";
+import { buildLevel2StateFromDraft, createStandaloneLevel2Draft } from "../app/level2Transition";
 import type { CardInstance } from "../types/card";
 import { EMPTY_EVENT_SLOTS } from "../types/event";
 import type { GameState } from "../types/game";
 import {
   beginYear,
   desiredProceduralEventCountWhenAllEmpty,
-  extraProceduralEventsFromAntiFrenchSentiment,
   maybeAddEuropeAlertSupplementalEvent,
   maybeAddReligiousTensionEvent,
   retentionCapacity,
@@ -67,33 +67,6 @@ describe("desiredProceduralEventCountWhenAllEmpty", () => {
     expect(desiredProceduralEventCountWhenAllEmpty(state, 0.4)).toBe(3);
     expect(desiredProceduralEventCountWhenAllEmpty(state, 0.89)).toBe(3);
     expect(desiredProceduralEventCountWhenAllEmpty(state, 0.9)).toBe(4);
-  });
-});
-
-describe("extraProceduralEventsFromAntiFrenchSentiment", () => {
-  it("adds one extra event when treasury+power is 21-24", () => {
-    const s0 = createInitialState(700_001, "secondMandate");
-    const state: GameState = {
-      ...s0,
-      resources: { ...s0.resources, treasuryStat: 12, power: 10 },
-    };
-    expect(extraProceduralEventsFromAntiFrenchSentiment(state)).toBe(1);
-  });
-
-  it("adds scaling extras every +5 above 20", () => {
-    const s0 = createInitialState(700_002, "secondMandate");
-    expect(
-      extraProceduralEventsFromAntiFrenchSentiment({
-        ...s0,
-        resources: { ...s0.resources, treasuryStat: 15, power: 10 },
-      }),
-    ).toBe(2);
-    expect(
-      extraProceduralEventsFromAntiFrenchSentiment({
-        ...s0,
-        resources: { ...s0.resources, treasuryStat: 18, power: 12 },
-      }),
-    ).toBe(3);
   });
 });
 
@@ -280,6 +253,43 @@ describe("beginYear + playerStatuses", () => {
     const s1 = beginYear(s0);
     expect(s1.hand).toContain("b0");
     expect(s1.resources.funding).toBe(0);
+    expect(
+      s1.actionLog.some((entry) => entry.kind === "info" && entry.infoKey === "cardDraw.fiscalBurdenTriggered"),
+    ).toBe(true);
+  });
+
+  it("when anti-french containment is drawn, it randomly reduces power or legitimacy by 1", () => {
+    const started = createInitialState(55_779, "secondMandate");
+    const cardsById: Record<string, CardInstance> = {
+      a0: { instanceId: "a0", templateId: "antiFrenchContainment" },
+    };
+    const s0: GameState = {
+      ...started,
+      outcome: "playing",
+      phase: "action",
+      rng: { state: 1 },
+      resources: { treasuryStat: 1, funding: 0, power: 2, legitimacy: 2 },
+      nextTurnDrawModifier: 0,
+      hand: [],
+      deck: ["a0"],
+      discard: [],
+      cardsById,
+      playerStatuses: [],
+      slots: { ...EMPTY_EVENT_SLOTS },
+    };
+    const s1 = beginYear(s0);
+    expect(s1.hand).toContain("a0");
+    const powerDropped = s1.resources.power === 1 && s1.resources.legitimacy === 2;
+    const legitimacyDropped = s1.resources.power === 2 && s1.resources.legitimacy === 1;
+    expect(powerDropped || legitimacyDropped).toBe(true);
+    expect(
+      s1.actionLog.some(
+        (entry) =>
+          entry.kind === "info" &&
+          (entry.infoKey === "cardDraw.antiFrenchContainmentPowerLoss" ||
+            entry.infoKey === "cardDraw.antiFrenchContainmentLegitimacyLoss"),
+      ),
+    ).toBe(true);
   });
 
   it("chapter 2 reshuffle applies inflation stack to inflation-tag cards", () => {
@@ -408,6 +418,21 @@ describe("beginYear + playerStatuses", () => {
     expect(s0.turn).toBe(1);
     expect(s0.slots.A?.templateId).toBe("tradeOpportunity");
     expect(s0.slots.B?.templateId).toBe("administrativeDelay");
+  });
+
+  it("forces standalone second-mandate year-1 opening events to versailles expenditure + tax resistance", () => {
+    const draft = createStandaloneLevel2Draft(424_243);
+    const s0 = buildLevel2StateFromDraft(draft);
+    expect(s0.turn).toBe(1);
+    expect(s0.slots.A?.templateId).toBe("versaillesExpenditure");
+    expect(s0.slots.B?.templateId).toBe("taxResistance");
+  });
+
+  it("ensures standalone second-mandate year-1 opening includes at least one non-fixed procedural event", () => {
+    const draft = createStandaloneLevel2Draft(424_244);
+    const s0 = buildLevel2StateFromDraft(draft);
+    expect(s0.turn).toBe(1);
+    expect(s0.slots.C).not.toBeNull();
   });
 
   it("does not place duplicate procedural templates within the same all-empty refill", () => {
@@ -616,7 +641,7 @@ describe("beginYear + playerStatuses", () => {
     ).toBe(true);
   });
 
-  it("adds anti-french sentiment status and at least one extra procedural event when treasury+power > 20", () => {
+  it("adds anti-french sentiment status when treasury+power > 20", () => {
     const started = createInitialState(902_013, "secondMandate");
     const s0: GameState = {
       ...started,
@@ -626,8 +651,6 @@ describe("beginYear + playerStatuses", () => {
     };
     const s1 = beginYear(s0);
     expect(s1.playerStatuses.some((st) => st.templateId === "antiFrenchSentiment")).toBe(true);
-    const nonNullCount = Object.values(s1.slots).filter(Boolean).length;
-    expect(nonNullCount).toBeGreaterThanOrEqual(2);
     expect(
       s1.actionLog.some((entry) => entry.kind === "info" && entry.infoKey === "antiFrenchSentimentActivated"),
     ).toBe(true);

@@ -174,6 +174,77 @@ function renderEntry(e: ActionLogEntry, t: (key: MessageKey, vars?: Record<strin
         </div>
       );
     }
+    case "eventLocalWarChoice": {
+      if (e.choice === "appease") {
+        return (
+          <div className={styles.actionLogHead}>
+            {t("log.eventLocalWarChoice.appease", {
+              turn: e.turn,
+              event: eventLabelWithIcon(e.templateId, t(eventTitleKey(e.templateId))),
+              legitimacy: resourceLabelWithIcon("legitimacy", t("resource.legitimacy")),
+            })}
+          </div>
+        );
+      }
+      const outcomeKey =
+        e.powerDelta > 0 && e.legitimacyDelta > 0
+          ? "log.eventLocalWarChoice.attackOutcome.success"
+          : e.powerDelta < 0
+            ? "log.eventLocalWarChoice.attackOutcome.setback"
+            : "log.eventLocalWarChoice.attackOutcome.stalemate";
+      return (
+        <div className={styles.actionLogHead}>
+          {t("log.eventLocalWarChoice.attack", {
+            turn: e.turn,
+            event: eventLabelWithIcon(e.templateId, t(eventTitleKey(e.templateId))),
+            paid: e.fundingPaid,
+            funding: fundingLabel,
+            outcome: t(outcomeKey as MessageKey, {
+              power: resourceLabelWithIcon("power", t("resource.power")),
+              legitimacy: resourceLabelWithIcon("legitimacy", t("resource.legitimacy")),
+            }),
+          })}
+        </div>
+      );
+    }
+    case "eventNineYearsWarCampaign": {
+      const outcomeKey =
+        e.outcome === "decisiveVictory"
+          ? "log.eventNineYearsWarCampaign.outcome.decisiveVictory"
+          : e.outcome === "limitedGains"
+            ? "log.eventNineYearsWarCampaign.outcome.limitedGains"
+            : "log.eventNineYearsWarCampaign.outcome.stalemate";
+      return (
+        <div>
+          <div className={styles.actionLogHead}>
+            {t("log.eventNineYearsWarCampaign.title", {
+              turn: e.turn,
+              event: eventLabelWithIcon("nineYearsWar", t(eventTitleKey("nineYearsWar"))),
+              paid: e.fundingPaid,
+              funding: fundingLabel,
+              method: e.viaIntervention ? t("log.eventNineYearsWarCampaign.method.intervention") : t("log.eventNineYearsWarCampaign.method.funding"),
+              outcome: t(outcomeKey as MessageKey, {
+                legitimacy: resourceLabelWithIcon("legitimacy", t("resource.legitimacy")),
+              }),
+            })}
+          </div>
+          <div className={styles.actionLogSubMuted}>{t("log.eventNineYearsWarCampaign.history")}</div>
+        </div>
+      );
+    }
+    case "eventNineYearsWarFiscalBurden":
+      return (
+        <div>
+          <div className={styles.actionLogHead}>
+            {t("log.eventNineYearsWarFiscalBurden.title", {
+              turn: e.turn,
+              event: eventLabelWithIcon("nineYearsWar", t(eventTitleKey("nineYearsWar"))),
+              card: cardLabelWithIcon("fiscalBurden", t(cardTitleKey("fiscalBurden"))),
+            })}
+          </div>
+          <div className={styles.actionLogSubMuted}>{t("log.eventNineYearsWarFiscalBurden.history")}</div>
+        </div>
+      );
     case "antiFrenchLeagueDraw":
       return (
         <div>

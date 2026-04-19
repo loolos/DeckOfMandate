@@ -1,6 +1,6 @@
 import { getCardTemplate } from "../data/cards";
 import { getEventSolveFundingAmount, getEventTemplate } from "../data/events";
-import { getLevelDef, type LevelId } from "../data/levels";
+import { getTurnLimitForRun, type LevelId } from "../data/levels";
 import { appendActionLog } from "../logic/actionLog";
 import { applyEffects, enforceLegitimacy } from "../logic/applyEffects";
 import { hasCardTag } from "../logic/cardTags";
@@ -12,6 +12,7 @@ import { resolveEndOfYearPenalties } from "../logic/resolveEvents";
 import { coalitionUntilTurn, findScriptedCalendarConfig } from "../logic/scriptedCalendar";
 import { rngNext } from "../logic/rng";
 import { beginYear, evaluateTimeDefeat, evaluateVictory, retentionCapacity } from "../logic/turnFlow";
+import { antiFrenchSentimentEventSolveCostPenalty } from "../logic/antiFrenchSentiment";
 import type { CardTemplateId } from "../types/card";
 import { EVENT_SLOT_ORDER, type EventTemplateId } from "../types/event";
 import type { SlotId } from "../types/event";
@@ -123,6 +124,37 @@ function markSlotResolved(state: GameState, slot: SlotId): GameState {
   };
 }
 
+function markSlotResolvedWithLeagueProgress(state: GameState, slot: SlotId): GameState {
+  const ev = state.slots[slot];
+  if (!ev) return state;
+  if (ev.templateId !== "leagueOfAugsburg") return markSlotResolved(state, slot);
+  const totalNeeded = getEventTemplate("leagueOfAugsburg").continuedDurationTurns ?? 3;
+  const remainingAfterSolve = Math.max(0, (ev.remainingTurns ?? totalNeeded) - 1);
+  return {
+    ...state,
+    slots: {
+      ...state.slots,
+      [slot]: { ...ev, resolved: true, remainingTurns: remainingAfterSolve },
+    },
+  };
+}
+
+function markSlotResolvedWithNineYearsWarPersistence(
+  state: GameState,
+  slot: SlotId,
+  keepOnBoard: boolean,
+): GameState {
+  const ev = state.slots[slot];
+  if (!ev || ev.templateId !== "nineYearsWar") return state;
+  return {
+    ...state,
+    slots: {
+      ...state.slots,
+      [slot]: { ...ev, resolved: true, remainingTurns: keepOnBoard ? undefined : 0 },
+    },
+  };
+}
+
 function resolveFirstUnresolvedEventByTemplate(
   state: GameState,
   templateId: EventTemplateId,
@@ -136,11 +168,25 @@ function resolveFirstUnresolvedEventByTemplate(
   return state;
 }
 
+function clearEventsByTemplate(state: GameState, templateId: EventTemplateId): GameState {
+  let changed = false;
+  const slots = { ...state.slots };
+  for (const slot of EVENT_SLOT_ORDER) {
+    const ev = slots[slot];
+    if (!ev) continue;
+    if (ev.templateId !== templateId) continue;
+    slots[slot] = null;
+    changed = true;
+  }
+  if (!changed) return state;
+  return { ...state, slots };
+}
+
 function isCrackdownTarget(state: GameState, slot: SlotId): boolean {
   const ev = state.slots[slot];
   if (!ev || ev.resolved) return false;
   const tmpl = getEventTemplate(ev.templateId);
-  return tmpl.harmful;
+  return tmpl.harmful || ev.templateId === "nineYearsWar";
 }
 
 function canFundSolve(state: GameState, slot: SlotId): boolean {
@@ -176,7 +222,7 @@ function canLocalWarAttack(state: GameState, slot: SlotId): boolean {
   if (state.phase !== "action" || state.pendingInteraction?.type === "crackdownPick") return false;
   const ev = state.slots[slot];
   if (!ev || ev.resolved || ev.templateId !== "localWar") return false;
-  return state.resources.funding >= state.europeAlertProgress;
+  return state.resources.funding >= Math.floor(state.europeAlertProgress / 2);
 }
 
 function isCardPlayableUnderStatuses(state: GameState, cardInstanceId: string): boolean {
@@ -221,7 +267,7 @@ function performScriptedAttack(state: GameState, slot: SlotId): GameState {
     };
   }
 
-  const turnLimit = getLevelDef(s.levelId).turnLimit;
+  const turnLimit = getTurnLimitForRun(s.levelId, s.calendarStartYear);
   const untilTurn = coalitionUntilTurn(s.turn, cfg, turnLimit);
   s = {
     ...s,
@@ -252,8 +298,10 @@ function performScriptedAttack(state: GameState, slot: SlotId): GameState {
 function performLocalWarAttack(state: GameState, slot: SlotId): GameState {
   const ev = state.slots[slot];
   if (!ev || ev.resolved || ev.templateId !== "localWar") return state;
-  const cost = state.europeAlertProgress;
+  const cost = Math.floor(state.europeAlertProgress / 2) + antiFrenchSentimentEventSolveCostPenalty(state);
   if (state.resources.funding < cost) return state;
+  let powerDelta = 0;
+  let legitimacyDelta = 0;
   let s: GameState = {
     ...state,
     resources: {
@@ -264,6 +312,8 @@ function performLocalWarAttack(state: GameState, slot: SlotId): GameState {
   const [rng, roll] = rngNext(s.rng);
   s = { ...s, rng };
   if (roll < 1 / 3) {
+    powerDelta = 1;
+    legitimacyDelta = 1;
     s = {
       ...s,
       resources: {
@@ -273,6 +323,7 @@ function performLocalWarAttack(state: GameState, slot: SlotId): GameState {
       },
     };
   } else if (roll >= 2 / 3) {
+    powerDelta = -1;
     s = {
       ...s,
       resources: {
@@ -282,7 +333,16 @@ function performLocalWarAttack(state: GameState, slot: SlotId): GameState {
     };
   }
   s = markSlotResolved(s, slot);
-  return enforceLegitimacy(s);
+  s = enforceLegitimacy(s);
+  return appendActionLog(s, {
+    kind: "eventLocalWarChoice",
+    slot,
+    templateId: "localWar",
+    choice: "attack",
+    fundingPaid: cost,
+    powerDelta,
+    legitimacyDelta,
+  });
 }
 
 function performLocalWarAppease(state: GameState, slot: SlotId): GameState {
@@ -290,7 +350,16 @@ function performLocalWarAppease(state: GameState, slot: SlotId): GameState {
   if (!ev || ev.resolved || ev.templateId !== "localWar") return state;
   let s: GameState = applyEffects(state, [{ kind: "modResource", resource: "legitimacy", delta: -1 }]);
   s = markSlotResolved(s, slot);
-  return enforceLegitimacy(s);
+  s = enforceLegitimacy(s);
+  return appendActionLog(s, {
+    kind: "eventLocalWarChoice",
+    slot,
+    templateId: "localWar",
+    choice: "appease",
+    fundingPaid: 0,
+    powerDelta: 0,
+    legitimacyDelta: -1,
+  });
 }
 
 /** After funding is cleared: keep chosen cards, discard the rest, then EOY penalties, then win / time / next year. */
@@ -304,6 +373,9 @@ function completeYearAfterRetention(state: GameState, keepIds: readonly string[]
     discard: [...state.discard, ...discardIds],
     phase: "action",
   };
+  if (s.playerStatuses.some((st) => st.templateId === "antiFrenchSentiment")) {
+    s = applyEffects(s, [{ kind: "addCardsToDeck", templateId: "antiFrenchContainment", count: 1 }]);
+  }
   s = resolveEndOfYearPenalties(s);
   if (s.outcome !== "playing") return purgeExtraCardsIfLevelEnded(s);
   s = evaluateVictory(s);
@@ -336,6 +408,27 @@ function performFundSolve(state: GameState, slot: SlotId): GameState {
   } else {
     return state;
   }
+  if (ev.templateId === "nineYearsWar") {
+    const [rng, roll] = rngNext(s.rng);
+    s = { ...s, rng };
+    const decisiveVictory = roll < 1 / 9;
+    const limitedGains = roll >= 5 / 9;
+    let legitimacyDelta = 0;
+    if (limitedGains && !decisiveVictory) {
+      legitimacyDelta = 1;
+      s = applyEffects(s, [{ kind: "modResource", resource: "legitimacy", delta: 1 }]);
+    }
+    s = markSlotResolvedWithNineYearsWarPersistence(s, slot, !decisiveVictory);
+    s = enforceLegitimacy(s);
+    return appendActionLog(s, {
+      kind: "eventNineYearsWarCampaign",
+      slot,
+      fundingPaid: fundingAmount ?? 0,
+      viaIntervention: false,
+      outcome: decisiveVictory ? "decisiveVictory" : limitedGains ? "limitedGains" : "stalemate",
+      legitimacyDelta,
+    });
+  }
   let treasuryGain = 0;
   if (tmpl.onFundSolveEffects && tmpl.onFundSolveEffects.length > 0) {
     for (const effect of tmpl.onFundSolveEffects) {
@@ -357,8 +450,9 @@ function performFundSolve(state: GameState, slot: SlotId): GameState {
       europeAlert: false,
       europeAlertProgress: 0,
     };
+    s = clearEventsByTemplate(s, "nineYearsWar");
   }
-  s = markSlotResolved(s, slot);
+  s = markSlotResolvedWithLeagueProgress(s, slot);
   s = enforceLegitimacy(s);
   const fundingPaid =
     tmpl.solve.kind === "funding" || tmpl.solve.kind === "fundingOrCrackdown" ? (fundingAmount ?? 0) : 0;
@@ -448,6 +542,15 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
         );
       }
       if (inst.templateId === "fiscalBurden") {
+        const removed = removeHand(paid, id);
+        return appendActionLog(removed, {
+          kind: "cardPlayed",
+          templateId: inst.templateId,
+          fundingCost: cost,
+          effects: tmpl.effects,
+        });
+      }
+      if (inst.templateId === "antiFrenchContainment") {
         const removed = removeHand(paid, id);
         return appendActionLog(removed, {
           kind: "cardPlayed",
@@ -556,7 +659,37 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       if (!isCrackdownTarget(state, action.slot)) return state;
       const cleared = state.slots[action.slot];
       if (!cleared) return state;
-      let s = markSlotResolved(state, action.slot);
+      if (cleared.templateId === "nineYearsWar") {
+        let s = state;
+        const [rng, roll] = rngNext(s.rng);
+        s = { ...s, rng };
+        const decisiveVictory = roll < 1 / 9;
+        const limitedGains = roll >= 5 / 9;
+        let legitimacyDelta = 0;
+        if (limitedGains && !decisiveVictory) {
+          legitimacyDelta = 1;
+          s = applyEffects(s, [{ kind: "modResource", resource: "legitimacy", delta: 1 }]);
+        }
+        s = markSlotResolvedWithNineYearsWarPersistence(s, action.slot, !decisiveVictory);
+        s = removeHand(s, p.cardInstanceId);
+        const consumed = consumeLimitedUseCard(s, p.cardInstanceId);
+        s = consumed.state;
+        if (!consumed.exhausted) {
+          s = pushDiscard(s, p.cardInstanceId);
+        }
+        s = { ...s, pendingInteraction: null };
+        s = enforceLegitimacy(s);
+        s = appendActionLog(s, {
+          kind: "eventNineYearsWarCampaign",
+          slot: action.slot,
+          fundingPaid: p.fundingPaid,
+          viaIntervention: true,
+          outcome: decisiveVictory ? "decisiveVictory" : limitedGains ? "limitedGains" : "stalemate",
+          legitimacyDelta,
+        });
+        return appendInflationActivationLogIfNeeded(state, s);
+      }
+      let s = markSlotResolvedWithLeagueProgress(state, action.slot);
       s = removeHand(s, p.cardInstanceId);
       const consumed = consumeLimitedUseCard(s, p.cardInstanceId);
       s = consumed.state;

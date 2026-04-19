@@ -1290,9 +1290,9 @@
   }
 
   .actionLogScroll {
-    height: 6rem;
-    min-height: 6rem;
-    max-height: 6rem;
+    height: 11rem;
+    min-height: 11rem;
+    max-height: 11rem;
     font-size: 0.74rem;
     line-height: 1.3;
   }

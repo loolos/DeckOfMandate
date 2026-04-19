@@ -1,6 +1,19 @@
-import type { EventTemplate, EventTemplateId } from "../types/event";
+import { EVENT_SLOT_ORDER, type EventTemplate, type EventTemplateId } from "../types/event";
 import type { GameState } from "../types/game";
+import { antiFrenchSentimentEventSolveCostPenalty } from "../logic/antiFrenchSentiment";
 import { nymwegenSettlementFundingCost } from "../logic/europeAlert";
+
+const EUROPE_ALERT_SUPPLEMENTAL_EVENT_IDS: readonly EventTemplateId[] = [
+  "frontierGarrisons",
+  "tradeDisruption",
+  "embargoCoalition",
+  "mercenaryRaiders",
+  "localWar",
+];
+
+export function isEuropeAlertSupplementalEvent(id: EventTemplateId): boolean {
+  return EUROPE_ALERT_SUPPLEMENTAL_EVENT_IDS.includes(id);
+}
 
 export const eventTemplates: Record<EventTemplateId, EventTemplate> = {
   budgetStrain: {
@@ -126,10 +139,7 @@ export const eventTemplates: Record<EventTemplateId, EventTemplate> = {
     titleKey: "event.nineYearsWar.name",
     descriptionKey: "event.nineYearsWar.desc",
     solve: { kind: "fundingOrCrackdown", amount: 2 },
-    penaltiesIfUnresolved: [
-      { kind: "modResource", resource: "treasuryStat", delta: -2 },
-      { kind: "scheduleNextTurnDrawModifier", delta: -1 },
-    ],
+    penaltiesIfUnresolved: [{ kind: "modResource", resource: "legitimacy", delta: -1 }],
   },
   ryswickPeace: {
     id: "ryswickPeace",
@@ -353,13 +363,19 @@ export function getEventRollWeight(state: GameState, id: EventTemplateId): numbe
 export function getEventSolveFundingAmount(state: GameState, id: EventTemplateId): number | null {
   const tmpl = eventTemplates[id];
   if (tmpl.solve.kind !== "funding" && tmpl.solve.kind !== "fundingOrCrackdown") return null;
+  const antiFrenchPenalty = isEuropeAlertSupplementalEvent(id) ? antiFrenchSentimentEventSolveCostPenalty(state) : 0;
   if (id === "nymwegenSettlement") {
-    return nymwegenSettlementFundingCost(state.europeAlertProgress);
+    return nymwegenSettlementFundingCost(state.europeAlertProgress) + antiFrenchPenalty;
   }
   if (id === "ryswickPeace") {
-    return state.europeAlertProgress + 2;
+    const nineYearsWarActive = EVENT_SLOT_ORDER.some((slot) => state.slots[slot]?.templateId === "nineYearsWar");
+    const warSurcharge = nineYearsWarActive ? 4 : 0;
+    return state.europeAlertProgress + 2 + antiFrenchPenalty + warSurcharge;
   }
-  return tmpl.solve.amount;
+  if (id === "nineYearsWar") {
+    return Math.floor(state.europeAlertProgress / 2) + 1;
+  }
+  return tmpl.solve.amount + antiFrenchPenalty;
 }
 
 /** Continued crises persist or transform; all other harmful crises clear after their EOY strike. */

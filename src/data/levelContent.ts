@@ -163,12 +163,6 @@ export const levelContentByLevelId = {
         overflowSlot: "D",
       },
       {
-        templateId: "grainReliefCrisis",
-        presenceStartYear: 1686,
-        presenceEndYear: 1694,
-        overflowSlot: "F",
-      },
-      {
         templateId: "leagueOfAugsburg",
         presenceStartYear: 1686,
         presenceEndYear: 1690,

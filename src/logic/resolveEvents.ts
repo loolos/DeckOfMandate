@@ -13,7 +13,25 @@ export function resolveEndOfYearPenalties(state: GameState): GameState {
   const schedulers = getLevelContent(s.levelId).eoyEscalationSchedulers;
   for (const slot of SLOTS) {
     const ev = s.slots[slot];
-    if (!ev || ev.resolved) continue;
+    if (!ev) continue;
+    if (ev.templateId === "nineYearsWar") {
+      if (!ev.resolved) {
+        const effects = [{ kind: "modResource", resource: "legitimacy", delta: -1 }] as const;
+        s = appendActionLog(s, {
+          kind: "eventYearEndPenalty",
+          slot,
+          templateId: ev.templateId,
+          effects,
+        });
+        s = applyEffects(s, effects);
+        s = enforceLegitimacy(s);
+        if (s.outcome !== "playing") return s;
+      }
+      s = applyEffects(s, [{ kind: "addCardsToDeck", templateId: "fiscalBurden", count: 1 }]);
+      s = appendActionLog(s, { kind: "eventNineYearsWarFiscalBurden", slot });
+      continue;
+    }
+    if (ev.resolved) continue;
     const tmpl = getEventTemplate(ev.templateId);
     if (schedulers.includes(ev.templateId)) {
       if (ev.templateId === "powerVacuum") {
@@ -45,18 +63,6 @@ export function resolveEndOfYearPenalties(state: GameState): GameState {
           ]);
         }
       }
-      const remainingTurns = (ev.remainingTurns ?? tmpl.continuedDurationTurns ?? 0) - 1;
-      if (remainingTurns <= 0) {
-        s = { ...s, slots: { ...s.slots, [slot]: null } };
-        continue;
-      }
-      s = {
-        ...s,
-        slots: {
-          ...s.slots,
-          [slot]: { ...ev, remainingTurns },
-        },
-      };
       continue;
     }
     if (!isContinuedCrisis(tmpl)) {

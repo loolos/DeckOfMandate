@@ -34,6 +34,7 @@ export const messagesZhCore = {
   "ui.historical": "史实",
   "ui.continued": "持续",
   "ui.continuedTurns": "持续{n}",
+  "ui.remainingTurns": "剩余{n}",
   "ui.deck": "牌库",
   "ui.discard": "弃牌堆",
   "ui.quickFrame.cost": "费用",
@@ -54,6 +55,8 @@ export const messagesZhCore = {
   "menu.title": "主菜单",
   "menu.resumeSave": "读取本地存档",
   "menu.levelLabel": "关卡",
+  "menu.levelBrief.firstMandate": "1661–1675（太阳王前期）：巩固王权、稳步扩张，在可控压力下建立统治基础。",
+  "menu.levelBrief.secondMandate": "1676–1700（太阳王后期）：在宗教与对外高压并行下，维持霸权并避免国家失序。",
   "menu.seedLabel": "随机种子（可选）",
   "menu.seedPlaceholder": "留空则随机",
   "menu.seedHint": "留空会随机生成种子；相同种子可复现开局牌库与事件。",
@@ -116,6 +119,11 @@ export const messagesZhCore = {
   "card.fiscalBurden.name": "财政负担",
   "card.fiscalBurden.background": "债务与紧急开支挤入账册，持续拖慢每个回合的财政回旋。",
   "card.fiscalBurden.desc": "抽到时经费 -1。可支付 2 经费打出并消除（不会进入弃牌堆）。",
+  "card.antiFrenchContainment.name": "反法遏制",
+  "card.antiFrenchContainment.background":
+    "欧洲宫廷以关税、信用与海上执法协同掣肘法国，任何对抗都要先吞下政治代价。",
+  "card.antiFrenchContainment.desc":
+    "抽到时以 50%/50% 概率使权力 -1 或合法性 -1。可支付 floor(欧洲警觉进度/2) 经费打出并消除（不会进入弃牌堆）。",
   "card.reform.name": "行政整编",
   "card.reform.background": "册籍与汇报线重划，官僚体系在王权下收得更紧。",
   "card.reform.desc": "权力 +1（影响下回合抽牌阶段）。立即抽 1（手牌上限 12）。",
@@ -188,6 +196,26 @@ export const messagesZhCore = {
   "log.crackdownCancelled": "[第 {turn} 年] 已取消干预；退回 {refund} {funding}。",
   "log.eventScriptedAttack.generic":
     "[第 {turn} 年] {event} — 采取军事进攻。已支付 {paid} {funding}。{treasury}",
+  "log.eventLocalWarChoice.attack":
+    "[第 {turn} 年] {event} — 选择进攻，支付 {paid} {funding}；后果：{outcome}。",
+  "log.eventLocalWarChoice.appease":
+    "[第 {turn} 年] {event} — 选择绥靖；后果：{legitimacy} -1。",
+  "log.eventLocalWarChoice.attackOutcome.success": "{power} +1，{legitimacy} +1",
+  "log.eventLocalWarChoice.attackOutcome.stalemate": "战果有限，本年无额外资源变化",
+  "log.eventLocalWarChoice.attackOutcome.setback": "{power} -1",
+  "log.eventNineYearsWarCampaign.title":
+    "[第 {turn} 年] {event}：以「{method}」推进战事（支付 {paid} {funding}）——{outcome}。",
+  "log.eventNineYearsWarCampaign.method.funding": "经费",
+  "log.eventNineYearsWarCampaign.method.intervention": "干预",
+  "log.eventNineYearsWarCampaign.outcome.decisiveVictory": "决定性胜利，战争压力终结",
+  "log.eventNineYearsWarCampaign.outcome.stalemate": "僵持不下，前线局势未改",
+  "log.eventNineYearsWarCampaign.outcome.limitedGains": "取得局部战果，{legitimacy} +1",
+  "log.eventNineYearsWarCampaign.history":
+    "史实背景：九年战争（1688–1697）从莱茵兰、低地到海上战场全面延伸，长期动员几乎压垮各国财政。",
+  "log.eventNineYearsWarFiscalBurden.title":
+    "[第 {turn} 年] {event} 在年末仍未结束：向抽牌堆加入 1 张 {card}。",
+  "log.eventNineYearsWarFiscalBurden.history":
+    "史实背景：长期战争需要反复举债、拖欠与加税，财政负担会持续累积并反噬治理能力。",
   "log.drawCards.title": "[第 {turn} 年] 本回合抓取 {count} 张牌：{cards}。",
   "log.drawOverflowDiscarded.title":
     "[第 {turn} 年] 手牌已达上限；将剩余未摸的 {count} 张牌直接置入弃牌堆：{cards}。",
@@ -200,9 +228,9 @@ export const messagesZhCore = {
   "log.info.chapter2EuropeAlertOff":
     "[第 {turn} 年] 第二关以「欧洲警觉：关闭」开局：不会进行欧洲警觉额外事件判定。",
   "log.info.antiFrenchSentimentActivated":
-    "[第 {turn} 年]「反法情绪」升温：法国财政与权力过度集中，引发周边国家共同警觉与制衡协同。此后将按“权力+财政”阈值额外触发通用压力事件。",
+    "[第 {turn} 年]「反法情绪」升温：当“权力+财政”大于 20 时，「欧洲警觉」相关且需经费解决的事件费用会先 +1，之后每再多满 5 点再 +1。",
   "log.info.antiFrenchSentimentEnded":
-    "[第 {turn} 年]「反法情绪」缓和：法国财政与权力强度回落，列强的即时联动警戒减弱；由该状态带来的额外通用压力事件停止触发。",
+    "[第 {turn} 年]「反法情绪」缓和：当“权力+财政”回到 20 或以下时，由该状态带来的额外事件费用加成被取消。",
   "log.info.cardTag.royal": "[第 {turn} 年] 标签说明「王室」：该牌属于王室工具，部分事件只能靠此类手段处理。",
   "log.info.cardTag.temp": "[第 {turn} 年] 标签说明「临时」：该牌通常为一次性应急工具，打出后不会进入弃牌堆循环。",
   "log.info.cardTag.extra":
@@ -216,6 +244,12 @@ export const messagesZhCore = {
     "[第 {turn} 年]「王室征收」次数耗尽（0/3），已从牌库循环中移除；非常规筹资渠道枯竭，财政 -1。",
   "log.info.cardUse.depleted.diplomaticIntervention":
     "[第 {turn} 年]「外交干预」次数耗尽（0/3），已从牌库循环中移除（无额外惩罚）。",
+  "log.info.cardDraw.fiscalBurdenTriggered":
+    "[第 {turn} 年] 抓到「财政负担」并触发：剩余经费 -1。",
+  "log.info.cardDraw.antiFrenchContainmentPowerLoss":
+    "[第 {turn} 年] 抓到「反法遏制」并触发：权力 -1。",
+  "log.info.cardDraw.antiFrenchContainmentLegitimacyLoss":
+    "[第 {turn} 年] 抓到「反法遏制」并触发：合法性 -1。",
   "log.info.eventTag.harmful": "[第 {turn} 年] 标签说明「有害」：若年末仍未解决，会触发惩罚。",
   "log.info.eventTag.opportunity": "[第 {turn} 年] 标签说明「机遇」：属于可投资机会，不处理通常不会受到惩罚。",
   "log.info.eventTag.historical":

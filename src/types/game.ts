@@ -18,6 +18,9 @@ export type LogInfoKey =
   | "cardUse.depleted.crackdownPenalty"
   | "cardUse.depleted.fundingPenalty"
   | "cardUse.depleted.diplomaticIntervention"
+  | "cardDraw.fiscalBurdenTriggered"
+  | "cardDraw.antiFrenchContainmentPowerLoss"
+  | "cardDraw.antiFrenchContainmentLegitimacyLoss"
   | "eventTag.harmful"
   | "eventTag.opportunity"
   | "eventTag.historical"
@@ -89,6 +92,33 @@ export type ActionLogEntry =
       powerDelta: number;
       /** Rounded percent; treasury roll used `extraTreasuryProbability` from config. */
       extraTreasuryProbabilityPct: number;
+    }
+  | {
+      kind: "eventLocalWarChoice";
+      id: string;
+      turn: number;
+      slot: SlotId;
+      templateId: "localWar";
+      choice: "attack" | "appease";
+      fundingPaid: number;
+      powerDelta: number;
+      legitimacyDelta: number;
+    }
+  | {
+      kind: "eventNineYearsWarCampaign";
+      id: string;
+      turn: number;
+      slot: SlotId;
+      fundingPaid: number;
+      viaIntervention: boolean;
+      outcome: "decisiveVictory" | "stalemate" | "limitedGains";
+      legitimacyDelta: number;
+    }
+  | {
+      kind: "eventNineYearsWarFiscalBurden";
+      id: string;
+      turn: number;
+      slot: SlotId;
     }
   | {
       kind: "antiFrenchLeagueDraw";

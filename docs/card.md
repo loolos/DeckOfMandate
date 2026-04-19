@@ -14,6 +14,7 @@
 | `diplomaticCongress` | 3 | *(none)* | power +1, also generates `diplomaticIntervention` to hand |
 | `diplomaticIntervention` | 0 | `extra` | harmful-event target selection (like crackdown channel) |
 | `fiscalBurden` | 2 | *(none)* | on draw: funding -1; can be played to purge itself |
+| `antiFrenchContainment` | dynamic | *(none)* | on draw: 50/50 lose 1 power or legitimacy; play cost = floor(Europe Alert progress / 2); can be played to purge itself |
 | `suppressHuguenots` | 3 | `temp` | consumes huguenot containment stacks; may clear self-family cards when finished |
 
 ## 2. Tags semantics
@@ -77,7 +78,7 @@ Activation:
 ## 6. Special runtime card interactions
 
 - `fiscalBurden`: draw-time funding drain is immediate on draw, not on play.
+- `antiFrenchContainment`: draw-time penalty is immediate on draw (50/50: power -1 or legitimacy -1), not on play; play cost is `floor(europeAlertProgress / 2)`.
 - `diplomaticCongress`: besides template effects, reducer adds one `diplomaticIntervention` into hand.
 - `grainRelief`: besides status adds, reducer resolves one unresolved `risingGrainPrices` if present.
 - `suppressHuguenots`: decrements `huguenotContainment` status counter and cleans related temporary cards when counter finishes.
-

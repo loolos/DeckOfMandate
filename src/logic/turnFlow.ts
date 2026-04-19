@@ -1,6 +1,6 @@
 import { getEventRollWeight, getEventTemplate } from "../data/events";
 import { getLevelContent } from "../data/levelContent";
-import { getLevelDef } from "../data/levels";
+import { getLevelDef, getTurnLimitForRun } from "../data/levels";
 import type { CardTemplateId } from "../types/card";
 import { appendActionLog } from "./actionLog";
 import {
@@ -21,6 +21,7 @@ import {
   europeAlertProgressShiftProbability,
   rollEuropeAlertSupplementalEventCount,
 } from "./europeAlert";
+import { antiFrenchSentimentActive } from "./antiFrenchSentiment";
 import { applyScriptedCalendarPhase, rollAntiFrenchLeagueDrawAdjustment } from "./scriptedCalendar";
 import { rngNext, shuffle } from "./rng";
 import { applyEffects } from "./applyEffects";
@@ -34,10 +35,13 @@ const EUROPE_ALERT_SUPPLEMENTAL_POOL = [
 const RELIGIOUS_TENSION_TRIGGER_PROBABILITY = 0.3;
 const PROCEDURAL_SEQUENCE_LOW_WATERMARK = 3;
 const SECOND_MANDATE_EARLIEST_VICTORY_YEAR = 1696;
-const ANTI_FRENCH_SENTIMENT_TRIGGER_SUM = 20;
 const FIRST_MANDATE_OPENING_EVENTS: readonly EventInstance["templateId"][] = [
   "tradeOpportunity",
   "administrativeDelay",
+];
+const SECOND_MANDATE_STANDALONE_OPENING_EVENTS: readonly EventInstance["templateId"][] = [
+  "versaillesExpenditure",
+  "taxResistance",
 ];
 type EventCountOption = {
   count: number;
@@ -102,8 +106,30 @@ function buildProceduralSequenceBlock(state: GameState): [GameState["rng"], Even
 }
 
 function buildOpeningSequencePrefix(state: GameState): EventInstance["templateId"][] {
-  if (state.levelId !== "firstMandate" || state.turn !== 1) return [];
-  return [...FIRST_MANDATE_OPENING_EVENTS];
+  if (state.turn !== 1) return [];
+  if (state.levelId === "firstMandate") return [...FIRST_MANDATE_OPENING_EVENTS];
+  if (state.levelId !== "secondMandate") return [];
+  if (!isSecondMandateStandaloneStart(state)) return [];
+  return [...SECOND_MANDATE_STANDALONE_OPENING_EVENTS];
+}
+
+function isSecondMandateStandaloneStart(state: GameState): boolean {
+  return Object.keys(state.cardsById).some((id) => id.startsWith("standalone_old_"));
+}
+
+function shouldForceSecondMandateStandaloneOpening(state: GameState): boolean {
+  if (state.levelId !== "secondMandate" || state.turn !== 1) return false;
+  return isSecondMandateStandaloneStart(state);
+}
+
+function forceSecondMandateStandaloneOpening(state: GameState): GameState {
+  if (!shouldForceSecondMandateStandaloneOpening(state)) return state;
+  const [first, second] = SECOND_MANDATE_STANDALONE_OPENING_EVENTS;
+  if (!first || !second) return state;
+  let st = state;
+  st = placeEventTemplateOnSlot(st, "A", first);
+  st = placeEventTemplateOnSlot(st, "B", second);
+  return st;
 }
 
 function ensureProceduralSequence(state: GameState, minRemaining: number): GameState {
@@ -187,7 +213,16 @@ function clearResolvedSlots(state: GameState): GameState {
   const slots = { ...state.slots };
   for (const slot of EVENT_SLOT_ORDER) {
     const ev = slots[slot];
-    if (ev?.resolved) slots[slot] = null;
+    if (!ev?.resolved) continue;
+    if (ev.templateId === "leagueOfAugsburg" && (ev.remainingTurns ?? 0) > 0) {
+      slots[slot] = { ...ev, resolved: false };
+      continue;
+    }
+    if (ev.templateId === "nineYearsWar" && ev.remainingTurns !== 0) {
+      slots[slot] = { ...ev, resolved: false };
+      continue;
+    }
+    slots[slot] = null;
   }
   return { ...state, slots };
 }
@@ -198,10 +233,6 @@ function allSlotsEmpty(st: GameState): boolean {
 
 function sumCoreResources(state: GameState): number {
   return state.resources.treasuryStat + state.resources.power + state.resources.legitimacy;
-}
-
-function sumPowerAndTreasury(state: GameState): number {
-  return state.resources.power + state.resources.treasuryStat;
 }
 
 function inRange(sum: number, rule: EventCountRule): boolean {
@@ -224,25 +255,21 @@ export function desiredProceduralEventCountWhenAllEmpty(state: GameState, roll: 
   if (state.levelId === "firstMandate" && state.turn === 1) return 2;
   const resourceSum = sumCoreResources(state);
   const matchedRule = EMPTY_BOARD_EVENT_COUNT_RULES.find((rule) => inRange(resourceSum, rule));
-  if (!matchedRule) return 1;
-  return pickWeightedEventCount(matchedRule.options, roll);
-}
-
-export function extraProceduralEventsFromAntiFrenchSentiment(state: GameState): number {
-  if (state.levelId !== "secondMandate") return 0;
-  const total = sumPowerAndTreasury(state);
-  if (total <= ANTI_FRENCH_SENTIMENT_TRIGGER_SUM) return 0;
-  return 1 + Math.floor((total - ANTI_FRENCH_SENTIMENT_TRIGGER_SUM) / 5);
+  const baseCount = matchedRule ? pickWeightedEventCount(matchedRule.options, roll) : 1;
+  if (state.levelId === "secondMandate" && state.turn === 1 && isSecondMandateStandaloneStart(state)) {
+    return Math.max(3, baseCount);
+  }
+  return baseCount;
 }
 
 function syncAntiFrenchSentimentStatus(state: GameState): GameState {
-  const extraEvents = extraProceduralEventsFromAntiFrenchSentiment(state);
+  const active = antiFrenchSentimentActive(state);
   const hasStatus = state.playerStatuses.some((s) => s.templateId === "antiFrenchSentiment");
-  if (extraEvents > 0 && !hasStatus) {
+  if (active && !hasStatus) {
     const s = applyEffects(state, [{ kind: "addPlayerStatus", templateId: "antiFrenchSentiment", turns: 99 }]);
     return appendActionLog(s, { kind: "info", infoKey: "antiFrenchSentimentActivated" });
   }
-  if (extraEvents === 0 && hasStatus) {
+  if (!active && hasStatus) {
     const s = {
       ...state,
       playerStatuses: state.playerStatuses.filter((s) => s.templateId !== "antiFrenchSentiment"),
@@ -250,22 +277,6 @@ function syncAntiFrenchSentimentStatus(state: GameState): GameState {
     return appendActionLog(s, { kind: "info", infoKey: "antiFrenchSentimentEnded" });
   }
   return state;
-}
-
-function maybeAddAntiFrenchSentimentProceduralEvents(state: GameState): GameState {
-  let s = syncAntiFrenchSentimentStatus(state);
-  const extra = extraProceduralEventsFromAntiFrenchSentiment(s);
-  if (extra <= 0) return s;
-  for (let i = 0; i < extra; i++) {
-    const target = EVENT_SLOT_ORDER.find((slot) => !s.slots[slot]);
-    if (!target) break;
-    const [afterDraw, picked] = drawFromProceduralSequence(s, 1);
-    s = afterDraw;
-    const templateId = picked[0];
-    if (!templateId) break;
-    s = placeEventTemplateOnSlot(s, target, templateId);
-  }
-  return s;
 }
 
 function fillEmptySlots(state: GameState): GameState {
@@ -298,8 +309,9 @@ function runEventPhase(state: GameState): GameState {
   let s = applyScheduledTransforms(state);
   s = clearResolvedSlots(s);
   s = applyScriptedCalendarPhase(s);
+  s = forceSecondMandateStandaloneOpening(s);
   s = fillEmptySlots(s);
-  s = maybeAddAntiFrenchSentimentProceduralEvents(s);
+  s = syncAntiFrenchSentimentStatus(s);
   s = maybeAddEuropeAlertSupplementalEvent(s);
   s = maybeAddReligiousTensionEvent(s);
   return s;
@@ -506,7 +518,7 @@ export function evaluateVictory(state: GameState): GameState {
 
 export function evaluateTimeDefeat(state: GameState): GameState {
   if (state.outcome !== "playing") return state;
-  if (state.turn === getLevelDef(state.levelId).turnLimit) {
+  if (state.turn === getTurnLimitForRun(state.levelId, state.calendarStartYear)) {
     return { ...state, phase: "gameOver", outcome: "defeatTime" };
   }
   return state;

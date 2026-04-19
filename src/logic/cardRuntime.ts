@@ -1,7 +1,8 @@
 import type { CardTemplateId } from "../types/card";
 import type { GameState } from "../types/game";
+import { appendActionLog } from "./actionLog";
 import { createInitialCardUseState } from "./cardUsage";
-import { rngNextInt } from "./rng";
+import { rngNext, rngNextInt } from "./rng";
 
 function makeGeneratedCardId(state: GameState, templateId: CardTemplateId, offset: number): string {
   let seq = Object.keys(state.cardsById).length + offset;
@@ -73,12 +74,38 @@ export function addCardsToHand(state: GameState, templateId: CardTemplateId, cou
 export function applyOnDrawCardEffects(state: GameState, drawnCardId: string): GameState {
   const inst = state.cardsById[drawnCardId];
   if (!inst) return state;
-  if (inst.templateId !== "fiscalBurden") return state;
-  return {
-    ...state,
-    resources: {
-      ...state.resources,
-      funding: Math.max(0, state.resources.funding - 1),
-    },
-  };
+  if (inst.templateId === "fiscalBurden") {
+    const nextState = {
+      ...state,
+      resources: {
+        ...state.resources,
+        funding: Math.max(0, state.resources.funding - 1),
+      },
+    };
+    return appendActionLog(nextState, { kind: "info", infoKey: "cardDraw.fiscalBurdenTriggered" });
+  }
+  if (inst.templateId === "antiFrenchContainment") {
+    const [rng, u] = rngNext(state.rng);
+    if (u < 0.5) {
+      const nextState = {
+        ...state,
+        rng,
+        resources: {
+          ...state.resources,
+          power: Math.max(0, state.resources.power - 1),
+        },
+      };
+      return appendActionLog(nextState, { kind: "info", infoKey: "cardDraw.antiFrenchContainmentPowerLoss" });
+    }
+    const nextState = {
+      ...state,
+      rng,
+      resources: {
+        ...state.resources,
+        legitimacy: Math.max(0, state.resources.legitimacy - 1),
+      },
+    };
+    return appendActionLog(nextState, { kind: "info", infoKey: "cardDraw.antiFrenchContainmentLegitimacyLoss" });
+  }
+  return state;
 }

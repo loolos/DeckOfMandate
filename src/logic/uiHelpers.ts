@@ -1,4 +1,5 @@
 import { getEventSolveFundingAmount, getEventTemplate } from "../data/events";
+import { antiFrenchSentimentEventSolveCostPenalty } from "./antiFrenchSentiment";
 import { findScriptedCalendarConfig } from "./scriptedCalendar";
 import type { SlotId } from "../types/event";
 import type { GameState } from "../types/game";
@@ -60,7 +61,7 @@ export function fundSolveLabelAmount(state: GameState, slot: SlotId): number | n
     return cfg?.attack?.fundingCost ?? null;
   }
   if (tmpl.solve.kind === "localWarChoice") {
-    return state.europeAlertProgress;
+    return Math.floor(state.europeAlertProgress / 2) + antiFrenchSentimentEventSolveCostPenalty(state);
   }
   return null;
 }

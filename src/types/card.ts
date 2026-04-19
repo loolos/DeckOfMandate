@@ -6,6 +6,7 @@ export type CardTemplateId =
   | "crackdown"
   | "diplomaticIntervention"
   | "fiscalBurden"
+  | "antiFrenchContainment"
   | "reform"
   | "ceremony"
   | "development"

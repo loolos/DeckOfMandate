@@ -131,7 +131,11 @@ export function EventPanel({
                         logEventTag("eventTag.continued");
                       }}
                     >
-                      {ev.remainingTurns != null ? t("ui.continuedTurns", { n: ev.remainingTurns }) : t("ui.continued")}
+                      {ev.remainingTurns != null
+                        ? tmpl.id === "leagueOfAugsburg"
+                          ? t("ui.remainingTurns", { n: ev.remainingTurns })
+                          : t("ui.continuedTurns", { n: ev.remainingTurns })
+                        : t("ui.continued")}
                     </button>
                   ) : null}
                   {ev.resolved ? (
@@ -205,11 +209,11 @@ export function EventPanel({
                       <button
                         type="button"
                         className={styles.btn}
-                        disabled={Boolean(state.pendingInteraction) || state.resources.funding < state.europeAlertProgress}
+                        disabled={Boolean(state.pendingInteraction) || amount == null || state.resources.funding < amount}
                         onClick={() => dispatch({ type: "PICK_LOCAL_WAR_ATTACK", slot })}
                       >
                         {t("ui.localWarAttack", {
-                          cost: `${getResourceIcon("funding")} ${state.europeAlertProgress}`,
+                          cost: `${getResourceIcon("funding")} ${amount ?? state.europeAlertProgress}`,
                         })}
                       </button>
                       <button
