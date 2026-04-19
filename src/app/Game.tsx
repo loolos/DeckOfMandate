@@ -120,6 +120,7 @@ export function Game() {
   const menuSeedTrimmed = menuSeedText.trim();
   const menuSeedParsed =
     menuSeedTrimmed === "" ? ("empty" as const) : Number.isFinite(Number(menuSeedTrimmed)) ? Number(menuSeedTrimmed) : ("invalid" as const);
+  const selectedMenuLevelDef = useMemo(() => getLevelDef(menuLevelId), [menuLevelId]);
 
   useEffect(() => {
     if (startMenuOpen) return;
@@ -575,6 +576,7 @@ export function Game() {
               );
             })}
           </select>
+          <p className={styles.startMenuMuted}>{t(`menu.levelBrief.${selectedMenuLevelDef.id}` as MessageKey)}</p>
           <label className={styles.startMenuLabel} htmlFor="start-menu-seed">
             {t("menu.seedLabel")}
           </label>

@@ -55,6 +55,10 @@ export const messagesEnCore = {
   "menu.title": "Main menu",
   "menu.resumeSave": "Resume saved run",
   "menu.levelLabel": "Level",
+  "menu.levelBrief.firstMandate":
+    "1661–1675, early Sun King era: centralize royal power and expand while pressure is still manageable.",
+  "menu.levelBrief.secondMandate":
+    "1676–1700, late Sun King era: hold hegemony as religious conflict and coalition pressure intensify.",
   "menu.seedLabel": "Run seed (optional)",
   "menu.seedPlaceholder": "Random if empty",
   "menu.seedHint": "Leave blank for a random seed. The same seed reproduces deck order and early events.",
