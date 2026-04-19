@@ -34,13 +34,13 @@ describe("getEventRollWeight", () => {
   it("adds anti-french sentiment solve-cost penalty to europe-alert supplemental pool events only", () => {
     const st = createInitialState(12_347, "secondMandate");
     const atTwenty = { ...st, resources: { ...st.resources, treasuryStat: 10, power: 10 } };
-    const overNoStep = { ...st, resources: { ...st.resources, treasuryStat: 11, power: 10 } };
-    const overPlusOne = { ...st, resources: { ...st.resources, treasuryStat: 13, power: 12 } };
-    const overPlusTwo = { ...st, resources: { ...st.resources, treasuryStat: 16, power: 14 } };
+    const overImmediatePlusOne = { ...st, resources: { ...st.resources, treasuryStat: 11, power: 10 } };
+    const overStillPlusOne = { ...st, resources: { ...st.resources, treasuryStat: 13, power: 12 } };
+    const overPlusTwo = { ...st, resources: { ...st.resources, treasuryStat: 16, power: 10 } };
 
     expect(getEventSolveFundingAmount(atTwenty, "frontierGarrisons")).toBe(3);
-    expect(getEventSolveFundingAmount(overNoStep, "frontierGarrisons")).toBe(3);
-    expect(getEventSolveFundingAmount(overPlusOne, "frontierGarrisons")).toBe(4);
+    expect(getEventSolveFundingAmount(overImmediatePlusOne, "frontierGarrisons")).toBe(4);
+    expect(getEventSolveFundingAmount(overStillPlusOne, "frontierGarrisons")).toBe(4);
     expect(getEventSolveFundingAmount(overPlusTwo, "frontierGarrisons")).toBe(5);
 
     expect(getEventSolveFundingAmount(overPlusTwo, "budgetStrain")).toBe(2);

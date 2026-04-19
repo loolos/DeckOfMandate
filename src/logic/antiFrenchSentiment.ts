@@ -12,10 +12,10 @@ export function antiFrenchSentimentActive(state: GameState): boolean {
 }
 
 /**
- * While active, every full +5 above (power+treasury)=20 increases all funding-based event solve costs by +1.
+ * While active, costs increase immediately at >20 (+1), then gain another +1 for each additional full +5.
  */
 export function antiFrenchSentimentEventSolveCostPenalty(state: GameState): number {
   if (!antiFrenchSentimentActive(state)) return 0;
   const overflow = sumPowerAndTreasury(state) - ANTI_FRENCH_SENTIMENT_TRIGGER_SUM;
-  return Math.floor(overflow / ANTI_FRENCH_SENTIMENT_COST_STEP);
+  return Math.ceil(overflow / ANTI_FRENCH_SENTIMENT_COST_STEP);
 }
