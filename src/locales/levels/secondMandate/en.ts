@@ -34,7 +34,7 @@ export const messagesEnSecondMandate = {
     "The system enters overt confrontation and dual-crisis pressure becomes routine.",
   "status.antiFrenchSentiment.name": "Anti-French Sentiment",
   "status.antiFrenchSentiment.history":
-    "After the 1670s coalition turn, stronger French capacity triggered tighter foreign coordination. Mechanically: when Power+Treasury exceeds 20, every full +5 overflow raises all funding-based event solve costs by +1; while this status exists, each turn end also injects 1 Anti-French Containment card into your deck (on draw: 50/50 lose 1 Power or 1 Legitimacy; play cost is floor(Europe Alert progress/2); on play: purged, not discarded). The status is removed once Power+Treasury returns to 20 or below.",
+    "After the 1670s, France's military and fiscal expansion convinced rival courts that temporary truces were no longer enough. A broader anti-French consensus emerged, with states increasingly coordinating diplomacy, trade pressure, and military readiness to contain Bourbon influence. Mechanically: once Power+Treasury is high enough, Europe-Alert-linked funding solutions become more expensive, and this status also adds recurring containment pressure through deck disruption until that combined strength falls back down.",
   "event.nymwegenSettlement.name": "Treaties of Nijmegen",
   "event.nymwegenSettlement.desc":
     "A mandatory long-running crisis: pay (Europe Alert progress + 3) Funding to secure the settlement (Power -2, Treasury -1, Legitimacy -1). This does not remove Europe Alert; if ignored, lose 1 Power each year.",
@@ -46,7 +46,7 @@ export const messagesEnSecondMandate = {
     "European powers coordinate against France. Tagged Remaining 3: it must be resolved 3 times total before it is fully removed. On any turn it is not resolved, you must pay floor(Europe Alert progress/2) Funding to keep talks alive; if unpaid, lose 1 Power and 1 Treasury. Each time you pay 2 Funding (or use Intervention), that counts as one resolve: this turn avoids the unresolved penalty, but the event remains next turn until Remaining reaches 0.",
   "event.nineYearsWar.name": "The Nine Years' War",
   "event.nineYearsWar.desc":
-    "Tagged Continued. Each turn you may spend floor(Europe Alert progress/2) Funding (minimum 1), or use Intervention, to launch a campaign: 1/9 decisive victory (event ends permanently), 4/9 stalemate (no effect), 4/9 limited gains (Legitimacy +1). If you do not act this turn, you suffer a local setback (Legitimacy -1) and the event remains. Also, if this event is still present at year-end, add 1 Fiscal Burden card to your deck.",
+    "From 1688, the Nine Years' War grew out of the League of Augsburg system into a continent-wide struggle over the European balance of power. Fighting stretched from the Rhineland and the Low Countries to maritime routes and colonial fronts, turning fiscal endurance into the core test of state capacity. In game terms, this is a Continued crisis: you can campaign each turn at a Europe-Alert-scaled cost, while delay risks legitimacy setbacks and ongoing fiscal drag.",
   "event.ryswickPeace.name": "Peace of Ryswick",
   "event.ryswickPeace.desc":
     "Peace terms can restore order. Invest (Europe Alert progress + 2) Funding to gain Legitimacy +1 and clear Europe Alert. If the Nine Years' War is still active, this solve cost gains an additional +4. Resolving this event also ends the Nine Years' War completely. This event is Continued: if unresolved, Legitimacy -1 each turn.",

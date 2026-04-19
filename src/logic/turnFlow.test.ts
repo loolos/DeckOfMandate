@@ -428,6 +428,13 @@ describe("beginYear + playerStatuses", () => {
     expect(s0.slots.B?.templateId).toBe("taxResistance");
   });
 
+  it("ensures standalone second-mandate year-1 opening includes at least one non-fixed procedural event", () => {
+    const draft = createStandaloneLevel2Draft(424_244);
+    const s0 = buildLevel2StateFromDraft(draft);
+    expect(s0.turn).toBe(1);
+    expect(s0.slots.C).not.toBeNull();
+  });
+
   it("does not place duplicate procedural templates within the same all-empty refill", () => {
     const started = createInitialState(9_090, "secondMandate");
     const pickState = (() => {

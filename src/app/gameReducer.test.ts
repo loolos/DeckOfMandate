@@ -919,6 +919,44 @@ describe("gameReducer", () => {
     expect(after.slots.B).toBeNull();
   });
 
+  it("keeps nine years war as plain continued (no continued-turn counter) after a non-decisive campaign", () => {
+    const base = createInitialState(202_904_2, "secondMandate");
+    const rngState = (() => {
+      for (let st = 1; st < 200_000; st++) {
+        const s0: typeof base = {
+          ...base,
+          rng: { state: st },
+          europeAlert: true,
+          europeAlertProgress: 5,
+          resources: { ...base.resources, funding: 6 },
+          slots: {
+            ...base.slots,
+            A: { instanceId: "e_nine", templateId: "nineYearsWar" as const, resolved: false },
+          },
+        };
+        const after = gameReducer(s0, { type: "SOLVE_EVENT", slot: "A" });
+        if (after.slots.A?.templateId === "nineYearsWar" && after.slots.A.remainingTurns === undefined) {
+          return st;
+        }
+      }
+      throw new Error("failed to find deterministic rng state for non-decisive nine years war campaign");
+    })();
+    const s0: typeof base = {
+      ...base,
+      rng: { state: rngState },
+      europeAlert: true,
+      europeAlertProgress: 5,
+      resources: { ...base.resources, funding: 6 },
+      slots: {
+        ...base.slots,
+        A: { instanceId: "e_nine", templateId: "nineYearsWar" as const, resolved: false },
+      },
+    };
+    const after = gameReducer(s0, { type: "SOLVE_EVENT", slot: "A" });
+    expect(after.slots.A?.templateId).toBe("nineYearsWar");
+    expect(after.slots.A?.remainingTurns).toBeUndefined();
+  });
+
   it("chapter 2 cannot win from 1696 onward while europe alert is still active", () => {
     const base = createInitialState(202_905, "secondMandate");
     const s0: typeof base = {
