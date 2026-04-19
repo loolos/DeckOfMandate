@@ -150,7 +150,7 @@ function markSlotResolvedWithNineYearsWarPersistence(
     ...state,
     slots: {
       ...state.slots,
-      [slot]: { ...ev, resolved: true, remainingTurns: keepOnBoard ? 1 : 0 },
+      [slot]: { ...ev, resolved: true, remainingTurns: keepOnBoard ? undefined : 0 },
     },
   };
 }

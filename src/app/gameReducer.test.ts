@@ -698,7 +698,7 @@ describe("gameReducer", () => {
     expect(after.discard.includes(containment)).toBe(false);
   });
 
-  it("anti-french containment cost follows floor(europe alert progress / 2)", () => {
+  it("anti-french containment cost follows floor(europe alert progress / 2), with a minimum cost of 1", () => {
     const base = createInitialState(202_609, "secondMandate");
     const containment = "afc_cost";
     const withCard: typeof base = {
@@ -720,6 +720,13 @@ describe("gameReducer", () => {
     expect(after.resources.funding).toBe(0);
     expect(after.hand.includes(containment)).toBe(false);
     expect(after.discard.includes(containment)).toBe(false);
+
+    const alertCleared = { ...withCard, europeAlert: false, europeAlertProgress: 0 };
+    const blockedAtZero = gameReducer({ ...alertCleared, resources: { ...alertCleared.resources, funding: 0 } }, { type: "PLAY_CARD", handIndex: 0 });
+    expect(blockedAtZero).toEqual({ ...alertCleared, resources: { ...alertCleared.resources, funding: 0 } });
+    const paidAtOne = gameReducer({ ...alertCleared, resources: { ...alertCleared.resources, funding: 1 } }, { type: "PLAY_CARD", handIndex: 0 });
+    expect(paidAtOne.hand.includes(containment)).toBe(false);
+    expect(paidAtOne.discard.includes(containment)).toBe(false);
   });
 
   it("anti-french sentiment injects one anti-french containment card at turn end", () => {
@@ -917,6 +924,44 @@ describe("gameReducer", () => {
     const after = gameReducer(s0, { type: "SOLVE_EVENT", slot: "A" });
     expect(after.resources.funding).toBe(0);
     expect(after.slots.B).toBeNull();
+  });
+
+  it("keeps nine years war as plain continued (no continued-turn counter) after a non-decisive campaign", () => {
+    const base = createInitialState(202_904_2, "secondMandate");
+    const rngState = (() => {
+      for (let st = 1; st < 200_000; st++) {
+        const s0: typeof base = {
+          ...base,
+          rng: { state: st },
+          europeAlert: true,
+          europeAlertProgress: 5,
+          resources: { ...base.resources, funding: 6 },
+          slots: {
+            ...base.slots,
+            A: { instanceId: "e_nine", templateId: "nineYearsWar" as const, resolved: false },
+          },
+        };
+        const after = gameReducer(s0, { type: "SOLVE_EVENT", slot: "A" });
+        if (after.slots.A?.templateId === "nineYearsWar" && after.slots.A.remainingTurns === undefined) {
+          return st;
+        }
+      }
+      throw new Error("failed to find deterministic rng state for non-decisive nine years war campaign");
+    })();
+    const s0: typeof base = {
+      ...base,
+      rng: { state: rngState },
+      europeAlert: true,
+      europeAlertProgress: 5,
+      resources: { ...base.resources, funding: 6 },
+      slots: {
+        ...base.slots,
+        A: { instanceId: "e_nine", templateId: "nineYearsWar" as const, resolved: false },
+      },
+    };
+    const after = gameReducer(s0, { type: "SOLVE_EVENT", slot: "A" });
+    expect(after.slots.A?.templateId).toBe("nineYearsWar");
+    expect(after.slots.A?.remainingTurns).toBeUndefined();
   });
 
   it("chapter 2 cannot win from 1696 onward while europe alert is still active", () => {

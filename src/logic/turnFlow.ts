@@ -109,14 +109,17 @@ function buildOpeningSequencePrefix(state: GameState): EventInstance["templateId
   if (state.turn !== 1) return [];
   if (state.levelId === "firstMandate") return [...FIRST_MANDATE_OPENING_EVENTS];
   if (state.levelId !== "secondMandate") return [];
-  const isStandaloneLevel2Start = Object.keys(state.cardsById).some((id) => id.startsWith("standalone_old_"));
-  if (!isStandaloneLevel2Start) return [];
+  if (!isSecondMandateStandaloneStart(state)) return [];
   return [...SECOND_MANDATE_STANDALONE_OPENING_EVENTS];
+}
+
+function isSecondMandateStandaloneStart(state: GameState): boolean {
+  return Object.keys(state.cardsById).some((id) => id.startsWith("standalone_old_"));
 }
 
 function shouldForceSecondMandateStandaloneOpening(state: GameState): boolean {
   if (state.levelId !== "secondMandate" || state.turn !== 1) return false;
-  return Object.keys(state.cardsById).some((id) => id.startsWith("standalone_old_"));
+  return isSecondMandateStandaloneStart(state);
 }
 
 function forceSecondMandateStandaloneOpening(state: GameState): GameState {
@@ -215,7 +218,7 @@ function clearResolvedSlots(state: GameState): GameState {
       slots[slot] = { ...ev, resolved: false };
       continue;
     }
-    if (ev.templateId === "nineYearsWar" && (ev.remainingTurns ?? 0) > 0) {
+    if (ev.templateId === "nineYearsWar" && ev.remainingTurns !== 0) {
       slots[slot] = { ...ev, resolved: false };
       continue;
     }
@@ -252,8 +255,11 @@ export function desiredProceduralEventCountWhenAllEmpty(state: GameState, roll: 
   if (state.levelId === "firstMandate" && state.turn === 1) return 2;
   const resourceSum = sumCoreResources(state);
   const matchedRule = EMPTY_BOARD_EVENT_COUNT_RULES.find((rule) => inRange(resourceSum, rule));
-  if (!matchedRule) return 1;
-  return pickWeightedEventCount(matchedRule.options, roll);
+  const baseCount = matchedRule ? pickWeightedEventCount(matchedRule.options, roll) : 1;
+  if (state.levelId === "secondMandate" && state.turn === 1 && isSecondMandateStandaloneStart(state)) {
+    return Math.max(3, baseCount);
+  }
+  return baseCount;
 }
 
 function syncAntiFrenchSentimentStatus(state: GameState): GameState {
