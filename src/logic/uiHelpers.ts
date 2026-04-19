@@ -1,6 +1,8 @@
 import { getEventSolveFundingAmount, getEventTemplate } from "../data/events";
 import { antiFrenchSentimentEventSolveCostPenalty } from "./antiFrenchSentiment";
 import { findScriptedCalendarConfig } from "./scriptedCalendar";
+import { getPlayableCardCost } from "./cardCost";
+import { hasCardTag } from "./cardTags";
 import type { SlotId } from "../types/event";
 import type { GameState } from "../types/game";
 
@@ -64,4 +66,49 @@ export function fundSolveLabelAmount(state: GameState, slot: SlotId): number | n
     return Math.floor(state.europeAlertProgress / 2) + antiFrenchSentimentEventSolveCostPenalty(state);
   }
   return null;
+}
+
+function isCardPlayableUnderStatuses(state: GameState, cardInstanceId: string): boolean {
+  for (const st of state.playerStatuses) {
+    if (st.kind !== "blockCardTag" || !st.blockedTag) continue;
+    if (hasCardTag(state, cardInstanceId, st.blockedTag)) return false;
+  }
+  return true;
+}
+
+function hasPlayableCrackdownCard(state: GameState): boolean {
+  if (state.phase !== "action" || state.outcome !== "playing" || state.pendingInteraction) return false;
+  for (const cardInstanceId of state.hand) {
+    const inst = state.cardsById[cardInstanceId];
+    if (!inst) continue;
+    if (inst.templateId !== "crackdown" && inst.templateId !== "diplomaticIntervention") continue;
+    if (!isCardPlayableUnderStatuses(state, cardInstanceId)) continue;
+    if (state.resources.funding < getPlayableCardCost(state, cardInstanceId)) continue;
+    return true;
+  }
+  return false;
+}
+
+function hasFurtherFeasibleEventAction(state: GameState, slot: SlotId): boolean {
+  if (state.phase !== "action" || state.outcome !== "playing") return false;
+  const ev = state.slots[slot];
+  if (!ev || ev.resolved) return false;
+  if (state.pendingInteraction?.type === "crackdownPick") {
+    return slotAllowsCrackdownTarget(state, slot);
+  }
+  const tmpl = getEventTemplate(ev.templateId);
+  if (tmpl.solve.kind === "nantesPolicyChoice" || tmpl.solve.kind === "localWarChoice") return true;
+  if (slotAllowsFundSolve(state, slot) || slotAllowsScriptedAttack(state, slot)) return true;
+  if (!slotAllowsCrackdownTarget(state, slot)) return false;
+  return hasPlayableCrackdownCard(state);
+}
+
+/**
+ * True when this turn's event is already handled or currently has no feasible next action.
+ */
+export function slotIsHandledOrNoFurtherAction(state: GameState, slot: SlotId): boolean {
+  const ev = state.slots[slot];
+  if (!ev) return false;
+  if (ev.resolved) return true;
+  return !hasFurtherFeasibleEventAction(state, slot);
 }
