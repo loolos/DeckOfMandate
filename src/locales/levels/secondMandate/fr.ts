@@ -20,6 +20,21 @@ export const messagesFrSecondMandate: Record<keyof typeof messagesEnSecondMandat
     "Alerte Europe suit désormais une progression (1-10) : départ à 3 ; progression 1-5, chance d'événement supplémentaire = progression×20% ; progression 6-10, au moins 1 événement garanti et chance de 2e événement = (progression-5)×20%.",
   "status.europeAlert.history":
     "Les offensives françaises antérieures ont durci la vigilance de coalition à long terme en Europe.",
+  "status.europeAlert.stage.eased.name": "Accalmie (1-2)",
+  "status.europeAlert.stage.eased.desc":
+    "La coordination rivale existe, mais la pression reste surtout diplomatique.",
+  "status.europeAlert.stage.alert.name": "Alerte (3-4)",
+  "status.europeAlert.stage.alert.desc":
+    "Surveillance et signaux de fermeté s'intensifient autour des engagements français.",
+  "status.europeAlert.stage.containment.name": "Endiguement (5-6)",
+  "status.europeAlert.stage.containment.desc":
+    "Les voisins passent à des mesures de balancing concrètes pour limiter la marge française.",
+  "status.europeAlert.stage.hostile.name": "Hostile (7-8)",
+  "status.europeAlert.stage.hostile.desc":
+    "La pression économique et militaire glisse de la dissuasion vers l'obstruction active.",
+  "status.europeAlert.stage.conflict.name": "Conflit (9-10)",
+  "status.europeAlert.stage.conflict.desc":
+    "Le système bascule en confrontation ouverte et les crises jumelées deviennent fréquentes.",
   "status.antiFrenchSentiment.name": "Sentiment anti-français",
   "status.antiFrenchSentiment.emotionLabel": "Émotion {x}",
   "status.antiFrenchSentiment.detail":
@@ -34,7 +49,7 @@ export const messagesFrSecondMandate: Record<keyof typeof messagesEnSecondMandat
     "En 1598, Henri IV publia l'édit de Nantes pour mettre fin aux guerres de Religion : le catholicisme demeurait la foi d'État, tandis que les protestants français (huguenots) recevaient des droits de culte limités, des protections civiles et des garanties de sécurité. La couronne le révoque désormais. C'est un événement Continu : si ignoré, vous piochez 2 cartes de moins à chaque tour et il reste sur le plateau. Résolvez en choisissant une politique : Tolérance religieuse (Légitimité -1 immédiat ; gagnez le statut permanent Tolérance religieuse qui a 30% de chance annuelle de générer Tension religieuse : payez 2 Financement ou perdez 1 Légitimité), ou Répression sévère (pas de variation numérique immédiate ; gagnez Contenir les restes huguenots 3 et ajoutez 3 cartes temporaires « Réprimer les huguenots » au deck, coût 3 chacune ; chaque activation réduit les restes de 1 ; à 0, retirez le statut et purgez ces cartes de la main/du deck/de la défausse). Tant que ce statut de containment existe, la victoire du Chapitre 2 est bloquée.",
   "event.leagueOfAugsburg.name": "Formation de la Ligue d'Augsbourg",
   "event.leagueOfAugsburg.desc":
-    "Les puissances européennes se coordonnent contre la France. Tag Continu 3 : chaque tour, payez floor(progression Alerte Europe/2) Financement pour maintenir les négociations ; si impayé, perdez 1 Pouvoir et 1 Trésor. Vous pouvez toujours résoudre plus tôt en payant 2 Financement (ou via Intervention).",
+    "Après les années 1680, l'expansion française sur le Rhin et dans les Pays-Bas entretient une inquiétude durable chez ses voisins. En 1686, princes du Saint-Empire, Habsbourg et États allemands se regroupent à Augsbourg, puis l'Angleterre, les Provinces-Unies et l'Espagne s'alignent progressivement vers une coordination anti-française. Pour Louis XIV, ce n'est plus une friction diplomatique ponctuelle : l'équilibre européen se transforme en contrainte d'alliance institutionnalisée. Côté mécanique : c'est une pression diplomatique continue qui demande des résolutions cumulées ; si vous la laissez de côté sur un tour, vous subissez un coût d'entretien lié à l'Alerte Europe.",
   "event.nineYearsWar.name": "Guerre de Neuf Ans",
   "event.nineYearsWar.desc":
     "À partir de 1688, la Guerre de Neuf Ans prolonge la logique de la Ligue d'Augsbourg en un affrontement continental sur l'équilibre européen. Les combats s'étendent du Rhin et des Pays-Bas aux routes maritimes et aux espaces coloniaux, faisant de l'endurance financière la véritable mesure de la puissance d'État. En jeu, c'est une crise Continue : vous pouvez lancer des campagnes chaque tour en payant floor(progression Alerte Europe/2)+1 Financement (ou via Intervention), tandis que l'inaction expose à des pertes de légitimité et à une pression budgétaire durable.",
@@ -62,6 +77,12 @@ export const messagesFrSecondMandate: Record<keyof typeof messagesEnSecondMandat
   "event.tradeDisruption.name": "Perturbation commerciale",
   "event.tradeDisruption.desc":
     "Les risques sur routes maritimes et convois réduisent la marge de gouvernance. Payez 1 Financement ou subissez un modificateur de pioche -2 l'an prochain.",
+  "event.embargoCoalition.name": "Coalition d'embargo",
+  "event.embargoCoalition.desc":
+    "Les restrictions maritimes se resserrent autour du commerce français. Payez 2 Financement, ou perdez 1 Trésor et subissez une pénalité de pioche l'an prochain.",
+  "event.mercenaryRaiders.name": "Raiders mercenaires",
+  "event.mercenaryRaiders.desc":
+    "Des pillards frontaliers à gages perturbent l'ordre local et l'autorité de la couronne. Payez 2 Financement, ou perdez 1 Pouvoir et 1 Légitimité.",
   "event.localWar.name": "Guerre locale",
   "event.localWar.desc":
     "L'Alerte Europe alimente un conflit régional. Intervention ne peut pas résoudre cet événement. Choisissez Attaquer (payez floor(progression Alerte Europe/2) Financement, puis appliquez le surcoût Sentiment anti-français si actif ; trois issues équiprobables : Victoire locale [Pouvoir +1, Légitimité +1], Enlisement [aucun effet], Pertes limitées [Pouvoir -1]) ou Apaiser (sans coût, mais Légitimité -1). C'est un événement Continu : s'il reste non résolu, le revenu de Financement du prochain tour est réduit de 2 (minimum 0).",
