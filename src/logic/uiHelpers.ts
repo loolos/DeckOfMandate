@@ -61,7 +61,7 @@ export function fundSolveLabelAmount(state: GameState, slot: SlotId): number | n
     return cfg?.attack?.fundingCost ?? null;
   }
   if (tmpl.solve.kind === "localWarChoice") {
-    return state.europeAlertProgress + antiFrenchSentimentEventSolveCostPenalty(state);
+    return Math.floor(state.europeAlertProgress / 2) + antiFrenchSentimentEventSolveCostPenalty(state);
   }
   return null;
 }

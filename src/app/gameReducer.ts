@@ -222,7 +222,7 @@ function canLocalWarAttack(state: GameState, slot: SlotId): boolean {
   if (state.phase !== "action" || state.pendingInteraction?.type === "crackdownPick") return false;
   const ev = state.slots[slot];
   if (!ev || ev.resolved || ev.templateId !== "localWar") return false;
-  return state.resources.funding >= state.europeAlertProgress;
+  return state.resources.funding >= Math.floor(state.europeAlertProgress / 2);
 }
 
 function isCardPlayableUnderStatuses(state: GameState, cardInstanceId: string): boolean {
@@ -298,7 +298,7 @@ function performScriptedAttack(state: GameState, slot: SlotId): GameState {
 function performLocalWarAttack(state: GameState, slot: SlotId): GameState {
   const ev = state.slots[slot];
   if (!ev || ev.resolved || ev.templateId !== "localWar") return state;
-  const cost = state.europeAlertProgress + antiFrenchSentimentEventSolveCostPenalty(state);
+  const cost = Math.floor(state.europeAlertProgress / 2) + antiFrenchSentimentEventSolveCostPenalty(state);
   if (state.resources.funding < cost) return state;
   let powerDelta = 0;
   let legitimacyDelta = 0;

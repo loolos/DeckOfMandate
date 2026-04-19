@@ -363,7 +363,7 @@ describe("gameReducer", () => {
     expect(after.antiFrenchLeague!.untilTurn).toBe(expectedUntil);
   });
 
-  it("local war attack pays europe-alert-progress cost and resolves the event", () => {
+  it("local war attack pays floor(europe-alert-progress/2) cost and resolves the event", () => {
     const base = createInitialState(8_001, "secondMandate");
     const s0 = {
       ...base,
@@ -376,13 +376,13 @@ describe("gameReducer", () => {
       },
     };
     const s1 = gameReducer(s0, { type: "PICK_LOCAL_WAR_ATTACK", slot: "A" });
-    expect(s1.resources.funding).toBe(3);
+    expect(s1.resources.funding).toBe(6);
     expect(s1.slots.A?.resolved).toBe(true);
     const last = s1.actionLog[s1.actionLog.length - 1];
     expect(last?.kind).toBe("eventLocalWarChoice");
     if (last?.kind === "eventLocalWarChoice") {
       expect(last.choice).toBe("attack");
-      expect(last.fundingPaid).toBe(5);
+      expect(last.fundingPaid).toBe(2);
     }
   });
 
@@ -399,7 +399,7 @@ describe("gameReducer", () => {
       },
     };
     const s1 = gameReducer(s0, { type: "PICK_LOCAL_WAR_ATTACK", slot: "A" });
-    expect(s1.resources.funding).toBe(2);
+    expect(s1.resources.funding).toBe(5);
     expect(s1.slots.A?.resolved).toBe(true);
   });
 
