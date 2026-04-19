@@ -152,6 +152,18 @@ function resolveFirstUnresolvedEventByTemplate(
   return state;
 }
 
+function removeEventsByTemplate(state: GameState, templateId: EventTemplateId): GameState {
+  const slots = { ...state.slots };
+  let changed = false;
+  for (const slot of EVENT_SLOT_ORDER) {
+    const ev = slots[slot];
+    if (!ev || ev.templateId !== templateId) continue;
+    slots[slot] = null;
+    changed = true;
+  }
+  return changed ? { ...state, slots } : state;
+}
+
 function isCrackdownTarget(state: GameState, slot: SlotId): boolean {
   const ev = state.slots[slot];
   if (!ev || ev.resolved) return false;
@@ -419,6 +431,7 @@ function performFundSolve(state: GameState, slot: SlotId): GameState {
       europeAlert: false,
       europeAlertProgress: 0,
     };
+    s = removeEventsByTemplate(s, "nineYearsWar");
   }
   s = markSlotResolvedWithLeagueProgress(s, slot);
   s = enforceLegitimacy(s);
