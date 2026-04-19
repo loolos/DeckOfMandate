@@ -131,7 +131,11 @@ export function EventPanel({
                         logEventTag("eventTag.continued");
                       }}
                     >
-                      {ev.remainingTurns != null ? t("ui.continuedTurns", { n: ev.remainingTurns }) : t("ui.continued")}
+                      {ev.remainingTurns != null
+                        ? tmpl.id === "leagueOfAugsburg"
+                          ? t("ui.remainingTurns", { n: ev.remainingTurns })
+                          : t("ui.continuedTurns", { n: ev.remainingTurns })
+                        : t("ui.continued")}
                     </button>
                   ) : null}
                   {ev.resolved ? (
