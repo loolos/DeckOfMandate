@@ -372,6 +372,9 @@ export function getEventSolveFundingAmount(state: GameState, id: EventTemplateId
     const warSurcharge = nineYearsWarActive ? 4 : 0;
     return state.europeAlertProgress + 2 + antiFrenchPenalty + warSurcharge;
   }
+  if (id === "nineYearsWar") {
+    return Math.max(1, Math.floor(state.europeAlertProgress / 2));
+  }
   return tmpl.solve.amount + antiFrenchPenalty;
 }
 
