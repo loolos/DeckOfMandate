@@ -31,17 +31,19 @@ describe("getEventRollWeight", () => {
     expect(getEventSolveFundingAmount({ ...st, europeAlertProgress: 10 }, "ryswickPeace")).toBe(12);
   });
 
-  it("adds anti-french sentiment solve-cost penalty (+1 per full +5 over power+treasury 20)", () => {
+  it("adds anti-french sentiment solve-cost penalty to europe-alert supplemental pool events only", () => {
     const st = createInitialState(12_347, "secondMandate");
     const atTwenty = { ...st, resources: { ...st.resources, treasuryStat: 10, power: 10 } };
     const overNoStep = { ...st, resources: { ...st.resources, treasuryStat: 11, power: 10 } };
     const overPlusOne = { ...st, resources: { ...st.resources, treasuryStat: 13, power: 12 } };
     const overPlusTwo = { ...st, resources: { ...st.resources, treasuryStat: 16, power: 14 } };
 
-    expect(getEventSolveFundingAmount(atTwenty, "budgetStrain")).toBe(2);
-    expect(getEventSolveFundingAmount(overNoStep, "budgetStrain")).toBe(2);
-    expect(getEventSolveFundingAmount(overPlusOne, "budgetStrain")).toBe(3);
-    expect(getEventSolveFundingAmount(overPlusTwo, "budgetStrain")).toBe(4);
+    expect(getEventSolveFundingAmount(atTwenty, "frontierGarrisons")).toBe(3);
+    expect(getEventSolveFundingAmount(overNoStep, "frontierGarrisons")).toBe(3);
+    expect(getEventSolveFundingAmount(overPlusOne, "frontierGarrisons")).toBe(4);
+    expect(getEventSolveFundingAmount(overPlusTwo, "frontierGarrisons")).toBe(5);
+
+    expect(getEventSolveFundingAmount(overPlusTwo, "budgetStrain")).toBe(2);
   });
 
 });

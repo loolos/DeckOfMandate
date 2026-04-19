@@ -380,6 +380,23 @@ describe("gameReducer", () => {
     expect(s1.slots.A?.resolved).toBe(true);
   });
 
+  it("local war attack includes anti-french sentiment penalty in funding cost", () => {
+    const base = createInitialState(8_003, "secondMandate");
+    const s0 = {
+      ...base,
+      resources: { ...base.resources, funding: 8, treasuryStat: 13, power: 12, legitimacy: 4 },
+      europeAlert: true,
+      europeAlertProgress: 5,
+      slots: {
+        ...EMPTY_EVENT_SLOTS,
+        A: { instanceId: "e_local_war", templateId: "localWar" as const, resolved: false },
+      },
+    };
+    const s1 = gameReducer(s0, { type: "PICK_LOCAL_WAR_ATTACK", slot: "A" });
+    expect(s1.resources.funding).toBe(2);
+    expect(s1.slots.A?.resolved).toBe(true);
+  });
+
   it("local war appease resolves with legitimacy -1 and no funding cost", () => {
     const base = createInitialState(8_002, "secondMandate");
     const s0 = {
