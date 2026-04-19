@@ -1,6 +1,6 @@
 import { getEventRollWeight, getEventTemplate } from "../data/events";
 import { getLevelContent } from "../data/levelContent";
-import { getLevelDef } from "../data/levels";
+import { getLevelDef, getTurnLimitForRun } from "../data/levels";
 import type { CardTemplateId } from "../types/card";
 import { appendActionLog } from "./actionLog";
 import {
@@ -512,7 +512,7 @@ export function evaluateVictory(state: GameState): GameState {
 
 export function evaluateTimeDefeat(state: GameState): GameState {
   if (state.outcome !== "playing") return state;
-  if (state.turn === getLevelDef(state.levelId).turnLimit) {
+  if (state.turn === getTurnLimitForRun(state.levelId, state.calendarStartYear)) {
     return { ...state, phase: "gameOver", outcome: "defeatTime" };
   }
   return state;
