@@ -221,16 +221,22 @@ export const messagesEnCore = {
     "[Turn {turn}] {event} — chose attack, paid {paid} {funding}; impact: {outcome}.",
   "log.eventLocalWarChoice.appease":
     "[Turn {turn}] {event} — chose appeasement; impact: {legitimacy} -1.",
-  "log.eventLocalWarChoice.attackOutcome.success": "{power} +1 and {legitimacy} +1",
-  "log.eventLocalWarChoice.attackOutcome.stalemate": "limited gains; no immediate resource swing",
-  "log.eventLocalWarChoice.attackOutcome.setback": "{power} -1",
+  "log.eventLocalWarChoice.attackOutcome.success":
+    "{power} +1 and {legitimacy} +1. Frontier victories briefly lift court prestige, and neighboring states ease off testing France's limits.",
+  "log.eventLocalWarChoice.attackOutcome.stalemate":
+    "limited gains; no immediate resource swing. Siege-and-supply deadlock repeats the attritional logic of the \"small wars between great wars.\"",
+  "log.eventLocalWarChoice.attackOutcome.setback":
+    "{power} -1. A failed raid exposes cracks in local military coordination and encourages rival courts to keep up pressure.",
   "log.eventNineYearsWarCampaign.title":
     "[Turn {turn}] {event}: used {method} (paid {paid} {funding}) — {outcome}.",
   "log.eventNineYearsWarCampaign.method.funding": "Funding",
   "log.eventNineYearsWarCampaign.method.intervention": "Intervention",
-  "log.eventNineYearsWarCampaign.outcome.decisiveVictory": "decisive victory; war pressure ends",
-  "log.eventNineYearsWarCampaign.outcome.stalemate": "stalemate; front remains unchanged",
-  "log.eventNineYearsWarCampaign.outcome.limitedGains": "limited gains; {legitimacy} +1",
+  "log.eventNineYearsWarCampaign.outcome.decisiveVictory":
+    "decisive victory; war pressure ends. From the Rhineland to the Low Countries, coalition momentum falters and coordinated offensives lose pace.",
+  "log.eventNineYearsWarCampaign.outcome.stalemate":
+    "stalemate; front remains unchanged. The balance-of-power struggle stays locked in a fiscal and credit endurance contest.",
+  "log.eventNineYearsWarCampaign.outcome.limitedGains":
+    "limited gains; {legitimacy} +1. Tactical success steadies domestic confidence, but does not yet break the long-war attrition pattern.",
   "log.eventNineYearsWarCampaign.history":
     "Historical note: the Nine Years' War (1688–1697) stretched from the Rhineland and Low Countries to maritime theaters, exhausting state finances across Europe.",
   "log.eventNineYearsWarFiscalBurden.title":

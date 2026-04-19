@@ -211,6 +211,18 @@ export const messagesFrCore: Record<keyof typeof messagesEnCore, string> = {
   "card.tag.remainingUses": "Restant {remaining}/{total}",
   "log.europeAlertProgressShift":
     "[Tour {turn}] Alerte Europe ajustée {from}→{to} (k={k}, chance de déclenchement {pct}%).",
+  "log.eventLocalWarChoice.attackOutcome.success":
+    "{power} +1 et {legitimacy} +1. Les succès de frontière rehaussent brièvement le prestige de cour, et les puissances voisines temporisent leurs tests.",
+  "log.eventLocalWarChoice.attackOutcome.stalemate":
+    "gains limités ; pas de variation immédiate des ressources. Le cycle sièges-logistique rejoue l'usure typique des « petites guerres entre grandes guerres ».",
+  "log.eventLocalWarChoice.attackOutcome.setback":
+    "{power} -1. Le revers révèle des fissures de coordination militaire locale et encourage les cours rivales à maintenir la pression.",
+  "log.eventNineYearsWarCampaign.outcome.decisiveVictory":
+    "victoire décisive ; la pression de guerre prend fin. Du Rhin aux Pays-Bas, l'élan de coalition s'essouffle et les offensives coordonnées ralentissent.",
+  "log.eventNineYearsWarCampaign.outcome.stalemate":
+    "enlisement ; le front reste inchangé. La logique d'équilibre européen reste piégée dans un duel d'endurance fiscale et de crédit.",
+  "log.eventNineYearsWarCampaign.outcome.limitedGains":
+    "gains partiels ; {legitimacy} +1. Le succès tactique rassure l'intérieur, sans rompre la dynamique d'usure d'une guerre longue.",
   "log.info.chapter2EuropeAlertOn":
     "[Tour {turn}] Le Chapitre 2 commence avec l'Alerte Europe active : la jauge démarre à 3/10 et pilote les événements supplémentaires annuels (1-5 : progression×20% ; 6-10 : 1 garanti + possible 2e).",
   "log.info.chapter2EuropeAlertOff":
