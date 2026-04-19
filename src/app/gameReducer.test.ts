@@ -699,7 +699,7 @@ describe("gameReducer", () => {
     expect(after.discard.includes(containment)).toBe(false);
   });
 
-  it("anti-french containment cost follows floor(europe alert progress / 2)", () => {
+  it("anti-french containment cost follows floor(europe alert progress / 2) with minimum 1", () => {
     const base = createInitialState(202_609, "secondMandate");
     const containment = "afc_cost";
     const withCard: typeof base = {
@@ -724,9 +724,9 @@ describe("gameReducer", () => {
     expect(after.discard.includes(containment)).toBe(false);
   });
 
-  it("anti-french containment costs 0 once Europe Alert is cleared", () => {
+  it("anti-french containment still costs at least 1 once Europe Alert is cleared", () => {
     const base = createInitialState(202_610, "secondMandate");
-    const containment = "afc_zero_after_clear";
+    const containment = "afc_min_after_clear";
     const withCard: typeof base = {
       ...base,
       cardsById: {
@@ -736,10 +736,14 @@ describe("gameReducer", () => {
       hand: [containment],
       deck: base.deck.filter((id) => id !== containment),
       europeAlert: false,
-      europeAlertProgress: 1,
+      europeAlertProgress: 0,
       resources: { ...base.resources, funding: 0 },
     };
-    const after = gameReducer(withCard, { type: "PLAY_CARD", handIndex: 0 });
+    const blocked = gameReducer(withCard, { type: "PLAY_CARD", handIndex: 0 });
+    expect(blocked).toEqual(withCard);
+
+    const affordable = { ...withCard, resources: { ...withCard.resources, funding: 1 } };
+    const after = gameReducer(affordable, { type: "PLAY_CARD", handIndex: 0 });
     expect(after.resources.funding).toBe(0);
     expect(after.hand.includes(containment)).toBe(false);
     expect(after.discard.includes(containment)).toBe(false);
