@@ -38,6 +38,7 @@ export const messagesFrCore: Record<keyof typeof messagesEnCore, string> = {
   "ui.historical": "Historique",
   "ui.continued": "Continu",
   "ui.continuedTurns": "Continu {n}",
+  "ui.remainingTurns": "Restant {n}",
   "ui.deck": "Pioche",
   "ui.discard": "Défausse",
   "ui.quickFrame.cost": "Coût",

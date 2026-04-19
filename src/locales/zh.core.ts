@@ -34,6 +34,7 @@ export const messagesZhCore = {
   "ui.historical": "史实",
   "ui.continued": "持续",
   "ui.continuedTurns": "持续{n}",
+  "ui.remainingTurns": "剩余{n}",
   "ui.deck": "牌库",
   "ui.discard": "弃牌堆",
   "ui.quickFrame.cost": "费用",

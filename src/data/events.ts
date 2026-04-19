@@ -3,6 +3,18 @@ import type { GameState } from "../types/game";
 import { antiFrenchSentimentEventSolveCostPenalty } from "../logic/antiFrenchSentiment";
 import { nymwegenSettlementFundingCost } from "../logic/europeAlert";
 
+const EUROPE_ALERT_SUPPLEMENTAL_EVENT_IDS: readonly EventTemplateId[] = [
+  "frontierGarrisons",
+  "tradeDisruption",
+  "embargoCoalition",
+  "mercenaryRaiders",
+  "localWar",
+];
+
+export function isEuropeAlertSupplementalEvent(id: EventTemplateId): boolean {
+  return EUROPE_ALERT_SUPPLEMENTAL_EVENT_IDS.includes(id);
+}
+
 export const eventTemplates: Record<EventTemplateId, EventTemplate> = {
   budgetStrain: {
     id: "budgetStrain",
@@ -354,7 +366,7 @@ export function getEventRollWeight(state: GameState, id: EventTemplateId): numbe
 export function getEventSolveFundingAmount(state: GameState, id: EventTemplateId): number | null {
   const tmpl = eventTemplates[id];
   if (tmpl.solve.kind !== "funding" && tmpl.solve.kind !== "fundingOrCrackdown") return null;
-  const antiFrenchPenalty = antiFrenchSentimentEventSolveCostPenalty(state);
+  const antiFrenchPenalty = isEuropeAlertSupplementalEvent(id) ? antiFrenchSentimentEventSolveCostPenalty(state) : 0;
   if (id === "nymwegenSettlement") {
     return nymwegenSettlementFundingCost(state.europeAlertProgress) + antiFrenchPenalty;
   }

@@ -12,6 +12,7 @@ import { resolveEndOfYearPenalties } from "../logic/resolveEvents";
 import { coalitionUntilTurn, findScriptedCalendarConfig } from "../logic/scriptedCalendar";
 import { rngNext } from "../logic/rng";
 import { beginYear, evaluateTimeDefeat, evaluateVictory, retentionCapacity } from "../logic/turnFlow";
+import { antiFrenchSentimentEventSolveCostPenalty } from "../logic/antiFrenchSentiment";
 import type { CardTemplateId } from "../types/card";
 import { EVENT_SLOT_ORDER, type EventTemplateId } from "../types/event";
 import type { SlotId } from "../types/event";
@@ -267,7 +268,7 @@ function performScriptedAttack(state: GameState, slot: SlotId): GameState {
 function performLocalWarAttack(state: GameState, slot: SlotId): GameState {
   const ev = state.slots[slot];
   if (!ev || ev.resolved || ev.templateId !== "localWar") return state;
-  const cost = state.europeAlertProgress;
+  const cost = state.europeAlertProgress + antiFrenchSentimentEventSolveCostPenalty(state);
   if (state.resources.funding < cost) return state;
   let s: GameState = {
     ...state,
