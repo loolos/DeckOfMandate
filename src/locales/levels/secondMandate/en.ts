@@ -33,6 +33,9 @@ export const messagesEnSecondMandate = {
   "status.europeAlert.stage.conflict.desc":
     "The system enters overt confrontation and dual-crisis pressure becomes routine.",
   "status.antiFrenchSentiment.name": "Anti-French Sentiment",
+  "status.antiFrenchSentiment.emotionLabel": "Emotion {x}",
+  "status.antiFrenchSentiment.detail":
+    "Emotion {x}: the current number of Anti-French Containment cards in your full library. While this status is active, Peace of Ryswick gains an extra +{n} Funding cost.",
   "status.antiFrenchSentiment.history":
     "After the 1670s, France's military and fiscal expansion convinced rival courts that temporary truces were no longer enough. A broader anti-French consensus emerged, with states increasingly coordinating diplomacy, trade pressure, and military readiness to contain Bourbon influence. Mechanically: once Power+Treasury is high enough, Europe-Alert-linked funding solutions become more expensive, and this status also adds recurring containment pressure through deck disruption until that combined strength falls back down.",
   "event.nymwegenSettlement.name": "Treaties of Nijmegen",
@@ -49,7 +52,7 @@ export const messagesEnSecondMandate = {
     "From 1688, the Nine Years' War grew out of the League of Augsburg system into a continent-wide struggle over the European balance of power. Fighting stretched from the Rhineland and the Low Countries to maritime routes and colonial fronts, turning fiscal endurance into the core test of state capacity. In game terms, this is a Continued crisis: you can campaign each turn by paying floor(Europe Alert progress / 2) + 1 Funding (or using Intervention), while delay risks legitimacy setbacks and ongoing fiscal drag.",
   "event.ryswickPeace.name": "Peace of Ryswick",
   "event.ryswickPeace.desc":
-    "Peace terms can restore order. Invest (Europe Alert progress + 2) Funding to gain Legitimacy +1 and clear Europe Alert. If the Nine Years' War is still active, this solve cost gains an additional +4. Resolving this event also ends the Nine Years' War completely. This event is Continued: if unresolved, Legitimacy -1 each turn.",
+    "Peace terms can restore order. Invest (Europe Alert progress + 2) Funding to gain Legitimacy +1 and clear Europe Alert. If the Nine Years' War is still active, this solve cost gains an additional +4. While Anti-French Sentiment is active, this cost also gains +2x (x = current Anti-French Containment cards in your full library). Resolving this event also ends the Nine Years' War completely. This event is Continued: if unresolved, Legitimacy -1 each turn.",
   "event.versaillesExpenditure.name": "Versailles Expenditure",
   "event.versaillesExpenditure.desc":
     "Court spending rises again. Pay 3 Funding or use Intervention; if unresolved, lose 2 Treasury.",

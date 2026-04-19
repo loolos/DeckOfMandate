@@ -44,6 +44,33 @@ describe("getEventRollWeight", () => {
     expect(getEventSolveFundingAmount(st, "ryswickPeace")).toBe(9);
   });
 
+  it("adds ryswick peace extra +2x only while anti-french sentiment is active", () => {
+    const base = createInitialState(3_340_1, "secondMandate");
+    const withContainmentInLibrary = {
+      ...base,
+      deck: [...base.deck, "afc_1", "afc_2"],
+      cardsById: {
+        ...base.cardsById,
+        afc_1: { instanceId: "afc_1", templateId: "antiFrenchContainment" as const },
+        afc_2: { instanceId: "afc_2", templateId: "antiFrenchContainment" as const },
+      },
+      europeAlert: true,
+      europeAlertProgress: 3,
+    };
+    const active = {
+      ...withContainmentInLibrary,
+      resources: { ...withContainmentInLibrary.resources, power: 11, treasuryStat: 10 },
+    };
+    const inactive = {
+      ...withContainmentInLibrary,
+      resources: { ...withContainmentInLibrary.resources, power: 10, treasuryStat: 10 },
+    };
+
+    // Base 5, then +2x where x=2 => +4.
+    expect(getEventSolveFundingAmount(active, "ryswickPeace")).toBe(9);
+    expect(getEventSolveFundingAmount(inactive, "ryswickPeace")).toBe(5);
+  });
+
   it("scales nine years war solve funding to floor(progress/2) + 1", () => {
     const base = createInitialState(3_341, "secondMandate");
     expect(getEventSolveFundingAmount({ ...base, europeAlertProgress: 1 }, "nineYearsWar")).toBe(1);

@@ -216,7 +216,7 @@ export const messagesFrCore: Record<keyof typeof messagesEnCore, string> = {
   "log.info.chapter2EuropeAlertOff":
     "[Tour {turn}] Le Chapitre 2 commence avec l'Alerte Europe inactive : aucune vérification d'événements supplémentaires liée à l'Alerte Europe.",
   "log.info.antiFrenchSentimentActivated":
-    "[Tour {turn}] Le sentiment anti-français monte : quand Pouvoir+Trésor dépasse 20, chaque tranche complète de +5 augmente de +1 le coût de résolution de tous les événements payés en Financement.",
+    "[Tour {turn}] Le sentiment anti-français monte : quand Pouvoir+Trésor dépasse 20, les résolutions financées liées à l'Alerte Europe prennent +1 immédiatement, puis +1 par tranche complète supplémentaire de +5. Le statut affiche aussi Émotion x (x = nombre de cartes Endiguement anti-français dans toute votre bibliothèque), et la Paix de Ryswick gagne un surcoût supplémentaire de +2x tant que ce statut est actif.",
   "log.info.antiFrenchSentimentEnded":
     "[Tour {turn}] Le sentiment anti-français retombe : dès que Pouvoir+Trésor revient à 20 ou moins, ce surcoût de résolution d'événements est retiré.",
   "log.info.cardUse.depleted.crackdownPenalty":

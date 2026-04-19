@@ -228,7 +228,7 @@ export const messagesZhCore = {
   "log.info.chapter2EuropeAlertOff":
     "[第 {turn} 年] 第二关以「欧洲警觉：关闭」开局：不会进行欧洲警觉额外事件判定。",
   "log.info.antiFrenchSentimentActivated":
-    "[第 {turn} 年]「反法情绪」升温：当“权力+财政”大于 20 时，「欧洲警觉」相关且需经费解决的事件费用会先 +1，之后每再多满 5 点再 +1。",
+    "[第 {turn} 年]「反法情绪」升温：当“权力+财政”大于 20 时，「欧洲警觉」相关且需经费解决的事件费用会先 +1，之后每再多满 5 点再 +1。该状态会显示「情绪x」（x=当前整个牌库中「反法遏制」数量）；且在状态持续期间，「里斯维克和约」费用还会额外 +2x。",
   "log.info.antiFrenchSentimentEnded":
     "[第 {turn} 年]「反法情绪」缓和：当“权力+财政”回到 20 或以下时，由该状态带来的额外事件费用加成被取消。",
   "log.info.cardTag.royal": "[第 {turn} 年] 标签说明「王室」：该牌属于王室工具，部分事件只能靠此类手段处理。",

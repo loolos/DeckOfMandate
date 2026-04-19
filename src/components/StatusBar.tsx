@@ -56,6 +56,7 @@ export function StatusBar({
   europeAlertActive,
   europeAlertPowerLoss,
   europeAlertProgress,
+  antiFrenchSentimentEmotion,
 }: {
   statuses: readonly PlayerStatusInstance[];
   /** Anti-French League pressure (scripted war follow-up); draw risk is rolled each year in engine. */
@@ -68,6 +69,8 @@ export function StatusBar({
   europeAlertPowerLoss?: number;
   /** Chapter-2 Europe Alert progress (1-10 while active). */
   europeAlertProgress?: number;
+  /** "Emotion x" value shown on Anti-French Sentiment; x = current Anti-French Containment cards in library. */
+  antiFrenchSentimentEmotion?: number;
 }) {
   const { t } = useI18n();
   const isSmallScreen = useSmallScreen();
@@ -114,19 +117,28 @@ export function StatusBar({
             : t("ui.statusTurnsRemaining", { n: row.turnsRemaining });
       const history = tmpl.historyKey ? t(tmpl.historyKey) : "";
       const effectDetail = statusDetail(row, t);
+      const antiFrenchEmotionLabel =
+        row.templateId === "antiFrenchSentiment"
+          ? t("status.antiFrenchSentiment.emotionLabel", { x: antiFrenchSentimentEmotion ?? 0 })
+          : "";
       next.push({
         id: row.instanceId,
-        title: t(tmpl.titleKey),
+        title:
+          row.templateId === "antiFrenchSentiment"
+            ? `${t(tmpl.titleKey)} ${antiFrenchEmotionLabel}`.trim()
+            : t(tmpl.titleKey),
         compactMeta: turnsText,
         meta: turnsText,
         detail:
           row.templateId === "huguenotContainment"
             ? `${effectDetail} ${history} ${t("status.huguenotContainment.hint")}`.trim()
+            : row.templateId === "antiFrenchSentiment"
+              ? `${t("status.antiFrenchSentiment.detail", { x: antiFrenchSentimentEmotion ?? 0, n: (antiFrenchSentimentEmotion ?? 0) * 2 })} ${history}`.trim()
             : `${effectDetail} ${history}`.trim(),
       });
     }
     return next;
-  }, [coalitionActive, europeAlertActive, europeAlertPowerLoss, europeAlertProgress, pct, statuses, t]);
+  }, [antiFrenchSentimentEmotion, coalitionActive, europeAlertActive, europeAlertPowerLoss, europeAlertProgress, pct, statuses, t]);
 
   useEffect(() => {
     if (!isSmallScreen) setExpandedStatusId(null);

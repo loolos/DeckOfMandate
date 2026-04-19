@@ -1,6 +1,6 @@
 import { EVENT_SLOT_ORDER, type EventTemplate, type EventTemplateId } from "../types/event";
 import type { GameState } from "../types/game";
-import { antiFrenchSentimentEventSolveCostPenalty } from "../logic/antiFrenchSentiment";
+import { antiFrenchSentimentEventSolveCostPenalty, antiFrenchSentimentRyswickSurcharge } from "../logic/antiFrenchSentiment";
 import { nymwegenSettlementFundingCost } from "../logic/europeAlert";
 
 const EUROPE_ALERT_SUPPLEMENTAL_EVENT_IDS: readonly EventTemplateId[] = [
@@ -370,7 +370,7 @@ export function getEventSolveFundingAmount(state: GameState, id: EventTemplateId
   if (id === "ryswickPeace") {
     const nineYearsWarActive = EVENT_SLOT_ORDER.some((slot) => state.slots[slot]?.templateId === "nineYearsWar");
     const warSurcharge = nineYearsWarActive ? 4 : 0;
-    return state.europeAlertProgress + 2 + antiFrenchPenalty + warSurcharge;
+    return state.europeAlertProgress + 2 + antiFrenchPenalty + warSurcharge + antiFrenchSentimentRyswickSurcharge(state);
   }
   if (id === "nineYearsWar") {
     return Math.floor(state.europeAlertProgress / 2) + 1;

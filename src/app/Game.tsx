@@ -19,6 +19,7 @@ import {
 } from "../data/levels";
 import { cardLabelWithIcon, resourceLabelWithIcon } from "../logic/icons";
 import { normalizeGameState } from "../logic/normalizeGameState";
+import { antiFrenchSentimentEmotionValue } from "../logic/antiFrenchSentiment";
 import { loadGame, saveGame } from "../logic/saveLoad";
 import { readTutorialOnLevelEntry, writeTutorialOnLevelEntry } from "../logic/tutorialPref";
 import { buildCardQuickFrameRows } from "../logic/quickOutcomeFrame";
@@ -698,6 +699,7 @@ export function Game() {
             europeAlertActive={state.europeAlert && state.outcome === "playing"}
             europeAlertPowerLoss={state.europeAlertPowerLoss}
             europeAlertProgress={state.europeAlertProgress}
+            antiFrenchSentimentEmotion={antiFrenchSentimentEmotionValue(state)}
             coalitionActive={
               !!state.antiFrenchLeague &&
               state.turn <= state.antiFrenchLeague.untilTurn &&

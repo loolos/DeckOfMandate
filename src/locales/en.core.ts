@@ -249,7 +249,7 @@ export const messagesEnCore = {
   "log.info.chapter2EuropeAlertOff":
     "[Turn {turn}] Chapter 2 starts with Europe Alert inactive: no Europe-Alert supplemental event checks.",
   "log.info.antiFrenchSentimentActivated":
-    "[Turn {turn}] Anti-French Sentiment rises: when Power+Treasury exceeds 20, every full +5 overflow raises all funding-based event solve costs by +1.",
+    "[Turn {turn}] Anti-French Sentiment rises: when Power+Treasury exceeds 20, Europe-Alert-linked funding solves gain +1 immediately, then +1 per additional full +5 overflow. The status now also shows Emotion x (x = Anti-French Containment cards in your full library), and Peace of Ryswick gains an extra +2x Funding while this status is active.",
   "log.info.antiFrenchSentimentEnded":
     "[Turn {turn}] Anti-French Sentiment recedes: once Power+Treasury returns to 20 or below, the extra event-cost pressure is removed.",
   "log.info.cardTag.royal":
