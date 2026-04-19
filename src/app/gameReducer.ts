@@ -1,6 +1,6 @@
 import { getCardTemplate } from "../data/cards";
 import { getEventSolveFundingAmount, getEventTemplate } from "../data/events";
-import { getLevelDef, type LevelId } from "../data/levels";
+import { getTurnLimitForRun, type LevelId } from "../data/levels";
 import { appendActionLog } from "../logic/actionLog";
 import { applyEffects, enforceLegitimacy } from "../logic/applyEffects";
 import { hasCardTag } from "../logic/cardTags";
@@ -267,7 +267,7 @@ function performScriptedAttack(state: GameState, slot: SlotId): GameState {
     };
   }
 
-  const turnLimit = getLevelDef(s.levelId).turnLimit;
+  const turnLimit = getTurnLimitForRun(s.levelId, s.calendarStartYear);
   const untilTurn = coalitionUntilTurn(s.turn, cfg, turnLimit);
   s = {
     ...s,
