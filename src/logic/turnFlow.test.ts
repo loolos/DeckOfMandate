@@ -254,7 +254,7 @@ describe("beginYear + playerStatuses", () => {
     expect(s1.resources.funding).toBe(0);
   });
 
-  it("reduces legitimacy by 1 when anti-french containment is drawn", () => {
+  it("when anti-french containment is drawn, it randomly reduces power or legitimacy by 1", () => {
     const started = createInitialState(55_779, "secondMandate");
     const cardsById: Record<string, CardInstance> = {
       a0: { instanceId: "a0", templateId: "antiFrenchContainment" },
@@ -263,7 +263,8 @@ describe("beginYear + playerStatuses", () => {
       ...started,
       outcome: "playing",
       phase: "action",
-      resources: { treasuryStat: 1, funding: 0, power: 1, legitimacy: 2 },
+      rng: { state: 1 },
+      resources: { treasuryStat: 1, funding: 0, power: 2, legitimacy: 2 },
       nextTurnDrawModifier: 0,
       hand: [],
       deck: ["a0"],
@@ -274,7 +275,9 @@ describe("beginYear + playerStatuses", () => {
     };
     const s1 = beginYear(s0);
     expect(s1.hand).toContain("a0");
-    expect(s1.resources.legitimacy).toBe(1);
+    const powerDropped = s1.resources.power === 1 && s1.resources.legitimacy === 2;
+    const legitimacyDropped = s1.resources.power === 2 && s1.resources.legitimacy === 1;
+    expect(powerDropped || legitimacyDropped).toBe(true);
   });
 
   it("chapter 2 reshuffle applies inflation stack to inflation-tag cards", () => {

@@ -1,7 +1,7 @@
 import type { CardTemplateId } from "../types/card";
 import type { GameState } from "../types/game";
 import { createInitialCardUseState } from "./cardUsage";
-import { rngNextInt } from "./rng";
+import { rngNext, rngNextInt } from "./rng";
 
 function makeGeneratedCardId(state: GameState, templateId: CardTemplateId, offset: number): string {
   let seq = Object.keys(state.cardsById).length + offset;
@@ -83,8 +83,20 @@ export function applyOnDrawCardEffects(state: GameState, drawnCardId: string): G
     };
   }
   if (inst.templateId === "antiFrenchContainment") {
+    const [rng, u] = rngNext(state.rng);
+    if (u < 0.5) {
+      return {
+        ...state,
+        rng,
+        resources: {
+          ...state.resources,
+          power: Math.max(0, state.resources.power - 1),
+        },
+      };
+    }
     return {
       ...state,
+      rng,
       resources: {
         ...state.resources,
         legitimacy: Math.max(0, state.resources.legitimacy - 1),

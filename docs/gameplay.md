@@ -99,7 +99,7 @@ When all slots are empty, event count depends on `treasuryStat + power + legitim
     - progress `6..10`: guaranteed **1**, plus chance `(progress-5) * 20%` to inject a **2nd** supplemental event
   - `Treaties of Nijmegen` funding solve amount is dynamic: `europeAlertProgress + 3`.
 - **Religious Tolerance status**: each year 30% chance to inject `religiousTension` if absent and space exists.
-- **Anti-French Sentiment status**: if `power + treasuryStat > 20`, apply status marker; while active, every full `+5` overflow above 20 increases all funding-based event solve costs by `+1`, and each turn-end injects one `antiFrenchContainment` card into deck (draw penalty: legitimacy -1, playable purge cost 2; removed once `power + treasuryStat <= 20`).
+- **Anti-French Sentiment status**: if `power + treasuryStat > 20`, apply status marker; while active, every full `+5` overflow above 20 increases all funding-based event solve costs by `+1`, and each turn-end injects one `antiFrenchContainment` card into deck (draw penalty: 50/50 lose 1 power or 1 legitimacy; playable purge cost `floor(europeAlertProgress/2)`; removed once `power + treasuryStat <= 20`).
 
 ### Event badges (UI tags)
 

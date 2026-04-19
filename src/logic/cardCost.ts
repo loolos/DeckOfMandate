@@ -26,6 +26,9 @@ export function getCardInflationDelta(state: GameState, cardInstanceId: string):
 export function getPlayableCardCost(state: GameState, cardInstanceId: string): number {
   const inst = state.cardsById[cardInstanceId];
   if (!inst) return 0;
+  if (inst.templateId === "antiFrenchContainment") {
+    return Math.floor(state.europeAlertProgress / 2);
+  }
   const base = getCardTemplate(inst.templateId).cost;
   return base + getCardInflationDelta(state, cardInstanceId);
 }

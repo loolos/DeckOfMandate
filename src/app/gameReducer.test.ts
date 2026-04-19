@@ -675,9 +675,34 @@ describe("gameReducer", () => {
       },
       hand: [containment],
       deck: base.deck.filter((id) => id !== containment),
+      europeAlertProgress: 4,
       resources: { ...base.resources, funding: 2 },
     };
     const after = gameReducer(withCard, { type: "PLAY_CARD", handIndex: 0 });
+    expect(after.resources.funding).toBe(0);
+    expect(after.hand.includes(containment)).toBe(false);
+    expect(after.discard.includes(containment)).toBe(false);
+  });
+
+  it("anti-french containment cost follows floor(europe alert progress / 2)", () => {
+    const base = createInitialState(202_609, "secondMandate");
+    const containment = "afc_cost";
+    const withCard: typeof base = {
+      ...base,
+      cardsById: {
+        ...base.cardsById,
+        [containment]: { instanceId: containment, templateId: "antiFrenchContainment" as const },
+      },
+      hand: [containment],
+      deck: base.deck.filter((id) => id !== containment),
+      europeAlertProgress: 5,
+      resources: { ...base.resources, funding: 1 },
+    };
+    const blocked = gameReducer(withCard, { type: "PLAY_CARD", handIndex: 0 });
+    expect(blocked).toEqual(withCard);
+
+    const affordable = { ...withCard, resources: { ...withCard.resources, funding: 2 } };
+    const after = gameReducer(affordable, { type: "PLAY_CARD", handIndex: 0 });
     expect(after.resources.funding).toBe(0);
     expect(after.hand.includes(containment)).toBe(false);
     expect(after.discard.includes(containment)).toBe(false);
