@@ -27,7 +27,7 @@ export function getPlayableCardCost(state: GameState, cardInstanceId: string): n
   const inst = state.cardsById[cardInstanceId];
   if (!inst) return 0;
   if (inst.templateId === "antiFrenchContainment") {
-    return Math.floor(state.europeAlertProgress / 2);
+    return state.europeAlert ? Math.floor(state.europeAlertProgress / 2) : 0;
   }
   const base = getCardTemplate(inst.templateId).cost;
   return base + getCardInflationDelta(state, cardInstanceId);
