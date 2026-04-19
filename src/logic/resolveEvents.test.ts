@@ -130,6 +130,39 @@ describe("resolveEndOfYearPenalties", () => {
     expect(s1.resources.legitimacy).toBe(legBefore - 1);
   });
 
+  it("nine years war unresolved applies legitimacy -1 and adds one fiscal burden", () => {
+    const base = createInitialState(5_031, "secondMandate");
+    const beforeCardCount = Object.keys(base.cardsById).length;
+    const s0 = {
+      ...base,
+      slots: {
+        ...EMPTY_EVENT_SLOTS,
+        A: { instanceId: "e_nine", templateId: "nineYearsWar" as const, resolved: false },
+      },
+    };
+    const s1 = resolveEndOfYearPenalties(s0);
+    const burdenCount = Object.values(s1.cardsById).filter((c) => c.templateId === "fiscalBurden").length;
+    expect(s1.resources.legitimacy).toBe(s0.resources.legitimacy - 1);
+    expect(Object.keys(s1.cardsById).length).toBe(beforeCardCount + 1);
+    expect(burdenCount).toBe(1);
+    expect(s1.slots.A).toEqual(s0.slots.A);
+  });
+
+  it("nine years war still adds one fiscal burden even if handled this turn", () => {
+    const base = createInitialState(5_032, "secondMandate");
+    const beforeCardCount = Object.keys(base.cardsById).length;
+    const s0 = {
+      ...base,
+      slots: {
+        ...EMPTY_EVENT_SLOTS,
+        A: { instanceId: "e_nine", templateId: "nineYearsWar" as const, resolved: true, remainingTurns: 1 },
+      },
+    };
+    const s1 = resolveEndOfYearPenalties(s0);
+    expect(s1.resources.legitimacy).toBe(s0.resources.legitimacy);
+    expect(Object.keys(s1.cardsById).length).toBe(beforeCardCount + 1);
+  });
+
   it("league of augsburg unresolved applies upkeep/penalty but does not consume remaining solves", () => {
     const base = createInitialState(5_004, "secondMandate");
     const s0 = {

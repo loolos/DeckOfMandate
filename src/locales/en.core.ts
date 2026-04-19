@@ -224,6 +224,19 @@ export const messagesEnCore = {
   "log.eventLocalWarChoice.attackOutcome.success": "{power} +1 and {legitimacy} +1",
   "log.eventLocalWarChoice.attackOutcome.stalemate": "limited gains; no immediate resource swing",
   "log.eventLocalWarChoice.attackOutcome.setback": "{power} -1",
+  "log.eventNineYearsWarCampaign.title":
+    "[Turn {turn}] {event}: used {method} (paid {paid} {funding}) — {outcome}.",
+  "log.eventNineYearsWarCampaign.method.funding": "Funding",
+  "log.eventNineYearsWarCampaign.method.intervention": "Intervention",
+  "log.eventNineYearsWarCampaign.outcome.decisiveVictory": "decisive victory; war pressure ends",
+  "log.eventNineYearsWarCampaign.outcome.stalemate": "stalemate; front remains unchanged",
+  "log.eventNineYearsWarCampaign.outcome.limitedGains": "limited gains; {legitimacy} +1",
+  "log.eventNineYearsWarCampaign.history":
+    "Historical note: the Nine Years' War (1688–1697) stretched from the Rhineland and Low Countries to maritime theaters, exhausting state finances across Europe.",
+  "log.eventNineYearsWarFiscalBurden.title":
+    "[Turn {turn}] {event} remains active at year-end: add 1 {card} to your deck.",
+  "log.eventNineYearsWarFiscalBurden.history":
+    "Historical note: prolonged mobilization forced extraordinary loans, arrears, and tax pressure that kept compounding fiscal strain.",
   "log.drawCards.title": "[Turn {turn}] Drew {count} card(s): {cards}.",
   "log.drawOverflowDiscarded.title":
     "[Turn {turn}] Hand reached cap; discarded {count} undrawn card(s): {cards}.",

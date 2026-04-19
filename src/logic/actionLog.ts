@@ -37,6 +37,15 @@ export type ActionLogPayload =
       powerDelta: number;
       legitimacyDelta: number;
     }
+  | {
+      kind: "eventNineYearsWarCampaign";
+      slot: SlotId;
+      fundingPaid: number;
+      viaIntervention: boolean;
+      outcome: "decisiveVictory" | "stalemate" | "limitedGains";
+      legitimacyDelta: number;
+    }
+  | { kind: "eventNineYearsWarFiscalBurden"; slot: SlotId }
   | { kind: "antiFrenchLeagueDraw"; probabilityPct: number }
   | { kind: "europeAlertProgressShift"; from: number; to: number; probabilityPct: number; pressureDeltaK: number }
   | { kind: "drawOverflowDiscarded"; cardTemplateIds: CardTemplateId[] }

@@ -901,6 +901,24 @@ describe("gameReducer", () => {
     expect(after.resources.legitimacy).toBe(base.resources.legitimacy + 1);
   });
 
+  it("ryswick peace costs +4 and also clears nine years war when that war is still active", () => {
+    const base = createInitialState(202_904_1, "secondMandate");
+    const s0: typeof base = {
+      ...base,
+      europeAlert: true,
+      europeAlertProgress: 5,
+      resources: { ...base.resources, funding: 11 },
+      slots: {
+        ...base.slots,
+        A: { instanceId: "e_ryswick", templateId: "ryswickPeace" as const, resolved: false },
+        B: { instanceId: "e_nine", templateId: "nineYearsWar" as const, resolved: false },
+      },
+    };
+    const after = gameReducer(s0, { type: "SOLVE_EVENT", slot: "A" });
+    expect(after.resources.funding).toBe(0);
+    expect(after.slots.B).toBeNull();
+  });
+
   it("chapter 2 cannot win from 1696 onward while europe alert is still active", () => {
     const base = createInitialState(202_905, "secondMandate");
     const s0: typeof base = {

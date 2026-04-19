@@ -139,6 +139,22 @@ function markSlotResolvedWithLeagueProgress(state: GameState, slot: SlotId): Gam
   };
 }
 
+function markSlotResolvedWithNineYearsWarPersistence(
+  state: GameState,
+  slot: SlotId,
+  keepOnBoard: boolean,
+): GameState {
+  const ev = state.slots[slot];
+  if (!ev || ev.templateId !== "nineYearsWar") return state;
+  return {
+    ...state,
+    slots: {
+      ...state.slots,
+      [slot]: { ...ev, resolved: true, remainingTurns: keepOnBoard ? 1 : 0 },
+    },
+  };
+}
+
 function resolveFirstUnresolvedEventByTemplate(
   state: GameState,
   templateId: EventTemplateId,
@@ -152,11 +168,25 @@ function resolveFirstUnresolvedEventByTemplate(
   return state;
 }
 
+function clearEventsByTemplate(state: GameState, templateId: EventTemplateId): GameState {
+  let changed = false;
+  const slots = { ...state.slots };
+  for (const slot of EVENT_SLOT_ORDER) {
+    const ev = slots[slot];
+    if (!ev) continue;
+    if (ev.templateId !== templateId) continue;
+    slots[slot] = null;
+    changed = true;
+  }
+  if (!changed) return state;
+  return { ...state, slots };
+}
+
 function isCrackdownTarget(state: GameState, slot: SlotId): boolean {
   const ev = state.slots[slot];
   if (!ev || ev.resolved) return false;
   const tmpl = getEventTemplate(ev.templateId);
-  return tmpl.harmful;
+  return tmpl.harmful || ev.templateId === "nineYearsWar";
 }
 
 function canFundSolve(state: GameState, slot: SlotId): boolean {
@@ -378,6 +408,27 @@ function performFundSolve(state: GameState, slot: SlotId): GameState {
   } else {
     return state;
   }
+  if (ev.templateId === "nineYearsWar") {
+    const [rng, roll] = rngNext(s.rng);
+    s = { ...s, rng };
+    const decisiveVictory = roll < 1 / 9;
+    const limitedGains = roll >= 5 / 9;
+    let legitimacyDelta = 0;
+    if (limitedGains && !decisiveVictory) {
+      legitimacyDelta = 1;
+      s = applyEffects(s, [{ kind: "modResource", resource: "legitimacy", delta: 1 }]);
+    }
+    s = markSlotResolvedWithNineYearsWarPersistence(s, slot, !decisiveVictory);
+    s = enforceLegitimacy(s);
+    return appendActionLog(s, {
+      kind: "eventNineYearsWarCampaign",
+      slot,
+      fundingPaid: fundingAmount ?? 0,
+      viaIntervention: false,
+      outcome: decisiveVictory ? "decisiveVictory" : limitedGains ? "limitedGains" : "stalemate",
+      legitimacyDelta,
+    });
+  }
   let treasuryGain = 0;
   if (tmpl.onFundSolveEffects && tmpl.onFundSolveEffects.length > 0) {
     for (const effect of tmpl.onFundSolveEffects) {
@@ -399,6 +450,7 @@ function performFundSolve(state: GameState, slot: SlotId): GameState {
       europeAlert: false,
       europeAlertProgress: 0,
     };
+    s = clearEventsByTemplate(s, "nineYearsWar");
   }
   s = markSlotResolvedWithLeagueProgress(s, slot);
   s = enforceLegitimacy(s);
@@ -607,6 +659,36 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       if (!isCrackdownTarget(state, action.slot)) return state;
       const cleared = state.slots[action.slot];
       if (!cleared) return state;
+      if (cleared.templateId === "nineYearsWar") {
+        let s = state;
+        const [rng, roll] = rngNext(s.rng);
+        s = { ...s, rng };
+        const decisiveVictory = roll < 1 / 9;
+        const limitedGains = roll >= 5 / 9;
+        let legitimacyDelta = 0;
+        if (limitedGains && !decisiveVictory) {
+          legitimacyDelta = 1;
+          s = applyEffects(s, [{ kind: "modResource", resource: "legitimacy", delta: 1 }]);
+        }
+        s = markSlotResolvedWithNineYearsWarPersistence(s, action.slot, !decisiveVictory);
+        s = removeHand(s, p.cardInstanceId);
+        const consumed = consumeLimitedUseCard(s, p.cardInstanceId);
+        s = consumed.state;
+        if (!consumed.exhausted) {
+          s = pushDiscard(s, p.cardInstanceId);
+        }
+        s = { ...s, pendingInteraction: null };
+        s = enforceLegitimacy(s);
+        s = appendActionLog(s, {
+          kind: "eventNineYearsWarCampaign",
+          slot: action.slot,
+          fundingPaid: p.fundingPaid,
+          viaIntervention: true,
+          outcome: decisiveVictory ? "decisiveVictory" : limitedGains ? "limitedGains" : "stalemate",
+          legitimacyDelta,
+        });
+        return appendInflationActivationLogIfNeeded(state, s);
+      }
       let s = markSlotResolvedWithLeagueProgress(state, action.slot);
       s = removeHand(s, p.cardInstanceId);
       const consumed = consumeLimitedUseCard(s, p.cardInstanceId);

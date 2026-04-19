@@ -34,10 +34,10 @@ export const messagesFrSecondMandate: Record<keyof typeof messagesEnSecondMandat
     "Les puissances européennes se coordonnent contre la France. Tag Continu 3 : chaque tour, payez floor(progression Alerte Europe/2) Financement pour maintenir les négociations ; si impayé, perdez 1 Pouvoir et 1 Trésor. Vous pouvez toujours résoudre plus tôt en payant 2 Financement (ou via Intervention).",
   "event.nineYearsWar.name": "Guerre de Neuf Ans",
   "event.nineYearsWar.desc":
-    "La pression d'une grande guerre s'installe. Payez 2 Financement (ou Intervention) pour stabiliser le front ; les années non résolues érodent le Trésor et le flux de cartes.",
+    "Événement Continu. Chaque tour, vous pouvez payer 2 Financement (ou utiliser Intervention) pour lancer une campagne : 1/9 victoire décisive (l'événement se termine), 4/9 statu quo (aucun effet), 4/9 gains limités (Légitimité +1). Si vous ne le traitez pas ce tour, vous subissez un revers local (Légitimité -1) et l'événement reste en place. Tant qu'il est encore présent en fin de tour, ajoutez 1 carte Fardeau fiscal à votre deck.",
   "event.ryswickPeace.name": "Paix de Ryswick",
   "event.ryswickPeace.desc":
-    "Les termes de paix peuvent restaurer l'ordre. Investissez (progression Alerte Europe + 2) Financement pour gagner Légitimité +1 et lever l'Alerte Europe. Cet événement est Continu : s'il n'est pas résolu, Légitimité -1 chaque tour.",
+    "Les termes de paix peuvent restaurer l'ordre. Investissez (progression Alerte Europe + 2) Financement pour gagner Légitimité +1 et lever l'Alerte Europe. Si la Guerre de Neuf Ans n'est pas encore terminée, ce coût gagne +4 supplémentaire. Résoudre cet événement met aussi fin définitivement à la Guerre de Neuf Ans. Cet événement est Continu : s'il n'est pas résolu, Légitimité -1 chaque tour.",
   "event.versaillesExpenditure.name": "Dépenses de Versailles",
   "event.versaillesExpenditure.desc":
     "Les dépenses de cour montent encore. Payez 3 Financement ou utilisez Intervention ; si non résolu, perdez 2 Trésor.",

@@ -203,6 +203,19 @@ export const messagesZhCore = {
   "log.eventLocalWarChoice.attackOutcome.success": "{power} +1，{legitimacy} +1",
   "log.eventLocalWarChoice.attackOutcome.stalemate": "战果有限，本年无额外资源变化",
   "log.eventLocalWarChoice.attackOutcome.setback": "{power} -1",
+  "log.eventNineYearsWarCampaign.title":
+    "[第 {turn} 年] {event}：以「{method}」推进战事（支付 {paid} {funding}）——{outcome}。",
+  "log.eventNineYearsWarCampaign.method.funding": "经费",
+  "log.eventNineYearsWarCampaign.method.intervention": "干预",
+  "log.eventNineYearsWarCampaign.outcome.decisiveVictory": "决定性胜利，战争压力终结",
+  "log.eventNineYearsWarCampaign.outcome.stalemate": "僵持不下，前线局势未改",
+  "log.eventNineYearsWarCampaign.outcome.limitedGains": "取得局部战果，{legitimacy} +1",
+  "log.eventNineYearsWarCampaign.history":
+    "史实背景：九年战争（1688–1697）从莱茵兰、低地到海上战场全面延伸，长期动员几乎压垮各国财政。",
+  "log.eventNineYearsWarFiscalBurden.title":
+    "[第 {turn} 年] {event} 在年末仍未结束：向抽牌堆加入 1 张 {card}。",
+  "log.eventNineYearsWarFiscalBurden.history":
+    "史实背景：长期战争需要反复举债、拖欠与加税，财政负担会持续累积并反噬治理能力。",
   "log.drawCards.title": "[第 {turn} 年] 本回合抓取 {count} 张牌：{cards}。",
   "log.drawOverflowDiscarded.title":
     "[第 {turn} 年] 手牌已达上限；将剩余未摸的 {count} 张牌直接置入弃牌堆：{cards}。",

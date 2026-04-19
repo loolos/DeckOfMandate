@@ -215,6 +215,10 @@ function clearResolvedSlots(state: GameState): GameState {
       slots[slot] = { ...ev, resolved: false };
       continue;
     }
+    if (ev.templateId === "nineYearsWar" && (ev.remainingTurns ?? 0) > 0) {
+      slots[slot] = { ...ev, resolved: false };
+      continue;
+    }
     slots[slot] = null;
   }
   return { ...state, slots };
