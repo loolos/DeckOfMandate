@@ -28,6 +28,15 @@ export type ActionLogPayload =
       powerDelta: number;
       extraTreasuryProbabilityPct: number;
     }
+  | {
+      kind: "eventNineYearsWarAttempt";
+      slot: SlotId;
+      method: "funding" | "intervention";
+      fundingPaid: number;
+      roll: number;
+      outcome: "majorVictory" | "stalemate" | "minorGains";
+    }
+  | { kind: "eventNineYearsWarBurden"; slot: SlotId }
   | { kind: "antiFrenchLeagueDraw"; probabilityPct: number }
   | { kind: "europeAlertProgressShift"; from: number; to: number; probabilityPct: number; pressureDeltaK: number }
   | { kind: "drawOverflowDiscarded"; cardTemplateIds: CardTemplateId[] }

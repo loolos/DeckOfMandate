@@ -34,7 +34,7 @@ export const messagesFrSecondMandate: Record<keyof typeof messagesEnSecondMandat
     "Les puissances européennes se coordonnent contre la France. Tag Continu 3 : chaque tour, payez floor(progression Alerte Europe/2) Financement pour maintenir les négociations ; si impayé, perdez 1 Pouvoir et 1 Trésor. Vous pouvez toujours résoudre plus tôt en payant 2 Financement (ou via Intervention).",
   "event.nineYearsWar.name": "Guerre de Neuf Ans",
   "event.nineYearsWar.desc":
-    "La pression d'une grande guerre s'installe. Payez 2 Financement (ou Intervention) pour stabiliser le front ; les années non résolues érodent le Trésor et le flux de cartes.",
+    "Cet événement est Continu. Chaque tour, vous pouvez payer 2 Financement (ou Intervention) pour tenter une résolution de campagne : 1/9 victoire décisive (retirez l'événement), 4/9 enlisement (aucun effet), 4/9 gains limités (Légitimité +1, l'événement reste). Si vous ne le traitez pas ce tour, Légitimité -1 et l'événement persiste. De plus, s'il est encore présent en fin de tour, ajoutez 1 Fardeau fiscal à votre pioche. Tant qu'il n'est pas terminé, la Paix de Ryswick coûte +4 Financement à résoudre.",
   "event.ryswickPeace.name": "Paix de Ryswick",
   "event.ryswickPeace.desc":
     "Les termes de paix peuvent restaurer l'ordre. Investissez (progression Alerte Europe + 2) Financement pour gagner Légitimité +1 et lever l'Alerte Europe. Cet événement est Continu : s'il n'est pas résolu, Légitimité -1 chaque tour.",
@@ -104,4 +104,20 @@ export const messagesFrSecondMandate: Record<keyof typeof messagesEnSecondMandat
     "Exercez une pression via émissaires et leviers de traité plutôt que par commandement royal direct.",
   "card.diplomaticIntervention.desc":
     "Carte supplémentaire. Résolvez un événement néfaste (pas Boom du commerce colonial). N'est pas une carte taguée Royal ; quand « Restant » est épuisé, il n'y a pas de pénalité supplémentaire et elle quitte simplement le cycle. Exclue du réajustement inter-chapitre et retirée à la fin du chapitre.",
+  "log.eventNineYearsWarAttempt.method.funding": "opérations financées",
+  "log.eventNineYearsWarAttempt.method.intervention": "intervention diplomatique",
+  "log.eventNineYearsWarAttempt.title":
+    "[Tour {turn}] {event} ({slot}) — {method}, {paid} {funding} engagés ; jet de campagne (table 1/9) : {roll}.",
+  "log.eventNineYearsWarAttempt.outcome.majorVictory":
+    "Repère historique : une fenêtre de règlement global type Ryswick s'ouvre ; la pression de guerre prend fin.",
+  "log.eventNineYearsWarAttempt.outcome.stalemate":
+    "Repère historique : la profondeur de coalition et la logistique imposent l'enlisement ; aucun basculement immédiat.",
+  "log.eventNineYearsWarAttempt.outcome.minorGains":
+    "Repère historique : des gains locaux sur les fronts/forteresses améliorent l'assise du trône ; {legitimacy} +1, mais la guerre continue.",
+  "log.eventNineYearsWarAttempt.history":
+    "Contexte : la guerre de Neuf Ans (1688-1697) fut une longue guerre d'usure de coalition, aux gains souvent limités.",
+  "log.eventNineYearsWarBurden.title":
+    "[Tour {turn}] {event} ({slot}) se poursuit — la contrainte financière de guerre ajoute 1 Fardeau fiscal à la pioche.",
+  "log.eventNineYearsWarBurden.history":
+    "Contexte : la mobilisation prolongée reposait sur l'endettement, les approvisionnements et une pression fiscale cumulative.",
 };

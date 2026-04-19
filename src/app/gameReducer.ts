@@ -177,6 +177,46 @@ function canFundSolve(state: GameState, slot: SlotId): boolean {
   return false;
 }
 
+function attemptNineYearsWarCampaign(
+  state: GameState,
+  slot: SlotId,
+  method: "funding" | "intervention",
+  fundingPaid: number,
+): GameState {
+  const ev = state.slots[slot];
+  if (!ev || ev.resolved || ev.templateId !== "nineYearsWar") return state;
+  const [rng, u] = rngNext(state.rng);
+  const roll = Math.floor(u * 9) + 1;
+  let s: GameState = { ...state, rng };
+  if (roll === 1) {
+    s = { ...s, slots: { ...s.slots, [slot]: null } };
+    return appendActionLog(s, {
+      kind: "eventNineYearsWarAttempt",
+      slot,
+      method,
+      fundingPaid,
+      roll,
+      outcome: "majorVictory",
+    });
+  }
+  if (roll >= 6) {
+    s = applyEffects(s, [{ kind: "modResource", resource: "legitimacy", delta: 1 }]);
+  }
+  s = {
+    ...s,
+    slots: { ...s.slots, [slot]: { ...ev, resolved: true } },
+  };
+  s = appendActionLog(s, {
+    kind: "eventNineYearsWarAttempt",
+    slot,
+    method,
+    fundingPaid,
+    roll,
+    outcome: roll <= 5 ? "stalemate" : "minorGains",
+  });
+  return enforceLegitimacy(s);
+}
+
 function canScriptedAttack(state: GameState, slot: SlotId): boolean {
   if (state.phase !== "action" || state.pendingInteraction?.type === "crackdownPick") return false;
   const ev = state.slots[slot];
@@ -354,6 +394,9 @@ function performFundSolve(state: GameState, slot: SlotId): GameState {
     };
   } else {
     return state;
+  }
+  if (ev.templateId === "nineYearsWar") {
+    return attemptNineYearsWarCampaign(s, slot, "funding", fundingAmount ?? 0);
   }
   let treasuryGain = 0;
   if (tmpl.onFundSolveEffects && tmpl.onFundSolveEffects.length > 0) {
@@ -584,7 +627,10 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       if (!isCrackdownTarget(state, action.slot)) return state;
       const cleared = state.slots[action.slot];
       if (!cleared) return state;
-      let s = markSlotResolvedWithLeagueProgress(state, action.slot);
+      let s =
+        cleared.templateId === "nineYearsWar"
+          ? attemptNineYearsWarCampaign(state, action.slot, "intervention", p.fundingPaid)
+          : markSlotResolvedWithLeagueProgress(state, action.slot);
       s = removeHand(s, p.cardInstanceId);
       const consumed = consumeLimitedUseCard(s, p.cardInstanceId);
       s = consumed.state;

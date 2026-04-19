@@ -41,7 +41,7 @@ export const messagesZhSecondMandate = {
     "欧洲列强开始系统围堵法国。该事件带「剩余3」标签：需累计处理 3 次才会彻底结束。每回合若未处理，需支付 floor(欧洲警觉进度/2) 经费维持谈判；若无法支付，则权力 -1、财政 -1。每次支付 2 经费（或干预）都算一次处理：当回合不会触发上述未处理负面效果，但事件会保留到下一回合，直到「剩余」归零。",
   "event.nineYearsWar.name": "九年战争",
   "event.nineYearsWar.desc":
-    "大战压力全面到来。支付 2 经费（或干预）稳住局势；若未处理，将持续侵蚀财政与抽牌能力。",
+    "该事件带「持续」标签：每回合可支付 2 经费（或干预）发动一次战役判定。结果为：1/9 彻底取胜（事件移除）；4/9 僵持（无变化）；4/9 取得战果（合法性 +1，但事件仍在）。若本回合未处理，则合法性 -1 且事件继续存在。只要该事件在回合末仍存在，就向抽牌堆加入 1 张「财政负担」。此外，九年战争未结束时，「里斯维克和约」解决费用 +4。",
   "event.ryswickPeace.name": "里斯维克和约",
   "event.ryswickPeace.desc":
     "和约提供秩序重建窗口。投入「欧洲警觉进度 + 2」经费可获得合法性 +1，并结束「欧洲警觉」。该事件带持续标签：若未处理，每回合合法性 -1。",
@@ -108,4 +108,20 @@ export const messagesZhSecondMandate = {
   "card.diplomaticIntervention.background": "通过使节施压与条约操作解决危机，而非直接动用王室强制力。",
   "card.diplomaticIntervention.desc":
     "额外牌。解决一个有害事件（不能选殖民贸易机遇），且不带王室标签；「剩余」用尽后无额外惩罚，仅会从牌库循环中移除。不会出现在过关整编中，本关结束后会移除。",
+  "log.eventNineYearsWarAttempt.method.funding": "军费推进",
+  "log.eventNineYearsWarAttempt.method.intervention": "外交干预",
+  "log.eventNineYearsWarAttempt.title":
+    "[第 {turn} 年] {event}（{slot}）— 以{method}投入 {paid} {funding} 发动战役（1/9 判定掷点：{roll}）。",
+  "log.eventNineYearsWarAttempt.outcome.majorVictory":
+    "历史回响：1697 年《里斯维克和约》式的全面停战窗口出现，战线整体收束，事件结束。",
+  "log.eventNineYearsWarAttempt.outcome.stalemate":
+    "历史回响：同盟体系与补给消耗形成长期拉锯，前线僵持，局势未见实质变化。",
+  "log.eventNineYearsWarAttempt.outcome.minorGains":
+    "历史回响：边境与要塞方向取得有限战果，{legitimacy} +1，但不足以终结大战。",
+  "log.eventNineYearsWarAttempt.history":
+    "背景：九年战争（1688-1697）是法国与大同盟的长期消耗战，战果常呈阶段性与局部性。",
+  "log.eventNineYearsWarBurden.title":
+    "[第 {turn} 年] {event}（{slot}）仍在持续 — 战争财政继续加压：向抽牌堆加入 1 张「财政负担」。",
+  "log.eventNineYearsWarBurden.history":
+    "背景：长期动员依赖借贷、军需与税负滚动，财政负担会不断沉淀到后续年度。",
 } as const;

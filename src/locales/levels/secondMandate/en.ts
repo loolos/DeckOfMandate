@@ -46,7 +46,7 @@ export const messagesEnSecondMandate = {
     "European powers coordinate against France. Tagged Remaining 3: it must be resolved 3 times total before it is fully removed. On any turn it is not resolved, you must pay floor(Europe Alert progress/2) Funding to keep talks alive; if unpaid, lose 1 Power and 1 Treasury. Each time you pay 2 Funding (or use Intervention), that counts as one resolve: this turn avoids the unresolved penalty, but the event remains next turn until Remaining reaches 0.",
   "event.nineYearsWar.name": "The Nine Years' War",
   "event.nineYearsWar.desc":
-    "Major war pressure settles in. Pay 2 Funding (or use Intervention) to stabilize the front; unresolved years erode Treasury and card flow.",
+    "This is a Continued event. Each turn, you may pay 2 Funding (or use Intervention) to attempt a campaign resolution: 1/9 decisive victory (remove this event), 4/9 stalemate (no change), 4/9 minor gains (Legitimacy +1, event remains). If you do not handle it this turn, Legitimacy -1 and the event persists. Also, if this event still exists at turn end, add 1 Fiscal Burden to your draw pile. While it remains unresolved, Peace of Ryswick costs +4 Funding to resolve.",
   "event.ryswickPeace.name": "Peace of Ryswick",
   "event.ryswickPeace.desc":
     "Peace terms can restore order. Invest (Europe Alert progress + 2) Funding to gain Legitimacy +1 and clear Europe Alert. This event is Continued: if unresolved, Legitimacy -1 each turn.",
@@ -122,4 +122,20 @@ export const messagesEnSecondMandate = {
     "Apply pressure through envoys and treaty leverage rather than direct royal command.",
   "card.diplomaticIntervention.desc":
     "Extra card. Resolve one harmful event (not Colonial Trade Boom). Not a Royal-tag card; when Remaining is exhausted there is no extra penalty, it simply leaves circulation. Excluded from chapter refit and removed when the chapter ends.",
+  "log.eventNineYearsWarAttempt.method.funding": "funding operations",
+  "log.eventNineYearsWarAttempt.method.intervention": "diplomatic intervention",
+  "log.eventNineYearsWarAttempt.title":
+    "[Turn {turn}] {event} ({slot}) — {method} committed {paid} {funding}; campaign roll (1/9 table): {roll}.",
+  "log.eventNineYearsWarAttempt.outcome.majorVictory":
+    "Historical note: a Ryswick-like full settlement window opens; the war pressure collapses and this event ends.",
+  "log.eventNineYearsWarAttempt.outcome.stalemate":
+    "Historical note: coalition depth and logistics produce a prolonged stalemate; no immediate strategic shift follows.",
+  "log.eventNineYearsWarAttempt.outcome.minorGains":
+    "Historical note: localized fortress/front gains improve crown standing; {legitimacy} +1, but war pressure continues.",
+  "log.eventNineYearsWarAttempt.history":
+    "Background: the Nine Years' War (1688-1697) was a long coalition war of attrition with intermittent, limited gains.",
+  "log.eventNineYearsWarBurden.title":
+    "[Turn {turn}] {event} ({slot}) continues — war finance strain adds 1 Fiscal Burden to the draw pile.",
+  "log.eventNineYearsWarBurden.history":
+    "Background: sustained mobilization relied on debt, supply contracts, and rolling fiscal pressure across years.",
 } as const;

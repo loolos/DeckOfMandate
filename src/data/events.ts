@@ -134,15 +134,12 @@ export const eventTemplates: Record<EventTemplateId, EventTemplate> = {
   nineYearsWar: {
     id: "nineYearsWar",
     weight: 0,
-    harmful: false,
+    harmful: true,
     crisisPersistence: "continued",
     titleKey: "event.nineYearsWar.name",
     descriptionKey: "event.nineYearsWar.desc",
     solve: { kind: "fundingOrCrackdown", amount: 2 },
-    penaltiesIfUnresolved: [
-      { kind: "modResource", resource: "treasuryStat", delta: -2 },
-      { kind: "scheduleNextTurnDrawModifier", delta: -1 },
-    ],
+    penaltiesIfUnresolved: [{ kind: "modResource", resource: "legitimacy", delta: -1 }],
   },
   ryswickPeace: {
     id: "ryswickPeace",
@@ -371,7 +368,11 @@ export function getEventSolveFundingAmount(state: GameState, id: EventTemplateId
     return nymwegenSettlementFundingCost(state.europeAlertProgress) + antiFrenchPenalty;
   }
   if (id === "ryswickPeace") {
-    return state.europeAlertProgress + 2 + antiFrenchPenalty;
+    const unresolvedNineYearsWar = Object.values(state.slots).some(
+      (ev) => !!ev && ev.templateId === "nineYearsWar",
+    );
+    const nineYearsWarPenalty = unresolvedNineYearsWar ? 4 : 0;
+    return state.europeAlertProgress + 2 + nineYearsWarPenalty + antiFrenchPenalty;
   }
   return tmpl.solve.amount + antiFrenchPenalty;
 }

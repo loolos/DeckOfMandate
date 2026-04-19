@@ -94,6 +94,23 @@ export type ActionLogEntry =
       extraTreasuryProbabilityPct: number;
     }
   | {
+      kind: "eventNineYearsWarAttempt";
+      id: string;
+      turn: number;
+      slot: SlotId;
+      method: "funding" | "intervention";
+      fundingPaid: number;
+      /** 1..9 sampled bucket used for deterministic outcome display. */
+      roll: number;
+      outcome: "majorVictory" | "stalemate" | "minorGains";
+    }
+  | {
+      kind: "eventNineYearsWarBurden";
+      id: string;
+      turn: number;
+      slot: SlotId;
+    }
+  | {
       kind: "antiFrenchLeagueDraw";
       id: string;
       turn: number;

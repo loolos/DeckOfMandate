@@ -155,4 +155,20 @@ describe("resolveEndOfYearPenalties", () => {
     expect(s2.resources.treasuryStat).toBe(3);
     expect(s2.slots.A?.remainingTurns).toBe(3);
   });
+
+  it("nine years war still adds fiscal burden at year end when present", () => {
+    const base = createInitialState(5_005, "secondMandate");
+    const beforeCards = Object.keys(base.cardsById).length;
+    const s0 = {
+      ...base,
+      slots: {
+        ...EMPTY_EVENT_SLOTS,
+        A: { instanceId: "e_nine", templateId: "nineYearsWar" as const, resolved: false },
+      },
+    };
+    const s1 = resolveEndOfYearPenalties(s0);
+    expect(s1.resources.legitimacy).toBe(base.resources.legitimacy - 1);
+    expect(Object.keys(s1.cardsById).length).toBe(beforeCards + 1);
+    expect(s1.actionLog.some((entry) => entry.kind === "eventNineYearsWarBurden")).toBe(true);
+  });
 });

@@ -11,6 +11,7 @@ const SLOTS: readonly SlotId[] = EVENT_SLOT_ORDER;
 export function resolveEndOfYearPenalties(state: GameState): GameState {
   let s = state;
   const schedulers = getLevelContent(s.levelId).eoyEscalationSchedulers;
+  const existingNineYearsWarSlot = SLOTS.find((slot) => s.slots[slot]?.templateId === "nineYearsWar") ?? null;
   for (const slot of SLOTS) {
     const ev = s.slots[slot];
     if (!ev || ev.resolved) continue;
@@ -50,6 +51,14 @@ export function resolveEndOfYearPenalties(state: GameState): GameState {
     if (!isContinuedCrisis(tmpl)) {
       s = { ...s, slots: { ...s.slots, [slot]: null } };
     }
+  }
+  const finalNineYearsWarSlot =
+    existingNineYearsWarSlot && s.slots[existingNineYearsWarSlot]?.templateId === "nineYearsWar"
+      ? existingNineYearsWarSlot
+      : null;
+  if (finalNineYearsWarSlot) {
+    s = appendActionLog(s, { kind: "eventNineYearsWarBurden", slot: finalNineYearsWarSlot });
+    s = applyEffects(s, [{ kind: "addCardsToDeck", templateId: "fiscalBurden", count: 1 }]);
   }
   return s;
 }
