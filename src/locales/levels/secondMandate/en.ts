@@ -46,10 +46,10 @@ export const messagesEnSecondMandate = {
     "European powers coordinate against France. Tagged Remaining 3: it must be resolved 3 times total before it is fully removed. On any turn it is not resolved, you must pay floor(Europe Alert progress/2) Funding to keep talks alive; if unpaid, lose 1 Power and 1 Treasury. Each time you pay 2 Funding (or use Intervention), that counts as one resolve: this turn avoids the unresolved penalty, but the event remains next turn until Remaining reaches 0.",
   "event.nineYearsWar.name": "The Nine Years' War",
   "event.nineYearsWar.desc":
-    "Major war pressure settles in. Pay 2 Funding (or use Intervention) to stabilize the front; unresolved years erode Treasury and card flow.",
+    "Tagged Continued. Each turn you may spend floor(Europe Alert progress/2) Funding (minimum 1), or use Intervention, to launch a campaign: 1/9 decisive victory (event ends permanently), 4/9 stalemate (no effect), 4/9 limited gains (Legitimacy +1). If you do not act this turn, you suffer a local setback (Legitimacy -1) and the event remains. Also, if this event is still present at year-end, add 1 Fiscal Burden card to your deck.",
   "event.ryswickPeace.name": "Peace of Ryswick",
   "event.ryswickPeace.desc":
-    "Peace terms can restore order. Invest (Europe Alert progress + 2) Funding to gain Legitimacy +1 and clear Europe Alert. This event is Continued: if unresolved, Legitimacy -1 each turn.",
+    "Peace terms can restore order. Invest (Europe Alert progress + 2) Funding to gain Legitimacy +1 and clear Europe Alert. If the Nine Years' War is still active, this solve cost gains an additional +4. Resolving this event also ends the Nine Years' War completely. This event is Continued: if unresolved, Legitimacy -1 each turn.",
   "event.versaillesExpenditure.name": "Versailles Expenditure",
   "event.versaillesExpenditure.desc":
     "Court spending rises again. Pay 3 Funding or use Intervention; if unresolved, lose 2 Treasury.",

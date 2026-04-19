@@ -105,6 +105,22 @@ export type ActionLogEntry =
       legitimacyDelta: number;
     }
   | {
+      kind: "eventNineYearsWarCampaign";
+      id: string;
+      turn: number;
+      slot: SlotId;
+      fundingPaid: number;
+      viaIntervention: boolean;
+      outcome: "decisiveVictory" | "stalemate" | "limitedGains";
+      legitimacyDelta: number;
+    }
+  | {
+      kind: "eventNineYearsWarFiscalBurden";
+      id: string;
+      turn: number;
+      slot: SlotId;
+    }
+  | {
       kind: "antiFrenchLeagueDraw";
       id: string;
       turn: number;

@@ -1,4 +1,4 @@
-import type { EventTemplate, EventTemplateId } from "../types/event";
+import { EVENT_SLOT_ORDER, type EventTemplate, type EventTemplateId } from "../types/event";
 import type { GameState } from "../types/game";
 import { antiFrenchSentimentEventSolveCostPenalty } from "../logic/antiFrenchSentiment";
 import { nymwegenSettlementFundingCost } from "../logic/europeAlert";
@@ -139,10 +139,7 @@ export const eventTemplates: Record<EventTemplateId, EventTemplate> = {
     titleKey: "event.nineYearsWar.name",
     descriptionKey: "event.nineYearsWar.desc",
     solve: { kind: "fundingOrCrackdown", amount: 2 },
-    penaltiesIfUnresolved: [
-      { kind: "modResource", resource: "treasuryStat", delta: -2 },
-      { kind: "scheduleNextTurnDrawModifier", delta: -1 },
-    ],
+    penaltiesIfUnresolved: [{ kind: "modResource", resource: "legitimacy", delta: -1 }],
   },
   ryswickPeace: {
     id: "ryswickPeace",
@@ -371,7 +368,12 @@ export function getEventSolveFundingAmount(state: GameState, id: EventTemplateId
     return nymwegenSettlementFundingCost(state.europeAlertProgress) + antiFrenchPenalty;
   }
   if (id === "ryswickPeace") {
-    return state.europeAlertProgress + 2 + antiFrenchPenalty;
+    const nineYearsWarActive = EVENT_SLOT_ORDER.some((slot) => state.slots[slot]?.templateId === "nineYearsWar");
+    const warSurcharge = nineYearsWarActive ? 4 : 0;
+    return state.europeAlertProgress + 2 + antiFrenchPenalty + warSurcharge;
+  }
+  if (id === "nineYearsWar") {
+    return Math.max(1, Math.floor(state.europeAlertProgress / 2));
   }
   return tmpl.solve.amount + antiFrenchPenalty;
 }
