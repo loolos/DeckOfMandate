@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { createInitialState } from "../app/initialState";
+import { buildLevel2StateFromDraft, createStandaloneLevel2Draft } from "../app/level2Transition";
 import type { CardInstance } from "../types/card";
 import { EMPTY_EVENT_SLOTS } from "../types/event";
 import type { GameState } from "../types/game";
@@ -406,6 +407,14 @@ describe("beginYear + playerStatuses", () => {
     expect(s0.turn).toBe(1);
     expect(s0.slots.A?.templateId).toBe("tradeOpportunity");
     expect(s0.slots.B?.templateId).toBe("administrativeDelay");
+  });
+
+  it("forces standalone second-mandate year-1 opening events to versailles expenditure + tax resistance", () => {
+    const draft = createStandaloneLevel2Draft(424_243);
+    const s0 = buildLevel2StateFromDraft(draft);
+    expect(s0.turn).toBe(1);
+    expect(s0.slots.A?.templateId).toBe("versaillesExpenditure");
+    expect(s0.slots.B?.templateId).toBe("taxResistance");
   });
 
   it("does not place duplicate procedural templates within the same all-empty refill", () => {

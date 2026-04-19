@@ -39,6 +39,10 @@ const FIRST_MANDATE_OPENING_EVENTS: readonly EventInstance["templateId"][] = [
   "tradeOpportunity",
   "administrativeDelay",
 ];
+const SECOND_MANDATE_STANDALONE_OPENING_EVENTS: readonly EventInstance["templateId"][] = [
+  "versaillesExpenditure",
+  "taxResistance",
+];
 type EventCountOption = {
   count: number;
   weight: number;
@@ -102,8 +106,27 @@ function buildProceduralSequenceBlock(state: GameState): [GameState["rng"], Even
 }
 
 function buildOpeningSequencePrefix(state: GameState): EventInstance["templateId"][] {
-  if (state.levelId !== "firstMandate" || state.turn !== 1) return [];
-  return [...FIRST_MANDATE_OPENING_EVENTS];
+  if (state.turn !== 1) return [];
+  if (state.levelId === "firstMandate") return [...FIRST_MANDATE_OPENING_EVENTS];
+  if (state.levelId !== "secondMandate") return [];
+  const isStandaloneLevel2Start = Object.keys(state.cardsById).some((id) => id.startsWith("standalone_old_"));
+  if (!isStandaloneLevel2Start) return [];
+  return [...SECOND_MANDATE_STANDALONE_OPENING_EVENTS];
+}
+
+function shouldForceSecondMandateStandaloneOpening(state: GameState): boolean {
+  if (state.levelId !== "secondMandate" || state.turn !== 1) return false;
+  return Object.keys(state.cardsById).some((id) => id.startsWith("standalone_old_"));
+}
+
+function forceSecondMandateStandaloneOpening(state: GameState): GameState {
+  if (!shouldForceSecondMandateStandaloneOpening(state)) return state;
+  const [first, second] = SECOND_MANDATE_STANDALONE_OPENING_EVENTS;
+  if (!first || !second) return state;
+  let st = state;
+  st = placeEventTemplateOnSlot(st, "A", first);
+  st = placeEventTemplateOnSlot(st, "B", second);
+  return st;
 }
 
 function ensureProceduralSequence(state: GameState, minRemaining: number): GameState {
@@ -276,6 +299,7 @@ function runEventPhase(state: GameState): GameState {
   let s = applyScheduledTransforms(state);
   s = clearResolvedSlots(s);
   s = applyScriptedCalendarPhase(s);
+  s = forceSecondMandateStandaloneOpening(s);
   s = fillEmptySlots(s);
   s = syncAntiFrenchSentimentStatus(s);
   s = maybeAddEuropeAlertSupplementalEvent(s);
