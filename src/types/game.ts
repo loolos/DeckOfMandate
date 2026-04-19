@@ -94,6 +94,17 @@ export type ActionLogEntry =
       extraTreasuryProbabilityPct: number;
     }
   | {
+      kind: "eventLocalWarChoice";
+      id: string;
+      turn: number;
+      slot: SlotId;
+      templateId: "localWar";
+      choice: "attack" | "appease";
+      fundingPaid: number;
+      powerDelta: number;
+      legitimacyDelta: number;
+    }
+  | {
       kind: "antiFrenchLeagueDraw";
       id: string;
       turn: number;

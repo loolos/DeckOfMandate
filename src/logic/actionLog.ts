@@ -28,6 +28,15 @@ export type ActionLogPayload =
       powerDelta: number;
       extraTreasuryProbabilityPct: number;
     }
+  | {
+      kind: "eventLocalWarChoice";
+      slot: SlotId;
+      templateId: "localWar";
+      choice: "attack" | "appease";
+      fundingPaid: number;
+      powerDelta: number;
+      legitimacyDelta: number;
+    }
   | { kind: "antiFrenchLeagueDraw"; probabilityPct: number }
   | { kind: "europeAlertProgressShift"; from: number; to: number; probabilityPct: number; pressureDeltaK: number }
   | { kind: "drawOverflowDiscarded"; cardTemplateIds: CardTemplateId[] }

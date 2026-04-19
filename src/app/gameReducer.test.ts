@@ -378,6 +378,12 @@ describe("gameReducer", () => {
     const s1 = gameReducer(s0, { type: "PICK_LOCAL_WAR_ATTACK", slot: "A" });
     expect(s1.resources.funding).toBe(3);
     expect(s1.slots.A?.resolved).toBe(true);
+    const last = s1.actionLog[s1.actionLog.length - 1];
+    expect(last?.kind).toBe("eventLocalWarChoice");
+    if (last?.kind === "eventLocalWarChoice") {
+      expect(last.choice).toBe("attack");
+      expect(last.fundingPaid).toBe(5);
+    }
   });
 
   it("local war attack includes anti-french sentiment penalty in funding cost", () => {
@@ -411,6 +417,14 @@ describe("gameReducer", () => {
     expect(s1.resources.funding).toBe(4);
     expect(s1.resources.legitimacy).toBe(3);
     expect(s1.slots.A?.resolved).toBe(true);
+    const last = s1.actionLog[s1.actionLog.length - 1];
+    expect(last).toMatchObject({
+      kind: "eventLocalWarChoice",
+      choice: "appease",
+      fundingPaid: 0,
+      legitimacyDelta: -1,
+      powerDelta: 0,
+    });
   });
 
   it("skips retention phase when hand size is within Legitimacy (auto-keep all)", () => {
