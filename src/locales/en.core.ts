@@ -217,6 +217,13 @@ export const messagesEnCore = {
   "log.crackdownCancelled": "[Turn {turn}] Intervention cancelled; refunded {refund} {funding}.",
   "log.eventScriptedAttack.generic":
     "[Turn {turn}] {event} — military option. Paid {paid} {funding}.{treasury}",
+  "log.eventLocalWarChoice.attack":
+    "[Turn {turn}] {event} — chose attack, paid {paid} {funding}; impact: {outcome}.",
+  "log.eventLocalWarChoice.appease":
+    "[Turn {turn}] {event} — chose appeasement; impact: {legitimacy} -1.",
+  "log.eventLocalWarChoice.attackOutcome.success": "{power} +1 and {legitimacy} +1",
+  "log.eventLocalWarChoice.attackOutcome.stalemate": "limited gains; no immediate resource swing",
+  "log.eventLocalWarChoice.attackOutcome.setback": "{power} -1",
   "log.drawCards.title": "[Turn {turn}] Drew {count} card(s): {cards}.",
   "log.drawOverflowDiscarded.title":
     "[Turn {turn}] Hand reached cap; discarded {count} undrawn card(s): {cards}.",

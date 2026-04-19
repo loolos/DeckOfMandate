@@ -174,6 +174,39 @@ function renderEntry(e: ActionLogEntry, t: (key: MessageKey, vars?: Record<strin
         </div>
       );
     }
+    case "eventLocalWarChoice": {
+      if (e.choice === "appease") {
+        return (
+          <div className={styles.actionLogHead}>
+            {t("log.eventLocalWarChoice.appease", {
+              turn: e.turn,
+              event: eventLabelWithIcon(e.templateId, t(eventTitleKey(e.templateId))),
+              legitimacy: resourceLabelWithIcon("legitimacy", t("resource.legitimacy")),
+            })}
+          </div>
+        );
+      }
+      const outcomeKey =
+        e.powerDelta > 0 && e.legitimacyDelta > 0
+          ? "log.eventLocalWarChoice.attackOutcome.success"
+          : e.powerDelta < 0
+            ? "log.eventLocalWarChoice.attackOutcome.setback"
+            : "log.eventLocalWarChoice.attackOutcome.stalemate";
+      return (
+        <div className={styles.actionLogHead}>
+          {t("log.eventLocalWarChoice.attack", {
+            turn: e.turn,
+            event: eventLabelWithIcon(e.templateId, t(eventTitleKey(e.templateId))),
+            paid: e.fundingPaid,
+            funding: fundingLabel,
+            outcome: t(outcomeKey as MessageKey, {
+              power: resourceLabelWithIcon("power", t("resource.power")),
+              legitimacy: resourceLabelWithIcon("legitimacy", t("resource.legitimacy")),
+            }),
+          })}
+        </div>
+      );
+    }
     case "antiFrenchLeagueDraw":
       return (
         <div>

@@ -270,6 +270,8 @@ function performLocalWarAttack(state: GameState, slot: SlotId): GameState {
   if (!ev || ev.resolved || ev.templateId !== "localWar") return state;
   const cost = state.europeAlertProgress + antiFrenchSentimentEventSolveCostPenalty(state);
   if (state.resources.funding < cost) return state;
+  let powerDelta = 0;
+  let legitimacyDelta = 0;
   let s: GameState = {
     ...state,
     resources: {
@@ -280,6 +282,8 @@ function performLocalWarAttack(state: GameState, slot: SlotId): GameState {
   const [rng, roll] = rngNext(s.rng);
   s = { ...s, rng };
   if (roll < 1 / 3) {
+    powerDelta = 1;
+    legitimacyDelta = 1;
     s = {
       ...s,
       resources: {
@@ -289,6 +293,7 @@ function performLocalWarAttack(state: GameState, slot: SlotId): GameState {
       },
     };
   } else if (roll >= 2 / 3) {
+    powerDelta = -1;
     s = {
       ...s,
       resources: {
@@ -298,7 +303,16 @@ function performLocalWarAttack(state: GameState, slot: SlotId): GameState {
     };
   }
   s = markSlotResolved(s, slot);
-  return enforceLegitimacy(s);
+  s = enforceLegitimacy(s);
+  return appendActionLog(s, {
+    kind: "eventLocalWarChoice",
+    slot,
+    templateId: "localWar",
+    choice: "attack",
+    fundingPaid: cost,
+    powerDelta,
+    legitimacyDelta,
+  });
 }
 
 function performLocalWarAppease(state: GameState, slot: SlotId): GameState {
@@ -306,7 +320,16 @@ function performLocalWarAppease(state: GameState, slot: SlotId): GameState {
   if (!ev || ev.resolved || ev.templateId !== "localWar") return state;
   let s: GameState = applyEffects(state, [{ kind: "modResource", resource: "legitimacy", delta: -1 }]);
   s = markSlotResolved(s, slot);
-  return enforceLegitimacy(s);
+  s = enforceLegitimacy(s);
+  return appendActionLog(s, {
+    kind: "eventLocalWarChoice",
+    slot,
+    templateId: "localWar",
+    choice: "appease",
+    fundingPaid: 0,
+    powerDelta: 0,
+    legitimacyDelta: -1,
+  });
 }
 
 /** After funding is cleared: keep chosen cards, discard the rest, then EOY penalties, then win / time / next year. */

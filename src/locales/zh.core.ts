@@ -196,6 +196,13 @@ export const messagesZhCore = {
   "log.crackdownCancelled": "[第 {turn} 年] 已取消干预；退回 {refund} {funding}。",
   "log.eventScriptedAttack.generic":
     "[第 {turn} 年] {event} — 采取军事进攻。已支付 {paid} {funding}。{treasury}",
+  "log.eventLocalWarChoice.attack":
+    "[第 {turn} 年] {event} — 选择进攻，支付 {paid} {funding}；后果：{outcome}。",
+  "log.eventLocalWarChoice.appease":
+    "[第 {turn} 年] {event} — 选择绥靖；后果：{legitimacy} -1。",
+  "log.eventLocalWarChoice.attackOutcome.success": "{power} +1，{legitimacy} +1",
+  "log.eventLocalWarChoice.attackOutcome.stalemate": "战果有限，本年无额外资源变化",
+  "log.eventLocalWarChoice.attackOutcome.setback": "{power} -1",
   "log.drawCards.title": "[第 {turn} 年] 本回合抓取 {count} 张牌：{cards}。",
   "log.drawOverflowDiscarded.title":
     "[第 {turn} 年] 手牌已达上限；将剩余未摸的 {count} 张牌直接置入弃牌堆：{cards}。",
