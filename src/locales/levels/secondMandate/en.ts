@@ -34,7 +34,7 @@ export const messagesEnSecondMandate = {
     "The system enters overt confrontation and dual-crisis pressure becomes routine.",
   "status.antiFrenchSentiment.name": "Anti-French Sentiment",
   "status.antiFrenchSentiment.history":
-    "When Power+Treasury exceeds 20, every full +5 overflow raises all funding-based event solve costs by +1 until the sum returns to 20 or below.",
+    "After the 1670s coalition turn, stronger French capacity triggered tighter foreign coordination. Mechanically: when Power+Treasury exceeds 20, every full +5 overflow raises all funding-based event solve costs by +1; while this status exists, each turn end also injects 1 Anti-French Containment card into your deck (on draw: 50/50 lose 1 Power or 1 Legitimacy; play cost is floor(Europe Alert progress/2); on play: purged, not discarded). The status is removed once Power+Treasury returns to 20 or below.",
   "event.nymwegenSettlement.name": "Treaties of Nijmegen",
   "event.nymwegenSettlement.desc":
     "A mandatory long-running crisis: pay (Europe Alert progress + 3) Funding to secure the settlement (Power -2, Treasury -1, Legitimacy -1). This does not remove Europe Alert; if ignored, lose 1 Power each year.",

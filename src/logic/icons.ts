@@ -9,6 +9,7 @@ const CARD_ICONS: Record<CardTemplateId, string> = {
   crackdown: "🛡️",
   diplomaticIntervention: "🕊️",
   fiscalBurden: "⛓️",
+  antiFrenchContainment: "🧷",
   reform: "📜",
   ceremony: "🎎",
   development: "🏗️",
