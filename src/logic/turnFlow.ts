@@ -43,6 +43,7 @@ const RELIGIOUS_TENSION_EVENTS: readonly EventInstance["templateId"][] = [
 ];
 const PROCEDURAL_SEQUENCE_LOW_WATERMARK = 3;
 const SECOND_MANDATE_EARLIEST_VICTORY_YEAR = 1696;
+const SECOND_MANDATE_MIN_LEGITIMACY = 6;
 const FIRST_MANDATE_OPENING_EVENTS: readonly EventInstance["templateId"][] = [
   "tradeOpportunity",
   "administrativeDelay",
@@ -552,7 +553,8 @@ export function evaluateVictory(state: GameState): GameState {
     const huguenotResidualResolved = !state.playerStatuses.some(
       (s) => s.templateId === "huguenotContainment",
     );
-    if (reachedVictoryYear && europeAlertResolved && huguenotResidualResolved) {
+    const legitimacyOk = state.resources.legitimacy >= SECOND_MANDATE_MIN_LEGITIMACY;
+    if (reachedVictoryYear && europeAlertResolved && huguenotResidualResolved && legitimacyOk) {
       return { ...state, phase: "gameOver", outcome: "victory" };
     }
     return state;

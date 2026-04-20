@@ -1055,7 +1055,7 @@ describe("gameReducer", () => {
       resources: {
         treasuryStat: 3,
         power: 3,
-        legitimacy: 3,
+        legitimacy: 6,
         funding: 0,
       },
       slots: { ...EMPTY_EVENT_SLOTS },

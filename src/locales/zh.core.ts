@@ -102,8 +102,8 @@ export const messagesZhCore = {
   "ui.actionLog": "行动记录",
   "ui.actionLog.empty": "本局尚无效果记录。",
   "ui.targets": "关卡目标 — {limit} 回合内：财政 {tT}，权力 {tP}，合法性 {tL}",
-  "ui.targets.secondMandateExtra":
-    "第二关胜利条件仅有两项：必须结束「欧洲警觉」，且至少存活至 1696 年（此前不会直接获胜）。",
+  "ui.targets.secondMandate":
+    "关卡目标 — {limit} 回合内：历法年份 ≥ 1696；「欧洲警觉」已结束；不存在「遏制胡格诺-剩余势力」状态（严厉镇压分支须完全收尾）；合法性 ≥ 6。",
   "ui.language": "语言",
   "ui.lang.en": "English",
   "ui.lang.zh": "中文",

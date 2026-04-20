@@ -786,18 +786,14 @@ export function Game() {
             </span>
           </div>
           <div className={styles.targets} id="tutorial-targets">
-            {t("ui.targets", {
-              limit: runTurnLimit,
-              tT: level.winTargets.treasuryStat,
-              tP: level.winTargets.power,
-              tL: level.winTargets.legitimacy,
-            })}
-            {state.levelId === "secondMandate" ? (
-              <>
-                <br />
-                {t("ui.targets.secondMandateExtra")}
-              </>
-            ) : null}
+            {state.levelId === "secondMandate"
+              ? t("ui.targets.secondMandate", { limit: runTurnLimit })
+              : t("ui.targets", {
+                  limit: runTurnLimit,
+                  tT: level.winTargets.treasuryStat,
+                  tP: level.winTargets.power,
+                  tL: level.winTargets.legitimacy,
+                })}
           </div>
         </div>
         <LanguageToggle />

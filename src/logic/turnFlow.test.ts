@@ -974,6 +974,7 @@ describe("evaluateVictory (secondMandate)", () => {
       outcome: "playing",
       turn: year - base.calendarStartYear + 1,
       europeAlert: false,
+      resources: { ...base.resources, legitimacy: Math.max(6, base.resources.legitimacy) },
       playerStatuses: base.playerStatuses.filter(
         (s) => s.templateId !== "huguenotContainment",
       ),
@@ -992,6 +993,17 @@ describe("evaluateVictory (secondMandate)", () => {
     const s: GameState = { ...base, europeAlert: true };
     const r = evaluateVictory(s);
     expect(r.outcome).toBe("playing");
+  });
+
+  it("does not declare victory while legitimacy is below 6", () => {
+    const base = makeSecondMandateBaseAtYear(1696);
+    const s: GameState = {
+      ...base,
+      resources: { ...base.resources, legitimacy: 5 },
+    };
+    const r = evaluateVictory(s);
+    expect(r.outcome).toBe("playing");
+    expect(r.phase).toBe("action");
   });
 
   it("does not declare victory while huguenotContainment status is still on the player", () => {
@@ -1014,7 +1026,7 @@ describe("evaluateVictory (secondMandate)", () => {
     expect(r.phase).toBe("action");
   });
 
-  it("declares victory once year is reached, europeAlert cleared, and no huguenotContainment remains", () => {
+  it("declares victory once year is reached, europeAlert cleared, no huguenotContainment remains, and legitimacy >= 6", () => {
     const s = makeSecondMandateBaseAtYear(1696);
     const r = evaluateVictory(s);
     expect(r.outcome).toBe("victory");

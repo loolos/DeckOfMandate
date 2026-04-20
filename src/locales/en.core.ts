@@ -107,8 +107,8 @@ export const messagesEnCore = {
   "ui.actionLog": "Action log",
   "ui.actionLog.empty": "No effects yet this run.",
   "ui.targets": "Level goals — within {limit} turns: Treasury {tT}, Power {tP}, Legitimacy {tL}",
-  "ui.targets.secondMandateExtra":
-    "Chapter 2 victory has only two conditions: Europe Alert must be cleared, and victory is blocked before 1696.",
+  "ui.targets.secondMandate":
+    "Level goals — within {limit} turns: calendar year ≥ 1696; Europe Alert cleared; no “Contain Huguenot Remnants” status (harsh crackdown path must be fully wound down); Legitimacy ≥ 6.",
   "ui.language": "Language",
   "ui.lang.en": "English",
   "ui.lang.zh": "中文",

@@ -114,8 +114,8 @@ export const messagesFrCore: Record<keyof typeof messagesEnCore, string> = {
   "ui.actionLog": "Journal d'actions",
   "ui.actionLog.empty": "Aucun effet enregistré dans cette partie.",
   "ui.targets": "Objectifs du niveau — en {limit} tours : Trésor {tT}, Pouvoir {tP}, Légitimité {tL}",
-  "ui.targets.secondMandateExtra":
-    "La victoire du Chapitre 2 n'a plus que deux conditions : l'Alerte Europe doit être levée, et la victoire reste bloquée avant 1696.",
+  "ui.targets.secondMandate":
+    "Objectifs du niveau — en {limit} tours : année calendaire ≥ 1696 ; Alerte Europe levée ; pas de statut « Contenir les restes huguenots » (la voie de la répression forte doit être entièrement close) ; Légitimité ≥ 6.",
   "ui.language": "Langue",
   "ui.lang.en": "English",
   "ui.lang.zh": "中文",
