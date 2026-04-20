@@ -1,5 +1,6 @@
 import { getCardTemplate } from "../data/cards";
 import { getEventSolveFundingAmount, getEventTemplate } from "../data/events";
+import { getChapter2StandaloneDraft } from "../data/levelBootstrap";
 import { getTurnLimitForRun, type LevelId } from "../data/levels";
 import { appendActionLog } from "../logic/actionLog";
 import { applyEffects, enforceLegitimacy } from "../logic/applyEffects";
@@ -18,7 +19,7 @@ import type { SlotId } from "../types/event";
 import type { GameState } from "../types/game";
 import type { LogInfoKey } from "../types/game";
 import { createInitialState } from "./initialState";
-import { buildLevel2StateFromDraft, createStandaloneLevel2Draft } from "./level2Transition";
+import { buildLevel2StateFromDraft } from "./level2Transition";
 
 export type GameAction =
   | { type: "NEW_GAME"; seed?: number; levelId?: LevelId }
@@ -478,8 +479,9 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       return normalizeGameState(action.state);
     case "NEW_GAME": {
       const nextLevelId = action.levelId ?? state.levelId;
-      if (nextLevelId === "secondMandate") {
-        return buildLevel2StateFromDraft(createStandaloneLevel2Draft(action.seed));
+      const chapter2Draft = getChapter2StandaloneDraft(nextLevelId, action.seed);
+      if (chapter2Draft) {
+        return buildLevel2StateFromDraft(chapter2Draft);
       }
       return createInitialState(action.seed, nextLevelId);
     }

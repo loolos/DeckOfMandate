@@ -1,17 +1,20 @@
 import {
   buildLevel2StateFromDraft,
   createContinuityLevel2Draft,
-  createStandaloneLevel2Draft,
   type Level2StartDraft,
 } from "../app/level2Transition";
 import { gameReducer, type GameAction } from "../app/gameReducer";
 import { createInitialState } from "../app/initialState";
-import { isLevelId, type LevelId } from "../data/levels";
+import { getChapter2StandaloneDraft } from "../data/levelBootstrap";
+import { getLevelDef, isLevelId, type LevelId } from "../data/levels";
 import { EVENT_SLOT_ORDER, type SlotId } from "../types/event";
 import type { GameState } from "../types/game";
 
 /** Magic header bytes identifying a DeckOfMandate run code (binary format). */
-export const RUN_CODE_MAGIC = [0xdc, 0x01] as const;
+export const RUN_CODE_MAGIC = [0xdc, 0x02] as const;
+
+/** Legacy v1 header (level id encoded as single bit); still accepted by {@link decodeSession}. */
+const RUN_CODE_MAGIC_V1 = [0xdc, 0x01] as const;
 
 /** Action tag space; values are stable on-wire identifiers and must not change. */
 const ACTION_TAG = {
@@ -44,31 +47,40 @@ export function shouldRecordAction(action: GameAction): boolean {
  * (computed against the deterministic `carryoverCards` order from
  * `createStandaloneLevel2Draft(seed)` or `createContinuityLevel2Draft(prevState, seed)`).
  */
-export type RunRecord =
-  | {
-      level: "firstMandate";
-      mode: "standalone";
-      seed: number;
-      actions: GameAction[];
-    }
-  | {
-      level: "secondMandate";
-      mode: "standalone" | "continuity";
-      seed: number;
-      removedIndices: number[];
-      actions: GameAction[];
-    };
+export type RunRecord = {
+  level: LevelId;
+  mode: "standalone" | "continuity";
+  seed: number;
+  /** Deck-refit removals for chapter-2-style starts; empty when not used. */
+  removedIndices: number[];
+  actions: GameAction[];
+};
 
 export type SessionRecord = RunRecord[];
 
-const LEVEL_ID_BY_BIT: readonly LevelId[] = ["firstMandate", "secondMandate"];
-
-function levelToBit(level: LevelId): 0 | 1 {
-  return level === "secondMandate" ? 1 : 0;
+function chapter2UsesRefit(levelId: LevelId): boolean {
+  return getLevelDef(levelId).bootstrap === "chapter2Standalone";
 }
 
-function bitToLevel(bit: 0 | 1): LevelId {
-  return LEVEL_ID_BY_BIT[bit]!;
+const LEVEL_ID_BY_BIT_V1: readonly LevelId[] = ["firstMandate", "secondMandate"];
+
+function bitToLevelV1(bit: 0 | 1): LevelId {
+  return LEVEL_ID_BY_BIT_V1[bit]!;
+}
+
+function writeUtf8LevelId(w: ByteWriter, id: string): void {
+  const enc = new TextEncoder().encode(id);
+  w.pushVarUint(enc.length);
+  for (const b of enc) w.pushU8(b);
+}
+
+function readUtf8LevelId(r: ByteReader): string {
+  const len = r.readVarUint();
+  const bytes = new Uint8Array(len);
+  for (let i = 0; i < len; i++) {
+    bytes[i] = r.readU8();
+  }
+  return new TextDecoder("utf-8", { fatal: true }).decode(bytes);
 }
 
 function slotToByte(slot: SlotId): number {
@@ -315,10 +327,11 @@ function readAction(r: ByteReader, currentHand: readonly string[]): GameAction {
 }
 
 function writeRunRecord(w: ByteWriter, run: RunRecord): void {
-  const flags = (run.level === "secondMandate" && run.mode === "continuity" ? 0b10 : 0b00) | levelToBit(run.level);
-  w.pushU8(flags);
+  const cont = run.mode === "continuity" ? 1 : 0;
+  w.pushU8(cont);
+  writeUtf8LevelId(w, run.level);
   w.pushU32LE(run.seed >>> 0);
-  if (run.level === "secondMandate") {
+  if (chapter2UsesRefit(run.level)) {
     w.pushU8(run.removedIndices.length & 0xff);
     for (const idx of run.removedIndices) {
       w.pushU8(idx & 0xff);
@@ -330,14 +343,48 @@ function writeRunRecord(w: ByteWriter, run: RunRecord): void {
   }
 }
 
-function readRunRecord(r: ByteReader, prevRunFinalState: GameState | null): {
+function readRunRecordV2(r: ByteReader, prevRunFinalState: GameState | null): {
+  record: RunRecord;
+  finalState: GameState;
+} {
+  const mode: "standalone" | "continuity" = r.readU8() !== 0 ? "continuity" : "standalone";
+  const level = readUtf8LevelId(r);
+  if (!isLevelId(level)) {
+    throw new Error(`runCode: unknown level id ${level}`);
+  }
+  const seed = r.readU32LE();
+  let removedIndices: number[] = [];
+  if (chapter2UsesRefit(level)) {
+    const count = r.readU8();
+    for (let i = 0; i < count; i++) removedIndices.push(r.readU8());
+  }
+  if (mode === "continuity" && !chapter2UsesRefit(level)) {
+    throw new Error("runCode: continuity mode is only valid for chapter-2-style levels");
+  }
+  if (mode === "continuity" && !prevRunFinalState) {
+    throw new Error("runCode: continuity run requires a previous run");
+  }
+
+  let state = startStateFor(level, mode, seed, removedIndices, prevRunFinalState);
+  const actionCount = r.readVarUint();
+  const actions: GameAction[] = [];
+  for (let i = 0; i < actionCount; i++) {
+    const action = readAction(r, state.hand);
+    actions.push(action);
+    state = gameReducer(state, action);
+  }
+  const record: RunRecord = { level, mode, seed, removedIndices, actions };
+  return { record, finalState: state };
+}
+
+function readRunRecordV1(r: ByteReader, prevRunFinalState: GameState | null): {
   record: RunRecord;
   finalState: GameState;
 } {
   const flags = r.readU8();
   const levelBit = (flags & 0b01) as 0 | 1;
   const mode: "standalone" | "continuity" = (flags & 0b10) !== 0 ? "continuity" : "standalone";
-  const level = bitToLevel(levelBit);
+  const level = bitToLevelV1(levelBit);
   const seed = r.readU32LE();
   let removedIndices: number[] = [];
   if (mode === "continuity" && level !== "secondMandate") {
@@ -359,10 +406,7 @@ function readRunRecord(r: ByteReader, prevRunFinalState: GameState | null): {
     actions.push(action);
     state = gameReducer(state, action);
   }
-  const record: RunRecord =
-    level === "secondMandate"
-      ? { level, mode, seed, removedIndices, actions }
-      : { level, mode: "standalone", seed, actions };
+  const record: RunRecord = { level, mode, seed, removedIndices, actions };
   return { record, finalState: state };
 }
 
@@ -373,16 +417,15 @@ function startStateFor(
   removedIndices: readonly number[],
   prevFinalState: GameState | null,
 ): GameState {
-  if (level === "secondMandate" && mode === "continuity") {
+  if (mode === "continuity") {
     if (!prevFinalState) throw new Error("runCode: continuity needs prev state");
     const baseDraft = createContinuityLevel2Draft(prevFinalState, seed);
     const draft: Level2StartDraft = applyRemovedIndices(baseDraft, removedIndices);
     return buildLevel2StateFromDraft(draft);
   }
-  if (level === "secondMandate") {
-    const baseDraft = createStandaloneLevel2Draft(seed);
-    const draft: Level2StartDraft = applyRemovedIndices(baseDraft, removedIndices);
-    return buildLevel2StateFromDraft(draft);
+  const chapter2Draft = getChapter2StandaloneDraft(level, seed);
+  if (chapter2Draft) {
+    return buildLevel2StateFromDraft(applyRemovedIndices(chapter2Draft, removedIndices));
   }
   return createInitialState(seed, level);
 }
@@ -419,7 +462,9 @@ export function decodeSession(hex: string): DecodeResult {
   const r = new ByteReader(bytes);
   const m0 = r.readU8();
   const m1 = r.readU8();
-  if (m0 !== RUN_CODE_MAGIC[0] || m1 !== RUN_CODE_MAGIC[1]) {
+  const v2 = m0 === RUN_CODE_MAGIC[0] && m1 === RUN_CODE_MAGIC[1];
+  const v1 = m0 === RUN_CODE_MAGIC_V1[0] && m1 === RUN_CODE_MAGIC_V1[1];
+  if (!v1 && !v2) {
     throw new Error("runCode: bad magic / version");
   }
   const runCount = r.readU8();
@@ -429,9 +474,11 @@ export function decodeSession(hex: string): DecodeResult {
   const session: RunRecord[] = [];
   let prevFinal: GameState | null = null;
   for (let i = 0; i < runCount; i++) {
-    const { record, finalState } = readRunRecord(r, prevFinal);
-    session.push(record);
-    prevFinal = finalState;
+    const decoded: { record: RunRecord; finalState: GameState } = v2
+      ? readRunRecordV2(r, prevFinal)
+      : readRunRecordV1(r, prevFinal);
+    session.push(decoded.record);
+    prevFinal = decoded.finalState;
   }
   if (r.remaining() !== 0) {
     throw new Error(`runCode: ${r.remaining()} trailing byte(s)`);
@@ -444,13 +491,8 @@ export function decodeSession(hex: string): DecodeResult {
 export function replaySession(session: SessionRecord): GameState {
   let prevFinal: GameState | null = null;
   for (const run of session) {
-    let state = startStateFor(
-      run.level,
-      run.mode,
-      run.seed,
-      run.level === "secondMandate" ? run.removedIndices : [],
-      prevFinal,
-    );
+    const removed = chapter2UsesRefit(run.level) ? run.removedIndices : [];
+    let state = startStateFor(run.level, run.mode, run.seed, removed, prevFinal);
     for (const action of run.actions) {
       state = gameReducer(state, action);
     }

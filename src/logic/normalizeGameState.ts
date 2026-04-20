@@ -1,4 +1,4 @@
-import { defaultLevelId, getLevelDef, isLevelId } from "../data/levels";
+import { getDefaultLevelId, getLevelDef, isLevelId } from "../data/levels";
 import { enforceHuguenotContainmentInvariant } from "./cardRuntime";
 import { normalizeCardUsesById } from "./cardUsage";
 import { computeEuropeAlertPowerLoss } from "./europeAlert";
@@ -28,7 +28,7 @@ function ensureFullSlotMaps(s: GameState): GameState {
 
 /** Fill defaults for fields added after older saves / external HYDRATE payloads. */
 export function normalizeGameState(state: GameState): GameState {
-  let s: GameState = isLevelId(state.levelId) ? state : { ...state, levelId: defaultLevelId };
+  let s: GameState = isLevelId(state.levelId) ? state : { ...state, levelId: getDefaultLevelId() };
   s = ensureFullSlotMaps(s);
   if (!Array.isArray(s.playerStatuses)) {
     s = { ...s, playerStatuses: [] };

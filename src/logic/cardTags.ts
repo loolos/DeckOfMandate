@@ -13,7 +13,7 @@ export function getCardTagsForInstance(state: GameState, cardInstanceId: string)
   const baseTags = getCardTemplate(inst.templateId).tags;
   if (state.levelId !== "firstMandate" || isInflationEnabled(state)) return baseTags;
   if (!isTemplateInflationGatedInFirstMandate(inst.templateId)) return baseTags;
-  return baseTags.filter((tag) => tag !== "inflation");
+  return baseTags.filter((tag: CardTag) => tag !== "inflation");
 }
 
 export function hasCardTag(state: GameState, cardInstanceId: string, tag: CardTag): boolean {

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { levelContentByLevelId } from "../data/levelContent";
-import { getLevelDef } from "../data/levels";
+import { getLevelDef, getTurnLimitForRun } from "../data/levels";
 import { getCardTemplate } from "../data/cards";
 import { getEventTemplate } from "../data/events";
 import { EMPTY_EVENT_SLOTS, type SlotId } from "../types/event";
@@ -360,8 +360,9 @@ describe("gameReducer", () => {
 
   it("SCRIPTED_EVENT_ATTACK uses level scripted config (cost, power, coalition window)", () => {
     const cfg = levelContentByLevelId.firstMandate.scriptedCalendarEvents.find(
-      (x) => x.templateId === "warOfDevolution",
+      (x: { templateId: string }) => x.templateId === "warOfDevolution",
     )!;
+    if (!cfg.attack || !cfg.antiCoalition) throw new Error("expected war scripted attack config");
     const turn = cfg.presenceStartYear - getLevelDef("firstMandate").calendarStartYear + 1;
     let s = createInitialState(100);
     s = {
@@ -382,7 +383,9 @@ describe("gameReducer", () => {
     expect(after.antiFrenchLeague).not.toBeNull();
     const turnWindow = cfg.antiCoalition.activeYearsAfterAttack;
     const expectedUntil =
-      turnWindow === null ? getLevelDef("firstMandate").turnLimit : turn + turnWindow;
+      turnWindow === null
+        ? getTurnLimitForRun("firstMandate", getLevelDef("firstMandate").calendarStartYear)
+        : turn + turnWindow;
     expect(after.antiFrenchLeague!.untilTurn).toBe(expectedUntil);
   });
 

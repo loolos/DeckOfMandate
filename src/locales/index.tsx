@@ -11,8 +11,9 @@ import type { MessageKey } from "./en";
 import { messagesEn } from "./en";
 import { messagesFr } from "./fr";
 import { messagesZh } from "./zh";
+import type { LocaleId } from "./localeIds";
 
-export type LocaleId = "en" | "zh" | "fr";
+export type { LocaleId };
 
 const STORAGE_KEY = "deck-of-mandate.locale";
 

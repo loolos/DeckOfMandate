@@ -1,5 +1,5 @@
 import { getLevelContent } from "../data/levelContent";
-import { defaultLevelId, getLevelDef } from "../data/levels";
+import { getDefaultLevelId, getLevelDef } from "../data/levels";
 import { buildDefaultCardUsesById } from "../logic/cardUsage";
 import { computeEuropeAlertPowerLoss } from "../logic/europeAlert";
 import { createRngFromSeed, shuffle } from "../logic/rng";
@@ -20,7 +20,7 @@ type InitialStateOptions = {
 
 export function createInitialState(
   seed?: number,
-  levelId = defaultLevelId,
+  levelId = getDefaultLevelId(),
   options?: InitialStateOptions,
 ): GameState {
   const level = getLevelDef(levelId);

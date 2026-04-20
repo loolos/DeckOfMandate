@@ -43,7 +43,7 @@ function expectEquivalent(a: GameState, b: GameState): void {
 describe("runCode", () => {
   it("encodes and decodes a fresh standalone first-mandate session with no actions", () => {
     const session: SessionRecord = [
-      { level: "firstMandate", mode: "standalone", seed: 12345, actions: [] },
+      { level: "firstMandate", mode: "standalone", seed: 12345, removedIndices: [], actions: [] },
     ];
     const hex = encodeSession(session);
     expect(hex).toMatch(/^[0-9a-f]+$/);
@@ -64,7 +64,7 @@ describe("runCode", () => {
       if (state.outcome !== "playing") break;
     }
     const session: SessionRecord = [
-      { level: "firstMandate", mode: "standalone", seed, actions: recorded },
+      { level: "firstMandate", mode: "standalone", seed, removedIndices: [], actions: recorded },
     ];
     const hex = encodeSession(session);
     const decoded = decodeSession(hex);
@@ -91,7 +91,7 @@ describe("runCode", () => {
       state = dispatchAndRecord(state, { type: "CONFIRM_RETENTION", keepIds: [] }, recorded);
     }
     const session: SessionRecord = [
-      { level: "firstMandate", mode: "standalone", seed, actions: recorded },
+      { level: "firstMandate", mode: "standalone", seed, removedIndices: [], actions: recorded },
     ];
     expectEquivalent(replaySession(session), state);
     expectEquivalent(decodeSession(encodeSession(session)).finalState, state);
@@ -111,7 +111,7 @@ describe("runCode", () => {
       handSnapshot,
     );
     const session: SessionRecord = [
-      { level: "firstMandate", mode: "standalone", seed, actions: [annotated] },
+      { level: "firstMandate", mode: "standalone", seed, removedIndices: [], actions: [annotated] },
     ];
     const decoded = decodeSession(encodeSession(session));
     const decodedAction = decoded.session[0]!.actions[0]!;
@@ -167,7 +167,7 @@ describe("runCode", () => {
     }
 
     const session: SessionRecord = [
-      { level: "firstMandate", mode: "standalone", seed: seed1, actions: recorded1 },
+      { level: "firstMandate", mode: "standalone", seed: seed1, removedIndices: [], actions: recorded1 },
       {
         level: "secondMandate",
         mode: "continuity",
@@ -189,7 +189,7 @@ describe("runCode", () => {
 
   it("rejects extra trailing bytes", () => {
     const session: SessionRecord = [
-      { level: "firstMandate", mode: "standalone", seed: 1, actions: [] },
+      { level: "firstMandate", mode: "standalone", seed: 1, removedIndices: [], actions: [] },
     ];
     const hex = encodeSession(session);
     expect(() => decodeSession(hex + "ff")).toThrow(/trailing/);
@@ -199,7 +199,7 @@ describe("runCode", () => {
     const seeds = [0, 1, 0x7fffffff, 0xffffffff, 0x9e3779b9];
     for (const s of seeds) {
       const session: SessionRecord = [
-        { level: "firstMandate", mode: "standalone", seed: s >>> 0, actions: [] },
+        { level: "firstMandate", mode: "standalone", seed: s >>> 0, removedIndices: [], actions: [] },
       ];
       const round: RunRecord = decodeSession(encodeSession(session)).session[0]!;
       expect(round.seed).toBe(s >>> 0);

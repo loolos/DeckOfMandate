@@ -1,6 +1,7 @@
 import { getEventRollWeight, getEventTemplate } from "../data/events";
 import { getLevelContent } from "../data/levelContent";
 import { getLevelDef, getTurnLimitForRun } from "../data/levels";
+import { currentCalendarYear } from "./scriptedCalendar";
 import type { CardTemplateId } from "../types/card";
 import { appendActionLog } from "./actionLog";
 import {
@@ -42,16 +43,6 @@ const RELIGIOUS_TENSION_EVENTS: readonly EventInstance["templateId"][] = [
   "huguenotTension",
 ];
 const PROCEDURAL_SEQUENCE_LOW_WATERMARK = 3;
-const SECOND_MANDATE_EARLIEST_VICTORY_YEAR = 1696;
-const SECOND_MANDATE_MIN_LEGITIMACY = 6;
-const FIRST_MANDATE_OPENING_EVENTS: readonly EventInstance["templateId"][] = [
-  "tradeOpportunity",
-  "administrativeDelay",
-];
-const SECOND_MANDATE_STANDALONE_OPENING_EVENTS: readonly EventInstance["templateId"][] = [
-  "versaillesExpenditure",
-  "taxResistance",
-];
 type EventCountOption = {
   count: number;
   weight: number;
@@ -114,30 +105,36 @@ function buildProceduralSequenceBlock(state: GameState): [GameState["rng"], Even
   return shuffle(state.rng, expanded);
 }
 
+function isStandaloneChapter2Start(state: GameState): boolean {
+  const prefix = getLevelContent(state.levelId).opening.standaloneCarryoverIdPrefix;
+  if (!prefix) return false;
+  return Object.keys(state.cardsById).some((id) => id.startsWith(prefix));
+}
+
 function buildOpeningSequencePrefix(state: GameState): EventInstance["templateId"][] {
   if (state.turn !== 1) return [];
-  if (state.levelId === "firstMandate") return [...FIRST_MANDATE_OPENING_EVENTS];
-  if (state.levelId !== "secondMandate") return [];
-  if (!isSecondMandateStandaloneStart(state)) return [];
-  return [...SECOND_MANDATE_STANDALONE_OPENING_EVENTS];
+  const oc = getLevelContent(state.levelId).opening;
+  if (isStandaloneChapter2Start(state) && oc.standaloneTurnOnePrefix?.length) {
+    return [...oc.standaloneTurnOnePrefix];
+  }
+  return [...oc.turnOnePrefix];
 }
 
-function isSecondMandateStandaloneStart(state: GameState): boolean {
-  return Object.keys(state.cardsById).some((id) => id.startsWith("standalone_old_"));
+function shouldForceStandaloneChapter2Opening(state: GameState): boolean {
+  const oc = getLevelContent(state.levelId).opening;
+  if (!oc.standaloneTurnOnePrefix?.length || state.turn !== 1) return false;
+  return isStandaloneChapter2Start(state);
 }
 
-function shouldForceSecondMandateStandaloneOpening(state: GameState): boolean {
-  if (state.levelId !== "secondMandate" || state.turn !== 1) return false;
-  return isSecondMandateStandaloneStart(state);
+function isStandaloneChapter2OpeningTurn(state: GameState): boolean {
+  return shouldForceStandaloneChapter2Opening(state);
 }
 
-function isSecondMandateStandaloneOpeningTurn(state: GameState): boolean {
-  return shouldForceSecondMandateStandaloneOpening(state);
-}
-
-function forceSecondMandateStandaloneOpening(state: GameState): GameState {
-  if (!shouldForceSecondMandateStandaloneOpening(state)) return state;
-  const [first, second] = SECOND_MANDATE_STANDALONE_OPENING_EVENTS;
+function forceStandaloneChapter2Opening(state: GameState): GameState {
+  if (!shouldForceStandaloneChapter2Opening(state)) return state;
+  const pair = getLevelContent(state.levelId).opening.standaloneTurnOnePrefix;
+  const first = pair?.[0];
+  const second = pair?.[1];
   if (!first || !second) return state;
   let st = state;
   st = placeEventTemplateOnSlot(st, "A", first);
@@ -265,12 +262,15 @@ function pickWeightedEventCount(options: readonly EventCountOption[], roll: numb
 }
 
 export function desiredProceduralEventCountWhenAllEmpty(state: GameState, roll: number): number {
-  if (state.levelId === "firstMandate" && state.turn === 1) return 2;
+  const lc = getLevelContent(state.levelId);
+  if (state.turn === 1 && lc.procedural.firstTurnEmptyBoardCount != null) {
+    return lc.procedural.firstTurnEmptyBoardCount;
+  }
   const resourceSum = sumCoreResources(state);
   const matchedRule = EMPTY_BOARD_EVENT_COUNT_RULES.find((rule) => inRange(resourceSum, rule));
   const baseCount = matchedRule ? pickWeightedEventCount(matchedRule.options, roll) : 1;
-  if (state.levelId === "secondMandate" && state.turn === 1 && isSecondMandateStandaloneStart(state)) {
-    return Math.max(3, baseCount);
+  if (state.turn === 1 && isStandaloneChapter2Start(state) && lc.procedural.firstTurnStandaloneEmptyBoardMin != null) {
+    return Math.max(lc.procedural.firstTurnStandaloneEmptyBoardMin, baseCount);
   }
   return baseCount;
 }
@@ -293,7 +293,7 @@ function syncAntiFrenchSentimentStatus(state: GameState): GameState {
 }
 
 function fillEmptySlots(state: GameState): GameState {
-  if (isSecondMandateStandaloneOpeningTurn(state)) return state;
+  if (isStandaloneChapter2OpeningTurn(state)) return state;
   let st = state;
   if (allSlotsEmpty(st)) {
     const [rng, u] = rngNext(st.rng);
@@ -323,7 +323,7 @@ function runEventPhase(state: GameState): GameState {
   let s = applyScheduledTransforms(state);
   s = clearResolvedSlots(s);
   s = applyScriptedCalendarPhase(s);
-  s = forceSecondMandateStandaloneOpening(s);
+  s = forceStandaloneChapter2Opening(s);
   s = fillEmptySlots(s);
   s = syncAntiFrenchSentimentStatus(s);
   s = maybeAddEuropeAlertSupplementalEvent(s);
@@ -365,8 +365,8 @@ export function maybeTriggerHuguenotResurgence(state: GameState): GameState {
 }
 
 export function maybeAddEuropeAlertSupplementalEvent(state: GameState): GameState {
-  if (isSecondMandateStandaloneOpeningTurn(state)) return state;
-  if (!state.europeAlert || state.levelId !== "secondMandate") return state;
+  if (isStandaloneChapter2OpeningTurn(state)) return state;
+  if (!state.europeAlert || !getLevelDef(state.levelId).features.europeAlertMechanics) return state;
   let s = state;
   const [rngPrimary, uPrimary] = rngNext(s.rng);
   s = { ...s, rng: rngPrimary };
@@ -432,7 +432,7 @@ function hasUnresolvedLocalWar(state: GameState): boolean {
 }
 
 function maybeAdjustEuropeAlertProgressAtYearStart(state: GameState): GameState {
-  if (!state.europeAlert || state.levelId !== "secondMandate") return state;
+  if (!state.europeAlert || !getLevelDef(state.levelId).features.europeAlertMechanics) return state;
   const from = clampEuropeAlertProgress(state.europeAlertProgress);
   const k = europeAlertPressureDeltaK(
     state.resources.treasuryStat,
@@ -545,22 +545,24 @@ export function beginYear(state: GameState): GameState {
 }
 
 export function evaluateVictory(state: GameState): GameState {
-  const currentYear = state.calendarStartYear + state.turn - 1;
+  const currentYear = currentCalendarYear(state);
+  const def = getLevelDef(state.levelId);
+  const vr = def.victoryRule;
 
-  if (state.levelId === "secondMandate") {
-    const reachedVictoryYear = currentYear >= SECOND_MANDATE_EARLIEST_VICTORY_YEAR;
+  if (vr.kind === "gated") {
+    const reachedVictoryYear = currentYear >= vr.earliestCalendarYear;
     const europeAlertResolved = !state.europeAlert;
     const huguenotResidualResolved = !state.playerStatuses.some(
       (s) => s.templateId === "huguenotContainment",
     );
-    const legitimacyOk = state.resources.legitimacy >= SECOND_MANDATE_MIN_LEGITIMACY;
+    const legitimacyOk = state.resources.legitimacy >= vr.minLegitimacy;
     if (reachedVictoryYear && europeAlertResolved && huguenotResidualResolved && legitimacyOk) {
       return { ...state, phase: "gameOver", outcome: "victory" };
     }
     return state;
   }
 
-  const t = getLevelDef(state.levelId).winTargets;
+  const t = def.winTargets;
   const { treasuryStat, power, legitimacy } = state.resources;
   if (treasuryStat >= t.treasuryStat && power >= t.power && legitimacy >= t.legitimacy) {
     return { ...state, phase: "gameOver", outcome: "victory" };

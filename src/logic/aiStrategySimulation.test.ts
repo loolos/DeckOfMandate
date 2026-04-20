@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { createInitialState } from "../app/initialState";
-import { getLevelDef } from "../data/levels";
+import { getLevelDef, getTurnLimitForRun } from "../data/levels";
 import {
   simulateFirstMandateBatch,
   simulateFirstMandateRun,
@@ -14,7 +14,9 @@ describe("aiStrategySimulation", () => {
     const run = simulateFirstMandateRun(202_604);
     expect(run.outcome).not.toBe("playing");
     expect(run.endTurn).toBeGreaterThan(0);
-    expect(run.endTurn).toBeLessThanOrEqual(getLevelDef("firstMandate").turnLimit);
+    expect(run.endTurn).toBeLessThanOrEqual(
+      getTurnLimitForRun("firstMandate", getLevelDef("firstMandate").calendarStartYear),
+    );
   });
 
   it("keeps the benchmark summary stable for first mandate", () => {
@@ -51,7 +53,9 @@ describe("aiStrategySimulation", () => {
     const run = simulateSecondMandateStandaloneRun(202_605);
     expect(run.outcome).not.toBe("playing");
     expect(run.endTurn).toBeGreaterThan(0);
-    expect(run.endTurn).toBeLessThanOrEqual(getLevelDef("secondMandate").turnLimit);
+    expect(run.endTurn).toBeLessThanOrEqual(
+      getTurnLimitForRun("secondMandate", getLevelDef("secondMandate").calendarStartYear),
+    );
   });
 
   it("keeps strategy I standalone chapter-2 benchmark stable", () => {

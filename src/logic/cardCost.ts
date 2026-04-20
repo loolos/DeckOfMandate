@@ -1,16 +1,16 @@
 import { getCardTemplate } from "../data/cards";
+import { getLevelDef } from "../data/levels";
 import { appendActionLog } from "./actionLog";
 import { hasCardTag } from "./cardTags";
 import type { GameState } from "../types/game";
 
-const FIRST_CHAPTER_INFLATION_THRESHOLD = 12;
-
 export function isInflationEnabled(state: GameState): boolean {
-  if (state.levelId === "secondMandate") return true;
-  if (state.levelId !== "firstMandate") return false;
+  const inf = getLevelDef(state.levelId).features.inflation;
+  if (inf.kind === "always") return true;
+  if (inf.kind === "off") return false;
   const pressureScore =
     state.resources.power + state.resources.treasuryStat + state.resources.legitimacy;
-  return pressureScore >= FIRST_CHAPTER_INFLATION_THRESHOLD;
+  return pressureScore >= inf.threshold;
 }
 
 function isInflationCard(state: GameState, cardInstanceId: string): boolean {
@@ -46,10 +46,12 @@ export function applyInflationFromDeckRefill(state: GameState, movedCardIds: rea
 }
 
 export function appendInflationActivationLogIfNeeded(prev: GameState, next: GameState): GameState {
-  if (prev.levelId !== "firstMandate" || next.levelId !== "firstMandate") return next;
+  if (prev.levelId !== next.levelId) return next;
+  const logKey = getLevelDef(next.levelId).features.inflationActivationLogKey;
+  if (!logKey) return next;
   if (isInflationEnabled(prev) || !isInflationEnabled(next)) return next;
-  if (next.actionLog.some((entry) => entry.kind === "info" && entry.infoKey === "firstMandateInflationActivated")) {
+  if (next.actionLog.some((entry) => entry.kind === "info" && entry.infoKey === logKey)) {
     return next;
   }
-  return appendActionLog(next, { kind: "info", infoKey: "firstMandateInflationActivated" });
+  return appendActionLog(next, { kind: "info", infoKey: logKey });
 }

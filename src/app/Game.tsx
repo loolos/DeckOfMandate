@@ -10,16 +10,17 @@ import { RunCodePanel } from "../components/RunCodePanel";
 import { StatusBar } from "../components/StatusBar";
 import { getCardTemplate } from "../data/cards";
 import {
-  defaultLevelId,
+  getDefaultLevelId,
   getLevelDef,
+  getRegisteredLevelIds,
   getTurnLimitForRun,
   isLevelId,
-  levelDefs,
   type LevelEndingCopyKeys,
   type LevelId,
 } from "../data/levels";
 import { cardLabelWithIcon, resourceLabelWithIcon } from "../logic/icons";
 import { normalizeGameState } from "../logic/normalizeGameState";
+import { currentCalendarYear } from "../logic/scriptedCalendar";
 import { antiFrenchSentimentEmotionValue } from "../logic/antiFrenchSentiment";
 import { loadGame, saveGame } from "../logic/saveLoad";
 import { readTutorialOnLevelEntry, writeTutorialOnLevelEntry } from "../logic/tutorialPref";
@@ -34,6 +35,8 @@ import { createInitialState } from "./initialState";
 import {
   LEVEL2_CONTINUITY_MAX_REMOVALS,
   LEVEL2_FIXED_NEW_IDS,
+  SUNKING_CH1_ID,
+  SUNKING_CH2_ID,
   buildLevel2StateFromDraft,
   createContinuityLevel2Draft,
   createStandaloneLevel2Draft,
@@ -55,14 +58,14 @@ import {
 
 type PendingNewRun = { seed?: number; levelId: LevelId };
 
-function levelDefHasIntro(def: (typeof levelDefs)[LevelId]): def is (typeof levelDefs)[LevelId] & {
+function levelDefHasIntro(def: ReturnType<typeof getLevelDef>): def is ReturnType<typeof getLevelDef> & {
   introTitleKey: MessageKey;
   introBodyKey: MessageKey;
 } {
   return "introTitleKey" in def && "introBodyKey" in def;
 }
 
-function levelEndingKeys(def: (typeof levelDefs)[LevelId]): LevelEndingCopyKeys | undefined {
+function levelEndingKeys(def: ReturnType<typeof getLevelDef>): LevelEndingCopyKeys | undefined {
   return "ending" in def ? def.ending : undefined;
 }
 
@@ -107,12 +110,12 @@ function cloneLevel2Draft(draft: Level2StartDraft): Level2StartDraft {
 }
 
 export function Game() {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const [state, dispatch] = useReducer(gameReducer, undefined, initFreshForStartMenu);
   const [retain, setRetain] = useState<Record<string, boolean>>({});
   const hadSaveOnLaunch = useMemo(() => hasValidStoredSave(), []);
   const [startMenuOpen, setStartMenuOpen] = useState(true);
-  const [menuLevelId, setMenuLevelId] = useState<LevelId>(defaultLevelId);
+  const [menuLevelId, setMenuLevelId] = useState<LevelId>(() => getDefaultLevelId());
   const [menuSeedText, setMenuSeedText] = useState("");
   const [pendingNewRun, setPendingNewRun] = useState<PendingNewRun | null>(null);
   const [pendingHydrateState, setPendingHydrateState] = useState<GameState | null>(null);
@@ -136,10 +139,14 @@ export function Game() {
 
   const startStandaloneSession = useCallback(
     (level: LevelId, seed: number, removedIndices: number[] = []) => {
-      const record: RunRecord =
-        level === "secondMandate"
-          ? { level: "secondMandate", mode: "standalone", seed: seed >>> 0, removedIndices, actions: [] }
-          : { level: "firstMandate", mode: "standalone", seed: seed >>> 0, actions: [] };
+      const needsRefit = getLevelDef(level).bootstrap === "chapter2Standalone";
+      const record: RunRecord = {
+        level,
+        mode: "standalone",
+        seed: seed >>> 0,
+        removedIndices: needsRefit ? removedIndices : [],
+        actions: [],
+      };
       sessionRef.current = [record];
       refreshCodeHex();
     },
@@ -151,7 +158,7 @@ export function Game() {
       sessionRef.current = [
         ...sessionRef.current,
         {
-          level: "secondMandate",
+          level: SUNKING_CH2_ID,
           mode: "continuity",
           seed: seed >>> 0,
           removedIndices,
@@ -184,10 +191,7 @@ export function Game() {
     [state.levelId, state.calendarStartYear],
   );
 
-  const turnCalendarLabel = useMemo(
-    () => state.calendarStartYear + state.turn - 1,
-    [state.calendarStartYear, state.turn],
-  );
+  const displayCalendarYear = useMemo(() => currentCalendarYear(state), [state]);
 
   useEffect(() => {
     if (state.phase !== "retention") return;
@@ -322,7 +326,7 @@ export function Game() {
   const beginConfiguredRun = (seed: number | undefined, levelId: LevelId) => {
     setPendingHydrateState(null);
     setPendingIntroLevelId(null);
-    if (levelId === "secondMandate") {
+    if (getLevelDef(levelId).bootstrap === "chapter2Standalone") {
       openLevel2Refit(createStandaloneLevel2Draft(seed));
       setLevelIntroOpen(false);
       setPendingNewRun(null);
@@ -398,7 +402,7 @@ export function Game() {
     if (level2Draft.mode === "continuity") {
       appendContinuitySession(nextState.runSeed, removedIndices);
     } else {
-      startStandaloneSession("secondMandate", nextState.runSeed, removedIndices);
+      startStandaloneSession(SUNKING_CH2_ID, nextState.runSeed, removedIndices);
     }
     setLevel2Draft(null);
     setLevel2DraftInitial(null);
@@ -432,11 +436,11 @@ export function Game() {
       <div className={styles.modal}>
         <div className={styles.levelIntroHeader}>
           <h2 id="level-intro-title" className={styles.levelIntroTitle}>
-            {t(introLevelDef.introTitleKey)}
+            {t(introLevelDef.introTitleKey as MessageKey)}
           </h2>
           <LanguageToggle />
         </div>
-        <div className={styles.levelIntroBody}>{t(introLevelDef.introBodyKey)}</div>
+        <div className={styles.levelIntroBody}>{t(introLevelDef.introBodyKey as MessageKey)}</div>
         <button type="button" className={`${styles.btn} ${styles.btnPrimary}`} onClick={confirmLevelIntro}>
           {t("menu.introContinue")}
         </button>
@@ -688,7 +692,7 @@ export function Game() {
               if (isLevelId(v)) setMenuLevelId(v);
             }}
           >
-            {(Object.keys(levelDefs) as LevelId[]).map((id) => {
+            {getRegisteredLevelIds().map((id) => {
               const def = getLevelDef(id);
               return (
                 <option key={id} value={id}>
@@ -697,7 +701,12 @@ export function Game() {
               );
             })}
           </select>
-          <p className={styles.startMenuMuted}>{t(`menu.levelBrief.${selectedMenuLevelDef.id}` as MessageKey)}</p>
+          {!selectedMenuLevelDef.supportedLocales.includes(locale) ? (
+            <p className={styles.startMenuError} role="status">
+              {t("ui.levelLocaleFallback")}
+            </p>
+          ) : null}
+          <p className={styles.startMenuMuted}>{t(selectedMenuLevelDef.menuBriefKey as MessageKey)}</p>
           <label className={styles.startMenuLabel} htmlFor="start-menu-seed">
             {t("menu.seedLabel")}
           </label>
@@ -780,14 +789,22 @@ export function Game() {
           <h1>{t("app.title")}</h1>
           <p>{t(level.nameKey as MessageKey)}</p>
           <div className={styles.banner}>
-            {turnCalendarLabel}
+            {displayCalendarYear}
             <span style={{ marginLeft: "0.65rem", color: "var(--muted)", fontSize: "0.95rem" }}>
-              {t("banner.turn", { turn: state.turn, limit: runTurnLimit })}
+              {t((level.turnBannerKey ?? "banner.turn") as MessageKey, {
+                turn: state.turn,
+                limit: runTurnLimit,
+              })}
             </span>
           </div>
           <div className={styles.targets} id="tutorial-targets">
-            {state.levelId === "secondMandate"
-              ? t("ui.targets.secondMandate", { limit: runTurnLimit })
+            {level.targetsUiKey
+              ? t(level.targetsUiKey as MessageKey, {
+                  limit: runTurnLimit,
+                  tT: level.winTargets.treasuryStat,
+                  tP: level.winTargets.power,
+                  tL: level.winTargets.legitimacy,
+                })
               : t("ui.targets", {
                   limit: runTurnLimit,
                   tT: level.winTargets.treasuryStat,
@@ -795,6 +812,9 @@ export function Game() {
                   tL: level.winTargets.legitimacy,
                 })}
           </div>
+          {level.timeStepHintKey ? (
+            <p className={styles.timeStepHint}>{t(level.timeStepHintKey as MessageKey)}</p>
+          ) : null}
         </div>
         <LanguageToggle />
       </header>
@@ -957,7 +977,7 @@ export function Game() {
               <button type="button" className={`${styles.btn} ${styles.btnPrimary}`} onClick={() => restartCurrentLevelRun()}>
                 {t("ui.newGame")}
               </button>
-              {state.outcome === "victory" && state.levelId === "firstMandate" ? (
+              {state.outcome === "victory" && state.levelId === SUNKING_CH1_ID ? (
                 <button type="button" className={styles.btn} onClick={openChapter2Continuity}>
                   {t("menu.continueChapter2")}
                 </button>

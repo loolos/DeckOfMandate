@@ -45,6 +45,13 @@
   overflow-wrap: anywhere;
 }
 
+.timeStepHint {
+  margin: 0.25rem 0 0;
+  font-size: 0.78rem;
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+
 .help {
   font-size: 0.9rem;
   color: var(--muted);

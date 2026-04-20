@@ -1,4 +1,4 @@
-/** Shared UI / cards / events — Chinese; not tied to a single level id. */
+/** Shared UI / engine strings — campaign copy lives in `src/levels/sunking/locales`. */
 export const messagesZhCore = {
   "app.title": "Deck of Mandate",
   "app.subtitle": "旭日",
@@ -55,8 +55,6 @@ export const messagesZhCore = {
   "menu.title": "主菜单",
   "menu.resumeSave": "读取本地存档",
   "menu.levelLabel": "关卡",
-  "menu.levelBrief.firstMandate": "1661–1675（太阳王前期）：巩固王权、稳步扩张，在可控压力下建立统治基础。",
-  "menu.levelBrief.secondMandate": "1676–1700（太阳王中期）：在宗教与对外高压并行下，维持霸权并避免国家失序。",
   "menu.seedLabel": "随机种子（可选）",
   "menu.seedPlaceholder": "留空则随机",
   "menu.seedHint": "留空会随机生成种子；相同种子可复现开局牌库与事件。",
@@ -102,8 +100,8 @@ export const messagesZhCore = {
   "ui.actionLog": "行动记录",
   "ui.actionLog.empty": "本局尚无效果记录。",
   "ui.targets": "关卡目标 — {limit} 回合内：财政 {tT}，权力 {tP}，合法性 {tL}",
-  "ui.targets.secondMandate":
-    "关卡目标 — {limit} 回合内：历法年份 ≥ 1696；「欧洲警觉」已结束；不存在「遏制胡格诺-剩余势力」状态（严厉镇压分支须完全收尾）；合法性 ≥ 6。",
+  "ui.levelLocaleFallback":
+    "该关卡尚未完全提供当前界面语言版本；关卡专属文案可能回退显示为英语。",
   "ui.language": "语言",
   "ui.lang.en": "English",
   "ui.lang.zh": "中文",
@@ -111,90 +109,6 @@ export const messagesZhCore = {
   "outcome.victory": "胜利 — 政权稳固。",
   "outcome.defeatLegitimacy": "失败 — 核心资源崩溃。",
   "outcome.defeatTime": "失败 — 时限内未达成目标。",
-  "card.funding.name": "王室征收",
-  "card.funding.background": "非常规征收与加急催缴——为宫廷燃眉之急凑出的短期现金。",
-  "card.funding.desc": "本回合 +1 经费（不增加财政能力）。若「剩余」用尽：财政 -1。",
-  "card.crackdown.name": "王室干预",
-  "card.crackdown.background": "敕令、驻军或警察行动——在流言与骚动已快于法律之处强行落实。",
-  "card.crackdown.desc": "解决一个有害事件。若「剩余」用尽：权力 -1。",
-  "card.fiscalBurden.name": "财政负担",
-  "card.fiscalBurden.background": "债务与紧急开支挤入账册，持续拖慢每个回合的财政回旋。",
-  "card.fiscalBurden.desc": "抽到时经费 -1。可支付 2 经费打出并消除（不会进入弃牌堆）。",
-  "card.antiFrenchContainment.name": "反法遏制",
-  "card.antiFrenchContainment.background":
-    "欧洲宫廷以关税、信用与海上执法协同掣肘法国，任何对抗都要先吞下政治代价。",
-  "card.antiFrenchContainment.desc":
-    "抽到时以 50%/50% 概率使权力 -1 或合法性 -1。可支付 floor(欧洲警觉进度/2) 经费打出并消除（不会进入弃牌堆）。",
-  "card.reform.name": "行政整编",
-  "card.reform.background": "册籍与汇报线重划，官僚体系在王权下收得更紧。",
-  "card.reform.desc": "权力 +1（影响下回合抽牌阶段）。立即抽 1（手牌上限 12）。",
-  "card.ceremony.name": "凡尔赛庆典",
-  "card.ceremony.background": "仪仗、誓词与排场——让各派都看清谁仍站在中心。",
-  "card.ceremony.desc": "合法性 +1。",
-  "card.development.name": "皇家工厂",
-  "card.development.background": "科尔贝尔式的工场、港口与基建——靠王家产业抬升国富。",
-  "card.development.desc": "财政 +1。",
-  "card.suppressHuguenots.name": "镇压胡格诺派",
-  "card.suppressHuguenots.background": "王权动员军警与地方法庭，清剿残余胡格诺网络。",
-  "card.suppressHuguenots.desc":
-    "临时牌。费用 3。打出后使「遏制胡格诺-剩余势力」-1；降到 0 时移除该状态，并清除所有「镇压胡格诺派」。",
-  "card.religiousTensionCard.name": "宗教矛盾",
-  "card.religiousTensionCard.background":
-    "宗派分歧未真正消解，仍以教义、礼仪与地方诉求的形式渗入治理日程，反复牵扯王权注意力。",
-  "card.religiousTensionCard.desc":
-    "额外牌。可支付 2 经费打出并消除（不会进入弃牌堆）。当「阿米尼乌斯派争论」、「胡格诺地下网络骚动」或「耶稣会庇护」处理时加入抽牌堆。",
-  "card.jesuitCollege.name": "耶稣会学院",
-  "card.jesuitCollege.background":
-    "拉弗莱什、路易大帝、克莱蒙等耶稣会精英学院培养与王权立场一致的官员、军官与教士，以辞令、神学与服从为核心训练；其讲坛也是对抗詹森派严苛主义的第一线。",
-  "card.jesuitCollege.desc":
-    "额外牌。剩余 1/1，只能使用一次。费用 2。打出时合法性 +1；若棋盘上存在未解决的「詹森派争议」事件，则立即解决一次（无须额外经费）。打出后从牌库循环中移除。",
-  "event.budgetStrain.name": "宫廷超支",
-  "event.budgetStrain.desc": "凡尔赛扩建与宫廷礼仪再度推高开支。支付 2 经费，否则财政 -1。",
-  "event.publicUnrest.name": "巴黎骚动",
-  "event.publicUnrest.desc": "面包价与流言挤满街头。仅可用干预，否则合法性 -1。",
-  "event.administrativeDelay.name": "官僚拖延",
-  "event.administrativeDelay.desc": "地方官员拖延执行宫廷新令。支付 1 经费，否则下一回合少抽 1（至少仍抽 1）。",
-  "event.tradeOpportunity.name": "殖民贸易机遇",
-  "event.tradeOpportunity.desc": "航线与商人请求王室支持。支付 1 经费获得财政 +1。忽略无惩罚。",
-  "event.powerVacuum.name": "地方总督坐大",
-  "event.powerVacuum.desc": "总督绕过宫廷自行其是。支付 2 经费或使用干预，否则下一年槽位升级为「王权危机」。",
-  "event.majorCrisis.name": "王权危机",
-  "event.majorCrisis.desc": "仅可用干预解决。带有「持续」标签：若未处理将留到下一回合，并在每回合继续触发合法性 -1 与抽牌惩罚，直到被解决。",
-  "event.politicalGridlock.name": "贵族阻挠",
-  "event.politicalGridlock.desc":
-    "大贵族联合反对新税方案。支付 2 经费，否则获得「权力流失」3 回合（每回合抽牌 -1，仍至少抽 1）。",
-  "status.powerLeak.name": "权力流失",
-  "status.powerLeak.history": "地方与派系掣肘上升，中央命令的执行效率持续下滑。",
-  "status.drawPenalty.name": "疲态",
-  "status.drawPenalty.history": "税制重估会在短期内增加执行摩擦与反馈滞后。",
-  "status.retentionBoost.name": "荐任红利",
-  "status.retentionBoost.history": "荐任网络强化了宫廷对官僚体系的连续控制。",
-  "status.royalBan.name": "王室牌禁用",
-  "status.royalBan.history": "宫廷信誉受损时，王室命令工具会暂时失灵。",
-  "status.grainReliefDrawBoost.name": "赈济调度",
-  "status.grainReliefDrawBoost.history": "赈济组织网络可短期提升地方调度效率。",
-  "status.grainReliefLegitimacyBoost.name": "赈济信任",
-  "status.grainReliefLegitimacyBoost.history": "及时赈济能在短时间修复民众对政权的信任。",
-  "status.religiousTolerance.name": "宗教宽容（永久）",
-  "status.religiousTolerance.history":
-    "17 世纪后半叶法国在撤销《南特敕令》后，国家试图在宗教统一与社会稳定之间寻找新平衡：对新教社群的压制、对天主教内部神学分歧的管控，以及王权合法性的维护彼此纠缠。你选择宽容，能暂缓全面对抗，却会让不同宗派在司法、教区与地方秩序层面反复制造政治摩擦。",
-  "status.huguenotContainment.name": "遏制胡格诺-剩余势力",
-  "status.huguenotContainment.history": "强力镇压依赖连续清剿行动与高压维稳成本。",
-  "status.huguenotContainment.hint": "该状态存在时，第二关无法胜利。",
-  "event.jansenistTension.name": "詹森派争议",
-  "event.jansenistTension.desc":
-    "詹森主义围绕“恩典与救赎”的神学立场长期冲击法国教会与王权关系；波尔-罗亚尔网络的余波再起，主教区与法院出现对立。支付 2 经费进行教区巡察与舆论安抚，否则合法性 -1。",
-  "event.arminianTension.name": "阿米尼乌斯派争论",
-  "event.arminianTension.desc":
-    "阿米尼乌斯派关于自由意志与预定论的争论，经由讲坛、学院与印刷传播扩大，削弱了王室推动统一教义的效率。支付 1 经费整合神学院与审查体系（处理后向抽牌堆加入 1 张「宗教矛盾」），否则权力 -1。",
-  "event.huguenotTension.name": "胡格诺地下网络骚动",
-  "event.huguenotTension.desc":
-    "撤销《南特敕令》后被迫地下化的胡格诺社群在边境与港市重建互助网络，地方警备与税务执行受到牵制。支付 1 经费加固治安与赈济（处理后向抽牌堆加入 1 张「宗教矛盾」），否则财政 -1。",
-  "card.tag.royal": "王室",
-  "card.tag.temp": "临时",
-  "card.tag.extra": "额外",
-  "card.tag.inflation": "通胀",
-  "card.tag.remainingUses": "剩余{remaining}/{total}",
   "log.cardPlayed.title": "[第 {turn} 年] {card} — 支付 {cost} {funding}。",
   "log.cardPlayed.effectsLabel": "效果：",
   "log.cardPlayed.noEffects": "无列表效果。",
@@ -250,8 +164,6 @@ export const messagesZhCore = {
     "[第 {turn} 年] 手牌已达上限；将剩余未摸的 {count} 张牌直接置入弃牌堆：{cards}。",
   "log.europeAlertProgressShift":
     "[第 {turn} 年] 欧洲警觉进度调整 {from}→{to}（k={k}，触发概率 {pct}%）。",
-  "log.info.firstMandateInflationActivated":
-    "[第 {turn} 年] 科尔贝尔改革与凡尔赛宫廷同步扩张，王权机器越强，维持它的行政与仪式成本也越高。已触发第一关「卡牌通胀」：此后仅带「通胀」标签的牌，在从弃牌堆洗回抽牌堆时才会叠加费用。",
   "log.info.chapter2EuropeAlertOn":
     "[第 {turn} 年] 第二关以「欧洲警觉：开启」开局：警觉进度从 3/10 起，并据此判定每年额外事件（1-5：进度×20%；6-10：保底 1 个并可能第 2 个）。",
   "log.info.chapter2EuropeAlertOff":

@@ -86,7 +86,7 @@ describe("level2Transition", () => {
     const draft = createStandaloneLevel2Draft(321);
     draft.removedCarryoverIds = [draft.carryoverCards[0]!.instanceId];
     const st = buildLevel2StateFromDraft(draft);
-    const standaloneResources = getLevelDef("secondMandate").standaloneStartingResources;
+    const standaloneResources = getLevelDef("secondMandate").standaloneStartingResources!;
     expect(st.levelId).toBe("secondMandate");
     expect(st.calendarStartYear).toBe(1676);
     expect(st.resources.treasuryStat).toBe(standaloneResources.treasuryStat);
