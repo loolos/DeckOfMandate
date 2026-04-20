@@ -23,14 +23,14 @@ describe("aiStrategySimulation", () => {
     const report = simulateFirstMandateBatch({ seedStart: 1, runCount: 200 });
     expect(report).toMatchInlineSnapshot(`
       {
-        "averageEndTurn": 13.615,
-        "averageEndTurnOnLoss": 13.615,
+        "averageEndTurn": 13.62,
+        "averageEndTurnOnLoss": 13.622,
         "averageEndTurnOnWin": 13.614,
         "averageEndingResources": {
-          "funding": 0.01,
+          "funding": 0,
           "legitimacy": 4.31,
           "power": 5.355,
-          "treasuryStat": 4.785,
+          "treasuryStat": 4.79,
         },
         "levelId": "firstMandate",
         "losses": 156,
@@ -62,13 +62,13 @@ describe("aiStrategySimulation", () => {
     const report = simulateSecondMandateStandaloneBatch({ seedStart: 1, runCount: 200 });
     expect(report).toMatchInlineSnapshot(`
       {
-        "averageEndTurn": 11.43,
-        "averageEndTurnOnLoss": 11.259,
+        "averageEndTurn": 11.67,
+        "averageEndTurnOnLoss": 11.503,
         "averageEndTurnOnWin": 22.667,
         "averageEndingResources": {
           "funding": 0.105,
-          "legitimacy": 4.91,
-          "power": 0.325,
+          "legitimacy": 4.68,
+          "power": 0.175,
           "treasuryStat": 3.465,
         },
         "levelId": "secondMandate",
@@ -86,8 +86,8 @@ describe("aiStrategySimulation", () => {
     const report = simulateFirstToSecondCampaignBatch({ seedStart: 1, runCount: 200 });
     expect(report).toMatchInlineSnapshot(`
       {
-        "averageChapter1EndTurn": 13.615,
-        "averageChapter2EndTurnOnReached": 14.455,
+        "averageChapter1EndTurn": 13.62,
+        "averageChapter2EndTurnOnReached": 15.091,
         "averageChapter2EndTurnOnWin": 23.667,
         "chapter1Losses": 156,
         "chapter1WinRate": 0.22,

@@ -703,7 +703,6 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       }
       if (
         state.resources.legitimacy <= 0 ||
-        state.resources.treasuryStat <= 0 ||
         state.resources.power <= 0
       ) {
         return purgeExtraCardsIfLevelEnded({ ...state, phase: "gameOver", outcome: "defeatLegitimacy" });

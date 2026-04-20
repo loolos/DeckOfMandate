@@ -57,15 +57,14 @@ describe("gameReducer", () => {
     expect(s1.phase).toBe("gameOver");
   });
 
-  it("lose-first: treasury collapse also ends the run", () => {
+  it("treasury can reach zero without immediate defeat", () => {
     const s0 = createInitialState(223);
     const doomed: typeof s0 = {
       ...s0,
       resources: { ...s0.resources, treasuryStat: 0 },
     };
     const s1 = gameReducer(doomed, { type: "END_YEAR" });
-    expect(s1.outcome).toBe("defeatLegitimacy");
-    expect(s1.phase).toBe("gameOver");
+    expect(s1.outcome).toBe("playing");
   });
 
   it("lose-first: power collapse from card depletion ends the run immediately", () => {
