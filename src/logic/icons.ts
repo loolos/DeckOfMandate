@@ -50,7 +50,9 @@ const EVENT_ICONS: Record<EventTemplateId, string> = {
   grainReliefCrisis: "🌾",
   expansionRemembered: "🦅",
   cautiousCrown: "👑",
-  religiousTension: "☯️",
+  jansenistTension: "✝️",
+  arminianTension: "📖",
+  huguenotTension: "🕯️",
   localWar: "⚔️",
 };
 

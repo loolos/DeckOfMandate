@@ -196,14 +196,20 @@ export const messagesFrCore: Record<keyof typeof messagesEnCore, string> = {
     "Une action de secours visible restaure brièvement la confiance dans la gouvernance de la couronne.",
   "status.religiousTolerance.name": "Tolérance religieuse (Permanent)",
   "status.religiousTolerance.history":
-    "La tolérance réduit la coercition immédiate mais laisse des tensions confessionnelles récurrentes.",
+    "Après la révocation, la couronne doit arbitrer entre unité confessionnelle et gouvernabilité : pression sur les protestants, contrôle des querelles théologiques catholiques et préservation de la légitimité royale se heurtent en permanence. La tolérance évite la confrontation totale, mais rouvre régulièrement des frictions dans les paroisses, les tribunaux et les provinces.",
   "status.huguenotContainment.name": "Contenir les restes huguenots",
   "status.huguenotContainment.history":
     "Une répression dure exige des campagnes policières soutenues et du capital politique.",
   "status.huguenotContainment.hint": "Tant que ce statut est actif, la victoire du Chapitre 2 est bloquée.",
-  "event.religiousTension.name": "Tension religieuse",
-  "event.religiousTension.desc":
-    "Le conflit confessionnel s'embrase de nouveau. Payez 2 Financement ou perdez 1 Légitimité.",
+  "event.jansenistTension.name": "Controverse janséniste",
+  "event.jansenistTension.desc":
+    "Les débats sur la grâce et le salut réactivent les réseaux jansénistes et opposent évêques, magistrats et pouvoir royal. Payez 2 Financement pour inspections ecclésiastiques et apaisement public, sinon perdez 1 Légitimité.",
+  "event.arminianTension.name": "Polémique arminienne",
+  "event.arminianTension.desc":
+    "Les disputes arminiennes sur libre arbitre et prédestination se diffusent dans les chaires et académies, affaiblissant la coordination doctrinale. Payez 3 Financement pour resserrer séminaires et censure, sinon perdez 1 Puissance.",
+  "event.huguenotTension.name": "Agitation huguenote clandestine",
+  "event.huguenotTension.desc":
+    "Après la révocation, des communautés huguenotes reconstruisent des réseaux d'entraide clandestins dans ports et zones frontalières, ce qui pèse sur police et fiscalité. Payez 2 Financement pour renforcer ordre public et secours, sinon perdez 1 Légitimité et 1 Puissance.",
   "card.tag.royal": "Royal",
   "card.tag.temp": "Temp",
   "card.tag.extra": "Supplémentaire",

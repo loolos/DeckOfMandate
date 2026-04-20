@@ -185,13 +185,20 @@ export const messagesEnCore = {
     "Visible relief action briefly restores trust in crown-led governance.",
   "status.religiousTolerance.name": "Religious Tolerance (Permanent)",
   "status.religiousTolerance.history":
-    "Tolerance lowers immediate coercion but leaves recurring confessional flashpoints.",
+    "After the revocation era, the crown balances confessional unity against governability: pressure on Protestants, policing of Catholic theological disputes, and royal legitimacy all pull in different directions. Choosing tolerance avoids total confrontation but keeps reopening friction in courts, parishes, and provincial administration.",
   "status.huguenotContainment.name": "Contain Huguenot Remnants",
   "status.huguenotContainment.history":
     "Harsh repression demands sustained policing campaigns and political bandwidth.",
   "status.huguenotContainment.hint": "While active, Chapter 2 victory is blocked.",
-  "event.religiousTension.name": "Religious Tension",
-  "event.religiousTension.desc": "Confessional conflict flares again. Pay 2 Funding or lose 1 Legitimacy.",
+  "event.jansenistTension.name": "Jansenist Controversy",
+  "event.jansenistTension.desc":
+    "Debates over grace and salvation revive Jansenist networks and reopen conflict between bishops, magistrates, and the crown. Pay 2 Funding for clerical inspections and public pacification, or lose 1 Legitimacy.",
+  "event.arminianTension.name": "Arminian Polemic",
+  "event.arminianTension.desc":
+    "Arminian disputes over free will and predestination spread through pulpits and academies, weakening doctrinal coordination. Pay 3 Funding to consolidate seminaries and censorship channels, or lose 1 Power.",
+  "event.huguenotTension.name": "Huguenot Underground Agitation",
+  "event.huguenotTension.desc":
+    "Post-revocation Huguenot communities rebuild covert aid networks in ports and border towns, straining police and tax enforcement. Pay 2 Funding to reinforce security and relief, or lose 1 Legitimacy and 1 Power.",
   "card.tag.royal": "Royal",
   "card.tag.temp": "Temp",
   "card.tag.extra": "Extra",
