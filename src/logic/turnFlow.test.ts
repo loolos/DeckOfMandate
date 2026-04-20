@@ -428,11 +428,20 @@ describe("beginYear + playerStatuses", () => {
     expect(s0.slots.B?.templateId).toBe("taxResistance");
   });
 
-  it("ensures standalone second-mandate year-1 opening includes at least one non-fixed procedural event", () => {
+  it("keeps standalone second-mandate year-1 opening fixed to exactly two events", () => {
     const draft = createStandaloneLevel2Draft(424_244);
     const s0 = buildLevel2StateFromDraft(draft);
     expect(s0.turn).toBe(1);
-    expect(s0.slots.C).not.toBeNull();
+    const occupiedSlots = Object.values(s0.slots).filter((slot) => slot !== null);
+    expect(occupiedSlots).toHaveLength(2);
+    expect(s0.slots.C).toBeNull();
+    expect(s0.slots.D).toBeNull();
+    expect(s0.slots.E).toBeNull();
+    expect(s0.slots.F).toBeNull();
+    expect(s0.slots.G).toBeNull();
+    expect(s0.slots.H).toBeNull();
+    expect(s0.slots.I).toBeNull();
+    expect(s0.slots.J).toBeNull();
   });
 
   it("does not place duplicate procedural templates within the same all-empty refill", () => {
