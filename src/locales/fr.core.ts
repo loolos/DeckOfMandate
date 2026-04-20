@@ -17,7 +17,8 @@ export const messagesFrCore: Record<keyof typeof messagesEnCore, string> = {
   "resource.funding": "Financement",
   "resource.funding.hint": "Paie les cartes et les événements.",
   "resource.power": "Pouvoir",
-  "resource.power.hint": "Tentatives de pioche par tour.",
+  "resource.power.hint":
+    "Les tentatives de pioche progressent sur une échelle de seuils de Pouvoir (1/2/4/7/11/16…) : franchir le seuil suivant donne +1 tentative ; passer sous le seuil actuel en retire 1. Déployez le détail de la ressource pour les règles et exemples complets.",
   "resource.legitimacy": "Légitimité",
   "resource.legitimacy.hint": "Limite de conservation ; 0 met fin à la partie.",
   "ui.resources": "Ressources",
@@ -63,7 +64,7 @@ export const messagesFrCore: Record<keyof typeof messagesEnCore, string> = {
   "menu.levelBrief.firstMandate":
     "1661–1675, début de l’ère du Roi-Soleil : consolidez l’autorité royale et l’expansion sous pression maîtrisable.",
   "menu.levelBrief.secondMandate":
-    "1676–1700, fin de l’ère du Roi-Soleil : maintenez l’hégémonie sous forte pression religieuse et géopolitique.",
+    "1676–1700, milieu de l’ère du Roi-Soleil : maintenez l’hégémonie sous forte pression religieuse et géopolitique.",
   "menu.seedLabel": "Graine de partie (optionnelle)",
   "menu.seedPlaceholder": "Aléatoire si vide",
   "menu.seedHint":
@@ -156,6 +157,16 @@ export const messagesFrCore: Record<keyof typeof messagesEnCore, string> = {
     "Troupes royales, police et tribunaux locaux sont mobilisés pour briser les réseaux huguenots restants.",
   "card.suppressHuguenots.desc":
     "Temporaire. Coût 3. À l'activation, réduisez « Contenir les restes huguenots » de 1 ; à 0, retirez ce statut et épurez toutes les cartes Réprimer les huguenots.",
+  "card.religiousTensionCard.name": "Tension religieuse",
+  "card.religiousTensionCard.background":
+    "Les fractures confessionnelles ne se referment jamais vraiment : disputes doctrinales, exigences liturgiques et griefs provinciaux continuent d'encombrer l'agenda royal.",
+  "card.religiousTensionCard.desc":
+    "Extra. Vous pouvez payer 2 Financement pour l'épurer (retirée, pas défaussée). Ajoutée à votre pioche quand Polémique arminienne, Agitation huguenote clandestine ou Patronage jésuite est résolu.",
+  "card.jesuitCollege.name": "Collège jésuite",
+  "card.jesuitCollege.background":
+    "La Flèche, Louis-le-Grand et Clermont forment des élites alignées sur la Couronne — magistrats, officiers et clergé instruits dans la rhétorique, la théologie et l'obéissance ; leurs chaires sont aussi en première ligne contre le rigorisme janséniste.",
+  "card.jesuitCollege.desc":
+    "Extra. Restant 1/1 — usage unique. Coût 2. À l'activation, Légitimité +1 ; s'il existe un événement Controverse janséniste non résolu sur le plateau, il en est résolu un immédiatement (sans coût de Financement). Après activation, retirée du circuit.",
   "event.budgetStrain.name": "Dépenses excessives de la cour",
   "event.budgetStrain.desc":
     "L'expansion de Versailles et le rituel de cour poussent les dépenses au-delà du budget. Payez 2 Financement ou perdez 1 Trésor.",
@@ -206,10 +217,10 @@ export const messagesFrCore: Record<keyof typeof messagesEnCore, string> = {
     "Les débats sur la grâce et le salut réactivent les réseaux jansénistes et opposent évêques, magistrats et pouvoir royal. Payez 2 Financement pour inspections ecclésiastiques et apaisement public, sinon perdez 1 Légitimité.",
   "event.arminianTension.name": "Polémique arminienne",
   "event.arminianTension.desc":
-    "Les disputes arminiennes sur libre arbitre et prédestination se diffusent dans les chaires et académies, affaiblissant la coordination doctrinale. Payez 3 Financement pour resserrer séminaires et censure, sinon perdez 1 Puissance.",
+    "Les disputes arminiennes sur libre arbitre et prédestination se diffusent dans les chaires et académies, affaiblissant la coordination doctrinale. Payez 1 Financement pour resserrer séminaires et censure (la résolution ajoute 1 Tension religieuse à votre pioche), sinon perdez 1 Pouvoir.",
   "event.huguenotTension.name": "Agitation huguenote clandestine",
   "event.huguenotTension.desc":
-    "Après la révocation, des communautés huguenotes reconstruisent des réseaux d'entraide clandestins dans ports et zones frontalières, ce qui pèse sur police et fiscalité. Payez 2 Financement pour renforcer ordre public et secours, sinon perdez 1 Légitimité et 1 Puissance.",
+    "Après la révocation, des communautés huguenotes reconstruisent des réseaux d'entraide clandestins dans ports et zones frontalières, ce qui pèse sur police et fiscalité. Payez 1 Financement pour renforcer ordre public et secours (la résolution ajoute 1 Tension religieuse à votre pioche), sinon perdez 1 Trésor.",
   "card.tag.royal": "Royal",
   "card.tag.temp": "Temp",
   "card.tag.extra": "Supplémentaire",
@@ -229,12 +240,16 @@ export const messagesFrCore: Record<keyof typeof messagesEnCore, string> = {
     "enlisement ; le front reste inchangé. La logique d'équilibre européen reste piégée dans un duel d'endurance fiscale et de crédit.",
   "log.eventNineYearsWarCampaign.outcome.limitedGains":
     "gains partiels ; {legitimacy} +1. Le succès tactique rassure l'intérieur, sans rompre la dynamique d'usure d'une guerre longue.",
+  "log.huguenotResurgence.title":
+    "[Tour {turn}] Contenir les restes huguenots est toujours actif : les réseaux clandestins huguenots se reforment via les marges de tolérance et les routes d'exil. Ajoute {addedCount} {card} au deck ; les restes passent à {remainingStacks}.",
+  "log.huguenotResurgence.history":
+    "Note historique : après l'édit de Fontainebleau (1685), les huguenots passent dans la clandestinité ou s'exilent, mais leurs assemblées, leur imprimerie et leurs réseaux d'entraide se reconstruisent dans les campagnes et aux frontières, exigeant de nouvelles vagues de répression tous les quelques années.",
   "log.info.chapter2EuropeAlertOn":
     "[Tour {turn}] Le Chapitre 2 commence avec l'Alerte Europe active : la jauge démarre à 3/10 et pilote les événements supplémentaires annuels (1-5 : progression×20% ; 6-10 : 1 garanti + possible 2e).",
   "log.info.chapter2EuropeAlertOff":
     "[Tour {turn}] Le Chapitre 2 commence avec l'Alerte Europe inactive : aucune vérification d'événements supplémentaires liée à l'Alerte Europe.",
   "log.info.antiFrenchSentimentActivated":
-    "[Tour {turn}] Le sentiment anti-français monte : quand Pouvoir+Trésor dépasse 20, les résolutions financées liées à l'Alerte Europe prennent +1 immédiatement, puis +1 par tranche complète supplémentaire de +5. Le statut affiche aussi Émotion x (x = nombre de cartes Endiguement anti-français dans toute votre bibliothèque), et la Paix de Ryswick gagne un surcoût supplémentaire de +2x tant que ce statut est actif.",
+    "[Tour {turn}] Le sentiment anti-français monte : quand Pouvoir+Trésor dépasse 20, les résolutions financées liées à l'Alerte Europe prennent +1 immédiatement, puis +1 par tranche complète supplémentaire de +5. Le statut affiche aussi Sentiment x (x = nombre de cartes Endiguement anti-français dans toute votre bibliothèque), et la Paix de Ryswick gagne un surcoût supplémentaire de +2x tant que ce statut est actif.",
   "log.info.antiFrenchSentimentEnded":
     "[Tour {turn}] Le sentiment anti-français retombe : dès que Pouvoir+Trésor revient à 20 ou moins, ce surcoût de résolution d'événements est retiré.",
   "log.info.cardUse.depleted.crackdownPenalty":

@@ -31,11 +31,18 @@ const RETENTION_PRIORITY_TEMPLATES_STRATEGY_I: readonly CardTemplateId[] = [
   "reform",
   "ceremony",
   "taxRebalance",
+  "jesuitCollege",
 ];
 const LEGACY_STRATEGY_ID = "event-first-retain-royal-funding-and-intervention";
 const STRATEGY_I_ID = "a-strategy-i";
 
 type StrategyPolicyId = "legacy" | "a-strategy-i";
+
+export type NantesChoice = "crackdown" | "tolerance";
+
+export type StrategyOptions = {
+  nantesChoice?: NantesChoice;
+};
 
 export type StrategyRunResult = {
   seed: number;
@@ -232,7 +239,6 @@ function isCriticalOpportunityEventTemplate(templateId: string): boolean {
   return (
     templateId === "ryswickPeace" ||
     templateId === "nymwegenSettlement" ||
-    templateId === "grainReliefCrisis" ||
     templateId === "leagueOfAugsburg" ||
     templateId === "nineYearsWar" ||
     templateId === "expansionRemembered" ||
@@ -252,7 +258,6 @@ function strategyISolvePriority(state: GameState, slot: SlotId, amount: number):
   if (id === "risingGrainPrices") return -26_000 + amount;
   if (id === "courtScandal") return -25_500 + amount;
   if (id === "provincialNoncompliance") return -25_000 + amount;
-  if (id === "grainReliefCrisis") return -24_500 + amount;
   if (id === "nymwegenSettlement") return -24_000 + amount;
   if (id === "leagueOfAugsburg" || id === "nineYearsWar") return -23_000 + amount;
   if (getEventTemplate(id).harmful) return -22_000 + amount;
@@ -262,6 +267,7 @@ function strategyISolvePriority(state: GameState, slot: SlotId, amount: number):
 
 function pickFundSolveActionsStrategyI(state: GameState): GameAction[] {
   const hasUnresolvedHarmful = hasUnresolvedHarmfulEvents(state);
+  const hasJansenistOnBoard = !!firstUnresolvedSlotByTemplate(state, "jansenistTension");
   const candidates: Array<{ slot: SlotId; amount: number; priority: number }> = [];
   for (const slot of EVENT_SLOT_ORDER) {
     const ev = state.slots[slot];
@@ -270,6 +276,9 @@ function pickFundSolveActionsStrategyI(state: GameState): GameAction[] {
     if (tmpl.solve.kind !== "funding" && tmpl.solve.kind !== "fundingOrCrackdown") continue;
     const keepEvenUnderPressure = isCriticalOpportunityEventTemplate(ev.templateId);
     if (hasUnresolvedHarmful && !tmpl.harmful && !keepEvenUnderPressure) continue;
+    // Jesuit Patronage dilutes the deck (2 collèges + 1 religious-tension card); only worth
+    // solving when its Jansenist auto-resolve synergy can actually be triggered.
+    if (ev.templateId === "jesuitPatronage" && !hasJansenistOnBoard) continue;
     const amount = getEventSolveFundingAmount(state, ev.templateId);
     if (amount === null) continue;
     if (state.resources.funding < amount) continue;
@@ -356,6 +365,7 @@ function cardPlayPriorityStrategyI(state: GameState, cardInstanceId: string): nu
     ryswickSolveAmount !== null && currentFunding < ryswickSolveAmount && currentFunding + 1 >= ryswickSolveAmount;
 
   if (tmpl === "fiscalBurden") return 10_000;
+  if (tmpl === "religiousTensionCard") return 10_000;
   if (state.levelId === "secondMandate") {
     switch (tmpl) {
       case "funding":
@@ -381,6 +391,11 @@ function cardPlayPriorityStrategyI(state: GameState, cardInstanceId: string): nu
         return state.resources.legitimacy < 6 ? 3 : state.resources.legitimacy < 9 ? 7 : 26;
       case "suppressHuguenots":
         return hasContainmentStatus ? 7 : 90;
+      case "jesuitCollege": {
+        const jansenistSlot = firstUnresolvedSlotByTemplate(state, "jansenistTension");
+        if (jansenistSlot) return 2;
+        return state.resources.legitimacy < 9 ? 5 : 12;
+      }
       default:
         return 30;
     }
@@ -402,6 +417,9 @@ function pickCardPlayActions(state: GameState, policy: StrategyPolicyId): GameAc
       continue;
     }
     if (template === "fiscalBurden") {
+      continue;
+    }
+    if (template === "religiousTensionCard") {
       continue;
     }
     if (template === "suppressHuguenots" && !hasContainmentStatus) {
@@ -463,9 +481,16 @@ function pickRetentionIdsForStrategyI(state: GameState): readonly string[] {
   return ranked.slice(0, capacity);
 }
 
-function pickSpecialChoiceActionsStrategyI(state: GameState): GameAction[] {
+function pickSpecialChoiceActionsStrategyI(
+  state: GameState,
+  options: StrategyOptions = {},
+): GameAction[] {
   const nantesSlot = firstUnresolvedSlotByTemplate(state, "revocationNantes");
   if (nantesSlot) {
+    const choice: NantesChoice = options.nantesChoice ?? "crackdown";
+    if (choice === "tolerance") {
+      return [{ type: "PICK_NANTES_TOLERANCE", slot: nantesSlot }];
+    }
     return [{ type: "PICK_NANTES_CRACKDOWN", slot: nantesSlot }];
   }
   const localWarSlot = firstUnresolvedSlotByTemplate(state, "localWar");
@@ -490,7 +515,11 @@ function pickSpecialChoiceActionsStrategyI(state: GameState): GameAction[] {
   return [];
 }
 
-function chooseActions(state: GameState, policy: StrategyPolicyId): GameAction[] {
+function chooseActions(
+  state: GameState,
+  policy: StrategyPolicyId,
+  options: StrategyOptions = {},
+): GameAction[] {
   if (state.phase === "retention") {
     const keepIds =
       policy === "legacy" ? pickRetentionIdsForSimplePolicy(state) : pickRetentionIdsForStrategyI(state);
@@ -503,7 +532,7 @@ function chooseActions(state: GameState, policy: StrategyPolicyId): GameAction[]
     return [{ type: "CRACKDOWN_CANCEL" }];
   }
   if (policy === "a-strategy-i") {
-    const special = pickSpecialChoiceActionsStrategyI(state);
+    const special = pickSpecialChoiceActionsStrategyI(state, options);
     if (special.length > 0) return special;
   }
   const solveActions = policy === "legacy" ? pickFundSolveActionsLegacy(state) : pickFundSolveActionsStrategyI(state);
@@ -517,8 +546,12 @@ function chooseActions(state: GameState, policy: StrategyPolicyId): GameAction[]
   ];
 }
 
-function runStrategyStep(state: GameState, policy: StrategyPolicyId): GameState {
-  const actions = chooseActions(state, policy);
+function runStrategyStep(
+  state: GameState,
+  policy: StrategyPolicyId,
+  options: StrategyOptions = {},
+): GameState {
+  const actions = chooseActions(state, policy, options);
   for (const action of actions) {
     const next = gameReducer(state, action);
     if (next !== state) return next;
@@ -536,8 +569,11 @@ export function simulateFirstMandateRun(seed: number): StrategyRunResult {
   };
 }
 
-export function simulateSecondMandateStandaloneRun(seed: number): StrategyRunResult {
-  const state = simulateSecondMandateStandaloneEndState(seed);
+export function simulateSecondMandateStandaloneRun(
+  seed: number,
+  options: StrategyOptions = {},
+): StrategyRunResult {
+  const state = simulateSecondMandateStandaloneEndState(seed, options);
   return {
     seed,
     outcome: state.outcome,
@@ -551,13 +587,14 @@ function simulateEndStateWithPolicy(
   policy: StrategyPolicyId,
   seed: number,
   label: string,
+  options: StrategyOptions = {},
 ): GameState {
   let state = initialState;
   for (let i = 0; i < MAX_STEPS_PER_RUN; i++) {
     if (state.outcome !== "playing") {
       return state;
     }
-    const next = runStrategyStep(state, policy);
+    const next = runStrategyStep(state, policy, options);
     if (next === state) {
       throw new Error(`strategy got stuck at ${label}, seed=${seed}, turn=${state.turn}, phase=${state.phase}`);
     }
@@ -570,17 +607,23 @@ export function simulateFirstMandateEndState(seed: number): GameState {
   return simulateEndStateWithPolicy(createInitialState(seed, "firstMandate"), "legacy", seed, "firstMandate");
 }
 
-export function simulateSecondMandateStandaloneEndState(seed: number): GameState {
+export function simulateSecondMandateStandaloneEndState(
+  seed: number,
+  options: StrategyOptions = {},
+): GameState {
   const draft = createStandaloneLevel2Draft(seed);
   const initialState = buildLevel2StateFromDraft(draft);
-  return simulateEndStateWithPolicy(initialState, "a-strategy-i", seed, "secondMandateStandalone");
+  return simulateEndStateWithPolicy(initialState, "a-strategy-i", seed, "secondMandateStandalone", options);
 }
 
 function campaignSecondStageSeed(seed: number): number {
   return ((seed * 1_664_525 + 1_013_904_223) >>> 0) || 0x9e3779b9;
 }
 
-export function simulateFirstToSecondCampaignRun(seed: number): CampaignRunResult {
+export function simulateFirstToSecondCampaignRun(
+  seed: number,
+  options: StrategyOptions = {},
+): CampaignRunResult {
   const firstEndState = simulateEndStateWithPolicy(
     createInitialState(seed, "firstMandate"),
     "legacy",
@@ -604,6 +647,7 @@ export function simulateFirstToSecondCampaignRun(seed: number): CampaignRunResul
     "a-strategy-i",
     seed2,
     "campaign:secondMandate",
+    options,
   );
   return {
     seed,
@@ -651,15 +695,18 @@ export function simulateFirstMandateBatch(options?: {
 export function simulateSecondMandateStandaloneBatch(options?: {
   seedStart?: number;
   runCount?: number;
+  nantesChoice?: NantesChoice;
 }): SecondMandateBatchReport {
   const seedStart = options?.seedStart ?? 1;
   const runCount = options?.runCount ?? 200;
   if (runCount <= 0) {
     throw new Error("runCount must be > 0");
   }
+  const strategyOptions: StrategyOptions = {};
+  if (options?.nantesChoice) strategyOptions.nantesChoice = options.nantesChoice;
   const runs: StrategyRunResult[] = [];
   for (let i = 0; i < runCount; i++) {
-    runs.push(simulateSecondMandateStandaloneRun(seedStart + i));
+    runs.push(simulateSecondMandateStandaloneRun(seedStart + i, strategyOptions));
   }
   const wins = runs.filter((r) => r.outcome === "victory");
   const losses = runs.filter((r) => r.outcome !== "victory");
@@ -686,15 +733,18 @@ export function simulateSecondMandateStandaloneBatch(options?: {
 export function simulateFirstToSecondCampaignBatch(options?: {
   seedStart?: number;
   runCount?: number;
+  nantesChoice?: NantesChoice;
 }): CampaignBatchReport {
   const seedStart = options?.seedStart ?? 1;
   const runCount = options?.runCount ?? 200;
   if (runCount <= 0) {
     throw new Error("runCount must be > 0");
   }
+  const strategyOptions: StrategyOptions = {};
+  if (options?.nantesChoice) strategyOptions.nantesChoice = options.nantesChoice;
   const runs: CampaignRunResult[] = [];
   for (let i = 0; i < runCount; i++) {
-    runs.push(simulateFirstToSecondCampaignRun(seedStart + i));
+    runs.push(simulateFirstToSecondCampaignRun(seedStart + i, strategyOptions));
   }
   const chapter1Wins = runs.filter((r) => r.firstOutcome === "victory");
   const chapter2Runs = runs.filter((r) => r.secondOutcome !== null);

@@ -123,6 +123,24 @@ const templates: Record<CardTemplateId, CardTemplate> = {
     descriptionKey: "card.suppressHuguenots.desc",
     effects: [],
   },
+  religiousTensionCard: {
+    id: "religiousTensionCard",
+    cost: 2,
+    tags: EXTRA,
+    titleKey: "card.religiousTensionCard.name",
+    backgroundKey: "card.religiousTensionCard.background",
+    descriptionKey: "card.religiousTensionCard.desc",
+    effects: [],
+  },
+  jesuitCollege: {
+    id: "jesuitCollege",
+    cost: 2,
+    tags: EXTRA,
+    titleKey: "card.jesuitCollege.name",
+    backgroundKey: "card.jesuitCollege.background",
+    descriptionKey: "card.jesuitCollege.desc",
+    effects: [{ kind: "modResource", resource: "legitimacy", delta: 1 }],
+  },
 };
 
 export function getCardTemplate(id: CardTemplateId): CardTemplate {

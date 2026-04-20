@@ -11,7 +11,7 @@ import {
 } from "../types/event";
 import type { GameState } from "../types/game";
 import type { PlayerStatusInstance } from "../types/status";
-import { applyOnDrawCardEffects } from "./cardRuntime";
+import { applyOnDrawCardEffects, enforceHuguenotContainmentInvariant } from "./cardRuntime";
 import { applyInflationFromDeckRefill } from "./cardCost";
 import { drawUpToPower } from "./draw";
 import { drawAttemptsFromPower } from "./drawScaling";
@@ -25,6 +25,9 @@ import { antiFrenchSentimentActive } from "./antiFrenchSentiment";
 import { applyScriptedCalendarPhase, rollAntiFrenchLeagueDrawAdjustment } from "./scriptedCalendar";
 import { rngNext, shuffle } from "./rng";
 import { applyEffects } from "./applyEffects";
+import { addCardsToDeck } from "./cardRuntime";
+
+const HUGUENOT_RESURGENCE_INTERVAL = 2;
 const EUROPE_ALERT_SUPPLEMENTAL_POOL = [
   "frontierGarrisons",
   "tradeDisruption",
@@ -324,6 +327,39 @@ function runEventPhase(state: GameState): GameState {
   s = syncAntiFrenchSentimentStatus(s);
   s = maybeAddEuropeAlertSupplementalEvent(s);
   s = maybeAddReligiousTensionEvent(s);
+  s = maybeTriggerHuguenotResurgence(s);
+  return s;
+}
+
+/**
+ * While `huguenotContainment` is active, every {@link HUGUENOT_RESURGENCE_INTERVAL} beginYear
+ * ticks adds a fresh `suppressHuguenots` card to the deck and bumps containment stacks +1.
+ *
+ * Models the "残余势力卷土重来" pressure: as long as the crown keeps the crackdown going
+ * but does not finish it, new cells of resistance keep regenerating.
+ */
+export function maybeTriggerHuguenotResurgence(state: GameState): GameState {
+  const containment = state.playerStatuses.find((s) => s.templateId === "huguenotContainment");
+  if (!containment) {
+    if (state.huguenotResurgenceCounter === 0) return state;
+    return { ...state, huguenotResurgenceCounter: 0 };
+  }
+  const nextCounter = state.huguenotResurgenceCounter + 1;
+  if (nextCounter < HUGUENOT_RESURGENCE_INTERVAL) {
+    return { ...state, huguenotResurgenceCounter: nextCounter };
+  }
+  let s: GameState = { ...state, huguenotResurgenceCounter: 0 };
+  s = addCardsToDeck(s, "suppressHuguenots", 1);
+  // Resync `turnsRemaining` to the live count of suppressHuguenots cards (this
+  // makes the +1 stack bump implicit and guarantees status === card count).
+  s = enforceHuguenotContainmentInvariant(s);
+  const refreshed = s.playerStatuses.find((p) => p.templateId === "huguenotContainment");
+  const remainingStacks = refreshed?.turnsRemaining ?? containment.turnsRemaining + 1;
+  s = appendActionLog(s, {
+    kind: "huguenotResurgence",
+    addedCount: 1,
+    remainingStacks,
+  });
   return s;
 }
 
@@ -513,7 +549,10 @@ export function evaluateVictory(state: GameState): GameState {
   if (state.levelId === "secondMandate") {
     const reachedVictoryYear = currentYear >= SECOND_MANDATE_EARLIEST_VICTORY_YEAR;
     const europeAlertResolved = !state.europeAlert;
-    if (reachedVictoryYear && europeAlertResolved) {
+    const huguenotResidualResolved = !state.playerStatuses.some(
+      (s) => s.templateId === "huguenotContainment",
+    );
+    if (reachedVictoryYear && europeAlertResolved && huguenotResidualResolved) {
       return { ...state, phase: "gameOver", outcome: "victory" };
     }
     return state;

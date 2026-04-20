@@ -1,13 +1,13 @@
 /**
- * English copy for level `secondMandate` (Glory Under Strain, France 1676–1700).
+ * English copy for level `secondMandate` (Long Shadows at Noon, France 1676–1700).
  */
 export const messagesEnSecondMandate = {
-  "level.gloryUnderStrain.name": "Glory Under Strain",
+  "level.gloryUnderStrain.name": "Long Shadows at Noon",
   "level.gloryUnderStrain.introTitle": "France, 1676 — Hold the hegemony",
   "level.gloryUnderStrain.introBody":
     "The age of expansion has ended; the age of payment begins. By 1676, Louis XIV presides over a stronger but more exposed monarchy: Versailles projects splendor, yet court ceremony, military mobilization, and fiscal extraction all demand constant funding. Every gain in authority now carries a maintenance cost, and every delay in administration risks widening into provincial noncompliance.\n\nReligion sharpens that strain. The Edict of Nantes, issued by Henry IV in 1598 after decades of civil war between Catholics and Protestants, did not create equality, but it built a political compromise: Catholicism remained the state religion while Huguenots retained limited worship rights, legal protections, and fortified spaces of security. That settlement helped end the French Wars of Religion by trading absolute confessional victory for governable coexistence.\n\nIn this chapter, that compromise unravels. Pressure to enforce unity can strengthen royal authority in the short term, but persecution can hollow out trust, provoke resistance, and drain state capacity over time. Tolerance, meanwhile, may reduce immediate violence while inviting recurring political backlash. Abroad, rival powers read domestic fracture as strategic opportunity; at home, tax burdens and grain stress turn doctrine into unrest. Your task is not to restore a lost balance, but to govern through a dangerous transition: preserve legitimacy, manage conflict between faith and obedience, and keep France standing through the wars that follow its rise.",
   "level.gloryUnderStrain.ending.victory":
-    "The monarchy endures the pressure years. France remains formidable, and the state survives famine scares, diplomatic encirclement, and war finance without collapsing legitimacy.",
+    "The monarchy endures the pressure years. France remains formidable, and the state survives diplomatic encirclement and war finance without collapsing legitimacy.",
   "level.gloryUnderStrain.ending.victoryWarDevolutionExtra":
     "Europe still remembers your earlier offensives. Rivals never fully trust French restraint, but careful reconstruction after war keeps the crown standing.",
   "level.gloryUnderStrain.ending.defeat":
@@ -33,9 +33,9 @@ export const messagesEnSecondMandate = {
   "status.europeAlert.stage.conflict.desc":
     "The system enters overt confrontation and dual-crisis pressure becomes routine.",
   "status.antiFrenchSentiment.name": "Anti-French Sentiment",
-  "status.antiFrenchSentiment.emotionLabel": "Emotion {x}",
+  "status.antiFrenchSentiment.emotionLabel": "Sentiment {x}",
   "status.antiFrenchSentiment.detail":
-    "Emotion {x}: the current number of Anti-French Containment cards in your full library. While this status is active, Peace of Ryswick gains an extra +{n} Funding cost.",
+    "Sentiment {x}: the current number of Anti-French Containment cards in your full library. While this status is active, Peace of Ryswick gains an extra +{n} Funding cost.",
   "status.antiFrenchSentiment.history":
     "After the 1670s, France's military and fiscal expansion convinced rival courts that temporary truces were no longer enough. A broader anti-French consensus emerged, with states increasingly coordinating diplomacy, trade pressure, and military readiness to contain Bourbon influence. Mechanically: once Power+Treasury is high enough, Europe-Alert-linked funding solutions become more expensive, and this status also adds recurring containment pressure through deck disruption until that combined strength falls back down.",
   "event.nymwegenSettlement.name": "Treaties of Nijmegen",
@@ -43,10 +43,10 @@ export const messagesEnSecondMandate = {
     "A mandatory long-running crisis: pay (Europe Alert progress + 3) Funding to secure the settlement (Power -2, Treasury -1, Legitimacy -1). This does not remove Europe Alert; if ignored, lose 1 Power each year.",
   "event.revocationNantes.name": "Policy on the Edict of Nantes",
   "event.revocationNantes.desc":
-    "In 1598, Henry IV issued the Edict of Nantes to end the French Wars of Religion: Catholicism remained the state faith, while French Protestants (Huguenots) received limited worship rights, civil protections, and security guarantees. The crown now revokes it. This is a Continued event: if ignored, you draw 2 fewer cards each turn and it stays on the board. Resolve by choosing one policy: Religious Tolerance (immediate Legitimacy -1; gain permanent Religious Tolerance, which rolls three confessional crises each turn—Jansenist controversy, Arminian polemic, and Huguenot underground agitation—each at 15%), or Harsh Crackdown (no immediate numeric change; gain Contain Huguenot Remnants 3 and add 3 temporary “Suppress the Huguenots” cards to deck, cost 3 each; each play reduces remnants by 1; at 0, remove the status and purge those cards from hand/deck/discard). While that containment status exists, Chapter 2 victory is blocked.",
+    "In 1598, Henry IV issued the Edict of Nantes to end the French Wars of Religion: Catholicism remained the state faith, while French Protestants (Huguenots) received limited worship rights, civil protections, and security guarantees. The crown now revokes it. This is a Continued event: if ignored, you draw 2 fewer cards each turn and it stays on the board. Resolve by choosing one policy: Religious Tolerance (immediate Legitimacy -1; gain permanent Religious Tolerance, which makes a single roll each turn that injects at most one of three confessional crises—Jansenist controversy (15%), Arminian polemic (15%), or Huguenot underground agitation (15%), for a 45% combined chance; the roll is skipped if any of the three is already on the board or no event slot is free; note that resolving Arminian Polemic or Huguenot Underground Agitation, each costing 1 Funding, also inserts 1 Religious Tension card into the draw pile, cost 2, purged from the deck on play rather than discarded), or Harsh Crackdown (no immediate numeric change; gain Contain Huguenot Remnants 3 and add 3 “Suppress the Huguenots” cards to deck, cost 3 each; each play reduces remnants by 1; at 0, remove the status and purge those cards from hand/deck/discard). While that containment status remains active, every 2 turns (at the end of the event phase) a Huguenot resurgence triggers: 1 extra “Suppress the Huguenots” card is added to the deck and remnants +1, modeling clandestine networks rebuilding faster than the crackdown can finish. While that containment status exists, Chapter 2 victory is blocked.",
   "event.leagueOfAugsburg.name": "League of Augsburg Forms",
   "event.leagueOfAugsburg.desc":
-    "European powers coordinate against France. Tagged Remaining 3: it must be resolved 3 times total before it is fully removed. On any turn it is not resolved, you must pay floor(Europe Alert progress/2) Funding to keep talks alive; if unpaid, lose 1 Power and 1 Treasury. Each time you pay 2 Funding (or use Intervention), that counts as one resolve: this turn avoids the unresolved penalty, but the event remains next turn until Remaining reaches 0.",
+    "After the 1680s, French expansion along the Rhine and into the Low Countries fed sustained alarm among the neighboring courts. In 1686, princes of the Holy Roman Empire, the Habsburgs, and German states aligned at Augsburg, and over the following years England, the Dutch Republic, and Spain progressively joined the anti-French coordination. For Louis XIV this was no longer a passing diplomatic friction: the European balance was hardening into an institutionalized alliance constraint on France. Mechanically, this is a continuous diplomatic pressure tagged Remaining 3 — it must be resolved 3 times in total before it is fully removed. On any turn it is not resolved, you lose 1 Power and 1 Treasury at end of turn (the Remaining counter is not consumed). Each time you pay 2 Funding (or use Intervention) it counts as one resolve: this turn avoids the unresolved penalty, but the event remains next turn until Remaining reaches 0.",
   "event.nineYearsWar.name": "The Nine Years' War",
   "event.nineYearsWar.desc":
     "From 1688, the Nine Years' War grew out of the League of Augsburg system into a continent-wide struggle over the European balance of power. Fighting stretched from the Rhineland and the Low Countries to maritime routes and colonial fronts, turning fiscal endurance into the core test of state capacity. In game terms, this is a Continued crisis: you can campaign each turn by paying floor(Europe Alert progress / 2) + 1 Funding (or using Intervention), while delay risks legitimacy setbacks and ongoing fiscal drag.",
@@ -98,9 +98,9 @@ export const messagesEnSecondMandate = {
   "event.warWeariness.name": "War Weariness",
   "event.warWeariness.desc":
     "Long conflict exhausts support. Pay 3 Funding or Intervention, or lose 1 Legitimacy and gain Loss of Authority for 2 turns.",
-  "event.grainReliefCrisis.name": "Grain Relief Crisis",
-  "event.grainReliefCrisis.desc":
-    "Food insecurity surges. Spend 2 Funding to stabilize communities and gain Legitimacy +2; unresolved pressure causes Legitimacy -2.",
+  "event.jesuitPatronage.name": "Jesuit Patronage",
+  "event.jesuitPatronage.desc":
+    "Père François de La Chaise, Louis XIV's Jesuit confessor since 1675, channels the Society of Jesus' patronage. Its elite collèges — La Flèche (where Descartes was schooled), Louis-le-Grand in Paris, and Clermont — train officers, magistrates, and clergy under royal-aligned doctrine, weaving the Crown into a transnational Catholic education and missionary network. Jesuit theologians had also been the sharpest opponents of Jansenism since the Augustinus controversy of the 1640s, and their pulpits could blunt local Jansenist agitation when the Crown leaned on them. The same prominence, however, fuels resentment from the Gallican episcopate, the Sorbonne, and Jansenist circles who see Jesuit ultramontanism as a threat to French ecclesiastical autonomy. Pay 2 Funding to deepen the partnership: add 2 Jesuit Collège cards (cost 2, Remaining 1/1, Legitimacy +1, also instantly resolves one unresolved Jansenist Controversy on play) and 1 Religious Tension card to your draw pile. If unresolved, no penalty.",
   "event.expansionRemembered.name": "Expansion Remembered",
   "event.expansionRemembered.desc":
     "Earlier expansion still casts a long shadow. Pay 2 Funding to contain it and add 2 Fiscal Burden cards to your deck; if unresolved, 3 Fiscal Burden cards are added.",

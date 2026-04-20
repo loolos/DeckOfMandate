@@ -4,7 +4,7 @@ import { getTurnLimitForRun, type LevelId } from "../data/levels";
 import { appendActionLog } from "../logic/actionLog";
 import { applyEffects, enforceLegitimacy } from "../logic/applyEffects";
 import { hasCardTag } from "../logic/cardTags";
-import { addCardsToHand } from "../logic/cardRuntime";
+import { addCardsToHand, enforceHuguenotContainmentInvariant } from "../logic/cardRuntime";
 import { appendInflationActivationLogIfNeeded, getPlayableCardCost } from "../logic/cardCost";
 import { normalizeGameState } from "../logic/normalizeGameState";
 import { applyPlayedCardEffects } from "../logic/resolveCard";
@@ -13,7 +13,6 @@ import { coalitionUntilTurn, findScriptedCalendarConfig } from "../logic/scripte
 import { rngNext } from "../logic/rng";
 import { beginYear, evaluateTimeDefeat, evaluateVictory, retentionCapacity } from "../logic/turnFlow";
 import { antiFrenchSentimentEventSolveCostPenalty } from "../logic/antiFrenchSentiment";
-import type { CardTemplateId } from "../types/card";
 import { EVENT_SLOT_ORDER, type EventTemplateId } from "../types/event";
 import type { SlotId } from "../types/event";
 import type { GameState } from "../types/game";
@@ -473,42 +472,6 @@ function addUniqueStatus(state: GameState, templateId: "religiousTolerance" | "h
   return applyEffects(state, [{ kind: "addPlayerStatus", templateId, turns: 99 }]);
 }
 
-function setStatusTurns(
-  state: GameState,
-  templateId: "religiousTolerance" | "huguenotContainment",
-  turnsRemaining: number,
-): GameState {
-  return {
-    ...state,
-    playerStatuses: state.playerStatuses.map((st) =>
-      st.templateId === templateId ? { ...st, turnsRemaining } : st,
-    ),
-  };
-}
-
-function removeCardsEverywhere(state: GameState, templateId: CardTemplateId): GameState {
-  const toRemove = new Set(
-    Object.values(state.cardsById)
-      .filter((c) => c.templateId === templateId)
-      .map((c) => c.instanceId),
-  );
-  if (toRemove.size === 0) return state;
-  const cardInflationById = { ...state.cardInflationById };
-  const cardUsesById = { ...state.cardUsesById };
-  for (const id of toRemove) {
-    delete cardInflationById[id];
-    delete cardUsesById[id];
-  }
-  return {
-    ...state,
-    hand: state.hand.filter((id) => !toRemove.has(id)),
-    deck: state.deck.filter((id) => !toRemove.has(id)),
-    discard: state.discard.filter((id) => !toRemove.has(id)),
-    cardUsesById,
-    cardInflationById,
-  };
-}
-
 export function gameReducer(state: GameState, action: GameAction): GameState {
   switch (action.type) {
     case "HYDRATE":
@@ -565,25 +528,21 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
           effects: tmpl.effects,
         });
       }
-      if (inst.templateId === "suppressHuguenots") {
+      if (inst.templateId === "religiousTensionCard") {
         const removed = removeHand(paid, id);
-        let s: GameState = removed;
-        const status = s.playerStatuses.find((st) => st.templateId === "huguenotContainment");
-        if (status) {
-          const next = Math.max(0, status.turnsRemaining - 1);
-          s = {
-            ...s,
-            playerStatuses:
-              next > 0
-                ? s.playerStatuses.map((st) =>
-                    st.instanceId === status.instanceId ? { ...st, turnsRemaining: next } : st,
-                  )
-                : s.playerStatuses.filter((st) => st.instanceId !== status.instanceId),
-          };
-          if (next === 0) {
-            s = removeCardsEverywhere(s, "suppressHuguenots");
-          }
-        }
+        return appendActionLog(removed, {
+          kind: "cardPlayed",
+          templateId: inst.templateId,
+          fundingCost: cost,
+          effects: tmpl.effects,
+        });
+      }
+      if (inst.templateId === "suppressHuguenots") {
+        let s: GameState = removeHand(paid, id);
+        // The played card is consumed (no discard), so prune it before resyncing
+        // the containment invariant: turnsRemaining MUST equal the count of
+        // suppressHuguenots cards left in deck/hand/discard.
+        s = enforceHuguenotContainmentInvariant(s);
         s = appendActionLog(s, {
           kind: "cardPlayed",
           templateId: inst.templateId,
@@ -598,6 +557,9 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       }
       if (inst.templateId === "diplomaticCongress") {
         s = addCardsToHand(s, "diplomaticIntervention", 1);
+      }
+      if (inst.templateId === "jesuitCollege") {
+        s = resolveFirstUnresolvedEventByTemplate(s, "jansenistTension");
       }
       s = removeHand(s, id);
       const consumed = consumeLimitedUseCard(s, id);
@@ -637,8 +599,12 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       const ev = state.slots[action.slot];
       if (!ev || ev.resolved || ev.templateId !== "revocationNantes") return state;
       let s: GameState = addUniqueStatus(state, "huguenotContainment");
-      s = setStatusTurns(s, "huguenotContainment", 3);
+      s = { ...s, huguenotResurgenceCounter: 0 };
       s = applyEffects(s, [{ kind: "addCardsToDeck", templateId: "suppressHuguenots", count: 3 }]);
+      // Resync `turnsRemaining` to the live count of suppressHuguenots cards so
+      // the status's number is always equal to the cards currently in play
+      // (e.g. if some prior crackdown branch already added cards/status).
+      s = enforceHuguenotContainmentInvariant(s);
       s = markSlotResolved(s, action.slot);
       s = appendActionLog(s, { kind: "info", infoKey: "nantesPolicy.crackdownFontainebleauIssued" });
       return s;

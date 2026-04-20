@@ -56,7 +56,7 @@ export const messagesZhCore = {
   "menu.resumeSave": "读取本地存档",
   "menu.levelLabel": "关卡",
   "menu.levelBrief.firstMandate": "1661–1675（太阳王前期）：巩固王权、稳步扩张，在可控压力下建立统治基础。",
-  "menu.levelBrief.secondMandate": "1676–1700（太阳王后期）：在宗教与对外高压并行下，维持霸权并避免国家失序。",
+  "menu.levelBrief.secondMandate": "1676–1700（太阳王中期）：在宗教与对外高压并行下，维持霸权并避免国家失序。",
   "menu.seedLabel": "随机种子（可选）",
   "menu.seedPlaceholder": "留空则随机",
   "menu.seedHint": "留空会随机生成种子；相同种子可复现开局牌库与事件。",
@@ -137,6 +137,16 @@ export const messagesZhCore = {
   "card.suppressHuguenots.background": "王权动员军警与地方法庭，清剿残余胡格诺网络。",
   "card.suppressHuguenots.desc":
     "临时牌。费用 3。打出后使「遏制胡格诺-剩余势力」-1；降到 0 时移除该状态，并清除所有「镇压胡格诺派」。",
+  "card.religiousTensionCard.name": "宗教矛盾",
+  "card.religiousTensionCard.background":
+    "宗派分歧未真正消解，仍以教义、礼仪与地方诉求的形式渗入治理日程，反复牵扯王权注意力。",
+  "card.religiousTensionCard.desc":
+    "额外牌。可支付 2 经费打出并消除（不会进入弃牌堆）。当「阿米尼乌斯派争论」、「胡格诺地下网络骚动」或「耶稣会庇护」处理时加入抽牌堆。",
+  "card.jesuitCollege.name": "耶稣会学院",
+  "card.jesuitCollege.background":
+    "拉弗莱什、路易大帝、克莱蒙等耶稣会精英学院培养与王权立场一致的官员、军官与教士，以辞令、神学与服从为核心训练；其讲坛也是对抗詹森派严苛主义的第一线。",
+  "card.jesuitCollege.desc":
+    "额外牌。剩余 1/1，只能使用一次。费用 2。打出时合法性 +1；若棋盘上存在未解决的「詹森派争议」事件，则立即解决一次（无须额外经费）。打出后从牌库循环中移除。",
   "event.budgetStrain.name": "宫廷超支",
   "event.budgetStrain.desc": "凡尔赛扩建与宫廷礼仪再度推高开支。支付 2 经费，否则财政 -1。",
   "event.publicUnrest.name": "巴黎骚动",
@@ -175,10 +185,10 @@ export const messagesZhCore = {
     "詹森主义围绕“恩典与救赎”的神学立场长期冲击法国教会与王权关系；波尔-罗亚尔网络的余波再起，主教区与法院出现对立。支付 2 经费进行教区巡察与舆论安抚，否则合法性 -1。",
   "event.arminianTension.name": "阿米尼乌斯派争论",
   "event.arminianTension.desc":
-    "阿米尼乌斯派关于自由意志与预定论的争论，经由讲坛、学院与印刷传播扩大，削弱了王室推动统一教义的效率。支付 3 经费整合神学院与审查体系，否则权力 -1。",
+    "阿米尼乌斯派关于自由意志与预定论的争论，经由讲坛、学院与印刷传播扩大，削弱了王室推动统一教义的效率。支付 1 经费整合神学院与审查体系（处理后向抽牌堆加入 1 张「宗教矛盾」），否则权力 -1。",
   "event.huguenotTension.name": "胡格诺地下网络骚动",
   "event.huguenotTension.desc":
-    "撤销《南特敕令》后被迫地下化的胡格诺社群在边境与港市重建互助网络，地方警备与税务执行受到牵制。支付 2 经费加固治安与赈济，否则合法性 -1 且权力 -1。",
+    "撤销《南特敕令》后被迫地下化的胡格诺社群在边境与港市重建互助网络，地方警备与税务执行受到牵制。支付 1 经费加固治安与赈济（处理后向抽牌堆加入 1 张「宗教矛盾」），否则财政 -1。",
   "card.tag.royal": "王室",
   "card.tag.temp": "临时",
   "card.tag.extra": "额外",
@@ -230,6 +240,10 @@ export const messagesZhCore = {
     "[第 {turn} 年] {event} 在年末仍未结束：向抽牌堆加入 1 张 {card}。",
   "log.eventNineYearsWarFiscalBurden.history":
     "史实背景：长期战争需要反复举债、拖欠与加税，财政负担会持续累积并反噬治理能力。",
+  "log.huguenotResurgence.title":
+    "[第 {turn} 年] 「遏制胡格诺-剩余势力」仍在场：胡格诺地下网络借宽容与逃亡渠道重新结社。向抽牌堆加入 {addedCount} 张「{card}」，剩余势力变为 {remainingStacks}。",
+  "log.huguenotResurgence.history":
+    "史实背景：1685 年《枫丹白露敕令》颁布后，胡格诺派被迫地下化或外逃，但其聚会、印刷与互助网络在乡野与边境反复重建，每隔数年就需新一轮镇压才能压住。",
   "log.drawCards.title": "[第 {turn} 年] 本回合抓取 {count} 张牌：{cards}。",
   "log.drawOverflowDiscarded.title":
     "[第 {turn} 年] 手牌已达上限；将剩余未摸的 {count} 张牌直接置入弃牌堆：{cards}。",

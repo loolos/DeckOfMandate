@@ -163,11 +163,10 @@ describe("resolveEndOfYearPenalties", () => {
     expect(Object.keys(s1.cardsById).length).toBe(beforeCardCount + 1);
   });
 
-  it("league of augsburg unresolved applies upkeep/penalty but does not consume remaining solves", () => {
+  it("league of augsburg unresolved applies power/treasury penalty without consuming remaining solves", () => {
     const base = createInitialState(5_004, "secondMandate");
     const s0 = {
       ...base,
-      europeAlertProgress: 7,
       resources: { ...base.resources, funding: 6, power: 5, treasuryStat: 4 },
       slots: {
         ...EMPTY_EVENT_SLOTS,
@@ -180,12 +179,10 @@ describe("resolveEndOfYearPenalties", () => {
       },
     };
     const s1 = resolveEndOfYearPenalties(s0);
-    expect(s1.resources.funding).toBe(3);
+    expect(s1.resources.funding).toBe(6);
+    expect(s1.resources.power).toBe(4);
+    expect(s1.resources.treasuryStat).toBe(3);
+    expect(s1.slots.A?.templateId).toBe("leagueOfAugsburg");
     expect(s1.slots.A?.remainingTurns).toBe(3);
-
-    const s2 = resolveEndOfYearPenalties({ ...s1, resources: { ...s1.resources, funding: 1 } });
-    expect(s2.resources.power).toBe(4);
-    expect(s2.resources.treasuryStat).toBe(3);
-    expect(s2.slots.A?.remainingTurns).toBe(3);
   });
 });

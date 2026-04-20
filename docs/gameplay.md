@@ -9,11 +9,24 @@ This document reflects current runtime behavior in `src/app/*`, `src/logic/*`, a
 - **Power**: governs draw attempts via threshold scaling, and chapter objectives.
 - **Legitimacy**: political stability, retention capacity baseline, and hard fail resource.
 
+### Starting values (from `src/data/levels.ts`)
+
+| Mode | Treasury | Funding | Power | Legitimacy |
+| --- | ---: | ---: | ---: | ---: |
+| Chapter 1 (`firstMandate`) | 2 | 0 | 2 | 2 |
+| Chapter 1 standalone | 2 | 0 | 2 | 2 |
+| Chapter 2 (`secondMandate`, continuity carry-in) | 3 | 0 | 3 | 3 |
+| Chapter 2 standalone | 7 | 0 | 7 | 5 |
+
+Continuity-mode Chapter 2 in practice carries the Chapter 1 final resources rather than these baseline `3 / 3 / 3` numbers (the baseline only matters when carry-over is missing); see §8 for the `warOfDevolutionAttacked` `legitimacy +1` bump.
+
 At begin-year:
 
 ```text
-funding += treasuryStat
+funding += max(0, treasuryStat - localWarIncomePenalty)
 ```
+
+`localWarIncomePenalty` is `2` while an unresolved `localWar` event remains on the board (Chapter 2), otherwise `0`. The transferred amount is clamped at `0`.
 
 ## 2. Turn pipeline (beginYear + action + retention)
 
@@ -37,7 +50,7 @@ Each turn is one year in both current chapters.
    - draw attempts run with hand cap 12
    - overflow draws are discarded and logged
    - if deck empties, refill from discard (shuffle) and continue
-   - on deck refill, inflation stacks may increase for qualifying instances
+   - on deck refill, inflation stacks may increase for qualifying instances. Activation differs by chapter: **Chapter 2 always** applies inflation; **Chapter 1 only** activates once `treasuryStat + power + legitimacy >= 12`. Until activation in Chapter 1, the `inflation` tag is hidden on `reform` / `ceremony` / `development` and refills do not stack.
 6. **Status tick-down**: most timed statuses decrement after draw; long-lived branch statuses do not auto-tick.
 7. **Event phase**:
    - apply scheduled slot transforms (e.g. `powerVacuum -> majorCrisis`)
@@ -47,13 +60,16 @@ Each turn is one year in both current chapters.
    - optional extra injections (Europe Alert pool, religious tension, anti-French-sentiment extras)
 8. **Action phase**:
    - play cards, solve events by funding, crackdowns, scripted attacks, policy choices
-9. **Retention phase trigger**:
-   - player ends year manually
-   - choose cards to keep (up to retention capacity)
+9. **End-year click → pre-retention checks**:
+   - unspent funding is cleared first
+   - victory is evaluated **before** the retention UI; if it triggers here the run ends without showing retention
+   - if hand size <= retention capacity, the retention UI is skipped and the year completes directly
+10. **Retention phase (only if needed)**:
+   - player chooses cards to keep (up to retention capacity)
    - unkept hand cards discard
-10. **End-of-year penalties**: unresolved harmful events strike in slot order.
-11. **Outcome checks**:
-   - immediate fail if legitimacy <= 0 at any enforced point
+11. **End-of-year penalties**: unresolved harmful events strike in slot order; `antiFrenchContainment` injection (if active) happens here, after retention but before penalties.
+12. **Outcome checks**:
+   - immediate fail if `legitimacy <= 0`, `treasuryStat <= 0`, or `power <= 0` at any enforced point
    - then victory check
    - then time defeat on last turn if not victorious
    - otherwise `turn + 1` and repeat
@@ -88,7 +104,10 @@ Turn 1 first block is prefixed with:
 
 ### All-empty board count rules
 
-When all slots are empty, event count depends on `treasuryStat + power + legitimacy` with weighted bands; Chapter 1 turn 1 is forced to 2 events.
+When all slots are empty, event count depends on `treasuryStat + power + legitimacy` with weighted bands.
+
+- **Chapter 1 turn 1** is forced to 2 events with the fixed prefix `tradeOpportunity` + `administrativeDelay`.
+- **Chapter 2 standalone start** (turn 1, when launched directly from the menu rather than continuity from Chapter 1) raises the all-empty floor to `max(3, baseCount)`, places `versaillesExpenditure` in slot A and `taxResistance` in slot B, and skips the regular procedural fill that turn.
 
 ### Extra injections
 
@@ -98,8 +117,11 @@ When all slots are empty, event count depends on `treasuryStat + power + legitim
     - progress `1..5`: chance `progress * 20%` to inject **1** supplemental event
     - progress `6..10`: guaranteed **1**, plus chance `(progress-5) * 20%` to inject a **2nd** supplemental event
   - `Treaties of Nijmegen` funding solve amount is dynamic: `europeAlertProgress + 3`.
-- **Religious Tolerance status**: each year 30% chance to inject `religiousTension` if absent and space exists.
-- **Anti-French Sentiment status**: if `power + treasuryStat > 20`, apply status marker; while active, event solve costs gain `+1` immediately at `>20`, then another `+1` for each additional full `+5` overflow, and each turn-end injects one `antiFrenchContainment` card into deck (draw penalty: 50/50 lose 1 power or 1 legitimacy; playable purge cost `floor(europeAlertProgress/2)`; removed once `power + treasuryStat <= 20`).
+- **Religious Tolerance status**: each turn one mutually-exclusive roll injects at most one of `jansenistTension` / `arminianTension` / `huguenotTension` at 15% / 15% / 15% (45% combined); skipped if any of the three is already on the board or no event slot is free. Resolving `arminianTension` or `huguenotTension` (each costs 1 Funding) inserts one `religiousTensionCard` into the draw pile (cost 2; played card is purged from the deck rather than discarded).
+- **Jesuit Patronage opportunity**: paying 2 Funding to resolve `jesuitPatronage` (random pool, weight 1) inserts 2 `jesuitCollege` cards (cost 2, Remaining 1/1, legitimacy +1, on play also auto-resolves one unresolved `jansenistTension` if present) and 1 `religiousTensionCard` into the draw pile. If unresolved, no penalty.
+- **Anti-French Sentiment status**: triggers as soon as `power + treasuryStat > 20`; clears once that sum drops back to 20 or below. While active:
+  - Europe-Alert-linked event solve costs gain a surcharge: **+1 the moment Power + TreasuryStat goes over 20**, and **another +1 every time the sum crosses an additional +5 line** — so +1 in the 21–25 range, +2 in 26–30, +3 in 31–35, and so on.
+  - Once per year — during the year-end flow, **after** retention is confirmed but **before** `resolveEndOfYearPenalties` — one `antiFrenchContainment` card is injected into the deck (draw penalty: 50/50 lose 1 power or 1 legitimacy; playable purge cost `max(1, floor(europeAlertProgress / 2))`).
 
 ### Event badges (UI tags)
 
@@ -119,13 +141,17 @@ Supported solve channels in current build:
 - scripted attack
 - Nantes policy choice (tolerance vs crackdown)
 
-`crackdown` and `diplomaticIntervention` only target unresolved **harmful** events.
+`crackdown` and `diplomaticIntervention` only target unresolved **harmful** events, with one explicit exception: `nineYearsWar` (tagged Continued / Historical, `harmful: false`) is also a valid crackdown target.
 
 ## 6. Win / lose checks
 
 ### Global lose
 
-- **Legitimacy <= 0** => immediate defeat.
+Any of the three persistent resources hitting zero or below at an enforced check ends the run:
+
+- `legitimacy <= 0` => immediate defeat
+- `treasuryStat <= 0` => immediate defeat
+- `power <= 0` => immediate defeat
 
 ### Chapter 1 victory (`firstMandate`)
 
@@ -137,10 +163,11 @@ By end-of-year checks within 15 turns:
 
 ### Chapter 2 victory (`secondMandate`)
 
-Need both:
+Need all three:
 
 - Current calendar year >= 1696
 - `europeAlert === false` (typically cleared by resolving `ryswickPeace`)
+- No `huguenotContainment` status remains in `playerStatuses` (i.e. the harsh-crackdown branch must be fully wound down — remnants reduced to zero)
 
 If last turn ends without victory => time defeat.
 
@@ -160,5 +187,7 @@ Two start modes:
    - Starts with Europe Alert on and war branch treated as taken.
 2. **Continuity from Chapter 1 victory**
    - Carries real card instances, inflation stacks, and remaining uses.
+   - The carry-over snapshot **excludes** any card with the `temp` or `extra` tag.
    - Refit is remove-only, max 3 removals.
    - Adds fixed Chapter 2 new cards.
+   - If Chapter 1 took the `warOfDevolutionAttacked` branch, Chapter 2 starting `legitimacy` is bumped by `+1`.

@@ -6,7 +6,6 @@ const HISTORICAL_EVENT_IDS = new Set<EventTemplateId>([
   "cautiousCrown",
   "nymwegenSettlement",
   "revocationNantes",
-  "grainReliefCrisis",
   "leagueOfAugsburg",
   "nineYearsWar",
   "ryswickPeace",

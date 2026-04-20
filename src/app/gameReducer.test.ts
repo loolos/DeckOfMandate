@@ -1123,6 +1123,11 @@ describe("gameReducer", () => {
     expect(containment?.turnsRemaining).toBe(3);
     const suppressCount = Object.values(after.cardsById).filter((c) => c.templateId === "suppressHuguenots").length;
     expect(suppressCount).toBe(3);
+    const liveSuppress = [...after.deck, ...after.hand, ...after.discard].filter(
+      (id) => after.cardsById[id]?.templateId === "suppressHuguenots",
+    ).length;
+    // Strict invariant: containment.turnsRemaining MUST equal the live card count.
+    expect(containment?.turnsRemaining).toBe(liveSuppress);
     expect(
       after.actionLog.some(
         (entry) => entry.kind === "info" && entry.infoKey === "nantesPolicy.crackdownFontainebleauIssued",
@@ -1130,21 +1135,15 @@ describe("gameReducer", () => {
     ).toBe(true);
   });
 
-  it("playing suppress huguenots decrements containment and purges all suppress cards at zero", () => {
+  it("playing the last suppress huguenots removes the containment status (strict invariant)", () => {
     const base = createInitialState(333_003, "secondMandate");
-    const cardId = "tmp_sup_1";
-    const second = "tmp_sup_2";
-    const third = "tmp_sup_3";
+    const cardId = "tmp_sup_only";
     const withCards: typeof base = {
       ...base,
       hand: [cardId],
-      deck: [second, ...base.deck],
-      discard: [third, ...base.discard],
       cardsById: {
         ...base.cardsById,
         [cardId]: { instanceId: cardId, templateId: "suppressHuguenots" as const },
-        [second]: { instanceId: second, templateId: "suppressHuguenots" as const },
-        [third]: { instanceId: third, templateId: "suppressHuguenots" as const },
       },
       resources: { ...base.resources, funding: 3 },
       playerStatuses: [
@@ -1161,7 +1160,103 @@ describe("gameReducer", () => {
     const after = gameReducer(withCards, { type: "PLAY_CARD", handIndex: 0 });
     expect(after.playerStatuses.some((s) => s.templateId === "huguenotContainment")).toBe(false);
     expect(after.hand.includes(cardId)).toBe(false);
-    expect(after.deck.includes(second)).toBe(false);
-    expect(after.discard.includes(third)).toBe(false);
+    const liveSuppress = [...after.deck, ...after.hand, ...after.discard].filter(
+      (id) => after.cardsById[id]?.templateId === "suppressHuguenots",
+    );
+    expect(liveSuppress).toHaveLength(0);
+    // Played card should also be pruned from cardsById (no orphan record left).
+    expect(after.cardsById[cardId]).toBeUndefined();
+  });
+
+  it("HYDRATE resyncs containment turnsRemaining to actual suppress card count (strict invariant)", () => {
+    const base = createInitialState(333_005, "secondMandate");
+    const oneId = "leg_sup_1";
+    const drift: typeof base = {
+      ...base,
+      hand: [oneId],
+      cardsById: {
+        ...base.cardsById,
+        [oneId]: { instanceId: oneId, templateId: "suppressHuguenots" as const },
+      },
+      playerStatuses: [
+        ...base.playerStatuses,
+        {
+          instanceId: "st_hug_legacy",
+          templateId: "huguenotContainment" as const,
+          kind: "drawAttemptsDelta" as const,
+          delta: 0,
+          turnsRemaining: 7,
+        },
+      ],
+    };
+    const after = gameReducer(drift, { type: "HYDRATE", state: drift });
+    const status = after.playerStatuses.find((s) => s.templateId === "huguenotContainment");
+    const live = [...after.deck, ...after.hand, ...after.discard].filter(
+      (id) => after.cardsById[id]?.templateId === "suppressHuguenots",
+    ).length;
+    expect(status?.turnsRemaining).toBe(live);
+    expect(status?.turnsRemaining).toBe(1);
+  });
+
+  it("HYDRATE removes containment status if no suppress cards remain (strict invariant)", () => {
+    const base = createInitialState(333_006, "secondMandate");
+    const orphanId = "orph_sup_1";
+    const drift: typeof base = {
+      ...base,
+      cardsById: {
+        ...base.cardsById,
+        [orphanId]: { instanceId: orphanId, templateId: "suppressHuguenots" as const },
+      },
+      playerStatuses: [
+        ...base.playerStatuses,
+        {
+          instanceId: "st_hug_orphan",
+          templateId: "huguenotContainment" as const,
+          kind: "drawAttemptsDelta" as const,
+          delta: 0,
+          turnsRemaining: 4,
+        },
+      ],
+    };
+    const after = gameReducer(drift, { type: "HYDRATE", state: drift });
+    expect(after.playerStatuses.some((s) => s.templateId === "huguenotContainment")).toBe(false);
+    expect(after.cardsById[orphanId]).toBeUndefined();
+  });
+
+  it("playing one of three suppress cards decrements containment to 2 (strict invariant)", () => {
+    const base = createInitialState(333_004, "secondMandate");
+    const inHand = "tmp_sup_hand";
+    const inDeck = "tmp_sup_deck";
+    const inDiscard = "tmp_sup_disc";
+    const withCards: typeof base = {
+      ...base,
+      hand: [inHand],
+      deck: [inDeck, ...base.deck],
+      discard: [inDiscard, ...base.discard],
+      cardsById: {
+        ...base.cardsById,
+        [inHand]: { instanceId: inHand, templateId: "suppressHuguenots" as const },
+        [inDeck]: { instanceId: inDeck, templateId: "suppressHuguenots" as const },
+        [inDiscard]: { instanceId: inDiscard, templateId: "suppressHuguenots" as const },
+      },
+      resources: { ...base.resources, funding: 3 },
+      playerStatuses: [
+        ...base.playerStatuses,
+        {
+          instanceId: "st_hug",
+          templateId: "huguenotContainment" as const,
+          kind: "drawAttemptsDelta" as const,
+          delta: 0,
+          turnsRemaining: 3,
+        },
+      ],
+    };
+    const after = gameReducer(withCards, { type: "PLAY_CARD", handIndex: 0 });
+    const status = after.playerStatuses.find((s) => s.templateId === "huguenotContainment");
+    const liveCount = [...after.deck, ...after.hand, ...after.discard].filter(
+      (id) => after.cardsById[id]?.templateId === "suppressHuguenots",
+    ).length;
+    expect(liveCount).toBe(2);
+    expect(status?.turnsRemaining).toBe(liveCount);
   });
 });

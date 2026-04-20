@@ -46,6 +46,7 @@ export type ActionLogPayload =
       legitimacyDelta: number;
     }
   | { kind: "eventNineYearsWarFiscalBurden"; slot: SlotId }
+  | { kind: "huguenotResurgence"; addedCount: number; remainingStacks: number }
   | { kind: "antiFrenchLeagueDraw"; probabilityPct: number }
   | { kind: "europeAlertProgressShift"; from: number; to: number; probabilityPct: number; pressureDeltaK: number }
   | { kind: "drawOverflowDiscarded"; cardTemplateIds: CardTemplateId[] }

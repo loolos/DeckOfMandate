@@ -76,6 +76,7 @@ export function createInitialState(
     europeAlertPowerLoss,
     europeAlertProgress,
     nymwegenSettlementAchieved: false,
+    huguenotResurgenceCounter: 0,
     proceduralEventSequence: [],
     actionLog: [],
   };

@@ -12,7 +12,8 @@ export const messagesEnCore = {
   "resource.funding": "Funding",
   "resource.funding.hint": "Pays cards & events.",
   "resource.power": "Power",
-  "resource.power.hint": "Draw attempts each turn.",
+  "resource.power.hint":
+    "Draw attempts grow on a Power threshold ladder (1/2/4/7/11/16…): cross the next threshold for +1 attempt; drop below the current threshold for −1. Expand the resource detail for the full rules and examples.",
   "resource.legitimacy": "Legitimacy",
   "resource.legitimacy.hint": "Retention cap; 0 ends the run.",
   "ui.resources": "Resources",
@@ -58,7 +59,7 @@ export const messagesEnCore = {
   "menu.levelBrief.firstMandate":
     "1661–1675, early Sun King era: centralize royal power and expand while pressure is still manageable.",
   "menu.levelBrief.secondMandate":
-    "1676–1700, late Sun King era: hold hegemony as religious conflict and coalition pressure intensify.",
+    "1676–1700, mid Sun King era: hold hegemony as religious conflict and coalition pressure intensify.",
   "menu.seedLabel": "Run seed (optional)",
   "menu.seedPlaceholder": "Random if empty",
   "menu.seedHint": "Leave blank for a random seed. The same seed reproduces deck order and early events.",
@@ -149,6 +150,16 @@ export const messagesEnCore = {
     "Royal troops, policing, and local courts are mobilized to break remaining Huguenot networks.",
   "card.suppressHuguenots.desc":
     "Temporary. Cost 3. On play, reduce “Contain Huguenot Remnants” by 1; at 0, remove that status and purge all Suppress the Huguenots cards.",
+  "card.religiousTensionCard.name": "Religious Tension",
+  "card.religiousTensionCard.background":
+    "Confessional rifts never fully close: doctrinal disputes, liturgical demands, and provincial grievances keep crowding the royal agenda.",
+  "card.religiousTensionCard.desc":
+    "Extra. You may pay 2 Funding to purge it (removed, not discarded). Added to your draw pile when Arminian Polemic, Huguenot Underground Agitation, or Jesuit Patronage is resolved.",
+  "card.jesuitCollege.name": "Jesuit Collège",
+  "card.jesuitCollege.background":
+    "La Flèche, Louis-le-Grand, and Clermont train Crown-aligned elites — magistrates, officers, and clergy schooled in rhetoric, theology, and obedience. Their pulpits also doubled as the front line against Jansenist rigorism.",
+  "card.jesuitCollege.desc":
+    "Extra. Remaining 1/1 — single use. Cost 2. On play, Legitimacy +1; if a Jansenist Controversy event is unresolved on the board, immediately resolve one (no Funding cost). After play, removed from circulation.",
   "event.budgetStrain.name": "Court Overspending",
   "event.budgetStrain.desc":
     "Versailles expansion and court ritual push spending past the budget. Pay 2 Funding or lose 1 Treasury.",
@@ -195,10 +206,10 @@ export const messagesEnCore = {
     "Debates over grace and salvation revive Jansenist networks and reopen conflict between bishops, magistrates, and the crown. Pay 2 Funding for clerical inspections and public pacification, or lose 1 Legitimacy.",
   "event.arminianTension.name": "Arminian Polemic",
   "event.arminianTension.desc":
-    "Arminian disputes over free will and predestination spread through pulpits and academies, weakening doctrinal coordination. Pay 3 Funding to consolidate seminaries and censorship channels, or lose 1 Power.",
+    "Arminian disputes over free will and predestination spread through pulpits and academies, weakening doctrinal coordination. Pay 1 Funding to consolidate seminaries and censorship channels (resolving adds 1 Religious Tension to your draw pile), or lose 1 Power.",
   "event.huguenotTension.name": "Huguenot Underground Agitation",
   "event.huguenotTension.desc":
-    "Post-revocation Huguenot communities rebuild covert aid networks in ports and border towns, straining police and tax enforcement. Pay 2 Funding to reinforce security and relief, or lose 1 Legitimacy and 1 Power.",
+    "Post-revocation Huguenot communities rebuild covert aid networks in ports and border towns, straining police and tax enforcement. Pay 1 Funding to reinforce security and relief (resolving adds 1 Religious Tension to your draw pile), or lose 1 Treasury.",
   "card.tag.royal": "Royal",
   "card.tag.temp": "Temp",
   "card.tag.extra": "Extra",
@@ -250,6 +261,10 @@ export const messagesEnCore = {
     "[Turn {turn}] {event} remains active at year-end: add 1 {card} to your deck.",
   "log.eventNineYearsWarFiscalBurden.history":
     "Historical note: prolonged mobilization forced extraordinary loans, arrears, and tax pressure that kept compounding fiscal strain.",
+  "log.huguenotResurgence.title":
+    "[Turn {turn}] Contain Huguenot Remnants is still active: clandestine Huguenot networks regroup through tolerance gaps and exile routes. Add {addedCount} {card} to your deck; remnant strength rises to {remainingStacks}.",
+  "log.huguenotResurgence.history":
+    "Historical note: after the 1685 Edict of Fontainebleau, Huguenots went underground or into exile, but their assemblies, printing, and mutual-aid networks kept reforming in the countryside and on the borders, demanding fresh waves of repression every few years.",
   "log.drawCards.title": "[Turn {turn}] Drew {count} card(s): {cards}.",
   "log.drawOverflowDiscarded.title":
     "[Turn {turn}] Hand reached cap; discarded {count} undrawn card(s): {cards}.",
@@ -262,7 +277,7 @@ export const messagesEnCore = {
   "log.info.chapter2EuropeAlertOff":
     "[Turn {turn}] Chapter 2 starts with Europe Alert inactive: no Europe-Alert supplemental event checks.",
   "log.info.antiFrenchSentimentActivated":
-    "[Turn {turn}] Anti-French Sentiment rises: when Power+Treasury exceeds 20, Europe-Alert-linked funding solves gain +1 immediately, then +1 per additional full +5 overflow. The status now also shows Emotion x (x = Anti-French Containment cards in your full library), and Peace of Ryswick gains an extra +2x Funding while this status is active.",
+    "[Turn {turn}] Anti-French Sentiment rises: when Power+Treasury exceeds 20, Europe-Alert-linked funding solves gain +1 immediately, then +1 per additional full +5 overflow. The status now also shows Sentiment x (x = Anti-French Containment cards in your full library), and Peace of Ryswick gains an extra +2x Funding while this status is active.",
   "log.info.antiFrenchSentimentEnded":
     "[Turn {turn}] Anti-French Sentiment recedes: once Power+Treasury returns to 20 or below, the extra event-cost pressure is removed.",
   "log.info.cardTag.royal":

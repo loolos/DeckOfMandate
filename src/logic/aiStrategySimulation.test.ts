@@ -58,22 +58,22 @@ describe("aiStrategySimulation", () => {
     const report = simulateSecondMandateStandaloneBatch({ seedStart: 1, runCount: 200 });
     expect(report).toMatchInlineSnapshot(`
       {
-        "averageEndTurn": 11.935,
-        "averageEndTurnOnLoss": 10.289,
-        "averageEndTurnOnWin": 22.481,
+        "averageEndTurn": 14.07,
+        "averageEndTurnOnLoss": 14.07,
+        "averageEndTurnOnWin": null,
         "averageEndingResources": {
-          "funding": 0.085,
-          "legitimacy": 3.54,
-          "power": 0.91,
-          "treasuryStat": 3.42,
+          "funding": 0.13,
+          "legitimacy": 5.36,
+          "power": 0.99,
+          "treasuryStat": 4.08,
         },
         "levelId": "secondMandate",
-        "losses": 173,
+        "losses": 200,
         "runCount": 200,
         "startMode": "standalone",
         "strategyId": "a-strategy-i",
-        "winRate": 0.135,
-        "wins": 27,
+        "winRate": 0,
+        "wins": 0,
       }
     `);
   });
@@ -83,17 +83,17 @@ describe("aiStrategySimulation", () => {
     expect(report).toMatchInlineSnapshot(`
       {
         "averageChapter1EndTurn": 13.615,
-        "averageChapter2EndTurnOnReached": 17.409,
-        "averageChapter2EndTurnOnWin": 24.474,
+        "averageChapter2EndTurnOnReached": 16.523,
+        "averageChapter2EndTurnOnWin": null,
         "chapter1Losses": 156,
         "chapter1WinRate": 0.22,
         "chapter1Wins": 44,
-        "chapter2Losses": 25,
+        "chapter2Losses": 44,
         "chapter2Runs": 44,
-        "chapter2WinRateAfterCarryover": 0.4318,
-        "chapter2Wins": 19,
-        "fullCampaignWinRate": 0.095,
-        "fullCampaignWins": 19,
+        "chapter2WinRateAfterCarryover": 0,
+        "chapter2Wins": 0,
+        "fullCampaignWinRate": 0,
+        "fullCampaignWins": 0,
         "runCount": 200,
         "strategyId": "a-strategy-i",
       }

@@ -123,6 +123,15 @@ export type ActionLogEntry =
       slot: SlotId;
     }
   | {
+      kind: "huguenotResurgence";
+      id: string;
+      turn: number;
+      /** Copies of `suppressHuguenots` just inserted into the deck (always 1 for now). */
+      addedCount: number;
+      /** Stacks left on `huguenotContainment` after this resurgence. */
+      remainingStacks: number;
+    }
+  | {
       kind: "antiFrenchLeagueDraw";
       id: string;
       turn: number;
@@ -245,6 +254,12 @@ export type GameState = {
   europeAlertProgress: number;
   /** Chapter-2 objective marker; set true once Treaties of Nijmegen is successfully resolved. */
   nymwegenSettlementAchieved: boolean;
+  /**
+   * Counts beginYear ticks since the last Huguenot resurgence trigger (or since Crackdown was chosen).
+   * While `huguenotContainment` is active, every 2 ticks adds a `suppressHuguenots` card to the deck
+   * and increments containment stacks by 1. Reset to 0 when the trigger fires or when the choice is made.
+   */
+  huguenotResurgenceCounter: number;
   /**
    * Deterministic procedural event queue (A–C random events only).
    * Built as concatenated shuffled blocks where each template appears `weight` times.

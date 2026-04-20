@@ -1,5 +1,6 @@
 import type { CardTemplateId } from "../types/card";
 import type { GameState } from "../types/game";
+import type { PlayerStatusInstance } from "../types/status";
 import { appendActionLog } from "./actionLog";
 import { createInitialCardUseState } from "./cardUsage";
 import { rngNext, rngNextInt } from "./rng";
@@ -69,6 +70,116 @@ export function addCardsToHand(state: GameState, templateId: CardTemplateId, cou
     cardUsesById,
     hand: [...state.hand, ...addedIds],
   };
+}
+
+/**
+ * Removes every instance of `templateId` from `cardsById`, hand, deck, discard,
+ * and any associated per-instance metadata (uses, inflation).
+ *
+ * Used when a card class needs to be wiped from the run entirely (e.g. ending
+ * the Huguenot suppression chain).
+ */
+export function removeCardsEverywhere(state: GameState, templateId: CardTemplateId): GameState {
+  const toRemove = new Set<string>();
+  for (const id in state.cardsById) {
+    if (state.cardsById[id]?.templateId === templateId) {
+      toRemove.add(id);
+    }
+  }
+  if (toRemove.size === 0) return state;
+  const cardsById = { ...state.cardsById };
+  const cardInflationById = { ...state.cardInflationById };
+  const cardUsesById = { ...state.cardUsesById };
+  for (const id of toRemove) {
+    delete cardsById[id];
+    delete cardInflationById[id];
+    delete cardUsesById[id];
+  }
+  return {
+    ...state,
+    hand: state.hand.filter((id) => !toRemove.has(id)),
+    deck: state.deck.filter((id) => !toRemove.has(id)),
+    discard: state.discard.filter((id) => !toRemove.has(id)),
+    cardsById,
+    cardUsesById,
+    cardInflationById,
+  };
+}
+
+/** Counts cards of `templateId` that are currently in play (deck + hand + discard). */
+export function countCardsInPlay(state: GameState, templateId: CardTemplateId): number {
+  let count = 0;
+  const tally = (id: string): void => {
+    if (state.cardsById[id]?.templateId === templateId) count += 1;
+  };
+  state.hand.forEach(tally);
+  state.deck.forEach(tally);
+  state.discard.forEach(tally);
+  return count;
+}
+
+/**
+ * Removes any `templateId` instances that exist in `cardsById` but are not
+ * present in any zone (deck/hand/discard). Keeps `cardsById` from accumulating
+ * orphan records after a card is consumed without being pushed to discard.
+ */
+function pruneOrphanCards(state: GameState, templateId: CardTemplateId): GameState {
+  const live = new Set<string>([...state.hand, ...state.deck, ...state.discard]);
+  const orphans: string[] = [];
+  for (const id in state.cardsById) {
+    if (state.cardsById[id]?.templateId !== templateId) continue;
+    if (!live.has(id)) orphans.push(id);
+  }
+  if (orphans.length === 0) return state;
+  const cardsById = { ...state.cardsById };
+  const cardInflationById = { ...state.cardInflationById };
+  const cardUsesById = { ...state.cardUsesById };
+  for (const id of orphans) {
+    delete cardsById[id];
+    delete cardInflationById[id];
+    delete cardUsesById[id];
+  }
+  return { ...state, cardsById, cardInflationById, cardUsesById };
+}
+
+/**
+ * Strict invariant: the `huguenotContainment` status's `turnsRemaining` MUST
+ * equal the number of `suppressHuguenots` cards that exist in the player's
+ * deck/hand/discard at all times.
+ *
+ * This helper resyncs both sides whenever they drift:
+ *  - if no status exists, any leftover suppress cards are wiped (defensive).
+ *  - if status exists but no suppress cards remain, the status is removed,
+ *    the resurgence counter is reset, and orphan card records are pruned.
+ *  - otherwise `turnsRemaining` is overwritten to match the live card count
+ *    and orphan records are pruned.
+ *
+ * Call this after any operation that touches either side (adding cards,
+ * playing a suppress card, hydrating a save, etc.).
+ */
+export function enforceHuguenotContainmentInvariant(state: GameState): GameState {
+  const status = state.playerStatuses.find((p) => p.templateId === "huguenotContainment");
+  const cardCount = countCardsInPlay(state, "suppressHuguenots");
+  if (!status) {
+    if (cardCount === 0) return state;
+    return removeCardsEverywhere(state, "suppressHuguenots");
+  }
+  if (cardCount === 0) {
+    const cleaned = removeCardsEverywhere(state, "suppressHuguenots");
+    return {
+      ...cleaned,
+      playerStatuses: cleaned.playerStatuses.filter(
+        (p) => p.templateId !== "huguenotContainment",
+      ),
+      huguenotResurgenceCounter: 0,
+    };
+  }
+  const pruned = pruneOrphanCards(state, "suppressHuguenots");
+  if (status.turnsRemaining === cardCount) return pruned;
+  const playerStatuses: PlayerStatusInstance[] = pruned.playerStatuses.map((p) =>
+    p.instanceId === status.instanceId ? { ...p, turnsRemaining: cardCount } : p,
+  );
+  return { ...pruned, playerStatuses };
 }
 
 export function applyOnDrawCardEffects(state: GameState, drawnCardId: string): GameState {

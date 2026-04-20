@@ -134,12 +134,15 @@ describe("secondMandate balance data", () => {
     expect(getEventTemplate("expansionRemembered").harmful).toBe(false);
     expect(getEventTemplate("cautiousCrown").harmful).toBe(false);
     expect(getEventTemplate("revocationNantes").harmful).toBe(false);
-    expect(getEventTemplate("grainReliefCrisis").harmful).toBe(false);
     expect(getEventTemplate("leagueOfAugsburg").harmful).toBe(false);
     expect(getEventTemplate("nineYearsWar").harmful).toBe(false);
     expect(getEventTemplate("ryswickPeace").harmful).toBe(false);
     expect(getEventTemplate("leagueOfAugsburg").crisisPersistence).toBe("continued");
     expect(getEventTemplate("leagueOfAugsburg").continuedDurationTurns).toBe(3);
+    expect(getEventTemplate("leagueOfAugsburg").penaltiesIfUnresolved).toEqual([
+      { kind: "modResource", resource: "power", delta: -1 },
+      { kind: "modResource", resource: "treasuryStat", delta: -1 },
+    ]);
     expect(getEventTemplate("ryswickPeace").crisisPersistence).toBe("continued");
     expect(getEventTemplate("ryswickPeace").penaltiesIfUnresolved).toEqual([
       { kind: "modResource", resource: "legitimacy", delta: -1 },
@@ -199,8 +202,20 @@ describe("secondMandate balance data", () => {
       { kind: "scheduleNextTurnDrawModifier", delta: -2 },
     ]);
     expect(getEventTemplate("jansenistTension").solve).toEqual({ kind: "funding", amount: 2 });
-    expect(getEventTemplate("arminianTension").solve).toEqual({ kind: "funding", amount: 3 });
-    expect(getEventTemplate("huguenotTension").solve).toEqual({ kind: "funding", amount: 2 });
+    expect(getEventTemplate("arminianTension").solve).toEqual({ kind: "funding", amount: 1 });
+    expect(getEventTemplate("huguenotTension").solve).toEqual({ kind: "funding", amount: 1 });
+    expect(getEventTemplate("arminianTension").onFundSolveEffects).toEqual([
+      { kind: "addCardsToDeck", templateId: "religiousTensionCard", count: 1 },
+    ]);
+    expect(getEventTemplate("huguenotTension").onFundSolveEffects).toEqual([
+      { kind: "addCardsToDeck", templateId: "religiousTensionCard", count: 1 },
+    ]);
+    expect(getEventTemplate("huguenotTension").penaltiesIfUnresolved).toEqual([
+      { kind: "modResource", resource: "treasuryStat", delta: -1 },
+    ]);
     expect(getCardTemplate("suppressHuguenots").cost).toBe(3);
+    expect(getCardTemplate("religiousTensionCard").cost).toBe(2);
+    expect(getCardTemplate("religiousTensionCard").tags).toContain("extra");
+    expect(getCardTemplate("religiousTensionCard").effects).toEqual([]);
   });
 });

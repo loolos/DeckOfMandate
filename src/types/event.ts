@@ -28,13 +28,13 @@ export type EventTemplateId =
   | "commercialExpansion"
   | "talentedAdministrator"
   | "warWeariness"
-  | "grainReliefCrisis"
   | "expansionRemembered"
   | "cautiousCrown"
   | "jansenistTension"
   | "arminianTension"
   | "huguenotTension"
-  | "localWar";
+  | "localWar"
+  | "jesuitPatronage";
 
 export type EventSolve =
   | { kind: "funding"; amount: number }

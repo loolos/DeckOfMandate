@@ -1,4 +1,5 @@
 import { defaultLevelId, getLevelDef, isLevelId } from "../data/levels";
+import { enforceHuguenotContainmentInvariant } from "./cardRuntime";
 import { normalizeCardUsesById } from "./cardUsage";
 import { computeEuropeAlertPowerLoss } from "./europeAlert";
 import { EMPTY_EVENT_SLOTS, EMPTY_PENDING_MAJOR_CRISIS, EVENT_SLOT_ORDER, type SlotId } from "../types/event";
@@ -70,6 +71,9 @@ export function normalizeGameState(state: GameState): GameState {
   if (s.nymwegenSettlementAchieved === undefined) {
     s = { ...s, nymwegenSettlementAchieved: false };
   }
+  if (typeof s.huguenotResurgenceCounter !== "number" || !Number.isFinite(s.huguenotResurgenceCounter)) {
+    s = { ...s, huguenotResurgenceCounter: 0 };
+  }
   if (typeof s.calendarStartYear !== "number") {
     s = { ...s, calendarStartYear: getLevelDef(s.levelId).calendarStartYear };
   }
@@ -96,5 +100,6 @@ export function normalizeGameState(state: GameState): GameState {
   if (!s.cardInflationById || typeof s.cardInflationById !== "object") {
     s = { ...s, cardInflationById: {} };
   }
+  s = enforceHuguenotContainmentInvariant(s);
   return s;
 }

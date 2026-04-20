@@ -132,6 +132,7 @@ export const levelContentByLevelId = {
       "commercialExpansion",
       "talentedAdministrator",
       "warWeariness",
+      "jesuitPatronage",
     ],
     slotEscalations: [],
     eoyEscalationSchedulers: [],

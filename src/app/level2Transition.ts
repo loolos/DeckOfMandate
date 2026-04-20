@@ -246,6 +246,7 @@ function buildContinuityLevel2State(draft: Level2StartDraft): GameState {
     europeAlertPowerLoss,
     europeAlertProgress,
     nymwegenSettlementAchieved: false,
+    huguenotResurgenceCounter: 0,
     proceduralEventSequence: [],
     actionLog: [],
   };

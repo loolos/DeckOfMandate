@@ -245,6 +245,20 @@ function renderEntry(e: ActionLogEntry, t: (key: MessageKey, vars?: Record<strin
           <div className={styles.actionLogSubMuted}>{t("log.eventNineYearsWarFiscalBurden.history")}</div>
         </div>
       );
+    case "huguenotResurgence":
+      return (
+        <div>
+          <div className={styles.actionLogHead}>
+            {t("log.huguenotResurgence.title", {
+              turn: e.turn,
+              card: cardLabelWithIcon("suppressHuguenots", t(cardTitleKey("suppressHuguenots"))),
+              addedCount: e.addedCount,
+              remainingStacks: e.remainingStacks,
+            })}
+          </div>
+          <div className={styles.actionLogSubMuted}>{t("log.huguenotResurgence.history")}</div>
+        </div>
+      );
     case "antiFrenchLeagueDraw":
       return (
         <div>

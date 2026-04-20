@@ -7,8 +7,10 @@ import type { GameState } from "../types/game";
 import {
   beginYear,
   desiredProceduralEventCountWhenAllEmpty,
+  evaluateVictory,
   maybeAddEuropeAlertSupplementalEvent,
   maybeAddReligiousTensionEvent,
+  maybeTriggerHuguenotResurgence,
   retentionCapacity,
 } from "./turnFlow";
 
@@ -822,5 +824,200 @@ describe("beginYear + playerStatuses", () => {
     if (overflowEntry?.kind === "drawOverflowDiscarded") {
       expect(overflowEntry.cardTemplateIds).toEqual(["development"]);
     }
+  });
+});
+
+describe("maybeTriggerHuguenotResurgence", () => {
+  function makeStateWithContainment(turnsRemaining: number): GameState {
+    const base = createInitialState(404_001, "secondMandate");
+    // Strict invariant: every `huguenotContainment` stack must be backed by an
+    // actual `suppressHuguenots` card in deck/hand/discard.
+    const cardsById = { ...base.cardsById };
+    const seededDeck: string[] = [];
+    for (let i = 0; i < turnsRemaining; i += 1) {
+      const id = `seed_sup_${i}`;
+      cardsById[id] = { instanceId: id, templateId: "suppressHuguenots" };
+      seededDeck.push(id);
+    }
+    return {
+      ...base,
+      cardsById,
+      deck: [...seededDeck, ...base.deck],
+      huguenotResurgenceCounter: 0,
+      playerStatuses: [
+        ...base.playerStatuses.filter((s) => s.templateId !== "huguenotContainment"),
+        {
+          instanceId: "st_hug_test",
+          templateId: "huguenotContainment",
+          kind: "drawAttemptsDelta",
+          delta: 0,
+          turnsRemaining,
+        },
+      ],
+    };
+  }
+
+  it("does not trigger when containment status is absent", () => {
+    const base = createInitialState(404_002, "secondMandate");
+    const s0: GameState = { ...base, huguenotResurgenceCounter: 1 };
+    const s1 = maybeTriggerHuguenotResurgence(s0);
+    expect(s1.huguenotResurgenceCounter).toBe(0);
+    const beforeSuppress = Object.values(s0.cardsById).filter((c) => c.templateId === "suppressHuguenots").length;
+    const afterSuppress = Object.values(s1.cardsById).filter((c) => c.templateId === "suppressHuguenots").length;
+    expect(afterSuppress).toBe(beforeSuppress);
+  });
+
+  it("increments counter on the first tick without spawning a card", () => {
+    const s0 = makeStateWithContainment(2);
+    const s1 = maybeTriggerHuguenotResurgence(s0);
+    expect(s1.huguenotResurgenceCounter).toBe(1);
+    expect(s1.playerStatuses.find((s) => s.templateId === "huguenotContainment")?.turnsRemaining).toBe(2);
+    const before = Object.values(s0.cardsById).filter((c) => c.templateId === "suppressHuguenots").length;
+    const after = Object.values(s1.cardsById).filter((c) => c.templateId === "suppressHuguenots").length;
+    expect(after).toBe(before);
+    expect(s1.actionLog.some((e) => e.kind === "huguenotResurgence")).toBe(false);
+  });
+
+  it("on the second tick spawns 1 suppress card, increments stacks, logs and resets counter", () => {
+    const s0 = makeStateWithContainment(2);
+    const s1 = maybeTriggerHuguenotResurgence(s0);
+    const s2 = maybeTriggerHuguenotResurgence(s1);
+    expect(s2.huguenotResurgenceCounter).toBe(0);
+    expect(s2.playerStatuses.find((s) => s.templateId === "huguenotContainment")?.turnsRemaining).toBe(3);
+    const before = Object.values(s0.cardsById).filter((c) => c.templateId === "suppressHuguenots").length;
+    const after = Object.values(s2.cardsById).filter((c) => c.templateId === "suppressHuguenots").length;
+    expect(after).toBe(before + 1);
+    const entry = s2.actionLog.find((e) => e.kind === "huguenotResurgence");
+    expect(entry).toBeTruthy();
+    if (entry?.kind === "huguenotResurgence") {
+      expect(entry.addedCount).toBe(1);
+      expect(entry.remainingStacks).toBe(3);
+    }
+  });
+
+  it("over a full beginYear cycle, two ticks add one suppress card and bump containment", () => {
+    const base = createInitialState(404_003, "secondMandate");
+    // Seed three real suppressHuguenots cards so the status (turnsRemaining=3)
+    // matches the live card count, satisfying the strict invariant.
+    const seededIds = ["seed_cycle_0", "seed_cycle_1", "seed_cycle_2"];
+    const cardsById = { ...base.cardsById };
+    for (const id of seededIds) {
+      cardsById[id] = { instanceId: id, templateId: "suppressHuguenots" };
+    }
+    const s0: GameState = {
+      ...base,
+      cardsById,
+      deck: [...seededIds, ...base.deck],
+      huguenotResurgenceCounter: 0,
+      playerStatuses: [
+        ...base.playerStatuses.filter((s) => s.templateId !== "huguenotContainment"),
+        {
+          instanceId: "st_hug_cycle",
+          templateId: "huguenotContainment",
+          kind: "drawAttemptsDelta",
+          delta: 0,
+          turnsRemaining: 3,
+        },
+      ],
+    };
+    const startSuppress = Object.values(s0.cardsById).filter((c) => c.templateId === "suppressHuguenots").length;
+    const s1 = beginYear(s0);
+    expect(s1.huguenotResurgenceCounter).toBe(1);
+    expect(s1.playerStatuses.find((s) => s.templateId === "huguenotContainment")?.turnsRemaining).toBe(3);
+    const s2 = beginYear({ ...s1, phase: "action" });
+    expect(s2.huguenotResurgenceCounter).toBe(0);
+    expect(s2.playerStatuses.find((s) => s.templateId === "huguenotContainment")?.turnsRemaining).toBe(4);
+    const endSuppress = Object.values(s2.cardsById).filter((c) => c.templateId === "suppressHuguenots").length;
+    expect(endSuppress).toBe(startSuppress + 1);
+  });
+
+  it("strict invariant: when status drifts above card count, sync brings it back down", () => {
+    const base = createInitialState(404_004, "secondMandate");
+    const onlyId = "seed_drift_only";
+    const cardsById = {
+      ...base.cardsById,
+      [onlyId]: { instanceId: onlyId, templateId: "suppressHuguenots" as const },
+    };
+    const s0: GameState = {
+      ...base,
+      cardsById,
+      deck: [onlyId, ...base.deck],
+      huguenotResurgenceCounter: 1,
+      playerStatuses: [
+        ...base.playerStatuses.filter((p) => p.templateId !== "huguenotContainment"),
+        {
+          instanceId: "st_hug_drift",
+          templateId: "huguenotContainment",
+          kind: "drawAttemptsDelta",
+          delta: 0,
+          turnsRemaining: 99,
+        },
+      ],
+    };
+    const s1 = maybeTriggerHuguenotResurgence(s0);
+    const status = s1.playerStatuses.find((p) => p.templateId === "huguenotContainment");
+    const liveCount = [...s1.deck, ...s1.hand, ...s1.discard].filter(
+      (id) => s1.cardsById[id]?.templateId === "suppressHuguenots",
+    ).length;
+    expect(status?.turnsRemaining).toBe(liveCount);
+    expect(status?.turnsRemaining).toBe(2);
+  });
+});
+
+describe("evaluateVictory (secondMandate)", () => {
+  function makeSecondMandateBaseAtYear(year: number): GameState {
+    const base = createInitialState(909_001, "secondMandate");
+    return {
+      ...base,
+      levelId: "secondMandate",
+      phase: "action",
+      outcome: "playing",
+      turn: year - base.calendarStartYear + 1,
+      europeAlert: false,
+      playerStatuses: base.playerStatuses.filter(
+        (s) => s.templateId !== "huguenotContainment",
+      ),
+    };
+  }
+
+  it("does not declare victory before the earliest victory year", () => {
+    const s = makeSecondMandateBaseAtYear(1695);
+    const r = evaluateVictory(s);
+    expect(r.outcome).toBe("playing");
+    expect(r.phase).toBe("action");
+  });
+
+  it("does not declare victory while europeAlert is still active", () => {
+    const base = makeSecondMandateBaseAtYear(1696);
+    const s: GameState = { ...base, europeAlert: true };
+    const r = evaluateVictory(s);
+    expect(r.outcome).toBe("playing");
+  });
+
+  it("does not declare victory while huguenotContainment status is still on the player", () => {
+    const base = makeSecondMandateBaseAtYear(1696);
+    const s: GameState = {
+      ...base,
+      playerStatuses: [
+        ...base.playerStatuses,
+        {
+          instanceId: "st_hug_block_victory",
+          templateId: "huguenotContainment",
+          kind: "drawAttemptsDelta",
+          delta: 0,
+          turnsRemaining: 2,
+        },
+      ],
+    };
+    const r = evaluateVictory(s);
+    expect(r.outcome).toBe("playing");
+    expect(r.phase).toBe("action");
+  });
+
+  it("declares victory once year is reached, europeAlert cleared, and no huguenotContainment remains", () => {
+    const s = makeSecondMandateBaseAtYear(1696);
+    const r = evaluateVictory(s);
+    expect(r.outcome).toBe("victory");
+    expect(r.phase).toBe("gameOver");
   });
 });

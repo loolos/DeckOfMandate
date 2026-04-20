@@ -1,3 +1,4 @@
+
 import { EVENT_SLOT_ORDER, type EventTemplate, type EventTemplateId } from "../types/event";
 import type { GameState } from "../types/game";
 import { antiFrenchSentimentEventSolveCostPenalty, antiFrenchSentimentRyswickSurcharge } from "../logic/antiFrenchSentiment";
@@ -129,7 +130,10 @@ export const eventTemplates: Record<EventTemplateId, EventTemplate> = {
     solve: { kind: "fundingOrCrackdown", amount: 2 },
     crisisPersistence: "continued",
     continuedDurationTurns: 3,
-    penaltiesIfUnresolved: [],
+    penaltiesIfUnresolved: [
+      { kind: "modResource", resource: "power", delta: -1 },
+      { kind: "modResource", resource: "treasuryStat", delta: -1 },
+    ],
   },
   nineYearsWar: {
     id: "nineYearsWar",
@@ -299,16 +303,6 @@ export const eventTemplates: Record<EventTemplateId, EventTemplate> = {
       { kind: "addPlayerStatus", templateId: "powerLeak", turns: 2 },
     ],
   },
-  grainReliefCrisis: {
-    id: "grainReliefCrisis",
-    weight: 0,
-    harmful: false,
-    titleKey: "event.grainReliefCrisis.name",
-    descriptionKey: "event.grainReliefCrisis.desc",
-    solve: { kind: "funding", amount: 2 },
-    onFundSolveEffects: [{ kind: "modResource", resource: "legitimacy", delta: 2 }],
-    penaltiesIfUnresolved: [{ kind: "modResource", resource: "legitimacy", delta: -2 }],
-  },
   expansionRemembered: {
     id: "expansionRemembered",
     weight: 0,
@@ -343,7 +337,8 @@ export const eventTemplates: Record<EventTemplateId, EventTemplate> = {
     harmful: true,
     titleKey: "event.arminianTension.name",
     descriptionKey: "event.arminianTension.desc",
-    solve: { kind: "funding", amount: 3 },
+    solve: { kind: "funding", amount: 1 },
+    onFundSolveEffects: [{ kind: "addCardsToDeck", templateId: "religiousTensionCard", count: 1 }],
     penaltiesIfUnresolved: [{ kind: "modResource", resource: "power", delta: -1 }],
   },
   huguenotTension: {
@@ -352,11 +347,22 @@ export const eventTemplates: Record<EventTemplateId, EventTemplate> = {
     harmful: true,
     titleKey: "event.huguenotTension.name",
     descriptionKey: "event.huguenotTension.desc",
+    solve: { kind: "funding", amount: 1 },
+    onFundSolveEffects: [{ kind: "addCardsToDeck", templateId: "religiousTensionCard", count: 1 }],
+    penaltiesIfUnresolved: [{ kind: "modResource", resource: "treasuryStat", delta: -1 }],
+  },
+  jesuitPatronage: {
+    id: "jesuitPatronage",
+    weight: 1,
+    harmful: false,
+    titleKey: "event.jesuitPatronage.name",
+    descriptionKey: "event.jesuitPatronage.desc",
     solve: { kind: "funding", amount: 2 },
-    penaltiesIfUnresolved: [
-      { kind: "modResource", resource: "legitimacy", delta: -1 },
-      { kind: "modResource", resource: "power", delta: -1 },
+    onFundSolveEffects: [
+      { kind: "addCardsToDeck", templateId: "jesuitCollege", count: 2 },
+      { kind: "addCardsToDeck", templateId: "religiousTensionCard", count: 1 },
     ],
+    penaltiesIfUnresolved: [],
   },
   localWar: {
     id: "localWar",

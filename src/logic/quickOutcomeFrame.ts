@@ -92,9 +92,6 @@ function eventYearEndChips(tmpl: EventTemplate): string | null {
   if (tmpl.id === "powerVacuum") {
     return "🚨+1⌛";
   }
-  if (tmpl.id === "grainReliefCrisis") {
-    return `👑-2`;
-  }
   if (tmpl.id === "localWar") {
     return `${getResourceIcon("funding")}-2`;
   }

@@ -51,20 +51,6 @@ export function resolveEndOfYearPenalties(state: GameState): GameState {
       s = enforceLegitimacy(s);
       if (s.outcome !== "playing") return s;
     }
-    if (ev.templateId === "leagueOfAugsburg") {
-      const upkeep = Math.floor(s.europeAlertProgress / 2);
-      if (upkeep > 0) {
-        if (s.resources.funding >= upkeep) {
-          s = { ...s, resources: { ...s.resources, funding: s.resources.funding - upkeep } };
-        } else {
-          s = applyEffects(s, [
-            { kind: "modResource", resource: "power", delta: -1 },
-            { kind: "modResource", resource: "treasuryStat", delta: -1 },
-          ]);
-        }
-      }
-      continue;
-    }
     if (!isContinuedCrisis(tmpl)) {
       s = { ...s, slots: { ...s.slots, [slot]: null } };
     }
