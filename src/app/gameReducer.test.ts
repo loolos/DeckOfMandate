@@ -6,6 +6,7 @@ import { getEventTemplate } from "../data/events";
 import { EMPTY_EVENT_SLOTS, type SlotId } from "../types/event";
 import { createInitialState } from "./initialState";
 import { gameReducer } from "./gameReducer";
+import { createStandaloneLevel2Draft } from "./level2Transition";
 
 describe("gameReducer", () => {
   it("creates deterministic initial layouts for the same seed", () => {
@@ -21,6 +22,28 @@ describe("gameReducer", () => {
     const s0 = createInitialState(1001);
     const s1 = gameReducer(s0, { type: "PLAY_CARD", handIndex: 999 });
     expect(s1).toEqual(s0);
+  });
+
+  it("NEW_GAME on second mandate restarts with standalone chapter-2 setup", () => {
+    const ended = {
+      ...createInitialState(6_002, "secondMandate"),
+      outcome: "defeatTime" as const,
+      phase: "gameOver" as const,
+      resources: { treasuryStat: 1, funding: 0, power: 1, legitimacy: 1 },
+    };
+    const restarted = gameReducer(ended, { type: "NEW_GAME", seed: 7_777 });
+    const expected = gameReducer(createInitialState(1, "firstMandate"), {
+      type: "NEW_GAME",
+      seed: 7_777,
+      levelId: "secondMandate",
+    });
+    expect(restarted).toEqual(expected);
+  });
+
+  it("standalone chapter-2 draft resources come from level definition", () => {
+    const draft = createStandaloneLevel2Draft(8_888);
+    const level = getLevelDef("secondMandate");
+    expect(draft.resources).toEqual(level.standaloneStartingResources);
   });
 
   it("lose-first: legitimacy collapse ends the run before a later victory check would matter", () => {
