@@ -6,6 +6,7 @@ import { LanguageToggle } from "../components/LanguageToggle";
 import { LevelTutorialOverlay } from "../components/LevelTutorialOverlay";
 import { OutcomeQuickFrame } from "../components/OutcomeQuickFrame";
 import { ResourceBar } from "../components/ResourceBar";
+import { RunCodePanel } from "../components/RunCodePanel";
 import { StatusBar } from "../components/StatusBar";
 import { getCardTemplate } from "../data/cards";
 import {
@@ -43,6 +44,14 @@ import {
 } from "./level2Transition";
 import styles from "./Game.module.css";
 import { retentionCapacity } from "../logic/turnFlow";
+import {
+  annotateConfirmRetention,
+  decodeSession,
+  encodeSession,
+  shouldRecordAction,
+  type RunRecord,
+  type SessionRecord,
+} from "../logic/runCode";
 
 type PendingNewRun = { seed?: number; levelId: LevelId };
 
@@ -118,6 +127,46 @@ export function Game() {
     typeof window !== "undefined" ? window.matchMedia("(max-width: 800px)").matches : false,
   );
   const mobileRefitRowLastTapAt = useRef<Record<string, number>>({});
+  const sessionRef = useRef<SessionRecord>([]);
+  const [codeHex, setCodeHex] = useState("");
+
+  const refreshCodeHex = useCallback(() => {
+    setCodeHex(encodeSession(sessionRef.current));
+  }, []);
+
+  const startStandaloneSession = useCallback(
+    (level: LevelId, seed: number, removedIndices: number[] = []) => {
+      const record: RunRecord =
+        level === "secondMandate"
+          ? { level: "secondMandate", mode: "standalone", seed: seed >>> 0, removedIndices, actions: [] }
+          : { level: "firstMandate", mode: "standalone", seed: seed >>> 0, actions: [] };
+      sessionRef.current = [record];
+      refreshCodeHex();
+    },
+    [refreshCodeHex],
+  );
+
+  const appendContinuitySession = useCallback(
+    (seed: number, removedIndices: number[]) => {
+      sessionRef.current = [
+        ...sessionRef.current,
+        {
+          level: "secondMandate",
+          mode: "continuity",
+          seed: seed >>> 0,
+          removedIndices,
+          actions: [],
+        },
+      ];
+      refreshCodeHex();
+    },
+    [refreshCodeHex],
+  );
+
+  const clearSession = useCallback(() => {
+    sessionRef.current = [];
+    refreshCodeHex();
+  }, [refreshCodeHex]);
 
   const menuSeedTrimmed = menuSeedText.trim();
   const menuSeedParsed =
@@ -184,7 +233,57 @@ export function Game() {
     selectedIds.length <= retentionCapacity(state) &&
     selectedIds.every((id) => state.hand.includes(id));
 
-  const dispatchSafe = (a: GameAction) => dispatch(a);
+  const dispatchSafe = (a: GameAction) => {
+    if (shouldRecordAction(a)) {
+      const next = gameReducer(state, a);
+      if (next !== state) {
+        const head = sessionRef.current[sessionRef.current.length - 1];
+        if (head) {
+          const recorded = a.type === "CONFIRM_RETENTION" ? annotateConfirmRetention(a, state) : a;
+          head.actions.push(recorded);
+          refreshCodeHex();
+        }
+      }
+    }
+    dispatch(a);
+  };
+
+  const restartCurrentLevelRun = useCallback(() => {
+    const next = gameReducer(state, { type: "NEW_GAME" });
+    dispatch({ type: "NEW_GAME" });
+    startStandaloneSession(next.levelId, next.runSeed);
+  }, [state, startStandaloneSession]);
+
+  const loadFromCode = useCallback(
+    (rawHex: string): { ok: true } | { ok: false; error: string } => {
+      let decoded;
+      try {
+        decoded = decodeSession(rawHex);
+      } catch (err) {
+        return { ok: false, error: err instanceof Error ? err.message : String(err) };
+      }
+      try {
+        sessionRef.current = decoded.session.map((run) => ({
+          ...run,
+          actions: [...run.actions],
+        })) as SessionRecord;
+        setCodeHex(encodeSession(sessionRef.current));
+        setPendingLevelTutorial(false);
+        setPendingHydrateState(null);
+        setPendingIntroLevelId(null);
+        setLevel2Draft(null);
+        setLevel2DraftInitial(null);
+        setLevelIntroOpen(false);
+        setPendingNewRun(null);
+        dispatch({ type: "HYDRATE", state: decoded.finalState });
+        setStartMenuOpen(false);
+        return { ok: true };
+      } catch (err) {
+        return { ok: false, error: err instanceof Error ? err.message : String(err) };
+      }
+    },
+    [],
+  );
 
   const dismissLevelTutorial = useCallback(() => {
     setPendingLevelTutorial(false);
@@ -230,7 +329,9 @@ export function Game() {
       return;
     }
     setPendingLevelTutorial(tutorialOnEntryMenu);
+    const next = gameReducer(state, { type: "NEW_GAME", seed, levelId });
     dispatchSafe({ type: "NEW_GAME", seed, levelId });
+    startStandaloneSession(next.levelId, next.runSeed);
     setStartMenuOpen(false);
     setLevelIntroOpen(false);
     setPendingNewRun(null);
@@ -275,6 +376,9 @@ export function Game() {
     const loaded = loadGame();
     if (!loaded || !isValidSave(loaded)) return;
     dispatchSafe({ type: "HYDRATE", state: normalizeLoadedSave(loaded as GameState) });
+    // The local-storage save is just a state snapshot; we have no recoverable action history,
+    // so the run code is intentionally cleared on resume.
+    clearSession();
     setStartMenuOpen(false);
   };
 
@@ -285,6 +389,17 @@ export function Game() {
     const v = validateLevel2Draft(level2Draft);
     if (!v.isValid) return;
     const nextState = buildLevel2StateFromDraft(level2Draft);
+    const carryover = level2Draft.carryoverCards;
+    const removedSet = new Set(level2Draft.removedCarryoverIds);
+    const removedIndices: number[] = [];
+    carryover.forEach((card, idx) => {
+      if (removedSet.has(card.instanceId)) removedIndices.push(idx);
+    });
+    if (level2Draft.mode === "continuity") {
+      appendContinuitySession(nextState.runSeed, removedIndices);
+    } else {
+      startStandaloneSession("secondMandate", nextState.runSeed, removedIndices);
+    }
     setLevel2Draft(null);
     setLevel2DraftInitial(null);
     setPendingNewRun(null);
@@ -626,6 +741,7 @@ export function Game() {
           >
             {t("menu.startConfigured")}
           </button>
+          <RunCodePanel variant="startMenu" code="" onLoad={loadFromCode} />
         </div>
         {hadSaveOnLaunch ? (
           <div className={styles.startMenuResume}>
@@ -754,7 +870,7 @@ export function Game() {
               {t("ui.endTurn")}
             </button>
           ) : null}
-          <button type="button" className={styles.btn} onClick={() => dispatchSafe({ type: "NEW_GAME" })}>
+          <button type="button" className={styles.btn} onClick={() => restartCurrentLevelRun()}>
             {t("ui.newGame")}
           </button>
         </div>
@@ -767,6 +883,8 @@ export function Game() {
             ? t("phase.retention")
             : t("phase.gameOver")}
       </p>
+
+      <RunCodePanel code={codeHex} onLoad={loadFromCode} />
 
       {state.phase === "retention" && state.outcome === "playing" ? (
         <div className={styles.overlay} role="dialog" aria-modal="true">
@@ -840,7 +958,7 @@ export function Game() {
                   </div>
                 );
               })()}
-              <button type="button" className={`${styles.btn} ${styles.btnPrimary}`} onClick={() => dispatchSafe({ type: "NEW_GAME" })}>
+              <button type="button" className={`${styles.btn} ${styles.btnPrimary}`} onClick={() => restartCurrentLevelRun()}>
                 {t("ui.newGame")}
               </button>
               {state.outcome === "victory" && state.levelId === "firstMandate" ? (

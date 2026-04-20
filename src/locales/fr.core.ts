@@ -71,6 +71,7 @@ export const messagesFrCore: Record<keyof typeof messagesEnCore, string> = {
     "Laissez vide pour une graine aléatoire. La même graine reproduit l'ordre du deck et les premiers événements.",
   "menu.seedInvalid": "Saisissez un nombre fini valide.",
   "menu.startConfigured": "Démarrer",
+  "menu.runCodeLoad": "Charger depuis un code de partie",
   "menu.continueChapter2": "Continuer au Chapitre 2",
   "menu.refit.title": "Réajustement du deck entre chapitres",
   "menu.refit.subtitle": "Reconstruisez votre deck pour une gouvernance à haute pression.",
@@ -269,4 +270,11 @@ export const messagesFrCore: Record<keyof typeof messagesEnCore, string> = {
   "log.info.cardUse.remainingUses": "[Tour {turn}] Note de tag « Restant » : cette carte a X/Y utilisations restantes ; chaque activation en consomme 1 et elle quitte le cycle à 0.",
   "help.short":
     "Le Trésor fixe le revenu en Financement par tour. Le Financement paie les cartes et résolutions d'événements. Le Pouvoir fixe les tentatives de pioche. La Légitimité fixe la limite de conservation. Les événements néfastes non résolus sont réglés en séquence.",
+  "runCode.label": "Code de partie",
+  "runCode.charCount": "{count} car.",
+  "runCode.copy": "Copier",
+  "runCode.copied": "Copié",
+  "runCode.loadPlaceholder": "Collez un code hexadécimal pour charger…",
+  "runCode.load": "Charger",
+  "runCode.invalid": "Code invalide : {error}",
 };

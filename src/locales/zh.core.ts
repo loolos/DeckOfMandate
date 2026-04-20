@@ -62,6 +62,7 @@ export const messagesZhCore = {
   "menu.seedHint": "留空会随机生成种子；相同种子可复现开局牌库与事件。",
   "menu.seedInvalid": "请输入有效的有限数字。",
   "menu.startConfigured": "开始",
+  "menu.runCodeLoad": "从对局码加载",
   "menu.continueChapter2": "进入第二关",
   "menu.refit.title": "过章卡池整编",
   "menu.refit.subtitle": "将第一关牌组重构为第二关高压治理牌组。",
@@ -291,4 +292,11 @@ export const messagesZhCore = {
   "log.info.eventTag.resolved": "[第 {turn} 年] 标签说明「已解决」：该事件已在本年被处理，不会在年末触发惩罚。",
   "help.short":
     "财政决定每回合转入的经费；经费用于打牌与事件处理。权力决定抽牌次数。合法性决定回合末可保留手牌数。未处理的有害事件依次结算。",
+  "runCode.label": "对局码",
+  "runCode.charCount": "{count} 字符",
+  "runCode.copy": "复制",
+  "runCode.copied": "已复制",
+  "runCode.loadPlaceholder": "粘贴一段十六进制对局码以加载…",
+  "runCode.load": "加载",
+  "runCode.invalid": "无效的对局码：{error}",
 } as const;

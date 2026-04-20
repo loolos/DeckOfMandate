@@ -65,6 +65,7 @@ export const messagesEnCore = {
   "menu.seedHint": "Leave blank for a random seed. The same seed reproduces deck order and early events.",
   "menu.seedInvalid": "Enter a valid finite number.",
   "menu.startConfigured": "Start",
+  "menu.runCodeLoad": "Load from run code",
   "menu.continueChapter2": "Continue to Chapter 2",
   "menu.refit.title": "Chapter Transition Deck Refit",
   "menu.refit.subtitle": "Rebuild your deck for high-pressure governance.",
@@ -317,4 +318,11 @@ export const messagesEnCore = {
     "[Turn {turn}] Tag note “Resolved”: this event has already been handled this year and will not apply year-end penalties.",
   "help.short":
     "Treasury sets turnly income to Funding. Funding pays for cards and event solves. Power sets draw attempts. Legitimacy sets retention limit. Unresolved harmful events are settled in sequence.",
+  "runCode.label": "Run code",
+  "runCode.charCount": "len {count}",
+  "runCode.copy": "Copy",
+  "runCode.copied": "Copied",
+  "runCode.loadPlaceholder": "Paste a hex run code to load…",
+  "runCode.load": "Load",
+  "runCode.invalid": "Invalid code: {error}",
 } as const;
