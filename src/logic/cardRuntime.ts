@@ -1,4 +1,5 @@
 import type { CardTemplateId } from "../levels/types/card";
+import type { CardPlacement } from "../levels/types/effect";
 import type { GameState } from "../types/game";
 import type { PlayerStatusInstance } from "../levels/types/status";
 import { appendActionLog } from "./actionLog";
@@ -31,6 +32,15 @@ function insertCardsIntoDeckAtRandomPositions(
 }
 
 export function addCardsToDeck(state: GameState, templateId: CardTemplateId, count: number): GameState {
+  return addGeneratedCards(state, templateId, count, "deckRandom");
+}
+
+export function addGeneratedCards(
+  state: GameState,
+  templateId: CardTemplateId,
+  count: number,
+  placement: CardPlacement,
+): GameState {
   if (count <= 0) return state;
   const cardsById = { ...state.cardsById };
   const cardUsesById = { ...state.cardUsesById };
@@ -41,6 +51,30 @@ export function addCardsToDeck(state: GameState, templateId: CardTemplateId, cou
     const usage = createInitialCardUseState(state.levelId, templateId);
     if (usage) cardUsesById[id] = usage;
     addedIds.push(id);
+  }
+  if (placement === "deckTop") {
+    return {
+      ...state,
+      cardsById,
+      cardUsesById,
+      deck: [...addedIds, ...state.deck],
+    };
+  }
+  if (placement === "deckBottom") {
+    return {
+      ...state,
+      cardsById,
+      cardUsesById,
+      deck: [...state.deck, ...addedIds],
+    };
+  }
+  if (placement === "discard") {
+    return {
+      ...state,
+      cardsById,
+      cardUsesById,
+      discard: [...state.discard, ...addedIds],
+    };
   }
   const inserted = insertCardsIntoDeckAtRandomPositions(state.rng, state.deck, addedIds);
   return {
