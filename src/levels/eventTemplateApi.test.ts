@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { getEventRollWeight, getEventSolveFundingAmount } from "./events";
 import { createInitialState } from "../app/initialState";
+import { getEventRollWeight, getEventSolveFundingAmount } from "./eventTemplateApi";
 
 describe("getEventRollWeight", () => {
   it("returns base weight when europe alert is off", () => {
@@ -93,5 +93,4 @@ describe("getEventRollWeight", () => {
 
     expect(getEventSolveFundingAmount(overPlusTwo, "budgetStrain")).toBe(2);
   });
-
 });

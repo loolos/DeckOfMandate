@@ -1,8 +1,8 @@
 import { getStatusTemplate } from "../data/statusTemplates";
-import type { CardTemplateId } from "../types/card";
-import type { Effect } from "../types/effect";
+import type { CardTemplateId } from "../levels/types/card";
+import type { Effect } from "../levels/types/effect";
 import type { GameState } from "../types/game";
-import type { PlayerStatusInstance } from "../types/status";
+import type { PlayerStatusInstance } from "../levels/types/status";
 import { appendActionLog } from "./actionLog";
 import { addCardsToDeck, applyOnDrawCardEffects } from "./cardRuntime";
 import { applyInflationFromDeckRefill } from "./cardCost";

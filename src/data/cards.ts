@@ -1,1 +1,1 @@
-export { getCardTemplate } from "../levels/sunking/templates/cards";
+export { cardTemplates, getCardTemplate } from "../levels/loadCardTemplates";

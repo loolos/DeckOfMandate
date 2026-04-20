@@ -4,8 +4,8 @@ import { buildDefaultCardUsesById } from "../logic/cardUsage";
 import { computeEuropeAlertPowerLoss } from "../logic/europeAlert";
 import { createRngFromSeed, shuffle } from "../logic/rng";
 import { beginYear } from "../logic/turnFlow";
-import type { CardInstance, CardTemplateId } from "../types/card";
-import { EMPTY_EVENT_SLOTS, EMPTY_PENDING_MAJOR_CRISIS } from "../types/event";
+import type { CardInstance, CardTemplateId } from "../levels/types/card";
+import { EMPTY_EVENT_SLOTS, EMPTY_PENDING_MAJOR_CRISIS } from "../levels/types/event";
 import type { GameState, Resources } from "../types/game";
 
 type InitialStateOptions = {

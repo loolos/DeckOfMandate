@@ -14,8 +14,8 @@ import { coalitionUntilTurn, findScriptedCalendarConfig } from "../logic/scripte
 import { rngNext } from "../logic/rng";
 import { beginYear, evaluateTimeDefeat, evaluateVictory, retentionCapacity } from "../logic/turnFlow";
 import { antiFrenchSentimentEventSolveCostPenalty } from "../logic/antiFrenchSentiment";
-import { EVENT_SLOT_ORDER, type EventTemplateId } from "../types/event";
-import type { SlotId } from "../types/event";
+import { EVENT_SLOT_ORDER, type EventTemplateId } from "../levels/types/event";
+import type { SlotId } from "../levels/types/event";
 import type { GameState } from "../types/game";
 import type { LogInfoKey } from "../types/game";
 import { createInitialState } from "./initialState";

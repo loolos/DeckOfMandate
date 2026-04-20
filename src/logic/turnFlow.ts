@@ -2,16 +2,16 @@ import { getEventRollWeight, getEventTemplate } from "../data/events";
 import { getLevelContent } from "../data/levelContent";
 import { getLevelDef, getTurnLimitForRun } from "../data/levels";
 import { currentCalendarYear } from "./scriptedCalendar";
-import type { CardTemplateId } from "../types/card";
+import type { CardTemplateId } from "../levels/types/card";
 import { appendActionLog } from "./actionLog";
 import {
   EVENT_SLOT_ORDER,
   PROCEDURAL_EVENT_SLOT_ORDER,
   type EventInstance,
   type SlotId,
-} from "../types/event";
+} from "../levels/types/event";
 import type { GameState } from "../types/game";
-import type { PlayerStatusInstance } from "../types/status";
+import type { PlayerStatusInstance } from "../levels/types/status";
 import { applyOnDrawCardEffects, enforceHuguenotContainmentInvariant } from "./cardRuntime";
 import { applyInflationFromDeckRefill } from "./cardCost";
 import { drawUpToPower } from "./draw";

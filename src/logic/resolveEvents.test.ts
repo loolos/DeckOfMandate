@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { createInitialState } from "../app/initialState";
-import { EMPTY_EVENT_SLOTS } from "../types/event";
+import { EMPTY_EVENT_SLOTS } from "../levels/types/event";
 import { resolveEndOfYearPenalties } from "./resolveEvents";
 
 describe("resolveEndOfYearPenalties", () => {

@@ -7,8 +7,8 @@ import type { MessageKey } from "../locales";
 import { useI18n } from "../locales";
 import { useSmallScreen } from "../logic/useSmallScreen";
 import type { ActionLogEntry } from "../types/game";
-import type { CardTemplateId } from "../types/card";
-import type { EventTemplateId } from "../types/event";
+import type { CardTemplateId } from "../levels/types/card";
+import type { EventTemplateId } from "../levels/types/event";
 import styles from "../app/Game.module.css";
 
 const STICKY_PX = 48;

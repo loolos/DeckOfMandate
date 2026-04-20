@@ -28,8 +28,8 @@ import { buildCardQuickFrameRows } from "../logic/quickOutcomeFrame";
 import type { MessageKey } from "../locales";
 import { useI18n } from "../locales";
 import type { GameState } from "../types/game";
-import type { CardTag } from "../types/tags";
-import { EVENT_SLOT_ORDER } from "../types/event";
+import type { CardTag } from "../levels/types/tags";
+import { EVENT_SLOT_ORDER } from "../levels/types/event";
 import { gameReducer, type GameAction } from "./gameReducer";
 import { createInitialState } from "./initialState";
 import {

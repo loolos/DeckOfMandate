@@ -3,7 +3,7 @@ import styles from "../app/Game.module.css";
 import { getStatusTemplate } from "../data/statusTemplates";
 import { useI18n, type MessageKey } from "../locales";
 import { useSmallScreen } from "../logic/useSmallScreen";
-import type { PlayerStatusInstance } from "../types/status";
+import type { PlayerStatusInstance } from "../levels/types/status";
 
 type StatusViewRow = {
   id: string;

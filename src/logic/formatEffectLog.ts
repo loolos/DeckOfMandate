@@ -1,7 +1,7 @@
 import { getStatusTemplate } from "../data/statusTemplates";
 import { getCardTemplate } from "../data/cards";
 import { resourceLabelWithIcon } from "./icons";
-import type { Effect } from "../types/effect";
+import type { Effect } from "../levels/types/effect";
 import type { MessageKey } from "../locales";
 
 export function formatEffectLogLine(

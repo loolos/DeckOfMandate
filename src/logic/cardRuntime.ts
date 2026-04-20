@@ -1,6 +1,6 @@
-import type { CardTemplateId } from "../types/card";
+import type { CardTemplateId } from "../levels/types/card";
 import type { GameState } from "../types/game";
-import type { PlayerStatusInstance } from "../types/status";
+import type { PlayerStatusInstance } from "../levels/types/status";
 import { appendActionLog } from "./actionLog";
 import { createInitialCardUseState } from "./cardUsage";
 import { rngNext, rngNextInt } from "./rng";

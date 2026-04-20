@@ -15,7 +15,7 @@ import {
   slotScriptedAttackAffordable,
 } from "../logic/uiHelpers";
 import type { GameState } from "../types/game";
-import { EVENT_SLOT_ORDER } from "../types/event";
+import { EVENT_SLOT_ORDER } from "../levels/types/event";
 import type { MessageKey } from "../locales";
 import { useI18n } from "../locales";
 import styles from "../app/Game.module.css";

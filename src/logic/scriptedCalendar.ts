@@ -1,7 +1,7 @@
 import { getLevelContent, type ScriptedCalendarEventConfig } from "../data/levelContent";
 import { getLevelDef } from "../data/levels";
 import { getEventTemplate } from "../data/events";
-import { EVENT_SLOT_ORDER, type EventInstance, type EventTemplateId, type SlotId } from "../types/event";
+import { EVENT_SLOT_ORDER, type EventInstance, type EventTemplateId, type SlotId } from "../levels/types/event";
 import type { AntiFrenchLeagueState, GameState } from "../types/game";
 import { rngNext } from "./rng";
 

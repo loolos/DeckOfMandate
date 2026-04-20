@@ -1,5 +1,1 @@
-export {
-  type StatusTemplate,
-  getStatusTemplate,
-  statusTemplates,
-} from "../levels/sunking/templates/statusTemplates";
+export { type StatusTemplate, getStatusTemplate, statusTemplates } from "../levels/statusTemplateApi";

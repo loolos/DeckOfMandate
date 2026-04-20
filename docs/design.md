@@ -17,11 +17,11 @@
 
 - `src/app/`: reducer, initialization, main game composition; `level2Transition.ts` re-exports chapter-2 builders from the Sun King campaign pack.
 - `src/data/`: **level registry** (`levelRegistry.ts`, `levelTypes.ts`) and thin re-exports (`levels.ts`, `levelContent.ts`, `cards.ts`, `events.ts`, `statusTemplates.ts` → Sun King pack); playable levels are registered at startup, not hardcoded here. Each `LevelDef` carries calendar pacing (`yearsPerTurn`), win/victory rules, turn-limit rule, and optional UI keys for goals / turn counter / time-step hint.
-- `src/levels/`: **campaign packs**. Each subdirectory can ship a `campaign.register.ts` file; `registerAll.ts` uses `import.meta.glob` so new files are picked up without editing `main.tsx`. The Sun King campaign lives under `src/levels/sunking/` (level defs, chapter-2 transition, **card/event/status template data** under `templates/`, and merged locale fragments under `locales/`).
+- `src/levels/`: **campaign packs** plus **template type shapes** (`levels/types/` — `CardTemplateId`, `EventTemplateId`, `Effect`, tags, status templates; current unions match the Sun King data). Each top-level subdirectory `<campaignId>/` ships `registerCampaign.ts`; `registerAll.ts` uses `import.meta.glob("./*/registerCampaign.ts")` so new campaigns are picked up without editing `main.tsx`. Chapters are discovered within a campaign (e.g. Sun King `sunking/chapters/*.ts`). The Sun King campaign lives under `src/levels/sunking/` (chapter-2 transition, **card/event/status template data** under `templates/`, and merged locale fragments under `locales/`).
 - `src/logic/`: pure-ish gameplay operations (draw, effects, event resolution, scripted calendar, scaling).
 - `src/components/`: presentational + interaction components.
 - `src/locales/`: framework UI strings (`*.core.ts`) plus merged bundles (`en.ts` / `fr.ts` / `zh.ts`) that spread campaign copy from `src/levels/sunking/sunkingLocales.ts` (which composes `locales/firstMandate.*`, `secondMandate.*`, and `coreGameContent.*` inside the sunking folder).
-- `src/types/`: domain models for cards, events, effects, statuses, game state.
+- `src/types/`: **runtime** domain types only (`game.ts` — `GameState`, `ActionLogEntry`, resources, phase, etc.); it imports template ids from `src/levels/types/`.
 
 ## 4. State architecture
 
@@ -54,7 +54,7 @@ Reducer entrypoint: `src/app/gameReducer.ts`.
 
 ### Level registration & i18n
 
-- **Registry**: `registerLevel(def, content)` adds a level; `getDefaultLevelId()` / `getRegisteredLevelIds()` drive menus. Removing a campaign folder (and its `campaign.register.ts`) leaves the engine running with whatever levels remain.
+- **Registry**: `registerLevel(def, content)` adds a level; `getDefaultLevelId()` / `getRegisteredLevelIds()` drive menus. Removing a campaign folder (and its `registerCampaign.ts`) leaves the engine running with whatever levels remain.
 - **Chapter 2 bootstrap**: `registerChapter2StandaloneFactory(levelId, factory)` connects “standalone chapter 2” menu flows to a draft builder (`levelBootstrap.ts`).
 - **Locales**: Framework strings live in `en.core.ts` / `fr.core.ts` / `zh.core.ts` (no longer holding `card.*` / `event.*` / `status.*` template copy for the current campaign). Sun King text — level intros, scripted events, and those template keys — lives under `src/levels/sunking/locales/` and is merged via `sunkingLocales.ts` into `en.ts` / `fr.ts` / `zh.ts`. Each `LevelDef` lists `supportedLocales`; the start menu shows `ui.levelLocaleFallback` when the UI language is not listed for the selected level.
 

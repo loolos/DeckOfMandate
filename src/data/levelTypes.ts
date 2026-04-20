@@ -1,5 +1,5 @@
-import type { CardTemplateId } from "../types/card";
-import type { EventTemplateId, SlotId } from "../types/event";
+import type { CardTemplateId } from "../levels/types/card";
+import type { EventTemplateId, SlotId } from "../levels/types/event";
 import type { Resources } from "../types/game";
 import type { LogInfoKey } from "../types/game";
 

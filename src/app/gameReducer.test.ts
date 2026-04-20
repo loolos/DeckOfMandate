@@ -3,7 +3,7 @@ import { levelContentByLevelId } from "../data/levelContent";
 import { getLevelDef, getTurnLimitForRun } from "../data/levels";
 import { getCardTemplate } from "../data/cards";
 import { getEventTemplate } from "../data/events";
-import { EMPTY_EVENT_SLOTS, type SlotId } from "../types/event";
+import { EMPTY_EVENT_SLOTS, type SlotId } from "../levels/types/event";
 import { createInitialState } from "./initialState";
 import { gameReducer } from "./gameReducer";
 import { createStandaloneLevel2Draft } from "./level2Transition";

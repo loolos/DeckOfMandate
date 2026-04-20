@@ -18,8 +18,10 @@
 - 代码事实源（authoritative source）：
   - `src/app/*`：`gameReducer.ts`、`initialState.ts`、`level2Transition.ts`
   - `src/logic/*`：`turnFlow.ts`、`actionLog.ts`、`aiStrategySimulation.ts`、`cardUsage.ts`、`icons.ts`、`normalizeGameState.ts`
-  - `src/data/*`：`cards.ts`、`events.ts`、`levelContent.ts`、`secondMandateBalance.test.ts`
-  - `src/types/*`：`card.ts`、`event.ts`、`game.ts`
+  - `src/data/*`：`cards.ts`、`events.ts`、`levelContent.ts`
+  - 太阳王战役平衡断言：`src/levels/sunking/secondMandateBalance.test.ts`
+  - `src/levels/types/*`：卡牌 / 事件 / 效果 / 标签 / 状态模板类型（与战役数据同源）
+  - `src/types/game.ts`：运行时状态与日志条目类型
 - 三语文案：
   - 核心：`src/locales/{zh,en,fr}.core.ts`
   - 关卡剧情：`src/locales/levels/<level>/{zh,en,fr}.ts`

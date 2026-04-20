@@ -11,7 +11,7 @@ import { useI18n } from "../locales";
 import { getPlayableCardCost } from "../logic/cardCost";
 import { getCardTagsForInstance, hasCardTag } from "../logic/cardTags";
 import { getCardUseStateForInstance } from "../logic/cardUsage";
-import type { CardTag } from "../types/tags";
+import type { CardTag } from "../levels/types/tags";
 import type { LogInfoKey } from "../types/game";
 import styles from "../app/Game.module.css";
 

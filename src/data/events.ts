@@ -1,8 +1,8 @@
 export {
   eventTemplates,
-  getEventTemplate,
   getEventRollWeight,
   getEventSolveFundingAmount,
+  getEventTemplate,
   isContinuedCrisis,
   isEuropeAlertSupplementalEvent,
-} from "../levels/sunking/templates/events";
+} from "../levels/eventTemplateApi";

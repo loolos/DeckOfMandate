@@ -1,5 +1,5 @@
 import type { LevelId } from "../data/levels";
-import type { CardInstance, CardTemplateId } from "../types/card";
+import type { CardInstance, CardTemplateId } from "../levels/types/card";
 import type { CardUseState, GameState } from "../types/game";
 
 const DEFAULT_LIMITED_CARD_TOTAL_USES = 3;

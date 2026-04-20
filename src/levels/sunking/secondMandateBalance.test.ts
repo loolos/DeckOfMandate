@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { getLevelContent } from "./levelContent";
-import { getCardTemplate } from "./cards";
-import { getEventSolveFundingAmount, getEventTemplate } from "./events";
-import { createInitialState } from "../app/initialState";
+import { createInitialState } from "../../app/initialState";
+import { getLevelContent } from "../../data/levelContent";
+import { getCardTemplate } from "../../data/cards";
+import { getEventSolveFundingAmount, getEventTemplate } from "../../data/events";
 
 describe("secondMandate balance data", () => {
   it("applies requested chapter 2 new-card costs", () => {

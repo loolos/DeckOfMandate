@@ -3,7 +3,7 @@ import { antiFrenchSentimentEventSolveCostPenalty } from "./antiFrenchSentiment"
 import { findScriptedCalendarConfig } from "./scriptedCalendar";
 import { getPlayableCardCost } from "./cardCost";
 import { hasCardTag } from "./cardTags";
-import type { SlotId } from "../types/event";
+import type { SlotId } from "../levels/types/event";
 import type { GameState } from "../types/game";
 
 /** Funding path is affordable (ignores pending UI like Crackdown target pick). */

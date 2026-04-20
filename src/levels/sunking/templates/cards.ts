@@ -1,11 +1,11 @@
-import type { CardTemplate, CardTemplateId } from "../../../types/card";
-import type { CardTag } from "../../../types/tags";
+import type { CardTemplate, CardTemplateId } from "../../types/card";
+import type { CardTag } from "../../types/tags";
 
 const ROYAL: readonly CardTag[] = ["royal"];
 const EXTRA: readonly CardTag[] = ["extra"];
 const INFLATION: readonly CardTag[] = ["inflation"];
 
-const templates: Record<CardTemplateId, CardTemplate> = {
+export const cardTemplates: Record<CardTemplateId, CardTemplate> = {
   funding: {
     id: "funding",
     cost: 0,
@@ -142,7 +142,3 @@ const templates: Record<CardTemplateId, CardTemplate> = {
     effects: [{ kind: "modResource", resource: "legitimacy", delta: 1 }],
   },
 };
-
-export function getCardTemplate(id: CardTemplateId): CardTemplate {
-  return templates[id];
-}

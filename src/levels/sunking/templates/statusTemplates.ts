@@ -1,15 +1,4 @@
-import type { MessageKey } from "../../../locales/en";
-import type { PlayerStatusKind, StatusTemplateId } from "../../../types/status";
-
-export type StatusTemplate = {
-  id: StatusTemplateId;
-  kind: PlayerStatusKind;
-  delta?: number;
-  resource?: "treasuryStat" | "power" | "legitimacy";
-  blockedTag?: "royal";
-  titleKey: MessageKey;
-  historyKey?: MessageKey;
-};
+import type { StatusTemplate, StatusTemplateId } from "../../types/status";
 
 export const statusTemplates: Record<StatusTemplateId, StatusTemplate> = {
   powerLeak: {
@@ -77,7 +66,3 @@ export const statusTemplates: Record<StatusTemplateId, StatusTemplate> = {
     historyKey: "status.antiFrenchSentiment.history",
   },
 };
-
-export function getStatusTemplate(id: StatusTemplateId): StatusTemplate {
-  return statusTemplates[id]!;
-}

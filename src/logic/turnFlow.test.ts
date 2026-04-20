@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { createInitialState } from "../app/initialState";
 import { buildLevel2StateFromDraft, createStandaloneLevel2Draft } from "../app/level2Transition";
-import type { CardInstance } from "../types/card";
-import { EMPTY_EVENT_SLOTS } from "../types/event";
+import type { CardInstance } from "../levels/types/card";
+import { EMPTY_EVENT_SLOTS } from "../levels/types/event";
 import type { GameState } from "../types/game";
 import {
   beginYear,

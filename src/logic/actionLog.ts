@@ -1,6 +1,6 @@
-import type { CardTemplateId } from "../types/card";
-import type { Effect } from "../types/effect";
-import type { EventTemplateId, SlotId } from "../types/event";
+import type { CardTemplateId } from "../levels/types/card";
+import type { Effect } from "../levels/types/effect";
+import type { EventTemplateId, SlotId } from "../levels/types/event";
 import type { ActionLogEntry, GameState, LogInfoKey } from "../types/game";
 
 export const MAX_ACTION_LOG = 150;

@@ -3,9 +3,9 @@ import { getStatusTemplate } from "../data/statusTemplates";
 import { findScriptedCalendarConfig } from "./scriptedCalendar";
 import { getResourceIcon } from "./icons";
 import type { MessageKey } from "../locales";
-import type { CardTemplate } from "../types/card";
-import type { Effect } from "../types/effect";
-import type { EventTemplate } from "../types/event";
+import type { CardTemplate } from "../levels/types/card";
+import type { Effect } from "../levels/types/effect";
+import type { EventTemplate } from "../levels/types/event";
 
 /** Compact emoji + signed numbers for one effect (no prose). */
 export function formatEffectChips(effects: readonly Effect[]): string {

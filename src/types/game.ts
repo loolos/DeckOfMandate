@@ -1,8 +1,8 @@
 import type { LevelId } from "../data/levels";
-import type { CardInstance, CardTemplateId } from "./card";
-import type { Effect } from "./effect";
-import type { EventInstance, EventTemplateId, SlotId } from "./event";
-import type { PlayerStatusInstance } from "./status";
+import type { CardInstance, CardTemplateId } from "../levels/types/card";
+import type { Effect } from "../levels/types/effect";
+import type { EventInstance, EventTemplateId, SlotId } from "../levels/types/event";
+import type { PlayerStatusInstance } from "../levels/types/status";
 
 export type LogInfoKey =
   | "firstMandateInflationActivated"

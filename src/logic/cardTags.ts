@@ -1,6 +1,6 @@
 import { getCardTemplate } from "../data/cards";
 import type { GameState } from "../types/game";
-import type { CardTag } from "../types/tags";
+import type { CardTag } from "../levels/types/tags";
 import { isInflationEnabled } from "./cardCost";
 
 function isTemplateInflationGatedInFirstMandate(templateId: string): boolean {

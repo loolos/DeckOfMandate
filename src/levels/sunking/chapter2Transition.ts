@@ -6,8 +6,8 @@ import { computeEuropeAlertPowerLoss } from "../../logic/europeAlert";
 import { calendarYearForTurn } from "../../logic/scriptedCalendar";
 import { createRngFromSeed, shuffle } from "../../logic/rng";
 import { beginYear } from "../../logic/turnFlow";
-import type { CardInstance, CardTemplateId } from "../../types/card";
-import { EMPTY_EVENT_SLOTS, EMPTY_PENDING_MAJOR_CRISIS } from "../../types/event";
+import type { CardInstance, CardTemplateId } from "../types/card";
+import { EMPTY_EVENT_SLOTS, EMPTY_PENDING_MAJOR_CRISIS } from "../types/event";
 import type { GameState, Resources } from "../../types/game";
 
 export const SUNKING_CH1_ID = "firstMandate";

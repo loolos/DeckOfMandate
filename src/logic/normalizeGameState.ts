@@ -2,7 +2,7 @@ import { getDefaultLevelId, getLevelDef, isLevelId } from "../data/levels";
 import { enforceHuguenotContainmentInvariant } from "./cardRuntime";
 import { normalizeCardUsesById } from "./cardUsage";
 import { computeEuropeAlertPowerLoss } from "./europeAlert";
-import { EMPTY_EVENT_SLOTS, EMPTY_PENDING_MAJOR_CRISIS, EVENT_SLOT_ORDER, type SlotId } from "../types/event";
+import { EMPTY_EVENT_SLOTS, EMPTY_PENDING_MAJOR_CRISIS, EVENT_SLOT_ORDER, type SlotId } from "../levels/types/event";
 import type { GameState } from "../types/game";
 
 function ensureFullSlotMaps(s: GameState): GameState {

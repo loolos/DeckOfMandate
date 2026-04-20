@@ -7,7 +7,7 @@ import { gameReducer, type GameAction } from "../app/gameReducer";
 import { createInitialState } from "../app/initialState";
 import { getChapter2StandaloneDraft } from "../data/levelBootstrap";
 import { getLevelDef, isLevelId, type LevelId } from "../data/levels";
-import { EVENT_SLOT_ORDER, type SlotId } from "../types/event";
+import { EVENT_SLOT_ORDER, type SlotId } from "../levels/types/event";
 import type { GameState } from "../types/game";
 
 /** Magic header bytes identifying a DeckOfMandate run code (binary format). */

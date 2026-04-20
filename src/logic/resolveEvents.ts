@@ -1,6 +1,6 @@
 import { getEventTemplate, isContinuedCrisis } from "../data/events";
 import { getLevelContent } from "../data/levelContent";
-import { EVENT_SLOT_ORDER, type SlotId } from "../types/event";
+import { EVENT_SLOT_ORDER, type SlotId } from "../levels/types/event";
 import type { GameState } from "../types/game";
 import { appendActionLog } from "./actionLog";
 import { applyEffects, enforceLegitimacy } from "./applyEffects";
