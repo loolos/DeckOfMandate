@@ -286,6 +286,10 @@ export const messagesEnCore = {
     "[Turn {turn}] On draw, Anti-French Containment triggered: Power -1.",
   "log.info.cardDraw.antiFrenchContainmentLegitimacyLoss":
     "[Turn {turn}] On draw, Anti-French Containment triggered: Legitimacy -1.",
+  "log.info.nantesPolicy.toleranceNoFontainebleau":
+    "[Turn {turn}] You chose Religious Tolerance: the crown does not issue a Fontainebleau-style full revocation decree this year. Immediate pressure eases, but confessional disputes will keep resurfacing.",
+  "log.info.nantesPolicy.crackdownFontainebleauIssued":
+    "[Turn {turn}] You chose Harsh Crackdown: policy shifts toward a Fontainebleau-style decree, withdrawing Protestant protections and intensifying forced conversion pressure. Compliance rises short-term, but long-run governance costs increase.",
   "log.info.eventTag.harmful":
     "[Turn {turn}] Tag note “Harmful”: if unresolved at year end, this event applies penalties.",
   "log.info.eventTag.opportunity":

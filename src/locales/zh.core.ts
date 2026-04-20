@@ -264,6 +264,10 @@ export const messagesZhCore = {
     "[第 {turn} 年] 抓到「反法遏制」并触发：权力 -1。",
   "log.info.cardDraw.antiFrenchContainmentLegitimacyLoss":
     "[第 {turn} 年] 抓到「反法遏制」并触发：合法性 -1。",
+  "log.info.nantesPolicy.toleranceNoFontainebleau":
+    "[第 {turn} 年] 你选择了宗教宽容路线：宫廷暂不颁布 1685 年《枫丹白露敕令》式的全面撤保政策，地方紧张有所缓和，但宗派争议将长期回潮。",
+  "log.info.nantesPolicy.crackdownFontainebleauIssued":
+    "[第 {turn} 年] 你选择了严厉镇压路线：王权转向《枫丹白露敕令》式政策，撤销新教群体既有保障并强化驱逐与改宗压力，短期服从上升但长期治理成本加重。",
   "log.info.eventTag.harmful": "[第 {turn} 年] 标签说明「有害」：若年末仍未解决，会触发惩罚。",
   "log.info.eventTag.opportunity": "[第 {turn} 年] 标签说明「机遇」：属于可投资机会，不处理通常不会受到惩罚。",
   "log.info.eventTag.historical":

@@ -21,6 +21,8 @@ export type LogInfoKey =
   | "cardDraw.fiscalBurdenTriggered"
   | "cardDraw.antiFrenchContainmentPowerLoss"
   | "cardDraw.antiFrenchContainmentLegitimacyLoss"
+  | "nantesPolicy.toleranceNoFontainebleau"
+  | "nantesPolicy.crackdownFontainebleauIssued"
   | "eventTag.harmful"
   | "eventTag.opportunity"
   | "eventTag.historical"

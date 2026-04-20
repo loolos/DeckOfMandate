@@ -41,7 +41,7 @@ export const messagesEnSecondMandate = {
   "event.nymwegenSettlement.name": "Treaties of Nijmegen",
   "event.nymwegenSettlement.desc":
     "A mandatory long-running crisis: pay (Europe Alert progress + 3) Funding to secure the settlement (Power -2, Treasury -1, Legitimacy -1). This does not remove Europe Alert; if ignored, lose 1 Power each year.",
-  "event.revocationNantes.name": "Revocation of the Edict of Nantes",
+  "event.revocationNantes.name": "Policy on the Edict of Nantes",
   "event.revocationNantes.desc":
     "In 1598, Henry IV issued the Edict of Nantes to end the French Wars of Religion: Catholicism remained the state faith, while French Protestants (Huguenots) received limited worship rights, civil protections, and security guarantees. The crown now revokes it. This is a Continued event: if ignored, you draw 2 fewer cards each turn and it stays on the board. Resolve by choosing one policy: Religious Tolerance (immediate Legitimacy -1; gain permanent Religious Tolerance, which rolls three confessional crises each turn—Jansenist controversy, Arminian polemic, and Huguenot underground agitation—each at 15%), or Harsh Crackdown (no immediate numeric change; gain Contain Huguenot Remnants 3 and add 3 temporary “Suppress the Huguenots” cards to deck, cost 3 each; each play reduces remnants by 1; at 0, remove the status and purge those cards from hand/deck/discard). While that containment status exists, Chapter 2 victory is blocked.",
   "event.leagueOfAugsburg.name": "League of Augsburg Forms",

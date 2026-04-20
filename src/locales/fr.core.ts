@@ -243,6 +243,10 @@ export const messagesFrCore: Record<keyof typeof messagesEnCore, string> = {
     "[Tour {turn}] Prélèvement royal atteint 0/3 et est retiré du cycle ; les canaux d'extraction d'urgence s'épuisent (Trésor -1).",
   "log.info.cardUse.depleted.diplomaticIntervention":
     "[Tour {turn}] Intervention diplomatique atteint 0/3 et est retirée du cycle (sans pénalité).",
+  "log.info.nantesPolicy.toleranceNoFontainebleau":
+    "[Tour {turn}] Vous choisissez la tolérance religieuse : la couronne n'édicte pas, cette année, une révocation générale de type Fontainebleau. La tension immédiate baisse, mais les conflits confessionnels reviendront.",
+  "log.info.nantesPolicy.crackdownFontainebleauIssued":
+    "[Tour {turn}] Vous choisissez la répression sévère : la monarchie bascule vers une ligne de type édit de Fontainebleau, retire des protections aux protestants et durcit les conversions forcées. L'obéissance progresse à court terme, mais le coût politique augmente.",
   "log.info.eventTag.historical":
     "[Tour {turn}] Note de tag « Historique » : cet événement renvoie à un fait historique réel et ce tag n'ajoute aucun effet de jeu.",
   "log.info.cardTag.extra":
