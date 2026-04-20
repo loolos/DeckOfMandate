@@ -25,7 +25,7 @@ import {
 import { antiFrenchSentimentActive } from "./antiFrenchSentiment";
 import { applyScriptedCalendarPhase, rollAntiFrenchLeagueDrawAdjustment } from "./scriptedCalendar";
 import { rngNext, shuffle } from "./rng";
-import { applyEffects } from "./applyEffects";
+import { applyEffects, enforceLegitimacy } from "./applyEffects";
 import { addCardsToDeck } from "./cardRuntime";
 
 const HUGUENOT_RESURGENCE_INTERVAL = 2;
@@ -486,6 +486,8 @@ export function beginYear(state: GameState): GameState {
   }
   s = { ...s, antiFrenchLeague: league };
   s = applyBeginYearResourceStatusEffects(s);
+  s = enforceLegitimacy(s);
+  if (s.outcome !== "playing") return s;
   s = maybeAdjustEuropeAlertProgressAtYearStart(s);
   const localWarIncomePenalty = hasUnresolvedLocalWar(s) ? 2 : 0;
   const fundingIncome = Math.max(0, s.resources.treasuryStat - localWarIncomePenalty);
@@ -538,9 +540,12 @@ export function beginYear(state: GameState): GameState {
   }
   for (const cardId of drawn.drawnCardIds) {
     s = applyOnDrawCardEffects(s, cardId);
+    s = enforceLegitimacy(s);
+    if (s.outcome !== "playing") return s;
   }
   s = { ...s, playerStatuses: tickPlayerStatusesAfterDraw(s.playerStatuses) };
   s = runEventPhase(s);
+  if (s.outcome !== "playing") return s;
   return { ...s, phase: "action" };
 }
 

@@ -15,7 +15,7 @@ export const messagesEnFirstMandate = {
     "Royal authority collapses under debt, disorder, and resistance. Provinces ignore Paris, nobles revive private power, and officials delay or refuse the king’s commands. Tax revenues shrink as unrest spreads through towns and countryside alike. Rumors of weakness invite foreign intrigue and domestic conspiracies. The dream of centralized monarchy breaks apart before it is complete, and France returns to a divided realm where the crown is feared less each passing year.",
   "event.warOfDevolution.name": "War of Devolution",
   "event.warOfDevolution.desc":
-    "Louis presses claims on the Spanish Netherlands and Franche-Comté. You may launch the campaign (costs and rewards below). Success alarms neighbors: after an attack, the Triple Alliance may coordinate—each year there is a chance to draw one fewer card (never below 1). The issue stays on the board through 1669 unless you attack.",
+    "In 1667, Louis XIV advanced a dynastic “devolution” claim through Queen Maria Theresa against Spanish possessions in the Low Countries and Franche-Comté. French forces moved quickly with strong siegecraft and logistics, and the war ended in 1668 with the Treaty of Aix-la-Chapelle: France kept several fortified towns, but the shock of that success helped drive England, the Dutch Republic, and Sweden into the Triple Alliance to contain further Bourbon expansion. Mechanically, launching the campaign can deliver short-term gains but raises later coalition pressure; if you hold back, the issue continues to occupy a slot until 1669.",
   "status.antiFrenchLeague.name": "Anti-French coalition",
   "status.antiFrenchLeague.hint": "Each year: {pct}% chance of −1 draw (min 1).",
   "status.antiFrenchLeague.history":
