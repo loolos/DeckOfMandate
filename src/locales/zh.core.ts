@@ -165,12 +165,20 @@ export const messagesZhCore = {
   "status.grainReliefLegitimacyBoost.name": "赈济信任",
   "status.grainReliefLegitimacyBoost.history": "及时赈济能在短时间修复民众对政权的信任。",
   "status.religiousTolerance.name": "宗教宽容（永久）",
-  "status.religiousTolerance.history": "宽容路线缓和了统治强度，但宗派摩擦会周期性回潮。",
+  "status.religiousTolerance.history":
+    "17 世纪后半叶法国在撤销《南特敕令》后，国家试图在宗教统一与社会稳定之间寻找新平衡：对新教社群的压制、对天主教内部神学分歧的管控，以及王权合法性的维护彼此纠缠。你选择宽容，能暂缓全面对抗，却会让不同宗派在司法、教区与地方秩序层面反复制造政治摩擦。",
   "status.huguenotContainment.name": "遏制胡格诺-剩余势力",
   "status.huguenotContainment.history": "强力镇压依赖连续清剿行动与高压维稳成本。",
   "status.huguenotContainment.hint": "该状态存在时，第二关无法胜利。",
-  "event.religiousTension.name": "宗教矛盾",
-  "event.religiousTension.desc": "宗教社群冲突再起。支付 2 经费平息，否则合法性 -1。",
+  "event.jansenistTension.name": "詹森派争议",
+  "event.jansenistTension.desc":
+    "詹森主义围绕“恩典与救赎”的神学立场长期冲击法国教会与王权关系；波尔-罗亚尔网络的余波再起，主教区与法院出现对立。支付 2 经费进行教区巡察与舆论安抚，否则合法性 -1。",
+  "event.arminianTension.name": "阿米尼乌斯派争论",
+  "event.arminianTension.desc":
+    "阿米尼乌斯派关于自由意志与预定论的争论，经由讲坛、学院与印刷传播扩大，削弱了王室推动统一教义的效率。支付 3 经费整合神学院与审查体系，否则权力 -1。",
+  "event.huguenotTension.name": "胡格诺地下网络骚动",
+  "event.huguenotTension.desc":
+    "撤销《南特敕令》后被迫地下化的胡格诺社群在边境与港市重建互助网络，地方警备与税务执行受到牵制。支付 2 经费加固治安与赈济，否则合法性 -1 且权力 -1。",
   "card.tag.royal": "王室",
   "card.tag.temp": "临时",
   "card.tag.extra": "额外",
@@ -256,6 +264,10 @@ export const messagesZhCore = {
     "[第 {turn} 年] 抓到「反法遏制」并触发：权力 -1。",
   "log.info.cardDraw.antiFrenchContainmentLegitimacyLoss":
     "[第 {turn} 年] 抓到「反法遏制」并触发：合法性 -1。",
+  "log.info.nantesPolicy.toleranceNoFontainebleau":
+    "[第 {turn} 年] 你选择了宗教宽容路线：宫廷暂不颁布 1685 年《枫丹白露敕令》式的全面撤保政策，地方紧张有所缓和，但宗派争议将长期回潮。",
+  "log.info.nantesPolicy.crackdownFontainebleauIssued":
+    "[第 {turn} 年] 你选择了严厉镇压路线：王权转向《枫丹白露敕令》式政策，撤销新教群体既有保障并强化驱逐与改宗压力，短期服从上升但长期治理成本加重。",
   "log.info.eventTag.harmful": "[第 {turn} 年] 标签说明「有害」：若年末仍未解决，会触发惩罚。",
   "log.info.eventTag.opportunity": "[第 {turn} 年] 标签说明「机遇」：属于可投资机会，不处理通常不会受到惩罚。",
   "log.info.eventTag.historical":

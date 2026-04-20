@@ -622,6 +622,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       let s: GameState = applyEffects(state, [{ kind: "modResource", resource: "legitimacy", delta: -1 }]);
       s = addUniqueStatus(s, "religiousTolerance");
       s = markSlotResolved(s, action.slot);
+      s = appendActionLog(s, { kind: "info", infoKey: "nantesPolicy.toleranceNoFontainebleau" });
       s = enforceLegitimacy(s);
       return appendInflationActivationLogIfNeeded(state, s);
     }
@@ -633,6 +634,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       s = setStatusTurns(s, "huguenotContainment", 3);
       s = applyEffects(s, [{ kind: "addCardsToDeck", templateId: "suppressHuguenots", count: 3 }]);
       s = markSlotResolved(s, action.slot);
+      s = appendActionLog(s, { kind: "info", infoKey: "nantesPolicy.crackdownFontainebleauIssued" });
       return s;
     }
     case "PICK_LOCAL_WAR_ATTACK": {

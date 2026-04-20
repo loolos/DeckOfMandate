@@ -1081,6 +1081,9 @@ describe("gameReducer", () => {
     expect(after.resources.legitimacy).toBe(4);
     expect(after.slots.A?.resolved).toBe(true);
     expect(after.playerStatuses.some((s) => s.templateId === "religiousTolerance")).toBe(true);
+    expect(
+      after.actionLog.some((entry) => entry.kind === "info" && entry.infoKey === "nantesPolicy.toleranceNoFontainebleau"),
+    ).toBe(true);
   });
 
   it("revocation nantes crackdown branch adds containment status and three suppress cards", () => {
@@ -1097,6 +1100,11 @@ describe("gameReducer", () => {
     expect(containment?.turnsRemaining).toBe(3);
     const suppressCount = Object.values(after.cardsById).filter((c) => c.templateId === "suppressHuguenots").length;
     expect(suppressCount).toBe(3);
+    expect(
+      after.actionLog.some(
+        (entry) => entry.kind === "info" && entry.infoKey === "nantesPolicy.crackdownFontainebleauIssued",
+      ),
+    ).toBe(true);
   });
 
   it("playing suppress huguenots decrements containment and purges all suppress cards at zero", () => {

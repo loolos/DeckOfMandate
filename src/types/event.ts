@@ -31,7 +31,9 @@ export type EventTemplateId =
   | "grainReliefCrisis"
   | "expansionRemembered"
   | "cautiousCrown"
-  | "religiousTension"
+  | "jansenistTension"
+  | "arminianTension"
+  | "huguenotTension"
   | "localWar";
 
 export type EventSolve =

@@ -32,7 +32,12 @@ const EUROPE_ALERT_SUPPLEMENTAL_POOL = [
   "mercenaryRaiders",
   "localWar",
 ] as const;
-const RELIGIOUS_TENSION_TRIGGER_PROBABILITY = 0.3;
+const RELIGIOUS_TENSION_BRANCH_PROBABILITY = 0.15;
+const RELIGIOUS_TENSION_EVENTS: readonly EventInstance["templateId"][] = [
+  "jansenistTension",
+  "arminianTension",
+  "huguenotTension",
+];
 const PROCEDURAL_SEQUENCE_LOW_WATERMARK = 3;
 const SECOND_MANDATE_EARLIEST_VICTORY_YEAR = 1696;
 const FIRST_MANDATE_OPENING_EVENTS: readonly EventInstance["templateId"][] = [
@@ -525,17 +530,28 @@ export function evaluateTimeDefeat(state: GameState): GameState {
 }
 export function maybeAddReligiousTensionEvent(state: GameState): GameState {
   if (!state.playerStatuses.some((s) => s.templateId === "religiousTolerance")) return state;
-  const alreadyOnBoard = EVENT_SLOT_ORDER.some((slot) => state.slots[slot]?.templateId === "religiousTension");
+  const alreadyOnBoard = EVENT_SLOT_ORDER.some((slot) => {
+    const templateId = state.slots[slot]?.templateId;
+    return templateId != null && RELIGIOUS_TENSION_EVENTS.includes(templateId);
+  });
   if (alreadyOnBoard) return state;
   const target = EVENT_SLOT_ORDER.find((slot) => !state.slots[slot]);
   if (!target) return state;
   let s = state;
   const [rngRoll, uRoll] = rngNext(s.rng);
   s = { ...s, rng: rngRoll };
-  if (uRoll >= RELIGIOUS_TENSION_TRIGGER_PROBABILITY) return s;
+  let templateId: EventInstance["templateId"] | null = null;
+  if (uRoll < RELIGIOUS_TENSION_BRANCH_PROBABILITY) {
+    templateId = "jansenistTension";
+  } else if (uRoll < RELIGIOUS_TENSION_BRANCH_PROBABILITY * 2) {
+    templateId = "arminianTension";
+  } else if (uRoll < RELIGIOUS_TENSION_BRANCH_PROBABILITY * 3) {
+    templateId = "huguenotTension";
+  }
+  if (!templateId) return s;
   const instance: EventInstance = {
     instanceId: `evt_${s.nextIds.event}`,
-    templateId: "religiousTension",
+    templateId,
     resolved: false,
   };
   return {

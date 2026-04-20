@@ -192,13 +192,15 @@ describe("secondMandate balance data", () => {
     ]);
   });
 
-  it("uses chapter-2 revocation branch mechanics and religious tension event", () => {
+  it("uses chapter-2 revocation branch mechanics and split religious tension events", () => {
     expect(getEventTemplate("revocationNantes").solve).toEqual({ kind: "nantesPolicyChoice" });
     expect(getEventTemplate("revocationNantes").crisisPersistence).toBe("continued");
     expect(getEventTemplate("revocationNantes").penaltiesIfUnresolved).toEqual([
       { kind: "scheduleNextTurnDrawModifier", delta: -2 },
     ]);
-    expect(getEventTemplate("religiousTension").solve).toEqual({ kind: "funding", amount: 2 });
+    expect(getEventTemplate("jansenistTension").solve).toEqual({ kind: "funding", amount: 2 });
+    expect(getEventTemplate("arminianTension").solve).toEqual({ kind: "funding", amount: 3 });
+    expect(getEventTemplate("huguenotTension").solve).toEqual({ kind: "funding", amount: 2 });
     expect(getCardTemplate("suppressHuguenots").cost).toBe(3);
   });
 });
