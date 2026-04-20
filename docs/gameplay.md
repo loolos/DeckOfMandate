@@ -107,7 +107,7 @@ Turn 1 first block is prefixed with:
 When all slots are empty, event count depends on `treasuryStat + power + legitimacy` with weighted bands.
 
 - **Chapter 1 turn 1** is forced to 2 events with the fixed prefix `tradeOpportunity` + `administrativeDelay`.
-- **Chapter 2 standalone start** (turn 1, when launched directly from the menu rather than continuity from Chapter 1) raises the all-empty floor to `max(3, baseCount)`, places `versaillesExpenditure` in slot A and `taxResistance` in slot B, and skips the regular procedural fill that turn.
+- **Chapter 2 standalone start** (turn 1, when launched directly from the menu rather than continuity from Chapter 1) force-places exactly two opening events — `versaillesExpenditure` in slot A and `taxResistance` in slot B — and skips the regular procedural fill that turn.
 
 ### Extra injections
 
