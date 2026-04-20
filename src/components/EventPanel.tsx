@@ -156,7 +156,6 @@ export function EventPanel({
                     </button>
                   ) : null}
                 </div>
-                <div className={styles.eventBody}>{descWithHandledMark}</div>
                 <OutcomeQuickFrame rows={quickRows} />
                 <div className={styles.actions} onClick={(e) => e.stopPropagation()}>
                   {!ev.resolved && solveKind === "scriptedAttack" && amount !== null ? (
@@ -244,6 +243,7 @@ export function EventPanel({
                     </button>
                   ) : null}
                 </div>
+                <div className={styles.eventBody}>{descWithHandledMark}</div>
               </>
             ) : null}
           </div>

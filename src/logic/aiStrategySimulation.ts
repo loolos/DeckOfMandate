@@ -265,9 +265,26 @@ function strategyISolvePriority(state: GameState, slot: SlotId, amount: number):
   return -8_000 + amount;
 }
 
+/**
+ * Funding kept in reserve when `huguenotContainment` is active and the AI
+ * holds at least one `suppressHuguenots` card. This prevents the solve-first
+ * loop from draining funding to 0 before the dead card can ever be played,
+ * which would otherwise let containment stacks pile up indefinitely.
+ *
+ * Solves can still consume reserved funding for *critical* (very-high
+ * priority) targets via `strategyISolvePriority` — the reserve is only
+ * enforced for ordinary harmful/funding solves where we'd rather chip away
+ * at the suppress stack than handle one more low/mid-tier event this turn.
+ */
+const HUGUENOT_SUPPRESS_FUNDING_RESERVE = 3;
+const HUGUENOT_SUPPRESS_RESERVE_OVERRIDE_PRIORITY = -25_000;
+
 function pickFundSolveActionsStrategyI(state: GameState): GameAction[] {
   const hasUnresolvedHarmful = hasUnresolvedHarmfulEvents(state);
   const hasJansenistOnBoard = !!firstUnresolvedSlotByTemplate(state, "jansenistTension");
+  const hasContainment = state.playerStatuses.some((s) => s.templateId === "huguenotContainment");
+  const hasSuppressInHand = state.hand.some((id) => state.cardsById[id]?.templateId === "suppressHuguenots");
+  const reserveBuffer = hasContainment && hasSuppressInHand ? HUGUENOT_SUPPRESS_FUNDING_RESERVE : 0;
   const candidates: Array<{ slot: SlotId; amount: number; priority: number }> = [];
   for (const slot of EVENT_SLOT_ORDER) {
     const ev = state.slots[slot];
@@ -282,10 +299,20 @@ function pickFundSolveActionsStrategyI(state: GameState): GameAction[] {
     const amount = getEventSolveFundingAmount(state, ev.templateId);
     if (amount === null) continue;
     if (state.resources.funding < amount) continue;
+    const priority = strategyISolvePriority(state, slot, amount);
+    // Funding-reserve guard for the suppressHuguenots play loop.
+    // Critical-priority solves (e.g. Ryswick) bypass the reserve.
+    if (
+      reserveBuffer > 0 &&
+      priority > HUGUENOT_SUPPRESS_RESERVE_OVERRIDE_PRIORITY &&
+      state.resources.funding - amount < reserveBuffer
+    ) {
+      continue;
+    }
     candidates.push({
       slot,
       amount,
-      priority: strategyISolvePriority(state, slot, amount),
+      priority,
     });
   }
   candidates.sort((a, b) => {
@@ -481,6 +508,50 @@ function pickRetentionIdsForStrategyI(state: GameState): readonly string[] {
   return ranked.slice(0, capacity);
 }
 
+/**
+ * Returns up to one "essential" card play that should happen *before* the
+ * solveActions phase consumes funding. Designed to break the feedback loop
+ * where `huguenotContainment` causes suppressHuguenots cards to pile up but
+ * are never played, because solves drain funding to 0 every turn.
+ *
+ * Logic when `huguenotContainment` is active and a `suppressHuguenots` is in
+ * the hand:
+ *   1. If funding ≥ 3 → play the first suppressHuguenots in hand.
+ *   2. Otherwise, if a free `funding` card is in hand → play it to build up
+ *      funding so the suppress can be played in a later iteration.
+ * Returns [] in all other cases.
+ */
+function pickEssentialPreSolveActionsStrategyI(state: GameState): GameAction[] {
+  const hasContainment = state.playerStatuses.some((s) => s.templateId === "huguenotContainment");
+  if (!hasContainment) return [];
+  let suppressHandIndex = -1;
+  let fundingHandIndex = -1;
+  for (let i = 0; i < state.hand.length; i++) {
+    const id = state.hand[i];
+    if (!id) continue;
+    const inst = state.cardsById[id];
+    if (!inst) continue;
+    if (suppressHandIndex < 0 && inst.templateId === "suppressHuguenots") {
+      suppressHandIndex = i;
+    } else if (fundingHandIndex < 0 && inst.templateId === "funding") {
+      fundingHandIndex = i;
+    }
+    if (suppressHandIndex >= 0 && fundingHandIndex >= 0) break;
+  }
+  if (suppressHandIndex < 0) return [];
+  if (state.resources.funding >= HUGUENOT_SUPPRESS_FUNDING_RESERVE) {
+    const suppressId = state.hand[suppressHandIndex];
+    if (!suppressId) return [];
+    const cost = getPlayableCardCost(state, suppressId);
+    if (state.resources.funding < cost) return [];
+    return [{ type: "PLAY_CARD", handIndex: suppressHandIndex }];
+  }
+  if (fundingHandIndex >= 0) {
+    return [{ type: "PLAY_CARD", handIndex: fundingHandIndex }];
+  }
+  return [];
+}
+
 function pickSpecialChoiceActionsStrategyI(
   state: GameState,
   options: StrategyOptions = {},
@@ -534,6 +605,8 @@ function chooseActions(
   if (policy === "a-strategy-i") {
     const special = pickSpecialChoiceActionsStrategyI(state, options);
     if (special.length > 0) return special;
+    const essential = pickEssentialPreSolveActionsStrategyI(state);
+    if (essential.length > 0) return essential;
   }
   const solveActions = policy === "legacy" ? pickFundSolveActionsLegacy(state) : pickFundSolveActionsStrategyI(state);
   const scriptedAttackActions =
