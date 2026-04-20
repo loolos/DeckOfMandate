@@ -127,6 +127,10 @@ function shouldForceSecondMandateStandaloneOpening(state: GameState): boolean {
   return isSecondMandateStandaloneStart(state);
 }
 
+function isSecondMandateStandaloneOpeningTurn(state: GameState): boolean {
+  return shouldForceSecondMandateStandaloneOpening(state);
+}
+
 function forceSecondMandateStandaloneOpening(state: GameState): GameState {
   if (!shouldForceSecondMandateStandaloneOpening(state)) return state;
   const [first, second] = SECOND_MANDATE_STANDALONE_OPENING_EVENTS;
@@ -285,6 +289,7 @@ function syncAntiFrenchSentimentStatus(state: GameState): GameState {
 }
 
 function fillEmptySlots(state: GameState): GameState {
+  if (isSecondMandateStandaloneOpeningTurn(state)) return state;
   let st = state;
   if (allSlotsEmpty(st)) {
     const [rng, u] = rngNext(st.rng);
@@ -323,6 +328,7 @@ function runEventPhase(state: GameState): GameState {
 }
 
 export function maybeAddEuropeAlertSupplementalEvent(state: GameState): GameState {
+  if (isSecondMandateStandaloneOpeningTurn(state)) return state;
   if (!state.europeAlert || state.levelId !== "secondMandate") return state;
   let s = state;
   const [rngPrimary, uPrimary] = rngNext(s.rng);
