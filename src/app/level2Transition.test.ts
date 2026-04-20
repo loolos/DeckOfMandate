@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { getLevelDef } from "../data/levels";
 import { createInitialState } from "./initialState";
 import {
   LEVEL2_CONTINUITY_MAX_REMOVALS,
@@ -19,9 +20,7 @@ describe("level2Transition", () => {
     expect(draft.calendarStartYear).toBe(1676);
     expect(draft.warOfDevolutionAttacked).toBe(true);
     expect(draft.europeAlert).toBe(true);
-    expect(draft.resources.treasuryStat).toBe(7);
-    expect(draft.resources.power).toBe(7);
-    expect(draft.resources.legitimacy).toBe(5);
+    expect(draft.resources).toEqual(getLevelDef("secondMandate").standaloneStartingResources);
     expect(draft.carryoverCards.length).toBe(13);
     expect(draft.carryoverCards.some((card) => card.templateId === "development")).toBe(true);
     const standaloneReform = draft.carryoverCards.find((card) => card.templateId === "reform");
@@ -87,11 +86,12 @@ describe("level2Transition", () => {
     const draft = createStandaloneLevel2Draft(321);
     draft.removedCarryoverIds = [draft.carryoverCards[0]!.instanceId];
     const st = buildLevel2StateFromDraft(draft);
+    const standaloneResources = getLevelDef("secondMandate").standaloneStartingResources;
     expect(st.levelId).toBe("secondMandate");
     expect(st.calendarStartYear).toBe(1676);
-    expect(st.resources.treasuryStat).toBe(7);
-    expect(st.resources.power).toBe(7);
-    expect(st.resources.legitimacy).toBe(5);
+    expect(st.resources.treasuryStat).toBe(standaloneResources.treasuryStat);
+    expect(st.resources.power).toBe(standaloneResources.power);
+    expect(st.resources.legitimacy).toBe(standaloneResources.legitimacy);
     expect(st.europeAlertPowerLoss).toBe(0);
     const allTemplateIds = Object.values(st.cardsById).map((c) => c.templateId);
     expect(allTemplateIds.includes("development")).toBe(true);

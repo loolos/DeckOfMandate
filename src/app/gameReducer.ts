@@ -19,6 +19,7 @@ import type { SlotId } from "../types/event";
 import type { GameState } from "../types/game";
 import type { LogInfoKey } from "../types/game";
 import { createInitialState } from "./initialState";
+import { buildLevel2StateFromDraft, createStandaloneLevel2Draft } from "./level2Transition";
 
 export type GameAction =
   | { type: "NEW_GAME"; seed?: number; levelId?: LevelId }
@@ -512,8 +513,13 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
   switch (action.type) {
     case "HYDRATE":
       return normalizeGameState(action.state);
-    case "NEW_GAME":
-      return createInitialState(action.seed, action.levelId ?? state.levelId);
+    case "NEW_GAME": {
+      const nextLevelId = action.levelId ?? state.levelId;
+      if (nextLevelId === "secondMandate") {
+        return buildLevel2StateFromDraft(createStandaloneLevel2Draft(action.seed));
+      }
+      return createInitialState(action.seed, nextLevelId);
+    }
     case "APPEND_LOG_INFO":
       return appendActionLog(state, { kind: "info", infoKey: action.infoKey });
     case "PLAY_CARD": {

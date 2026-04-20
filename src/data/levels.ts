@@ -25,6 +25,12 @@ const firstMandate = {
     power: 2,
     legitimacy: 2,
   },
+  standaloneStartingResources: {
+    treasuryStat: 2,
+    funding: 0,
+    power: 2,
+    legitimacy: 2,
+  },
   winTargets: {
     treasuryStat: 6,
     power: 6,
@@ -50,6 +56,12 @@ const secondMandate = {
     funding: 0,
     power: 3,
     legitimacy: 3,
+  },
+  standaloneStartingResources: {
+    treasuryStat: 7,
+    funding: 0,
+    power: 7,
+    legitimacy: 5,
   },
   winTargets: {
     treasuryStat: 10,
