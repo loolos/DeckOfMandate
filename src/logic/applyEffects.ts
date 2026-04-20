@@ -4,7 +4,7 @@ import type { Effect } from "../levels/types/effect";
 import type { GameState } from "../types/game";
 import type { PlayerStatusInstance } from "../levels/types/status";
 import { appendActionLog } from "./actionLog";
-import { addCardsToDeck, applyOnDrawCardEffects } from "./cardRuntime";
+import { addGeneratedCards, applyOnDrawCardEffects } from "./cardRuntime";
 import { applyInflationFromDeckRefill } from "./cardCost";
 import { drawUpToPower } from "./draw";
 
@@ -81,7 +81,7 @@ export function applyEffect(state: GameState, e: Effect): GameState {
       };
     }
     case "addCardsToDeck":
-      return addCardsToDeck(state, e.templateId, e.count);
+      return addGeneratedCards(state, e.templateId, e.count, e.placement ?? "deckRandom");
     default: {
       const _exhaustive: never = e;
       return _exhaustive;
