@@ -18,6 +18,7 @@ export type LogInfoKey =
   | "cardTag.inflation"
   | "cardTag.defiance"
   | "cardTag.consume"
+  | "cardTag.successionContest"
   | "cardUse.remainingUses"
   | "cardUse.depleted.crackdownPenalty"
   | "cardUse.depleted.fundingPenalty"

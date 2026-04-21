@@ -261,6 +261,8 @@ export const messagesEnCore = {
     "[Turn {turn}] Tag note “Defiance”: while a Reservation of Conscience card sits immediately to the right in your hand, this card gains Defiance and cannot be played.",
   "log.info.cardTag.consume":
     "[Turn {turn}] Tag note “Consume”: when played, this card is removed from your library and does not go to discard or reshuffle back into your deck.",
+  "log.info.cardTag.successionContest":
+    "[Turn {turn}] Tag note “Succession Contest”: this card belongs to the War of the Spanish Succession struggle. The tag has no direct gameplay effect and serves as historical context for Bourbon-Habsburg competition over dynastic legitimacy, diplomacy, and theater-wide war finance.",
   "log.info.cardTag.opponent":
     "[Turn {turn}] Tag note “Opponent”: this card is used only by the Habsburg opponent phase, not from your hand.",
   "log.info.cardUse.remainingUses": "[Turn {turn}] Tag note “Remaining”: this card currently has X/Y uses left; each play spends one, and it leaves circulation at 0.",

@@ -12,7 +12,7 @@ export const sunkingCoreGameContentEn = {
   "card.fiscalBurden.background":
     "Debt obligations and emergency liabilities now crowd the books and constrain every cycle.",
   "card.fiscalBurden.desc":
-    "When drawn, lose 1 Funding. You may pay 2 Funding to purge it (removed, not discarded).",
+    "When drawn, lose 1 Funding. You may pay floor(Treasury/5)+1 Funding to purge it (removed, not discarded).",
   "card.antiFrenchContainment.name": "Anti-French Containment",
   "card.antiFrenchContainment.background":
     "European courts coordinate tariffs, credit pressure, and maritime checks to narrow French options.",
@@ -108,5 +108,6 @@ export const sunkingCoreGameContentEn = {
   "card.tag.inflation": "Inflation",
   "card.tag.defiance": "Defiance",
   "card.tag.consume": "Consume",
+  "card.tag.successionContest": "Succession Contest",
   "card.tag.remainingUses": "Remaining {remaining}/{total}",
 } as const;

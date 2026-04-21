@@ -7,6 +7,7 @@ const EXTRA_CONSUME: readonly CardTag[] = ["extra", "consume"];
 const INFLATION: readonly CardTag[] = ["inflation"];
 const CONSUME: readonly CardTag[] = ["consume"];
 const OPPONENT: readonly CardTag[] = ["opponent"];
+const SUCCESSION_CONTEST: readonly CardTag[] = ["successionContest"];
 
 export const cardTemplates: Record<CardTemplateId, CardTemplate> = {
   funding: {
@@ -156,7 +157,7 @@ export const cardTemplates: Record<CardTemplateId, CardTemplate> = {
   bourbonMarriageProclamation: {
     id: "bourbonMarriageProclamation",
     cost: 3,
-    tags: [],
+    tags: SUCCESSION_CONTEST,
     titleKey: "card.bourbonMarriageProclamation.name",
     backgroundKey: "card.bourbonMarriageProclamation.background",
     descriptionKey: "card.bourbonMarriageProclamation.desc",
@@ -168,7 +169,7 @@ export const cardTemplates: Record<CardTemplateId, CardTemplate> = {
   grandAllianceInfiltrationDiplomacy: {
     id: "grandAllianceInfiltrationDiplomacy",
     cost: 3,
-    tags: [],
+    tags: SUCCESSION_CONTEST,
     titleKey: "card.grandAllianceInfiltrationDiplomacy.name",
     backgroundKey: "card.grandAllianceInfiltrationDiplomacy.background",
     descriptionKey: "card.grandAllianceInfiltrationDiplomacy.desc",
@@ -180,7 +181,7 @@ export const cardTemplates: Record<CardTemplateId, CardTemplate> = {
   italianTheaterTroopRedeploy: {
     id: "italianTheaterTroopRedeploy",
     cost: 3,
-    tags: [],
+    tags: SUCCESSION_CONTEST,
     titleKey: "card.italianTheaterTroopRedeploy.name",
     backgroundKey: "card.italianTheaterTroopRedeploy.background",
     descriptionKey: "card.italianTheaterTroopRedeploy.desc",

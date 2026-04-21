@@ -8,7 +8,8 @@ export const sunkingCoreGameContentZh = {
   "card.crackdown.desc": "解决一个有害事件。若「剩余」用尽：权力 -1。",
   "card.fiscalBurden.name": "财政负担",
   "card.fiscalBurden.background": "债务与紧急开支挤入账册，持续拖慢每个回合的财政回旋。",
-  "card.fiscalBurden.desc": "抽到时经费 -1。可支付 2 经费打出并消除（不会进入弃牌堆）。",
+  "card.fiscalBurden.desc":
+    "抽到时经费 -1。可支付 floor(财政/5)+1 经费打出并消除（不会进入弃牌堆）。",
   "card.antiFrenchContainment.name": "反法遏制",
   "card.antiFrenchContainment.background":
     "欧洲宫廷以关税、信用与海上执法协同掣肘法国，任何对抗都要先吞下政治代价。",
@@ -91,5 +92,6 @@ export const sunkingCoreGameContentZh = {
   "card.tag.inflation": "通胀",
   "card.tag.defiance": "抗命",
   "card.tag.consume": "消耗",
+  "card.tag.successionContest": "继承争夺",
   "card.tag.remainingUses": "剩余{remaining}/{total}",
 } as const;
