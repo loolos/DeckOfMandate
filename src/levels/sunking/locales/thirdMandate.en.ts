@@ -26,7 +26,7 @@ export const messagesEnThirdMandate = {
   "event.bavarianCourtRealignment.desc": "Pay 2 Funding: succession track +1. If ignored: succession track −1.",
   "event.portugueseTariffNegotiation.name": "Portuguese tariff negotiation",
   "event.portugueseTariffNegotiation.desc":
-    "Context: during the War of the Spanish Succession, Portugal realigned with the maritime coalition; the 1703 Methuen Treaty traded favorable wine duties in Portugal for English cloth access, folding Lisbon’s revenue politics into the Grand Alliance’s wider war economy and imperial supply lines against France.\n\nPay ceil(Treasury/4) Funding: Treasury +1 and succession track +1. If ignored: Treasury +1 only.",
+    "Context: during the War of the Spanish Succession, Portugal realigned with the maritime coalition; the 1703 Methuen Treaty traded favorable wine duties in Portugal for English cloth access, folding Lisbon’s revenue politics into the Grand Alliance’s wider war economy and imperial supply lines against France.\n\nPay ceil(Treasury/4) Funding: Treasury +1 and succession track +1. If ignored: no bonus.",
   "event.imperialElectorsMood.name": "Imperial electors’ mood",
   "event.imperialElectorsMood.desc":
     "Pay 2 Funding or use Intervention. If ignored: succession track −1 and Legitimacy −1.",
