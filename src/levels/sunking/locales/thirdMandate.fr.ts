@@ -58,4 +58,10 @@ export const messagesFrThirdMandate = {
     "Coût adverse 2. Piste de succession −2 ; ajoute 1 Fardeau fiscal à votre pioche à une position aléatoire.",
   "card.habsburgGrandAllianceLevy.opponentHistory":
     "Subsides des ligues anti-françaises, emprunts hollandais et impôts autrichiens alimentent campagnes et sièges sur des années : rendre cher à la France toute suprématie annoncée.",
+  "card.habsburgImperialCustomsDelay.name": "Retards douaniers impériaux",
+  "card.habsburgImperialCustomsDelay.background": "Friction portuaire",
+  "card.habsburgImperialCustomsDelay.desc":
+    "Coût adverse 2. Trésor −1 ; ajoute 1 Fardeau fiscal à votre pioche à une position aléatoire ; l’année suivante, tentatives de pioche −1 (minimum 1).",
+  "card.habsburgImperialCustomsDelay.opponentHistory":
+    "Blocages techniques sur connaissements, lettres de change et convois militaires dans les ports d’Empire et des Pays-Bas : la lenteur administrative serre l’espace fiscal français sans bataille rangée.",
 } as const;

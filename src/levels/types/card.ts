@@ -21,6 +21,7 @@ export type CardTemplateId =
   | "grandAllianceInfiltrationDiplomacy"
   | "italianTheaterTroopRedeploy"
   | "habsburgGrandAllianceLevy"
+  | "habsburgImperialCustomsDelay"
   | "habsburgImperialLegitimacyNote"
   | "habsburgLowCountriesAgitation";
 

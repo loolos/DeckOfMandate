@@ -216,4 +216,14 @@ export const cardTemplates: Record<CardTemplateId, CardTemplate> = {
     descriptionKey: "card.habsburgGrandAllianceLevy.desc",
     effects: [],
   },
+  habsburgImperialCustomsDelay: {
+    id: "habsburgImperialCustomsDelay",
+    cost: 0,
+    opponentCost: 2,
+    tags: OPPONENT,
+    titleKey: "card.habsburgImperialCustomsDelay.name",
+    backgroundKey: "card.habsburgImperialCustomsDelay.background",
+    descriptionKey: "card.habsburgImperialCustomsDelay.desc",
+    effects: [],
+  },
 };

@@ -59,4 +59,10 @@ export const messagesEnThirdMandate = {
     "Opponent cost 2. Succession track −2; add 1 Fiscal Burden to your deck at a random position.",
   "card.habsburgGrandAllianceLevy.opponentHistory":
     "Funds raised under anti-French leagues and imperial diets: subsidies, Dutch loans, and Austrian direct taxes, stitched into long campaigns that made French primacy expensive to hold year after year.",
+  "card.habsburgImperialCustomsDelay.name": "Imperial customs delay",
+  "card.habsburgImperialCustomsDelay.background": "Harbor friction",
+  "card.habsburgImperialCustomsDelay.desc":
+    "Opponent cost 2. Treasury −1; add 1 Fiscal Burden to your deck at a random position; next year draw attempts −1 (still at least 1).",
+  "card.habsburgImperialCustomsDelay.opponentHistory":
+    "Technical holds on manifests, bills, and military consignments at imperial and Low Countries ports slow cash recovery—bureaucratic drag that tightens France’s fiscal room without a pitched battle.",
 } as const;

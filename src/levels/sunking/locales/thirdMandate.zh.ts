@@ -57,4 +57,10 @@ export const messagesZhThirdMandate = {
   "card.habsburgGrandAllianceLevy.desc": "对手费用 2。王位争夺进度 −2；向抽牌堆随机位置加入 1 张财政负担。",
   "card.habsburgGrandAllianceLevy.opponentHistory":
     "来自反法同盟与帝国摊派的补助、荷兰贷款与奥地利直接税，被缝入年复一年的一线野战与围城，让「法国的霸权时刻」在任何单一年份都显得昂贵得难以坐实。",
+  "card.habsburgImperialCustomsDelay.name": "帝国报关拖延",
+  "card.habsburgImperialCustomsDelay.background": "口岸迟滞",
+  "card.habsburgImperialCustomsDelay.desc":
+    "对手费用 2。财政 −1；向抽牌堆随机位置加入 1 张财政负担；下一年抽牌次数 −1（仍至少 1 次）。",
+  "card.habsburgImperialCustomsDelay.opponentHistory":
+    "帝国与低地口岸对船舶、汇票与军需报关的技术性拖延，使现金回笼与关税入库变慢，在纸面规则里就能勒紧法兰西的现金流。",
 } as const;

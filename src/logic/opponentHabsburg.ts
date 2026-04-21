@@ -11,6 +11,7 @@ import { shuffle } from "./rng";
 
 const HABSURG_TIE_ORDER: readonly CardTemplateId[] = [
   "habsburgGrandAllianceLevy",
+  "habsburgImperialCustomsDelay",
   "habsburgImperialLegitimacyNote",
   "habsburgLowCountriesAgitation",
 ];
@@ -25,6 +26,8 @@ function opponentEffectDelta(templateId: CardTemplateId): OppDelta {
       return { seq: -1, pow: -1, leg: 0, tre: 0 };
     case "habsburgGrandAllianceLevy":
       return { seq: -2, pow: 0, leg: 0, tre: 0 };
+    case "habsburgImperialCustomsDelay":
+      return { seq: 0, pow: 0, leg: 0, tre: -1 };
     default:
       return { seq: 0, pow: 0, leg: 0, tre: 0 };
   }
@@ -37,8 +40,13 @@ export function opponentTemplatesToAppliedEffects(ids: readonly CardTemplateId[]
   const out: Effect[] = [];
   if (d.seq !== 0) out.push({ kind: "modSuccessionTrack", delta: d.seq });
   const levyCount = ids.filter((id) => id === "habsburgGrandAllianceLevy").length;
-  if (levyCount > 0) {
-    out.push({ kind: "addCardsToDeck", templateId: "fiscalBurden", count: levyCount });
+  const customsCount = ids.filter((id) => id === "habsburgImperialCustomsDelay").length;
+  const fiscalBurdenAdds = levyCount + customsCount;
+  if (fiscalBurdenAdds > 0) {
+    out.push({ kind: "addCardsToDeck", templateId: "fiscalBurden", count: fiscalBurdenAdds });
+  }
+  if (customsCount > 0) {
+    out.push({ kind: "scheduleNextTurnDrawModifier", delta: -customsCount });
   }
   if (d.pow !== 0) out.push({ kind: "modResource", resource: "power", delta: d.pow });
   if (d.leg !== 0) out.push({ kind: "modResource", resource: "legitimacy", delta: d.leg });
@@ -163,6 +171,12 @@ function applyOpponentCardToState(state: GameState, templateId: CardTemplateId):
   if (templateId === "habsburgGrandAllianceLevy") {
     effects.push({ kind: "addCardsToDeck", templateId: "fiscalBurden", count: 1 });
   }
+  if (templateId === "habsburgImperialCustomsDelay") {
+    effects.push(
+      { kind: "addCardsToDeck", templateId: "fiscalBurden", count: 1 },
+      { kind: "scheduleNextTurnDrawModifier", delta: -1 },
+    );
+  }
   if (effects.length === 0) return state;
   return applyEffects(state, effects);
 }
@@ -217,6 +231,8 @@ export function initOpponentHabsburgPool(state: GameState): GameState {
   const templates: CardTemplateId[] = [
     "habsburgGrandAllianceLevy",
     "habsburgGrandAllianceLevy",
+    "habsburgImperialCustomsDelay",
+    "habsburgImperialCustomsDelay",
     "habsburgImperialLegitimacyNote",
     "habsburgImperialLegitimacyNote",
     "habsburgLowCountriesAgitation",

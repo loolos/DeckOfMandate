@@ -24,6 +24,7 @@ const CARD_ICONS: Record<CardTemplateId, string> = {
   grandAllianceInfiltrationDiplomacy: "🕵️",
   italianTheaterTroopRedeploy: "🗡️",
   habsburgGrandAllianceLevy: "⚔️",
+  habsburgImperialCustomsDelay: "📋",
   habsburgImperialLegitimacyNote: "📜",
   habsburgLowCountriesAgitation: "🗺️",
 };

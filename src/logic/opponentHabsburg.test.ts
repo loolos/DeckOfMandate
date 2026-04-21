@@ -80,4 +80,34 @@ describe("opponentHabsburg AI", () => {
     expect(next.opponentHand).toEqual([]);
     expect(next.opponentDiscard).toEqual([levyId]);
   });
+
+  it("Imperial customs delay cuts treasury, adds Fiscal Burden, and schedules −1 draw next year", () => {
+    const base = createInitialState(101, THIRD_MANDATE_LEVEL_ID);
+    const customsId = "opp_customs_test";
+    const burdenBefore = Object.values(base.cardsById).filter((c) => c.templateId === "fiscalBurden").length;
+    const treasuryBefore = base.resources.treasuryStat;
+    const st: GameState = {
+      ...base,
+      opponentHabsburgUnlocked: true,
+      opponentHand: [customsId],
+      opponentDeck: [],
+      opponentDiscard: [],
+      opponentStrength: 2,
+      opponentCostDiscountThisTurn: 0,
+      opponentLastPlayedTemplateIds: [],
+      nextTurnDrawModifier: 0,
+      cardsById: {
+        ...base.cardsById,
+        [customsId]: { instanceId: customsId, templateId: "habsburgImperialCustomsDelay" },
+      },
+    };
+    const next = opponentEndYearPlayPhase(st);
+    expect(next.resources.treasuryStat).toBe(treasuryBefore - 1);
+    const burdenAfter = Object.values(next.cardsById).filter((c) => c.templateId === "fiscalBurden").length;
+    expect(burdenAfter).toBe(burdenBefore + 1);
+    expect(next.deck.some((id) => next.cardsById[id]?.templateId === "fiscalBurden")).toBe(true);
+    expect(next.nextTurnDrawModifier).toBe(-1);
+    expect(next.opponentHand).toEqual([]);
+    expect(next.opponentDiscard).toEqual([customsId]);
+  });
 });
