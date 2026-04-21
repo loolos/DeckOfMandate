@@ -30,12 +30,12 @@ export const messagesEnThirdMandate = {
     "Context: during the War of the Spanish Succession, Portugal realigned with the maritime coalition; the 1703 Methuen Treaty traded favorable wine duties in Portugal for English cloth access, folding Lisbon’s revenue politics into the Grand Alliance’s wider war economy and imperial supply lines against France.\n\nPay ceil(Treasury/4) Funding: Treasury +1 and succession track +1. If ignored: no bonus.",
   "event.imperialElectorsMood.name": "Imperial electors’ mood",
   "event.imperialElectorsMood.desc":
-    "Pay 2 Funding or use Intervention. If ignored: succession track −1 and Legitimacy −1.",
+    "Context: as the War of the Spanish Succession widened, the Holy Roman Empire’s prince-electors and Reichstag politics were central, not marginal. The three Rhenish ecclesiastical electors and their secular peers had to balance French armies on their roads and imperial fiscal demands against subsidies and guarantees from Vienna, Berlin, and Dresden. After Joseph I’s accession as King of the Romans, diets, mandates, and the tone of electoral debate shaped how far imperial law could publicly contest Bourbon Philip in Madrid—and how much diplomatic room France retained. Versailles worked within imperial forms to soften electors’ hostility while shielding its Spanish claimant; any swing in their mood squeezes both the succession narrative abroad and your legitimacy at home.\n\nPay 2 Funding or use Intervention. If ignored: succession track −1 and Legitimacy −1.",
 
   "card.bourbonMarriageProclamation.name": "Bourbon marriage proclamation",
   "card.bourbonMarriageProclamation.background": "Dynastic narrative",
   "card.bourbonMarriageProclamation.desc":
-    "Context: Bourbon marriage ties and succession law are staged as public narrative—asserting Anjou’s right to Madrid abroad and at home while squeezing Habsburg room in the court of opinion.\n\nLegitimacy +1. Succession track +1.",
+    "Context: Bourbon marriage ties and succession law are staged as public narrative—asserting Anjou’s right to Madrid abroad and at home while squeezing Habsburg room in the court of opinion.\n\nPower +1. Succession track +1.",
   "card.grandAllianceInfiltrationDiplomacy.name": "Grand Alliance infiltration diplomacy",
   "card.grandAllianceInfiltrationDiplomacy.background": "Divide the coalition",
   "card.grandAllianceInfiltrationDiplomacy.desc":

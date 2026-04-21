@@ -161,7 +161,7 @@ export const cardTemplates: Record<CardTemplateId, CardTemplate> = {
     backgroundKey: "card.bourbonMarriageProclamation.background",
     descriptionKey: "card.bourbonMarriageProclamation.desc",
     effects: [
-      { kind: "modResource", resource: "legitimacy", delta: 1 },
+      { kind: "modResource", resource: "power", delta: 1 },
       { kind: "modSuccessionTrack", delta: 1 },
     ],
   },

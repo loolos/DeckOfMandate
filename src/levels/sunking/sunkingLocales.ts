@@ -24,7 +24,7 @@ const sunkingExtraEn: Record<string, string> = {
   "ui.targets.secondMandate":
     "Level goals — within {limit} turns (each ≈ one calendar year): calendar year ≥ 1696; Europe Alert cleared; no “Contain Huguenot Remnants” status (harsh crackdown path must be fully wound down); Legitimacy ≥ 6.",
   "ui.targets.thirdMandate":
-    "Chapter 3 — within {limit} years: push the succession track to +10 for an immediate win, or survive to 1720 for a tiered settlement. You lose immediately at −10 on the track, or if Power or Legitimacy reaches 0 (checked at once whenever the score moves). The Habsburg side starts with 2 cards in hand and draws 2 at each year-end before playing. Edict of Nantes branch still injects 4 Religious Tension or 4 Reservation of Conscience; menu start defaults to crackdown. Standalone chapter-3 removes Royal levy / Royal intervention from the opening pool, and Reform / Tax Rebalance / Grain Relief / Versailles Ceremony all open at cost 4 from inflation.",
+    "Chapter 3 — within {limit} years: reach +10 on the succession track for an immediate win, or survive to 1720 for a tiered settlement. You lose immediately at −10 on the track, or if Power or Legitimacy reaches 0 (checked whenever those values change).",
   "banner.turn.sunKingAnnual": "Turn {turn} / {limit} — each step is one calendar year",
   "levelTime.sunKing.oneTurnOneYear": "Timeline: one full turn corresponds to one year on the scenario calendar.",
   "log.info.firstMandateInflationActivated":
@@ -43,7 +43,7 @@ const sunkingExtraFr: Record<string, string> = {
   "ui.targets.secondMandate":
     "Objectifs du niveau — en {limit} tours (chaque tour ≈ une année calendaire) : année calendaire ≥ 1696 ; Alerte Europe levée ; pas de statut « Contenir les restes huguenots » (la voie de la répression forte doit être entièrement close) ; Légitimité ≥ 6.",
   "ui.targets.thirdMandate":
-    "Chapitre 3 — en {limit} ans : menez la piste de succession à +10 pour une victoire immédiate, ou tenez jusqu’en 1720 pour un règlement par paliers. Défaite immédiate à −10 sur la piste, ou si le Pouvoir ou la Légitimité atteint 0 (contrôle dès que les scores bougent). Le camp habsbourgeois commence avec 2 cartes en main et pioche 2 en fin d’année avant de jouer. La branche sur l’édit de Nantes injecte encore 4 Tension religieuse ou 4 Réserve de conscience ; démarrage menu = répression par défaut. Un chapitre 3 lancé depuis le menu retire la Levée royale / l’Intervention royale du pool d’ouverture ; Réforme / Rééquilibrage fiscal / Secours grainier / Cérémonie de Versailles commencent tous à un coût de 4 via l’inflation.",
+    "Chapitre 3 — en {limit} ans : atteignez +10 sur la piste de succession pour une victoire immédiate, ou tenez jusqu’en 1720 pour un règlement par paliers. Défaite immédiate à −10 sur la piste, ou si le Pouvoir ou la Légitimité atteint 0 (vérifié dès que ces valeurs changent).",
   "banner.turn.sunKingAnnual": "Tour {turn} / {limit} — chaque pas vaut une année calendaire",
   "levelTime.sunKing.oneTurnOneYear": "Échelle : un tour complet correspond à une année sur le calendrier du scénario.",
   "log.info.firstMandateInflationActivated":
@@ -60,7 +60,7 @@ const sunkingExtraZh: Record<string, string> = {
   "ui.targets.secondMandate":
     "关卡目标 — {limit} 回合内（每回合约 1 个历法年）：历法年份 ≥ 1696；「欧洲警觉」已结束；不存在「遏制胡格诺-剩余势力」状态（严厉镇压分支须完全收尾）；合法性 ≥ 6。",
   "ui.targets.thirdMandate":
-    "第三关 — {limit} 年内：王位争夺进度到 +10 立即胜利，或坚持到 1720 年按档位结算。进度 −10，或权力/合法性任一归零，均立即失败（数值变动时即刻判定）。哈布斯堡阵营起手持有 2 张牌，每年年末对手阶段先摸 2 张再出牌。《南特敕令》分支仍注入 4 张「宗教冲突」或 4 张「良心保留」；主菜单直开默认镇压。主菜单直接进入第三关时，开局牌池移除「王室征收」「王室干预」；「行政整编」「税制重估」「粮食赈济」「凡尔赛庆典」开局都因通胀按 4 费起算。",
+    "第三关 — {limit} 年内：王位争夺进度到 +10 立即胜利，或坚持到 1720 年按档位结算。进度 −10，或权力/合法性任一归零，均立即失败（数值变动时即刻判定）。",
   "banner.turn.sunKingAnnual": "第 {turn} / {limit} 回合 — 每步对应 1 个历法年",
   "levelTime.sunKing.oneTurnOneYear": "时间尺度：一个完整回合对应剧本时间线上的一个历法年。",
   "log.info.firstMandateInflationActivated":

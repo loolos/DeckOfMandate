@@ -29,12 +29,13 @@ export const messagesZhThirdMandate = {
   "event.portugueseTariffNegotiation.desc":
     "背景：西班牙王位继承战争牵动伊比利亚与海外航路；葡萄牙在英荷同盟与法兰西—波旁体系之间重新站队，1703 年《梅休因条约》以葡酒优先关税换取英格兰毛织品进入葡境，实质上也把葡国贸易与关税主权嵌入大同盟对法和殖民补给的棋局之中。\n\n支付 ceil(财政/4) 经费：财政 +1 且王位争夺进度 +1。不处理：无加成。",
   "event.imperialElectorsMood.name": "帝国选侯会议风向",
-  "event.imperialElectorsMood.desc": "支付 2 经费或干预。不处理：进度 −1 且合法性 −1。",
+  "event.imperialElectorsMood.desc":
+    "背景：西班牙王位继承战争全面化之后，神圣罗马帝国的选侯团与帝国议会政治不再是边缘议题。美因茨、特里尔、科隆三位教会选侯与莱茵—南德的世俗选侯，既要应付过境大军与帝国摊派，也要在维也纳宫廷、柏林与德累斯顿的许诺之间重新站队。约瑟夫一世登基为罗马人国王后，选侯会议上的风向、诏书措辞与对「帝国和平」的表态，会直接影响大同盟能否在法统话语上持续压制波旁系对马德里与地中海遗产的主张，抑或让法国在外交上获得更多迂回空间。法国一面在帝国法框架内以津贴、安全保证缓和选侯敌意，一面希望自己的西班牙继承人少受帝国禁令与选帝舆论的牵制；会议态度一旦偏转，会在「合法性叙事」与实战调度两端同时挤压你的王位进度与国内威信。\n\n支付 2 经费或干预。不处理：进度 −1 且合法性 −1。",
 
   "card.bourbonMarriageProclamation.name": "波旁联姻宣示",
   "card.bourbonMarriageProclamation.background": "王朝叙事",
   "card.bourbonMarriageProclamation.desc":
-    "背景：以波旁联姻与继承法理为公开叙事，向国内外宣示安茹系对西班牙王座的正当性，压缩哈布斯堡舆论空间。\n\n合法性 +1，王位争夺进度 +1。",
+    "背景：以波旁联姻与继承法理为公开叙事，向国内外宣示安茹系对西班牙王座的正当性，压缩哈布斯堡舆论空间。\n\n权力 +1，王位争夺进度 +1。",
   "card.grandAllianceInfiltrationDiplomacy.name": "大同盟渗透外交",
   "card.grandAllianceInfiltrationDiplomacy.background": "分化同盟",
   "card.grandAllianceInfiltrationDiplomacy.desc":

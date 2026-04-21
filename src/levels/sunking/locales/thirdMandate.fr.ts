@@ -29,12 +29,13 @@ export const messagesFrThirdMandate = {
   "event.portugueseTariffNegotiation.desc":
     "Contexte : pendant la guerre de Succession d’Espagne, le Portugal se réaligne sur la ligue maritime ; les traités de Methuen (1703) échangent des droits favorables sur les vins contre l’accès des lainages anglais, intégrant la politique douanière lisboète à l’économie de guerre de la Grande Alliance.\n\nPayez ceil(Trésor/4) Fonds : Trésor +1 et piste +1. Si ignoré : aucun bonus.",
   "event.imperialElectorsMood.name": "Humeur des princes-électeurs",
-  "event.imperialElectorsMood.desc": "Payez 2 Fonds ou Intervention. Si ignoré : piste −1 et Légitimité −1.",
+  "event.imperialElectorsMood.desc":
+    "Contexte : à mesure que la guerre de Succession d’Espagne s’élargit, le collège des princes-électeurs et la politique du Reichstag comptent au centre du jeu, non en marge. Les trois électeurs ecclésiastiques rhénans et leurs pairs laïcs doivent jongler entre passages de troupes, charges impériales et promesses financières venues de Vienne, Berlin ou Dresde. Après l’élection de Joseph Ier comme roi des Romains, les diètes, mandats et tonalité des débats électoraux fixent jusqu’où le droit impérial peut contester publiquement Philippe Bourbon à Madrid — et quelle marge diplomatique reste à Versailles. La France cherche, dans les formes de l’Empire, à adoucir l’hostilité des électeurs tout en protégeant son prétendant espagnol ; le moindre basculement de leur humeur serre à la fois le récit de succession et votre légitimité intérieure.\n\nPayez 2 Fonds ou Intervention. Si ignoré : piste −1 et Légitimité −1.",
 
   "card.bourbonMarriageProclamation.name": "Proclamation du mariage bourbon",
   "card.bourbonMarriageProclamation.background": "Narratif dynastique",
   "card.bourbonMarriageProclamation.desc":
-    "Contexte : alliances bourbonniennes et droit successoral servent de récit public pour affirmer la légitimité de la branche d’Anjou sur le trône espagnol et réduire l’espace de manœuvre habsbourgeois.\n\nLégitimité +1. Piste de succession +1.",
+    "Contexte : alliances bourbonniennes et droit successoral servent de récit public pour affirmer la légitimité de la branche d’Anjou sur le trône espagnol et réduire l’espace de manœuvre habsbourgeois.\n\nPouvoir +1. Piste de succession +1.",
   "card.grandAllianceInfiltrationDiplomacy.name": "Diplomatie d’infiltration de la Grande Alliance",
   "card.grandAllianceInfiltrationDiplomacy.background": "Diviser la coalition",
   "card.grandAllianceInfiltrationDiplomacy.desc":
