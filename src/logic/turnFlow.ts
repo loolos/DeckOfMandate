@@ -1,4 +1,8 @@
-import { getEventRollWeight, getEventTemplate } from "../data/events";
+import {
+  getEventRollWeight,
+  getEventTemplate,
+  shouldDiscardCh3SuccessionGatedProceduralHead,
+} from "../data/events";
 import { getLevelContent } from "../data/levelContent";
 import { getLevelDef, getTurnLimitForRun } from "../data/levels";
 import { currentCalendarYear } from "./scriptedCalendar";
@@ -169,6 +173,7 @@ function drawFromProceduralSequence(
     const [head, ...rest] = s.proceduralEventSequence;
     s = { ...s, proceduralEventSequence: rest };
     if (!head) continue;
+    if (shouldDiscardCh3SuccessionGatedProceduralHead(s, head)) continue;
     if (used.has(head)) continue;
     picked.push(head);
     used.add(head);

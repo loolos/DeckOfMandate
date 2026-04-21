@@ -33,13 +33,16 @@ export const messagesEnThirdMandate = {
 
   "card.bourbonMarriageProclamation.name": "Bourbon marriage proclamation",
   "card.bourbonMarriageProclamation.background": "Dynastic narrative",
-  "card.bourbonMarriageProclamation.desc": "Legitimacy +1. Succession track +1.",
+  "card.bourbonMarriageProclamation.desc":
+    "Context: Bourbon marriage ties and succession law are staged as public narrative—asserting Anjou’s right to Madrid abroad and at home while squeezing Habsburg room in the court of opinion.\n\nLegitimacy +1. Succession track +1.",
   "card.grandAllianceInfiltrationDiplomacy.name": "Grand Alliance infiltration diplomacy",
   "card.grandAllianceInfiltrationDiplomacy.background": "Divide the coalition",
-  "card.grandAllianceInfiltrationDiplomacy.desc": "Draw 1. This turn, opponent phase costs −1 (min 0).",
+  "card.grandAllianceInfiltrationDiplomacy.desc":
+    "Context: neutral courts, trading posts, and intelligence channels raise the coordination tax on anti-French leagues so the Grand Alliance cannot always funnel full diplomatic pressure onto the Spanish succession.\n\nDraw 1. This turn, opponent phase costs −1 (min 0).",
   "card.italianTheaterTroopRedeploy.name": "Italian theater troop redeploy",
   "card.italianTheaterTroopRedeploy.background": "Alpine front",
-  "card.italianTheaterTroopRedeploy.desc": "Succession track +2. Add 1 Fiscal Burden to your deck.",
+  "card.italianTheaterTroopRedeploy.desc":
+    "Context: maneuver and battle around Savoy, Milan, and Naples turn field gains into hard support for Bourbon claims—but the treasury keeps paying for the Alpine–Po corridor.\n\nSuccession track +2. Add 1 Fiscal Burden to your deck.",
   "card.habsburgImperialLegitimacyNote.name": "Imperial legitimacy note",
   "card.habsburgImperialLegitimacyNote.background": "Legalist pressure",
   "card.habsburgImperialLegitimacyNote.desc": "Opponent cost 1. Succession track −1.",
@@ -52,7 +55,8 @@ export const messagesEnThirdMandate = {
     "The Spanish Netherlands—fortress belts, river lines, and mutinous garrisons—were the cockpit where coalition logistics met French overreach; unrest here was a lever on London as much as on Versailles.",
   "card.habsburgGrandAllianceLevy.name": "Grand Alliance levy",
   "card.habsburgGrandAllianceLevy.background": "Coalition war chest",
-  "card.habsburgGrandAllianceLevy.desc": "Opponent cost 2. Succession track −2.",
+  "card.habsburgGrandAllianceLevy.desc":
+    "Opponent cost 2. Succession track −2; add 1 Fiscal Burden to your deck at a random position.",
   "card.habsburgGrandAllianceLevy.opponentHistory":
     "Funds raised under anti-French leagues and imperial diets: subsidies, Dutch loans, and Austrian direct taxes, stitched into long campaigns that made French primacy expensive to hold year after year.",
 } as const;

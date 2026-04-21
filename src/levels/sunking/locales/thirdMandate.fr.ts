@@ -32,13 +32,16 @@ export const messagesFrThirdMandate = {
 
   "card.bourbonMarriageProclamation.name": "Proclamation du mariage bourbon",
   "card.bourbonMarriageProclamation.background": "Narratif dynastique",
-  "card.bourbonMarriageProclamation.desc": "Légitimité +1. Piste de succession +1.",
+  "card.bourbonMarriageProclamation.desc":
+    "Contexte : alliances bourbonniennes et droit successoral servent de récit public pour affirmer la légitimité de la branche d’Anjou sur le trône espagnol et réduire l’espace de manœuvre habsbourgeois.\n\nLégitimité +1. Piste de succession +1.",
   "card.grandAllianceInfiltrationDiplomacy.name": "Diplomatie d’infiltration de la Grande Alliance",
   "card.grandAllianceInfiltrationDiplomacy.background": "Diviser la coalition",
-  "card.grandAllianceInfiltrationDiplomacy.desc": "Pioche 1. Ce tour, coût adverse −1 (min 0).",
+  "card.grandAllianceInfiltrationDiplomacy.desc":
+    "Contexte : cours neutres, comptoirs et réseaux d’information alourdissent la coordination des ligues anti-françaises, si bien que la Grande Alliance ne transpose pas systématiquement toute sa pression sur la succession espagnole.\n\nPioche 1. Ce tour, coût adverse −1 (min 0).",
   "card.italianTheaterTroopRedeploy.name": "Redéploiement théâtre italien",
   "card.italianTheaterTroopRedeploy.background": "Front alpin",
-  "card.italianTheaterTroopRedeploy.desc": "Piste de succession +2. Ajoute 1 Fardeau fiscal au deck.",
+  "card.italianTheaterTroopRedeploy.desc":
+    "Contexte : manœuvres et combats en Piémont, à Milan et à Naples transforment les gains de campagne en appui concret aux prétentions bourbonnes—mais le trésor saigne pour l’axe alpin et le Pô.\n\nPiste de succession +2. Ajoute 1 Fardeau fiscal au deck.",
   "card.habsburgImperialLegitimacyNote.name": "Note de légitimité impériale",
   "card.habsburgImperialLegitimacyNote.background": "Pression juridique",
   "card.habsburgImperialLegitimacyNote.desc": "Coût adverse 1. Piste de succession −1.",
@@ -51,7 +54,8 @@ export const messagesFrThirdMandate = {
     "Les Pays-Bas espagnols, ceinture de forteresses et d’hivers de garnison, tiennent ensemble l’inquiétude londonienne et la pression sur les routes du nord.",
   "card.habsburgGrandAllianceLevy.name": "Contribution de la Grande Alliance",
   "card.habsburgGrandAllianceLevy.background": "Caisse de coalition",
-  "card.habsburgGrandAllianceLevy.desc": "Coût adverse 2. Piste de succession −2.",
+  "card.habsburgGrandAllianceLevy.desc":
+    "Coût adverse 2. Piste de succession −2 ; ajoute 1 Fardeau fiscal à votre pioche à une position aléatoire.",
   "card.habsburgGrandAllianceLevy.opponentHistory":
     "Subsides des ligues anti-françaises, emprunts hollandais et impôts autrichiens alimentent campagnes et sièges sur des années : rendre cher à la France toute suprématie annoncée.",
 } as const;

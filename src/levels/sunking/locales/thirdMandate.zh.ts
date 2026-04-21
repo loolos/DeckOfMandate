@@ -32,13 +32,16 @@ export const messagesZhThirdMandate = {
 
   "card.bourbonMarriageProclamation.name": "波旁联姻宣示",
   "card.bourbonMarriageProclamation.background": "王朝叙事",
-  "card.bourbonMarriageProclamation.desc": "合法性 +1，王位争夺进度 +1。",
+  "card.bourbonMarriageProclamation.desc":
+    "背景：以波旁联姻与继承法理为公开叙事，向国内外宣示安茹系对西班牙王座的正当性，压缩哈布斯堡舆论空间。\n\n合法性 +1，王位争夺进度 +1。",
   "card.grandAllianceInfiltrationDiplomacy.name": "大同盟渗透外交",
   "card.grandAllianceInfiltrationDiplomacy.background": "分化同盟",
-  "card.grandAllianceInfiltrationDiplomacy.desc": "立即抽 1；本回合对手阶段对手费用 −1（最低 0）。",
+  "card.grandAllianceInfiltrationDiplomacy.desc":
+    "背景：借中立宫廷、商站与情报网抬高反法盟邦的协调成本，使大同盟难以把全部外交压力持续压到西班牙遗产问题上。\n\n立即抽 1；本回合对手阶段对手费用 −1（最低 0）。",
   "card.italianTheaterTroopRedeploy.name": "意大利战区调兵",
   "card.italianTheaterTroopRedeploy.background": "阿尔卑斯战线",
-  "card.italianTheaterTroopRedeploy.desc": "王位争夺进度 +2；向抽牌堆加入 1 张财政负担。",
+  "card.italianTheaterTroopRedeploy.desc":
+    "背景：萨伏依、米兰与那不勒斯方向的机动与会战，把战果转化为对波旁继承主张的硬支撑，但国库为阿尔卑斯—波河轴线持续出血。\n\n王位争夺进度 +2；向抽牌堆加入 1 张财政负担。",
   "card.habsburgImperialLegitimacyNote.name": "帝国法统照会",
   "card.habsburgImperialLegitimacyNote.background": "法统压力",
   "card.habsburgImperialLegitimacyNote.desc": "对手费用 1。王位争夺进度 −1。",
@@ -51,7 +54,7 @@ export const messagesZhThirdMandate = {
     "西属尼德兰一线的棱堡与冬营、兵变与补给争端，使伦敦与海牙的安全焦虑与法国北进路线纠缠在一起；此地的动荡，最能牵动大同盟的钱袋与舰队。",
   "card.habsburgGrandAllianceLevy.name": "大同盟军费动员",
   "card.habsburgGrandAllianceLevy.background": "同盟军费",
-  "card.habsburgGrandAllianceLevy.desc": "对手费用 2。王位争夺进度 −2。",
+  "card.habsburgGrandAllianceLevy.desc": "对手费用 2。王位争夺进度 −2；向抽牌堆随机位置加入 1 张财政负担。",
   "card.habsburgGrandAllianceLevy.opponentHistory":
     "来自反法同盟与帝国摊派的补助、荷兰贷款与奥地利直接税，被缝入年复一年的一线野战与围城，让「法国的霸权时刻」在任何单一年份都显得昂贵得难以坐实。",
 } as const;

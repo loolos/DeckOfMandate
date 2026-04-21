@@ -36,6 +36,10 @@ export function opponentTemplatesToAppliedEffects(ids: readonly CardTemplateId[]
   for (const id of ids) d = addDelta(d, opponentEffectDelta(id));
   const out: Effect[] = [];
   if (d.seq !== 0) out.push({ kind: "modSuccessionTrack", delta: d.seq });
+  const levyCount = ids.filter((id) => id === "habsburgGrandAllianceLevy").length;
+  if (levyCount > 0) {
+    out.push({ kind: "addCardsToDeck", templateId: "fiscalBurden", count: levyCount });
+  }
   if (d.pow !== 0) out.push({ kind: "modResource", resource: "power", delta: d.pow });
   if (d.leg !== 0) out.push({ kind: "modResource", resource: "legitimacy", delta: d.leg });
   if (d.tre !== 0) out.push({ kind: "modResource", resource: "treasuryStat", delta: d.tre });
@@ -151,11 +155,14 @@ export function chooseOpponentPlay(state: GameState): readonly string[] | null {
 
 function applyOpponentCardToState(state: GameState, templateId: CardTemplateId): GameState {
   const d = opponentEffectDelta(templateId);
-  const effects = [];
+  const effects: Effect[] = [];
   if (d.seq !== 0) effects.push({ kind: "modSuccessionTrack" as const, delta: d.seq });
   if (d.pow !== 0) effects.push({ kind: "modResource" as const, resource: "power" as const, delta: d.pow });
   if (d.leg !== 0) effects.push({ kind: "modResource" as const, resource: "legitimacy" as const, delta: d.leg });
   if (d.tre !== 0) effects.push({ kind: "modResource" as const, resource: "treasuryStat" as const, delta: d.tre });
+  if (templateId === "habsburgGrandAllianceLevy") {
+    effects.push({ kind: "addCardsToDeck", templateId: "fiscalBurden", count: 1 });
+  }
   if (effects.length === 0) return state;
   return applyEffects(state, effects);
 }

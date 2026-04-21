@@ -1,6 +1,10 @@
 import { describe, expect, it } from "vitest";
 import { createInitialState } from "../app/initialState";
-import { getEventRollWeight, getEventSolveFundingAmount } from "./eventTemplateApi";
+import {
+  getEventRollWeight,
+  getEventSolveFundingAmount,
+  shouldDiscardCh3SuccessionGatedProceduralHead,
+} from "./eventTemplateApi";
 
 describe("getEventRollWeight", () => {
   it("returns base weight when europe alert is off", () => {
@@ -17,6 +21,18 @@ describe("getEventRollWeight", () => {
     expect(getEventRollWeight(st, "tradeDisruption")).toBe(1);
     expect(getEventRollWeight(st, "warWeariness")).toBe(2);
     expect(getEventRollWeight(st, "risingGrainPrices")).toBe(3);
+  });
+
+  it("zeros chapter-3 succession-gated roll weights until track leaves 0", () => {
+    const atZero = { ...createInitialState(501, "thirdMandate"), successionTrack: 0 };
+    expect(getEventRollWeight(atZero, "bavarianCourtRealignment")).toBe(0);
+    expect(getEventRollWeight(atZero, "portugueseTariffNegotiation")).toBe(0);
+    expect(getEventRollWeight(atZero, "imperialElectorsMood")).toBe(0);
+    expect(getEventRollWeight(atZero, "taxResistance")).toBe(2);
+    const moved = { ...atZero, successionTrack: -1 };
+    expect(getEventRollWeight(moved, "bavarianCourtRealignment")).toBe(2);
+    expect(shouldDiscardCh3SuccessionGatedProceduralHead(atZero, "bavarianCourtRealignment")).toBe(true);
+    expect(shouldDiscardCh3SuccessionGatedProceduralHead(moved, "bavarianCourtRealignment")).toBe(false);
   });
 
   it("scales nymwegen settlement funding cost by europe alert progress", () => {

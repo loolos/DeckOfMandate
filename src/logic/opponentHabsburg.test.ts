@@ -1,7 +1,11 @@
 import { describe, expect, it } from "vitest";
 import { createInitialState } from "../app/initialState";
 import type { GameState } from "../types/game";
-import { chooseOpponentPlay, opponentBeginYearDrawPhase } from "./opponentHabsburg";
+import {
+  chooseOpponentPlay,
+  opponentBeginYearDrawPhase,
+  opponentEndYearPlayPhase,
+} from "./opponentHabsburg";
 import { THIRD_MANDATE_LEVEL_ID } from "./thirdMandateConstants";
 
 describe("opponentHabsburg AI", () => {
@@ -49,5 +53,31 @@ describe("opponentHabsburg AI", () => {
     const next = opponentBeginYearDrawPhase(st);
     expect(next.opponentHand).toEqual(["opp_a", "opp_b"]);
     expect(next.opponentDeck).toEqual(["opp_c"]);
+  });
+
+  it("Grand Alliance levy adds one Fiscal Burden to the player deck at a random position", () => {
+    const base = createInitialState(99, THIRD_MANDATE_LEVEL_ID);
+    const levyId = "opp_levy_test";
+    const burdenBefore = Object.values(base.cardsById).filter((c) => c.templateId === "fiscalBurden").length;
+    const st: GameState = {
+      ...base,
+      opponentHabsburgUnlocked: true,
+      opponentHand: [levyId],
+      opponentDeck: [],
+      opponentDiscard: [],
+      opponentStrength: 2,
+      opponentCostDiscountThisTurn: 0,
+      opponentLastPlayedTemplateIds: [],
+      cardsById: {
+        ...base.cardsById,
+        [levyId]: { instanceId: levyId, templateId: "habsburgGrandAllianceLevy" },
+      },
+    };
+    const next = opponentEndYearPlayPhase(st);
+    const burdenAfter = Object.values(next.cardsById).filter((c) => c.templateId === "fiscalBurden").length;
+    expect(burdenAfter).toBe(burdenBefore + 1);
+    expect(next.deck.some((id) => next.cardsById[id]?.templateId === "fiscalBurden")).toBe(true);
+    expect(next.opponentHand).toEqual([]);
+    expect(next.opponentDiscard).toEqual([levyId]);
   });
 });
