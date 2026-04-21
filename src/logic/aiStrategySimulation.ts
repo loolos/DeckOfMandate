@@ -11,6 +11,7 @@ import { getLevelDef } from "../data/levels";
 import type { CardTemplateId } from "../levels/types/card";
 import { EVENT_SLOT_ORDER, type SlotId } from "../levels/types/event";
 import type { GameOutcome, GameState, Resources } from "../types/game";
+import { antiFrenchSentimentEventSolveCostPenalty } from "./antiFrenchSentiment";
 import { getPlayableCardCost } from "./cardCost";
 import { findScriptedCalendarConfig } from "./scriptedCalendar";
 import { retentionCapacity } from "./turnFlow";
@@ -171,6 +172,7 @@ function pickCrackdownTarget(state: GameState): SlotId | null {
   });
   for (const slot of ranked) {
     const tmpl = getEventTemplate(state.slots[slot]!.templateId);
+    if (tmpl.crackdownImmune) continue;
     if (tmpl.harmful) return slot;
   }
   return null;
@@ -267,13 +269,11 @@ function strategyISolvePriority(state: GameState, slot: SlotId, amount: number):
   if (id === "risingGrainPrices") return -26_000 + amount;
   if (id === "courtScandal") return -25_500 + amount;
   if (id === "provincialNoncompliance") return -25_000 + amount;
-  if (id === "grainReliefCrisis") return -24_500 + amount;
   if (id === "nymwegenSettlement") {
     // Nijmegen solve trades away power immediately; delay it when power is already fragile.
     if (power <= 4) return -21_000 + amount;
     return -24_000 + amount;
   }
-  if (id === "nymwegenSettlement") return -24_000 + amount;
   if (id === "leagueOfAugsburg" || id === "nineYearsWar") return -23_000 + amount;
   if (getEventTemplate(id).harmful) return -22_000 + amount;
   if (isCriticalOpportunityEventTemplate(id)) return -14_000 + amount;
@@ -588,7 +588,7 @@ function pickSpecialChoiceActionsStrategyI(
   }
   const localWarSlot = firstUnresolvedSlotByTemplate(state, "localWar");
   if (localWarSlot) {
-    const cost = state.europeAlertProgress;
+    const cost = Math.floor(state.europeAlertProgress / 2) + antiFrenchSentimentEventSolveCostPenalty(state);
     if (state.resources.funding >= cost) {
       return [{ type: "PICK_LOCAL_WAR_ATTACK", slot: localWarSlot }];
     }

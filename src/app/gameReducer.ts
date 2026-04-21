@@ -238,7 +238,8 @@ function canLocalWarAttack(state: GameState, slot: SlotId): boolean {
   if (state.phase !== "action" || state.pendingInteraction?.type === "crackdownPick") return false;
   const ev = state.slots[slot];
   if (!ev || ev.resolved || ev.templateId !== "localWar") return false;
-  return state.resources.funding >= Math.floor(state.europeAlertProgress / 2);
+  const cost = Math.floor(state.europeAlertProgress / 2) + antiFrenchSentimentEventSolveCostPenalty(state);
+  return state.resources.funding >= cost;
 }
 
 function performScriptedAttack(state: GameState, slot: SlotId): GameState {

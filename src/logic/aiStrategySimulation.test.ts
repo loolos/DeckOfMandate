@@ -62,22 +62,22 @@ describe("aiStrategySimulation", () => {
     const report = simulateSecondMandateStandaloneBatch({ seedStart: 1, runCount: 200 });
     expect(report).toMatchInlineSnapshot(`
       {
-        "averageEndTurn": 14.32,
-        "averageEndTurnOnLoss": 11.486,
-        "averageEndTurnOnWin": 22.385,
+        "averageEndTurn": 12.66,
+        "averageEndTurnOnLoss": 12.603,
+        "averageEndTurnOnWin": 24,
         "averageEndingResources": {
-          "funding": 0.125,
-          "legitimacy": 2.82,
-          "power": 1.815,
-          "treasuryStat": 3.94,
+          "funding": 0.04,
+          "legitimacy": 3.76,
+          "power": 0.41,
+          "treasuryStat": 2.81,
         },
         "levelId": "secondMandate",
-        "losses": 148,
+        "losses": 199,
         "runCount": 200,
         "startMode": "standalone",
         "strategyId": "a-strategy-i",
-        "winRate": 0.26,
-        "wins": 52,
+        "winRate": 0.005,
+        "wins": 1,
       }
     `);
   });
@@ -86,18 +86,18 @@ describe("aiStrategySimulation", () => {
     const report = simulateFirstToSecondCampaignBatch({ seedStart: 1, runCount: 200 });
     expect(report).toMatchInlineSnapshot(`
       {
-        "averageChapter1EndTurn": 13.615,
-        "averageChapter2EndTurnOnReached": 18.682,
-        "averageChapter2EndTurnOnWin": 24.2,
+        "averageChapter1EndTurn": 13.62,
+        "averageChapter2EndTurnOnReached": 15.636,
+        "averageChapter2EndTurnOnWin": 23.5,
         "chapter1Losses": 156,
         "chapter1WinRate": 0.22,
         "chapter1Wins": 44,
-        "chapter2Losses": 24,
+        "chapter2Losses": 42,
         "chapter2Runs": 44,
-        "chapter2WinRateAfterCarryover": 0.4545,
-        "chapter2Wins": 20,
-        "fullCampaignWinRate": 0.1,
-        "fullCampaignWins": 20,
+        "chapter2WinRateAfterCarryover": 0.0455,
+        "chapter2Wins": 2,
+        "fullCampaignWinRate": 0.01,
+        "fullCampaignWins": 2,
         "runCount": 200,
         "strategyId": "a-strategy-i",
       }
