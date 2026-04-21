@@ -256,7 +256,7 @@ export function initOpponentHabsburgPool(state: GameState): GameState {
   const [rng2, shuffled] = shuffle(state.rng, ids);
   let deck = [...shuffled];
   const hand: string[] = [];
-  for (let i = 0; i < 1 && deck.length > 0; i++) {
+  for (let i = 0; i < 2 && deck.length > 0; i++) {
     hand.push(deck[0]!);
     deck = deck.slice(1);
   }

@@ -55,23 +55,23 @@ export const messagesEnThirdMandate = {
   "card.habsburgImperialLegitimacyNote.desc":
     "Opponent cost 1. Succession track −1; opponent draws 1 fewer card at their next year-start draw (can be 0).",
   "card.habsburgImperialLegitimacyNote.opponentHistory":
-    "Chancelleries cite imperial privilege and old ties to Spain’s Habsburg past—jurists’ briefs meant to remind Europe that Bourbon claims were negotiable on paper long before they were conceded on the battlefield.",
+    "Chancelleries invoke imperial privilege and old Habsburg ties to Spain. In play: succession track −1, and the opponent draws 1 fewer card next year (min 0).",
   "card.habsburgLowCountriesAgitation.name": "Low Countries agitation",
   "card.habsburgLowCountriesAgitation.background": "Northwestern front",
   "card.habsburgLowCountriesAgitation.desc":
     "Opponent cost 2. Succession track −1, Power −1, Legitimacy −1.",
   "card.habsburgLowCountriesAgitation.opponentHistory":
-    "The Spanish Netherlands—fortress belts, river lines, and mutinous garrisons—were the cockpit where coalition logistics met French overreach; unrest here was a lever on London as much as on Versailles.",
+    "Unrest in the Spanish Netherlands turns border pressure into a coalition lever. In play: succession track −1, Power −1, and Legitimacy −1.",
   "card.habsburgGrandAllianceLevy.name": "Grand Alliance levy",
   "card.habsburgGrandAllianceLevy.background": "Coalition war chest",
   "card.habsburgGrandAllianceLevy.desc":
     "Opponent cost 2. Succession track −2; add 1 Fiscal Burden to your deck at a random position.",
   "card.habsburgGrandAllianceLevy.opponentHistory":
-    "Funds raised under anti-French leagues and imperial diets: subsidies, Dutch loans, and Austrian direct taxes, stitched into long campaigns that made French primacy expensive to hold year after year.",
+    "Coalition subsidies, Dutch loans, and imperial taxation keep pressure constant. In play: succession track −2 and add 1 Fiscal Burden to your deck.",
   "card.habsburgImperialCustomsDelay.name": "Imperial customs delay",
   "card.habsburgImperialCustomsDelay.background": "Harbor friction",
   "card.habsburgImperialCustomsDelay.desc":
     "Opponent cost 2. Treasury −1; add 1 Fiscal Burden to your deck at a random position; next year draw attempts −1 (still at least 1).",
   "card.habsburgImperialCustomsDelay.opponentHistory":
-    "Technical holds on manifests, bills, and military consignments at imperial and Low Countries ports slow cash recovery—bureaucratic drag that tightens France’s fiscal room without a pitched battle.",
+    "Port-side customs delays choke cash flow without a major battle. In play: Treasury −1, add 1 Fiscal Burden, and next year draw attempts −1 (min 1).",
 } as const;

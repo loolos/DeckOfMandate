@@ -55,21 +55,21 @@ export const messagesZhThirdMandate = {
   "card.habsburgImperialLegitimacyNote.desc":
     "对手费用 1。王位争夺进度 −1；对手下一年年初摸牌少 1 张（可至 0 张）。",
   "card.habsburgImperialLegitimacyNote.opponentHistory":
-    "宫廷法学家援引帝国特权与西班牙旧哈布斯堡谱系，以照会与备忘录层层质问波旁继统的条文——在战场之外先打一场纸面上的合法性战争。",
+    "帝国法学家以照会质疑波旁继统合法性。局内会让王位争夺进度 −1，且对手下一年少摸 1 张牌（最低 0）。",
   "card.habsburgLowCountriesAgitation.name": "低地鼓动",
   "card.habsburgLowCountriesAgitation.background": "西北战线",
   "card.habsburgLowCountriesAgitation.desc": "对手费用 2。进度 −1，权力 −1，合法性 −1。",
   "card.habsburgLowCountriesAgitation.opponentHistory":
-    "西属尼德兰一线的棱堡与冬营、兵变与补给争端，使伦敦与海牙的安全焦虑与法国北进路线纠缠在一起；此地的动荡，最能牵动大同盟的钱袋与舰队。",
+    "西属尼德兰的动荡会放大大同盟对法压力。局内会同时压低进度、权力、合法性（各 −1）。",
   "card.habsburgGrandAllianceLevy.name": "大同盟军费动员",
   "card.habsburgGrandAllianceLevy.background": "同盟军费",
   "card.habsburgGrandAllianceLevy.desc": "对手费用 2。王位争夺进度 −2；向抽牌堆随机位置加入 1 张财政负担。",
   "card.habsburgGrandAllianceLevy.opponentHistory":
-    "来自反法同盟与帝国摊派的补助、荷兰贷款与奥地利直接税，被缝入年复一年的一线野战与围城，让「法国的霸权时刻」在任何单一年份都显得昂贵得难以坐实。",
+    "反法同盟的补助与贷款让战争消耗持续。局内会让王位争夺进度 −2，并向牌库加入 1 张财政负担。",
   "card.habsburgImperialCustomsDelay.name": "帝国报关拖延",
   "card.habsburgImperialCustomsDelay.background": "口岸迟滞",
   "card.habsburgImperialCustomsDelay.desc":
     "对手费用 2。财政 −1；向抽牌堆随机位置加入 1 张财政负担；下一年抽牌次数 −1（仍至少 1 次）。",
   "card.habsburgImperialCustomsDelay.opponentHistory":
-    "帝国与低地口岸对船舶、汇票与军需报关的技术性拖延，使现金回笼与关税入库变慢，在纸面规则里就能勒紧法兰西的现金流。",
+    "帝国口岸的报关拖延会直接卡住现金流。局内会财政 −1、加入 1 张财政负担，且下一年抽牌次数 −1（最低 1）。",
 } as const;

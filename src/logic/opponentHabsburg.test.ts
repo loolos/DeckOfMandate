@@ -201,7 +201,7 @@ describe("opponentHabsburg AI", () => {
     expect(next.opponentDeck).toEqual(["opp_x"]);
   });
 
-  it("initOpponentHabsburgPool preserves opponentNextTurnDrawModifier (e.g. from Bavarian fund-solve before unlock)", () => {
+  it("initOpponentHabsburgPool preserves opponentNextTurnDrawModifier and starts with 2 opponent cards in hand", () => {
     const base = createInitialState(55_002, THIRD_MANDATE_LEVEL_ID);
     const st: GameState = {
       ...base,
@@ -211,6 +211,8 @@ describe("opponentHabsburg AI", () => {
     const next = initOpponentHabsburgPool(st);
     expect(next.opponentNextTurnDrawModifier).toBe(1);
     expect(next.opponentHabsburgUnlocked).toBe(true);
+    expect(next.opponentHand).toHaveLength(2);
+    expect(next.opponentDeck).toHaveLength(6);
   });
 });
 
