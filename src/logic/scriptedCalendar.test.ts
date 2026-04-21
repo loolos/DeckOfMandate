@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { createInitialState } from "../app/initialState";
 import { levelContentByLevelId } from "../data/levelContent";
 import { getLevelDef } from "../data/levels";
-import { EMPTY_EVENT_SLOTS } from "../types/event";
+import { EMPTY_EVENT_SLOTS } from "../levels/types/event";
 import type { GameState } from "../types/game";
 import {
   applyScriptedCalendarPhase,

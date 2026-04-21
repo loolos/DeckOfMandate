@@ -6,6 +6,8 @@
 
 Deck of Mandate is a fully client-side, single-player, turn-based strategy card game (React + TypeScript + Vite). There is no backend, database, or external API — all state lives in-memory and optionally in browser LocalStorage.
 
+Playable **levels** load via `src/levels/registerAll.ts`, which discovers `src/levels/<campaignId>/registerCampaign.ts` (one file per campaign folder). Each campaign’s `registerCampaign.ts` merges chapter modules from that folder (e.g. `sunking/chapters/*.ts`). **Template-related TypeScript types** (`CardTemplateId`, events, effects, tags, statuses) live in `src/levels/types/`. Sun King **card/event/status template data** lives under `src/levels/sunking/templates/` (re-exported from `src/data/`). Campaign i18n is merged from `src/levels/sunking/` (e.g. `sunkingLocales.ts`, `locales/*`). Vitest preloads the same registration through `src/test/setupLevels.ts`.
+
 ### Running the app
 
 Standard npm scripts are defined in `package.json`:

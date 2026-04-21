@@ -1,11 +1,9 @@
 import type { MessageKey } from "./en";
 import { messagesFrCore } from "./fr.core";
-import { messagesFrFirstMandate } from "./levels/firstMandate/fr";
-import { messagesFrSecondMandate } from "./levels/secondMandate/fr";
+import { sunkingMessagesFr } from "../levels/sunking/sunkingLocales";
 
-/** Bundle français fusionné : cœur + niveau `firstMandate` + niveau `secondMandate`. */
+/** Bundle français : cœur + campagne Roi-Soleil. */
 export const messagesFr: Record<MessageKey, string> = {
   ...messagesFrCore,
-  ...messagesFrFirstMandate,
-  ...messagesFrSecondMandate,
+  ...sunkingMessagesFr,
 };

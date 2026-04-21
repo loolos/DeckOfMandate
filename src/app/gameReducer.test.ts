@@ -1,11 +1,13 @@
 import { describe, expect, it } from "vitest";
 import { levelContentByLevelId } from "../data/levelContent";
-import { getLevelDef } from "../data/levels";
+import { getLevelDef, getTurnLimitForRun } from "../data/levels";
 import { getCardTemplate } from "../data/cards";
 import { getEventTemplate } from "../data/events";
-import { EMPTY_EVENT_SLOTS, type SlotId } from "../types/event";
+import { EMPTY_EVENT_SLOTS, type SlotId } from "../levels/types/event";
 import { createInitialState } from "./initialState";
 import { gameReducer } from "./gameReducer";
+import { createStandaloneLevel2Draft } from "./level2Transition";
+import { THIRD_MANDATE_LEVEL_ID } from "../logic/thirdMandateConstants";
 
 describe("gameReducer", () => {
   it("creates deterministic initial layouts for the same seed", () => {
@@ -23,6 +25,28 @@ describe("gameReducer", () => {
     expect(s1).toEqual(s0);
   });
 
+  it("NEW_GAME on second mandate restarts with standalone chapter-2 setup", () => {
+    const ended = {
+      ...createInitialState(6_002, "secondMandate"),
+      outcome: "defeatTime" as const,
+      phase: "gameOver" as const,
+      resources: { treasuryStat: 1, funding: 0, power: 1, legitimacy: 1 },
+    };
+    const restarted = gameReducer(ended, { type: "NEW_GAME", seed: 7_777 });
+    const expected = gameReducer(createInitialState(1, "firstMandate"), {
+      type: "NEW_GAME",
+      seed: 7_777,
+      levelId: "secondMandate",
+    });
+    expect(restarted).toEqual(expected);
+  });
+
+  it("standalone chapter-2 draft resources come from level definition", () => {
+    const draft = createStandaloneLevel2Draft(8_888);
+    const level = getLevelDef("secondMandate");
+    expect(draft.resources).toEqual(level.standaloneStartingResources);
+  });
+
   it("lose-first: legitimacy collapse ends the run before a later victory check would matter", () => {
     const s0 = createInitialState(222);
     const doomed: typeof s0 = {
@@ -34,15 +58,14 @@ describe("gameReducer", () => {
     expect(s1.phase).toBe("gameOver");
   });
 
-  it("lose-first: treasury collapse also ends the run", () => {
+  it("treasury can reach zero without immediate defeat", () => {
     const s0 = createInitialState(223);
     const doomed: typeof s0 = {
       ...s0,
       resources: { ...s0.resources, treasuryStat: 0 },
     };
     const s1 = gameReducer(doomed, { type: "END_YEAR" });
-    expect(s1.outcome).toBe("defeatLegitimacy");
-    expect(s1.phase).toBe("gameOver");
+    expect(s1.outcome).toBe("playing");
   });
 
   it("lose-first: power collapse from card depletion ends the run immediately", () => {
@@ -308,6 +331,103 @@ describe("gameReducer", () => {
     }
   });
 
+  it("Bavarian defection probe fund-solve adds +1 to opponent next-year draw when Habsburg row is active", () => {
+    const s0 = createInitialState(51_001, THIRD_MANDATE_LEVEL_ID);
+    const s1: typeof s0 = {
+      ...s0,
+      resources: { ...s0.resources, funding: 2 },
+      opponentHabsburgUnlocked: true,
+      opponentNextTurnDrawModifier: 0,
+      slots: {
+        ...s0.slots,
+        A: { instanceId: "e_bav", templateId: "bavarianCourtRealignment", resolved: false },
+      },
+    };
+    const after = gameReducer(s1, { type: "SOLVE_EVENT", slot: "A" });
+    expect(after.resources.funding).toBe(0);
+    expect(after.opponentNextTurnDrawModifier).toBe(1);
+  });
+
+  it("Imperial electors fund-solve adds +1 to opponent next-year draw", () => {
+    const s0 = createInitialState(51_003, THIRD_MANDATE_LEVEL_ID);
+    const s1: typeof s0 = {
+      ...s0,
+      resources: { ...s0.resources, funding: 2 },
+      opponentHabsburgUnlocked: true,
+      opponentNextTurnDrawModifier: 0,
+      slots: {
+        ...s0.slots,
+        A: { instanceId: "e_elec", templateId: "imperialElectorsMood", resolved: false },
+      },
+    };
+    const after = gameReducer(s1, { type: "SOLVE_EVENT", slot: "A" });
+    expect(after.resources.funding).toBe(0);
+    expect(after.opponentNextTurnDrawModifier).toBe(1);
+  });
+
+  it("1708 dual-front crisis: concede applies −3 track and +1 opponent budget", () => {
+    const base = createInitialState(51_100, THIRD_MANDATE_LEVEL_ID);
+    const s0: typeof base = {
+      ...base,
+      successionTrack: 0,
+      opponentHabsburgUnlocked: true,
+      opponentStrength: 2,
+      slots: {
+        ...base.slots,
+        A: { instanceId: "e_df", templateId: "dualFrontCrisis", resolved: false },
+      },
+    };
+    const after = gameReducer(s0, { type: "PICK_DUAL_FRONT_CRISIS", slot: "A", expandWar: false });
+    expect(after.successionTrack).toBe(-3);
+    expect(after.opponentStrength).toBe(3);
+    expect(after.slots.A?.resolved).toBe(true);
+  });
+
+  it("1708 dual-front crisis: escalate applies +1 track, −1 legitimacy, +3 fiscal burden, +1 opponent budget", () => {
+    const base = createInitialState(51_101, THIRD_MANDATE_LEVEL_ID);
+    const burdenBefore = Object.values(base.cardsById).filter((c) => c.templateId === "fiscalBurden").length;
+    const s0: typeof base = {
+      ...base,
+      successionTrack: 0,
+      resources: { ...base.resources, legitimacy: 5 },
+      opponentHabsburgUnlocked: true,
+      opponentStrength: 2,
+      slots: {
+        ...base.slots,
+        A: { instanceId: "e_df2", templateId: "dualFrontCrisis", resolved: false },
+      },
+    };
+    const after = gameReducer(s0, { type: "PICK_DUAL_FRONT_CRISIS", slot: "A", expandWar: true });
+    expect(after.successionTrack).toBe(1);
+    expect(after.resources.legitimacy).toBe(4);
+    expect(after.opponentStrength).toBe(3);
+    const burdenAfter = Object.values(after.cardsById).filter((c) => c.templateId === "fiscalBurden").length;
+    expect(burdenAfter).toBe(burdenBefore + 3);
+  });
+
+  it("Imperial electors crackdown intervention adds +1 to opponent next-year draw", () => {
+    const base = createInitialState(51_004, THIRD_MANDATE_LEVEL_ID);
+    const diId = "tmp_di_elec";
+    const s0: typeof base = {
+      ...base,
+      cardsById: {
+        ...base.cardsById,
+        [diId]: { instanceId: diId, templateId: "diplomaticIntervention" },
+      },
+      hand: [diId],
+      resources: { ...base.resources, funding: 0 },
+      opponentHabsburgUnlocked: true,
+      opponentNextTurnDrawModifier: 0,
+      slots: {
+        ...base.slots,
+        A: { instanceId: "e_elec2", templateId: "imperialElectorsMood", resolved: false },
+      },
+    };
+    const afterPlay = gameReducer(s0, { type: "PLAY_CARD", handIndex: 0 });
+    const after = gameReducer(afterPlay, { type: "CRACKDOWN_TARGET", slot: "A" });
+    expect(after.opponentNextTurnDrawModifier).toBe(1);
+  });
+
   it("league of augsburg requires 3 resolves and persists between years until remaining reaches zero", () => {
     const base = createInitialState(31_416, "secondMandate");
     const s0: typeof base = {
@@ -337,8 +457,9 @@ describe("gameReducer", () => {
 
   it("SCRIPTED_EVENT_ATTACK uses level scripted config (cost, power, coalition window)", () => {
     const cfg = levelContentByLevelId.firstMandate.scriptedCalendarEvents.find(
-      (x) => x.templateId === "warOfDevolution",
+      (x: { templateId: string }) => x.templateId === "warOfDevolution",
     )!;
+    if (!cfg.attack || !cfg.antiCoalition) throw new Error("expected war scripted attack config");
     const turn = cfg.presenceStartYear - getLevelDef("firstMandate").calendarStartYear + 1;
     let s = createInitialState(100);
     s = {
@@ -359,11 +480,13 @@ describe("gameReducer", () => {
     expect(after.antiFrenchLeague).not.toBeNull();
     const turnWindow = cfg.antiCoalition.activeYearsAfterAttack;
     const expectedUntil =
-      turnWindow === null ? getLevelDef("firstMandate").turnLimit : turn + turnWindow;
+      turnWindow === null
+        ? getTurnLimitForRun("firstMandate", getLevelDef("firstMandate").calendarStartYear)
+        : turn + turnWindow;
     expect(after.antiFrenchLeague!.untilTurn).toBe(expectedUntil);
   });
 
-  it("local war attack pays europe-alert-progress cost and resolves the event", () => {
+  it("local war attack pays floor(europe-alert-progress/2) cost and resolves the event", () => {
     const base = createInitialState(8_001, "secondMandate");
     const s0 = {
       ...base,
@@ -376,8 +499,14 @@ describe("gameReducer", () => {
       },
     };
     const s1 = gameReducer(s0, { type: "PICK_LOCAL_WAR_ATTACK", slot: "A" });
-    expect(s1.resources.funding).toBe(3);
+    expect(s1.resources.funding).toBe(6);
     expect(s1.slots.A?.resolved).toBe(true);
+    const last = s1.actionLog[s1.actionLog.length - 1];
+    expect(last?.kind).toBe("eventLocalWarChoice");
+    if (last?.kind === "eventLocalWarChoice") {
+      expect(last.choice).toBe("attack");
+      expect(last.fundingPaid).toBe(2);
+    }
   });
 
   it("local war attack includes anti-french sentiment penalty in funding cost", () => {
@@ -393,7 +522,7 @@ describe("gameReducer", () => {
       },
     };
     const s1 = gameReducer(s0, { type: "PICK_LOCAL_WAR_ATTACK", slot: "A" });
-    expect(s1.resources.funding).toBe(2);
+    expect(s1.resources.funding).toBe(5);
     expect(s1.slots.A?.resolved).toBe(true);
   });
 
@@ -411,6 +540,14 @@ describe("gameReducer", () => {
     expect(s1.resources.funding).toBe(4);
     expect(s1.resources.legitimacy).toBe(3);
     expect(s1.slots.A?.resolved).toBe(true);
+    const last = s1.actionLog[s1.actionLog.length - 1];
+    expect(last).toMatchObject({
+      kind: "eventLocalWarChoice",
+      choice: "appease",
+      fundingPaid: 0,
+      legitimacyDelta: -1,
+      powerDelta: 0,
+    });
   });
 
   it("skips retention phase when hand size is within Legitimacy (auto-keep all)", () => {
@@ -675,6 +812,7 @@ describe("gameReducer", () => {
       },
       hand: [containment],
       deck: base.deck.filter((id) => id !== containment),
+      europeAlert: true,
       europeAlertProgress: 4,
       resources: { ...base.resources, funding: 2 },
     };
@@ -684,7 +822,7 @@ describe("gameReducer", () => {
     expect(after.discard.includes(containment)).toBe(false);
   });
 
-  it("anti-french containment cost follows floor(europe alert progress / 2)", () => {
+  it("anti-french containment cost follows floor(europe alert progress / 2) with minimum 1", () => {
     const base = createInitialState(202_609, "secondMandate");
     const containment = "afc_cost";
     const withCard: typeof base = {
@@ -695,6 +833,7 @@ describe("gameReducer", () => {
       },
       hand: [containment],
       deck: base.deck.filter((id) => id !== containment),
+      europeAlert: true,
       europeAlertProgress: 5,
       resources: { ...base.resources, funding: 1 },
     };
@@ -702,6 +841,31 @@ describe("gameReducer", () => {
     expect(blocked).toEqual(withCard);
 
     const affordable = { ...withCard, resources: { ...withCard.resources, funding: 2 } };
+    const after = gameReducer(affordable, { type: "PLAY_CARD", handIndex: 0 });
+    expect(after.resources.funding).toBe(0);
+    expect(after.hand.includes(containment)).toBe(false);
+    expect(after.discard.includes(containment)).toBe(false);
+  });
+
+  it("anti-french containment still costs at least 1 once Europe Alert is cleared", () => {
+    const base = createInitialState(202_610, "secondMandate");
+    const containment = "afc_min_after_clear";
+    const withCard: typeof base = {
+      ...base,
+      cardsById: {
+        ...base.cardsById,
+        [containment]: { instanceId: containment, templateId: "antiFrenchContainment" as const },
+      },
+      hand: [containment],
+      deck: base.deck.filter((id) => id !== containment),
+      europeAlert: false,
+      europeAlertProgress: 0,
+      resources: { ...base.resources, funding: 0 },
+    };
+    const blocked = gameReducer(withCard, { type: "PLAY_CARD", handIndex: 0 });
+    expect(blocked).toEqual(withCard);
+
+    const affordable = { ...withCard, resources: { ...withCard.resources, funding: 1 } };
     const after = gameReducer(affordable, { type: "PLAY_CARD", handIndex: 0 });
     expect(after.resources.funding).toBe(0);
     expect(after.hand.includes(containment)).toBe(false);
@@ -890,6 +1054,62 @@ describe("gameReducer", () => {
     expect(after.actionLog.some((entry) => entry.kind === "eventNineYearsWarEndedByRyswick")).toBe(true);
   });
 
+  it("ryswick peace costs +4 and also clears nine years war when that war is still active", () => {
+    const base = createInitialState(202_904_1, "secondMandate");
+    const s0: typeof base = {
+      ...base,
+      europeAlert: true,
+      europeAlertProgress: 5,
+      resources: { ...base.resources, funding: 11 },
+      slots: {
+        ...base.slots,
+        A: { instanceId: "e_ryswick", templateId: "ryswickPeace" as const, resolved: false },
+        B: { instanceId: "e_nine", templateId: "nineYearsWar" as const, resolved: false },
+      },
+    };
+    const after = gameReducer(s0, { type: "SOLVE_EVENT", slot: "A" });
+    expect(after.resources.funding).toBe(0);
+    expect(after.slots.B).toBeNull();
+  });
+
+  it("keeps nine years war as plain continued (no continued-turn counter) after a non-decisive campaign", () => {
+    const base = createInitialState(202_904_2, "secondMandate");
+    const rngState = (() => {
+      for (let st = 1; st < 200_000; st++) {
+        const s0: typeof base = {
+          ...base,
+          rng: { state: st },
+          europeAlert: true,
+          europeAlertProgress: 5,
+          resources: { ...base.resources, funding: 6 },
+          slots: {
+            ...base.slots,
+            A: { instanceId: "e_nine", templateId: "nineYearsWar" as const, resolved: false },
+          },
+        };
+        const after = gameReducer(s0, { type: "SOLVE_EVENT", slot: "A" });
+        if (after.slots.A?.templateId === "nineYearsWar" && after.slots.A.remainingTurns === undefined) {
+          return st;
+        }
+      }
+      throw new Error("failed to find deterministic rng state for non-decisive nine years war campaign");
+    })();
+    const s0: typeof base = {
+      ...base,
+      rng: { state: rngState },
+      europeAlert: true,
+      europeAlertProgress: 5,
+      resources: { ...base.resources, funding: 6 },
+      slots: {
+        ...base.slots,
+        A: { instanceId: "e_nine", templateId: "nineYearsWar" as const, resolved: false },
+      },
+    };
+    const after = gameReducer(s0, { type: "SOLVE_EVENT", slot: "A" });
+    expect(after.slots.A?.templateId).toBe("nineYearsWar");
+    expect(after.slots.A?.remainingTurns).toBeUndefined();
+  });
+
   it("chapter 2 cannot win from 1696 onward while europe alert is still active", () => {
     const base = createInitialState(202_905, "secondMandate");
     const s0: typeof base = {
@@ -938,7 +1158,7 @@ describe("gameReducer", () => {
       resources: {
         treasuryStat: 3,
         power: 3,
-        legitimacy: 3,
+        legitimacy: 6,
         funding: 0,
       },
       slots: { ...EMPTY_EVENT_SLOTS },
@@ -987,6 +1207,9 @@ describe("gameReducer", () => {
     expect(after.resources.legitimacy).toBe(4);
     expect(after.slots.A?.resolved).toBe(true);
     expect(after.playerStatuses.some((s) => s.templateId === "religiousTolerance")).toBe(true);
+    expect(
+      after.actionLog.some((entry) => entry.kind === "info" && entry.infoKey === "nantesPolicy.toleranceNoFontainebleau"),
+    ).toBe(true);
   });
 
   it("revocation nantes crackdown branch adds containment status and three suppress cards", () => {
@@ -1003,23 +1226,27 @@ describe("gameReducer", () => {
     expect(containment?.turnsRemaining).toBe(3);
     const suppressCount = Object.values(after.cardsById).filter((c) => c.templateId === "suppressHuguenots").length;
     expect(suppressCount).toBe(3);
+    const liveSuppress = [...after.deck, ...after.hand, ...after.discard].filter(
+      (id) => after.cardsById[id]?.templateId === "suppressHuguenots",
+    ).length;
+    // Strict invariant: containment.turnsRemaining MUST equal the live card count.
+    expect(containment?.turnsRemaining).toBe(liveSuppress);
+    expect(
+      after.actionLog.some(
+        (entry) => entry.kind === "info" && entry.infoKey === "nantesPolicy.crackdownFontainebleauIssued",
+      ),
+    ).toBe(true);
   });
 
-  it("playing suppress huguenots decrements containment and purges all suppress cards at zero", () => {
+  it("playing the last suppress huguenots removes the containment status (strict invariant)", () => {
     const base = createInitialState(333_003, "secondMandate");
-    const cardId = "tmp_sup_1";
-    const second = "tmp_sup_2";
-    const third = "tmp_sup_3";
+    const cardId = "tmp_sup_only";
     const withCards: typeof base = {
       ...base,
       hand: [cardId],
-      deck: [second, ...base.deck],
-      discard: [third, ...base.discard],
       cardsById: {
         ...base.cardsById,
         [cardId]: { instanceId: cardId, templateId: "suppressHuguenots" as const },
-        [second]: { instanceId: second, templateId: "suppressHuguenots" as const },
-        [third]: { instanceId: third, templateId: "suppressHuguenots" as const },
       },
       resources: { ...base.resources, funding: 3 },
       playerStatuses: [
@@ -1036,7 +1263,103 @@ describe("gameReducer", () => {
     const after = gameReducer(withCards, { type: "PLAY_CARD", handIndex: 0 });
     expect(after.playerStatuses.some((s) => s.templateId === "huguenotContainment")).toBe(false);
     expect(after.hand.includes(cardId)).toBe(false);
-    expect(after.deck.includes(second)).toBe(false);
-    expect(after.discard.includes(third)).toBe(false);
+    const liveSuppress = [...after.deck, ...after.hand, ...after.discard].filter(
+      (id) => after.cardsById[id]?.templateId === "suppressHuguenots",
+    );
+    expect(liveSuppress).toHaveLength(0);
+    // Played card should also be pruned from cardsById (no orphan record left).
+    expect(after.cardsById[cardId]).toBeUndefined();
+  });
+
+  it("HYDRATE resyncs containment turnsRemaining to actual suppress card count (strict invariant)", () => {
+    const base = createInitialState(333_005, "secondMandate");
+    const oneId = "leg_sup_1";
+    const drift: typeof base = {
+      ...base,
+      hand: [oneId],
+      cardsById: {
+        ...base.cardsById,
+        [oneId]: { instanceId: oneId, templateId: "suppressHuguenots" as const },
+      },
+      playerStatuses: [
+        ...base.playerStatuses,
+        {
+          instanceId: "st_hug_legacy",
+          templateId: "huguenotContainment" as const,
+          kind: "drawAttemptsDelta" as const,
+          delta: 0,
+          turnsRemaining: 7,
+        },
+      ],
+    };
+    const after = gameReducer(drift, { type: "HYDRATE", state: drift });
+    const status = after.playerStatuses.find((s) => s.templateId === "huguenotContainment");
+    const live = [...after.deck, ...after.hand, ...after.discard].filter(
+      (id) => after.cardsById[id]?.templateId === "suppressHuguenots",
+    ).length;
+    expect(status?.turnsRemaining).toBe(live);
+    expect(status?.turnsRemaining).toBe(1);
+  });
+
+  it("HYDRATE removes containment status if no suppress cards remain (strict invariant)", () => {
+    const base = createInitialState(333_006, "secondMandate");
+    const orphanId = "orph_sup_1";
+    const drift: typeof base = {
+      ...base,
+      cardsById: {
+        ...base.cardsById,
+        [orphanId]: { instanceId: orphanId, templateId: "suppressHuguenots" as const },
+      },
+      playerStatuses: [
+        ...base.playerStatuses,
+        {
+          instanceId: "st_hug_orphan",
+          templateId: "huguenotContainment" as const,
+          kind: "drawAttemptsDelta" as const,
+          delta: 0,
+          turnsRemaining: 4,
+        },
+      ],
+    };
+    const after = gameReducer(drift, { type: "HYDRATE", state: drift });
+    expect(after.playerStatuses.some((s) => s.templateId === "huguenotContainment")).toBe(false);
+    expect(after.cardsById[orphanId]).toBeUndefined();
+  });
+
+  it("playing one of three suppress cards decrements containment to 2 (strict invariant)", () => {
+    const base = createInitialState(333_004, "secondMandate");
+    const inHand = "tmp_sup_hand";
+    const inDeck = "tmp_sup_deck";
+    const inDiscard = "tmp_sup_disc";
+    const withCards: typeof base = {
+      ...base,
+      hand: [inHand],
+      deck: [inDeck, ...base.deck],
+      discard: [inDiscard, ...base.discard],
+      cardsById: {
+        ...base.cardsById,
+        [inHand]: { instanceId: inHand, templateId: "suppressHuguenots" as const },
+        [inDeck]: { instanceId: inDeck, templateId: "suppressHuguenots" as const },
+        [inDiscard]: { instanceId: inDiscard, templateId: "suppressHuguenots" as const },
+      },
+      resources: { ...base.resources, funding: 3 },
+      playerStatuses: [
+        ...base.playerStatuses,
+        {
+          instanceId: "st_hug",
+          templateId: "huguenotContainment" as const,
+          kind: "drawAttemptsDelta" as const,
+          delta: 0,
+          turnsRemaining: 3,
+        },
+      ],
+    };
+    const after = gameReducer(withCards, { type: "PLAY_CARD", handIndex: 0 });
+    const status = after.playerStatuses.find((s) => s.templateId === "huguenotContainment");
+    const liveCount = [...after.deck, ...after.hand, ...after.discard].filter(
+      (id) => after.cardsById[id]?.templateId === "suppressHuguenots",
+    ).length;
+    expect(liveCount).toBe(2);
+    expect(status?.turnsRemaining).toBe(liveCount);
   });
 });

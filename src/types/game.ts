@@ -1,19 +1,23 @@
 import type { LevelId } from "../data/levels";
-import type { CardInstance, CardTemplateId } from "./card";
-import type { Effect } from "./effect";
-import type { EventInstance, EventTemplateId, SlotId } from "./event";
-import type { PlayerStatusInstance } from "./status";
+import type { CardInstance, CardTemplateId } from "../levels/types/card";
+import type { Effect } from "../levels/types/effect";
+import type { EventInstance, EventTemplateId, SlotId } from "../levels/types/event";
+import type { PlayerStatusInstance } from "../levels/types/status";
 
 export type LogInfoKey =
   | "firstMandateInflationActivated"
   | "chapter2EuropeAlertOn"
+  | "chapter2EuropeAlertContinuityLow"
   | "chapter2EuropeAlertOff"
+  | "chapter3ContinuityIntro"
   | "antiFrenchSentimentActivated"
   | "antiFrenchSentimentEnded"
   | "cardTag.royal"
   | "cardTag.temp"
   | "cardTag.extra"
   | "cardTag.inflation"
+  | "cardTag.defiance"
+  | "cardTag.consume"
   | "cardUse.remainingUses"
   | "cardUse.depleted.crackdownPenalty"
   | "cardUse.depleted.fundingPenalty"
@@ -21,6 +25,8 @@ export type LogInfoKey =
   | "cardDraw.fiscalBurdenTriggered"
   | "cardDraw.antiFrenchContainmentPowerLoss"
   | "cardDraw.antiFrenchContainmentLegitimacyLoss"
+  | "nantesPolicy.toleranceNoFontainebleau"
+  | "nantesPolicy.crackdownFontainebleauIssued"
   | "eventTag.harmful"
   | "eventTag.opportunity"
   | "eventTag.historical"
@@ -111,6 +117,33 @@ export type ActionLogEntry =
       slot: SlotId;
     }
   | {
+      kind: "eventLocalWarChoice";
+      id: string;
+      turn: number;
+      slot: SlotId;
+      templateId: "localWar";
+      choice: "attack" | "appease";
+      fundingPaid: number;
+      powerDelta: number;
+      legitimacyDelta: number;
+    }
+  | {
+      kind: "eventNineYearsWarCampaign";
+      id: string;
+      turn: number;
+      slot: SlotId;
+      fundingPaid: number;
+      viaIntervention: boolean;
+      outcome: "decisiveVictory" | "stalemate" | "limitedGains";
+      legitimacyDelta: number;
+    }
+  | {
+      kind: "eventNineYearsWarFiscalBurden";
+      id: string;
+      turn: number;
+      slot: SlotId;
+    }
+  | {
       kind: "eventNineYearsWarEndedByRyswick";
       id: string;
       turn: number;
@@ -121,6 +154,15 @@ export type ActionLogEntry =
       id: string;
       turn: number;
       slot: SlotId;
+    }
+  | {
+      kind: "huguenotResurgence";
+      id: string;
+      turn: number;
+      /** Copies of `suppressHuguenots` just inserted into the deck (always 1 for now). */
+      addedCount: number;
+      /** Stacks left on `huguenotContainment` after this resurgence. */
+      remainingStacks: number;
     }
   | {
       kind: "antiFrenchLeagueDraw";
@@ -157,15 +199,53 @@ export type ActionLogEntry =
       id: string;
       turn: number;
       infoKey: LogInfoKey;
+    }
+  | {
+      kind: "opponentHabsburgPlay";
+      id: string;
+      turn: number;
+      /** Instance ids played this opponent phase, sorted per AI tie-break. */
+      cardInstanceIds: string[];
+      /** Total opponent-cost budget before discount. */
+      opponentCostSum: number;
+      /** Applied discount from player cards this turn. */
+      opponentCostDiscount: number;
+    }
+  | {
+      kind: "opponentHabsburgDraw";
+      id: string;
+      turn: number;
+      drawnCardIds: string[];
+    }
+  | {
+      kind: "eventDualFrontCrisisChoice";
+      id: string;
+      turn: number;
+      slot: SlotId;
+      /** True: escalate war (+1 track, −1 legitimacy, +3 Fiscal Burden). False: concede (−3 track). Opponent budget +1 either way. */
+      expandWar: boolean;
+    }
+  | {
+      kind: "eventLocalizedSuccessionWarResolve";
+      id: string;
+      turn: number;
+      slot: SlotId;
+      fundingPaid: number;
+      successionDelta: -1 | 0 | 1 | 2;
     };
 
 export type GamePhase = "action" | "retention" | "gameOver";
+
+/** Set when chapter 3 ends on the calendar without hitting ±10 on the succession track. */
+export type SuccessionIntervalTier = "habsburg" | "compromise" | "bourbon";
 
 export type GameOutcome =
   | "playing"
   | "victory"
   | "defeatLegitimacy"
-  | "defeatTime";
+  | "defeatTime"
+  /** Chapter 3: succession track reached -10 (or legacy). */
+  | "defeatSuccession";
 
 /** After a scripted military choice; each year’s draw may roll drawPenaltyProbability for drawPenaltyDelta (clamped with power). */
 export type AntiFrenchLeagueState = {
@@ -181,6 +261,9 @@ export type PendingInteraction =
       /** For cancel / validation. */
       fundingPaid: number;
     };
+
+/** Set when the player resolves `revocationNantes` in chapter 2; drives chapter-3 standalone/carryover setup. */
+export type NantesPolicyCarryover = "tolerance" | "crackdown";
 
 export type Resources = {
   treasuryStat: number;
@@ -231,6 +314,11 @@ export type GameState = {
   slots: Record<SlotId, EventInstance | null>;
   /** If true, that slot must become Major Crisis at the next Event phase (before empty rolls). */
   pendingMajorCrisis: Record<SlotId, boolean>;
+  /**
+   * Chapter 2 only (until resolved): records the Edict of Nantes branch taken at `revocationNantes`.
+   * Chapter 3 reads this when continuing from chapter 2; remains null if the event was never resolved.
+   */
+  nantesPolicyCarryover: NantesPolicyCarryover | null;
   /** Timed modifiers (e.g. draw penalty); turns tick after each beginYear draw phase. */
   playerStatuses: PlayerStatusInstance[];
   /** Set when resolving a scripted attack (e.g. War of Devolution); cleared after `untilTurn`. */
@@ -246,9 +334,48 @@ export type GameState = {
   /** Chapter-2 objective marker; set true once Treaties of Nijmegen is successfully resolved. */
   nymwegenSettlementAchieved: boolean;
   /**
+   * Counts beginYear ticks since the last Huguenot resurgence trigger (or since Crackdown was chosen).
+   * While `huguenotContainment` is active, every 2 ticks adds a `suppressHuguenots` card to the deck
+   * and increments containment stacks by 1. Reset to 0 when the trigger fires or when the choice is made.
+   */
+  huguenotResurgenceCounter: number;
+  /**
    * Deterministic procedural event queue (A–C random events only).
    * Built as concatenated shuffled blocks where each template appears `weight` times.
    */
   proceduralEventSequence: EventTemplateId[];
   actionLog: readonly ActionLogEntry[];
+  /** Chapter 3: Spanish succession contest, -10..+10. */
+  successionTrack: number;
+  /** Chapter 3: max opponent-cost budget per opponent phase (fixed at 2 in this version). */
+  opponentStrength: number;
+  /** Chapter 3: after `successionCrisis` resolves; enables opponent draw/play. */
+  opponentHabsburgUnlocked: boolean;
+  /** Chapter 3: player ended the war via Utrecht event or countdown. */
+  warEnded: boolean;
+  /** Chapter 3: Utrecht event rounds remaining while active; null when not in negotiation. */
+  utrechtTreatyCountdown: number | null;
+  opponentDeck: string[];
+  opponentHand: string[];
+  opponentDiscard: string[];
+  /** Chapter 3: `grandAllianceInfiltrationDiplomacy` — reduces opponent cost sum (min 0). */
+  opponentCostDiscountThisTurn: number;
+  /**
+   * Chapter 3: added when the opponent plays certain cards; consumed at `opponentBeginYearDrawPhase`.
+   * Opponent draw count that year is `max(0, 1 + this)`, then this resets to 0.
+   */
+  opponentNextTurnDrawModifier: number;
+  /**
+   * Chapter 3: opponent templates played in the last completed opponent phase (`END_YEAR`), preserved for UI.
+   */
+  opponentLastPlayedTemplateIds: readonly CardTemplateId[];
+  /**
+   * When `outcome` is `victory` from chapter 3 calendar end, which tier narrative to show.
+   */
+  successionOutcomeTier: SuccessionIntervalTier | null;
+  /**
+   * Chapter 3: frozen when the Utrecht treaty ends hostilities (`warEnded`), from signing-time
+   * `successionTrack`. Drives `outcome.utrechtVictoryEpilogue.*` on victory.
+   */
+  utrechtSettlementTier: SuccessionIntervalTier | null;
 };

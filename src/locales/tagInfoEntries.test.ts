@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { messagesEnCore } from "./en.core";
 import { messagesZhCore } from "./zh.core";
 import { messagesFrCore } from "./fr.core";
-import { CARD_TAGS } from "../types/tags";
+import { CARD_TAGS } from "../levels/types/tags";
 
 const bundles = {
   en: messagesEnCore,

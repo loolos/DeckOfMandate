@@ -11,7 +11,7 @@ import { useI18n } from "../locales";
 import { getPlayableCardCost } from "../logic/cardCost";
 import { getCardTagsForInstance, hasCardTag } from "../logic/cardTags";
 import { getCardUseStateForInstance } from "../logic/cardUsage";
-import type { CardTag } from "../types/tags";
+import type { CardTag } from "../levels/types/tags";
 import type { LogInfoKey } from "../types/game";
 import styles from "../app/Game.module.css";
 
@@ -52,7 +52,8 @@ export function Hand({
         const cost = getPlayableCardCost(state, id);
         const affordable = state.resources.funding >= cost;
         const blockedByStatus = blockedRoyal && hasCardTag(state, id, "royal");
-        const playable = canPlay && affordable && !blockedByStatus;
+        const blockedByDefiance = hasCardTag(state, id, "defiance");
+        const playable = canPlay && affordable && !blockedByStatus && !blockedByDefiance;
         const title = cardLabelWithIcon(inst.templateId, t(tmpl.titleKey as MessageKey));
         const quickRows = buildCardQuickFrameRows(tmpl, cost);
         const compactSummary = quickRows.map((row) => row.value).join(" · ");

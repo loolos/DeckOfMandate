@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { createInitialState } from "../app/initialState";
-import { getLevelDef } from "../data/levels";
+import { getLevelDef, getTurnLimitForRun } from "../data/levels";
 import {
   simulateFirstMandateBatch,
   simulateFirstMandateRun,
@@ -14,21 +14,23 @@ describe("aiStrategySimulation", () => {
     const run = simulateFirstMandateRun(202_604);
     expect(run.outcome).not.toBe("playing");
     expect(run.endTurn).toBeGreaterThan(0);
-    expect(run.endTurn).toBeLessThanOrEqual(getLevelDef("firstMandate").turnLimit);
+    expect(run.endTurn).toBeLessThanOrEqual(
+      getTurnLimitForRun("firstMandate", getLevelDef("firstMandate").calendarStartYear),
+    );
   });
 
   it("keeps the benchmark summary stable for first mandate", () => {
     const report = simulateFirstMandateBatch({ seedStart: 1, runCount: 200 });
     expect(report).toMatchInlineSnapshot(`
       {
-        "averageEndTurn": 13.615,
-        "averageEndTurnOnLoss": 13.615,
+        "averageEndTurn": 13.62,
+        "averageEndTurnOnLoss": 13.622,
         "averageEndTurnOnWin": 13.614,
         "averageEndingResources": {
-          "funding": 0.01,
+          "funding": 0,
           "legitimacy": 4.31,
           "power": 5.355,
-          "treasuryStat": 4.785,
+          "treasuryStat": 4.79,
         },
         "levelId": "firstMandate",
         "losses": 156,
@@ -51,29 +53,31 @@ describe("aiStrategySimulation", () => {
     const run = simulateSecondMandateStandaloneRun(202_605);
     expect(run.outcome).not.toBe("playing");
     expect(run.endTurn).toBeGreaterThan(0);
-    expect(run.endTurn).toBeLessThanOrEqual(getLevelDef("secondMandate").turnLimit);
+    expect(run.endTurn).toBeLessThanOrEqual(
+      getTurnLimitForRun("secondMandate", getLevelDef("secondMandate").calendarStartYear),
+    );
   });
 
   it("keeps strategy I standalone chapter-2 benchmark stable", () => {
     const report = simulateSecondMandateStandaloneBatch({ seedStart: 1, runCount: 200 });
     expect(report).toMatchInlineSnapshot(`
       {
-        "averageEndTurn": 10.98,
-        "averageEndTurnOnLoss": 9.929,
-        "averageEndTurnOnWin": 22.294,
+        "averageEndTurn": 12.63,
+        "averageEndTurnOnLoss": 12.515,
+        "averageEndTurnOnWin": 24,
         "averageEndingResources": {
-          "funding": 0.105,
-          "legitimacy": 3.4,
-          "power": 0.905,
-          "treasuryStat": 3.22,
+          "funding": 0.04,
+          "legitimacy": 3.82,
+          "power": 0.38,
+          "treasuryStat": 2.815,
         },
         "levelId": "secondMandate",
-        "losses": 183,
+        "losses": 198,
         "runCount": 200,
         "startMode": "standalone",
         "strategyId": "a-strategy-i",
-        "winRate": 0.085,
-        "wins": 17,
+        "winRate": 0.01,
+        "wins": 2,
       }
     `);
   });
@@ -82,18 +86,18 @@ describe("aiStrategySimulation", () => {
     const report = simulateFirstToSecondCampaignBatch({ seedStart: 1, runCount: 200 });
     expect(report).toMatchInlineSnapshot(`
       {
-        "averageChapter1EndTurn": 13.615,
-        "averageChapter2EndTurnOnReached": 17.818,
-        "averageChapter2EndTurnOnWin": 23.769,
+        "averageChapter1EndTurn": 13.62,
+        "averageChapter2EndTurnOnReached": 15.614,
+        "averageChapter2EndTurnOnWin": 25,
         "chapter1Losses": 156,
         "chapter1WinRate": 0.22,
         "chapter1Wins": 44,
-        "chapter2Losses": 31,
+        "chapter2Losses": 43,
         "chapter2Runs": 44,
-        "chapter2WinRateAfterCarryover": 0.2955,
-        "chapter2Wins": 13,
-        "fullCampaignWinRate": 0.065,
-        "fullCampaignWins": 13,
+        "chapter2WinRateAfterCarryover": 0.0227,
+        "chapter2Wins": 1,
+        "fullCampaignWinRate": 0.005,
+        "fullCampaignWins": 1,
         "runCount": 200,
         "strategyId": "a-strategy-i",
       }

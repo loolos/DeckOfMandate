@@ -1,12 +1,24 @@
 import { getLevelContent, type ScriptedCalendarEventConfig } from "../data/levelContent";
+import { getLevelDef } from "../data/levels";
 import { getEventTemplate } from "../data/events";
-import { EVENT_SLOT_ORDER, type EventInstance, type EventTemplateId, type SlotId } from "../types/event";
+import { EVENT_SLOT_ORDER, type EventInstance, type EventTemplateId, type SlotId } from "../levels/types/event";
+import { THIRD_MANDATE_LEVEL_ID } from "./thirdMandateConstants";
 import type { AntiFrenchLeagueState, GameState } from "../types/game";
 import { appendActionLog } from "./actionLog";
 import { rngNext } from "./rng";
 
+/** Scenario calendar year at the start of the current turn. */
+export function calendarYearForTurn(
+  levelId: GameState["levelId"],
+  calendarStartYear: number,
+  turn: number,
+): number {
+  const ypt = getLevelDef(levelId).yearsPerTurn;
+  return calendarStartYear + (turn - 1) * ypt;
+}
+
 export function currentCalendarYear(state: GameState): number {
-  return state.calendarStartYear + state.turn - 1;
+  return calendarYearForTurn(state.levelId, state.calendarStartYear, state.turn);
 }
 
 export function findScriptedCalendarConfig(
@@ -98,6 +110,9 @@ export function applyScriptedCalendarPhase(state: GameState): GameState {
     s = placeScriptedEvent(s, cfg.templateId, target);
     if (cfg.templateId === "nineYearsWar") {
       s = appendActionLog(s, { kind: "eventNineYearsWarBegins", slot: target });
+    }
+    if (s.levelId === THIRD_MANDATE_LEVEL_ID && cfg.templateId === "utrechtTreaty") {
+      s = { ...s, utrechtTreatyCountdown: 6 };
     }
   }
 

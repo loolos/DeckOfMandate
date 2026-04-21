@@ -1,4 +1,4 @@
-import type { EventTemplateId } from "../types/event";
+import type { EventTemplateId } from "../levels/types/event";
 
 const HISTORICAL_EVENT_IDS = new Set<EventTemplateId>([
   "warOfDevolution",
@@ -6,7 +6,6 @@ const HISTORICAL_EVENT_IDS = new Set<EventTemplateId>([
   "cautiousCrown",
   "nymwegenSettlement",
   "revocationNantes",
-  "grainReliefCrisis",
   "leagueOfAugsburg",
   "nineYearsWar",
   "ryswickPeace",
