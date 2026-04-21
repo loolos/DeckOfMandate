@@ -83,7 +83,8 @@ export const messagesZhSecondMandate = {
   "event.militaryPrestige.name": "军事声望",
   "event.militaryPrestige.desc": "可将军功转化为统治威望。投入 2 经费，合法性 +1。",
   "event.commercialExpansion.name": "商业扩张",
-  "event.commercialExpansion.desc": "商人请求政策支持。投入 2 经费，财政 +1。",
+  "event.commercialExpansion.desc":
+    "17 世纪后期，法国在科尔贝尔主义影响下持续扶持工场手工业、航运与特许贸易公司，但连年战争与关税摩擦也让商业扩张始终伴随高成本。商人请求政策支持。投入 2 经费，财政 +1。",
   "event.talentedAdministrator.name": "能臣举荐",
   "event.talentedAdministrator.desc": "可提拔能干官员。投入 2 经费，权力 +1。",
   "event.warWeariness.name": "战争疲劳",

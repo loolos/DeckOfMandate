@@ -28,7 +28,8 @@ export const messagesZhThirdMandate = {
   "event.portugueseTariffNegotiation.desc":
     "背景：西班牙王位继承战争牵动伊比利亚与海外航路；葡萄牙在英荷同盟与法兰西—波旁体系之间重新站队，1703 年《梅休因条约》以葡酒优先关税换取英格兰毛织品进入葡境，实质上也把葡国贸易与关税主权嵌入大同盟对法和殖民补给的棋局之中。\n\n支付 ceil(财政/4) 经费：财政 +1 且王位争夺进度 +1。不处理：仅财政 +1。",
   "event.imperialElectorsMood.name": "帝国选侯会议风向",
-  "event.imperialElectorsMood.desc": "支付 2 经费或干预。不处理：进度 −1 且合法性 −1。",
+  "event.imperialElectorsMood.desc":
+    "莱茵与德意志诸邦担心法国借王位争议扩大在帝国内部的影响，帝国选侯会议上的态度常随战局与补贴承诺摇摆。支付 2 经费或干预。不处理：进度 −1 且合法性 −1。",
 
   "card.bourbonMarriageProclamation.name": "波旁联姻宣示",
   "card.bourbonMarriageProclamation.background": "王朝叙事",

@@ -94,7 +94,7 @@ export const messagesFrSecondMandate: Record<keyof typeof messagesEnSecondMandat
     "Une occasion de convertir l'image du champ de bataille en autorité. Investissez 2 Financement pour Légitimité +1.",
   "event.commercialExpansion.name": "Expansion commerciale",
   "event.commercialExpansion.desc":
-    "Les marchands demandent un soutien à la croissance. Investissez 2 Financement pour Trésor +1.",
+    "Dans la France de la fin du XVIIe siècle, l'héritage colbertiste continue de soutenir manufactures, marine marchande et compagnies à privilège, mais les guerres et les frictions tarifaires rendent l'essor commercial coûteux. Les marchands demandent un soutien à la croissance. Investissez 2 Financement pour Trésor +1.",
   "event.talentedAdministrator.name": "Administrateur talentueux",
   "event.talentedAdministrator.desc":
     "Un officier capable peut être promu. Investissez 2 Financement pour Pouvoir +1.",

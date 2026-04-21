@@ -29,7 +29,7 @@ export const messagesEnThirdMandate = {
     "Context: during the War of the Spanish Succession, Portugal realigned with the maritime coalition; the 1703 Methuen Treaty traded favorable wine duties in Portugal for English cloth access, folding Lisbon’s revenue politics into the Grand Alliance’s wider war economy and imperial supply lines against France.\n\nPay ceil(Treasury/4) Funding: Treasury +1 and succession track +1. If ignored: Treasury +1 only.",
   "event.imperialElectorsMood.name": "Imperial electors’ mood",
   "event.imperialElectorsMood.desc":
-    "Pay 2 Funding or use Intervention. If ignored: succession track −1 and Legitimacy −1.",
+    "Princes in the Empire feared that a Bourbon gain in Spain would widen French leverage in German affairs, so sentiment in elector circles shifted with campaign news and subsidy promises. Pay 2 Funding or use Intervention. If ignored: succession track −1 and Legitimacy −1.",
 
   "card.bourbonMarriageProclamation.name": "Bourbon marriage proclamation",
   "card.bourbonMarriageProclamation.background": "Dynastic narrative",
