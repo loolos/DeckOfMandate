@@ -23,21 +23,21 @@ describe("aiStrategySimulation", () => {
     const report = simulateFirstMandateBatch({ seedStart: 1, runCount: 200 });
     expect(report).toMatchInlineSnapshot(`
       {
-        "averageEndTurn": 13.62,
-        "averageEndTurnOnLoss": 13.622,
-        "averageEndTurnOnWin": 13.614,
+        "averageEndTurn": 13.74,
+        "averageEndTurnOnLoss": 13.817,
+        "averageEndTurnOnWin": 13.323,
         "averageEndingResources": {
           "funding": 0,
-          "legitimacy": 4.31,
-          "power": 5.355,
-          "treasuryStat": 4.79,
+          "legitimacy": 4.12,
+          "power": 5.13,
+          "treasuryStat": 4.845,
         },
         "levelId": "firstMandate",
-        "losses": 156,
+        "losses": 169,
         "runCount": 200,
         "strategyId": "event-first-retain-royal-funding-and-intervention",
-        "winRate": 0.22,
-        "wins": 44,
+        "winRate": 0.155,
+        "wins": 31,
       }
     `);
   });
@@ -62,22 +62,22 @@ describe("aiStrategySimulation", () => {
     const report = simulateSecondMandateStandaloneBatch({ seedStart: 1, runCount: 200 });
     expect(report).toMatchInlineSnapshot(`
       {
-        "averageEndTurn": 12.54,
-        "averageEndTurnOnLoss": 12.54,
-        "averageEndTurnOnWin": null,
+        "averageEndTurn": 12.97,
+        "averageEndTurnOnLoss": 12.869,
+        "averageEndTurnOnWin": 23,
         "averageEndingResources": {
           "funding": 0.15,
-          "legitimacy": 3.135,
-          "power": 0.385,
-          "treasuryStat": 2.74,
+          "legitimacy": 3.205,
+          "power": 0.43,
+          "treasuryStat": 2.565,
         },
         "levelId": "secondMandate",
-        "losses": 200,
+        "losses": 198,
         "runCount": 200,
         "startMode": "standalone",
         "strategyId": "a-strategy-i",
-        "winRate": 0,
-        "wins": 0,
+        "winRate": 0.01,
+        "wins": 2,
       }
     `);
   });
@@ -86,15 +86,15 @@ describe("aiStrategySimulation", () => {
     const report = simulateFirstToSecondCampaignBatch({ seedStart: 1, runCount: 200 });
     expect(report).toMatchInlineSnapshot(`
       {
-        "averageChapter1EndTurn": 13.62,
-        "averageChapter2EndTurnOnReached": 15.614,
-        "averageChapter2EndTurnOnWin": 25,
-        "chapter1Losses": 156,
-        "chapter1WinRate": 0.22,
-        "chapter1Wins": 44,
-        "chapter2Losses": 43,
-        "chapter2Runs": 44,
-        "chapter2WinRateAfterCarryover": 0.0227,
+        "averageChapter1EndTurn": 13.74,
+        "averageChapter2EndTurnOnReached": 14.387,
+        "averageChapter2EndTurnOnWin": 23,
+        "chapter1Losses": 169,
+        "chapter1WinRate": 0.155,
+        "chapter1Wins": 31,
+        "chapter2Losses": 30,
+        "chapter2Runs": 31,
+        "chapter2WinRateAfterCarryover": 0.0323,
         "chapter2Wins": 1,
         "fullCampaignWinRate": 0.005,
         "fullCampaignWins": 1,

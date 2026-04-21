@@ -284,6 +284,26 @@ function renderEntry(e: ActionLogEntry, t: (key: MessageKey, vars?: Record<strin
         </div>
       );
     }
+    case "eventSuccessionCrisisChoice": {
+      const titleKey = e.pay ? "log.eventSuccessionCrisisChoice.payTitle" : "log.eventSuccessionCrisisChoice.declineTitle";
+      const historyKey = e.pay
+        ? "log.eventSuccessionCrisisChoice.payHistory"
+        : "log.eventSuccessionCrisisChoice.declineHistory";
+      return (
+        <div>
+          <div className={styles.actionLogHead}>
+            {t(titleKey as MessageKey, {
+              turn: e.turn,
+              event: eventLabelWithIcon("successionCrisis", t(eventTitleKey("successionCrisis"))),
+              paid: e.fundingPaid,
+              funding: fundingLabel,
+              track: t("ui.successionTrack"),
+            })}
+          </div>
+          <div className={styles.actionLogSubMuted}>{t(historyKey as MessageKey)}</div>
+        </div>
+      );
+    }
     case "eventLocalizedSuccessionWarResolve": {
       const signed = e.successionDelta > 0 ? `+${e.successionDelta}` : String(e.successionDelta);
       const narrativeKey: MessageKey =

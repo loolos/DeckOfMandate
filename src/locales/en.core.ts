@@ -188,6 +188,14 @@ export const messagesEnCore = {
     "[Turn {turn}] {event} — temporarily conceded; succession track −3; opponent budget +1.",
   "log.eventDualFrontCrisis.escalate":
     "[Turn {turn}] {event} — expanded the war; succession track +1, legitimacy −1, +3 Fiscal Burden; opponent budget +1.",
+  "log.eventSuccessionCrisisChoice.payTitle":
+    "[Turn {turn}] {event} — paid {paid} {funding}; {track} +1.",
+  "log.eventSuccessionCrisisChoice.payHistory":
+    "Chanceries and jurists spar over wills and family compacts: this payment backs embassies, inducements, and treatises for Bourbon rights in neutral capitals before the Habsburg line hardens into a standing opponent.",
+  "log.eventSuccessionCrisisChoice.declineTitle":
+    "[Turn {turn}] {event} — declined; {track} −1.",
+  "log.eventSuccessionCrisisChoice.declineHistory":
+    "When the treasury balks, Vienna’s dynastic and imperial arguments frame the year first—France still fights for the Spanish crown, but begins from a colder room in the court of recognition.",
   "log.eventLocalizedSuccessionWar.title":
     "[Turn {turn}] {event}. Paid {paid} {funding}. {track} {delta} (random).",
   "log.eventLocalizedSuccessionWar.narrative.m1":

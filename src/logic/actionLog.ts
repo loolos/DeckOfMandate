@@ -74,6 +74,13 @@ export type ActionLogPayload =
   | { kind: "opponentHabsburgDraw"; drawnCardIds: string[] }
   | { kind: "eventDualFrontCrisisChoice"; slot: SlotId; expandWar: boolean }
   | {
+      kind: "eventSuccessionCrisisChoice";
+      slot: SlotId;
+      pay: boolean;
+      fundingPaid: number;
+      successionDelta: 1 | -1;
+    }
+  | {
       kind: "eventLocalizedSuccessionWarResolve";
       slot: SlotId;
       fundingPaid: number;

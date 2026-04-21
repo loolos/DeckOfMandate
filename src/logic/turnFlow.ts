@@ -99,15 +99,22 @@ const EMPTY_BOARD_EVENT_COUNT_RULES: readonly EventCountRule[] = [
   },
 ] as const;
 
-function buildProceduralSequenceBlock(state: GameState): [GameState["rng"], EventInstance["templateId"][]] {
-  const pool = getLevelContent(state.levelId).rollableEventIds;
+function buildProceduralSequenceBlock(state: GameState): [GameState, EventInstance["templateId"][]] {
+  const contentPool = getLevelContent(state.levelId).rollableEventIds;
+  let s = state;
+  if (s.proceduralEventPoolOrder.length === 0) {
+    const [r, shuffled] = shuffle(s.rng, [...contentPool]);
+    s = { ...s, rng: r, proceduralEventPoolOrder: shuffled };
+  }
   const expanded: EventInstance["templateId"][] = [];
-  for (const id of pool) {
-    const weight = Math.max(0, Math.floor(getEventRollWeight(state, id)));
+  for (const id of s.proceduralEventPoolOrder) {
+    if (!contentPool.includes(id)) continue;
+    const weight = Math.max(0, Math.floor(getEventRollWeight(s, id)));
     for (let i = 0; i < weight; i++) expanded.push(id);
   }
-  if (expanded.length === 0) return [state.rng, []];
-  return shuffle(state.rng, expanded);
+  if (expanded.length === 0) return [s, []];
+  const [rng, shuffledExpanded] = shuffle(s.rng, expanded);
+  return [{ ...s, rng }, shuffledExpanded];
 }
 
 function isStandaloneChapter2Start(state: GameState): boolean {
@@ -151,32 +158,53 @@ function ensureProceduralSequence(state: GameState, minRemaining: number): GameS
   let s = state;
   while (s.proceduralEventSequence.length < minRemaining) {
     const isFirstBlock = s.proceduralEventSequence.length === 0;
-    const [rng, block] = buildProceduralSequenceBlock(s);
+    const [sAfter, block] = buildProceduralSequenceBlock(s);
+    s = sAfter;
     const prefix = isFirstBlock ? buildOpeningSequencePrefix(s) : [];
     const withPrefix = prefix.length > 0 ? [...prefix, ...block.filter((id) => !prefix.includes(id))] : block;
-    s = { ...s, rng, proceduralEventSequence: [...s.proceduralEventSequence, ...withPrefix] };
+    s = { ...s, proceduralEventSequence: [...s.proceduralEventSequence, ...withPrefix] };
     if (withPrefix.length === 0) break;
   }
   return s;
 }
 
+function templateIdsOnEventBoardAtYearStart(state: GameState): Set<EventInstance["templateId"]> {
+  const set = new Set<EventInstance["templateId"]>();
+  for (const slot of EVENT_SLOT_ORDER) {
+    const ev = state.slots[slot];
+    if (ev) set.add(ev.templateId);
+  }
+  return set;
+}
+
+/**
+ * Pops from the front of `proceduralEventSequence`. If the head would duplicate an
+ * event already on the board this year or already taken in this draw, it is moved to
+ * the back and we try the next. Ch3 succession-gated heads are discarded, not re-queued.
+ */
 function drawFromProceduralSequence(
   state: GameState,
   count: number,
 ): [GameState, EventInstance["templateId"][]] {
+  const taken = templateIdsOnEventBoardAtYearStart(state);
   let s = ensureProceduralSequence(state, Math.max(count, PROCEDURAL_SEQUENCE_LOW_WATERMARK));
   const picked: EventInstance["templateId"][] = [];
-  const used = new Set<EventInstance["templateId"]>();
-  while (picked.length < count) {
+  const maxIters = Math.max(500, count * 200);
+  let iters = 0;
+  while (picked.length < count && iters < maxIters) {
+    iters += 1;
     s = ensureProceduralSequence(s, 1);
     if (s.proceduralEventSequence.length === 0) break;
     const [head, ...rest] = s.proceduralEventSequence;
     s = { ...s, proceduralEventSequence: rest };
     if (!head) continue;
     if (shouldDiscardCh3SuccessionGatedProceduralHead(s, head)) continue;
-    if (used.has(head)) continue;
+    if (taken.has(head)) {
+      s = { ...s, proceduralEventSequence: [...s.proceduralEventSequence, head] };
+      continue;
+    }
     picked.push(head);
-    used.add(head);
+    taken.add(head);
   }
   if (s.proceduralEventSequence.length < PROCEDURAL_SEQUENCE_LOW_WATERMARK) {
     s = ensureProceduralSequence(s, PROCEDURAL_SEQUENCE_LOW_WATERMARK);
@@ -320,11 +348,16 @@ function fillEmptySlots(state: GameState): GameState {
     }
     return st;
   }
+  const emptyProceduralSlots: SlotId[] = [];
   for (const slot of PROCEDURAL_EVENT_SLOT_ORDER) {
-    if (st.slots[slot]) continue;
-    const [afterDraw, picked] = drawFromProceduralSequence(st, 1);
-    st = afterDraw;
-    const templateId = picked[0];
+    if (!st.slots[slot]) emptyProceduralSlots.push(slot);
+  }
+  if (emptyProceduralSlots.length === 0) return st;
+  const [afterDraw, picked] = drawFromProceduralSequence(st, emptyProceduralSlots.length);
+  st = afterDraw;
+  for (let i = 0; i < emptyProceduralSlots.length; i++) {
+    const slot = emptyProceduralSlots[i]!;
+    const templateId = picked[i];
     if (!templateId) break;
     st = placeEventTemplateOnSlot(st, slot, templateId);
   }

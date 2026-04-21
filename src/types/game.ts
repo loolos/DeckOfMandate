@@ -230,6 +230,15 @@ export type ActionLogEntry =
       expandWar: boolean;
     }
   | {
+      kind: "eventSuccessionCrisisChoice";
+      id: string;
+      turn: number;
+      slot: SlotId;
+      pay: boolean;
+      fundingPaid: number;
+      successionDelta: 1 | -1;
+    }
+  | {
       kind: "eventLocalizedSuccessionWarResolve";
       id: string;
       turn: number;
@@ -348,6 +357,11 @@ export type GameState = {
    * Built as concatenated shuffled blocks where each template appears `weight` times.
    */
   proceduralEventSequence: EventTemplateId[];
+  /**
+   * Shuffled `rollableEventIds` for the current level, fixed the first time a block is
+   * built; cleared on level change. Weights still repeat copies; deck order is per level start.
+   */
+  proceduralEventPoolOrder: EventTemplateId[];
   actionLog: readonly ActionLogEntry[];
   /** Chapter 3: Spanish succession contest, -10..+10. */
   successionTrack: number;

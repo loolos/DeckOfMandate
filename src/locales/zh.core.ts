@@ -184,6 +184,14 @@ export const messagesZhCore = {
     "[第 {turn} 年] {event} — 选择暂时让步；王位争夺进度 −3；对手费用上限 +1。",
   "log.eventDualFrontCrisis.escalate":
     "[第 {turn} 年] {event} — 选择扩大战争；王位争夺进度 +1，合法性 −1，向抽牌堆加入 3 张财政负担；对手费用上限 +1。",
+  "log.eventSuccessionCrisisChoice.payTitle":
+    "[第 {turn} 年] {event} — 已支付 {paid} {funding}；{track} +1。",
+  "log.eventSuccessionCrisisChoice.payHistory":
+    "各邦宫廷在遗嘱、谱系与均势上角力：支付代表在外交、津贴与法理论述上为波旁主张抢先占位，在哈布斯堡对手常压登场之前，先买下一轮国际舆论与承认空间。",
+  "log.eventSuccessionCrisisChoice.declineTitle":
+    "[第 {turn} 年] {event} — 未支付；{track} −1。",
+  "log.eventSuccessionCrisisChoice.declineHistory":
+    "当国库与政治决心不愿为「纸面战争」先押筹码时，维也纳与大同盟的合法性叙事先于凡尔赛设调：你仍要争夺西属遗产，但本年纪录从更被动的承认气候开场。",
   "log.eventLocalizedSuccessionWar.title":
     "[第 {turn} 年] {event}。已支付 {paid} {funding}。{track} {delta}（随机）。",
   "log.eventLocalizedSuccessionWar.narrative.m1":

@@ -206,6 +206,15 @@ export const messagesFrCore: Record<keyof typeof messagesEnCore, string> = {
     "[Tour {turn}] {event} — céder provisoirement ; piste −3 ; budget adverse +1.",
   "log.eventDualFrontCrisis.escalate":
     "[Tour {turn}] {event} — élargir la guerre ; piste +1, légitimité −1, +3 Charges fiscales ; budget adverse +1.",
+  "log.opponentHabsburgPlay.cardsLine": "Jouées : {cards}.",
+  "log.eventSuccessionCrisisChoice.payTitle":
+    "[Tour {turn}] {event} — payé {paid} {funding} ; {track} +1.",
+  "log.eventSuccessionCrisisChoice.payHistory":
+    "Chancelleries et juristes croisent testaments et pactes dynastiques : ce paiement soutient ambassades, récompenses et traités pour les droits bourbon dans les cours neutres avant que le camp Habsbourg ne se fige en adversaire permanent.",
+  "log.eventSuccessionCrisisChoice.declineTitle":
+    "[Tour {turn}] {event} — refus ; {track} −1.",
+  "log.eventSuccessionCrisisChoice.declineHistory":
+    "Quand le Trésor hésite, Vienne et la ligue impériale cadrer d’abord le récit ; la France conteste encore la couronne espagnole, mais part d’une reconnaissance plus froide.",
   "log.eventLocalizedSuccessionWar.title":
     "[Tour {turn}] {event}. Payé {paid} {funding}. {track} {delta} (aléatoire).",
   "log.eventLocalizedSuccessionWar.narrative.m1":

@@ -252,6 +252,7 @@ function buildContinuityLevel2State(draft: Level2StartDraft): GameState {
     nymwegenSettlementAchieved: false,
     huguenotResurgenceCounter: 0,
     proceduralEventSequence: [],
+    proceduralEventPoolOrder: [],
     actionLog: [],
     successionTrack: 0,
     opponentStrength: 2,

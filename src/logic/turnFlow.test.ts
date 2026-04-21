@@ -505,6 +505,24 @@ describe("beginYear + playerStatuses", () => {
     expect(new Set(ids).size).toBe(3);
   });
 
+  it("does not place duplicate procedural templates in one year when only some of A–C are empty", () => {
+    const started = createInitialState(9_101, "secondMandate");
+    const s0: GameState = {
+      ...started,
+      turn: 5,
+      proceduralEventSequence: [],
+      proceduralEventPoolOrder: [],
+      slots: {
+        ...EMPTY_EVENT_SLOTS,
+        A: { instanceId: "evt_held", templateId: "budgetStrain", resolved: false },
+      },
+    };
+    const s1 = beginYear(s0);
+    expect(s1.slots.B?.templateId).toBeDefined();
+    expect(s1.slots.C?.templateId).toBeDefined();
+    expect(s1.slots.B?.templateId).not.toBe(s1.slots.C?.templateId);
+  });
+
   it("adds a europe-alert supplemental event when progress-gated roll succeeds", () => {
     const started = createInitialState(902_010, "secondMandate");
     const supplementalPool = ["frontierGarrisons", "tradeDisruption", "embargoCoalition", "mercenaryRaiders", "localWar"];

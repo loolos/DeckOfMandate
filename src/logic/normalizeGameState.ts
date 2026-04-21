@@ -110,6 +110,9 @@ export function normalizeGameState(state: GameState): GameState {
   if (!Array.isArray(s.proceduralEventSequence)) {
     s = { ...s, proceduralEventSequence: [] };
   }
+  if (!Array.isArray(s.proceduralEventPoolOrder)) {
+    s = { ...s, proceduralEventPoolOrder: [] };
+  }
   if (typeof s.successionTrack !== "number" || !Number.isFinite(s.successionTrack)) {
     s = { ...s, successionTrack: 0 };
   } else {

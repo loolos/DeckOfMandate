@@ -417,6 +417,8 @@ function performSuccessionCrisisPick(state: GameState, slot: SlotId, pay: boolea
     return state;
   }
   let s = state;
+  const fundingPaid = pay ? 3 : 0;
+  const successionDelta: 1 | -1 = pay ? 1 : -1;
   if (pay) {
     if (s.resources.funding < 3) return state;
     s = { ...s, resources: { ...s.resources, funding: s.resources.funding - 3 } };
@@ -424,8 +426,18 @@ function performSuccessionCrisisPick(state: GameState, slot: SlotId, pay: boolea
   } else {
     s = applyEffects(s, [{ kind: "modSuccessionTrack", delta: -1 }]);
   }
-  if (s.outcome !== "playing") return s;
+  const crisisLog = {
+    kind: "eventSuccessionCrisisChoice" as const,
+    slot,
+    pay,
+    fundingPaid,
+    successionDelta,
+  };
+  if (s.outcome !== "playing") {
+    return appendActionLog(s, crisisLog);
+  }
   s = completeSuccessionCrisisAndRevealOpponent(s, slot);
+  s = appendActionLog(s, crisisLog);
   return appendInflationActivationLogIfNeeded(state, s);
 }
 

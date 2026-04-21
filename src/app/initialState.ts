@@ -145,6 +145,7 @@ export function createInitialState(
     nymwegenSettlementAchieved: false,
     huguenotResurgenceCounter: 0,
     proceduralEventSequence: [],
+    proceduralEventPoolOrder: [],
     actionLog: [],
     successionTrack: 0,
     opponentStrength: 2,
