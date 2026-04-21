@@ -365,6 +365,8 @@ export function opponentEndYearPlayPhase(state: GameState): GameState {
   return appendActionLog(s, {
     kind: "opponentHabsburgPlay",
     cardInstanceIds: [...picked],
+    playedTemplateIds: playedTemplates,
+    effects: opponentTemplatesToAppliedEffects(playedTemplates),
     opponentCostSum: costSum,
     opponentCostDiscount: discount,
   });

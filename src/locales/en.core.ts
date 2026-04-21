@@ -169,6 +169,7 @@ export const messagesEnCore = {
   "log.effect.modOpponentStrength": "Habsburg opponent budget {delta}",
   "log.opponentHabsburgPlay.title":
     "[Turn {turn}] Habsburg phase: played for {cost} opponent cost (discount {discount}).",
+  "log.opponentHabsburgPlay.cardsLine": "Played: {cards}.",
   "log.opponentHabsburgDraw.title": "[Turn {turn}] Habsburg drew {n} card(s).",
   "log.eventFundSolved": "[Turn {turn}] {event}. Paid {paid} {funding}{treasury}",
   "log.eventFundSolved.treasury": " Treasury +{gain}.",

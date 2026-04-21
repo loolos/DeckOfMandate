@@ -1,7 +1,9 @@
 import { getDefaultLevelId, getLevelDef, isLevelId } from "../data/levels";
+import type { CardTemplateId } from "../levels/types/card";
 import { enforceHuguenotContainmentInvariant } from "./cardRuntime";
 import { normalizeCardUsesById } from "./cardUsage";
 import { computeEuropeAlertPowerLoss } from "./europeAlert";
+import { opponentTemplatesToAppliedEffects } from "./opponentHabsburg";
 import { EMPTY_EVENT_SLOTS, EMPTY_PENDING_MAJOR_CRISIS, EVENT_SLOT_ORDER, type SlotId } from "../levels/types/event";
 import type { GameState } from "../types/game";
 
@@ -42,6 +44,25 @@ export function normalizeGameState(state: GameState): GameState {
   s = { ...s, nextIds: { event: eventId, status: statusId, log: logId } };
   if (!Array.isArray(s.actionLog)) {
     s = { ...s, actionLog: [] };
+  } else {
+    s = {
+      ...s,
+      actionLog: s.actionLog.map((e) => {
+        if (e.kind !== "opponentHabsburgPlay") return e;
+        const hasPlayed = Array.isArray(e.playedTemplateIds);
+        const hasEffects = Array.isArray(e.effects);
+        if (hasPlayed && hasEffects) return e;
+        let playedTemplateIds: CardTemplateId[] = hasPlayed ? [...e.playedTemplateIds!] : [];
+        if (playedTemplateIds.length === 0 && Array.isArray(e.cardInstanceIds)) {
+          for (const cid of e.cardInstanceIds) {
+            const tid = s.cardsById[cid]?.templateId;
+            if (tid) playedTemplateIds.push(tid);
+          }
+        }
+        const effects = hasEffects ? e.effects! : opponentTemplatesToAppliedEffects(playedTemplateIds);
+        return { ...e, playedTemplateIds, effects };
+      }) as GameState["actionLog"],
+    };
   }
   if (s.antiFrenchLeague === undefined) {
     s = { ...s, antiFrenchLeague: null };

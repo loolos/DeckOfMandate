@@ -66,6 +66,8 @@ export type ActionLogPayload =
   | {
       kind: "opponentHabsburgPlay";
       cardInstanceIds: string[];
+      playedTemplateIds: readonly CardTemplateId[];
+      effects: readonly Effect[];
       opponentCostSum: number;
       opponentCostDiscount: number;
     }

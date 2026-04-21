@@ -206,6 +206,10 @@ export type ActionLogEntry =
       turn: number;
       /** Instance ids played this opponent phase, sorted per AI tie-break. */
       cardInstanceIds: string[];
+      /** Play order; same tie-break as instance ids. */
+      playedTemplateIds: readonly CardTemplateId[];
+      /** Net effects on the player this phase (same composition as `opponentTemplatesToAppliedEffects`). */
+      effects: readonly Effect[];
       /** Total opponent-cost budget before discount. */
       opponentCostSum: number;
       /** Applied discount from player cards this turn. */

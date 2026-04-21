@@ -165,6 +165,7 @@ export const messagesZhCore = {
   "log.effect.modOpponentStrength": "哈布斯堡对手费用上限 {delta}",
   "log.opponentHabsburgPlay.title":
     "[第 {turn} 年] 哈布斯堡阶段：打出合计 {cost} 点对手费用（已减免 {discount}）。",
+  "log.opponentHabsburgPlay.cardsLine": "打出：{cards}。",
   "log.opponentHabsburgDraw.title": "[第 {turn} 年] 哈布斯堡摸牌 {n} 张。",
   "log.eventFundSolved": "[第 {turn} 年] {event}。已支付 {paid} {funding}。{treasury}",
   "log.eventFundSolved.treasury": "财政 +{gain}。",

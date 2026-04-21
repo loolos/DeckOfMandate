@@ -413,16 +413,35 @@ function renderEntry(e: ActionLogEntry, t: (key: MessageKey, vars?: Record<strin
     }
     case "info":
       return <div className={styles.actionLogHead}>{t(`log.info.${e.infoKey}` as MessageKey, { turn: e.turn })}</div>;
-    case "opponentHabsburgPlay":
+    case "opponentHabsburgPlay": {
+      const cardLine = e.playedTemplateIds
+        .map((id) => cardLabelWithIcon(id, t(cardTitleKey(id))))
+        .join("、");
       return (
-        <div className={styles.actionLogHead}>
-          {t("log.opponentHabsburgPlay.title", {
-            turn: e.turn,
-            cost: e.opponentCostSum,
-            discount: e.opponentCostDiscount,
-          })}
+        <div>
+          <div className={styles.actionLogHead}>
+            {t("log.opponentHabsburgPlay.title", {
+              turn: e.turn,
+              cost: e.opponentCostSum,
+              discount: e.opponentCostDiscount,
+            })}
+          </div>
+          {cardLine ? (
+            <div className={styles.actionLogSub}>{t("log.opponentHabsburgPlay.cardsLine", { cards: cardLine })}</div>
+          ) : null}
+          {e.effects.length > 0 ? (
+            <>
+              <div className={styles.actionLogSubMuted}>{t("log.cardPlayed.effectsLabel")}</div>
+              {e.effects.map((fx, i) => (
+                <div key={i} className={styles.actionLogSub}>
+                  {formatEffectLogLine(fx, t)}
+                </div>
+              ))}
+            </>
+          ) : null}
         </div>
       );
+    }
     case "opponentHabsburgDraw":
       return (
         <div className={styles.actionLogHead}>
