@@ -93,8 +93,8 @@ export function createContinuityLevel3Draft(from: GameState, seed?: number): Lev
   const inheritedResources: Resources = {
     treasuryStat: from.resources.treasuryStat,
     power: from.resources.power,
-    legitimacy: from.resources.legitimacy + (from.warOfDevolutionAttacked ? 1 : 0),
-    funding: 0,
+    legitimacy: from.resources.legitimacy,
+    funding: from.resources.funding,
   };
   const carryoverCards = createDeckRefitCarryoverSnapshot(from);
   return {
@@ -173,12 +173,14 @@ export function buildLevel3StateFromDraft(draft: Level3StartDraft): GameState {
     if (card.inflationDelta > 0) {
       cardInflationById[card.instanceId] = card.inflationDelta;
     }
-    const usage = createInitialCardUseState(THIRD_MANDATE_LEVEL_ID, card.templateId, card.remainingUses ?? undefined);
-    if (usage) {
-      const total = card.totalUses ?? usage.total;
-      const remaining = Math.max(0, Math.min(total, card.remainingUses ?? usage.remaining));
+    if (card.totalUses != null && card.remainingUses != null) {
+      const total = Math.max(0, card.totalUses);
+      const remaining = Math.max(0, Math.min(total, card.remainingUses));
       cardUsesById[card.instanceId] = { total, remaining };
+      continue;
     }
+    const usage = createInitialCardUseState(THIRD_MANDATE_LEVEL_ID, card.templateId);
+    if (usage) cardUsesById[card.instanceId] = usage;
   }
   for (const id of ch3Ids) {
     const inst = cardsById[id]!;

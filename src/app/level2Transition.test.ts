@@ -48,7 +48,7 @@ describe("level2Transition", () => {
       warOfDevolutionAttacked: true,
       resources: {
         treasuryStat: 4,
-        funding: 0,
+        funding: 3,
         power: 4,
         legitimacy: 5,
       },
@@ -62,7 +62,8 @@ describe("level2Transition", () => {
     expect(stWar.actionLog.some((e) => e.kind === "info" && e.infoKey === "chapter2EuropeAlertOn")).toBe(true);
     expect(draft.resources.treasuryStat).toBe(4);
     expect(draft.resources.power).toBe(4);
-    expect(draft.resources.legitimacy).toBe(6);
+    expect(draft.resources.legitimacy).toBe(5);
+    expect(draft.resources.funding).toBe(3);
     expect(draft.calendarStartYear).toBe(1672);
     expect(draft.carryoverCards.length).toBeGreaterThan(0);
     expect(draft.removedCarryoverIds).toEqual([]);
@@ -126,15 +127,14 @@ describe("level2Transition", () => {
     ).toBe(true);
   });
 
-  it("continuity refit removes cards per-instance up to the configured cap", () => {
+  it("continuity refit does not allow carryover removals", () => {
     const chapter1Win = createInitialState(778, "firstMandate");
     const draft = createContinuityLevel2Draft(chapter1Win);
-    if (draft.carryoverCards.length < 4) throw new Error("expected at least 4 carryover cards");
     let d = draft;
     for (let i = 0; i < LEVEL2_CONTINUITY_MAX_REMOVALS; i++) {
       d = toggleContinuityCardRemoval(d, d.carryoverCards[i]!.instanceId);
     }
-    const blocked = toggleContinuityCardRemoval(d, d.carryoverCards[LEVEL2_CONTINUITY_MAX_REMOVALS]!.instanceId);
+    const blocked = toggleContinuityCardRemoval(d, d.carryoverCards[0]!.instanceId);
     expect(blocked.removedCarryoverIds.length).toBe(LEVEL2_CONTINUITY_MAX_REMOVALS);
     const v = validateLevel2ContinuityRefit(blocked);
     expect(v.adjustableChanges).toBe(LEVEL2_CONTINUITY_MAX_REMOVALS);
@@ -142,7 +142,7 @@ describe("level2Transition", () => {
     expect(v.isValid).toBe(true);
   });
 
-  it("continuity chapter 2 state keeps per-instance inflation for retained cards", () => {
+  it("continuity chapter 2 state keeps per-instance inflation", () => {
     const chapter1Win = createInitialState(779, "firstMandate");
     const poolIds = [...chapter1Win.deck, ...chapter1Win.discard, ...chapter1Win.hand];
     const first = poolIds[0];
@@ -160,14 +160,12 @@ describe("level2Transition", () => {
     const keepInflated = draft0.carryoverCards.find((c) => c.instanceId === first);
     const removeInflated = draft0.carryoverCards.find((c) => c.instanceId === second);
     if (!keepInflated || !removeInflated) throw new Error("expected inflation cards in carryover");
-    let draft = draft0;
-    draft = toggleContinuityCardRemoval(draft, removeInflated.instanceId);
-    const st = buildLevel2StateFromDraft(draft);
+    const st = buildLevel2StateFromDraft(draft0);
     expect(st.levelId).toBe("secondMandate");
     expect(st.cardsById[keepInflated.instanceId]?.templateId).toBe(keepInflated.templateId);
     expect(st.cardInflationById[keepInflated.instanceId]).toBe(2);
-    expect(st.cardsById[removeInflated.instanceId]).toBeUndefined();
-    expect(st.cardInflationById[removeInflated.instanceId]).toBeUndefined();
+    expect(st.cardsById[removeInflated.instanceId]?.templateId).toBe(removeInflated.templateId);
+    expect(st.cardInflationById[removeInflated.instanceId]).toBe(1);
     const allTemplateIds = Object.values(st.cardsById).map((c) => c.templateId);
     for (const id of LEVEL2_FIXED_NEW_IDS) {
       expect(allTemplateIds.includes(id)).toBe(true);
