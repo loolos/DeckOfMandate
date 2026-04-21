@@ -174,6 +174,72 @@ function renderEntry(e: ActionLogEntry, t: (key: MessageKey, vars?: Record<strin
         </div>
       );
     }
+    case "eventNineYearsWarAttempt": {
+      const eventLabel = eventLabelWithIcon("nineYearsWar", t(eventTitleKey("nineYearsWar")));
+      const methodKey =
+        e.method === "funding" ? "log.eventNineYearsWarAttempt.method.funding" : "log.eventNineYearsWarAttempt.method.intervention";
+      return (
+        <div>
+          <div className={styles.actionLogHead}>
+            {t("log.eventNineYearsWarAttempt.title", {
+              turn: e.turn,
+              slot: e.slot,
+              event: eventLabel,
+              paid: e.fundingPaid,
+              funding: fundingLabel,
+              method: t(methodKey as MessageKey),
+              roll: e.roll,
+            })}
+          </div>
+          <div className={styles.actionLogSub}>
+            {t(`log.eventNineYearsWarAttempt.outcome.${e.outcome}` as MessageKey, {
+              legitimacy: resourceLabelWithIcon("legitimacy", t("resource.legitimacy")),
+            })}
+          </div>
+          <div className={styles.actionLogSubMuted}>{t("log.eventNineYearsWarAttempt.history")}</div>
+        </div>
+      );
+    }
+    case "eventNineYearsWarBegins":
+      return (
+        <div>
+          <div className={styles.actionLogHead}>
+            {t("log.eventNineYearsWarBegins.title", {
+              turn: e.turn,
+              slot: e.slot,
+              event: eventLabelWithIcon("nineYearsWar", t(eventTitleKey("nineYearsWar"))),
+            })}
+          </div>
+          <div className={styles.actionLogSubMuted}>{t("log.eventNineYearsWarBegins.history")}</div>
+        </div>
+      );
+    case "eventNineYearsWarEndedByRyswick":
+      return (
+        <div>
+          <div className={styles.actionLogHead}>
+            {t("log.eventNineYearsWarEndedByRyswick.title", {
+              turn: e.turn,
+              removed: e.removedCount,
+              ryswick: eventLabelWithIcon("ryswickPeace", t(eventTitleKey("ryswickPeace"))),
+              war: eventLabelWithIcon("nineYearsWar", t(eventTitleKey("nineYearsWar"))),
+            })}
+          </div>
+          <div className={styles.actionLogSubMuted}>{t("log.eventNineYearsWarEndedByRyswick.history")}</div>
+        </div>
+      );
+    case "eventNineYearsWarBurden":
+      return (
+        <div>
+          <div className={styles.actionLogHead}>
+            {t("log.eventNineYearsWarBurden.title", {
+              turn: e.turn,
+              slot: e.slot,
+              event: eventLabelWithIcon("nineYearsWar", t(eventTitleKey("nineYearsWar"))),
+            })}
+          </div>
+          <div className={styles.actionLogSubMuted}>{t("log.eventNineYearsWarBurden.history")}</div>
+        </div>
+      );
     case "eventLocalWarChoice": {
       if (e.choice === "appease") {
         return (

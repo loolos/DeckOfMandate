@@ -131,13 +131,21 @@ describe("secondMandate balance data", () => {
     const st = { ...createInitialState(1_234, "secondMandate"), europeAlert: true, europeAlertProgress: 7 };
     expect(getEventSolveFundingAmount(st, "nymwegenSettlement")).toBe(10);
     expect(getEventSolveFundingAmount(st, "ryswickPeace")).toBe(9);
+    const stWithNineYearsWar = {
+      ...st,
+      slots: {
+        ...st.slots,
+        A: { instanceId: "e_nine_years", templateId: "nineYearsWar" as const, resolved: false },
+      },
+    };
+    expect(getEventSolveFundingAmount(stWithNineYearsWar, "ryswickPeace")).toBe(13);
     expect(getEventTemplate("nymwegenSettlement").harmful).toBe(false);
     expect(getEventTemplate("expansionRemembered").harmful).toBe(false);
     expect(getEventTemplate("cautiousCrown").harmful).toBe(false);
     expect(getEventTemplate("revocationNantes").harmful).toBe(false);
     expect(getEventTemplate("leagueOfAugsburg").harmful).toBe(false);
-    expect(getEventTemplate("nineYearsWar").harmful).toBe(false);
-    expect(getEventTemplate("nineYearsWar").solve).toEqual({ kind: "funding", amount: 2 });
+    expect(getEventTemplate("nineYearsWar").harmful).toBe(true);
+    expect(getEventTemplate("nineYearsWar").solve).toEqual({ kind: "fundingOrCrackdown", amount: 2 });
     expect(getEventTemplate("ryswickPeace").harmful).toBe(false);
     expect(getEventTemplate("leagueOfAugsburg").crisisPersistence).toBe("continued");
     expect(getEventTemplate("leagueOfAugsburg").continuedDurationTurns).toBe(3);

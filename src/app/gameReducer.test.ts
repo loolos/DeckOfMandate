@@ -1038,10 +1038,11 @@ describe("gameReducer", () => {
       ...base,
       europeAlert: true,
       europeAlertProgress: 5,
-      resources: { ...base.resources, funding: 7 },
+      resources: { ...base.resources, funding: 11 },
       slots: {
         ...base.slots,
         A: { instanceId: "e_ryswick", templateId: "ryswickPeace" as const, resolved: false },
+        B: { instanceId: "e_nine_years", templateId: "nineYearsWar" as const, resolved: false },
       },
     };
     const after = gameReducer(s0, { type: "SOLVE_EVENT", slot: "A" });
@@ -1049,6 +1050,8 @@ describe("gameReducer", () => {
     expect(after.europeAlertProgress).toBe(0);
     expect(after.resources.funding).toBe(0);
     expect(after.resources.legitimacy).toBe(base.resources.legitimacy + 1);
+    expect(after.slots.B).toBeNull();
+    expect(after.actionLog.some((entry) => entry.kind === "eventNineYearsWarEndedByRyswick")).toBe(true);
   });
 
   it("ryswick peace costs +4 and also clears nine years war when that war is still active", () => {

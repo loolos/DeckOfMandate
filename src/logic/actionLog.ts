@@ -29,6 +29,17 @@ export type ActionLogPayload =
       extraTreasuryProbabilityPct: number;
     }
   | {
+      kind: "eventNineYearsWarAttempt";
+      slot: SlotId;
+      method: "funding" | "intervention";
+      fundingPaid: number;
+      roll: number;
+      outcome: "majorVictory" | "stalemate" | "minorGains";
+    }
+  | { kind: "eventNineYearsWarBegins"; slot: SlotId }
+  | { kind: "eventNineYearsWarEndedByRyswick"; removedCount: number }
+  | { kind: "eventNineYearsWarBurden"; slot: SlotId }
+  | {
       kind: "eventLocalWarChoice";
       slot: SlotId;
       templateId: "localWar";
