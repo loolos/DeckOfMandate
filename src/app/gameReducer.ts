@@ -394,17 +394,7 @@ function performUtrechtTreatyPick(state: GameState, slot: SlotId, endWar: boolea
       slots: { ...state.slots, [slot]: null },
     };
   }
-  const raw = state.utrechtTreatyCountdown ?? 6;
-  const next = raw - 1;
-  if (next <= 0) {
-    return {
-      ...state,
-      warEnded: true,
-      utrechtTreatyCountdown: null,
-      slots: { ...state.slots, [slot]: null },
-    };
-  }
-  return { ...state, utrechtTreatyCountdown: next };
+  return state;
 }
 
 /** After funding is cleared: keep chosen cards, discard the rest, then EOY penalties, then win / time / next year. */

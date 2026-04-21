@@ -185,4 +185,36 @@ describe("resolveEndOfYearPenalties", () => {
     expect(s1.slots.A?.templateId).toBe("leagueOfAugsburg");
     expect(s1.slots.A?.remainingTurns).toBe(3);
   });
+
+  it("third mandate unresolved utrecht treaty decrements countdown by one each year", () => {
+    const base = createInitialState(5_100, "thirdMandate");
+    const s0 = {
+      ...base,
+      utrechtTreatyCountdown: 6,
+      slots: {
+        ...EMPTY_EVENT_SLOTS,
+        A: { instanceId: "e_utrecht", templateId: "utrechtTreaty" as const, resolved: false },
+      },
+    };
+    const s1 = resolveEndOfYearPenalties(s0);
+    expect(s1.utrechtTreatyCountdown).toBe(5);
+    expect(s1.warEnded).toBe(false);
+    expect(s1.slots.A?.templateId).toBe("utrechtTreaty");
+  });
+
+  it("third mandate unresolved utrecht treaty auto-ends war when countdown reaches zero", () => {
+    const base = createInitialState(5_101, "thirdMandate");
+    const s0 = {
+      ...base,
+      utrechtTreatyCountdown: 1,
+      slots: {
+        ...EMPTY_EVENT_SLOTS,
+        A: { instanceId: "e_utrecht", templateId: "utrechtTreaty" as const, resolved: false },
+      },
+    };
+    const s1 = resolveEndOfYearPenalties(s0);
+    expect(s1.utrechtTreatyCountdown).toBeNull();
+    expect(s1.warEnded).toBe(true);
+    expect(s1.slots.A).toBeNull();
+  });
 });
