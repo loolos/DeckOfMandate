@@ -188,7 +188,7 @@ function isCrackdownTarget(state: GameState, slot: SlotId): boolean {
   const ev = state.slots[slot];
   if (!ev || ev.resolved) return false;
   const tmpl = getEventTemplate(ev.templateId);
-  return tmpl.harmful || ev.templateId === "nineYearsWar";
+  return tmpl.harmful;
 }
 
 function canFundSolve(state: GameState, slot: SlotId): boolean {
@@ -600,36 +600,6 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       if (!isCrackdownTarget(state, action.slot)) return state;
       const cleared = state.slots[action.slot];
       if (!cleared) return state;
-      if (cleared.templateId === "nineYearsWar") {
-        let s = state;
-        const [rng, roll] = rngNext(s.rng);
-        s = { ...s, rng };
-        const decisiveVictory = roll < 1 / 9;
-        const limitedGains = roll >= 5 / 9;
-        let legitimacyDelta = 0;
-        if (limitedGains && !decisiveVictory) {
-          legitimacyDelta = 1;
-          s = applyEffects(s, [{ kind: "modResource", resource: "legitimacy", delta: 1 }]);
-        }
-        s = markSlotResolvedWithNineYearsWarPersistence(s, action.slot, !decisiveVictory);
-        s = removeHand(s, p.cardInstanceId);
-        const consumed = consumeLimitedUseCard(s, p.cardInstanceId);
-        s = consumed.state;
-        if (!consumed.exhausted) {
-          s = pushDiscard(s, p.cardInstanceId);
-        }
-        s = { ...s, pendingInteraction: null };
-        s = enforceLegitimacy(s);
-        s = appendActionLog(s, {
-          kind: "eventNineYearsWarCampaign",
-          slot: action.slot,
-          fundingPaid: p.fundingPaid,
-          viaIntervention: true,
-          outcome: decisiveVictory ? "decisiveVictory" : limitedGains ? "limitedGains" : "stalemate",
-          legitimacyDelta,
-        });
-        return appendInflationActivationLogIfNeeded(state, s);
-      }
       let s = markSlotResolvedWithLeagueProgress(state, action.slot);
       s = removeHand(s, p.cardInstanceId);
       const consumed = consumeLimitedUseCard(s, p.cardInstanceId);

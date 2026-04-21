@@ -127,7 +127,7 @@ export const eventTemplates: Record<EventTemplateId, EventTemplate> = {
     crisisPersistence: "continued",
     titleKey: "event.nineYearsWar.name",
     descriptionKey: "event.nineYearsWar.desc",
-    solve: { kind: "fundingOrCrackdown", amount: 2 },
+    solve: { kind: "funding", amount: 2 },
     penaltiesIfUnresolved: [{ kind: "modResource", resource: "legitimacy", delta: -1 }],
   },
   ryswickPeace: {

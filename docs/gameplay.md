@@ -141,7 +141,7 @@ Supported solve channels in current build:
 - scripted attack
 - Nantes policy choice (tolerance vs crackdown)
 
-`crackdown` and `diplomaticIntervention` only target unresolved **harmful** events, with one explicit exception: `nineYearsWar` (tagged Continued / Historical, `harmful: false`) is also a valid crackdown target.
+`crackdown` and `diplomaticIntervention` only target unresolved **harmful** events (`nineYearsWar` and `localWar` are not valid targets).
 
 ## 6. Win / lose checks
 

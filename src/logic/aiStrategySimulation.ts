@@ -173,7 +173,7 @@ function pickCrackdownTarget(state: GameState): SlotId | null {
     const tmpl = getEventTemplate(state.slots[slot]!.templateId);
     if (tmpl.harmful) return slot;
   }
-  return ranked[0] ?? null;
+  return null;
 }
 
 function pickFundSolveActionsLegacy(state: GameState): GameAction[] {

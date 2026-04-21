@@ -137,6 +137,7 @@ describe("secondMandate balance data", () => {
     expect(getEventTemplate("revocationNantes").harmful).toBe(false);
     expect(getEventTemplate("leagueOfAugsburg").harmful).toBe(false);
     expect(getEventTemplate("nineYearsWar").harmful).toBe(false);
+    expect(getEventTemplate("nineYearsWar").solve).toEqual({ kind: "funding", amount: 2 });
     expect(getEventTemplate("ryswickPeace").harmful).toBe(false);
     expect(getEventTemplate("leagueOfAugsburg").crisisPersistence).toBe("continued");
     expect(getEventTemplate("leagueOfAugsburg").continuedDurationTurns).toBe(3);
