@@ -316,6 +316,11 @@ export type GameState = {
   /** Chapter 3: `grandAllianceInfiltrationDiplomacy` — reduces opponent cost sum (min 0). */
   opponentCostDiscountThisTurn: number;
   /**
+   * Chapter 3: added when the opponent plays certain cards; consumed at `opponentBeginYearDrawPhase`.
+   * Opponent draw count that year is `max(0, 2 + this)`, then this resets to 0.
+   */
+  opponentNextTurnDrawModifier: number;
+  /**
    * Chapter 3: opponent templates played in the last completed opponent phase (`END_YEAR`), preserved for UI.
    */
   opponentLastPlayedTemplateIds: readonly CardTemplateId[];

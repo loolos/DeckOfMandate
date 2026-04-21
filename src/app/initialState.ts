@@ -155,6 +155,7 @@ export function createInitialState(
     opponentHand: [],
     opponentDiscard: [],
     opponentCostDiscountThisTurn: 0,
+    opponentNextTurnDrawModifier: 0,
     opponentLastPlayedTemplateIds: [],
     successionOutcomeTier: null,
   };

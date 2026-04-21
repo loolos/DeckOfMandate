@@ -22,8 +22,9 @@ export const messagesFrThirdMandate = {
   "event.utrechtTreaty.name": "Fenêtre du traité d’Utrecht",
   "event.utrechtTreaty.desc":
     "Mettre fin à la guerre de succession ou attendre. Chaque attente consomme 1 tour sur la fenêtre de 6 ; à 0, fin automatique. La phase adverse continue après la fin de guerre.",
-  "event.bavarianCourtRealignment.name": "Réalignement de la cour de Bavière",
-  "event.bavarianCourtRealignment.desc": "Payez 2 Fonds : piste +1. Si ignoré : piste −1.",
+  "event.bavarianCourtRealignment.name": "Sondage de basculement bavarois",
+  "event.bavarianCourtRealignment.desc":
+    "Contexte : pendant la guerre de Succession d’Espagne, l’électeur Maximilien II Emmanuel de Bavière s’allie à Louis XIV et à Philippe V ; prince-évêque électeur de Cologne et acteur du collège des princes-électeurs, il ménage un espace politique aux prétentions bourbonno-espagnoles, tandis que la Grande Alliance et Vienne combinent subsides, sanctions impériales et marchandages d’après-bataille (surtout après Blenheim) pour tenter de ramener Munich vers la coalition. Le long de l’axe Rhin–sud de l’Empire, un hochement de tête à la cour ou en conseil de guerre peut faire pencher la balance sur l’héritage espagnol.\n\nPayez 2 Fonds : piste +1. Si ignoré : piste −1.",
   "event.portugueseTariffNegotiation.name": "Négociation tarifaire portugaise",
   "event.portugueseTariffNegotiation.desc":
     "Contexte : pendant la guerre de Succession d’Espagne, le Portugal se réaligne sur la ligue maritime ; les traités de Methuen (1703) échangent des droits favorables sur les vins contre l’accès des lainages anglais, intégrant la politique douanière lisboète à l’économie de guerre de la Grande Alliance.\n\nPayez ceil(Trésor/4) Fonds : Trésor +1 et piste +1. Si ignoré : aucun bonus.",
@@ -37,19 +38,20 @@ export const messagesFrThirdMandate = {
   "card.grandAllianceInfiltrationDiplomacy.name": "Diplomatie d’infiltration de la Grande Alliance",
   "card.grandAllianceInfiltrationDiplomacy.background": "Diviser la coalition",
   "card.grandAllianceInfiltrationDiplomacy.desc":
-    "Contexte : cours neutres, comptoirs et réseaux d’information alourdissent la coordination des ligues anti-françaises, si bien que la Grande Alliance ne transpose pas systématiquement toute sa pression sur la succession espagnole.\n\nPioche 1. Ce tour, coût adverse −1 (min 0).",
+    "Contexte : cours neutres, comptoirs et réseaux d’information alourdissent la coordination des ligues anti-françaises, si bien que la Grande Alliance ne transpose pas systématiquement toute sa pression sur la succession espagnole.\n\nPiste de succession +1. Pioche 1. Ce tour, coût adverse −1 (min 0).",
   "card.italianTheaterTroopRedeploy.name": "Redéploiement théâtre italien",
   "card.italianTheaterTroopRedeploy.background": "Front alpin",
   "card.italianTheaterTroopRedeploy.desc":
     "Contexte : manœuvres et combats en Piémont, à Milan et à Naples transforment les gains de campagne en appui concret aux prétentions bourbonnes—mais le trésor saigne pour l’axe alpin et le Pô.\n\nPiste de succession +2. Ajoute 1 Fardeau fiscal au deck.",
   "card.habsburgImperialLegitimacyNote.name": "Note de légitimité impériale",
   "card.habsburgImperialLegitimacyNote.background": "Pression juridique",
-  "card.habsburgImperialLegitimacyNote.desc": "Coût adverse 1. Piste de succession −1.",
+  "card.habsburgImperialLegitimacyNote.desc":
+    "Coût adverse 1. Piste de succession −1 ; l’adversaire pioche 1 carte de moins à sa prochaine pioche de début d’année (peut être 0).",
   "card.habsburgImperialLegitimacyNote.opponentHistory":
     "Mémoires et consultations rappellent l’ancienne continuité des Habsbourg espagnols : on combat la légitimité bourbonienne d’abord sur le papier des cours, avant les batailles rangées.",
   "card.habsburgLowCountriesAgitation.name": "Agitation dans les Pays-Bas",
   "card.habsburgLowCountriesAgitation.background": "Front du Nord-Ouest",
-  "card.habsburgLowCountriesAgitation.desc": "Coût adverse 2. Piste −1, Pouvoir −1.",
+  "card.habsburgLowCountriesAgitation.desc": "Coût adverse 2. Piste −1, Pouvoir −1, Légitimité −1.",
   "card.habsburgLowCountriesAgitation.opponentHistory":
     "Les Pays-Bas espagnols, ceinture de forteresses et d’hivers de garnison, tiennent ensemble l’inquiétude londonienne et la pression sur les routes du nord.",
   "card.habsburgGrandAllianceLevy.name": "Contribution de la Grande Alliance",

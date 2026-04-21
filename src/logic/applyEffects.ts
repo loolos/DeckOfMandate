@@ -77,6 +77,11 @@ export function applyEffect(state: GameState, e: Effect): GameState {
         ...state,
         nextTurnDrawModifier: state.nextTurnDrawModifier + e.delta,
       };
+    case "opponentNextTurnDrawModifier":
+      return {
+        ...state,
+        opponentNextTurnDrawModifier: state.opponentNextTurnDrawModifier + e.delta,
+      };
     case "scheduleDrawModifiers":
       return {
         ...state,

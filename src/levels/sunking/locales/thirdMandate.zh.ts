@@ -22,8 +22,9 @@ export const messagesZhThirdMandate = {
   "event.utrechtTreaty.name": "乌得勒支和约谈判窗口",
   "event.utrechtTreaty.desc":
     "选择结束王位继承战争或继续观望。每次观望消耗 1 回合谈判窗口（初值 6）；到 0 自动等同结束战争。结束后对手阶段仍进行。",
-  "event.bavarianCourtRealignment.name": "巴伐利亚宫廷倒向试探",
-  "event.bavarianCourtRealignment.desc": "支付 2 经费：进度 +1。不处理：进度 −1。",
+  "event.bavarianCourtRealignment.name": "倒戈试探",
+  "event.bavarianCourtRealignment.desc":
+    "背景：西班牙王位继承战争中，巴伐利亚选侯马克西米利安二世·埃曼努埃尔与路易十四结盟，支持波旁系的腓力五世；他身兼科隆大主教选侯领地等头衔，在帝国选侯团与天主教同盟政治里为法—西波旁主张争取空间，大同盟与维也纳则以补贴、帝国禁令与战场后的谈判筹码（布伦海姆等会战之后尤甚）试图拉拢或迫使其转向。南德—莱茵一线「站队」并非一劳永逸，宫廷与军需会议上的每一次示好或疏远，都会立刻反映到对西班牙遗产争夺的外交战与兵力调度上。\n\n支付 2 经费：进度 +1。不处理：进度 −1。",
   "event.portugueseTariffNegotiation.name": "葡萄牙王室关税谈判",
   "event.portugueseTariffNegotiation.desc":
     "背景：西班牙王位继承战争牵动伊比利亚与海外航路；葡萄牙在英荷同盟与法兰西—波旁体系之间重新站队，1703 年《梅休因条约》以葡酒优先关税换取英格兰毛织品进入葡境，实质上也把葡国贸易与关税主权嵌入大同盟对法和殖民补给的棋局之中。\n\n支付 ceil(财政/4) 经费：财政 +1 且王位争夺进度 +1。不处理：无加成。",
@@ -37,19 +38,20 @@ export const messagesZhThirdMandate = {
   "card.grandAllianceInfiltrationDiplomacy.name": "大同盟渗透外交",
   "card.grandAllianceInfiltrationDiplomacy.background": "分化同盟",
   "card.grandAllianceInfiltrationDiplomacy.desc":
-    "背景：借中立宫廷、商站与情报网抬高反法盟邦的协调成本，使大同盟难以把全部外交压力持续压到西班牙遗产问题上。\n\n立即抽 1；本回合对手阶段对手费用 −1（最低 0）。",
+    "背景：借中立宫廷、商站与情报网抬高反法盟邦的协调成本，使大同盟难以把全部外交压力持续压到西班牙遗产问题上。\n\n王位争夺进度 +1；立即抽 1；本回合对手阶段对手费用 −1（最低 0）。",
   "card.italianTheaterTroopRedeploy.name": "意大利战区调兵",
   "card.italianTheaterTroopRedeploy.background": "阿尔卑斯战线",
   "card.italianTheaterTroopRedeploy.desc":
     "背景：萨伏依、米兰与那不勒斯方向的机动与会战，把战果转化为对波旁继承主张的硬支撑，但国库为阿尔卑斯—波河轴线持续出血。\n\n王位争夺进度 +2；向抽牌堆加入 1 张财政负担。",
   "card.habsburgImperialLegitimacyNote.name": "帝国法统照会",
   "card.habsburgImperialLegitimacyNote.background": "法统压力",
-  "card.habsburgImperialLegitimacyNote.desc": "对手费用 1。王位争夺进度 −1。",
+  "card.habsburgImperialLegitimacyNote.desc":
+    "对手费用 1。王位争夺进度 −1；对手下一年年初摸牌少 1 张（可至 0 张）。",
   "card.habsburgImperialLegitimacyNote.opponentHistory":
     "宫廷法学家援引帝国特权与西班牙旧哈布斯堡谱系，以照会与备忘录层层质问波旁继统的条文——在战场之外先打一场纸面上的合法性战争。",
   "card.habsburgLowCountriesAgitation.name": "低地鼓动",
   "card.habsburgLowCountriesAgitation.background": "西北战线",
-  "card.habsburgLowCountriesAgitation.desc": "对手费用 2。进度 −1，权力 −1。",
+  "card.habsburgLowCountriesAgitation.desc": "对手费用 2。进度 −1，权力 −1，合法性 −1。",
   "card.habsburgLowCountriesAgitation.opponentHistory":
     "西属尼德兰一线的棱堡与冬营、兵变与补给争端，使伦敦与海牙的安全焦虑与法国北进路线纠缠在一起；此地的动荡，最能牵动大同盟的钱袋与舰队。",
   "card.habsburgGrandAllianceLevy.name": "大同盟军费动员",

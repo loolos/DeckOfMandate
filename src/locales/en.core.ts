@@ -150,6 +150,7 @@ export const messagesEnCore = {
   "log.effect.gainFunding": "{funding} +{amount}",
   "log.effect.drawCards": "Draw {count}",
   "log.effect.scheduleNextTurnDrawModifier": "Next-year draw modifier {delta}",
+  "log.effect.opponentNextTurnDrawModifier": "Opponent next-year draw modifier {delta}",
   "log.effect.scheduleDrawModifiers": "Multi-year draw modifiers {deltas}",
   "log.effect.setCardTagBlocked": "Block {tag} cards ({turns} turns)",
   "log.effect.addPlayerStatus": "{status} ({turns} turns)",

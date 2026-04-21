@@ -55,6 +55,30 @@ describe("opponentHabsburg AI", () => {
     expect(next.opponentDeck).toEqual(["opp_c"]);
   });
 
+  it("Low Countries agitation lowers succession, power, and legitimacy", () => {
+    const base = createInitialState(104, THIRD_MANDATE_LEVEL_ID);
+    const agId = "opp_ag_test";
+    const st: GameState = {
+      ...base,
+      opponentHabsburgUnlocked: true,
+      opponentHand: [agId],
+      opponentDeck: [],
+      opponentDiscard: [],
+      opponentStrength: 2,
+      opponentCostDiscountThisTurn: 0,
+      opponentLastPlayedTemplateIds: [],
+      cardsById: {
+        ...base.cardsById,
+        [agId]: { instanceId: agId, templateId: "habsburgLowCountriesAgitation" },
+      },
+    };
+    const next = opponentEndYearPlayPhase(st);
+    expect(next.successionTrack).toBe(base.successionTrack - 1);
+    expect(next.resources.power).toBe(base.resources.power - 1);
+    expect(next.resources.legitimacy).toBe(base.resources.legitimacy - 1);
+    expect(next.opponentDiscard).toEqual([agId]);
+  });
+
   it("Grand Alliance levy adds one Fiscal Burden to the player deck at a random position", () => {
     const base = createInitialState(99, THIRD_MANDATE_LEVEL_ID);
     const levyId = "opp_levy_test";
@@ -109,5 +133,51 @@ describe("opponentHabsburg AI", () => {
     expect(next.nextTurnDrawModifier).toBe(-1);
     expect(next.opponentHand).toEqual([]);
     expect(next.opponentDiscard).toEqual([customsId]);
+  });
+
+  it("Imperial legitimacy note lowers succession track and schedules −1 opponent draw next year", () => {
+    const base = createInitialState(102, THIRD_MANDATE_LEVEL_ID);
+    const noteId = "opp_note_test";
+    const trackBefore = base.successionTrack;
+    const st: GameState = {
+      ...base,
+      opponentHabsburgUnlocked: true,
+      opponentHand: [noteId],
+      opponentDeck: [],
+      opponentDiscard: [],
+      opponentStrength: 2,
+      opponentCostDiscountThisTurn: 0,
+      opponentNextTurnDrawModifier: 0,
+      opponentLastPlayedTemplateIds: [],
+      cardsById: {
+        ...base.cardsById,
+        [noteId]: { instanceId: noteId, templateId: "habsburgImperialLegitimacyNote" },
+      },
+    };
+    const next = opponentEndYearPlayPhase(st);
+    expect(next.successionTrack).toBe(trackBefore - 1);
+    expect(next.opponentNextTurnDrawModifier).toBe(-1);
+    expect(next.opponentDiscard).toEqual([noteId]);
+  });
+
+  it("opponent begin-year draw uses opponentNextTurnDrawModifier (e.g. only 1 card when modifier is −1)", () => {
+    const base = createInitialState(103, THIRD_MANDATE_LEVEL_ID);
+    const st: GameState = {
+      ...base,
+      opponentHabsburgUnlocked: true,
+      opponentNextTurnDrawModifier: -1,
+      opponentDeck: ["opp_x", "opp_y", "opp_z"],
+      opponentHand: [],
+      cardsById: {
+        ...base.cardsById,
+        opp_x: { instanceId: "opp_x", templateId: "habsburgImperialLegitimacyNote" },
+        opp_y: { instanceId: "opp_y", templateId: "habsburgImperialLegitimacyNote" },
+        opp_z: { instanceId: "opp_z", templateId: "habsburgGrandAllianceLevy" },
+      },
+    };
+    const next = opponentBeginYearDrawPhase(st);
+    expect(next.opponentHand).toEqual(["opp_x"]);
+    expect(next.opponentDeck).toEqual(["opp_y", "opp_z"]);
+    expect(next.opponentNextTurnDrawModifier).toBe(0);
   });
 });

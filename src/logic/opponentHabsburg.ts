@@ -23,7 +23,7 @@ function opponentEffectDelta(templateId: CardTemplateId): OppDelta {
     case "habsburgImperialLegitimacyNote":
       return { seq: -1, pow: 0, leg: 0, tre: 0 };
     case "habsburgLowCountriesAgitation":
-      return { seq: -1, pow: -1, leg: 0, tre: 0 };
+      return { seq: -1, pow: -1, leg: -1, tre: 0 };
     case "habsburgGrandAllianceLevy":
       return { seq: -2, pow: 0, leg: 0, tre: 0 };
     case "habsburgImperialCustomsDelay":
@@ -47,6 +47,10 @@ export function opponentTemplatesToAppliedEffects(ids: readonly CardTemplateId[]
   }
   if (customsCount > 0) {
     out.push({ kind: "scheduleNextTurnDrawModifier", delta: -customsCount });
+  }
+  const legitimacyNoteCount = ids.filter((id) => id === "habsburgImperialLegitimacyNote").length;
+  if (legitimacyNoteCount > 0) {
+    out.push({ kind: "opponentNextTurnDrawModifier", delta: -legitimacyNoteCount });
   }
   if (d.pow !== 0) out.push({ kind: "modResource", resource: "power", delta: d.pow });
   if (d.leg !== 0) out.push({ kind: "modResource", resource: "legitimacy", delta: d.leg });
@@ -168,6 +172,9 @@ function applyOpponentCardToState(state: GameState, templateId: CardTemplateId):
   if (d.pow !== 0) effects.push({ kind: "modResource" as const, resource: "power" as const, delta: d.pow });
   if (d.leg !== 0) effects.push({ kind: "modResource" as const, resource: "legitimacy" as const, delta: d.leg });
   if (d.tre !== 0) effects.push({ kind: "modResource" as const, resource: "treasuryStat" as const, delta: d.tre });
+  if (templateId === "habsburgImperialLegitimacyNote") {
+    effects.push({ kind: "opponentNextTurnDrawModifier", delta: -1 });
+  }
   if (templateId === "habsburgGrandAllianceLevy") {
     effects.push({ kind: "addCardsToDeck", templateId: "fiscalBurden", count: 1 });
   }
@@ -264,6 +271,7 @@ export function initOpponentHabsburgPool(state: GameState): GameState {
     opponentDiscard: [],
     opponentStrength: 2,
     opponentHabsburgUnlocked: true,
+    opponentNextTurnDrawModifier: 0,
   };
 }
 
@@ -272,9 +280,11 @@ export function opponentBeginYearDrawPhase(state: GameState): GameState {
   if (state.levelId !== THIRD_MANDATE_LEVEL_ID || !state.opponentHabsburgUnlocked) {
     return { ...state, opponentCostDiscountThisTurn: 0 };
   }
-  const reset = { ...state, opponentCostDiscountThisTurn: 0 };
+  const drawMod = state.opponentNextTurnDrawModifier;
+  const drawN = Math.max(0, 2 + drawMod);
+  const reset = { ...state, opponentCostDiscountThisTurn: 0, opponentNextTurnDrawModifier: 0 };
   const beforeDraw = reset.opponentHand.length;
-  const drawnState = opponentDrawFromDeck(reset, 2);
+  const drawnState = opponentDrawFromDeck(reset, drawN);
   const drawn = drawnState.opponentHand.slice(beforeDraw);
   if (drawn.length === 0) return drawnState;
   return appendActionLog(drawnState, { kind: "opponentHabsburgDraw", drawnCardIds: drawn });

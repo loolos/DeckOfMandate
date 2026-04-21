@@ -147,6 +147,7 @@ export const messagesZhCore = {
   "log.effect.gainFunding": "{funding} +{amount}",
   "log.effect.drawCards": "抽牌 {count}",
   "log.effect.scheduleNextTurnDrawModifier": "下一年抽牌修正 {delta}",
+  "log.effect.opponentNextTurnDrawModifier": "对手下一年摸牌修正 {delta}",
   "log.effect.scheduleDrawModifiers": "后续多年抽牌修正 {deltas}",
   "log.effect.setCardTagBlocked": "禁用 {tag} 牌（{turns} 回合）",
   "log.effect.addPlayerStatus": "{status}（{turns} 回合）",

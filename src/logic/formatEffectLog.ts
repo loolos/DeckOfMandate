@@ -31,6 +31,11 @@ export function formatEffectLogLine(
       const signed = d >= 0 ? `+${d}` : String(d);
       return t("log.effect.scheduleNextTurnDrawModifier", { delta: signed });
     }
+    case "opponentNextTurnDrawModifier": {
+      const d = effect.delta;
+      const signed = d >= 0 ? `+${d}` : String(d);
+      return t("log.effect.opponentNextTurnDrawModifier", { delta: signed });
+    }
     case "scheduleDrawModifiers":
       return t("log.effect.scheduleDrawModifiers", {
         deltas: effect.deltas.map((d) => (d >= 0 ? `+${d}` : String(d))).join(", "),

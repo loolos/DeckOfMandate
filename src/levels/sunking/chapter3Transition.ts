@@ -239,6 +239,7 @@ export function buildLevel3StateFromDraft(draft: Level3StartDraft): GameState {
     opponentHand: [],
     opponentDiscard: [],
     opponentCostDiscountThisTurn: 0,
+    opponentNextTurnDrawModifier: 0,
     opponentLastPlayedTemplateIds: [],
     successionOutcomeTier: null,
   };

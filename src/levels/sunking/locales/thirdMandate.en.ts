@@ -22,8 +22,9 @@ export const messagesEnThirdMandate = {
   "event.utrechtTreaty.name": "Treaty of Utrecht window",
   "event.utrechtTreaty.desc":
     "End the war of succession or wait. Each wait consumes one round of the 6-round negotiation window; at 0, the war ends automatically. Ending the war does not remove the opponent phase.",
-  "event.bavarianCourtRealignment.name": "Bavarian court realignment",
-  "event.bavarianCourtRealignment.desc": "Pay 2 Funding: succession track +1. If ignored: succession track −1.",
+  "event.bavarianCourtRealignment.name": "Bavarian defection probe",
+  "event.bavarianCourtRealignment.desc":
+    "Context: in the War of the Spanish Succession, Elector Maximilian II Emanuel of Bavaria backed Louis XIV and Philip V; as prince-bishop elector of Cologne and a voice in the Imperial electoral college, he carved political room for the Bourbon-Spanish claim while the Grand Alliance and Vienna mixed subsidies, Imperial bans, and post-battle bargaining (especially after Blenheim) to pull Munich toward the coalition. Along the Rhine-south-German corridor, court signals and council minutes over garrisons and supply could flip meaning for the wider fight over the Spanish inheritance.\n\nPay 2 Funding: succession track +1. If ignored: succession track −1.",
   "event.portugueseTariffNegotiation.name": "Portuguese tariff negotiation",
   "event.portugueseTariffNegotiation.desc":
     "Context: during the War of the Spanish Succession, Portugal realigned with the maritime coalition; the 1703 Methuen Treaty traded favorable wine duties in Portugal for English cloth access, folding Lisbon’s revenue politics into the Grand Alliance’s wider war economy and imperial supply lines against France.\n\nPay ceil(Treasury/4) Funding: Treasury +1 and succession track +1. If ignored: no bonus.",
@@ -38,19 +39,21 @@ export const messagesEnThirdMandate = {
   "card.grandAllianceInfiltrationDiplomacy.name": "Grand Alliance infiltration diplomacy",
   "card.grandAllianceInfiltrationDiplomacy.background": "Divide the coalition",
   "card.grandAllianceInfiltrationDiplomacy.desc":
-    "Context: neutral courts, trading posts, and intelligence channels raise the coordination tax on anti-French leagues so the Grand Alliance cannot always funnel full diplomatic pressure onto the Spanish succession.\n\nDraw 1. This turn, opponent phase costs −1 (min 0).",
+    "Context: neutral courts, trading posts, and intelligence channels raise the coordination tax on anti-French leagues so the Grand Alliance cannot always funnel full diplomatic pressure onto the Spanish succession.\n\nSuccession track +1. Draw 1. This turn, opponent phase costs −1 (min 0).",
   "card.italianTheaterTroopRedeploy.name": "Italian theater troop redeploy",
   "card.italianTheaterTroopRedeploy.background": "Alpine front",
   "card.italianTheaterTroopRedeploy.desc":
     "Context: maneuver and battle around Savoy, Milan, and Naples turn field gains into hard support for Bourbon claims—but the treasury keeps paying for the Alpine–Po corridor.\n\nSuccession track +2. Add 1 Fiscal Burden to your deck.",
   "card.habsburgImperialLegitimacyNote.name": "Imperial legitimacy note",
   "card.habsburgImperialLegitimacyNote.background": "Legalist pressure",
-  "card.habsburgImperialLegitimacyNote.desc": "Opponent cost 1. Succession track −1.",
+  "card.habsburgImperialLegitimacyNote.desc":
+    "Opponent cost 1. Succession track −1; opponent draws 1 fewer card at their next year-start draw (can be 0).",
   "card.habsburgImperialLegitimacyNote.opponentHistory":
     "Chancelleries cite imperial privilege and old ties to Spain’s Habsburg past—jurists’ briefs meant to remind Europe that Bourbon claims were negotiable on paper long before they were conceded on the battlefield.",
   "card.habsburgLowCountriesAgitation.name": "Low Countries agitation",
   "card.habsburgLowCountriesAgitation.background": "Northwestern front",
-  "card.habsburgLowCountriesAgitation.desc": "Opponent cost 2. Succession track −1, Power −1.",
+  "card.habsburgLowCountriesAgitation.desc":
+    "Opponent cost 2. Succession track −1, Power −1, Legitimacy −1.",
   "card.habsburgLowCountriesAgitation.opponentHistory":
     "The Spanish Netherlands—fortress belts, river lines, and mutinous garrisons—were the cockpit where coalition logistics met French overreach; unrest here was a lever on London as much as on Versailles.",
   "card.habsburgGrandAllianceLevy.name": "Grand Alliance levy",
