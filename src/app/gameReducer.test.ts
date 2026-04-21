@@ -845,6 +845,13 @@ describe("gameReducer", () => {
     expect(after.resources.funding).toBe(0);
     expect(after.hand.includes(containment)).toBe(false);
     expect(after.discard.includes(containment)).toBe(false);
+
+    const alertCleared = { ...withCard, europeAlert: false, europeAlertProgress: 0 };
+    const blockedAtZero = gameReducer({ ...alertCleared, resources: { ...alertCleared.resources, funding: 0 } }, { type: "PLAY_CARD", handIndex: 0 });
+    expect(blockedAtZero).toEqual({ ...alertCleared, resources: { ...alertCleared.resources, funding: 0 } });
+    const paidAtOne = gameReducer({ ...alertCleared, resources: { ...alertCleared.resources, funding: 1 } }, { type: "PLAY_CARD", handIndex: 0 });
+    expect(paidAtOne.hand.includes(containment)).toBe(false);
+    expect(paidAtOne.discard.includes(containment)).toBe(false);
   });
 
   it("anti-french containment still costs at least 1 once Europe Alert is cleared", () => {

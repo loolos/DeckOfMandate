@@ -306,7 +306,6 @@ function syncAntiFrenchSentimentStatus(state: GameState): GameState {
 }
 
 function fillEmptySlots(state: GameState): GameState {
-  if (isStandaloneChapter2OpeningTurn(state)) return state;
   let st = state;
   if (allSlotsEmpty(st)) {
     const [rng, u] = rngNext(st.rng);

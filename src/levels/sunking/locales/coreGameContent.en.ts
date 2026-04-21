@@ -17,7 +17,7 @@ export const sunkingCoreGameContentEn = {
   "card.antiFrenchContainment.background":
     "European courts coordinate tariffs, credit pressure, and maritime checks to narrow French options.",
   "card.antiFrenchContainment.desc":
-    "When drawn, 50/50: lose 1 Power or lose 1 Legitimacy. You may pay floor(Europe Alert progress/2) Funding to purge it (removed, not discarded).",
+    "When drawn, 50/50: lose 1 Power or lose 1 Legitimacy. You may pay max(1, floor(Europe Alert progress/2)) Funding to purge it (removed, not discarded).",
   "card.reform.name": "Administrative Reform",
   "card.reform.background":
     "Registers and reporting lines are redrawn; the bureaucracy tightens under royal direction.",

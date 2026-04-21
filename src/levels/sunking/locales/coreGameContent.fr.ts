@@ -17,7 +17,7 @@ export const sunkingCoreGameContentFr = {
   "card.antiFrenchContainment.background":
     "Les cours européennes coordonnent tarifs, crédit et contrôle maritime pour restreindre la marge française.",
   "card.antiFrenchContainment.desc":
-    "Quand piochée, 50/50 : perdez 1 Pouvoir ou 1 Légitimité. Vous pouvez payer floor(progression Alerte Europe/2) Financement pour l'épurer (retirée, pas défaussée).",
+    "Quand piochée, 50/50 : perdez 1 Pouvoir ou 1 Légitimité. Vous pouvez payer max(1, floor(progression Alerte Europe/2)) Financement pour l'épurer (retirée, pas défaussée).",
   "card.reform.name": "Réforme administrative",
   "card.reform.background":
     "Registres et chaînes de rapport sont redessinés ; la bureaucratie se resserre sous la direction royale.",
