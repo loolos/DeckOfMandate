@@ -55,22 +55,22 @@ export const messagesFrThirdMandate = {
   "card.habsburgImperialLegitimacyNote.desc":
     "Coût adverse 1. Piste de succession −1 ; l’adversaire pioche 1 carte de moins à sa prochaine pioche de début d’année (peut être 0).",
   "card.habsburgImperialLegitimacyNote.opponentHistory":
-    "Mémoires et consultations rappellent l’ancienne continuité des Habsbourg espagnols : on combat la légitimité bourbonienne d’abord sur le papier des cours, avant les batailles rangées.",
+    "Les juristes impériaux contestent la légitimité bourbonienne par notes et mémoires. En jeu : piste de succession −1, et l’adversaire pioche 1 carte de moins l’an prochain (min 0).",
   "card.habsburgLowCountriesAgitation.name": "Agitation dans les Pays-Bas",
   "card.habsburgLowCountriesAgitation.background": "Front du Nord-Ouest",
   "card.habsburgLowCountriesAgitation.desc": "Coût adverse 2. Piste −1, Pouvoir −1, Légitimité −1.",
   "card.habsburgLowCountriesAgitation.opponentHistory":
-    "Les Pays-Bas espagnols, ceinture de forteresses et d’hivers de garnison, tiennent ensemble l’inquiétude londonienne et la pression sur les routes du nord.",
+    "L’agitation aux Pays-Bas espagnols devient un levier de coalition contre la France. En jeu : piste −1, Pouvoir −1, Légitimité −1.",
   "card.habsburgGrandAllianceLevy.name": "Contribution de la Grande Alliance",
   "card.habsburgGrandAllianceLevy.background": "Caisse de coalition",
   "card.habsburgGrandAllianceLevy.desc":
     "Coût adverse 2. Piste de succession −2 ; ajoute 1 Fardeau fiscal à votre pioche à une position aléatoire.",
   "card.habsburgGrandAllianceLevy.opponentHistory":
-    "Subsides des ligues anti-françaises, emprunts hollandais et impôts autrichiens alimentent campagnes et sièges sur des années : rendre cher à la France toute suprématie annoncée.",
+    "Subsides de coalition, emprunts hollandais et impôts impériaux entretiennent la pression. En jeu : piste de succession −2 et +1 Fardeau fiscal dans votre deck.",
   "card.habsburgImperialCustomsDelay.name": "Retards douaniers impériaux",
   "card.habsburgImperialCustomsDelay.background": "Friction portuaire",
   "card.habsburgImperialCustomsDelay.desc":
     "Coût adverse 2. Trésor −1 ; ajoute 1 Fardeau fiscal à votre pioche à une position aléatoire ; l’année suivante, tentatives de pioche −1 (minimum 1).",
   "card.habsburgImperialCustomsDelay.opponentHistory":
-    "Blocages techniques sur connaissements, lettres de change et convois militaires dans les ports d’Empire et des Pays-Bas : la lenteur administrative serre l’espace fiscal français sans bataille rangée.",
+    "Les retards douaniers étranglent la trésorerie sans bataille décisive. En jeu : Trésor −1, +1 Fardeau fiscal, et tentatives de pioche −1 l’année suivante (min 1).",
 } as const;
