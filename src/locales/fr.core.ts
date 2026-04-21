@@ -206,6 +206,14 @@ export const messagesFrCore: Record<keyof typeof messagesEnCore, string> = {
     "[Tour {turn}] {event} — céder provisoirement ; piste −3 ; budget adverse +1.",
   "log.eventDualFrontCrisis.escalate":
     "[Tour {turn}] {event} — élargir la guerre ; piste +1, légitimité −1, +3 Charges fiscales ; budget adverse +1.",
-  "log.eventLocalizedSuccessionWar.resolve":
+  "log.eventLocalizedSuccessionWar.title":
     "[Tour {turn}] {event}. Payé {paid} {funding}. {track} {delta} (aléatoire).",
+  "log.eventLocalizedSuccessionWar.narrative.m1":
+    "La Grande Alliance l'emporte : place forte perdue en Flandres ou sur le Rhin, couverture qui cède—écho de Blenheim (1704) ou Ramillies (1706), en plus petit.",
+  "log.eventLocalizedSuccessionWar.narrative.z0":
+    "Année d'indécision : sièges et combats des Pays-Bas à l'Italie ; sur le modèle de Malplaquet (1709), le terrain stratégique à peine bouge malgré le coût.",
+  "log.eventLocalizedSuccessionWar.narrative.p1":
+    "La ligne bourbonienne tient : secours, bouchage d'une section menacée, ou léger gain sur le Pô—saison au bilan passable.",
+  "log.eventLocalizedSuccessionWar.narrative.p2":
+    "Succès net : grand siège gagné, offensive de campagne refoulée avec pièces, ou péninsule plus ferme pour Philippe V ; avantage militaire clair ici pour les Bourbons.",
 };

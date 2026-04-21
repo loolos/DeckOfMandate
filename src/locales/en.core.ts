@@ -187,8 +187,16 @@ export const messagesEnCore = {
     "[Turn {turn}] {event} — temporarily conceded; succession track −3; opponent budget +1.",
   "log.eventDualFrontCrisis.escalate":
     "[Turn {turn}] {event} — expanded the war; succession track +1, legitimacy −1, +3 Fiscal Burden; opponent budget +1.",
-  "log.eventLocalizedSuccessionWar.resolve":
+  "log.eventLocalizedSuccessionWar.title":
     "[Turn {turn}] {event}. Paid {paid} {funding}. {track} {delta} (random).",
+  "log.eventLocalizedSuccessionWar.narrative.m1":
+    "The Grand Alliance takes this round: a Flanders or Rhineland stronghold is lost, the covering line sags—Blenheim (1704) or Ramillies (1706) in miniature.",
+  "log.eventLocalizedSuccessionWar.narrative.z0":
+    "A stale year: parallel sieges and bloody fights from the Low Countries to Italy; after a Malplaquet-style bloodletting (1709), the map barely moves.",
+  "log.eventLocalizedSuccessionWar.narrative.p1":
+    "Bourbon lines hold: a relief lands, a gap is shored, or the Po front inches forward—enough to call a defensible season.",
+  "log.eventLocalizedSuccessionWar.narrative.p2":
+    "A clear local win: a major siege succeeds, a coalition field push is repulsed with captured guns, or the Iberian interior steadies for Philip V.",
   "log.eventLocalWarChoice.attackOutcome.success":
     "{power} +1 and {legitimacy} +1. Frontier victories briefly lift court prestige, and neighboring states ease off testing France's limits.",
   "log.eventLocalWarChoice.attackOutcome.stalemate":

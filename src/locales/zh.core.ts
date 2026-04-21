@@ -183,8 +183,16 @@ export const messagesZhCore = {
     "[第 {turn} 年] {event} — 选择暂时让步；王位争夺进度 −3；对手费用上限 +1。",
   "log.eventDualFrontCrisis.escalate":
     "[第 {turn} 年] {event} — 选择扩大战争；王位争夺进度 +1，合法性 −1，向抽牌堆加入 3 张财政负担；对手费用上限 +1。",
-  "log.eventLocalizedSuccessionWar.resolve":
+  "log.eventLocalizedSuccessionWar.title":
     "[第 {turn} 年] {event}。已支付 {paid} {funding}。{track} {delta}（随机）。",
+  "log.eventLocalizedSuccessionWar.narrative.m1":
+    "大同盟在当面占上风：佛兰德或莱茵线失一要垒、掩护线动摇——有布伦海姆（1704）、拉米利（1706）后法方在低地受挫之势，只是规模较小。",
+  "log.eventLocalizedSuccessionWar.narrative.z0":
+    "自低地至意大利再度僵持；并列攻城与血肉对耗，如马尔普拉凯（1709）般惨胜难跟进，主战线几无改色。",
+  "log.eventLocalizedSuccessionWar.narrative.p1":
+    "波旁守住了当面：解围或补线，波河或略有寸进，本季尚算能交代。",
+  "log.eventLocalizedSuccessionWar.narrative.p2":
+    "本季战果报捷：大围城得胜、野战中击退主力并获辎重，或伊比利亚内线更利腓力五世——对西班牙王座的军事支撑明显加分。",
   "log.eventLocalWarChoice.attackOutcome.success":
     "{power} +1，{legitimacy} +1。前线捷报短暂提振宫廷威望，边境诸邦也暂缓试探法国底线。",
   "log.eventLocalWarChoice.attackOutcome.stalemate":

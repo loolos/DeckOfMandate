@@ -286,16 +286,27 @@ function renderEntry(e: ActionLogEntry, t: (key: MessageKey, vars?: Record<strin
     }
     case "eventLocalizedSuccessionWarResolve": {
       const signed = e.successionDelta > 0 ? `+${e.successionDelta}` : String(e.successionDelta);
+      const narrativeKey: MessageKey =
+        e.successionDelta === -1
+          ? "log.eventLocalizedSuccessionWar.narrative.m1"
+          : e.successionDelta === 0
+            ? "log.eventLocalizedSuccessionWar.narrative.z0"
+            : e.successionDelta === 1
+              ? "log.eventLocalizedSuccessionWar.narrative.p1"
+              : "log.eventLocalizedSuccessionWar.narrative.p2";
       return (
-        <div className={styles.actionLogHead}>
-          {t("log.eventLocalizedSuccessionWar.resolve", {
-            turn: e.turn,
-            event: eventLabelWithIcon("localizedSuccessionWar", t(eventTitleKey("localizedSuccessionWar"))),
-            paid: e.fundingPaid,
-            funding: fundingLabel,
-            delta: signed,
-            track: t("ui.successionTrack"),
-          })}
+        <div>
+          <div className={styles.actionLogHead}>
+            {t("log.eventLocalizedSuccessionWar.title", {
+              turn: e.turn,
+              event: eventLabelWithIcon("localizedSuccessionWar", t(eventTitleKey("localizedSuccessionWar"))),
+              paid: e.fundingPaid,
+              funding: fundingLabel,
+              delta: signed,
+              track: t("ui.successionTrack"),
+            })}
+          </div>
+          <div className={styles.actionLogSubMuted}>{t(narrativeKey)}</div>
         </div>
       );
     }
