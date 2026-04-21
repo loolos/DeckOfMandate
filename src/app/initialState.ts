@@ -23,6 +23,7 @@ type InitialStateOptions = {
   /** Chapter 3: mirrors chapter 2’s Nantes branch; omitted or null defaults to crackdown (镇压). */
   nantesPolicyCarryover?: NantesPolicyCarryover | null;
 };
+const STANDALONE_CH3_INFLATION_TARGET_COST = 4;
 
 export function createInitialState(
   seed?: number,
@@ -93,7 +94,7 @@ export function createInitialState(
       if (id.startsWith("ch3_hand_")) continue;
       const t = cardsById[id]?.templateId;
       if (t && getCardTemplate(t).tags.includes("inflation")) {
-        cardInflationById[id] = 2;
+        cardInflationById[id] = Math.max(0, STANDALONE_CH3_INFLATION_TARGET_COST - getCardTemplate(t).cost);
       }
     }
   }

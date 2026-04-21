@@ -12,19 +12,22 @@ describe("level3Transition / thirdMandate Nantes carryover", () => {
   it("standalone chapter 3 draft uses a full chapter-2-sized carryover pool for refit", () => {
     const draft = createStandaloneLevel3Draft(50_001);
     expect(draft.mode).toBe("standalone");
-    expect(draft.carryoverCards.length).toBe(getLevelContent("secondMandate").starterDeckTemplateOrder.length);
+    const ch2Count = getLevelContent("secondMandate").starterDeckTemplateOrder.length;
+    expect(draft.carryoverCards.length).toBe(ch2Count - 7);
+    expect(draft.carryoverCards.some((c) => c.templateId === "funding" || c.templateId === "crackdown")).toBe(false);
     expect(validateLevel3Draft(draft).isValid).toBe(true);
   });
 
-  it("standalone third mandate excludes royal levy/crackdown from shuffled deck and seeds +2 inflation on inflation cards", () => {
+  it("standalone third mandate excludes royal levy/crackdown and seeds opening inflation so target cards start at cost 4", () => {
     const st = createInitialState(12_399, SUNKING_CH3_ID);
-    const fromDeck = st.deck.map((id) => st.cardsById[id]?.templateId);
-    expect(fromDeck.some((t) => t === "funding" || t === "crackdown")).toBe(false);
-    const inflated = Object.entries(st.cardInflationById).filter(([, v]) => v === 2);
-    expect(inflated.length).toBeGreaterThan(0);
-    for (const [cid] of inflated) {
-      const tid = st.cardsById[cid]?.templateId;
-      expect(tid && getCardTemplate(tid).tags.includes("inflation")).toBe(true);
+    const allTemplates = [...st.deck, ...st.hand, ...st.discard].map((id) => st.cardsById[id]?.templateId);
+    expect(allTemplates.some((t) => t === "funding" || t === "crackdown")).toBe(false);
+    const openingInflationTargets = new Set(["reform", "ceremony", "grainRelief", "taxRebalance"]);
+    for (const [cardId, delta] of Object.entries(st.cardInflationById)) {
+      const tid = st.cardsById[cardId]?.templateId;
+      if (!tid || !openingInflationTargets.has(tid)) continue;
+      const tmpl = getCardTemplate(tid);
+      expect(tmpl.cost + delta).toBe(4);
     }
   });
 

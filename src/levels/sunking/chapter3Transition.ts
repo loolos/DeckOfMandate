@@ -23,6 +23,8 @@ export const LEVEL3_CONTINUITY_MAX_REMOVALS = LEVEL2_CONTINUITY_MAX_REMOVALS;
 export type Level3CarryoverCard = Level2CarryoverCard;
 
 const LEVEL3_HAND_NEW_COUNT = LEVEL3_STARTING_HAND_TEMPLATE_ORDER.length;
+const STANDALONE_CH3_REMOVED_TEMPLATES = new Set<CardTemplateId>(["funding", "crackdown"]);
+const STANDALONE_CH3_INFLATION_TARGET_COST = 4;
 
 export type Level3StandaloneDraft = {
   mode: "standalone";
@@ -52,18 +54,24 @@ export type Level3StartDraft = Level3StandaloneDraft | Level3ContinuityDraft;
 export function createStandaloneLevel3Draft(seed?: number): Level3StandaloneDraft {
   const level = getLevelDef(THIRD_MANDATE_LEVEL_ID);
   const ch2Templates = getLevelContent(SUNKING_CH2_ID).starterDeckTemplateOrder;
-  const carryoverCards: Level3CarryoverCard[] = ch2Templates.map((templateId, i) => {
-    const usage = createInitialCardUseState(THIRD_MANDATE_LEVEL_ID, templateId);
-    const standaloneRoyalUses =
-      templateId === "funding" || templateId === "crackdown" || templateId === "development" ? 1 : null;
-    return {
-      instanceId: `standalone_ch3_old_${i}_${templateId}`,
-      templateId,
-      inflationDelta: templateId === "reform" || templateId === "ceremony" ? 1 : 0,
-      remainingUses: standaloneRoyalUses ?? usage?.remaining ?? null,
-      totalUses: standaloneRoyalUses ?? usage?.total ?? null,
-    };
-  });
+  const carryoverCards: Level3CarryoverCard[] = ch2Templates
+    .filter((templateId) => !STANDALONE_CH3_REMOVED_TEMPLATES.has(templateId))
+    .map((templateId, i) => {
+      const tmpl = getCardTemplate(templateId);
+      const targetInflationDelta = tmpl.tags.includes("inflation")
+        ? Math.max(0, STANDALONE_CH3_INFLATION_TARGET_COST - tmpl.cost)
+        : 0;
+      const usage = createInitialCardUseState(THIRD_MANDATE_LEVEL_ID, templateId);
+      const standaloneRoyalUses =
+        templateId === "funding" || templateId === "crackdown" || templateId === "development" ? 1 : null;
+      return {
+        instanceId: `standalone_ch3_old_${i}_${templateId}`,
+        templateId,
+        inflationDelta: targetInflationDelta,
+        remainingUses: standaloneRoyalUses ?? usage?.remaining ?? null,
+        totalUses: standaloneRoyalUses ?? usage?.total ?? null,
+      };
+    });
   return {
     mode: "standalone",
     seed,
@@ -174,7 +182,8 @@ export function buildLevel3StateFromDraft(draft: Level3StartDraft): GameState {
     for (const id of shuffledDeckIds) {
       const tid = cardsById[id]?.templateId;
       if (!tid || !getCardTemplate(tid).tags.includes("inflation")) continue;
-      cardInflationById[id] = Math.max(cardInflationById[id] ?? 0, 2);
+      const targetDelta = Math.max(0, STANDALONE_CH3_INFLATION_TARGET_COST - getCardTemplate(tid).cost);
+      cardInflationById[id] = Math.max(cardInflationById[id] ?? 0, targetDelta);
     }
   }
 
