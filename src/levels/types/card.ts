@@ -16,7 +16,13 @@ export type CardTemplateId =
   | "suppressHuguenots"
   | "religiousTensionCard"
   | "jansenistReservation"
-  | "jesuitCollege";
+  | "jesuitCollege"
+  | "bourbonMarriageProclamation"
+  | "grandAllianceInfiltrationDiplomacy"
+  | "italianTheaterTroopRedeploy"
+  | "habsburgGrandAllianceLevy"
+  | "habsburgImperialLegitimacyNote"
+  | "habsburgLowCountriesAgitation";
 
 export type CardTemplate = {
   id: CardTemplateId;
@@ -29,6 +35,11 @@ export type CardTemplate = {
   descriptionKey: string;
   /** Crackdown uses UI + reducer branch instead of a generic effect list. */
   effects: Effect[];
+  /**
+   * Habsburg opponent pool only: budget cost for the opponent phase each year.
+   * When set, the card is not meant for the player hand (engine keeps it in opponent zones).
+   */
+  opponentCost?: number;
 };
 
 export type CardInstance = {

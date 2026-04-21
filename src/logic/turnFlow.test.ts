@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { createInitialState } from "../app/initialState";
+import { getTurnLimitForRun } from "../data/levels";
 import { buildLevel2StateFromDraft, createStandaloneLevel2Draft } from "../app/level2Transition";
 import type { CardInstance } from "../levels/types/card";
 import { EMPTY_EVENT_SLOTS } from "../levels/types/event";
@@ -1064,6 +1065,56 @@ describe("evaluateVictory (secondMandate)", () => {
     const s = makeSecondMandateBaseAtYear(1696);
     const r = evaluateVictory(s);
     expect(r.outcome).toBe("victory");
+    expect(r.phase).toBe("gameOver");
+  });
+});
+
+describe("evaluateVictory (thirdMandate successionWar)", () => {
+  it("does not grant track +10 victory when Power is 0", () => {
+    const base = createInitialState(909_002, "thirdMandate");
+    const s: GameState = {
+      ...base,
+      phase: "action",
+      outcome: "playing",
+      successionTrack: 10,
+      resources: {
+        ...base.resources,
+        power: 0,
+        legitimacy: Math.max(1, base.resources.legitimacy),
+      },
+    };
+    const r = evaluateVictory(s);
+    expect(r.outcome).toBe("defeatLegitimacy");
+    expect(r.phase).toBe("gameOver");
+  });
+
+  it("does not grant track +10 victory when Legitimacy is 0", () => {
+    const base = createInitialState(909_003, "thirdMandate");
+    const s: GameState = {
+      ...base,
+      phase: "action",
+      outcome: "playing",
+      successionTrack: 10,
+      resources: { ...base.resources, power: Math.max(1, base.resources.power), legitimacy: 0 },
+    };
+    const r = evaluateVictory(s);
+    expect(r.outcome).toBe("defeatLegitimacy");
+    expect(r.phase).toBe("gameOver");
+  });
+
+  it("does not grant turn-limit tiered victory when a core resource is 0", () => {
+    const base = createInitialState(909_004, "thirdMandate");
+    const lim = getTurnLimitForRun("thirdMandate", base.calendarStartYear);
+    const s: GameState = {
+      ...base,
+      phase: "action",
+      outcome: "playing",
+      turn: lim,
+      successionTrack: 2,
+      resources: { ...base.resources, power: 0, legitimacy: 4 },
+    };
+    const r = evaluateVictory(s);
+    expect(r.outcome).toBe("defeatLegitimacy");
     expect(r.phase).toBe("gameOver");
   });
 });

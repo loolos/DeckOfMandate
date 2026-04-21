@@ -34,7 +34,13 @@ export type EventTemplateId =
   | "arminianTension"
   | "huguenotTension"
   | "localWar"
-  | "jesuitPatronage";
+  | "jesuitPatronage"
+  | "successionCrisis"
+  | "opponentHabsburg"
+  | "utrechtTreaty"
+  | "bavarianCourtRealignment"
+  | "portugueseTariffNegotiation"
+  | "imperialElectorsMood";
 
 export type EventSolve =
   | { kind: "funding"; amount: number }
@@ -43,7 +49,15 @@ export type EventSolve =
   | { kind: "crackdownOnly" }
   | { kind: "localWarChoice" }
   /** Balance numbers come from level `scriptedCalendarEvents` (matched by template id). */
-  | { kind: "scriptedAttack" };
+  | { kind: "scriptedAttack" }
+  /** Chapter 3: pay 3 funding for track +1, or decline for -1 (resolved via dedicated actions). */
+  | { kind: "successionCrisisChoice" }
+  /** Chapter 3: scripted Utrecht negotiation — no funding solve. */
+  | { kind: "utrechtTreatyChoice" }
+  /** Chapter 3: permanent opponent row — not solved with funding. */
+  | { kind: "opponentDisplay" }
+  /** Chapter 3: funding scales with ceil(treasuryStat/4) at solve time. */
+  | { kind: "fundingTreasuryQuarterCeil" };
 
 /** Fixed event columns (max 10); procedural random rolls only fill {@link PROCEDURAL_EVENT_SLOT_ORDER}. */
 export const EVENT_SLOT_ORDER = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"] as const;

@@ -59,6 +59,7 @@ export function StatusBar({
   europeAlertPowerLoss,
   europeAlertProgress,
   antiFrenchSentimentEmotion,
+  successionTrack,
 }: {
   statuses: readonly PlayerStatusInstance[];
   /** Used to tune containment hint copy (chapter 2 gates victory on this status). */
@@ -75,6 +76,8 @@ export function StatusBar({
   europeAlertProgress?: number;
   /** "Emotion x" value shown on Anti-French Sentiment; x = current Anti-French Containment cards in library. */
   antiFrenchSentimentEmotion?: number;
+  /** Chapter 3: succession contest gauge (−10…+10). */
+  successionTrack?: number;
 }) {
   const { t } = useI18n();
   const isSmallScreen = useSmallScreen();
@@ -87,6 +90,18 @@ export function StatusBar({
         ? ("status.huguenotContainment.hint" as MessageKey)
         : ("status.huguenotContainment.hintGeneral" as MessageKey);
     const next: StatusViewRow[] = [];
+    if (successionTrack !== undefined && levelId === "thirdMandate") {
+      const clamped = Math.max(-10, Math.min(10, Math.floor(successionTrack)));
+      const signed = clamped > 0 ? `+${clamped}` : `${clamped}`;
+      next.push({
+        id: "successionTrack",
+        title: t("ui.successionStatus.title"),
+        compactMeta: signed,
+        meta: `${signed} / ±10`,
+        detail: t("ui.successionStatus.detail"),
+        hideMetaWhenExpandedOnMobile: true,
+      });
+    }
     if (europeAlertActive) {
       const progress = Math.max(1, Math.min(10, europeAlertProgress ?? 3));
       const stage = europeAlertStage(progress);
@@ -154,6 +169,7 @@ export function StatusBar({
     europeAlertPowerLoss,
     europeAlertProgress,
     pct,
+    successionTrack,
     statuses,
     t,
   ]);
@@ -197,6 +213,16 @@ export function StatusBar({
                   />
                 </span>
               ) : null}
+              {row.id === "successionTrack" ? (
+                <span className={styles.successionProgressTrack} aria-hidden="true">
+                  <span
+                    className={styles.successionProgressFill}
+                    style={{
+                      width: `${Math.max(0, Math.min(100, ((Math.max(-10, Math.min(10, successionTrack ?? 0)) + 10) / 20) * 100))}%`,
+                    }}
+                  />
+                </span>
+              ) : null}
               {row.detail ? <span className={styles.statusDetail}>{row.detail}</span> : null}
             </li>
           );
@@ -226,6 +252,16 @@ export function StatusBar({
                 <span
                   className={styles.europeAlertProgressFill}
                   style={{ width: `${Math.max(1, Math.min(10, europeAlertProgress ?? 3)) * 10}%` }}
+                />
+              </span>
+            ) : null}
+            {row.id === "successionTrack" ? (
+              <span className={styles.successionProgressTrack} aria-hidden="true">
+                <span
+                  className={styles.successionProgressFill}
+                  style={{
+                    width: `${Math.max(0, Math.min(100, ((Math.max(-10, Math.min(10, successionTrack ?? 0)) + 10) / 20) * 100))}%`,
+                  }}
                 />
               </span>
             ) : null}

@@ -36,6 +36,9 @@ export function getEventRollWeight(state: GameState, id: EventTemplateId): numbe
 
 export function getEventSolveFundingAmount(state: GameState, id: EventTemplateId): number | null {
   const tmpl = eventTemplates[id];
+  if (tmpl.solve.kind === "fundingTreasuryQuarterCeil") {
+    return Math.max(0, Math.ceil(state.resources.treasuryStat / 4));
+  }
   if (tmpl.solve.kind !== "funding" && tmpl.solve.kind !== "fundingOrCrackdown") return null;
   const antiFrenchPenalty = isEuropeAlertSupplementalEvent(id) ? antiFrenchSentimentEventSolveCostPenalty(state) : 0;
   if (id === "nymwegenSettlement") {

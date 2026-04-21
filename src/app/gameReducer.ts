@@ -13,7 +13,9 @@ import { applyPlayedCardEffects } from "../logic/resolveCard";
 import { resolveEndOfYearPenalties } from "../logic/resolveEvents";
 import { coalitionUntilTurn, findScriptedCalendarConfig } from "../logic/scriptedCalendar";
 import { rngNext } from "../logic/rng";
+import { completeSuccessionCrisisAndRevealOpponent, opponentEndYearPlayPhase } from "../logic/opponentHabsburg";
 import { beginYear, evaluateTimeDefeat, evaluateVictory, retentionCapacity } from "../logic/turnFlow";
+import { THIRD_MANDATE_LEVEL_ID } from "../logic/thirdMandateConstants";
 import { antiFrenchSentimentEventSolveCostPenalty } from "../logic/antiFrenchSentiment";
 import { EVENT_SLOT_ORDER, type EventTemplateId } from "../levels/types/event";
 import type { SlotId } from "../levels/types/event";
@@ -36,7 +38,9 @@ export type GameAction =
   | { type: "CRACKDOWN_TARGET"; slot: SlotId }
   | { type: "CRACKDOWN_CANCEL" }
   | { type: "APPEND_LOG_INFO"; infoKey: LogInfoKey }
-  | { type: "CONFIRM_RETENTION"; keepIds: readonly string[] };
+  | { type: "CONFIRM_RETENTION"; keepIds: readonly string[] }
+  | { type: "PICK_SUCCESSION_CRISIS"; slot: SlotId; pay: boolean }
+  | { type: "PICK_UTRECHT_TREATY"; slot: SlotId; endWar: boolean };
 
 function removeHand(state: GameState, instanceId: string): GameState {
   return { ...state, hand: state.hand.filter((id) => id !== instanceId) };
@@ -202,6 +206,10 @@ function canFundSolve(state: GameState, slot: SlotId): boolean {
     const amount = getEventSolveFundingAmount(state, ev.templateId);
     return amount !== null && state.resources.funding >= amount;
   }
+  if (tmpl.solve.kind === "fundingTreasuryQuarterCeil") {
+    const amount = getEventSolveFundingAmount(state, ev.templateId);
+    return amount !== null && state.resources.funding >= amount;
+  }
   if (tmpl.solve.kind === "fundingOrCrackdown") {
     const amount = getEventSolveFundingAmount(state, ev.templateId);
     return amount !== null && state.resources.funding >= amount;
@@ -355,6 +363,50 @@ function performLocalWarAppease(state: GameState, slot: SlotId): GameState {
   });
 }
 
+function performSuccessionCrisisPick(state: GameState, slot: SlotId, pay: boolean): GameState {
+  const ev = state.slots[slot];
+  if (!ev || ev.resolved || ev.templateId !== "successionCrisis" || state.levelId !== THIRD_MANDATE_LEVEL_ID) {
+    return state;
+  }
+  let s = state;
+  if (pay) {
+    if (s.resources.funding < 3) return state;
+    s = { ...s, resources: { ...s.resources, funding: s.resources.funding - 3 } };
+    s = applyEffects(s, [{ kind: "modSuccessionTrack", delta: 1 }]);
+  } else {
+    s = applyEffects(s, [{ kind: "modSuccessionTrack", delta: -1 }]);
+  }
+  if (s.outcome !== "playing") return s;
+  s = completeSuccessionCrisisAndRevealOpponent(s, slot);
+  return appendInflationActivationLogIfNeeded(state, s);
+}
+
+function performUtrechtTreatyPick(state: GameState, slot: SlotId, endWar: boolean): GameState {
+  const ev = state.slots[slot];
+  if (!ev || ev.resolved || ev.templateId !== "utrechtTreaty" || state.levelId !== THIRD_MANDATE_LEVEL_ID) {
+    return state;
+  }
+  if (endWar) {
+    return {
+      ...state,
+      warEnded: true,
+      utrechtTreatyCountdown: null,
+      slots: { ...state.slots, [slot]: null },
+    };
+  }
+  const raw = state.utrechtTreatyCountdown ?? 6;
+  const next = raw - 1;
+  if (next <= 0) {
+    return {
+      ...state,
+      warEnded: true,
+      utrechtTreatyCountdown: null,
+      slots: { ...state.slots, [slot]: null },
+    };
+  }
+  return { ...state, utrechtTreatyCountdown: next };
+}
+
 /** After funding is cleared: keep chosen cards, discard the rest, then EOY penalties, then win / time / next year. */
 function completeYearAfterRetention(state: GameState, keepIds: readonly string[]): GameState {
   const retainedIds = keepIds.filter((id) => !isTemporaryCardInstance(state, id));
@@ -371,6 +423,8 @@ function completeYearAfterRetention(state: GameState, keepIds: readonly string[]
   }
   s = resolveEndOfYearPenalties(s);
   if (s.outcome !== "playing") return purgeExtraCardsIfLevelEnded(s);
+  s = opponentEndYearPlayPhase(s);
+  if (s.outcome !== "playing") return purgeExtraCardsIfLevelEnded(s);
   s = evaluateVictory(s);
   if (s.outcome === "victory") return purgeExtraCardsIfLevelEnded(s);
   s = evaluateTimeDefeat(s);
@@ -386,7 +440,7 @@ function performFundSolve(state: GameState, slot: SlotId): GameState {
   const tmpl = getEventTemplate(ev.templateId);
   const fundingAmount = getEventSolveFundingAmount(state, ev.templateId);
   let s = state;
-  if (tmpl.solve.kind === "funding") {
+  if (tmpl.solve.kind === "funding" || tmpl.solve.kind === "fundingTreasuryQuarterCeil") {
     if (fundingAmount === null) return state;
     s = {
       ...s,
@@ -448,7 +502,11 @@ function performFundSolve(state: GameState, slot: SlotId): GameState {
   s = markSlotResolvedWithLeagueProgress(s, slot);
   s = enforceLegitimacy(s);
   const fundingPaid =
-    tmpl.solve.kind === "funding" || tmpl.solve.kind === "fundingOrCrackdown" ? (fundingAmount ?? 0) : 0;
+    tmpl.solve.kind === "funding" ||
+    tmpl.solve.kind === "fundingTreasuryQuarterCeil" ||
+    tmpl.solve.kind === "fundingOrCrackdown"
+      ? (fundingAmount ?? 0)
+      : 0;
   s = appendActionLog(s, {
     kind: "eventFundSolved",
     slot,
@@ -517,6 +575,9 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
         });
       }
       let s = applyPlayedCardEffects(paid, inst.templateId);
+      if (inst.templateId === "grandAllianceInfiltrationDiplomacy") {
+        s = { ...s, opponentCostDiscountThisTurn: 1 };
+      }
       if (inst.templateId === "grainRelief") {
         s = resolveFirstUnresolvedEventByTemplate(s, "risingGrainPrices");
       }
@@ -662,6 +723,14 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       }
       if (action.keepIds.length > retentionCapacity(state)) return state;
       return appendInflationActivationLogIfNeeded(state, completeYearAfterRetention(state, action.keepIds));
+    }
+    case "PICK_SUCCESSION_CRISIS": {
+      if (state.outcome !== "playing" || state.phase !== "action" || state.pendingInteraction) return state;
+      return appendInflationActivationLogIfNeeded(state, performSuccessionCrisisPick(state, action.slot, action.pay));
+    }
+    case "PICK_UTRECHT_TREATY": {
+      if (state.outcome !== "playing" || state.phase !== "action" || state.pendingInteraction) return state;
+      return appendInflationActivationLogIfNeeded(state, performUtrechtTreatyPick(state, action.slot, action.endWar));
     }
     default: {
       const _never: never = action;

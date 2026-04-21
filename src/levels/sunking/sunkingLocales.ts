@@ -18,13 +18,13 @@ const sunkingExtraEn: Record<string, string> = {
   "menu.levelBrief.secondMandate":
     "1676–1700, mid Sun King era: hold hegemony as religious conflict and coalition pressure intensify.",
   "menu.levelBrief.thirdMandate":
-    "1701–1720, War of the Spanish Succession era: coalition war, dynastic rivalry, and contested legitimacy (placeholder goals).",
+    "1701–1720 — War of the Spanish Succession: wills and battle lines from Madrid to the North Sea, where Bourbon and Habsburg claims reshaped Europe.",
   "ui.targets.firstMandate":
     "Level goals — within {limit} turns (each turn advances one calendar year): Treasury ≥ {tT}, Power ≥ {tP}, Legitimacy ≥ {tL}.",
   "ui.targets.secondMandate":
     "Level goals — within {limit} turns (each ≈ one calendar year): calendar year ≥ 1696; Europe Alert cleared; no “Contain Huguenot Remnants” status (harsh crackdown path must be fully wound down); Legitimacy ≥ 6.",
   "ui.targets.thirdMandate":
-    "Level goals — within {limit} turns (each turn advances one calendar year): Treasury ≥ {tT}, Power ≥ {tP}, Legitimacy ≥ {tL}. Chapter 2’s Edict of Nantes choice injects 4 Religious Tension cards (tolerance) or 4 Reservation of Conscience cards (crackdown); menu start defaults to crackdown.",
+    "Chapter 3 — within {limit} years: push the succession track to +10 for an immediate win, or survive to 1720 for a tiered settlement. You lose immediately at −10 on the track, or if Power or Legitimacy reaches 0 (checked at once whenever the score moves). The Habsburg side starts with 2 cards in hand and draws 2 at each year-end before playing. Edict of Nantes branch still injects 4 Religious Tension or 4 Reservation of Conscience; menu start defaults to crackdown. Standalone chapter-3 starts without Royal levy / Royal intervention in the shuffled deck; inflation-tagged cards begin with +2 cost from inflation atop their printed base.",
   "banner.turn.sunKingAnnual": "Turn {turn} / {limit} — each step is one calendar year",
   "levelTime.sunKing.oneTurnOneYear": "Timeline: one full turn corresponds to one year on the scenario calendar.",
   "log.info.firstMandateInflationActivated":
@@ -37,13 +37,13 @@ const sunkingExtraFr: Record<string, string> = {
   "menu.levelBrief.secondMandate":
     "1676–1700, milieu de l’ère du Roi-Soleil : maintenez l’hégémonie sous forte pression religieuse et géopolitique.",
   "menu.levelBrief.thirdMandate":
-    "1701–1720, ère de la guerre de Succession d’Espagne : coalition, rivalité dynastique et légitimité contestée (objectifs de placeholder).",
+    "1701–1720 — guerre de Succession d’Espagne : testaments et fronts, de Madrid à la Manche, où s’affrontent prétentions bourboniennes et habsbourgeoises.",
   "ui.targets.firstMandate":
     "Objectifs du niveau — en {limit} tours (chaque tour avance d’une année calendaire) : Trésor ≥ {tT}, Pouvoir ≥ {tP}, Légitimité ≥ {tL}.",
   "ui.targets.secondMandate":
     "Objectifs du niveau — en {limit} tours (chaque tour ≈ une année calendaire) : année calendaire ≥ 1696 ; Alerte Europe levée ; pas de statut « Contenir les restes huguenots » (la voie de la répression forte doit être entièrement close) ; Légitimité ≥ 6.",
   "ui.targets.thirdMandate":
-    "Objectifs du niveau — en {limit} tours (chaque tour avance d’une année calendaire) : Trésor ≥ {tT}, Pouvoir ≥ {tP}, Légitimité ≥ {tL}. Le choix sur l’édit de Nantes au Chapitre 2 injecte 4 cartes Tension religieuse (tolérance) ou 4 Réserve de conscience (répression) ; démarrer depuis le menu applique par défaut la répression.",
+    "Chapitre 3 — en {limit} ans : menez la piste de succession à +10 pour une victoire immédiate, ou tenez jusqu’en 1720 pour un règlement par paliers. Défaite immédiate à −10 sur la piste, ou si le Pouvoir ou la Légitimité atteint 0 (contrôle dès que les scores bougent). Le camp habsbourgeois commence avec 2 cartes en main et pioche 2 en fin d’année avant de jouer. La branche sur l’édit de Nantes injecte encore 4 Tension religieuse ou 4 Réserve de conscience ; démarrage menu = répression par défaut. Un chapitre 3 lancé depuis le menu exclut la Levée royale / l’Intervention royale du deck mélangé ; les cartes à tag Inflation commencent avec +2 de coût d’inflation en plus du coût imprimé.",
   "banner.turn.sunKingAnnual": "Tour {turn} / {limit} — chaque pas vaut une année calendaire",
   "levelTime.sunKing.oneTurnOneYear": "Échelle : un tour complet correspond à une année sur le calendrier du scénario.",
   "log.info.firstMandateInflationActivated":
@@ -54,13 +54,13 @@ const sunkingExtraZh: Record<string, string> = {
   "menu.levelBrief.firstMandate": "1661–1675（太阳王前期）：巩固王权、稳步扩张，在可控压力下建立统治基础。",
   "menu.levelBrief.secondMandate": "1676–1700（太阳王中期）：在宗教与对外高压并行下，维持霸权并避免国家失序。",
   "menu.levelBrief.thirdMandate":
-    "1701–1720（西班牙王位继承战争时期）：联盟战争、王朝竞争与合法性拉锯（占位目标）。",
+    "1701–1720（西班牙王位继承战争时期）：马德里的遗嘱与北海风向之间，波旁与哈布斯堡在欧洲地图上重划继业边界。",
   "ui.targets.firstMandate":
     "关卡目标 — {limit} 回合内（每回合推进 1 个历法年）：财政 ≥ {tT}，权力 ≥ {tP}，合法性 ≥ {tL}。",
   "ui.targets.secondMandate":
     "关卡目标 — {limit} 回合内（每回合约 1 个历法年）：历法年份 ≥ 1696；「欧洲警觉」已结束；不存在「遏制胡格诺-剩余势力」状态（严厉镇压分支须完全收尾）；合法性 ≥ 6。",
   "ui.targets.thirdMandate":
-    "关卡目标 — {limit} 回合内（每回合推进 1 个历法年）：财政 ≥ {tT}，权力 ≥ {tP}，合法性 ≥ {tL}。第二关《南特敕令》分支在开局向牌库注入 4 张「宗教冲突」（宽容）或 4 张「良心保留」（镇压）；主菜单直开默认镇压。",
+    "第三关 — {limit} 年内：王位争夺进度到 +10 立即胜利，或坚持到 1720 年按档位结算。进度 −10，或权力/合法性任一归零，均立即失败（数值变动时即刻判定）。哈布斯堡阵营起手持有 2 张牌，每年年末对手阶段先摸 2 张再出牌。《南特敕令》分支仍注入 4 张「宗教冲突」或 4 张「良心保留」；主菜单直开默认镇压。主菜单直接进入第三关时，洗牌牌库不再包含「王室征收」「王室干预」；带「通胀」标签的牌开局即视为已在印刷费用上叠 +2 通胀费用。",
   "banner.turn.sunKingAnnual": "第 {turn} / {limit} 回合 — 每步对应 1 个历法年",
   "levelTime.sunKing.oneTurnOneYear": "时间尺度：一个完整回合对应剧本时间线上的一个历法年。",
   "log.info.firstMandateInflationActivated":

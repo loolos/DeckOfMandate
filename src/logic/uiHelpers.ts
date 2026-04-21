@@ -21,6 +21,10 @@ export function slotFundSolveAffordable(state: GameState, slot: SlotId): boolean
     const amount = getEventSolveFundingAmount(state, ev.templateId);
     return amount !== null && state.resources.funding >= amount;
   }
+  if (tmpl.solve.kind === "fundingTreasuryQuarterCeil") {
+    const amount = getEventSolveFundingAmount(state, ev.templateId);
+    return amount !== null && state.resources.funding >= amount;
+  }
   return false;
 }
 
@@ -58,6 +62,7 @@ export function fundSolveLabelAmount(state: GameState, slot: SlotId): number | n
   const tmpl = getEventTemplate(ev.templateId);
   if (tmpl.solve.kind === "funding") return getEventSolveFundingAmount(state, ev.templateId);
   if (tmpl.solve.kind === "fundingOrCrackdown") return getEventSolveFundingAmount(state, ev.templateId);
+  if (tmpl.solve.kind === "fundingTreasuryQuarterCeil") return getEventSolveFundingAmount(state, ev.templateId);
   if (tmpl.solve.kind === "scriptedAttack") {
     const cfg = findScriptedCalendarConfig(state.levelId, ev.templateId);
     return cfg?.attack?.fundingCost ?? null;
@@ -86,7 +91,9 @@ function hasFundingSolvePath(state: GameState, slot: SlotId): boolean {
   const ev = state.slots[slot];
   if (!ev || ev.resolved) return false;
   const tmpl = getEventTemplate(ev.templateId);
-  if (tmpl.solve.kind !== "funding" && tmpl.solve.kind !== "fundingOrCrackdown") return false;
+  if (tmpl.solve.kind !== "funding" && tmpl.solve.kind !== "fundingOrCrackdown" && tmpl.solve.kind !== "fundingTreasuryQuarterCeil") {
+    return false;
+  }
   return getEventSolveFundingAmount(state, ev.templateId) !== null;
 }
 
@@ -108,7 +115,14 @@ function hasFurtherFeasibleEventAction(state: GameState, slot: SlotId): boolean 
     return slotAllowsCrackdownTarget(state, slot);
   }
   const tmpl = getEventTemplate(ev.templateId);
-  if (tmpl.solve.kind === "nantesPolicyChoice" || tmpl.solve.kind === "localWarChoice") return true;
+  if (
+    tmpl.solve.kind === "nantesPolicyChoice" ||
+    tmpl.solve.kind === "localWarChoice" ||
+    tmpl.solve.kind === "successionCrisisChoice" ||
+    tmpl.solve.kind === "utrechtTreatyChoice"
+  ) {
+    return true;
+  }
   if (hasFundingSolvePath(state, slot) || hasScriptedAttackSolvePath(state, slot)) return true;
   if (!slotAllowsCrackdownTarget(state, slot)) return false;
   return hasPlayableCrackdownCard(state);

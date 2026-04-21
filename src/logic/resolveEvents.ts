@@ -4,6 +4,8 @@ import { EVENT_SLOT_ORDER, type SlotId } from "../levels/types/event";
 import type { GameState } from "../types/game";
 import { appendActionLog } from "./actionLog";
 import { applyEffects, enforceLegitimacy } from "./applyEffects";
+import { completeSuccessionCrisisAndRevealOpponent } from "./opponentHabsburg";
+import { THIRD_MANDATE_LEVEL_ID } from "./thirdMandateConstants";
 
 const SLOTS: readonly SlotId[] = EVENT_SLOT_ORDER;
 
@@ -33,6 +35,19 @@ export function resolveEndOfYearPenalties(state: GameState): GameState {
     }
     if (ev.resolved) continue;
     const tmpl = getEventTemplate(ev.templateId);
+    if (s.levelId === THIRD_MANDATE_LEVEL_ID && ev.templateId === "successionCrisis") {
+      s = appendActionLog(s, {
+        kind: "eventYearEndPenalty",
+        slot,
+        templateId: ev.templateId,
+        effects: tmpl.penaltiesIfUnresolved,
+      });
+      s = applyEffects(s, tmpl.penaltiesIfUnresolved);
+      s = enforceLegitimacy(s);
+      if (s.outcome !== "playing") return s;
+      s = completeSuccessionCrisisAndRevealOpponent(s, slot);
+      continue;
+    }
     if (schedulers.includes(ev.templateId)) {
       if (ev.templateId === "powerVacuum") {
         s = appendActionLog(s, { kind: "eventPowerVacuumScheduled", slot, templateId: "powerVacuum" });

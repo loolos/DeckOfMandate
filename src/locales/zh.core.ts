@@ -28,6 +28,23 @@ export const messagesZhCore = {
   "ui.nantesCrackdown": "严厉镇压",
   "ui.localWarAttack": "进攻（{cost}）",
   "ui.localWarAppease": "绥靖",
+  "ui.successionCrisisPay": "支付 3 经费 — 王位争夺进度 +1",
+  "ui.successionCrisisDecline": "不支付 — 起始进度 −1",
+  "ui.utrechtEndWar": "结束王位继承战争（和约）",
+  "ui.utrechtWait": "暂不结束（谈判窗口剩余 {n} 回合）",
+  "ui.successionTrack": "王位争夺进度",
+  "ui.successionStatus.title": "西班牙王位继承之争",
+  "ui.successionStatus.detail":
+    "哈布斯堡（奥地利系）与法国所支持的波旁支系，在欧洲诸条约与战场之间争夺西班牙遗产与海权；这是大同盟战争的焦点之一。",
+  "ui.opponentEvent.currentHand": "对手当前手牌",
+  "ui.opponentEvent.handEmpty": "当前尚无对手手牌。",
+  "ui.opponentEvent.lastPlay": "上一回合对手出牌（上年年末）",
+  "ui.opponentEvent.lastPlayNone": "上一对手阶段未出牌。",
+  "ui.opponentEvent.effectSummary": "盘面效果：{fx}",
+  "ui.opponentEvent.strengthTag": "实力{n}",
+  "ui.opponentEvent.lastPlayCombinedFx": "上年年末对手出牌合计盘面效果：{fx}",
+  "ui.opponentHabsburg": "对手：哈布斯堡",
+  "ui.opponentStrength": "对手费用上限",
   "ui.resolved": "已处理",
   "ui.harmful": "有害",
   "ui.opportunity": "机遇",
@@ -85,6 +102,13 @@ export const messagesZhCore = {
   "menu.refit.removeToggle": "删除这张牌",
   "menu.refit.invalid": "当前构筑未满足规则。",
   "menu.refit.start": "开始第二关",
+  "menu.refit.titleChapter3": "第三关牌库整编",
+  "menu.refit.mode.continuityChapter3": "模式：承接第二关胜利",
+  "menu.refit.mode.standaloneChapter3": "模式：主菜单直开第三关",
+  "menu.refit.continuityRuleChapter3":
+    "仅从第二关幸存牌库中移除 0–{max} 张牌。六张新牌加入起手手牌（见下）；其余牌洗入抽牌堆。",
+  "menu.refit.newCardsChapter3": "新牌（起手手牌）",
+  "menu.refit.startChapter3": "开始第三关",
   "menu.refit.back": "返回",
   "menu.refit.reset": "重置到进入整编时",
   "menu.refit.presetHistorical": "历史推荐构筑",
@@ -112,6 +136,10 @@ export const messagesZhCore = {
   "outcome.victory": "胜利 — 政权稳固。",
   "outcome.defeatLegitimacy": "失败 — 核心资源崩溃。",
   "outcome.defeatTime": "失败 — 时限内未达成目标。",
+  "outcome.defeatSuccession": "失败 — 王位争夺进度跌至谷底。",
+  "outcome.successionTier.bourbon": "结局：波旁系在最终账面上占优。",
+  "outcome.successionTier.compromise": "结局：双方主张形成妥协均势。",
+  "outcome.successionTier.habsburg": "结局：哈布斯堡系在最终账面上占优。",
   "log.cardPlayed.title": "[第 {turn} 年] {card} — 支付 {cost} {funding}。",
   "log.cardPlayed.effectsLabel": "效果：",
   "log.cardPlayed.noEffects": "无列表效果。",
@@ -123,6 +151,10 @@ export const messagesZhCore = {
   "log.effect.setCardTagBlocked": "禁用 {tag} 牌（{turns} 回合）",
   "log.effect.addPlayerStatus": "{status}（{turns} 回合）",
   "log.effect.addCardsToDeck": "向抽牌堆加入 {count} 张{card}",
+  "log.effect.modSuccessionTrack": "王位争夺进度 {delta}",
+  "log.opponentHabsburgPlay.title":
+    "[第 {turn} 年] 哈布斯堡阶段：打出合计 {cost} 点对手费用（已减免 {discount}）。",
+  "log.opponentHabsburgDraw.title": "[第 {turn} 年] 哈布斯堡摸牌 {n} 张。",
   "log.eventFundSolved": "[第 {turn} 年] {event}。已支付 {paid} {funding}。{treasury}",
   "log.eventFundSolved.treasury": "财政 +{gain}。",
   "log.eventCrackdownSolved": "[第 {turn} 年] 以干预清除 {event}（已花费 {paid} {funding}）。",
@@ -173,6 +205,8 @@ export const messagesZhCore = {
     "[第 {turn} 年] 法国在遗产与边境争端中更多依靠外交斡旋与边境威慑，而未把欧陆拖入全面军事摊牌；邻国仍紧盯凡尔赛的每一步，使节、军备与贸易杠杆暗中加码，但那种因大战惨败或领土剧变而瞬间抬高的围堵烈度尚未到来——戒备像余烬，而非燎原之火（「欧洲警觉」仍以较低烈度笼罩边境）。",
   "log.info.chapter2EuropeAlertOff":
     "[第 {turn} 年] 在这一叙事起点上，外部对法兰西的牵制尚未聚合成制度化围堵：和约与密约仍在试探，反法大同盟的动员逻辑尚未成为欧陆日常，宫廷文书里更多是观望而非摊牌。",
+  "log.info.chapter3ContinuityIntro":
+    "[第 {turn} 年] 第三关开局：继承第二关的资源、历法年与幸存牌库；另有六张新牌加入起手手牌。历法进入 1701 年时将按脚本出现王位继承危机。",
   "log.info.antiFrenchSentimentActivated":
     "[第 {turn} 年]「反法情绪」升温：当“权力+财政”大于 20 时，「欧洲警觉」相关且需经费解决的事件费用会先 +1，之后每再多满 5 点再 +1。该状态会显示「情绪x」（x=当前整个牌库中「反法遏制」数量）；且在状态持续期间，「里斯维克和约」费用还会额外 +2x。",
   "log.info.antiFrenchSentimentEnded":
@@ -187,6 +221,8 @@ export const messagesZhCore = {
     "[第 {turn} 年] 标签说明「抗命」：当手牌中紧邻右侧为「良心保留」时，本牌获得抗命且不可打出。",
   "log.info.cardTag.consume":
     "[第 {turn} 年] 标签说明「消耗」：打出后从牌库循环中移除，不会进入弃牌堆，也不会再被洗回抽牌堆。",
+  "log.info.cardTag.opponent":
+    "[第 {turn} 年] 标签说明「对手」：该牌仅用于哈布斯堡对手阶段，不能从玩家手牌打出。",
   "log.info.cardUse.remainingUses": "[第 {turn} 年] 标签说明「剩余」：该卡可用次数为 X/Y；每次打出会消耗 1 次，用尽后将从牌库循环中移除。",
   "log.info.cardUse.depleted.crackdownPenalty":
     "[第 {turn} 年]「王室干预」次数耗尽（0/3），已从牌库循环中移除；王室强制力受损，权力 -1。",

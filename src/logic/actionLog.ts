@@ -51,7 +51,14 @@ export type ActionLogPayload =
   | { kind: "europeAlertProgressShift"; from: number; to: number; probabilityPct: number; pressureDeltaK: number }
   | { kind: "drawOverflowDiscarded"; cardTemplateIds: CardTemplateId[] }
   | { kind: "drawCards"; cardTemplateIds: CardTemplateId[] }
-  | { kind: "info"; infoKey: LogInfoKey };
+  | { kind: "info"; infoKey: LogInfoKey }
+  | {
+      kind: "opponentHabsburgPlay";
+      cardInstanceIds: string[];
+      opponentCostSum: number;
+      opponentCostDiscount: number;
+    }
+  | { kind: "opponentHabsburgDraw"; drawnCardIds: string[] };
 
 export function appendActionLog(state: GameState, payload: ActionLogPayload): GameState {
   const logSeq = state.nextIds.log ?? 0;

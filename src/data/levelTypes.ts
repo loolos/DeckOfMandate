@@ -23,6 +23,11 @@ export type VictoryRule =
       kind: "gated";
       earliestCalendarYear: number;
       minLegitimacy: number;
+    }
+  /** Chapter 3: succession track ±10 instant outcomes; last playable calendar year = calendarEndExclusiveYear - 1. */
+  | {
+      kind: "successionWar";
+      calendarEndExclusiveYear: number;
     };
 
 /** How inflation applies to card costs for this level. */
@@ -31,7 +36,7 @@ export type InflationRule =
   | { kind: "pressureThreshold"; threshold: number }
   | { kind: "off" };
 
-export type LevelBootstrapKind = "initial" | "chapter2Standalone";
+export type LevelBootstrapKind = "initial" | "chapter2Standalone" | "chapter3Standalone";
 
 export type SlotEscalation = {
   from: EventTemplateId;

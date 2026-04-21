@@ -2,6 +2,7 @@ import { getLevelContent, type ScriptedCalendarEventConfig } from "../data/level
 import { getLevelDef } from "../data/levels";
 import { getEventTemplate } from "../data/events";
 import { EVENT_SLOT_ORDER, type EventInstance, type EventTemplateId, type SlotId } from "../levels/types/event";
+import { THIRD_MANDATE_LEVEL_ID } from "./thirdMandateConstants";
 import type { AntiFrenchLeagueState, GameState } from "../types/game";
 import { rngNext } from "./rng";
 
@@ -106,6 +107,9 @@ export function applyScriptedCalendarPhase(state: GameState): GameState {
       target = cfg.overflowSlot ?? "C";
     }
     s = placeScriptedEvent(s, cfg.templateId, target);
+    if (s.levelId === THIRD_MANDATE_LEVEL_ID && cfg.templateId === "utrechtTreaty") {
+      s = { ...s, utrechtTreatyCountdown: 6 };
+    }
   }
 
   return s;

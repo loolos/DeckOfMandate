@@ -89,6 +89,44 @@ export function normalizeGameState(state: GameState): GameState {
   if (!Array.isArray(s.proceduralEventSequence)) {
     s = { ...s, proceduralEventSequence: [] };
   }
+  if (typeof s.successionTrack !== "number" || !Number.isFinite(s.successionTrack)) {
+    s = { ...s, successionTrack: 0 };
+  } else {
+    s = { ...s, successionTrack: Math.max(-10, Math.min(10, Math.floor(s.successionTrack))) };
+  }
+  if (typeof s.opponentStrength !== "number" || !Number.isFinite(s.opponentStrength)) {
+    s = { ...s, opponentStrength: 2 };
+  }
+  if (typeof s.opponentHabsburgUnlocked !== "boolean") {
+    s = { ...s, opponentHabsburgUnlocked: false };
+  }
+  if (typeof s.warEnded !== "boolean") {
+    s = { ...s, warEnded: false };
+  }
+  if (s.utrechtTreatyCountdown !== null && (typeof s.utrechtTreatyCountdown !== "number" || !Number.isFinite(s.utrechtTreatyCountdown))) {
+    s = { ...s, utrechtTreatyCountdown: null };
+  }
+  if (!Array.isArray(s.opponentDeck)) {
+    s = { ...s, opponentDeck: [] };
+  }
+  if (!Array.isArray(s.opponentHand)) {
+    s = { ...s, opponentHand: [] };
+  }
+  if (!Array.isArray(s.opponentDiscard)) {
+    s = { ...s, opponentDiscard: [] };
+  }
+  if (typeof s.opponentCostDiscountThisTurn !== "number" || !Number.isFinite(s.opponentCostDiscountThisTurn)) {
+    s = { ...s, opponentCostDiscountThisTurn: 0 };
+  }
+  if (!Array.isArray(s.opponentLastPlayedTemplateIds)) {
+    s = { ...s, opponentLastPlayedTemplateIds: [] };
+  }
+  if (s.successionOutcomeTier != null && s.successionOutcomeTier !== "habsburg" && s.successionOutcomeTier !== "compromise" && s.successionOutcomeTier !== "bourbon") {
+    s = { ...s, successionOutcomeTier: null };
+  }
+  if (s.successionOutcomeTier === undefined) {
+    s = { ...s, successionOutcomeTier: null };
+  }
   if (!s.cardUsesById || typeof s.cardUsesById !== "object") {
     s = { ...s, cardUsesById: {} };
   }

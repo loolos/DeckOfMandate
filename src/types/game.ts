@@ -9,6 +9,7 @@ export type LogInfoKey =
   | "chapter2EuropeAlertOn"
   | "chapter2EuropeAlertContinuityLow"
   | "chapter2EuropeAlertOff"
+  | "chapter3ContinuityIntro"
   | "antiFrenchSentimentActivated"
   | "antiFrenchSentimentEnded"
   | "cardTag.royal"
@@ -169,15 +170,37 @@ export type ActionLogEntry =
       id: string;
       turn: number;
       infoKey: LogInfoKey;
+    }
+  | {
+      kind: "opponentHabsburgPlay";
+      id: string;
+      turn: number;
+      /** Instance ids played this opponent phase, sorted per AI tie-break. */
+      cardInstanceIds: string[];
+      /** Total opponent-cost budget before discount. */
+      opponentCostSum: number;
+      /** Applied discount from player cards this turn. */
+      opponentCostDiscount: number;
+    }
+  | {
+      kind: "opponentHabsburgDraw";
+      id: string;
+      turn: number;
+      drawnCardIds: string[];
     };
 
 export type GamePhase = "action" | "retention" | "gameOver";
+
+/** Set when chapter 3 ends on the calendar without hitting ±10 on the succession track. */
+export type SuccessionIntervalTier = "habsburg" | "compromise" | "bourbon";
 
 export type GameOutcome =
   | "playing"
   | "victory"
   | "defeatLegitimacy"
-  | "defeatTime";
+  | "defeatTime"
+  /** Chapter 3: succession track reached -10 (or legacy). */
+  | "defeatSuccession";
 
 /** After a scripted military choice; each year’s draw may roll drawPenaltyProbability for drawPenaltyDelta (clamped with power). */
 export type AntiFrenchLeagueState = {
@@ -277,4 +300,27 @@ export type GameState = {
    */
   proceduralEventSequence: EventTemplateId[];
   actionLog: readonly ActionLogEntry[];
+  /** Chapter 3: Spanish succession contest, -10..+10. */
+  successionTrack: number;
+  /** Chapter 3: max opponent-cost budget per opponent phase (fixed at 2 in this version). */
+  opponentStrength: number;
+  /** Chapter 3: after `successionCrisis` resolves; enables opponent draw/play. */
+  opponentHabsburgUnlocked: boolean;
+  /** Chapter 3: player ended the war via Utrecht event or countdown. */
+  warEnded: boolean;
+  /** Chapter 3: Utrecht event rounds remaining while active; null when not in negotiation. */
+  utrechtTreatyCountdown: number | null;
+  opponentDeck: string[];
+  opponentHand: string[];
+  opponentDiscard: string[];
+  /** Chapter 3: `grandAllianceInfiltrationDiplomacy` — reduces opponent cost sum (min 0). */
+  opponentCostDiscountThisTurn: number;
+  /**
+   * Chapter 3: opponent templates played in the last completed opponent phase (`END_YEAR`), preserved for UI.
+   */
+  opponentLastPlayedTemplateIds: readonly CardTemplateId[];
+  /**
+   * When `outcome` is `victory` from chapter 3 calendar end, which tier narrative to show.
+   */
+  successionOutcomeTier: SuccessionIntervalTier | null;
 };

@@ -1,3 +1,4 @@
+import { getCardTemplate } from "../data/cards";
 import { getLevelContent } from "../data/levelContent";
 import { getDefaultLevelId, getLevelDef } from "../data/levels";
 import { buildDefaultCardUsesById } from "../logic/cardUsage";
@@ -6,10 +7,10 @@ import { createRngFromSeed, shuffle } from "../logic/rng";
 import { beginYear } from "../logic/turnFlow";
 import type { CardInstance, CardTemplateId } from "../levels/types/card";
 import { EMPTY_EVENT_SLOTS, EMPTY_PENDING_MAJOR_CRISIS } from "../levels/types/event";
+import { LEVEL3_STARTING_HAND_TEMPLATE_ORDER } from "../levels/sunking/chapters/thirdMandate";
 import { applyThirdMandateNantesStartingEffects, resolveThirdMandateNantesPolicy } from "../logic/thirdMandateStart";
+import { THIRD_MANDATE_LEVEL_ID } from "../logic/thirdMandateConstants";
 import type { GameState, NantesPolicyCarryover, Resources } from "../types/game";
-
-const THIRD_MANDATE_LEVEL_ID = "thirdMandate";
 
 type InitialStateOptions = {
   starterDeckTemplateOrder?: readonly CardTemplateId[];
@@ -55,8 +56,13 @@ export function createInitialState(
       ? resolveThirdMandateNantesPolicy(options?.nantesPolicyCarryover ?? null)
       : null;
 
-  const starterDeckTemplateOrder =
+  let starterDeckTemplateOrder =
     options?.starterDeckTemplateOrder ?? getLevelContent(levelId).starterDeckTemplateOrder;
+  if (levelId === THIRD_MANDATE_LEVEL_ID && !options?.starterDeckTemplateOrder) {
+    starterDeckTemplateOrder = starterDeckTemplateOrder.filter(
+      (id) => id !== "funding" && id !== "crackdown",
+    );
+  }
   const deckOrder = starterDeckTemplateOrder.map((templateId, i) => ({
     instanceId: `${templateId}__${i}`,
     templateId: templateId as CardTemplateId,
@@ -68,7 +74,29 @@ export function createInitialState(
   for (const c of shuffled) {
     cardsById[c.instanceId] = { instanceId: c.instanceId, templateId: c.templateId };
   }
+
+  let initialHandIds: string[] = [];
+  if (levelId === THIRD_MANDATE_LEVEL_ID) {
+    for (let i = 0; i < LEVEL3_STARTING_HAND_TEMPLATE_ORDER.length; i++) {
+      const templateId = LEVEL3_STARTING_HAND_TEMPLATE_ORDER[i]!;
+      const instanceId = `ch3_hand_${i}_${templateId}`;
+      cardsById[instanceId] = { instanceId, templateId };
+      initialHandIds.push(instanceId);
+    }
+  }
+
   const cardUsesById = buildDefaultCardUsesById(levelId, cardsById);
+
+  const cardInflationById: Record<string, number> = {};
+  if (levelId === THIRD_MANDATE_LEVEL_ID) {
+    for (const id of Object.keys(cardsById)) {
+      if (id.startsWith("ch3_hand_")) continue;
+      const t = cardsById[id]?.templateId;
+      if (t && getCardTemplate(t).tags.includes("inflation")) {
+        cardInflationById[id] = 2;
+      }
+    }
+  }
 
   const base: GameState = {
     levelId,
@@ -85,10 +113,10 @@ export function createInitialState(
     scheduledDrawModifiers: [],
     deck: shuffled.map((c) => c.instanceId),
     discard: [],
-    hand: [],
+    hand: initialHandIds,
     cardsById,
     cardUsesById,
-    cardInflationById: {},
+    cardInflationById,
     slots: { ...EMPTY_EVENT_SLOTS },
     pendingMajorCrisis: { ...EMPTY_PENDING_MAJOR_CRISIS },
     nantesPolicyCarryover,
@@ -102,6 +130,17 @@ export function createInitialState(
     huguenotResurgenceCounter: 0,
     proceduralEventSequence: [],
     actionLog: [],
+    successionTrack: 0,
+    opponentStrength: 2,
+    opponentHabsburgUnlocked: false,
+    warEnded: false,
+    utrechtTreatyCountdown: null,
+    opponentDeck: [],
+    opponentHand: [],
+    opponentDiscard: [],
+    opponentCostDiscountThisTurn: 0,
+    opponentLastPlayedTemplateIds: [],
+    successionOutcomeTier: null,
   };
 
   let ready = base;

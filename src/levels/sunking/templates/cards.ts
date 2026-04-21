@@ -6,6 +6,7 @@ const EXTRA: readonly CardTag[] = ["extra"];
 const EXTRA_CONSUME: readonly CardTag[] = ["extra", "consume"];
 const INFLATION: readonly CardTag[] = ["inflation"];
 const CONSUME: readonly CardTag[] = ["consume"];
+const OPPONENT: readonly CardTag[] = ["opponent"];
 
 export const cardTemplates: Record<CardTemplateId, CardTemplate> = {
   funding: {
@@ -151,5 +152,68 @@ export const cardTemplates: Record<CardTemplateId, CardTemplate> = {
     backgroundKey: "card.jesuitCollege.background",
     descriptionKey: "card.jesuitCollege.desc",
     effects: [{ kind: "modResource", resource: "legitimacy", delta: 1 }],
+  },
+  bourbonMarriageProclamation: {
+    id: "bourbonMarriageProclamation",
+    cost: 2,
+    tags: INFLATION,
+    titleKey: "card.bourbonMarriageProclamation.name",
+    backgroundKey: "card.bourbonMarriageProclamation.background",
+    descriptionKey: "card.bourbonMarriageProclamation.desc",
+    effects: [
+      { kind: "modResource", resource: "legitimacy", delta: 1 },
+      { kind: "modSuccessionTrack", delta: 1 },
+    ],
+  },
+  grandAllianceInfiltrationDiplomacy: {
+    id: "grandAllianceInfiltrationDiplomacy",
+    cost: 2,
+    tags: INFLATION,
+    titleKey: "card.grandAllianceInfiltrationDiplomacy.name",
+    backgroundKey: "card.grandAllianceInfiltrationDiplomacy.background",
+    descriptionKey: "card.grandAllianceInfiltrationDiplomacy.desc",
+    effects: [{ kind: "drawCards", count: 1 }],
+  },
+  italianTheaterTroopRedeploy: {
+    id: "italianTheaterTroopRedeploy",
+    cost: 3,
+    tags: INFLATION,
+    titleKey: "card.italianTheaterTroopRedeploy.name",
+    backgroundKey: "card.italianTheaterTroopRedeploy.background",
+    descriptionKey: "card.italianTheaterTroopRedeploy.desc",
+    effects: [
+      { kind: "modSuccessionTrack", delta: 2 },
+      { kind: "addCardsToDeck", templateId: "fiscalBurden", count: 1 },
+    ],
+  },
+  habsburgImperialLegitimacyNote: {
+    id: "habsburgImperialLegitimacyNote",
+    cost: 0,
+    opponentCost: 1,
+    tags: OPPONENT,
+    titleKey: "card.habsburgImperialLegitimacyNote.name",
+    backgroundKey: "card.habsburgImperialLegitimacyNote.background",
+    descriptionKey: "card.habsburgImperialLegitimacyNote.desc",
+    effects: [],
+  },
+  habsburgLowCountriesAgitation: {
+    id: "habsburgLowCountriesAgitation",
+    cost: 0,
+    opponentCost: 2,
+    tags: OPPONENT,
+    titleKey: "card.habsburgLowCountriesAgitation.name",
+    backgroundKey: "card.habsburgLowCountriesAgitation.background",
+    descriptionKey: "card.habsburgLowCountriesAgitation.desc",
+    effects: [],
+  },
+  habsburgGrandAllianceLevy: {
+    id: "habsburgGrandAllianceLevy",
+    cost: 0,
+    opponentCost: 2,
+    tags: OPPONENT,
+    titleKey: "card.habsburgGrandAllianceLevy.name",
+    backgroundKey: "card.habsburgGrandAllianceLevy.background",
+    descriptionKey: "card.habsburgGrandAllianceLevy.desc",
+    effects: [],
   },
 };

@@ -90,7 +90,7 @@ export function createStandaloneLevel2Draft(seed?: number): Level2StandaloneDraf
   };
 }
 
-function createDeckRefitCarryoverSnapshot(from: GameState): Level2CarryoverCard[] {
+export function createDeckRefitCarryoverSnapshot(from: GameState): Level2CarryoverCard[] {
   const orderedPoolIds = [...from.deck, ...from.discard, ...from.hand];
   const seen = new Set<string>();
   const out: Level2CarryoverCard[] = [];
@@ -136,7 +136,13 @@ export function createContinuityLevel2Draft(from: GameState, seed?: number): Lev
   };
 }
 
-export function toggleContinuityCardRemoval<T extends Level2StartDraft>(draft: T, instanceId: string): T {
+/** Shared shape for chapter 2 / 3 deck-refit toggles (remove up to 3 carryover cards). */
+export type DeckRefitDraft = {
+  carryoverCards: readonly { instanceId: string }[];
+  removedCarryoverIds: readonly string[];
+};
+
+export function toggleContinuityCardRemoval<T extends DeckRefitDraft>(draft: T, instanceId: string): T {
   if (!draft.carryoverCards.some((card) => card.instanceId === instanceId)) return draft;
   const removed = new Set(draft.removedCarryoverIds);
   if (removed.has(instanceId)) {
@@ -247,6 +253,17 @@ function buildContinuityLevel2State(draft: Level2StartDraft): GameState {
     huguenotResurgenceCounter: 0,
     proceduralEventSequence: [],
     actionLog: [],
+    successionTrack: 0,
+    opponentStrength: 2,
+    opponentHabsburgUnlocked: false,
+    warEnded: false,
+    utrechtTreatyCountdown: null,
+    opponentDeck: [],
+    opponentHand: [],
+    opponentDiscard: [],
+    opponentCostDiscountThisTurn: 0,
+    opponentLastPlayedTemplateIds: [],
+    successionOutcomeTier: null,
   };
   const europeAlertIntroKey =
     draft.mode === "continuity" && !draft.warOfDevolutionAttacked

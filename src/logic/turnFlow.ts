@@ -25,6 +25,7 @@ import {
 import { antiFrenchSentimentActive } from "./antiFrenchSentiment";
 import { applyScriptedCalendarPhase, rollAntiFrenchLeagueDrawAdjustment } from "./scriptedCalendar";
 import { rngNext, shuffle } from "./rng";
+import { opponentBeginYearDrawPhase } from "./opponentHabsburg";
 import { applyEffects, enforceLegitimacy } from "./applyEffects";
 import { addCardsToDeck } from "./cardRuntime";
 
@@ -232,6 +233,8 @@ function clearResolvedSlots(state: GameState): GameState {
       slots[slot] = { ...ev, resolved: false };
       continue;
     }
+    /** Persistent UI slot: remains until the run ends (resolved only marks "no player action"). */
+    if (ev.templateId === "opponentHabsburg") continue;
     slots[slot] = null;
   }
   return { ...state, slots };
@@ -480,6 +483,8 @@ function tickPlayerStatusesAfterDraw(statuses: readonly PlayerStatusInstance[]):
 export function beginYear(state: GameState): GameState {
   if (state.outcome !== "playing") return state;
   let s: GameState = { ...state, pendingInteraction: null };
+  s = opponentBeginYearDrawPhase(s);
+  if (s.outcome !== "playing") return s;
   let league = s.antiFrenchLeague;
   if (league && s.turn > league.untilTurn) {
     league = null;
@@ -549,12 +554,39 @@ export function beginYear(state: GameState): GameState {
   return { ...s, phase: "action" };
 }
 
+function successionIntervalTier(track: number): import("../types/game").SuccessionIntervalTier {
+  if (track >= 4 && track <= 9) return "bourbon";
+  if (track >= -3 && track <= 3) return "compromise";
+  return "habsburg";
+}
+
 export function evaluateVictory(state: GameState): GameState {
-  const currentYear = currentCalendarYear(state);
+  if (state.outcome !== "playing") return state;
+  if (state.resources.power <= 0 || state.resources.legitimacy <= 0) {
+    return { ...state, phase: "gameOver", outcome: "defeatLegitimacy" };
+  }
+
   const def = getLevelDef(state.levelId);
   const vr = def.victoryRule;
 
+  if (vr.kind === "successionWar") {
+    if (state.successionTrack >= 10) {
+      return { ...state, phase: "gameOver", outcome: "victory", successionOutcomeTier: null };
+    }
+    const lim = getTurnLimitForRun(state.levelId, state.calendarStartYear);
+    if (state.turn >= lim && state.successionTrack > -10 && state.successionTrack < 10) {
+      return {
+        ...state,
+        phase: "gameOver",
+        outcome: "victory",
+        successionOutcomeTier: successionIntervalTier(state.successionTrack),
+      };
+    }
+    return state;
+  }
+
   if (vr.kind === "gated") {
+    const currentYear = currentCalendarYear(state);
     const reachedVictoryYear = currentYear >= vr.earliestCalendarYear;
     const europeAlertResolved = !state.europeAlert;
     const huguenotResidualResolved = !state.playerStatuses.some(
@@ -577,6 +609,10 @@ export function evaluateVictory(state: GameState): GameState {
 
 export function evaluateTimeDefeat(state: GameState): GameState {
   if (state.outcome !== "playing") return state;
+  const def = getLevelDef(state.levelId);
+  if (def.victoryRule.kind === "successionWar") {
+    return state;
+  }
   if (state.turn === getTurnLimitForRun(state.levelId, state.calendarStartYear)) {
     return { ...state, phase: "gameOver", outcome: "defeatTime" };
   }

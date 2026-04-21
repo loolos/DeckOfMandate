@@ -20,6 +20,12 @@ const CARD_ICONS: Record<CardTemplateId, string> = {
   religiousTensionCard: "⛪",
   jansenistReservation: "📖",
   jesuitCollege: "🎓",
+  bourbonMarriageProclamation: "💒",
+  grandAllianceInfiltrationDiplomacy: "🕵️",
+  italianTheaterTroopRedeploy: "🗡️",
+  habsburgGrandAllianceLevy: "⚔️",
+  habsburgImperialLegitimacyNote: "📜",
+  habsburgLowCountriesAgitation: "🗺️",
 };
 
 const EVENT_ICONS: Record<EventTemplateId, string> = {
@@ -57,6 +63,12 @@ const EVENT_ICONS: Record<EventTemplateId, string> = {
   huguenotTension: "🕯️",
   localWar: "⚔️",
   jesuitPatronage: "📚",
+  successionCrisis: "👑",
+  opponentHabsburg: "🦅",
+  utrechtTreaty: "📜",
+  bavarianCourtRealignment: "🏰",
+  portugueseTariffNegotiation: "⚓",
+  imperialElectorsMood: "🗳️",
 };
 
 const RESOURCE_ICONS: Record<ResourceKey, string> = {

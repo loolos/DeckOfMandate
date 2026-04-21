@@ -3,6 +3,11 @@ import {
   createContinuityLevel2Draft,
   type Level2StartDraft,
 } from "../app/level2Transition";
+import {
+  applyRemovedIndicesToLevel3Draft,
+  buildLevel3StateFromDraft,
+  createContinuityLevel3Draft,
+} from "../levels/sunking/chapter3Transition";
 import { gameReducer, type GameAction } from "../app/gameReducer";
 import { createInitialState } from "../app/initialState";
 import { getChapter2StandaloneDraft } from "../data/levelBootstrap";
@@ -29,6 +34,8 @@ const ACTION_TAG = {
   CRACKDOWN_TARGET: 0x09,
   CRACKDOWN_CANCEL: 0x0a,
   CONFIRM_RETENTION: 0x0b,
+  PICK_SUCCESSION_CRISIS: 0x0c,
+  PICK_UTRECHT_TREATY: 0x0d,
 } as const;
 
 /** Action types that we never persist into the run code. */
@@ -58,8 +65,12 @@ export type RunRecord = {
 
 export type SessionRecord = RunRecord[];
 
-function chapter2UsesRefit(levelId: LevelId): boolean {
-  return getLevelDef(levelId).bootstrap === "chapter2Standalone";
+/** Whether removed-index bytes are written/read for this run (deck refit). */
+function writesRefitRemovals(level: LevelId, mode: "standalone" | "continuity"): boolean {
+  const b = getLevelDef(level).bootstrap;
+  if (b === "chapter2Standalone") return true;
+  if (b === "chapter3Standalone") return mode === "standalone";
+  return level === "thirdMandate" && mode === "continuity";
 }
 
 const LEVEL_ID_BY_BIT_V1: readonly LevelId[] = ["firstMandate", "secondMandate"];
@@ -212,6 +223,16 @@ function writeAction(w: ByteWriter, a: GameAction): void {
     case "CRACKDOWN_CANCEL":
       w.pushU8(ACTION_TAG.CRACKDOWN_CANCEL);
       return;
+    case "PICK_SUCCESSION_CRISIS":
+      w.pushU8(ACTION_TAG.PICK_SUCCESSION_CRISIS);
+      w.pushU8(slotToByte(a.slot));
+      w.pushU8(a.pay ? 1 : 0);
+      return;
+    case "PICK_UTRECHT_TREATY":
+      w.pushU8(ACTION_TAG.PICK_UTRECHT_TREATY);
+      w.pushU8(slotToByte(a.slot));
+      w.pushU8(a.endWar ? 1 : 0);
+      return;
     case "CONFIRM_RETENTION": {
       w.pushU8(ACTION_TAG.CONFIRM_RETENTION);
       // Retained ids are decoded against the live hand at replay time; encode as a bitmask
@@ -303,6 +324,10 @@ function readAction(r: ByteReader, currentHand: readonly string[]): GameAction {
       return { type: "CRACKDOWN_TARGET", slot: byteToSlot(r.readU8()) };
     case ACTION_TAG.CRACKDOWN_CANCEL:
       return { type: "CRACKDOWN_CANCEL" };
+    case ACTION_TAG.PICK_SUCCESSION_CRISIS:
+      return { type: "PICK_SUCCESSION_CRISIS", slot: byteToSlot(r.readU8()), pay: r.readU8() !== 0 };
+    case ACTION_TAG.PICK_UTRECHT_TREATY:
+      return { type: "PICK_UTRECHT_TREATY", slot: byteToSlot(r.readU8()), endWar: r.readU8() !== 0 };
     case ACTION_TAG.CONFIRM_RETENTION: {
       const handLength = r.readU8();
       const byteCount = Math.ceil(handLength / 8);
@@ -331,7 +356,7 @@ function writeRunRecord(w: ByteWriter, run: RunRecord): void {
   w.pushU8(cont);
   writeUtf8LevelId(w, run.level);
   w.pushU32LE(run.seed >>> 0);
-  if (chapter2UsesRefit(run.level)) {
+  if (writesRefitRemovals(run.level, run.mode)) {
     w.pushU8(run.removedIndices.length & 0xff);
     for (const idx of run.removedIndices) {
       w.pushU8(idx & 0xff);
@@ -354,11 +379,11 @@ function readRunRecordV2(r: ByteReader, prevRunFinalState: GameState | null): {
   }
   const seed = r.readU32LE();
   let removedIndices: number[] = [];
-  if (chapter2UsesRefit(level)) {
+  if (writesRefitRemovals(level, mode)) {
     const count = r.readU8();
     for (let i = 0; i < count; i++) removedIndices.push(r.readU8());
   }
-  if (mode === "continuity" && !chapter2UsesRefit(level)) {
+  if (mode === "continuity" && !writesRefitRemovals(level, mode)) {
     throw new Error("runCode: continuity mode is only valid for chapter-2-style levels");
   }
   if (mode === "continuity" && !prevRunFinalState) {
@@ -419,6 +444,11 @@ function startStateFor(
 ): GameState {
   if (mode === "continuity") {
     if (!prevFinalState) throw new Error("runCode: continuity needs prev state");
+    if (level === "thirdMandate") {
+      const baseDraft = createContinuityLevel3Draft(prevFinalState, seed);
+      const draft = applyRemovedIndicesToLevel3Draft(baseDraft, removedIndices);
+      return buildLevel3StateFromDraft(draft);
+    }
     const baseDraft = createContinuityLevel2Draft(prevFinalState, seed);
     const draft: Level2StartDraft = applyRemovedIndices(baseDraft, removedIndices);
     return buildLevel2StateFromDraft(draft);
@@ -468,7 +498,7 @@ export function decodeSession(hex: string): DecodeResult {
     throw new Error("runCode: bad magic / version");
   }
   const runCount = r.readU8();
-  if (runCount < 1 || runCount > 2) {
+  if (runCount < 1 || runCount > 3) {
     throw new Error(`runCode: unsupported runCount ${runCount}`);
   }
   const session: RunRecord[] = [];
@@ -491,7 +521,7 @@ export function decodeSession(hex: string): DecodeResult {
 export function replaySession(session: SessionRecord): GameState {
   let prevFinal: GameState | null = null;
   for (const run of session) {
-    const removed = chapter2UsesRefit(run.level) ? run.removedIndices : [];
+    const removed = writesRefitRemovals(run.level, run.mode) ? run.removedIndices : [];
     let state = startStateFor(run.level, run.mode, run.seed, removed, prevFinal);
     for (const action of run.actions) {
       state = gameReducer(state, action);

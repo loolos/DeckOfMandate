@@ -28,6 +28,23 @@ export const messagesEnCore = {
   "ui.nantesCrackdown": "Harsh Crackdown",
   "ui.localWarAttack": "Attack ({cost})",
   "ui.localWarAppease": "Appease",
+  "ui.successionCrisisPay": "Pay 3 Funding — claim +1 on the succession track",
+  "ui.successionCrisisDecline": "Decline payment — start at −1 on the succession track",
+  "ui.utrechtEndWar": "End the war of succession (treaty)",
+  "ui.utrechtWait": "Wait ({n} round(s) left in the negotiation window)",
+  "ui.successionTrack": "Succession track",
+  "ui.successionStatus.title": "War of the Spanish Succession",
+  "ui.successionStatus.detail":
+    "Bourbon claimants face Habsburg-led coalitions in a long trial of crowns: the balance shifts with battles, treaties, and recognition abroad.",
+  "ui.opponentEvent.currentHand": "Opponent hand",
+  "ui.opponentEvent.handEmpty": "No cards in the opponent’s hand at the moment.",
+  "ui.opponentEvent.lastPlay": "Last opponent play (previous year-end)",
+  "ui.opponentEvent.lastPlayNone": "No opponent cards were played last phase.",
+  "ui.opponentEvent.effectSummary": "Board effects: {fx}",
+  "ui.opponentEvent.strengthTag": "Strength {n}",
+  "ui.opponentEvent.lastPlayCombinedFx": "Last opponent play — combined effects on the board: {fx}",
+  "ui.opponentHabsburg": "Habsburg opponent",
+  "ui.opponentStrength": "Opponent budget",
   "ui.resolved": "Resolved",
   "ui.harmful": "Harmful",
   "ui.opportunity": "Opportunity",
@@ -88,6 +105,13 @@ export const messagesEnCore = {
   "menu.refit.removeToggle": "Remove this card",
   "menu.refit.invalid": "Deck rules not met yet.",
   "menu.refit.start": "Start Chapter 2",
+  "menu.refit.titleChapter3": "Chapter 3 deck refit",
+  "menu.refit.mode.continuityChapter3": "Mode: continue from Chapter 2 victory",
+  "menu.refit.mode.standaloneChapter3": "Mode: standalone Chapter 3 start",
+  "menu.refit.continuityRuleChapter3":
+    "Remove 0–{max} carryover cards from your chapter 2 deck only. Six new cards are placed in your opening hand (below); the rest of your library is shuffled into the draw pile.",
+  "menu.refit.newCardsChapter3": "New cards (opening hand)",
+  "menu.refit.startChapter3": "Start Chapter 3",
   "menu.refit.back": "Back",
   "menu.refit.reset": "Reset to entry state",
   "menu.refit.presetHistorical": "Historical recommendation",
@@ -115,6 +139,10 @@ export const messagesEnCore = {
   "outcome.victory": "Victory — mandate secured.",
   "outcome.defeatLegitimacy": "Defeat — a core resource collapsed.",
   "outcome.defeatTime": "Defeat — time ran out before targets were met.",
+  "outcome.defeatSuccession": "Defeat — the succession contest turned decisively against France.",
+  "outcome.successionTier.bourbon": "Settlement: Bourbon advantage on the succession line.",
+  "outcome.successionTier.compromise": "Settlement: a compromise equilibrium between claims.",
+  "outcome.successionTier.habsburg": "Settlement: Habsburg-leaning advantage in the final accounting.",
   "log.cardPlayed.title": "[Turn {turn}] {card} — paid {cost} {funding}.",
   "log.cardPlayed.effectsLabel": "Effects:",
   "log.cardPlayed.noEffects": "No listed effects.",
@@ -126,6 +154,10 @@ export const messagesEnCore = {
   "log.effect.setCardTagBlocked": "Block {tag} cards ({turns} turns)",
   "log.effect.addPlayerStatus": "{status} ({turns} turns)",
   "log.effect.addCardsToDeck": "Add {count} {card} to deck",
+  "log.effect.modSuccessionTrack": "Succession track {delta}",
+  "log.opponentHabsburgPlay.title":
+    "[Turn {turn}] Habsburg phase: played for {cost} opponent cost (discount {discount}).",
+  "log.opponentHabsburgDraw.title": "[Turn {turn}] Habsburg drew {n} card(s).",
   "log.eventFundSolved": "[Turn {turn}] {event}. Paid {paid} {funding}{treasury}",
   "log.eventFundSolved.treasury": " Treasury +{gain}.",
   "log.eventCrackdownSolved": "[Turn {turn}] Intervention cleared {event} (spent {paid} {funding}).",
@@ -176,6 +208,8 @@ export const messagesEnCore = {
     "[Turn {turn}] France pressed its claims chiefly through diplomacy and frontier pressure rather than a general European war over the Devolution crisis. Rivals still watched Versailles closely—envoys, armaments, and commercial levers tightened quietly—but the white heat of a continent-wide encirclement, born of shattering defeats or abrupt annexations, had not yet arrived. Suspicion smoldered rather than blazed (Europe Alert still hangs over the border, but at a lower pitch).",
   "log.info.chapter2EuropeAlertOff":
     "[Turn {turn}] At this narrative starting point, outside pressure on France had not yet hardened into institutionalized containment: treaties and secret clauses were still being tested, and grand-alliance mobilization was not yet the rhythm of European politics—chancelleries read caution more often than ultimatums.",
+  "log.info.chapter3ContinuityIntro":
+    "[Turn {turn}] Chapter 3 opens: your resources, calendar year, and surviving deck carry over from chapter 2; six new cards are placed in your opening hand. The scripted succession crisis will appear when the calendar reaches 1701.",
   "log.info.antiFrenchSentimentActivated":
     "[Turn {turn}] Anti-French Sentiment rises: when Power+Treasury exceeds 20, Europe-Alert-linked funding solves gain +1 immediately, then +1 per additional full +5 overflow. The status now also shows Sentiment x (x = Anti-French Containment cards in your full library), and Peace of Ryswick gains an extra +2x Funding while this status is active.",
   "log.info.antiFrenchSentimentEnded":
@@ -192,6 +226,8 @@ export const messagesEnCore = {
     "[Turn {turn}] Tag note “Defiance”: while a Reservation of Conscience card sits immediately to the right in your hand, this card gains Defiance and cannot be played.",
   "log.info.cardTag.consume":
     "[Turn {turn}] Tag note “Consume”: when played, this card is removed from your library and does not go to discard or reshuffle back into your deck.",
+  "log.info.cardTag.opponent":
+    "[Turn {turn}] Tag note “Opponent”: this card is used only by the Habsburg opponent phase, not from your hand.",
   "log.info.cardUse.remainingUses": "[Turn {turn}] Tag note “Remaining”: this card currently has X/Y uses left; each play spends one, and it leaves circulation at 0.",
   "log.info.cardUse.depleted.crackdownPenalty":
     "[Turn {turn}] Royal Intervention reached 0/3 and was removed from circulation; court coercive leverage slips (Power -1).",

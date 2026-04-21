@@ -14,6 +14,11 @@ export function formatEffectLogLine(
         resource: resourceLabelWithIcon(effect.resource, t(`resource.${effect.resource}` as MessageKey)),
         delta: effect.delta >= 0 ? `+${effect.delta}` : String(effect.delta),
       });
+    case "modSuccessionTrack": {
+      const d = effect.delta;
+      const signed = d >= 0 ? `+${d}` : String(d);
+      return t("log.effect.modSuccessionTrack", { delta: signed });
+    }
     case "gainFunding":
       return t("log.effect.gainFunding", {
         amount: effect.amount,

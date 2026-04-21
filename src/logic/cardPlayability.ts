@@ -1,3 +1,4 @@
+import { getCardTemplate } from "../data/cards";
 import { hasCardTag } from "./cardTags";
 import type { GameState } from "../types/game";
 
@@ -13,5 +14,7 @@ export function isCardPlayableUnderStatuses(state: GameState, cardInstanceId: st
 
 /** Full playability check for the action phase. */
 export function isCardPlayableInActionPhase(state: GameState, cardInstanceId: string): boolean {
+  const inst = state.cardsById[cardInstanceId];
+  if (inst && getCardTemplate(inst.templateId).tags.includes("opponent")) return false;
   return isCardPlayableUnderStatuses(state, cardInstanceId);
 }

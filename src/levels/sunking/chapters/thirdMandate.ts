@@ -1,6 +1,36 @@
 import type { LevelContent, LevelDef } from "../../../data/levelTypes";
+import type { CardTemplateId } from "../../types/card";
 
-/** War of the Spanish Succession era (placeholder content; Nantes carryover is wired in `initialState`). */
+/** Opening hand templates (6) — not part of the shuffled deck. */
+export const LEVEL3_STARTING_HAND_TEMPLATE_ORDER: readonly CardTemplateId[] = [
+  "bourbonMarriageProclamation",
+  "bourbonMarriageProclamation",
+  "grandAllianceInfiltrationDiplomacy",
+  "grandAllianceInfiltrationDiplomacy",
+  "italianTheaterTroopRedeploy",
+  "italianTheaterTroopRedeploy",
+];
+
+/** Same core deck as chapter 2 (16 cards); six chapter-3 cards start in hand. */
+const LEVEL3_DECK_TEMPLATE_ORDER: readonly CardTemplateId[] = [
+  "funding",
+  "funding",
+  "funding",
+  "funding",
+  "crackdown",
+  "crackdown",
+  "crackdown",
+  "reform",
+  "reform",
+  "ceremony",
+  "ceremony",
+  "grainRelief",
+  "grainRelief",
+  "taxRebalance",
+  "taxRebalance",
+  "diplomaticCongress",
+];
+
 export const levelDef: LevelDef = {
   id: "thirdMandate",
   supportedLocales: ["en", "fr", "zh"],
@@ -25,13 +55,13 @@ export const levelDef: LevelDef = {
     power: 10,
     legitimacy: 10,
   },
-  turnLimitRule: { kind: "fixed", turnLimit: 20 },
-  victoryRule: { kind: "resourceTargets" },
+  turnLimitRule: { kind: "calendarEnd", endYear: 1721 },
+  victoryRule: { kind: "successionWar", calendarEndExclusiveYear: 1721 },
   features: {
     europeAlertMechanics: false,
     inflation: { kind: "pressureThreshold", threshold: 12 },
   },
-  bootstrap: "initial",
+  bootstrap: "chapter3Standalone",
   menuBriefKey: "menu.levelBrief.thirdMandate",
   targetsUiKey: "ui.targets.thirdMandate",
   turnBannerKey: "banner.turn.sunKingAnnual",
@@ -39,34 +69,39 @@ export const levelDef: LevelDef = {
 };
 
 export const levelContent: LevelContent = {
-  starterDeckTemplateOrder: [
-    "funding",
-    "funding",
-    "funding",
-    "funding",
-    "crackdown",
-    "crackdown",
-    "crackdown",
-    "reform",
-    "reform",
-    "ceremony",
-    "ceremony",
-    "development",
-    "development",
-  ],
+  starterDeckTemplateOrder: LEVEL3_DECK_TEMPLATE_ORDER,
   rollableEventIds: [
-    "budgetStrain",
-    "publicUnrest",
-    "administrativeDelay",
-    "tradeOpportunity",
-    "politicalGridlock",
-    "powerVacuum",
+    "versaillesExpenditure",
+    "provincialNoncompliance",
+    "risingGrainPrices",
+    "taxResistance",
+    "courtScandal",
+    "militaryPrestige",
+    "commercialExpansion",
+    "warWeariness",
+    "jesuitPatronage",
+    "bavarianCourtRealignment",
+    "portugueseTariffNegotiation",
+    "imperialElectorsMood",
   ],
-  slotEscalations: [{ from: "powerVacuum", to: "majorCrisis" }],
-  eoyEscalationSchedulers: ["powerVacuum"],
-  scriptedCalendarEvents: [],
+  slotEscalations: [],
+  eoyEscalationSchedulers: [],
+  scriptedCalendarEvents: [
+    {
+      templateId: "successionCrisis",
+      presenceStartYear: 1701,
+      presenceEndYear: 1701,
+      overflowSlot: "D",
+    },
+    {
+      templateId: "utrechtTreaty",
+      presenceStartYear: 1713,
+      presenceEndYear: 1720,
+      overflowSlot: "E",
+    },
+  ],
   opening: {
-    turnOnePrefix: ["tradeOpportunity", "administrativeDelay"],
+    turnOnePrefix: [],
     standaloneCarryoverIdPrefix: "standalone_old_",
   },
   procedural: {

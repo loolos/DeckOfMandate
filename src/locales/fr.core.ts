@@ -33,6 +33,15 @@ export const messagesFrCore: Record<keyof typeof messagesEnCore, string> = {
   "ui.nantesCrackdown": "Répression sévère",
   "ui.localWarAttack": "Attaquer ({cost})",
   "ui.localWarAppease": "Apaiser",
+  "ui.successionCrisisPay": "Payer 3 fonds — piste de succession +1",
+  "ui.successionCrisisDecline": "Ne pas payer — départ à −1 sur la piste",
+  "ui.utrechtEndWar": "Mettre fin à la guerre de succession (traité)",
+  "ui.utrechtWait": "Attendre ({n} tour(s) restant(s) à la fenêtre)",
+  "ui.successionTrack": "Piste de succession",
+  "ui.opponentHabsburg": "Adversaire : Habsbourg",
+  "ui.opponentStrength": "Budget adversaire",
+  "ui.opponentEvent.strengthTag": "Puissance {n}",
+  "ui.opponentEvent.lastPlayCombinedFx": "Dernier coup adverse — effets combinés sur le plateau : {fx}",
   "ui.resolved": "Résolu",
   "ui.harmful": "Néfaste",
   "ui.opportunity": "Opportunité",
@@ -122,6 +131,10 @@ export const messagesFrCore: Record<keyof typeof messagesEnCore, string> = {
   "outcome.victory": "Victoire — mandat sécurisé.",
   "outcome.defeatLegitimacy": "Défaite — une ressource clé s'est effondrée.",
   "outcome.defeatTime": "Défaite — le temps est écoulé avant d'atteindre les objectifs.",
+  "outcome.defeatSuccession": "Défaite — la ligne de succession a basculé contre la France.",
+  "outcome.successionTier.bourbon": "Règlement : avantage Bourbon dans le bilan final.",
+  "outcome.successionTier.compromise": "Règlement : équilibre de compromis entre prétentions.",
+  "outcome.successionTier.habsburg": "Règlement : avantage Habsbourg dans le bilan final.",
   "log.europeAlertProgressShift":
     "[Tour {turn}] Alerte Europe ajustée {from}→{to} (k={k}, chance de déclenchement {pct}%).",
   "log.eventLocalWarChoice.attackOutcome.success":
@@ -146,6 +159,8 @@ export const messagesFrCore: Record<keyof typeof messagesEnCore, string> = {
     "[Tour {turn}] La France a surtout fait valoir ses prétentions par la diplomatie et la pression frontalière plutôt que par une guerre généralisée autour de la Dévolution. Les rivaux observent toujours Versailles de près—agents, armements et leviers commerciaux se resserrent dans l'ombre—, mais la fusion d'un encerclement continental, forgé par des défaites éclatantes ou des annexions brutales, n'est pas encore là. La méfiance couve plutôt qu'elle n'embrase (l'Alerte Europe pèse encore sur les frontières, mais à un registre plus bas).",
   "log.info.chapter2EuropeAlertOff":
     "[Tour {turn}] À ce point de départ narratif, la pression extérieure sur la France ne s'est pas encore cristallisée en containment institutionnel : traités et clauses secrètes restent à l'essai, et la mobilisation des grandes alliances n'est pas encore le tempo de la politique européenne—les chancelleries lisent la prudence plus souvent que l'ultimatum.",
+  "log.info.chapter3ContinuityIntro":
+    "[Tour {turn}] Chapitre 3 : vos ressources, l'année du calendrier et le deck survivant se poursuivent depuis le chapitre 2 ; six nouvelles cartes rejoignent la main de départ. La crise de succession scriptée apparaît lorsque le calendrier atteint 1701.",
   "log.info.antiFrenchSentimentActivated":
     "[Tour {turn}] Le sentiment anti-français monte : quand Pouvoir+Trésor dépasse 20, les résolutions financées liées à l'Alerte Europe prennent +1 immédiatement, puis +1 par tranche complète supplémentaire de +5. Le statut affiche aussi Sentiment x (x = nombre de cartes Endiguement anti-français dans toute votre bibliothèque), et la Paix de Ryswick gagne un surcoût supplémentaire de +2x tant que ce statut est actif.",
   "log.info.antiFrenchSentimentEnded":

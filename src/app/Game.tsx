@@ -45,7 +45,15 @@ import {
   type Level2CarryoverCard,
   type Level2StartDraft,
 } from "./level2Transition";
-import { buildLevel3StateFromChapter2 } from "./level3Transition";
+import {
+  buildLevel3StateFromDraft,
+  createContinuityLevel3Draft,
+  createStandaloneLevel3Draft,
+  validateLevel3Draft,
+  SUNKING_CH3_ID,
+  type Level3StartDraft,
+} from "./level3Transition";
+import { LEVEL3_STARTING_HAND_TEMPLATE_ORDER } from "../levels/sunking/chapters/thirdMandate";
 import styles from "./Game.module.css";
 import { retentionCapacity } from "../logic/turnFlow";
 import {
@@ -110,6 +118,15 @@ function cloneLevel2Draft(draft: Level2StartDraft): Level2StartDraft {
   };
 }
 
+function cloneLevel3Draft(draft: Level3StartDraft): Level3StartDraft {
+  return {
+    ...draft,
+    resources: { ...draft.resources },
+    carryoverCards: draft.carryoverCards.map((card) => ({ ...card })),
+    removedCarryoverIds: [...draft.removedCarryoverIds],
+  };
+}
+
 export function Game() {
   const { t, locale } = useI18n();
   const [state, dispatch] = useReducer(gameReducer, undefined, initFreshForStartMenu);
@@ -126,6 +143,8 @@ export function Game() {
   const [pendingLevelTutorial, setPendingLevelTutorial] = useState(false);
   const [level2Draft, setLevel2Draft] = useState<Level2StartDraft | null>(null);
   const [level2DraftInitial, setLevel2DraftInitial] = useState<Level2StartDraft | null>(null);
+  const [level3Draft, setLevel3Draft] = useState<Level3StartDraft | null>(null);
+  const [level3DraftInitial, setLevel3DraftInitial] = useState<Level3StartDraft | null>(null);
   const [expandedRefitCardId, setExpandedRefitCardId] = useState<string | null>(null);
   const [isSmallRefitViewport, setIsSmallRefitViewport] = useState(() =>
     typeof window !== "undefined" ? window.matchMedia("(max-width: 800px)").matches : false,
@@ -140,7 +159,8 @@ export function Game() {
 
   const startStandaloneSession = useCallback(
     (level: LevelId, seed: number, removedIndices: number[] = []) => {
-      const needsRefit = getLevelDef(level).bootstrap === "chapter2Standalone";
+      const b = getLevelDef(level).bootstrap;
+      const needsRefit = b === "chapter2Standalone" || b === "chapter3Standalone";
       const record: RunRecord = {
         level,
         mode: "standalone",
@@ -160,6 +180,23 @@ export function Game() {
         ...sessionRef.current,
         {
           level: SUNKING_CH2_ID,
+          mode: "continuity",
+          seed: seed >>> 0,
+          removedIndices,
+          actions: [],
+        },
+      ];
+      refreshCodeHex();
+    },
+    [refreshCodeHex],
+  );
+
+  const appendChapter3ContinuitySession = useCallback(
+    (seed: number, removedIndices: number[]) => {
+      sessionRef.current = [
+        ...sessionRef.current,
+        {
+          level: SUNKING_CH3_ID,
           mode: "continuity",
           seed: seed >>> 0,
           removedIndices,
@@ -209,9 +246,9 @@ export function Game() {
   }, [state.outcome, state.phase, pendingLevelTutorial]);
 
   useEffect(() => {
-    if (level2Draft) return;
+    if (level2Draft || level3Draft) return;
     setExpandedRefitCardId(null);
-  }, [level2Draft]);
+  }, [level2Draft, level3Draft]);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -278,6 +315,8 @@ export function Game() {
         setPendingIntroLevelId(null);
         setLevel2Draft(null);
         setLevel2DraftInitial(null);
+        setLevel3Draft(null);
+        setLevel3DraftInitial(null);
         setLevelIntroOpen(false);
         setPendingNewRun(null);
         dispatch({ type: "HYDRATE", state: decoded.finalState });
@@ -310,6 +349,10 @@ export function Game() {
     setLevel2Draft((prev) => (prev ? toggleContinuityCardRemoval(prev, cardId) : prev));
   }, []);
 
+  const toggleRefitRemovalLevel3 = useCallback((cardId: string) => {
+    setLevel3Draft((prev) => (prev ? toggleContinuityCardRemoval(prev, cardId) : prev));
+  }, []);
+
   const maybeToggleRemovalBySmallScreenDoubleTap = useCallback(
     (cardId: string) => {
       if (!isSmallRefitViewport) return;
@@ -324,11 +367,34 @@ export function Game() {
     [isSmallRefitViewport, toggleRefitRemoval],
   );
 
+  const maybeToggleRemovalBySmallScreenDoubleTapLevel3 = useCallback(
+    (cardId: string) => {
+      if (!isSmallRefitViewport) return;
+      const now = Date.now();
+      const lastTapAt = mobileRefitRowLastTapAt.current[cardId] ?? 0;
+      mobileRefitRowLastTapAt.current[cardId] = now;
+      if (now - lastTapAt <= 320) {
+        mobileRefitRowLastTapAt.current[cardId] = 0;
+        toggleRefitRemovalLevel3(cardId);
+      }
+    },
+    [isSmallRefitViewport, toggleRefitRemovalLevel3],
+  );
+
   const beginConfiguredRun = (seed: number | undefined, levelId: LevelId) => {
     setPendingHydrateState(null);
     setPendingIntroLevelId(null);
     if (getLevelDef(levelId).bootstrap === "chapter2Standalone") {
       openLevel2Refit(createStandaloneLevel2Draft(seed));
+      setLevelIntroOpen(false);
+      setPendingNewRun(null);
+      return;
+    }
+    if (getLevelDef(levelId).bootstrap === "chapter3Standalone") {
+      const snapshot = cloneLevel3Draft(createStandaloneLevel3Draft(seed));
+      setLevel3Draft(snapshot);
+      setLevel3DraftInitial(cloneLevel3Draft(snapshot));
+      setExpandedRefitCardId(null);
       setLevelIntroOpen(false);
       setPendingNewRun(null);
       return;
@@ -362,6 +428,8 @@ export function Game() {
       setStartMenuOpen(false);
       setLevel2Draft(null);
       setLevel2DraftInitial(null);
+      setLevel3Draft(null);
+      setLevel3DraftInitial(null);
       setLevelIntroOpen(false);
       setPendingHydrateState(null);
       setPendingIntroLevelId(null);
@@ -378,6 +446,8 @@ export function Game() {
     setPendingIntroLevelId(null);
     setLevel2Draft(null);
     setLevel2DraftInitial(null);
+    setLevel3Draft(null);
+    setLevel3DraftInitial(null);
     const loaded = loadGame();
     if (!loaded || !isValidSave(loaded)) return;
     dispatchSafe({ type: "HYDRATE", state: normalizeLoadedSave(loaded as GameState) });
@@ -388,6 +458,7 @@ export function Game() {
   };
 
   const level2Validation = useMemo(() => (level2Draft ? validateLevel2Draft(level2Draft) : null), [level2Draft]);
+  const level3Validation = useMemo(() => (level3Draft ? validateLevel3Draft(level3Draft) : null), [level3Draft]);
 
   const confirmLevel2Refit = () => {
     if (!level2Draft) return;
@@ -428,19 +499,52 @@ export function Game() {
   };
 
   const openChapter3Continuity = () => {
-    const next = buildLevel3StateFromChapter2(state);
-    const def = getLevelDef(next.levelId);
+    const snapshot = cloneLevel3Draft(createContinuityLevel3Draft(state));
+    setLevel3Draft(snapshot);
+    setLevel3DraftInitial(cloneLevel3Draft(snapshot));
+    setExpandedRefitCardId(null);
     setPendingNewRun(null);
+  };
+
+  const resetLevel3Refit = () => {
+    if (!level3DraftInitial) return;
+    setLevel3Draft(cloneLevel3Draft(level3DraftInitial));
+    setExpandedRefitCardId(null);
+  };
+
+  const confirmLevel3Refit = () => {
+    if (!level3Draft) return;
+    const v = validateLevel3Draft(level3Draft);
+    if (!v.isValid) return;
+    const nextState = buildLevel3StateFromDraft(level3Draft);
+    const carryover = level3Draft.carryoverCards;
+    const removedSet = new Set(level3Draft.removedCarryoverIds);
+    const removedIndices: number[] = [];
+    carryover.forEach((card, idx) => {
+      if (removedSet.has(card.instanceId)) removedIndices.push(idx);
+    });
+    if (level3Draft.mode === "continuity") {
+      appendChapter3ContinuitySession(nextState.runSeed, removedIndices);
+    } else {
+      startStandaloneSession(SUNKING_CH3_ID, nextState.runSeed, removedIndices);
+    }
+    setLevel3Draft(null);
+    setLevel3DraftInitial(null);
+    setPendingNewRun(null);
+    const def = getLevelDef(nextState.levelId);
     if (levelDefHasIntro(def)) {
-      setPendingHydrateState(next);
-      setPendingIntroLevelId(next.levelId);
+      setPendingHydrateState(nextState);
+      setPendingIntroLevelId(nextState.levelId);
       setLevelIntroOpen(true);
       setStartMenuOpen(false);
       return;
     }
     setPendingLevelTutorial(tutorialOnEntryMenu);
-    dispatchSafe({ type: "HYDRATE", state: next });
+    dispatchSafe({ type: "HYDRATE", state: nextState });
     setStartMenuOpen(false);
+    setLevelIntroOpen(false);
+    setPendingHydrateState(null);
+    setPendingIntroLevelId(null);
   };
 
   const introLevelDef =
@@ -593,6 +697,222 @@ export function Game() {
       </div>
     );
   };
+
+  const renderLevel3RefitCardRow = (card: Level2CarryoverCard) => {
+    if (!level3Draft) return null;
+    const tmpl = getCardTemplate(card.templateId);
+    const visibleTags = displayRefitTags("continuity", tmpl.tags);
+    const visibleInflationDelta = card.inflationDelta;
+    const effectiveCost = tmpl.cost + visibleInflationDelta;
+    const title = cardLabelWithIcon(card.templateId, t(tmpl.titleKey as MessageKey));
+    const quickRows = buildCardQuickFrameRows(tmpl, effectiveCost);
+    const compactSummary = quickRows.map((row) => row.value).join(" · ");
+    const expanded = expandedRefitCardId === card.instanceId;
+    const removed = level3Draft.removedCarryoverIds.includes(card.instanceId);
+    const tagChips =
+      visibleTags.length > 0 || (card.remainingUses != null && card.totalUses != null) ? (
+        <div className={styles.badgeRow}>
+          {card.remainingUses != null && card.totalUses != null ? (
+            <span key={`${card.instanceId}_remaining_uses`} className={`${styles.badge} ${styles.tagButton}`}>
+              {t("card.tag.remainingUses", {
+                remaining: card.remainingUses,
+                total: card.totalUses,
+              })}
+            </span>
+          ) : null}
+          {visibleTags.map((tag) => (
+            <span key={`${card.instanceId}_${tag}`} className={`${styles.badge} ${styles.tagButton}`}>
+              {t(`card.tag.${tag}` as MessageKey)}
+            </span>
+          ))}
+        </div>
+      ) : null;
+    return (
+      <div
+        key={card.instanceId}
+        className={[styles.retainRow, styles.refitRow, expanded && styles.refitRowExpanded].filter(Boolean).join(" ")}
+        role="button"
+        tabIndex={0}
+        aria-expanded={expanded ? "true" : "false"}
+        onClick={() => setExpandedRefitCardId((prev) => (prev === card.instanceId ? null : card.instanceId))}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            setExpandedRefitCardId((prev) => (prev === card.instanceId ? null : card.instanceId));
+          }
+        }}
+        onDoubleClick={() => {
+          if (!isSmallRefitViewport) return;
+          toggleRefitRemovalLevel3(card.instanceId);
+        }}
+        onTouchEnd={() => maybeToggleRemovalBySmallScreenDoubleTapLevel3(card.instanceId)}
+      >
+        <div className={styles.retainCardInfo}>
+          <span className={styles.retainCardTitle}>{title}</span>
+          <span className={styles.retainCardSummary}>{compactSummary}</span>
+          {tagChips}
+          {expanded ? (
+            <div className={styles.retainCardDetails}>
+              <OutcomeQuickFrame rows={quickRows} />
+              <div className={styles.cardBg}>{t(tmpl.backgroundKey as MessageKey)}</div>
+              <div className={styles.cardDesc}>{t(tmpl.descriptionKey as MessageKey)}</div>
+            </div>
+          ) : null}
+        </div>
+        <div
+          className={styles.retainCounterControls}
+          onClick={(e) => e.stopPropagation()}
+          onTouchEnd={(e) => e.stopPropagation()}
+        >
+          <label className={styles.startMenuMuted} style={{ display: "flex", alignItems: "center", gap: "0.35rem" }}>
+            <input
+              type="checkbox"
+              checked={removed}
+              onChange={() => toggleRefitRemovalLevel3(card.instanceId)}
+            />
+            {t("menu.refit.removeToggle")}
+          </label>
+        </div>
+      </div>
+    );
+  };
+
+  const renderLevel3FixedNewCardPreviewRow = (templateId: (typeof LEVEL3_STARTING_HAND_TEMPLATE_ORDER)[number], rowKey: string) => {
+    if (!level3Draft) return null;
+    const tmpl = getCardTemplate(templateId);
+    const visibleTags = displayRefitTags("continuity", tmpl.tags);
+    const title = cardLabelWithIcon(templateId, t(tmpl.titleKey as MessageKey));
+    const quickRows = buildCardQuickFrameRows(tmpl);
+    const compactSummary = quickRows.map((row) => row.value).join(" · ");
+    const expanded = expandedRefitCardId === rowKey;
+    const tagChips =
+      visibleTags.length > 0 ? (
+        <div className={styles.badgeRow}>
+          {visibleTags.map((tag) => (
+            <span key={`${rowKey}_${tag}`} className={`${styles.badge} ${styles.tagButton}`}>
+              {t(`card.tag.${tag}` as MessageKey)}
+            </span>
+          ))}
+        </div>
+      ) : null;
+    return (
+      <div
+        key={rowKey}
+        className={[styles.retainRow, styles.refitRow, expanded && styles.refitRowExpanded].filter(Boolean).join(" ")}
+        role="button"
+        tabIndex={0}
+        aria-expanded={expanded ? "true" : "false"}
+        onClick={() => setExpandedRefitCardId((prev) => (prev === rowKey ? null : rowKey))}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            setExpandedRefitCardId((prev) => (prev === rowKey ? null : rowKey));
+          }
+        }}
+      >
+        <div className={styles.retainCardInfo}>
+          <span className={styles.retainCardTitle}>{title}</span>
+          <span className={styles.retainCardSummary}>{compactSummary}</span>
+          {tagChips}
+          {expanded ? (
+            <div className={styles.retainCardDetails}>
+              <OutcomeQuickFrame rows={quickRows} />
+              <div className={styles.cardBg}>{t(tmpl.backgroundKey as MessageKey)}</div>
+              <div className={styles.cardDesc}>{t(tmpl.descriptionKey as MessageKey)}</div>
+            </div>
+          ) : null}
+        </div>
+      </div>
+    );
+  };
+
+  const level3RefitScreen = level3Draft ? (
+    <div className={styles.startMenuScreen} role="dialog" aria-modal="true" aria-labelledby="level3-refit-title">
+      <div className={styles.modal}>
+        <div className={styles.startMenuHeader}>
+          <h2 id="level3-refit-title" className={styles.startMenuTitle}>
+            {t("menu.refit.titleChapter3")}
+          </h2>
+          <LanguageToggle />
+        </div>
+        <div className={styles.startMenuForm}>
+          <p className={styles.startMenuMuted}>{t("menu.refit.subtitle")}</p>
+          <p className={styles.startMenuMuted}>
+            {level3Draft.mode === "continuity"
+              ? t("menu.refit.mode.continuityChapter3")
+              : t("menu.refit.mode.standaloneChapter3")}
+          </p>
+          <p className={styles.startMenuMuted}>
+            {t("menu.refit.resources", {
+              treasury: level3Draft.resources.treasuryStat,
+              power: level3Draft.resources.power,
+              legitimacy: level3Draft.resources.legitimacy,
+            })}
+          </p>
+          <p className={styles.startMenuMuted}>{t("menu.refit.startYear", { year: level3Draft.calendarStartYear })}</p>
+          <>
+            <h3 className={styles.statusSectionTitle}>{t("menu.refit.adjustable")}</h3>
+            <p className={styles.startMenuMuted}>
+              {t("menu.refit.continuityRuleChapter3", { max: LEVEL2_CONTINUITY_MAX_REMOVALS })}
+            </p>
+            {isSmallRefitViewport ? (
+              <p className={styles.startMenuMuted}>{t("menu.refit.mobileDoubleToggleHint")}</p>
+            ) : null}
+            {level3Draft.carryoverCards.map((card) => renderLevel3RefitCardRow(card))}
+            <h3 className={styles.statusSectionTitle}>{t("menu.refit.newCardsChapter3")}</h3>
+            {LEVEL3_STARTING_HAND_TEMPLATE_ORDER.map((id, idx) =>
+              renderLevel3FixedNewCardPreviewRow(id, `preview-ch3-${idx}-${id}`),
+            )}
+          </>
+          {level3Validation ? (
+            <>
+              <p className={styles.startMenuMuted}>
+                {t("menu.refit.totalCards.simple", { current: level3Validation.totalCards })}
+              </p>
+              <p className={styles.startMenuMuted}>
+                {t("menu.refit.newCardTotal", {
+                  current: level3Validation.totalNewCards,
+                  max: LEVEL3_STARTING_HAND_TEMPLATE_ORDER.length,
+                })}
+              </p>
+              <p className={styles.startMenuMuted}>
+                {t("menu.refit.baseAdjustTotal", {
+                  current: level3Validation.adjustableChanges,
+                  max: level3Validation.maxAdjustableChanges,
+                })}
+              </p>
+              {!level3Validation.isValid ? (
+                <p className={styles.startMenuError}>{t("menu.refit.invalid")}</p>
+              ) : null}
+            </>
+          ) : null}
+          <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
+            <button type="button" className={styles.btn} onClick={resetLevel3Refit}>
+              {t("menu.refit.reset")}
+            </button>
+            <button
+              type="button"
+              className={`${styles.btn} ${styles.btnPrimary}`}
+              disabled={!level3Validation?.isValid}
+              onClick={confirmLevel3Refit}
+            >
+              {t("menu.refit.startChapter3")}
+            </button>
+            <button
+              type="button"
+              className={styles.btn}
+              onClick={() => {
+                setLevel3Draft(null);
+                setLevel3DraftInitial(null);
+              }}
+            >
+              {t("menu.refit.back")}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  ) : null;
 
   const level2RefitScreen = level2Draft ? (
     <div className={styles.startMenuScreen} role="dialog" aria-modal="true" aria-labelledby="level2-refit-title">
@@ -785,11 +1105,15 @@ export function Game() {
   }
 
   if (startMenuOpen) {
-    return level2RefitScreen ?? startMenu;
+    return level2RefitScreen ?? level3RefitScreen ?? startMenu;
   }
 
   if (level2Draft) {
     return level2RefitScreen;
+  }
+
+  if (level3Draft) {
+    return level3RefitScreen;
   }
 
   const showLevelTutorial =
@@ -859,6 +1183,9 @@ export function Game() {
               state.antiFrenchLeague
                 ? Math.round(state.antiFrenchLeague.drawPenaltyProbability * 100)
                 : undefined
+            }
+            successionTrack={
+              state.levelId === SUNKING_CH3_ID && state.outcome === "playing" ? state.successionTrack : undefined
             }
           />
         </section>
@@ -971,7 +1298,9 @@ export function Game() {
                   ? t("outcome.victory")
                   : state.outcome === "defeatLegitimacy"
                     ? t("outcome.defeatLegitimacy")
-                    : t("outcome.defeatTime")}
+                    : state.outcome === "defeatSuccession"
+                      ? t("outcome.defeatSuccession")
+                      : t("outcome.defeatTime")}
               </h2>
               {(() => {
                 const ending = levelEndingKeys(getLevelDef(state.levelId));
@@ -979,6 +1308,9 @@ export function Game() {
                 if (state.outcome === "victory") {
                   return (
                     <div className={styles.gameOverBody}>
+                      {state.levelId === SUNKING_CH3_ID && state.successionOutcomeTier ? (
+                        <p>{t(`outcome.successionTier.${state.successionOutcomeTier}` as MessageKey)}</p>
+                      ) : null}
                       <p>{t(ending.victoryBodyKey as MessageKey)}</p>
                       {state.warOfDevolutionAttacked ? (
                         <p>{t(ending.victoryWarDevolutionExtraKey as MessageKey)}</p>
