@@ -4,6 +4,7 @@ import {
   type EventTemplateId,
   type SlotId,
 } from "../levels/types/event";
+import { THIRD_MANDATE_LEVEL_ID } from "../logic/thirdMandateConstants";
 import type { GameState } from "../types/game";
 import { antiFrenchSentimentEventSolveCostPenalty, antiFrenchSentimentRyswickSurcharge } from "../logic/antiFrenchSentiment";
 import { nymwegenSettlementFundingCost } from "../logic/europeAlert";
@@ -23,6 +24,18 @@ export function isEuropeAlertSupplementalEvent(id: EventTemplateId): boolean {
   return EUROPE_ALERT_SUPPLEMENTAL_EVENT_IDS.includes(id);
 }
 
+/** Chapter-3 random pool: only roll once succession track has moved off 0. */
+const CH3_SUCCESSION_GATED_ROLL_EVENT_IDS: readonly EventTemplateId[] = [
+  "bavarianCourtRealignment",
+  "portugueseTariffNegotiation",
+  "imperialElectorsMood",
+  "localizedSuccessionWar",
+];
+
+export function isCh3SuccessionGatedRollEvent(id: EventTemplateId): boolean {
+  return CH3_SUCCESSION_GATED_ROLL_EVENT_IDS.includes(id);
+}
+
 export function getEventTemplate(id: EventTemplateId): EventTemplate {
   const t = eventTemplates[id];
   if (t === undefined) throw new Error(`Unknown event template: ${String(id)}`);
@@ -30,8 +43,24 @@ export function getEventTemplate(id: EventTemplateId): EventTemplate {
 }
 
 export function getEventRollWeight(state: GameState, id: EventTemplateId): number {
-  void state;
-  return getEventTemplate(id).weight;
+  const base = getEventTemplate(id).weight;
+  if (
+    state.levelId === THIRD_MANDATE_LEVEL_ID &&
+    state.successionTrack === 0 &&
+    isCh3SuccessionGatedRollEvent(id)
+  ) {
+    return 0;
+  }
+  return base;
+}
+
+/** Procedural queue may contain gated ids from an older turn; discard while track is still 0. */
+export function shouldDiscardCh3SuccessionGatedProceduralHead(state: GameState, id: EventTemplateId): boolean {
+  return (
+    state.levelId === THIRD_MANDATE_LEVEL_ID &&
+    state.successionTrack === 0 &&
+    isCh3SuccessionGatedRollEvent(id)
+  );
 }
 
 export function getEventSolveFundingAmount(state: GameState, id: EventTemplateId): number | null {

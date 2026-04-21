@@ -32,6 +32,9 @@ export const messagesEnCore = {
   "ui.successionCrisisDecline": "Decline payment — start at −1 on the succession track",
   "ui.utrechtEndWar": "End the war of succession (treaty)",
   "ui.utrechtWait": "Wait ({n} round(s) left in the negotiation window)",
+  "ui.dualFrontCrisis.concede": "Temporarily concede — succession track −3; opponent budget +1",
+  "ui.dualFrontCrisis.escalate":
+    "Expand the war — succession track +1, legitimacy −1, +3 Fiscal Burden, opponent budget +1",
   "ui.successionTrack": "Succession track",
   "ui.successionStatus.title": "War of the Spanish Succession",
   "ui.successionStatus.detail":
@@ -143,6 +146,12 @@ export const messagesEnCore = {
   "outcome.successionTier.bourbon": "Settlement: Bourbon advantage on the succession line.",
   "outcome.successionTier.compromise": "Settlement: a compromise equilibrium between claims.",
   "outcome.successionTier.habsburg": "Settlement: Habsburg-leaning advantage in the final accounting.",
+  "outcome.utrechtVictoryEpilogue.bourbon":
+    "After the Utrecht settlement, open war gives way to parchment: Europe accepts a Bourbon Spain under strict guardrails, and France trades away worst-case union fears for a defensible dynastic win.",
+  "outcome.utrechtVictoryEpilogue.compromise":
+    "The treaties close the fighting season without a clean knockout: claims are partitioned and face is saved on all sides—France secures breathing room, not a blank cheque, in the Spanish inheritance.",
+  "outcome.utrechtVictoryEpilogue.habsburg":
+    "The peace mirrors coalition pressure: Philip may keep Madrid, but France accepts tighter straps—imperial and maritime checks that will long outlast the last cannonade of the succession war.",
   "log.cardPlayed.title": "[Turn {turn}] {card} — paid {cost} {funding}.",
   "log.cardPlayed.effectsLabel": "Effects:",
   "log.cardPlayed.noEffects": "No listed effects.",
@@ -150,11 +159,13 @@ export const messagesEnCore = {
   "log.effect.gainFunding": "{funding} +{amount}",
   "log.effect.drawCards": "Draw {count}",
   "log.effect.scheduleNextTurnDrawModifier": "Next-year draw modifier {delta}",
+  "log.effect.opponentNextTurnDrawModifier": "Opponent next-year draw modifier {delta}",
   "log.effect.scheduleDrawModifiers": "Multi-year draw modifiers {deltas}",
   "log.effect.setCardTagBlocked": "Block {tag} cards ({turns} turns)",
   "log.effect.addPlayerStatus": "{status} ({turns} turns)",
   "log.effect.addCardsToDeck": "Add {count} {card} to deck",
   "log.effect.modSuccessionTrack": "Succession track {delta}",
+  "log.effect.modOpponentStrength": "Habsburg opponent budget {delta}",
   "log.opponentHabsburgPlay.title":
     "[Turn {turn}] Habsburg phase: played for {cost} opponent cost (discount {discount}).",
   "log.opponentHabsburgDraw.title": "[Turn {turn}] Habsburg drew {n} card(s).",
@@ -171,6 +182,12 @@ export const messagesEnCore = {
     "[Turn {turn}] {event} — chose attack, paid {paid} {funding}; impact: {outcome}.",
   "log.eventLocalWarChoice.appease":
     "[Turn {turn}] {event} — chose appeasement; impact: {legitimacy} -1.",
+  "log.eventDualFrontCrisis.concede":
+    "[Turn {turn}] {event} — temporarily conceded; succession track −3; opponent budget +1.",
+  "log.eventDualFrontCrisis.escalate":
+    "[Turn {turn}] {event} — expanded the war; succession track +1, legitimacy −1, +3 Fiscal Burden; opponent budget +1.",
+  "log.eventLocalizedSuccessionWar.resolve":
+    "[Turn {turn}] {event}. Paid {paid} {funding}. {track} {delta} (random).",
   "log.eventLocalWarChoice.attackOutcome.success":
     "{power} +1 and {legitimacy} +1. Frontier victories briefly lift court prestige, and neighboring states ease off testing France's limits.",
   "log.eventLocalWarChoice.attackOutcome.stalemate":

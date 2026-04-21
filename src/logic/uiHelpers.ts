@@ -53,7 +53,9 @@ export function slotAllowsScriptedAttack(state: GameState, slot: SlotId): boolea
 export function slotAllowsCrackdownTarget(state: GameState, slot: SlotId): boolean {
   const ev = state.slots[slot];
   if (!ev || ev.resolved) return false;
-  return getEventTemplate(ev.templateId).harmful;
+  const tmpl = getEventTemplate(ev.templateId);
+  if (tmpl.crackdownImmune) return false;
+  return tmpl.harmful;
 }
 
 export function fundSolveLabelAmount(state: GameState, slot: SlotId): number | null {
@@ -119,7 +121,8 @@ function hasFurtherFeasibleEventAction(state: GameState, slot: SlotId): boolean 
     tmpl.solve.kind === "nantesPolicyChoice" ||
     tmpl.solve.kind === "localWarChoice" ||
     tmpl.solve.kind === "successionCrisisChoice" ||
-    tmpl.solve.kind === "utrechtTreatyChoice"
+    tmpl.solve.kind === "utrechtTreatyChoice" ||
+    tmpl.solve.kind === "dualFrontCrisisChoice"
   ) {
     return true;
   }

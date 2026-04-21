@@ -1,4 +1,8 @@
-import { getEventRollWeight, getEventTemplate } from "../data/events";
+import {
+  getEventRollWeight,
+  getEventTemplate,
+  shouldDiscardCh3SuccessionGatedProceduralHead,
+} from "../data/events";
 import { getLevelContent } from "../data/levelContent";
 import { getLevelDef, getTurnLimitForRun } from "../data/levels";
 import { currentCalendarYear } from "./scriptedCalendar";
@@ -169,6 +173,7 @@ function drawFromProceduralSequence(
     const [head, ...rest] = s.proceduralEventSequence;
     s = { ...s, proceduralEventSequence: rest };
     if (!head) continue;
+    if (shouldDiscardCh3SuccessionGatedProceduralHead(s, head)) continue;
     if (used.has(head)) continue;
     picked.push(head);
     used.add(head);
@@ -233,8 +238,13 @@ function clearResolvedSlots(state: GameState): GameState {
       slots[slot] = { ...ev, resolved: false };
       continue;
     }
-    /** Persistent UI slot: remains until the run ends (resolved only marks "no player action"). */
-    if (ev.templateId === "opponentHabsburg") continue;
+    /** Persistent row until Utrecht ends the war; then cleared like other resolved rows. */
+    if (ev.templateId === "opponentHabsburg") {
+      if (state.warEnded) {
+        slots[slot] = null;
+      }
+      continue;
+    }
     slots[slot] = null;
   }
   return { ...state, slots };
@@ -296,7 +306,6 @@ function syncAntiFrenchSentimentStatus(state: GameState): GameState {
 }
 
 function fillEmptySlots(state: GameState): GameState {
-  if (isStandaloneChapter2OpeningTurn(state)) return state;
   let st = state;
   if (allSlotsEmpty(st)) {
     const [rng, u] = rngNext(st.rng);

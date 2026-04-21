@@ -1,9 +1,8 @@
 import { getCardTemplate } from "../data/cards";
 import type { CardTemplateId } from "../levels/types/card";
 import type { Effect } from "../levels/types/effect";
-import type { EventInstance } from "../levels/types/event";
-import type { SlotId } from "../levels/types/event";
-import type { GameState } from "../types/game";
+import { EVENT_SLOT_ORDER, type EventInstance, type SlotId } from "../levels/types/event";
+import type { GameState, SuccessionIntervalTier } from "../types/game";
 import { appendActionLog } from "./actionLog";
 import { applyEffects, enforceLegitimacy, enforceSuccessionImmediateOutcome } from "./applyEffects";
 import { OPPONENT_AI_NEAR_WIN_THRESHOLD, THIRD_MANDATE_LEVEL_ID } from "./thirdMandateConstants";
@@ -11,6 +10,7 @@ import { shuffle } from "./rng";
 
 const HABSURG_TIE_ORDER: readonly CardTemplateId[] = [
   "habsburgGrandAllianceLevy",
+  "habsburgImperialCustomsDelay",
   "habsburgImperialLegitimacyNote",
   "habsburgLowCountriesAgitation",
 ];
@@ -22,9 +22,11 @@ function opponentEffectDelta(templateId: CardTemplateId): OppDelta {
     case "habsburgImperialLegitimacyNote":
       return { seq: -1, pow: 0, leg: 0, tre: 0 };
     case "habsburgLowCountriesAgitation":
-      return { seq: -1, pow: -1, leg: 0, tre: 0 };
+      return { seq: -1, pow: -1, leg: -1, tre: 0 };
     case "habsburgGrandAllianceLevy":
       return { seq: -2, pow: 0, leg: 0, tre: 0 };
+    case "habsburgImperialCustomsDelay":
+      return { seq: 0, pow: 0, leg: 0, tre: -1 };
     default:
       return { seq: 0, pow: 0, leg: 0, tre: 0 };
   }
@@ -36,6 +38,19 @@ export function opponentTemplatesToAppliedEffects(ids: readonly CardTemplateId[]
   for (const id of ids) d = addDelta(d, opponentEffectDelta(id));
   const out: Effect[] = [];
   if (d.seq !== 0) out.push({ kind: "modSuccessionTrack", delta: d.seq });
+  const levyCount = ids.filter((id) => id === "habsburgGrandAllianceLevy").length;
+  const customsCount = ids.filter((id) => id === "habsburgImperialCustomsDelay").length;
+  const fiscalBurdenAdds = levyCount + customsCount;
+  if (fiscalBurdenAdds > 0) {
+    out.push({ kind: "addCardsToDeck", templateId: "fiscalBurden", count: fiscalBurdenAdds });
+  }
+  if (customsCount > 0) {
+    out.push({ kind: "scheduleNextTurnDrawModifier", delta: -customsCount });
+  }
+  const legitimacyNoteCount = ids.filter((id) => id === "habsburgImperialLegitimacyNote").length;
+  if (legitimacyNoteCount > 0) {
+    out.push({ kind: "opponentNextTurnDrawModifier", delta: -legitimacyNoteCount });
+  }
   if (d.pow !== 0) out.push({ kind: "modResource", resource: "power", delta: d.pow });
   if (d.leg !== 0) out.push({ kind: "modResource", resource: "legitimacy", delta: d.leg });
   if (d.tre !== 0) out.push({ kind: "modResource", resource: "treasuryStat", delta: d.tre });
@@ -151,11 +166,23 @@ export function chooseOpponentPlay(state: GameState): readonly string[] | null {
 
 function applyOpponentCardToState(state: GameState, templateId: CardTemplateId): GameState {
   const d = opponentEffectDelta(templateId);
-  const effects = [];
+  const effects: Effect[] = [];
   if (d.seq !== 0) effects.push({ kind: "modSuccessionTrack" as const, delta: d.seq });
   if (d.pow !== 0) effects.push({ kind: "modResource" as const, resource: "power" as const, delta: d.pow });
   if (d.leg !== 0) effects.push({ kind: "modResource" as const, resource: "legitimacy" as const, delta: d.leg });
   if (d.tre !== 0) effects.push({ kind: "modResource" as const, resource: "treasuryStat" as const, delta: d.tre });
+  if (templateId === "habsburgImperialLegitimacyNote") {
+    effects.push({ kind: "opponentNextTurnDrawModifier", delta: -1 });
+  }
+  if (templateId === "habsburgGrandAllianceLevy") {
+    effects.push({ kind: "addCardsToDeck", templateId: "fiscalBurden", count: 1 });
+  }
+  if (templateId === "habsburgImperialCustomsDelay") {
+    effects.push(
+      { kind: "addCardsToDeck", templateId: "fiscalBurden", count: 1 },
+      { kind: "scheduleNextTurnDrawModifier", delta: -1 },
+    );
+  }
   if (effects.length === 0) return state;
   return applyEffects(state, effects);
 }
@@ -210,6 +237,8 @@ export function initOpponentHabsburgPool(state: GameState): GameState {
   const templates: CardTemplateId[] = [
     "habsburgGrandAllianceLevy",
     "habsburgGrandAllianceLevy",
+    "habsburgImperialCustomsDelay",
+    "habsburgImperialCustomsDelay",
     "habsburgImperialLegitimacyNote",
     "habsburgImperialLegitimacyNote",
     "habsburgLowCountriesAgitation",
@@ -227,7 +256,7 @@ export function initOpponentHabsburgPool(state: GameState): GameState {
   const [rng2, shuffled] = shuffle(state.rng, ids);
   let deck = [...shuffled];
   const hand: string[] = [];
-  for (let i = 0; i < 2 && deck.length > 0; i++) {
+  for (let i = 0; i < 1 && deck.length > 0; i++) {
     hand.push(deck[0]!);
     deck = deck.slice(1);
   }
@@ -241,24 +270,64 @@ export function initOpponentHabsburgPool(state: GameState): GameState {
     opponentDiscard: [],
     opponentStrength: 2,
     opponentHabsburgUnlocked: true,
+    opponentNextTurnDrawModifier: state.opponentNextTurnDrawModifier,
   };
 }
 
 /** Opponent draws at year-start so the player can see current rival hand before ending the year. */
+/** Tier at treaty-signing time from succession track (not identical to calendar-end interval tiers). */
+export function utrechtTreatySituationTier(track: number): SuccessionIntervalTier {
+  if (track >= 4) return "bourbon";
+  if (track >= -3) return "compromise";
+  return "habsburg";
+}
+
+/** Player chose Utrecht peace (or countdown expired): end war, drop rival row, freeze settlement tier for epilogue. */
+export function stateAfterUtrechtTreatyEndsWar(state: GameState, utrechtSlot: SlotId): GameState {
+  const tier = utrechtTreatySituationTier(state.successionTrack);
+  const slots: GameState["slots"] = { ...state.slots, [utrechtSlot]: null };
+  for (const slot of EVENT_SLOT_ORDER) {
+    if (slots[slot]?.templateId === "opponentHabsburg") {
+      slots[slot] = null;
+    }
+  }
+  return {
+    ...state,
+    warEnded: true,
+    utrechtTreatyCountdown: null,
+    utrechtSettlementTier: tier,
+    slots,
+    opponentHabsburgUnlocked: false,
+    opponentDeck: [],
+    opponentHand: [],
+    opponentDiscard: [],
+    opponentLastPlayedTemplateIds: [],
+    opponentNextTurnDrawModifier: 0,
+    opponentCostDiscountThisTurn: 0,
+  };
+}
+
 export function opponentBeginYearDrawPhase(state: GameState): GameState {
-  if (state.levelId !== THIRD_MANDATE_LEVEL_ID || !state.opponentHabsburgUnlocked) {
+  if (state.levelId !== THIRD_MANDATE_LEVEL_ID || !state.opponentHabsburgUnlocked || state.warEnded) {
     return { ...state, opponentCostDiscountThisTurn: 0 };
   }
-  const reset = { ...state, opponentCostDiscountThisTurn: 0 };
+  const drawMod = state.opponentNextTurnDrawModifier;
+  const drawN = Math.max(0, 1 + drawMod);
+  const reset = { ...state, opponentCostDiscountThisTurn: 0, opponentNextTurnDrawModifier: 0 };
   const beforeDraw = reset.opponentHand.length;
-  const drawnState = opponentDrawFromDeck(reset, 2);
+  const drawnState = opponentDrawFromDeck(reset, drawN);
   const drawn = drawnState.opponentHand.slice(beforeDraw);
   if (drawn.length === 0) return drawnState;
   return appendActionLog(drawnState, { kind: "opponentHabsburgDraw", drawnCardIds: drawn });
 }
 
 export function opponentEndYearPlayPhase(state: GameState): GameState {
-  if (state.levelId !== THIRD_MANDATE_LEVEL_ID || !state.opponentHabsburgUnlocked || state.outcome !== "playing") {
+  if (
+    state.levelId !== THIRD_MANDATE_LEVEL_ID ||
+    !state.opponentHabsburgUnlocked ||
+    state.outcome !== "playing" ||
+    state.warEnded
+  ) {
     return state;
   }
   let pre = state;

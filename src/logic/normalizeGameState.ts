@@ -118,6 +118,9 @@ export function normalizeGameState(state: GameState): GameState {
   if (typeof s.opponentCostDiscountThisTurn !== "number" || !Number.isFinite(s.opponentCostDiscountThisTurn)) {
     s = { ...s, opponentCostDiscountThisTurn: 0 };
   }
+  if (typeof s.opponentNextTurnDrawModifier !== "number" || !Number.isFinite(s.opponentNextTurnDrawModifier)) {
+    s = { ...s, opponentNextTurnDrawModifier: 0 };
+  }
   if (!Array.isArray(s.opponentLastPlayedTemplateIds)) {
     s = { ...s, opponentLastPlayedTemplateIds: [] };
   }
@@ -126,6 +129,17 @@ export function normalizeGameState(state: GameState): GameState {
   }
   if (s.successionOutcomeTier === undefined) {
     s = { ...s, successionOutcomeTier: null };
+  }
+  if (
+    s.utrechtSettlementTier != null &&
+    s.utrechtSettlementTier !== "habsburg" &&
+    s.utrechtSettlementTier !== "compromise" &&
+    s.utrechtSettlementTier !== "bourbon"
+  ) {
+    s = { ...s, utrechtSettlementTier: null };
+  }
+  if (s.utrechtSettlementTier === undefined) {
+    s = { ...s, utrechtSettlementTier: null };
   }
   if (!s.cardUsesById || typeof s.cardUsesById !== "object") {
     s = { ...s, cardUsesById: {} };

@@ -9,7 +9,7 @@ import {
   formatEffectChips,
 } from "../logic/quickOutcomeFrame";
 import { opponentTemplatesToAppliedEffects } from "../logic/opponentHabsburg";
-import { cardLabelWithIcon, eventLabelWithIcon, getResourceIcon } from "../logic/icons";
+import { cardLabelWithIcon, eventLabelWithIcon, getResourceIcon, opponentBudgetEmojiPips } from "../logic/icons";
 import { useSmallScreen } from "../logic/useSmallScreen";
 import {
   fundSolveLabelAmount,
@@ -74,8 +74,11 @@ export function EventPanel({
             >
               <div className={styles.eventTitle}>{title}</div>
               <div className={styles.badges}>
-                <span className={`${styles.badge} ${styles.badgeOk}`}>
-                  {t("ui.opponentEvent.strengthTag", { n: state.opponentStrength })}
+                <span
+                  className={`${styles.badge} ${styles.badgeOk}`}
+                  title={t("ui.opponentEvent.strengthTag", { n: state.opponentStrength })}
+                >
+                  {opponentBudgetEmojiPips(state.opponentStrength)}
                 </span>
               </div>
               {isSmallScreen ? (
@@ -99,7 +102,10 @@ export function EventPanel({
                               <li key={cid}>
                                 <strong>{cardLabelWithIcon(inst.templateId, t(ct.titleKey as MessageKey))}</strong>
                                 {" · "}
-                                {t("ui.opponentStrength")}: {ct.opponentCost ?? 0} ·{" "}
+                                <span title={`${t("ui.opponentStrength")}: ${ct.opponentCost ?? 0}`}>
+                                  {opponentBudgetEmojiPips(ct.opponentCost ?? 0)}
+                                </span>
+                                {" · "}
                                 {formatEffectChips(opponentTemplatesToAppliedEffects([inst.templateId]))}
                               </li>
                             );
@@ -325,6 +331,26 @@ export function EventPanel({
                         onClick={() => dispatch({ type: "PICK_UTRECHT_TREATY", slot, endWar: false })}
                       >
                         {t("ui.utrechtWait", { n: state.utrechtTreatyCountdown ?? 6 })}
+                      </button>
+                    </>
+                  ) : null}
+                  {!ev.resolved && solveKind === "dualFrontCrisisChoice" ? (
+                    <>
+                      <button
+                        type="button"
+                        className={styles.btn}
+                        disabled={Boolean(state.pendingInteraction)}
+                        onClick={() => dispatch({ type: "PICK_DUAL_FRONT_CRISIS", slot, expandWar: false })}
+                      >
+                        {t("ui.dualFrontCrisis.concede")}
+                      </button>
+                      <button
+                        type="button"
+                        className={`${styles.btn} ${styles.btnPrimary}`}
+                        disabled={Boolean(state.pendingInteraction)}
+                        onClick={() => dispatch({ type: "PICK_DUAL_FRONT_CRISIS", slot, expandWar: true })}
+                      >
+                        {t("ui.dualFrontCrisis.escalate")}
                       </button>
                     </>
                   ) : null}

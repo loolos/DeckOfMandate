@@ -1308,7 +1308,9 @@ export function Game() {
                 if (state.outcome === "victory") {
                   return (
                     <div className={styles.gameOverBody}>
-                      {state.levelId === SUNKING_CH3_ID && state.successionOutcomeTier ? (
+                      {state.levelId === SUNKING_CH3_ID && state.utrechtSettlementTier ? (
+                        <p>{t(`outcome.utrechtVictoryEpilogue.${state.utrechtSettlementTier}` as MessageKey)}</p>
+                      ) : state.levelId === SUNKING_CH3_ID && state.successionOutcomeTier ? (
                         <p>{t(`outcome.successionTier.${state.successionOutcomeTier}` as MessageKey)}</p>
                       ) : null}
                       <p>{t(ending.victoryBodyKey as MessageKey)}</p>

@@ -1,7 +1,7 @@
 import type { LevelContent, LevelDef } from "../../../data/levelTypes";
 import type { CardTemplateId } from "../../types/card";
 
-/** Opening hand templates (6) — not part of the shuffled deck. */
+/** Six chapter-3-only templates shuffled into the full library with the rest; opening deal is two cards. */
 export const LEVEL3_STARTING_HAND_TEMPLATE_ORDER: readonly CardTemplateId[] = [
   "bourbonMarriageProclamation",
   "bourbonMarriageProclamation",
@@ -11,7 +11,7 @@ export const LEVEL3_STARTING_HAND_TEMPLATE_ORDER: readonly CardTemplateId[] = [
   "italianTheaterTroopRedeploy",
 ];
 
-/** Same core deck as chapter 2 (16 cards); six chapter-3 cards start in hand. */
+/** Same core deck as chapter 2 (16 cards); six chapter-3 templates are part of the shuffled pool. */
 const LEVEL3_DECK_TEMPLATE_ORDER: readonly CardTemplateId[] = [
   "funding",
   "funding",
@@ -82,6 +82,7 @@ export const levelContent: LevelContent = {
     "bavarianCourtRealignment",
     "portugueseTariffNegotiation",
     "imperialElectorsMood",
+    "localizedSuccessionWar",
   ],
   slotEscalations: [],
   eoyEscalationSchedulers: [],
@@ -97,6 +98,12 @@ export const levelContent: LevelContent = {
       presenceStartYear: 1713,
       presenceEndYear: 1720,
       overflowSlot: "E",
+    },
+    {
+      templateId: "dualFrontCrisis",
+      presenceStartYear: 1708,
+      presenceEndYear: 1708,
+      overflowSlot: "F",
     },
   ],
   opening: {

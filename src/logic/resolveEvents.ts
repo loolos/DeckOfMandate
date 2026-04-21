@@ -4,7 +4,7 @@ import { EVENT_SLOT_ORDER, type SlotId } from "../levels/types/event";
 import type { GameState } from "../types/game";
 import { appendActionLog } from "./actionLog";
 import { applyEffects, enforceLegitimacy } from "./applyEffects";
-import { completeSuccessionCrisisAndRevealOpponent } from "./opponentHabsburg";
+import { completeSuccessionCrisisAndRevealOpponent, stateAfterUtrechtTreatyEndsWar } from "./opponentHabsburg";
 import { THIRD_MANDATE_LEVEL_ID } from "./thirdMandateConstants";
 
 const SLOTS: readonly SlotId[] = EVENT_SLOT_ORDER;
@@ -52,12 +52,7 @@ export function resolveEndOfYearPenalties(state: GameState): GameState {
       const raw = s.utrechtTreatyCountdown ?? 6;
       const next = raw - 1;
       if (next <= 0) {
-        s = {
-          ...s,
-          warEnded: true,
-          utrechtTreatyCountdown: null,
-          slots: { ...s.slots, [slot]: null },
-        };
+        s = stateAfterUtrechtTreatyEndsWar(s, slot);
       } else {
         s = { ...s, utrechtTreatyCountdown: next };
       }

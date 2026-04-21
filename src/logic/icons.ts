@@ -24,6 +24,7 @@ const CARD_ICONS: Record<CardTemplateId, string> = {
   grandAllianceInfiltrationDiplomacy: "🕵️",
   italianTheaterTroopRedeploy: "🗡️",
   habsburgGrandAllianceLevy: "⚔️",
+  habsburgImperialCustomsDelay: "📋",
   habsburgImperialLegitimacyNote: "📜",
   habsburgLowCountriesAgitation: "🗺️",
 };
@@ -69,6 +70,8 @@ const EVENT_ICONS: Record<EventTemplateId, string> = {
   bavarianCourtRealignment: "🏰",
   portugueseTariffNegotiation: "⚓",
   imperialElectorsMood: "🗳️",
+  localizedSuccessionWar: "⚔️",
+  dualFrontCrisis: "⚔️",
 };
 
 const RESOURCE_ICONS: Record<ResourceKey, string> = {
@@ -101,4 +104,11 @@ export function eventLabelWithIcon(id: EventTemplateId, label: string): string {
 
 export function resourceLabelWithIcon(resource: ResourceKey, label: string): string {
   return withIcon(RESOURCE_ICONS[resource], label);
+}
+
+/** Habsburg opponent-phase budget / card cost as repeated emoji (one pip per point). */
+export function opponentBudgetEmojiPips(n: number): string {
+  const k = Math.max(0, Math.min(12, Math.floor(Number.isFinite(n) ? n : 0)));
+  if (k === 0) return "○";
+  return "🪙".repeat(k);
 }

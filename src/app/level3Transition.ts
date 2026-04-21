@@ -25,7 +25,7 @@ export {
 
 export const SUNKING_CH3_ID = "thirdMandate" as const;
 
-/** Continue from chapter 2 victory: inherit deck snapshot, resources, calendar anchor; six new cards go to the opening hand. */
+/** Continue from chapter 2 victory: inherit deck snapshot, resources, calendar anchor; six new chapter-3 cards shuffle into the full library. */
 export function buildLevel3StateFromChapter2(ch2End: GameState, seed?: number): GameState {
   const draft = createContinuityLevel3Draft(ch2End, seed);
   return buildLevel3StateFromDraft(draft);

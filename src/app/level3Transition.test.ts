@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { getCardTemplate } from "../data/cards";
 import { getLevelContent } from "../data/levelRegistry";
+import { createDeckRefitCarryoverSnapshot } from "../levels/sunking/chapter2Transition";
 import {
   createStandaloneLevel3Draft,
   validateLevel3Draft,
@@ -12,19 +13,22 @@ describe("level3Transition / thirdMandate Nantes carryover", () => {
   it("standalone chapter 3 draft uses a full chapter-2-sized carryover pool for refit", () => {
     const draft = createStandaloneLevel3Draft(50_001);
     expect(draft.mode).toBe("standalone");
-    expect(draft.carryoverCards.length).toBe(getLevelContent("secondMandate").starterDeckTemplateOrder.length);
+    const ch2Count = getLevelContent("secondMandate").starterDeckTemplateOrder.length;
+    expect(draft.carryoverCards.length).toBe(ch2Count - 7);
+    expect(draft.carryoverCards.some((c) => c.templateId === "funding" || c.templateId === "crackdown")).toBe(false);
     expect(validateLevel3Draft(draft).isValid).toBe(true);
   });
 
-  it("standalone third mandate excludes royal levy/crackdown from shuffled deck and seeds +2 inflation on inflation cards", () => {
+  it("standalone third mandate excludes royal levy/crackdown and seeds opening inflation so target cards start at cost 4", () => {
     const st = createInitialState(12_399, SUNKING_CH3_ID);
-    const fromDeck = st.deck.map((id) => st.cardsById[id]?.templateId);
-    expect(fromDeck.some((t) => t === "funding" || t === "crackdown")).toBe(false);
-    const inflated = Object.entries(st.cardInflationById).filter(([, v]) => v === 2);
-    expect(inflated.length).toBeGreaterThan(0);
-    for (const [cid] of inflated) {
-      const tid = st.cardsById[cid]?.templateId;
-      expect(tid && getCardTemplate(tid).tags.includes("inflation")).toBe(true);
+    const allTemplates = [...st.deck, ...st.hand, ...st.discard].map((id) => st.cardsById[id]?.templateId);
+    expect(allTemplates.some((t) => t === "funding" || t === "crackdown")).toBe(false);
+    const openingInflationTargets = new Set(["reform", "ceremony", "grainRelief", "taxRebalance"]);
+    for (const [cardId, delta] of Object.entries(st.cardInflationById)) {
+      const tid = st.cardsById[cardId]?.templateId;
+      if (!tid || !openingInflationTargets.has(tid)) continue;
+      const tmpl = getCardTemplate(tid);
+      expect(tmpl.cost + delta).toBe(4);
     }
   });
 
@@ -65,17 +69,15 @@ describe("level3Transition / thirdMandate Nantes carryover", () => {
     expect(Object.values(st.cardsById).filter((c) => c.templateId === "jansenistReservation").length).toBe(4);
   });
 
-  it("continuity inherits chapter 2 deck instance ids and adds six opening-hand cards", () => {
+  it("continuity merges carryover and six chapter-3 cards in the opening shuffle, then inserts four Nantes cards at random deck positions", () => {
     const ch2 = createInitialState(777, "secondMandate");
-    const poolIds = new Set([...ch2.deck, ...ch2.discard, ...ch2.hand]);
+    const carryoverCount = createDeckRefitCarryoverSnapshot(ch2).length;
     const st = buildLevel3StateFromChapter2(ch2, 888);
-    expect(st.hand.filter((id) => id.startsWith("ch3_hand_")).length).toBe(6);
-    for (const id of st.deck) {
-      if (poolIds.has(id)) continue;
-      const tmpl = st.cardsById[id]?.templateId;
-      expect(tmpl === "jansenistReservation" || tmpl === "religiousTensionCard").toBe(true);
-    }
-    expect(st.deck.length + st.hand.length).toBe(poolIds.size + 6 + 4);
+    const allIds = [...st.deck, ...st.discard, ...st.hand];
+    expect(new Set(allIds).size).toBe(allIds.length);
+    expect(allIds.length).toBe(carryoverCount + 6 + 4);
+    expect(Object.values(st.cardsById).filter((c) => c.templateId === "bourbonMarriageProclamation").length).toBe(2);
+    expect(Object.values(st.cardsById).filter((c) => c.templateId === "jansenistReservation").length).toBe(4);
     expect(st.resources.treasuryStat).toBe(ch2.resources.treasuryStat);
   });
 });

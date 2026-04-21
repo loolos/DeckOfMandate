@@ -13,7 +13,11 @@ import { applyPlayedCardEffects } from "../logic/resolveCard";
 import { resolveEndOfYearPenalties } from "../logic/resolveEvents";
 import { coalitionUntilTurn, findScriptedCalendarConfig } from "../logic/scriptedCalendar";
 import { rngNext } from "../logic/rng";
-import { completeSuccessionCrisisAndRevealOpponent, opponentEndYearPlayPhase } from "../logic/opponentHabsburg";
+import {
+  completeSuccessionCrisisAndRevealOpponent,
+  opponentEndYearPlayPhase,
+  stateAfterUtrechtTreatyEndsWar,
+} from "../logic/opponentHabsburg";
 import { beginYear, evaluateTimeDefeat, evaluateVictory, retentionCapacity } from "../logic/turnFlow";
 import { THIRD_MANDATE_LEVEL_ID } from "../logic/thirdMandateConstants";
 import { antiFrenchSentimentEventSolveCostPenalty } from "../logic/antiFrenchSentiment";
@@ -40,7 +44,8 @@ export type GameAction =
   | { type: "APPEND_LOG_INFO"; infoKey: LogInfoKey }
   | { type: "CONFIRM_RETENTION"; keepIds: readonly string[] }
   | { type: "PICK_SUCCESSION_CRISIS"; slot: SlotId; pay: boolean }
-  | { type: "PICK_UTRECHT_TREATY"; slot: SlotId; endWar: boolean };
+  | { type: "PICK_UTRECHT_TREATY"; slot: SlotId; endWar: boolean }
+  | { type: "PICK_DUAL_FRONT_CRISIS"; slot: SlotId; expandWar: boolean };
 
 function removeHand(state: GameState, instanceId: string): GameState {
   return { ...state, hand: state.hand.filter((id) => id !== instanceId) };
@@ -174,24 +179,29 @@ function resolveFirstUnresolvedEventByTemplate(
   return state;
 }
 
-function clearEventsByTemplate(state: GameState, templateId: EventTemplateId): GameState {
-  let changed = false;
+function removeEventsByTemplate(
+  state: GameState,
+  templateId: EventTemplateId,
+): { state: GameState; removedCount: number } {
   const slots = { ...state.slots };
+  let removedCount = 0;
   for (const slot of EVENT_SLOT_ORDER) {
     const ev = slots[slot];
-    if (!ev) continue;
-    if (ev.templateId !== templateId) continue;
+    if (!ev || ev.templateId !== templateId) continue;
     slots[slot] = null;
-    changed = true;
+    removedCount += 1;
   }
-  if (!changed) return state;
-  return { ...state, slots };
+  return {
+    state: removedCount > 0 ? { ...state, slots } : state,
+    removedCount,
+  };
 }
 
 function isCrackdownTarget(state: GameState, slot: SlotId): boolean {
   const ev = state.slots[slot];
   if (!ev || ev.resolved) return false;
   const tmpl = getEventTemplate(ev.templateId);
+  if (tmpl.crackdownImmune) return false;
   return tmpl.harmful;
 }
 
@@ -217,6 +227,43 @@ function canFundSolve(state: GameState, slot: SlotId): boolean {
   return false;
 }
 
+function attemptNineYearsWarCampaign(
+  state: GameState,
+  slot: SlotId,
+  method: "funding" | "intervention",
+  fundingPaid: number,
+): GameState {
+  const ev = state.slots[slot];
+  if (!ev || ev.resolved || ev.templateId !== "nineYearsWar") return state;
+  const [rng, u] = rngNext(state.rng);
+  const roll = Math.floor(u * 9) + 1;
+  let s: GameState = { ...state, rng };
+  if (roll === 1) {
+    s = { ...s, slots: { ...s.slots, [slot]: null } };
+    return appendActionLog(s, {
+      kind: "eventNineYearsWarAttempt",
+      slot,
+      method,
+      fundingPaid,
+      roll,
+      outcome: "majorVictory",
+    });
+  }
+  if (roll >= 6) {
+    s = applyEffects(s, [{ kind: "modResource", resource: "legitimacy", delta: 1 }]);
+  }
+  s = markSlotResolvedWithNineYearsWarPersistence(s, slot, true);
+  s = appendActionLog(s, {
+    kind: "eventNineYearsWarAttempt",
+    slot,
+    method,
+    fundingPaid,
+    roll,
+    outcome: roll <= 5 ? "stalemate" : "minorGains",
+  });
+  return enforceLegitimacy(s);
+}
+
 function canScriptedAttack(state: GameState, slot: SlotId): boolean {
   if (state.phase !== "action" || state.pendingInteraction?.type === "crackdownPick") return false;
   const ev = state.slots[slot];
@@ -232,7 +279,8 @@ function canLocalWarAttack(state: GameState, slot: SlotId): boolean {
   if (state.phase !== "action" || state.pendingInteraction?.type === "crackdownPick") return false;
   const ev = state.slots[slot];
   if (!ev || ev.resolved || ev.templateId !== "localWar") return false;
-  return state.resources.funding >= Math.floor(state.europeAlertProgress / 2);
+  const cost = Math.floor(state.europeAlertProgress / 2) + antiFrenchSentimentEventSolveCostPenalty(state);
+  return state.resources.funding >= cost;
 }
 
 function performScriptedAttack(state: GameState, slot: SlotId): GameState {
@@ -387,14 +435,35 @@ function performUtrechtTreatyPick(state: GameState, slot: SlotId, endWar: boolea
     return state;
   }
   if (endWar) {
-    return {
-      ...state,
-      warEnded: true,
-      utrechtTreatyCountdown: null,
-      slots: { ...state.slots, [slot]: null },
-    };
+    return stateAfterUtrechtTreatyEndsWar(state, slot);
   }
   return state;
+}
+
+function performDualFrontCrisisPick(state: GameState, slot: SlotId, expandWar: boolean): GameState {
+  const ev = state.slots[slot];
+  if (!ev || ev.resolved || ev.templateId !== "dualFrontCrisis" || state.levelId !== THIRD_MANDATE_LEVEL_ID) {
+    return state;
+  }
+  let s = state;
+  if (expandWar) {
+    s = applyEffects(s, [
+      { kind: "modOpponentStrength", delta: 1 },
+      { kind: "modSuccessionTrack", delta: 1 },
+      { kind: "modResource", resource: "legitimacy", delta: -1 },
+      { kind: "addCardsToDeck", templateId: "fiscalBurden", count: 3 },
+    ]);
+  } else {
+    s = applyEffects(s, [
+      { kind: "modOpponentStrength", delta: 1 },
+      { kind: "modSuccessionTrack", delta: -3 },
+    ]);
+  }
+  if (s.outcome !== "playing") return s;
+  s = enforceLegitimacy(s);
+  if (s.outcome !== "playing") return s;
+  s = markSlotResolvedWithLeagueProgress(s, slot);
+  return appendActionLog(s, { kind: "eventDualFrontCrisisChoice", slot, expandWar });
 }
 
 /** After funding is cleared: keep chosen cards, discard the rest, then EOY penalties, then win / time / next year. */
@@ -446,25 +515,26 @@ function performFundSolve(state: GameState, slot: SlotId): GameState {
     return state;
   }
   if (ev.templateId === "nineYearsWar") {
+    return attemptNineYearsWarCampaign(s, slot, "funding", fundingAmount ?? 0);
+  }
+  if (ev.templateId === "localizedSuccessionWar") {
     const [rng, roll] = rngNext(s.rng);
     s = { ...s, rng };
-    const decisiveVictory = roll < 1 / 9;
-    const limitedGains = roll >= 5 / 9;
-    let legitimacyDelta = 0;
-    if (limitedGains && !decisiveVictory) {
-      legitimacyDelta = 1;
-      s = applyEffects(s, [{ kind: "modResource", resource: "legitimacy", delta: 1 }]);
-    }
-    s = markSlotResolvedWithNineYearsWarPersistence(s, slot, !decisiveVictory);
+    const deltas = [-1, 0, 1, 2] as const;
+    const idx = Math.min(3, Math.floor(roll * 4));
+    const successionDelta = deltas[idx]!;
+    s = applyEffects(s, [{ kind: "modSuccessionTrack", delta: successionDelta }]);
+    if (s.outcome !== "playing") return appendInflationActivationLogIfNeeded(state, s);
     s = enforceLegitimacy(s);
-    return appendActionLog(s, {
-      kind: "eventNineYearsWarCampaign",
+    if (s.outcome !== "playing") return appendInflationActivationLogIfNeeded(state, s);
+    s = markSlotResolvedWithLeagueProgress(s, slot);
+    s = appendActionLog(s, {
+      kind: "eventLocalizedSuccessionWarResolve",
       slot,
       fundingPaid: fundingAmount ?? 0,
-      viaIntervention: false,
-      outcome: decisiveVictory ? "decisiveVictory" : limitedGains ? "limitedGains" : "stalemate",
-      legitimacyDelta,
+      successionDelta,
     });
+    return appendInflationActivationLogIfNeeded(state, s);
   }
   let treasuryGain = 0;
   if (tmpl.onFundSolveEffects && tmpl.onFundSolveEffects.length > 0) {
@@ -487,7 +557,11 @@ function performFundSolve(state: GameState, slot: SlotId): GameState {
       europeAlert: false,
       europeAlertProgress: 0,
     };
-    s = clearEventsByTemplate(s, "nineYearsWar");
+    const removed = removeEventsByTemplate(s, "nineYearsWar");
+    s = removed.state;
+    if (removed.removedCount > 0) {
+      s = appendActionLog(s, { kind: "eventNineYearsWarEndedByRyswick", removedCount: removed.removedCount });
+    }
   }
   s = markSlotResolvedWithLeagueProgress(s, slot);
   s = enforceLegitimacy(s);
@@ -651,7 +725,13 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       if (!isCrackdownTarget(state, action.slot)) return state;
       const cleared = state.slots[action.slot];
       if (!cleared) return state;
-      let s = markSlotResolvedWithLeagueProgress(state, action.slot);
+      let s =
+        cleared.templateId === "nineYearsWar"
+          ? attemptNineYearsWarCampaign(state, action.slot, "intervention", p.fundingPaid)
+          : markSlotResolvedWithLeagueProgress(state, action.slot);
+      if (cleared.templateId === "imperialElectorsMood") {
+        s = applyEffects(s, [{ kind: "opponentNextTurnDrawModifier", delta: 1 }]);
+      }
       s = removeHand(s, p.cardInstanceId);
       const consumed = consumeLimitedUseCard(s, p.cardInstanceId);
       s = consumed.state;
@@ -721,6 +801,13 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
     case "PICK_UTRECHT_TREATY": {
       if (state.outcome !== "playing" || state.phase !== "action" || state.pendingInteraction) return state;
       return appendInflationActivationLogIfNeeded(state, performUtrechtTreatyPick(state, action.slot, action.endWar));
+    }
+    case "PICK_DUAL_FRONT_CRISIS": {
+      if (state.outcome !== "playing" || state.phase !== "action" || state.pendingInteraction) return state;
+      return appendInflationActivationLogIfNeeded(
+        state,
+        performDualFrontCrisisPick(state, action.slot, action.expandWar),
+      );
     }
     default: {
       const _never: never = action;

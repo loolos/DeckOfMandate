@@ -1,5 +1,5 @@
-import type { GameState, NantesPolicyCarryover } from "../types/game";
-import { applyEffects } from "./applyEffects";
+import type { CardInstance } from "../levels/types/card";
+import type { NantesPolicyCarryover } from "../types/game";
 
 /** Standalone / menu start: when unspecified, chapter 3 defaults to the crackdown branch. */
 export function resolveThirdMandateNantesPolicy(
@@ -9,14 +9,26 @@ export function resolveThirdMandateNantesPolicy(
 }
 
 /**
- * Chapter 2 Nantes branch → chapter 3 deck injection only (no duplicate status / legitimacy from ch.2).
- * - Tolerance: 4× `religiousTensionCard` (宗教冲突).
- * - Crackdown: 4× `jansenistReservation` (良心保留; Jansenist defiance after Huguenot suppression).
+ * Four Nantes-policy cards for chapter 3 (registered in `cardsById` only).
+ * Caller shuffles the rest of the library, then inserts these ids at random positions in the draw pile.
+ * - Tolerance: 4× `religiousTensionCard`.
+ * - Crackdown: 4× `jansenistReservation`.
  */
-export function applyThirdMandateNantesStartingEffects(
-  state: GameState,
+export function registerNantesStarterCardsForThirdMandate(
+  cardsById: Record<string, CardInstance>,
   policy: NantesPolicyCarryover,
-): GameState {
+): readonly string[] {
   const templateId = policy === "tolerance" ? "religiousTensionCard" : "jansenistReservation";
-  return applyEffects(state, [{ kind: "addCardsToDeck", templateId, count: 4 }]);
+  const ids: string[] = [];
+  for (let i = 0; i < 4; i++) {
+    let seq = Object.keys(cardsById).length + i;
+    let id = `gen_${templateId}_${seq}`;
+    while (cardsById[id]) {
+      seq += 1;
+      id = `gen_${templateId}_${seq}`;
+    }
+    cardsById[id] = { instanceId: id, templateId };
+    ids.push(id);
+  }
+  return ids;
 }

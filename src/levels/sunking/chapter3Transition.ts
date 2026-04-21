@@ -1,9 +1,10 @@
 import { getCardTemplate } from "../../data/cards";
 import { getLevelContent, getLevelDef } from "../../data/levelRegistry";
 import { appendActionLog } from "../../logic/actionLog";
+import { insertCardsIntoDeckAtRandomPositions } from "../../logic/cardRuntime";
 import { createInitialCardUseState } from "../../logic/cardUsage";
 import { THIRD_MANDATE_LEVEL_ID } from "../../logic/thirdMandateConstants";
-import { applyThirdMandateNantesStartingEffects, resolveThirdMandateNantesPolicy } from "../../logic/thirdMandateStart";
+import { registerNantesStarterCardsForThirdMandate, resolveThirdMandateNantesPolicy } from "../../logic/thirdMandateStart";
 import { createRngFromSeed, shuffle } from "../../logic/rng";
 import { calendarYearForTurn } from "../../logic/scriptedCalendar";
 import { beginYear } from "../../logic/turnFlow";
@@ -23,6 +24,8 @@ export const LEVEL3_CONTINUITY_MAX_REMOVALS = LEVEL2_CONTINUITY_MAX_REMOVALS;
 export type Level3CarryoverCard = Level2CarryoverCard;
 
 const LEVEL3_HAND_NEW_COUNT = LEVEL3_STARTING_HAND_TEMPLATE_ORDER.length;
+const STANDALONE_CH3_REMOVED_TEMPLATES = new Set<CardTemplateId>(["funding", "crackdown"]);
+const STANDALONE_CH3_INFLATION_TARGET_COST = 4;
 
 export type Level3StandaloneDraft = {
   mode: "standalone";
@@ -52,18 +55,24 @@ export type Level3StartDraft = Level3StandaloneDraft | Level3ContinuityDraft;
 export function createStandaloneLevel3Draft(seed?: number): Level3StandaloneDraft {
   const level = getLevelDef(THIRD_MANDATE_LEVEL_ID);
   const ch2Templates = getLevelContent(SUNKING_CH2_ID).starterDeckTemplateOrder;
-  const carryoverCards: Level3CarryoverCard[] = ch2Templates.map((templateId, i) => {
-    const usage = createInitialCardUseState(THIRD_MANDATE_LEVEL_ID, templateId);
-    const standaloneRoyalUses =
-      templateId === "funding" || templateId === "crackdown" || templateId === "development" ? 1 : null;
-    return {
-      instanceId: `standalone_ch3_old_${i}_${templateId}`,
-      templateId,
-      inflationDelta: templateId === "reform" || templateId === "ceremony" ? 1 : 0,
-      remainingUses: standaloneRoyalUses ?? usage?.remaining ?? null,
-      totalUses: standaloneRoyalUses ?? usage?.total ?? null,
-    };
-  });
+  const carryoverCards: Level3CarryoverCard[] = ch2Templates
+    .filter((templateId) => !STANDALONE_CH3_REMOVED_TEMPLATES.has(templateId))
+    .map((templateId, i) => {
+      const tmpl = getCardTemplate(templateId);
+      const targetInflationDelta = tmpl.tags.includes("inflation")
+        ? Math.max(0, STANDALONE_CH3_INFLATION_TARGET_COST - tmpl.cost)
+        : 0;
+      const usage = createInitialCardUseState(THIRD_MANDATE_LEVEL_ID, templateId);
+      const standaloneRoyalUses =
+        templateId === "funding" || templateId === "crackdown" || templateId === "development" ? 1 : null;
+      return {
+        instanceId: `standalone_ch3_old_${i}_${templateId}`,
+        templateId,
+        inflationDelta: targetInflationDelta,
+        remainingUses: standaloneRoyalUses ?? usage?.remaining ?? null,
+        totalUses: standaloneRoyalUses ?? usage?.total ?? null,
+      };
+    });
   return {
     mode: "standalone",
     seed,
@@ -132,22 +141,31 @@ export function buildLevel3StateFromDraft(draft: Level3StartDraft): GameState {
   let rng = createRngFromSeed(runSeed);
   const removed = new Set(draft.removedCarryoverIds);
   const keptCards = draft.carryoverCards.filter((card) => !removed.has(card.instanceId));
-  const deckOrderIds = keptCards.map((c) => c.instanceId);
-  const [rng2, shuffledDeckIds] = shuffle(rng, deckOrderIds);
-  rng = rng2;
+  const policy = resolveThirdMandateNantesPolicy(draft.nantesPolicyCarryover);
 
   const cardsById: Record<string, CardInstance> = {};
   for (const card of keptCards) {
     cardsById[card.instanceId] = { instanceId: card.instanceId, templateId: card.templateId };
   }
 
-  const handIds: string[] = [];
+  const ch3Ids: string[] = [];
   for (let i = 0; i < LEVEL3_STARTING_HAND_TEMPLATE_ORDER.length; i++) {
     const templateId = LEVEL3_STARTING_HAND_TEMPLATE_ORDER[i]! as CardTemplateId;
     const instanceId = `ch3_hand_${i}_${templateId}`;
     cardsById[instanceId] = { instanceId, templateId };
-    handIds.push(instanceId);
+    ch3Ids.push(instanceId);
   }
+
+  const nantesIds = registerNantesStarterCardsForThirdMandate(cardsById, policy);
+  const carryoverIds = keptCards.map((c) => c.instanceId);
+  const fullPool = [...carryoverIds, ...ch3Ids];
+  const [rng2, shuffledIds] = shuffle(rng, fullPool);
+  rng = rng2;
+  const handIds = shuffledIds.slice(0, 2);
+  const deckFromShuffle = shuffledIds.slice(2);
+  const inserted = insertCardsIntoDeckAtRandomPositions(rng, deckFromShuffle, nantesIds);
+  rng = inserted.rng;
+  const deckIds = inserted.deck;
 
   const cardInflationById: Record<string, number> = {};
   const cardUsesById: GameState["cardUsesById"] = {};
@@ -162,7 +180,7 @@ export function buildLevel3StateFromDraft(draft: Level3StartDraft): GameState {
       cardUsesById[card.instanceId] = { total, remaining };
     }
   }
-  for (const id of handIds) {
+  for (const id of ch3Ids) {
     const inst = cardsById[id]!;
     const usage = createInitialCardUseState(THIRD_MANDATE_LEVEL_ID, inst.templateId);
     if (usage) {
@@ -171,14 +189,14 @@ export function buildLevel3StateFromDraft(draft: Level3StartDraft): GameState {
   }
 
   if (draft.mode === "standalone") {
-    for (const id of shuffledDeckIds) {
+    for (const card of keptCards) {
+      const id = card.instanceId;
       const tid = cardsById[id]?.templateId;
       if (!tid || !getCardTemplate(tid).tags.includes("inflation")) continue;
-      cardInflationById[id] = Math.max(cardInflationById[id] ?? 0, 2);
+      const targetDelta = Math.max(0, STANDALONE_CH3_INFLATION_TARGET_COST - getCardTemplate(tid).cost);
+      cardInflationById[id] = Math.max(cardInflationById[id] ?? 0, targetDelta);
     }
   }
-
-  const policy = resolveThirdMandateNantesPolicy(draft.nantesPolicyCarryover);
 
   const base: GameState = {
     levelId: THIRD_MANDATE_LEVEL_ID,
@@ -193,7 +211,7 @@ export function buildLevel3StateFromDraft(draft: Level3StartDraft): GameState {
     resources: draft.resources,
     nextTurnDrawModifier: 0,
     scheduledDrawModifiers: [],
-    deck: shuffledDeckIds,
+    deck: deckIds,
     discard: [],
     hand: handIds,
     cardsById,
@@ -221,13 +239,14 @@ export function buildLevel3StateFromDraft(draft: Level3StartDraft): GameState {
     opponentHand: [],
     opponentDiscard: [],
     opponentCostDiscountThisTurn: 0,
+    opponentNextTurnDrawModifier: 0,
     opponentLastPlayedTemplateIds: [],
     successionOutcomeTier: null,
+    utrechtSettlementTier: null,
   };
 
-  const withNantes = applyThirdMandateNantesStartingEffects(base, policy);
   if (draft.mode === "continuity") {
-    return beginYear(appendActionLog(withNantes, { kind: "info", infoKey: "chapter3ContinuityIntro" }));
+    return beginYear(appendActionLog(base, { kind: "info", infoKey: "chapter3ContinuityIntro" }));
   }
-  return beginYear(withNantes);
+  return beginYear(base);
 }

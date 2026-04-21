@@ -100,6 +100,23 @@ export type ActionLogEntry =
       extraTreasuryProbabilityPct: number;
     }
   | {
+      kind: "eventNineYearsWarAttempt";
+      id: string;
+      turn: number;
+      slot: SlotId;
+      method: "funding" | "intervention";
+      fundingPaid: number;
+      /** 1..9 sampled bucket used for deterministic outcome display. */
+      roll: number;
+      outcome: "majorVictory" | "stalemate" | "minorGains";
+    }
+  | {
+      kind: "eventNineYearsWarBegins";
+      id: string;
+      turn: number;
+      slot: SlotId;
+    }
+  | {
       kind: "eventLocalWarChoice";
       id: string;
       turn: number;
@@ -122,6 +139,18 @@ export type ActionLogEntry =
     }
   | {
       kind: "eventNineYearsWarFiscalBurden";
+      id: string;
+      turn: number;
+      slot: SlotId;
+    }
+  | {
+      kind: "eventNineYearsWarEndedByRyswick";
+      id: string;
+      turn: number;
+      removedCount: number;
+    }
+  | {
+      kind: "eventNineYearsWarBurden";
       id: string;
       turn: number;
       slot: SlotId;
@@ -187,6 +216,22 @@ export type ActionLogEntry =
       id: string;
       turn: number;
       drawnCardIds: string[];
+    }
+  | {
+      kind: "eventDualFrontCrisisChoice";
+      id: string;
+      turn: number;
+      slot: SlotId;
+      /** True: escalate war (+1 track, −1 legitimacy, +3 Fiscal Burden). False: concede (−3 track). Opponent budget +1 either way. */
+      expandWar: boolean;
+    }
+  | {
+      kind: "eventLocalizedSuccessionWarResolve";
+      id: string;
+      turn: number;
+      slot: SlotId;
+      fundingPaid: number;
+      successionDelta: -1 | 0 | 1 | 2;
     };
 
 export type GamePhase = "action" | "retention" | "gameOver";
@@ -316,6 +361,11 @@ export type GameState = {
   /** Chapter 3: `grandAllianceInfiltrationDiplomacy` — reduces opponent cost sum (min 0). */
   opponentCostDiscountThisTurn: number;
   /**
+   * Chapter 3: added when the opponent plays certain cards; consumed at `opponentBeginYearDrawPhase`.
+   * Opponent draw count that year is `max(0, 1 + this)`, then this resets to 0.
+   */
+  opponentNextTurnDrawModifier: number;
+  /**
    * Chapter 3: opponent templates played in the last completed opponent phase (`END_YEAR`), preserved for UI.
    */
   opponentLastPlayedTemplateIds: readonly CardTemplateId[];
@@ -323,4 +373,9 @@ export type GameState = {
    * When `outcome` is `victory` from chapter 3 calendar end, which tier narrative to show.
    */
   successionOutcomeTier: SuccessionIntervalTier | null;
+  /**
+   * Chapter 3: frozen when the Utrecht treaty ends hostilities (`warEnded`), from signing-time
+   * `successionTrack`. Drives `outcome.utrechtVictoryEpilogue.*` on victory.
+   */
+  utrechtSettlementTier: SuccessionIntervalTier | null;
 };

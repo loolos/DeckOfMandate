@@ -29,6 +29,17 @@ export type ActionLogPayload =
       extraTreasuryProbabilityPct: number;
     }
   | {
+      kind: "eventNineYearsWarAttempt";
+      slot: SlotId;
+      method: "funding" | "intervention";
+      fundingPaid: number;
+      roll: number;
+      outcome: "majorVictory" | "stalemate" | "minorGains";
+    }
+  | { kind: "eventNineYearsWarBegins"; slot: SlotId }
+  | { kind: "eventNineYearsWarEndedByRyswick"; removedCount: number }
+  | { kind: "eventNineYearsWarBurden"; slot: SlotId }
+  | {
       kind: "eventLocalWarChoice";
       slot: SlotId;
       templateId: "localWar";
@@ -58,7 +69,14 @@ export type ActionLogPayload =
       opponentCostSum: number;
       opponentCostDiscount: number;
     }
-  | { kind: "opponentHabsburgDraw"; drawnCardIds: string[] };
+  | { kind: "opponentHabsburgDraw"; drawnCardIds: string[] }
+  | { kind: "eventDualFrontCrisisChoice"; slot: SlotId; expandWar: boolean }
+  | {
+      kind: "eventLocalizedSuccessionWarResolve";
+      slot: SlotId;
+      fundingPaid: number;
+      successionDelta: -1 | 0 | 1 | 2;
+    };
 
 export function appendActionLog(state: GameState, payload: ActionLogPayload): GameState {
   const logSeq = state.nextIds.log ?? 0;

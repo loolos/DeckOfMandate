@@ -216,5 +216,51 @@ describe("resolveEndOfYearPenalties", () => {
     expect(s1.utrechtTreatyCountdown).toBeNull();
     expect(s1.warEnded).toBe(true);
     expect(s1.slots.A).toBeNull();
+    expect(s1.opponentHabsburgUnlocked).toBe(false);
+    expect(s1.utrechtSettlementTier).toBe("compromise");
+    expect(s1.opponentHand.length).toBe(0);
+    expect(s1.opponentDeck.length).toBe(0);
+  });
+
+  it("third mandate utrecht countdown zero also clears opponent row and sets tier from track", () => {
+    const base = createInitialState(5_102, "thirdMandate");
+    const s0 = {
+      ...base,
+      successionTrack: 6,
+      utrechtTreatyCountdown: 1,
+      opponentHabsburgUnlocked: true,
+      opponentHand: ["c1"],
+      opponentDeck: ["c2"],
+      slots: {
+        ...EMPTY_EVENT_SLOTS,
+        A: { instanceId: "e_utrecht", templateId: "utrechtTreaty" as const, resolved: false },
+        B: {
+          instanceId: "e_opp",
+          templateId: "opponentHabsburg" as const,
+          resolved: true,
+        },
+      },
+    };
+    const s1 = resolveEndOfYearPenalties(s0);
+    expect(s1.warEnded).toBe(true);
+    expect(s1.slots.A).toBeNull();
+    expect(s1.slots.B).toBeNull();
+    expect(s1.utrechtSettlementTier).toBe("bourbon");
+  });
+
+  it("nine years war still adds fiscal burden at year end when present", () => {
+    const base = createInitialState(5_005, "secondMandate");
+    const beforeCards = Object.keys(base.cardsById).length;
+    const s0 = {
+      ...base,
+      slots: {
+        ...EMPTY_EVENT_SLOTS,
+        A: { instanceId: "e_nine", templateId: "nineYearsWar" as const, resolved: false },
+      },
+    };
+    const s1 = resolveEndOfYearPenalties(s0);
+    expect(s1.resources.legitimacy).toBe(base.resources.legitimacy - 1);
+    expect(Object.keys(s1.cardsById).length).toBe(beforeCards + 1);
+    expect(s1.actionLog.some((entry) => entry.kind === "eventNineYearsWarFiscalBurden")).toBe(true);
   });
 });

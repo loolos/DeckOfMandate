@@ -128,4 +128,28 @@ export const messagesFrSecondMandate: Record<keyof typeof messagesEnSecondMandat
     "Exercez une pression via émissaires et leviers de traité plutôt que par commandement royal direct.",
   "card.diplomaticIntervention.desc":
     "Carte supplémentaire. Résolvez un événement néfaste (pas Boom du commerce colonial). N'est pas une carte taguée Royal ; quand « Restant » est épuisé, il n'y a pas de pénalité supplémentaire et elle quitte simplement le cycle. Exclue du réajustement inter-chapitre et retirée à la fin du chapitre.",
+  "log.eventNineYearsWarAttempt.method.funding": "opérations financées",
+  "log.eventNineYearsWarAttempt.method.intervention": "intervention diplomatique",
+  "log.eventNineYearsWarAttempt.title":
+    "[Tour {turn}] {event} ({slot}) — {method}, {paid} {funding} engagés ; jet de campagne (table 1/9) : {roll}.",
+  "log.eventNineYearsWarAttempt.outcome.majorVictory":
+    "Repère historique : une fenêtre de règlement global type Ryswick s'ouvre ; la pression de guerre prend fin.",
+  "log.eventNineYearsWarAttempt.outcome.stalemate":
+    "Repère historique : la profondeur de coalition et la logistique imposent l'enlisement ; aucun basculement immédiat.",
+  "log.eventNineYearsWarAttempt.outcome.minorGains":
+    "Repère historique : des gains locaux sur les fronts/forteresses améliorent l'assise du trône ; {legitimacy} +1, mais la guerre continue.",
+  "log.eventNineYearsWarAttempt.history":
+    "Contexte : la guerre de Neuf Ans (1688-1697) fut une longue guerre d'usure de coalition, aux gains souvent limités.",
+  "log.eventNineYearsWarBegins.title":
+    "[Tour {turn}] {event} ({slot}) commence comme crise calendaire fixe (1689).",
+  "log.eventNineYearsWarBegins.history":
+    "Contexte : à partir de 1689, la guerre s'élargit en affrontement de coalition paneuropéen contre Louis XIV.",
+  "log.eventNineYearsWarEndedByRyswick.title":
+    "[Tour {turn}] {ryswick} est conclu — {war} est entièrement terminé et retiré ({removed} occurrence(s)).",
+  "log.eventNineYearsWarEndedByRyswick.history":
+    "Contexte : la paix de Ryswick (1697) règle globalement la guerre de Neuf Ans et réordonne l'équilibre diplomatique.",
+  "log.eventNineYearsWarBurden.title":
+    "[Tour {turn}] {event} ({slot}) se poursuit — la contrainte financière de guerre ajoute 1 Fardeau fiscal à la pioche.",
+  "log.eventNineYearsWarBurden.history":
+    "Contexte : la mobilisation prolongée reposait sur l'endettement, les approvisionnements et une pression fiscale cumulative.",
 };

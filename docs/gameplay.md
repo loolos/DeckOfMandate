@@ -163,11 +163,12 @@ By end-of-year checks within 15 turns:
 
 ### Chapter 2 victory (`secondMandate`)
 
-Need all three:
+Need all of the following:
 
 - Current calendar year >= 1696
 - `europeAlert === false` (typically cleared by resolving `ryswickPeace`)
 - No `huguenotContainment` status remains in `playerStatuses` (i.e. the harsh-crackdown branch must be fully wound down — remnants reduced to zero)
+- `legitimacy >= victoryRule.minLegitimacy` (currently **6** in the `secondMandate` level definition)
 
 If last turn ends without victory => time defeat.
 

@@ -16,7 +16,8 @@ function makeGeneratedCardId(state: GameState, templateId: CardTemplateId, offse
   return id;
 }
 
-function insertCardsIntoDeckAtRandomPositions(
+/** Inserts each id at a uniform random index in `[0, currentDeck.length]` (inclusive). */
+export function insertCardsIntoDeckAtRandomPositions(
   rng: GameState["rng"],
   deck: readonly string[],
   addedIds: readonly string[]

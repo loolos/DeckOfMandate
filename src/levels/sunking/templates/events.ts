@@ -123,11 +123,11 @@ export const eventTemplates: Record<EventTemplateId, EventTemplate> = {
   nineYearsWar: {
     id: "nineYearsWar",
     weight: 0,
-    harmful: false,
+    harmful: true,
     crisisPersistence: "continued",
     titleKey: "event.nineYearsWar.name",
     descriptionKey: "event.nineYearsWar.desc",
-    solve: { kind: "funding", amount: 2 },
+    solve: { kind: "fundingOrCrackdown", amount: 2 },
     penaltiesIfUnresolved: [{ kind: "modResource", resource: "legitimacy", delta: -1 }],
   },
   ryswickPeace: {
@@ -385,7 +385,10 @@ export const eventTemplates: Record<EventTemplateId, EventTemplate> = {
     titleKey: "event.bavarianCourtRealignment.name",
     descriptionKey: "event.bavarianCourtRealignment.desc",
     solve: { kind: "funding", amount: 2 },
-    onFundSolveEffects: [{ kind: "modSuccessionTrack", delta: 1 }],
+    onFundSolveEffects: [
+      { kind: "modSuccessionTrack", delta: 1 },
+      { kind: "opponentNextTurnDrawModifier", delta: 1 },
+    ],
     penaltiesIfUnresolved: [{ kind: "modSuccessionTrack", delta: -1 }],
   },
   portugueseTariffNegotiation: {
@@ -399,7 +402,7 @@ export const eventTemplates: Record<EventTemplateId, EventTemplate> = {
       { kind: "modResource", resource: "treasuryStat", delta: 1 },
       { kind: "modSuccessionTrack", delta: 1 },
     ],
-    penaltiesIfUnresolved: [{ kind: "modResource", resource: "treasuryStat", delta: 1 }],
+    penaltiesIfUnresolved: [],
   },
   imperialElectorsMood: {
     id: "imperialElectorsMood",
@@ -408,9 +411,32 @@ export const eventTemplates: Record<EventTemplateId, EventTemplate> = {
     titleKey: "event.imperialElectorsMood.name",
     descriptionKey: "event.imperialElectorsMood.desc",
     solve: { kind: "fundingOrCrackdown", amount: 2 },
+    onFundSolveEffects: [{ kind: "opponentNextTurnDrawModifier", delta: 1 }],
     penaltiesIfUnresolved: [
       { kind: "modSuccessionTrack", delta: -1 },
       { kind: "modResource", resource: "legitimacy", delta: -1 },
+    ],
+  },
+  localizedSuccessionWar: {
+    id: "localizedSuccessionWar",
+    weight: 3,
+    harmful: true,
+    crackdownImmune: true,
+    titleKey: "event.localizedSuccessionWar.name",
+    descriptionKey: "event.localizedSuccessionWar.desc",
+    solve: { kind: "funding", amount: 4 },
+    penaltiesIfUnresolved: [{ kind: "modSuccessionTrack", delta: -1 }],
+  },
+  dualFrontCrisis: {
+    id: "dualFrontCrisis",
+    weight: 0,
+    harmful: true,
+    titleKey: "event.dualFrontCrisis.name",
+    descriptionKey: "event.dualFrontCrisis.desc",
+    solve: { kind: "dualFrontCrisisChoice" },
+    penaltiesIfUnresolved: [
+      { kind: "modSuccessionTrack", delta: -3 },
+      { kind: "modOpponentStrength", delta: 1 },
     ],
   },
   localWar: {
