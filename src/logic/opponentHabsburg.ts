@@ -244,12 +244,17 @@ export function initOpponentHabsburgPool(state: GameState): GameState {
   };
 }
 
-/** Opponent draws at year-end before playing, not at year start (pool starts with 2 cards in hand). */
+/** Opponent draws at year-start so the player can see current rival hand before ending the year. */
 export function opponentBeginYearDrawPhase(state: GameState): GameState {
   if (state.levelId !== THIRD_MANDATE_LEVEL_ID || !state.opponentHabsburgUnlocked) {
     return { ...state, opponentCostDiscountThisTurn: 0 };
   }
-  return { ...state, opponentCostDiscountThisTurn: 0 };
+  const reset = { ...state, opponentCostDiscountThisTurn: 0 };
+  const beforeDraw = reset.opponentHand.length;
+  const drawnState = opponentDrawFromDeck(reset, 2);
+  const drawn = drawnState.opponentHand.slice(beforeDraw);
+  if (drawn.length === 0) return drawnState;
+  return appendActionLog(drawnState, { kind: "opponentHabsburgDraw", drawnCardIds: drawn });
 }
 
 export function opponentEndYearPlayPhase(state: GameState): GameState {
@@ -257,12 +262,6 @@ export function opponentEndYearPlayPhase(state: GameState): GameState {
     return state;
   }
   let pre = state;
-  const beforeDraw = pre.opponentHand.length;
-  pre = opponentDrawFromDeck(pre, 2);
-  const drawn = pre.opponentHand.slice(beforeDraw);
-  if (drawn.length > 0) {
-    pre = appendActionLog(pre, { kind: "opponentHabsburgDraw", drawnCardIds: drawn });
-  }
   const picked = chooseOpponentPlay(pre);
   if (picked === null) {
     return pre;
