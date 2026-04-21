@@ -1,12 +1,19 @@
+import { getCardTemplate } from "../data/cards";
 import { getEventTemplate } from "../data/events";
 import { useState } from "react";
 import type { GameAction } from "../app/gameReducer";
 import { OutcomeQuickFrame } from "./OutcomeQuickFrame";
-import { buildEventQuickFrameRows, buildScriptedEventQuickFrameRows } from "../logic/quickOutcomeFrame";
-import { eventLabelWithIcon, getResourceIcon } from "../logic/icons";
+import {
+  buildEventQuickFrameRows,
+  buildScriptedEventQuickFrameRows,
+  formatEffectChips,
+} from "../logic/quickOutcomeFrame";
+import { opponentTemplatesToAppliedEffects } from "../logic/opponentHabsburg";
+import { cardLabelWithIcon, eventLabelWithIcon, getResourceIcon, opponentBudgetEmojiPips } from "../logic/icons";
 import { useSmallScreen } from "../logic/useSmallScreen";
 import {
   fundSolveLabelAmount,
+  slotIsHandledOrNoFurtherAction,
   slotAllowsCrackdownTarget,
   slotAllowsFundSolve,
   slotAllowsScriptedAttack,
@@ -14,7 +21,7 @@ import {
   slotScriptedAttackAffordable,
 } from "../logic/uiHelpers";
 import type { GameState } from "../types/game";
-import { EVENT_SLOT_ORDER } from "../types/event";
+import { EVENT_SLOT_ORDER } from "../levels/types/event";
 import type { MessageKey } from "../locales";
 import { useI18n } from "../locales";
 import styles from "../app/Game.module.css";
@@ -40,6 +47,106 @@ export function EventPanel({
       {visibleSlots.map((slot) => {
         const ev = state.slots[slot]!;
         const tmpl = getEventTemplate(ev.templateId);
+        if (ev.templateId === "opponentHabsburg") {
+          const title = eventLabelWithIcon(tmpl.id, t(tmpl.titleKey as MessageKey));
+          const intro = t(tmpl.descriptionKey as MessageKey);
+          const showDetails = !isSmallScreen || expandedSlot === slot;
+          const toggleCard = () => setExpandedSlot((prev) => (prev === slot ? null : slot));
+          const lastIds = state.opponentLastPlayedTemplateIds;
+          const lastAppliedFx = formatEffectChips(opponentTemplatesToAppliedEffects(lastIds));
+          return (
+            <div
+              key={slot}
+              className={`${styles.eventCard} ${isSmallScreen && !showDetails ? styles.eventCardCollapsed : ""}`}
+              onClick={isSmallScreen ? toggleCard : undefined}
+              role={isSmallScreen ? "button" : undefined}
+              tabIndex={isSmallScreen ? 0 : undefined}
+              onKeyDown={
+                isSmallScreen
+                  ? (e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        toggleCard();
+                      }
+                    }
+                  : undefined
+              }
+            >
+              <div className={styles.eventTitle}>{title}</div>
+              <div className={styles.badges}>
+                <span
+                  className={`${styles.badge} ${styles.badgeOk}`}
+                  title={t("ui.opponentEvent.strengthTag", { n: state.opponentStrength })}
+                >
+                  {opponentBudgetEmojiPips(state.opponentStrength)}
+                </span>
+              </div>
+              {isSmallScreen ? (
+                <div className={styles.compactSummary}>{t("ui.opponentEvent.currentHand")}</div>
+              ) : null}
+              {!isSmallScreen || showDetails ? (
+                <>
+                  <div className={styles.eventBody}>{intro}</div>
+                  <div className={styles.opponentHabsburgSections}>
+                    <div>
+                      <h3 className={styles.statusSectionTitle}>{t("ui.opponentEvent.currentHand")}</h3>
+                      {state.opponentHand.length === 0 ? (
+                        <p className={styles.statusDetail}>{t("ui.opponentEvent.handEmpty")}</p>
+                      ) : (
+                        <ul className={styles.opponentHandList}>
+                          {state.opponentHand.map((cid) => {
+                            const inst = state.cardsById[cid];
+                            if (!inst) return null;
+                            const ct = getCardTemplate(inst.templateId);
+                            return (
+                              <li key={cid}>
+                                <strong>{cardLabelWithIcon(inst.templateId, t(ct.titleKey as MessageKey))}</strong>
+                                {" · "}
+                                <span title={`${t("ui.opponentStrength")}: ${ct.opponentCost ?? 0}`}>
+                                  {opponentBudgetEmojiPips(ct.opponentCost ?? 0)}
+                                </span>
+                                {" · "}
+                                {formatEffectChips(opponentTemplatesToAppliedEffects([inst.templateId]))}
+                              </li>
+                            );
+                          })}
+                        </ul>
+                      )}
+                    </div>
+                    <div>
+                      <h3 className={styles.statusSectionTitle}>{t("ui.opponentEvent.lastPlay")}</h3>
+                      {lastIds.length === 0 ? (
+                        <p className={styles.statusDetail}>{t("ui.opponentEvent.lastPlayNone")}</p>
+                      ) : (
+                        <>
+                          <p className={styles.statusDetail}>
+                            {t("ui.opponentEvent.lastPlayCombinedFx", { fx: lastAppliedFx })}
+                          </p>
+                          {lastIds.map((tid) => {
+                            const ct = getCardTemplate(tid);
+                            const histKey = `card.${tid}.opponentHistory` as MessageKey;
+                            const singleFx = formatEffectChips(opponentTemplatesToAppliedEffects([tid]));
+                            return (
+                              <div key={tid} className={styles.opponentLastPlayBlock}>
+                                <div className={styles.eventTitle}>
+                                  {cardLabelWithIcon(tid, t(ct.titleKey as MessageKey))}
+                                </div>
+                                <p className={styles.statusDetail}>
+                                  {t("ui.opponentEvent.effectSummary", { fx: singleFx })}
+                                </p>
+                                <p className={styles.eventBody}>{t(histKey)}</p>
+                              </div>
+                            );
+                          })}
+                        </>
+                      )}
+                    </div>
+                  </div>
+                </>
+              ) : null}
+            </div>
+          );
+        }
         const title = eventLabelWithIcon(tmpl.id, t(tmpl.titleKey as MessageKey));
         const desc = t(tmpl.descriptionKey as MessageKey);
         const affordable = slotFundSolveAffordable(state, slot);
@@ -51,6 +158,10 @@ export function EventPanel({
         const solveKind = tmpl.solve.kind;
         const quickRows = buildScriptedEventQuickFrameRows(state.levelId, tmpl) ?? buildEventQuickFrameRows(tmpl);
         const compactSummary = quickRows.map((row) => row.value).join(" · ");
+        const handledOrNoFurtherAction = slotIsHandledOrNoFurtherAction(state, slot);
+        const handledMark = handledOrNoFurtherAction ? " 🆗" : "";
+        const compactSummaryWithHandledMark = `${compactSummary}${handledMark}`;
+        const descWithHandledMark = `${desc}${handledMark}`;
         const showDetails = !isSmallScreen || expandedSlot === slot || crack;
         const toggleCard = () => setExpandedSlot((prev) => (prev === slot ? null : slot));
         const logEventTag = (
@@ -84,7 +195,7 @@ export function EventPanel({
             }
           >
             <div className={styles.eventTitle}>{title}</div>
-            {isSmallScreen ? <div className={styles.compactSummary}>{compactSummary}</div> : null}
+            {isSmallScreen ? <div className={styles.compactSummary}>{compactSummaryWithHandledMark}</div> : null}
             {!isSmallScreen || showDetails ? (
               <>
                 <div className={styles.badges}>
@@ -151,7 +262,6 @@ export function EventPanel({
                     </button>
                   ) : null}
                 </div>
-                <div className={styles.eventBody}>{desc}</div>
                 <OutcomeQuickFrame rows={quickRows} />
                 <div className={styles.actions} onClick={(e) => e.stopPropagation()}>
                   {!ev.resolved && solveKind === "scriptedAttack" && amount !== null ? (
@@ -173,6 +283,76 @@ export function EventPanel({
                     >
                       {t("ui.solve", { cost: `${getResourceIcon("funding")} ${amount}` })}
                     </button>
+                  ) : null}
+                  {!ev.resolved && solveKind === "fundingTreasuryQuarterCeil" && amount !== null ? (
+                    <button
+                      type="button"
+                      className={styles.btn}
+                      disabled={!affordable || !canClickFund}
+                      onClick={() => dispatch({ type: "SOLVE_EVENT", slot })}
+                    >
+                      {t("ui.solve", { cost: `${getResourceIcon("funding")} ${amount}` })}
+                    </button>
+                  ) : null}
+                  {!ev.resolved && solveKind === "successionCrisisChoice" ? (
+                    <>
+                      <button
+                        type="button"
+                        className={`${styles.btn} ${styles.btnPrimary}`}
+                        disabled={Boolean(state.pendingInteraction) || state.resources.funding < 3}
+                        onClick={() => dispatch({ type: "PICK_SUCCESSION_CRISIS", slot, pay: true })}
+                      >
+                        {t("ui.successionCrisisPay")}
+                      </button>
+                      <button
+                        type="button"
+                        className={styles.btn}
+                        disabled={Boolean(state.pendingInteraction)}
+                        onClick={() => dispatch({ type: "PICK_SUCCESSION_CRISIS", slot, pay: false })}
+                      >
+                        {t("ui.successionCrisisDecline")}
+                      </button>
+                    </>
+                  ) : null}
+                  {!ev.resolved && solveKind === "utrechtTreatyChoice" ? (
+                    <>
+                      <button
+                        type="button"
+                        className={`${styles.btn} ${styles.btnPrimary}`}
+                        disabled={Boolean(state.pendingInteraction)}
+                        onClick={() => dispatch({ type: "PICK_UTRECHT_TREATY", slot, endWar: true })}
+                      >
+                        {t("ui.utrechtEndWar")}
+                      </button>
+                      <button
+                        type="button"
+                        className={styles.btn}
+                        disabled={Boolean(state.pendingInteraction)}
+                        onClick={() => dispatch({ type: "PICK_UTRECHT_TREATY", slot, endWar: false })}
+                      >
+                        {t("ui.utrechtWait", { n: state.utrechtTreatyCountdown ?? 6 })}
+                      </button>
+                    </>
+                  ) : null}
+                  {!ev.resolved && solveKind === "dualFrontCrisisChoice" ? (
+                    <>
+                      <button
+                        type="button"
+                        className={styles.btn}
+                        disabled={Boolean(state.pendingInteraction)}
+                        onClick={() => dispatch({ type: "PICK_DUAL_FRONT_CRISIS", slot, expandWar: false })}
+                      >
+                        {t("ui.dualFrontCrisis.concede")}
+                      </button>
+                      <button
+                        type="button"
+                        className={`${styles.btn} ${styles.btnPrimary}`}
+                        disabled={Boolean(state.pendingInteraction)}
+                        onClick={() => dispatch({ type: "PICK_DUAL_FRONT_CRISIS", slot, expandWar: true })}
+                      >
+                        {t("ui.dualFrontCrisis.escalate")}
+                      </button>
+                    </>
                   ) : null}
                   {!ev.resolved && solveKind === "fundingOrCrackdown" && amount !== null ? (
                     <button
@@ -239,6 +419,7 @@ export function EventPanel({
                     </button>
                   ) : null}
                 </div>
+                <div className={styles.eventBody}>{descWithHandledMark}</div>
               </>
             ) : null}
           </div>

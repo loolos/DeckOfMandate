@@ -7,8 +7,8 @@ import type { MessageKey } from "../locales";
 import { useI18n } from "../locales";
 import { useSmallScreen } from "../logic/useSmallScreen";
 import type { ActionLogEntry } from "../types/game";
-import type { CardTemplateId } from "../types/card";
-import type { EventTemplateId } from "../types/event";
+import type { CardTemplateId } from "../levels/types/card";
+import type { EventTemplateId } from "../levels/types/event";
 import styles from "../app/Game.module.css";
 
 const STICKY_PX = 48;
@@ -174,6 +174,72 @@ function renderEntry(e: ActionLogEntry, t: (key: MessageKey, vars?: Record<strin
         </div>
       );
     }
+    case "eventNineYearsWarAttempt": {
+      const eventLabel = eventLabelWithIcon("nineYearsWar", t(eventTitleKey("nineYearsWar")));
+      const methodKey =
+        e.method === "funding" ? "log.eventNineYearsWarAttempt.method.funding" : "log.eventNineYearsWarAttempt.method.intervention";
+      return (
+        <div>
+          <div className={styles.actionLogHead}>
+            {t("log.eventNineYearsWarAttempt.title", {
+              turn: e.turn,
+              slot: e.slot,
+              event: eventLabel,
+              paid: e.fundingPaid,
+              funding: fundingLabel,
+              method: t(methodKey as MessageKey),
+              roll: e.roll,
+            })}
+          </div>
+          <div className={styles.actionLogSub}>
+            {t(`log.eventNineYearsWarAttempt.outcome.${e.outcome}` as MessageKey, {
+              legitimacy: resourceLabelWithIcon("legitimacy", t("resource.legitimacy")),
+            })}
+          </div>
+          <div className={styles.actionLogSubMuted}>{t("log.eventNineYearsWarAttempt.history")}</div>
+        </div>
+      );
+    }
+    case "eventNineYearsWarBegins":
+      return (
+        <div>
+          <div className={styles.actionLogHead}>
+            {t("log.eventNineYearsWarBegins.title", {
+              turn: e.turn,
+              slot: e.slot,
+              event: eventLabelWithIcon("nineYearsWar", t(eventTitleKey("nineYearsWar"))),
+            })}
+          </div>
+          <div className={styles.actionLogSubMuted}>{t("log.eventNineYearsWarBegins.history")}</div>
+        </div>
+      );
+    case "eventNineYearsWarEndedByRyswick":
+      return (
+        <div>
+          <div className={styles.actionLogHead}>
+            {t("log.eventNineYearsWarEndedByRyswick.title", {
+              turn: e.turn,
+              removed: e.removedCount,
+              ryswick: eventLabelWithIcon("ryswickPeace", t(eventTitleKey("ryswickPeace"))),
+              war: eventLabelWithIcon("nineYearsWar", t(eventTitleKey("nineYearsWar"))),
+            })}
+          </div>
+          <div className={styles.actionLogSubMuted}>{t("log.eventNineYearsWarEndedByRyswick.history")}</div>
+        </div>
+      );
+    case "eventNineYearsWarBurden":
+      return (
+        <div>
+          <div className={styles.actionLogHead}>
+            {t("log.eventNineYearsWarBurden.title", {
+              turn: e.turn,
+              slot: e.slot,
+              event: eventLabelWithIcon("nineYearsWar", t(eventTitleKey("nineYearsWar"))),
+            })}
+          </div>
+          <div className={styles.actionLogSubMuted}>{t("log.eventNineYearsWarBurden.history")}</div>
+        </div>
+      );
     case "eventLocalWarChoice": {
       if (e.choice === "appease") {
         return (
@@ -203,6 +269,32 @@ function renderEntry(e: ActionLogEntry, t: (key: MessageKey, vars?: Record<strin
               power: resourceLabelWithIcon("power", t("resource.power")),
               legitimacy: resourceLabelWithIcon("legitimacy", t("resource.legitimacy")),
             }),
+          })}
+        </div>
+      );
+    }
+    case "eventDualFrontCrisisChoice": {
+      const key = e.expandWar ? "log.eventDualFrontCrisis.escalate" : "log.eventDualFrontCrisis.concede";
+      return (
+        <div className={styles.actionLogHead}>
+          {t(key as MessageKey, {
+            turn: e.turn,
+            event: eventLabelWithIcon("dualFrontCrisis", t(eventTitleKey("dualFrontCrisis"))),
+          })}
+        </div>
+      );
+    }
+    case "eventLocalizedSuccessionWarResolve": {
+      const signed = e.successionDelta > 0 ? `+${e.successionDelta}` : String(e.successionDelta);
+      return (
+        <div className={styles.actionLogHead}>
+          {t("log.eventLocalizedSuccessionWar.resolve", {
+            turn: e.turn,
+            event: eventLabelWithIcon("localizedSuccessionWar", t(eventTitleKey("localizedSuccessionWar"))),
+            paid: e.fundingPaid,
+            funding: fundingLabel,
+            delta: signed,
+            track: t("ui.successionTrack"),
           })}
         </div>
       );
@@ -243,6 +335,20 @@ function renderEntry(e: ActionLogEntry, t: (key: MessageKey, vars?: Record<strin
             })}
           </div>
           <div className={styles.actionLogSubMuted}>{t("log.eventNineYearsWarFiscalBurden.history")}</div>
+        </div>
+      );
+    case "huguenotResurgence":
+      return (
+        <div>
+          <div className={styles.actionLogHead}>
+            {t("log.huguenotResurgence.title", {
+              turn: e.turn,
+              card: cardLabelWithIcon("suppressHuguenots", t(cardTitleKey("suppressHuguenots"))),
+              addedCount: e.addedCount,
+              remainingStacks: e.remainingStacks,
+            })}
+          </div>
+          <div className={styles.actionLogSubMuted}>{t("log.huguenotResurgence.history")}</div>
         </div>
       );
     case "antiFrenchLeagueDraw":
@@ -296,6 +402,22 @@ function renderEntry(e: ActionLogEntry, t: (key: MessageKey, vars?: Record<strin
     }
     case "info":
       return <div className={styles.actionLogHead}>{t(`log.info.${e.infoKey}` as MessageKey, { turn: e.turn })}</div>;
+    case "opponentHabsburgPlay":
+      return (
+        <div className={styles.actionLogHead}>
+          {t("log.opponentHabsburgPlay.title", {
+            turn: e.turn,
+            cost: e.opponentCostSum,
+            discount: e.opponentCostDiscount,
+          })}
+        </div>
+      );
+    case "opponentHabsburgDraw":
+      return (
+        <div className={styles.actionLogHead}>
+          {t("log.opponentHabsburgDraw.title", { turn: e.turn, n: e.drawnCardIds.length })}
+        </div>
+      );
     default: {
       const _never: never = e;
       return _never;

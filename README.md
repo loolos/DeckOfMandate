@@ -11,7 +11,7 @@ Single-player, turn-based strategy card game about governance under pressure. Th
 - **Content model**: typed card/event/status templates under `src/data/*`.
 - **Modes**:
   - Chapter 1: **The Rising Sun** (`firstMandate`, 1661–1675, 15 turns)
-  - Chapter 2: **Glory Under Strain** (`secondMandate`, 1676–1700, 25 turns)
+  - Chapter 2: **Long Shadows at Noon** (`secondMandate`, 1676–1700, 25 turns)
 - **Localization**: English / 中文 / Français.
 
 ## Run locally

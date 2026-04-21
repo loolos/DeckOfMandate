@@ -3,9 +3,9 @@ import { getStatusTemplate } from "../data/statusTemplates";
 import { findScriptedCalendarConfig } from "./scriptedCalendar";
 import { getResourceIcon } from "./icons";
 import type { MessageKey } from "../locales";
-import type { CardTemplate } from "../types/card";
-import type { Effect } from "../types/effect";
-import type { EventTemplate } from "../types/event";
+import type { CardTemplate } from "../levels/types/card";
+import type { Effect } from "../levels/types/effect";
+import type { EventTemplate } from "../levels/types/event";
 
 /** Compact emoji + signed numbers for one effect (no prose). */
 export function formatEffectChips(effects: readonly Effect[]): string {
@@ -17,12 +17,18 @@ function formatSingleEffectChip(e: Effect): string {
   switch (e.kind) {
     case "modResource":
       return `${getResourceIcon(e.resource)}${signedInt(e.delta)}`;
+    case "modSuccessionTrack":
+      return `⚖️${signedInt(e.delta)}`;
     case "gainFunding":
       return `${getResourceIcon("funding")}+${e.amount}`;
     case "drawCards":
       return `🃏+${e.count}`;
     case "scheduleNextTurnDrawModifier":
       return `📜${signedInt(e.delta)}`;
+    case "opponentNextTurnDrawModifier":
+      return `🦅🃏${signedInt(e.delta)}`;
+    case "modOpponentStrength":
+      return `🦅${signedInt(e.delta)}`;
     case "scheduleDrawModifiers":
       return `📜${e.deltas.map((d) => signedInt(d)).join("/")}`;
     case "addCardsToDeck":
@@ -72,6 +78,9 @@ function eventPayChips(tmpl: EventTemplate): string {
   if (sk.kind === "localWarChoice") {
     return `⚔️ | 🕊️`;
   }
+  if (sk.kind === "dualFrontCrisisChoice") {
+    return "—";
+  }
   return `🛡️ · ${getResourceIcon("funding")}1`;
 }
 
@@ -91,9 +100,6 @@ function eventYearEndChips(tmpl: EventTemplate): string | null {
   }
   if (tmpl.id === "powerVacuum") {
     return "🚨+1⌛";
-  }
-  if (tmpl.id === "grainReliefCrisis") {
-    return `👑-2`;
   }
   if (tmpl.id === "localWar") {
     return `${getResourceIcon("funding")}-2`;
@@ -115,6 +121,15 @@ export function buildCardQuickFrameRows(tmpl: CardTemplate, costValue = tmpl.cos
       {
         labelKey: "ui.quickFrame.onPlay",
         value: `🛡️1 · 🚫🤝`,
+      },
+    ];
+  }
+  if (tmpl.id === "jansenistReservation") {
+    return [
+      cost,
+      {
+        labelKey: "ui.quickFrame.onPlay",
+        value: "🏷️←",
       },
     ];
   }
@@ -153,6 +168,36 @@ export function buildScriptedEventQuickFrameRows(levelId: LevelId, tmpl: EventTe
 }
 
 export function buildEventQuickFrameRows(tmpl: EventTemplate): QuickFrameRow[] {
+  if (tmpl.id === "localizedSuccessionWar") {
+    const yEnd = eventYearEndChips(tmpl);
+    return [
+      { labelKey: "ui.quickFrame.pay", value: `${getResourceIcon("funding")}4` },
+      {
+        labelKey: "ui.quickFrame.ifSolved",
+        value: "~25% ⚖️−1 · ~25% ⚖️0 · ~25% ⚖️+1 · ~25% ⚖️+2",
+      },
+      {
+        labelKey: "ui.quickFrame.yearEnd",
+        value: yEnd ?? "—",
+        muted: yEnd === "∅",
+      },
+    ];
+  }
+  if (tmpl.id === "dualFrontCrisis") {
+    const yEnd = eventYearEndChips(tmpl);
+    return [
+      { labelKey: "ui.quickFrame.pay", value: "—" },
+      {
+        labelKey: "ui.quickFrame.ifSolved",
+        value: "⚖️−3 · 🦅+1 │ ⚖️+1 · 👑−1 · ⛓️+3 · 🦅+1",
+      },
+      {
+        labelKey: "ui.quickFrame.yearEnd",
+        value: yEnd ?? "—",
+        muted: yEnd === "∅",
+      },
+    ];
+  }
   const pay: QuickFrameRow = {
     labelKey: "ui.quickFrame.pay",
     value: eventPayChips(tmpl),

@@ -3,7 +3,8 @@ import styles from "../app/Game.module.css";
 import { getStatusTemplate } from "../data/statusTemplates";
 import { useI18n, type MessageKey } from "../locales";
 import { useSmallScreen } from "../logic/useSmallScreen";
-import type { PlayerStatusInstance } from "../types/status";
+import type { LevelId } from "../data/levels";
+import type { PlayerStatusInstance } from "../levels/types/status";
 
 type StatusViewRow = {
   id: string;
@@ -51,13 +52,18 @@ function statusDetail(
 
 export function StatusBar({
   statuses,
+  levelId,
   coalitionActive,
   coalitionProbabilityPct,
   europeAlertActive,
   europeAlertPowerLoss,
   europeAlertProgress,
+  antiFrenchSentimentEmotion,
+  successionTrack,
 }: {
   statuses: readonly PlayerStatusInstance[];
+  /** Used to tune containment hint copy (chapter 2 gates victory on this status). */
+  levelId?: LevelId;
   /** Anti-French League pressure (scripted war follow-up); draw risk is rolled each year in engine. */
   coalitionActive?: boolean;
   /** Rounded percent; shown in status hint (from `antiFrenchLeague.drawPenaltyProbability`). */
@@ -68,6 +74,10 @@ export function StatusBar({
   europeAlertPowerLoss?: number;
   /** Chapter-2 Europe Alert progress (1-10 while active). */
   europeAlertProgress?: number;
+  /** "Emotion x" value shown on Anti-French Sentiment; x = current Anti-French Containment cards in library. */
+  antiFrenchSentimentEmotion?: number;
+  /** Chapter 3: succession contest gauge (−10…+10). */
+  successionTrack?: number;
 }) {
   const { t } = useI18n();
   const isSmallScreen = useSmallScreen();
@@ -75,7 +85,23 @@ export function StatusBar({
   const pct = coalitionProbabilityPct ?? 0;
 
   const rows = useMemo<StatusViewRow[]>(() => {
+    const containmentHintKey =
+      levelId === "secondMandate"
+        ? ("status.huguenotContainment.hint" as MessageKey)
+        : ("status.huguenotContainment.hintGeneral" as MessageKey);
     const next: StatusViewRow[] = [];
+    if (successionTrack !== undefined && levelId === "thirdMandate") {
+      const clamped = Math.max(-10, Math.min(10, Math.floor(successionTrack)));
+      const signed = clamped > 0 ? `+${clamped}` : `${clamped}`;
+      next.push({
+        id: "successionTrack",
+        title: t("ui.successionStatus.title"),
+        compactMeta: signed,
+        meta: `${signed} / ±10`,
+        detail: t("ui.successionStatus.detail"),
+        hideMetaWhenExpandedOnMobile: true,
+      });
+    }
     if (europeAlertActive) {
       const progress = Math.max(1, Math.min(10, europeAlertProgress ?? 3));
       const stage = europeAlertStage(progress);
@@ -114,19 +140,39 @@ export function StatusBar({
             : t("ui.statusTurnsRemaining", { n: row.turnsRemaining });
       const history = tmpl.historyKey ? t(tmpl.historyKey) : "";
       const effectDetail = statusDetail(row, t);
+      const antiFrenchEmotionLabel =
+        row.templateId === "antiFrenchSentiment"
+          ? t("status.antiFrenchSentiment.emotionLabel", { x: antiFrenchSentimentEmotion ?? 0 })
+          : "";
       next.push({
         id: row.instanceId,
-        title: t(tmpl.titleKey),
+        title:
+          row.templateId === "antiFrenchSentiment"
+            ? `${t(tmpl.titleKey)} ${antiFrenchEmotionLabel}`.trim()
+            : t(tmpl.titleKey),
         compactMeta: turnsText,
         meta: turnsText,
         detail:
           row.templateId === "huguenotContainment"
-            ? `${effectDetail} ${history} ${t("status.huguenotContainment.hint")}`.trim()
+            ? `${effectDetail} ${history} ${t(containmentHintKey)}`.trim()
+            : row.templateId === "antiFrenchSentiment"
+              ? `${t("status.antiFrenchSentiment.detail", { x: antiFrenchSentimentEmotion ?? 0, n: (antiFrenchSentimentEmotion ?? 0) * 2 })} ${history}`.trim()
             : `${effectDetail} ${history}`.trim(),
       });
     }
     return next;
-  }, [coalitionActive, europeAlertActive, europeAlertPowerLoss, europeAlertProgress, pct, statuses, t]);
+  }, [
+    antiFrenchSentimentEmotion,
+    coalitionActive,
+    levelId,
+    europeAlertActive,
+    europeAlertPowerLoss,
+    europeAlertProgress,
+    pct,
+    successionTrack,
+    statuses,
+    t,
+  ]);
 
   useEffect(() => {
     if (!isSmallScreen) setExpandedStatusId(null);
@@ -167,6 +213,16 @@ export function StatusBar({
                   />
                 </span>
               ) : null}
+              {row.id === "successionTrack" ? (
+                <span className={styles.successionProgressTrack} aria-hidden="true">
+                  <span
+                    className={styles.successionProgressFill}
+                    style={{
+                      width: `${Math.max(0, Math.min(100, ((Math.max(-10, Math.min(10, successionTrack ?? 0)) + 10) / 20) * 100))}%`,
+                    }}
+                  />
+                </span>
+              ) : null}
               {row.detail ? <span className={styles.statusDetail}>{row.detail}</span> : null}
             </li>
           );
@@ -196,6 +252,16 @@ export function StatusBar({
                 <span
                   className={styles.europeAlertProgressFill}
                   style={{ width: `${Math.max(1, Math.min(10, europeAlertProgress ?? 3)) * 10}%` }}
+                />
+              </span>
+            ) : null}
+            {row.id === "successionTrack" ? (
+              <span className={styles.successionProgressTrack} aria-hidden="true">
+                <span
+                  className={styles.successionProgressFill}
+                  style={{
+                    width: `${Math.max(0, Math.min(100, ((Math.max(-10, Math.min(10, successionTrack ?? 0)) + 10) / 20) * 100))}%`,
+                  }}
                 />
               </span>
             ) : null}

@@ -1,4 +1,4 @@
-/** Shared UI / cards / events — Chinese; not tied to a single level id. */
+/** Shared UI / engine strings — campaign copy lives in `src/levels/sunking/locales`. */
 export const messagesZhCore = {
   "app.title": "Deck of Mandate",
   "app.subtitle": "旭日",
@@ -28,6 +28,25 @@ export const messagesZhCore = {
   "ui.nantesCrackdown": "严厉镇压",
   "ui.localWarAttack": "进攻（{cost}）",
   "ui.localWarAppease": "绥靖",
+  "ui.successionCrisisPay": "支付 3 经费 — 王位争夺进度 +1",
+  "ui.successionCrisisDecline": "不支付 — 起始进度 −1",
+  "ui.utrechtEndWar": "结束王位继承战争（和约）",
+  "ui.utrechtWait": "暂不结束（谈判窗口剩余 {n} 回合）",
+  "ui.dualFrontCrisis.concede": "暂时让步 — 王位争夺进度 −3；对手费用上限 +1",
+  "ui.dualFrontCrisis.escalate": "扩大战争 — 王位争夺进度 +1，合法性 −1，向抽牌堆加入 3 张财政负担；对手费用上限 +1",
+  "ui.successionTrack": "王位争夺进度",
+  "ui.successionStatus.title": "西班牙王位继承之争",
+  "ui.successionStatus.detail":
+    "哈布斯堡（奥地利系）与法国所支持的波旁支系，在欧洲诸条约与战场之间争夺西班牙遗产与海权；这是大同盟战争的焦点之一。",
+  "ui.opponentEvent.currentHand": "对手当前手牌",
+  "ui.opponentEvent.handEmpty": "当前尚无对手手牌。",
+  "ui.opponentEvent.lastPlay": "上一回合对手出牌（上年年末）",
+  "ui.opponentEvent.lastPlayNone": "上一对手阶段未出牌。",
+  "ui.opponentEvent.effectSummary": "盘面效果：{fx}",
+  "ui.opponentEvent.strengthTag": "实力{n}",
+  "ui.opponentEvent.lastPlayCombinedFx": "上年年末对手出牌合计盘面效果：{fx}",
+  "ui.opponentHabsburg": "对手：哈布斯堡",
+  "ui.opponentStrength": "对手费用上限",
   "ui.resolved": "已处理",
   "ui.harmful": "有害",
   "ui.opportunity": "机遇",
@@ -55,14 +74,14 @@ export const messagesZhCore = {
   "menu.title": "主菜单",
   "menu.resumeSave": "读取本地存档",
   "menu.levelLabel": "关卡",
-  "menu.levelBrief.firstMandate": "1661–1675（太阳王前期）：巩固王权、稳步扩张，在可控压力下建立统治基础。",
-  "menu.levelBrief.secondMandate": "1676–1700（太阳王后期）：在宗教与对外高压并行下，维持霸权并避免国家失序。",
   "menu.seedLabel": "随机种子（可选）",
   "menu.seedPlaceholder": "留空则随机",
   "menu.seedHint": "留空会随机生成种子；相同种子可复现开局牌库与事件。",
   "menu.seedInvalid": "请输入有效的有限数字。",
   "menu.startConfigured": "开始",
+  "menu.runCodeLoad": "从对局码加载",
   "menu.continueChapter2": "进入第二关",
+  "menu.continueChapter3": "进入第三关",
   "menu.refit.title": "过章卡池整编",
   "menu.refit.subtitle": "将第一关牌组重构为第二关高压治理牌组。",
   "menu.refit.adjustable": "继承基础牌",
@@ -73,6 +92,8 @@ export const messagesZhCore = {
   "menu.refit.startYear": "第二关起始年份：{year}",
   "menu.refit.europeAlertOn":
     "欧洲警觉：开启（进度条开局为 3/10。进度 1-5 时，额外事件概率=进度×20%；进度 6-10 时至少触发 1 个，且第二个事件概率=(进度-5)×20%）。",
+  "menu.refit.europeAlertOnLow":
+    "欧洲警觉：开启（承接局且第一关未发动遗产战争军事进攻：进度条从 1/10 起；年度额外事件判定规则同上）。",
   "menu.refit.europeAlertOff": "欧洲警觉：关闭（标准第二关压力）。",
   "menu.refit.totalCards": "总牌数：{current}（需在 {min}–{max}）",
   "menu.refit.totalCards.simple": "删牌后总牌数：{current}",
@@ -83,6 +104,13 @@ export const messagesZhCore = {
   "menu.refit.removeToggle": "删除这张牌",
   "menu.refit.invalid": "当前构筑未满足规则。",
   "menu.refit.start": "开始第二关",
+  "menu.refit.titleChapter3": "第三关牌库整编",
+  "menu.refit.mode.continuityChapter3": "模式：承接第二关胜利",
+  "menu.refit.mode.standaloneChapter3": "模式：主菜单直开第三关",
+  "menu.refit.continuityRuleChapter3":
+    "仅从第二关幸存牌库中移除 0–{max} 张牌。六张新牌加入起手手牌（见下）；其余牌洗入抽牌堆。",
+  "menu.refit.newCardsChapter3": "新牌（起手手牌）",
+  "menu.refit.startChapter3": "开始第三关",
   "menu.refit.back": "返回",
   "menu.refit.reset": "重置到进入整编时",
   "menu.refit.presetHistorical": "历史推荐构筑",
@@ -101,8 +129,8 @@ export const messagesZhCore = {
   "ui.actionLog": "行动记录",
   "ui.actionLog.empty": "本局尚无效果记录。",
   "ui.targets": "关卡目标 — {limit} 回合内：财政 {tT}，权力 {tP}，合法性 {tL}",
-  "ui.targets.secondMandateExtra":
-    "第二关胜利条件仅有两项：必须结束「欧洲警觉」，且至少存活至 1696 年（此前不会直接获胜）。",
+  "ui.levelLocaleFallback":
+    "该关卡尚未完全提供当前界面语言版本；关卡专属文案可能回退显示为英语。",
   "ui.language": "语言",
   "ui.lang.en": "English",
   "ui.lang.zh": "中文",
@@ -110,72 +138,16 @@ export const messagesZhCore = {
   "outcome.victory": "胜利 — 政权稳固。",
   "outcome.defeatLegitimacy": "失败 — 核心资源崩溃。",
   "outcome.defeatTime": "失败 — 时限内未达成目标。",
-  "card.funding.name": "王室征收",
-  "card.funding.background": "非常规征收与加急催缴——为宫廷燃眉之急凑出的短期现金。",
-  "card.funding.desc": "本回合 +1 经费（不增加财政能力）。若「剩余」用尽：财政 -1。",
-  "card.crackdown.name": "王室干预",
-  "card.crackdown.background": "敕令、驻军或警察行动——在流言与骚动已快于法律之处强行落实。",
-  "card.crackdown.desc": "解决一个有害事件。若「剩余」用尽：权力 -1。",
-  "card.fiscalBurden.name": "财政负担",
-  "card.fiscalBurden.background": "债务与紧急开支挤入账册，持续拖慢每个回合的财政回旋。",
-  "card.fiscalBurden.desc": "抽到时经费 -1。可支付 2 经费打出并消除（不会进入弃牌堆）。",
-  "card.antiFrenchContainment.name": "反法遏制",
-  "card.antiFrenchContainment.background":
-    "欧洲宫廷以关税、信用与海上执法协同掣肘法国，任何对抗都要先吞下政治代价。",
-  "card.antiFrenchContainment.desc":
-    "抽到时以 50%/50% 概率使权力 -1 或合法性 -1。可支付 max(1, floor(欧洲警觉进度/2)) 经费打出并消除（不会进入弃牌堆）。",
-  "card.reform.name": "行政整编",
-  "card.reform.background": "册籍与汇报线重划，官僚体系在王权下收得更紧。",
-  "card.reform.desc": "权力 +1（影响下回合抽牌阶段）。立即抽 1（手牌上限 12）。",
-  "card.ceremony.name": "凡尔赛庆典",
-  "card.ceremony.background": "仪仗、誓词与排场——让各派都看清谁仍站在中心。",
-  "card.ceremony.desc": "合法性 +1。",
-  "card.development.name": "皇家工厂",
-  "card.development.background": "科尔贝尔式的工场、港口与基建——靠王家产业抬升国富。",
-  "card.development.desc": "财政 +1。",
-  "card.suppressHuguenots.name": "镇压胡格诺派",
-  "card.suppressHuguenots.background": "王权动员军警与地方法庭，清剿残余胡格诺网络。",
-  "card.suppressHuguenots.desc":
-    "临时牌。费用 3。打出后使「遏制胡格诺-剩余势力」-1；降到 0 时移除该状态，并清除所有「镇压胡格诺派」。",
-  "event.budgetStrain.name": "宫廷超支",
-  "event.budgetStrain.desc": "凡尔赛扩建与宫廷礼仪再度推高开支。支付 2 经费，否则财政 -1。",
-  "event.publicUnrest.name": "巴黎骚动",
-  "event.publicUnrest.desc": "面包价与流言挤满街头。仅可用干预，否则合法性 -1。",
-  "event.administrativeDelay.name": "官僚拖延",
-  "event.administrativeDelay.desc": "地方官员拖延执行宫廷新令。支付 1 经费，否则下一回合少抽 1（至少仍抽 1）。",
-  "event.tradeOpportunity.name": "殖民贸易机遇",
-  "event.tradeOpportunity.desc": "航线与商人请求王室支持。支付 1 经费获得财政 +1。忽略无惩罚。",
-  "event.powerVacuum.name": "地方总督坐大",
-  "event.powerVacuum.desc": "总督绕过宫廷自行其是。支付 2 经费或使用干预，否则下一年槽位升级为「王权危机」。",
-  "event.majorCrisis.name": "王权危机",
-  "event.majorCrisis.desc": "仅可用干预解决。带有「持续」标签：若未处理将留到下一回合，并在每回合继续触发合法性 -1 与抽牌惩罚，直到被解决。",
-  "event.politicalGridlock.name": "贵族阻挠",
-  "event.politicalGridlock.desc":
-    "大贵族联合反对新税方案。支付 2 经费，否则获得「权力流失」3 回合（每回合抽牌 -1，仍至少抽 1）。",
-  "status.powerLeak.name": "权力流失",
-  "status.powerLeak.history": "地方与派系掣肘上升，中央命令的执行效率持续下滑。",
-  "status.drawPenalty.name": "疲态",
-  "status.drawPenalty.history": "税制重估会在短期内增加执行摩擦与反馈滞后。",
-  "status.retentionBoost.name": "荐任红利",
-  "status.retentionBoost.history": "荐任网络强化了宫廷对官僚体系的连续控制。",
-  "status.royalBan.name": "王室牌禁用",
-  "status.royalBan.history": "宫廷信誉受损时，王室命令工具会暂时失灵。",
-  "status.grainReliefDrawBoost.name": "赈济调度",
-  "status.grainReliefDrawBoost.history": "赈济组织网络可短期提升地方调度效率。",
-  "status.grainReliefLegitimacyBoost.name": "赈济信任",
-  "status.grainReliefLegitimacyBoost.history": "及时赈济能在短时间修复民众对政权的信任。",
-  "status.religiousTolerance.name": "宗教宽容（永久）",
-  "status.religiousTolerance.history": "宽容路线缓和了统治强度，但宗派摩擦会周期性回潮。",
-  "status.huguenotContainment.name": "遏制胡格诺-剩余势力",
-  "status.huguenotContainment.history": "强力镇压依赖连续清剿行动与高压维稳成本。",
-  "status.huguenotContainment.hint": "该状态存在时，第二关无法胜利。",
-  "event.religiousTension.name": "宗教矛盾",
-  "event.religiousTension.desc": "宗教社群冲突再起。支付 2 经费平息，否则合法性 -1。",
-  "card.tag.royal": "王室",
-  "card.tag.temp": "临时",
-  "card.tag.extra": "额外",
-  "card.tag.inflation": "通胀",
-  "card.tag.remainingUses": "剩余{remaining}/{total}",
+  "outcome.defeatSuccession": "失败 — 王位争夺进度跌至谷底。",
+  "outcome.successionTier.bourbon": "结局：波旁系在最终账面上占优。",
+  "outcome.successionTier.compromise": "结局：双方主张形成妥协均势。",
+  "outcome.successionTier.habsburg": "结局：哈布斯堡系在最终账面上占优。",
+  "outcome.utrechtVictoryEpilogue.bourbon":
+    "《乌得勒支和约》系列安排落地后，公开交战让位于条文：欧洲在防止法西合并的前提下接受波旁留驻马德里，法国以让渡最坏的合并想象换取可辩护的王朝成果。",
+  "outcome.utrechtVictoryEpilogue.compromise":
+    "和约并未给出单方完胜：遗产被条约重新切块，各方在承认与颜面之间折衷——法国保住西班牙继承的底线空间，却也背负长期均势约束。",
+  "outcome.utrechtVictoryEpilogue.habsburg":
+    "纸面和平折射大同盟压力：波旁虽保西班牙王位，却须在帝国法统与海上秩序前吞下更多让步；继承战的账单将以战略绳套的形式延续。",
   "log.cardPlayed.title": "[第 {turn} 年] {card} — 支付 {cost} {funding}。",
   "log.cardPlayed.effectsLabel": "效果：",
   "log.cardPlayed.noEffects": "无列表效果。",
@@ -183,10 +155,16 @@ export const messagesZhCore = {
   "log.effect.gainFunding": "{funding} +{amount}",
   "log.effect.drawCards": "抽牌 {count}",
   "log.effect.scheduleNextTurnDrawModifier": "下一年抽牌修正 {delta}",
+  "log.effect.opponentNextTurnDrawModifier": "对手下一年摸牌修正 {delta}",
   "log.effect.scheduleDrawModifiers": "后续多年抽牌修正 {deltas}",
   "log.effect.setCardTagBlocked": "禁用 {tag} 牌（{turns} 回合）",
   "log.effect.addPlayerStatus": "{status}（{turns} 回合）",
   "log.effect.addCardsToDeck": "向抽牌堆加入 {count} 张{card}",
+  "log.effect.modSuccessionTrack": "王位争夺进度 {delta}",
+  "log.effect.modOpponentStrength": "哈布斯堡对手费用上限 {delta}",
+  "log.opponentHabsburgPlay.title":
+    "[第 {turn} 年] 哈布斯堡阶段：打出合计 {cost} 点对手费用（已减免 {discount}）。",
+  "log.opponentHabsburgDraw.title": "[第 {turn} 年] 哈布斯堡摸牌 {n} 张。",
   "log.eventFundSolved": "[第 {turn} 年] {event}。已支付 {paid} {funding}。{treasury}",
   "log.eventFundSolved.treasury": "财政 +{gain}。",
   "log.eventCrackdownSolved": "[第 {turn} 年] 以干预清除 {event}（已花费 {paid} {funding}）。",
@@ -200,35 +178,53 @@ export const messagesZhCore = {
     "[第 {turn} 年] {event} — 选择进攻，支付 {paid} {funding}；后果：{outcome}。",
   "log.eventLocalWarChoice.appease":
     "[第 {turn} 年] {event} — 选择绥靖；后果：{legitimacy} -1。",
-  "log.eventLocalWarChoice.attackOutcome.success": "{power} +1，{legitimacy} +1",
-  "log.eventLocalWarChoice.attackOutcome.stalemate": "战果有限，本年无额外资源变化",
-  "log.eventLocalWarChoice.attackOutcome.setback": "{power} -1",
+  "log.eventDualFrontCrisis.concede":
+    "[第 {turn} 年] {event} — 选择暂时让步；王位争夺进度 −3；对手费用上限 +1。",
+  "log.eventDualFrontCrisis.escalate":
+    "[第 {turn} 年] {event} — 选择扩大战争；王位争夺进度 +1，合法性 −1，向抽牌堆加入 3 张财政负担；对手费用上限 +1。",
+  "log.eventLocalizedSuccessionWar.resolve":
+    "[第 {turn} 年] {event}。已支付 {paid} {funding}。{track} {delta}（随机）。",
+  "log.eventLocalWarChoice.attackOutcome.success":
+    "{power} +1，{legitimacy} +1。前线捷报短暂提振宫廷威望，边境诸邦也暂缓试探法国底线。",
+  "log.eventLocalWarChoice.attackOutcome.stalemate":
+    "战果有限，本年无额外资源变化。围城与补给线拉锯重演了“大战间隙小战”的消耗逻辑，声势有余而收益不足。",
+  "log.eventLocalWarChoice.attackOutcome.setback":
+    "{power} -1。突袭受挫后，地方军政协调暴露裂缝，列强更确信法国难以长期维持高压动员。",
   "log.eventNineYearsWarCampaign.title":
     "[第 {turn} 年] {event}：以「{method}」推进战事（支付 {paid} {funding}）——{outcome}。",
   "log.eventNineYearsWarCampaign.method.funding": "经费",
   "log.eventNineYearsWarCampaign.method.intervention": "干预",
-  "log.eventNineYearsWarCampaign.outcome.decisiveVictory": "决定性胜利，战争压力终结",
-  "log.eventNineYearsWarCampaign.outcome.stalemate": "僵持不下，前线局势未改",
-  "log.eventNineYearsWarCampaign.outcome.limitedGains": "取得局部战果，{legitimacy} +1",
+  "log.eventNineYearsWarCampaign.outcome.decisiveVictory":
+    "决定性胜利，战争压力终结。自莱茵到低地的战线终于松动，奥格斯堡同盟短期内难再组织同等强度的协同攻势。",
+  "log.eventNineYearsWarCampaign.outcome.stalemate":
+    "僵持不下，前线局势未改。欧洲均势博弈继续把冲突拖入财政与信用的耐力战，谁都无法迅速脱身。",
+  "log.eventNineYearsWarCampaign.outcome.limitedGains":
+    "取得局部战果，{legitimacy} +1。局部胜利稳住了国内观感，但尚不足以改写九年战争的长期消耗格局。",
   "log.eventNineYearsWarCampaign.history":
     "史实背景：九年战争（1688–1697）从莱茵兰、低地到海上战场全面延伸，长期动员几乎压垮各国财政。",
   "log.eventNineYearsWarFiscalBurden.title":
     "[第 {turn} 年] {event} 在年末仍未结束：向抽牌堆加入 1 张 {card}。",
   "log.eventNineYearsWarFiscalBurden.history":
     "史实背景：长期战争需要反复举债、拖欠与加税，财政负担会持续累积并反噬治理能力。",
+  "log.huguenotResurgence.title":
+    "[第 {turn} 年] 「遏制胡格诺-剩余势力」仍在场：胡格诺地下网络借宽容与逃亡渠道重新结社。向抽牌堆加入 {addedCount} 张「{card}」，剩余势力变为 {remainingStacks}。",
+  "log.huguenotResurgence.history":
+    "史实背景：1685 年《枫丹白露敕令》颁布后，胡格诺派被迫地下化或外逃，但其聚会、印刷与互助网络在乡野与边境反复重建，每隔数年就需新一轮镇压才能压住。",
   "log.drawCards.title": "[第 {turn} 年] 本回合抓取 {count} 张牌：{cards}。",
   "log.drawOverflowDiscarded.title":
     "[第 {turn} 年] 手牌已达上限；将剩余未摸的 {count} 张牌直接置入弃牌堆：{cards}。",
   "log.europeAlertProgressShift":
     "[第 {turn} 年] 欧洲警觉进度调整 {from}→{to}（k={k}，触发概率 {pct}%）。",
-  "log.info.firstMandateInflationActivated":
-    "[第 {turn} 年] 科尔贝尔改革与凡尔赛宫廷同步扩张，王权机器越强，维持它的行政与仪式成本也越高。已触发第一关「卡牌通胀」：此后仅带「通胀」标签的牌，在从弃牌堆洗回抽牌堆时才会叠加费用。",
   "log.info.chapter2EuropeAlertOn":
-    "[第 {turn} 年] 第二关以「欧洲警觉：开启」开局：警觉进度从 3/10 起，并据此判定每年额外事件（1-5：进度×20%；6-10：保底 1 个并可能第 2 个）。",
+    "[第 {turn} 年] 遗产战争与随后的外交摊牌（如 1668 年前后《亚琛和约》缔结之际）已让欧陆诸国切身感到路易十四在低地与继承问题上的决心：停战并未消解疑惧，荷兰、帝国与海上强国之间的串联从临时应急转向更长久的相互戒备——「欧洲警觉」在此刻已是宫廷间心照不宣的现实。",
+  "log.info.chapter2EuropeAlertContinuityLow":
+    "[第 {turn} 年] 法国在遗产与边境争端中更多依靠外交斡旋与边境威慑，而未把欧陆拖入全面军事摊牌；邻国仍紧盯凡尔赛的每一步，使节、军备与贸易杠杆暗中加码，但那种因大战惨败或领土剧变而瞬间抬高的围堵烈度尚未到来——戒备像余烬，而非燎原之火（「欧洲警觉」仍以较低烈度笼罩边境）。",
   "log.info.chapter2EuropeAlertOff":
-    "[第 {turn} 年] 第二关以「欧洲警觉：关闭」开局：不会进行欧洲警觉额外事件判定。",
+    "[第 {turn} 年] 在这一叙事起点上，外部对法兰西的牵制尚未聚合成制度化围堵：和约与密约仍在试探，反法大同盟的动员逻辑尚未成为欧陆日常，宫廷文书里更多是观望而非摊牌。",
+  "log.info.chapter3ContinuityIntro":
+    "[第 {turn} 年] 第三关开局：继承第二关的资源、历法年与幸存牌库；另有六张新牌加入起手手牌。历法进入 1701 年时将按脚本出现王位继承危机。",
   "log.info.antiFrenchSentimentActivated":
-    "[第 {turn} 年]「反法情绪」升温：当“权力+财政”大于 20 时，「欧洲警觉」相关且需经费解决的事件费用会先 +1，之后每再多满 5 点再 +1。",
+    "[第 {turn} 年]「反法情绪」升温：当“权力+财政”大于 20 时，「欧洲警觉」相关且需经费解决的事件费用会先 +1，之后每再多满 5 点再 +1。该状态会显示「情绪x」（x=当前整个牌库中「反法遏制」数量）；且在状态持续期间，「里斯维克和约」费用还会额外 +2x。",
   "log.info.antiFrenchSentimentEnded":
     "[第 {turn} 年]「反法情绪」缓和：当“权力+财政”回到 20 或以下时，由该状态带来的额外事件费用加成被取消。",
   "log.info.cardTag.royal": "[第 {turn} 年] 标签说明「王室」：该牌属于王室工具，部分事件只能靠此类手段处理。",
@@ -237,6 +233,12 @@ export const messagesZhCore = {
     "[第 {turn} 年] 标签说明「额外」：该牌由其他效果临时加入，不会出现在过关整编中，并会在本关结束时从牌堆移除。",
   "log.info.cardTag.inflation":
     "[第 {turn} 年] 标签说明「通胀」：当卡牌通胀机制生效后，该牌每次经过洗牌回抽都会叠加费用。",
+  "log.info.cardTag.defiance":
+    "[第 {turn} 年] 标签说明「抗命」：当手牌中紧邻右侧为「良心保留」时，本牌获得抗命且不可打出。",
+  "log.info.cardTag.consume":
+    "[第 {turn} 年] 标签说明「消耗」：打出后从牌库循环中移除，不会进入弃牌堆，也不会再被洗回抽牌堆。",
+  "log.info.cardTag.opponent":
+    "[第 {turn} 年] 标签说明「对手」：该牌仅用于哈布斯堡对手阶段，不能从玩家手牌打出。",
   "log.info.cardUse.remainingUses": "[第 {turn} 年] 标签说明「剩余」：该卡可用次数为 X/Y；每次打出会消耗 1 次，用尽后将从牌库循环中移除。",
   "log.info.cardUse.depleted.crackdownPenalty":
     "[第 {turn} 年]「王室干预」次数耗尽（0/3），已从牌库循环中移除；王室强制力受损，权力 -1。",
@@ -250,6 +252,10 @@ export const messagesZhCore = {
     "[第 {turn} 年] 抓到「反法遏制」并触发：权力 -1。",
   "log.info.cardDraw.antiFrenchContainmentLegitimacyLoss":
     "[第 {turn} 年] 抓到「反法遏制」并触发：合法性 -1。",
+  "log.info.nantesPolicy.toleranceNoFontainebleau":
+    "[第 {turn} 年] 你选择了宗教宽容路线：宫廷暂不颁布 1685 年《枫丹白露敕令》式的全面撤保政策，地方紧张有所缓和，但宗派争议将长期回潮。",
+  "log.info.nantesPolicy.crackdownFontainebleauIssued":
+    "[第 {turn} 年] 你选择了严厉镇压路线：王权转向《枫丹白露敕令》式政策，撤销新教群体既有保障并强化驱逐与改宗压力，短期服从上升但长期治理成本加重。",
   "log.info.eventTag.harmful": "[第 {turn} 年] 标签说明「有害」：若年末仍未解决，会触发惩罚。",
   "log.info.eventTag.opportunity": "[第 {turn} 年] 标签说明「机遇」：属于可投资机会，不处理通常不会受到惩罚。",
   "log.info.eventTag.historical":
@@ -259,4 +265,11 @@ export const messagesZhCore = {
   "log.info.eventTag.resolved": "[第 {turn} 年] 标签说明「已解决」：该事件已在本年被处理，不会在年末触发惩罚。",
   "help.short":
     "财政决定每回合转入的经费；经费用于打牌与事件处理。权力决定抽牌次数。合法性决定回合末可保留手牌数。未处理的有害事件依次结算。",
+  "runCode.label": "对局码",
+  "runCode.charCount": "{count} 字符",
+  "runCode.copy": "复制",
+  "runCode.copied": "已复制",
+  "runCode.loadPlaceholder": "粘贴一段十六进制对局码以加载…",
+  "runCode.load": "加载",
+  "runCode.invalid": "无效的对局码：{error}",
 } as const;

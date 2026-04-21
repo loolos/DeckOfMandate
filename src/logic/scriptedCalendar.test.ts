@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { createInitialState } from "../app/initialState";
 import { levelContentByLevelId } from "../data/levelContent";
 import { getLevelDef } from "../data/levels";
-import { EMPTY_EVENT_SLOTS } from "../types/event";
+import { EMPTY_EVENT_SLOTS } from "../levels/types/event";
 import type { GameState } from "../types/game";
 import {
   applyScriptedCalendarPhase,
@@ -33,6 +33,20 @@ describe("scriptedCalendar", () => {
     const s = applyScriptedCalendarPhase(stateAtTurn(turn));
     const placed = Object.values(s.slots).find((e) => e?.templateId === cfg.templateId);
     expect(placed).toBeDefined();
+  });
+
+  it("injects nine years war on fixed year 1689 and writes historical log entry", () => {
+    const cfg = levelContentByLevelId.secondMandate.scriptedCalendarEvents.find(
+      (it) => it.templateId === "nineYearsWar",
+    );
+    if (!cfg) throw new Error("missing nineYearsWar scripted config");
+    const cal = getLevelDef("secondMandate").calendarStartYear;
+    const turn = cfg.presenceStartYear - cal + 1;
+    const s0 = createInitialState(4242, "secondMandate");
+    const s1 = applyScriptedCalendarPhase({ ...s0, turn, phase: "action", slots: { ...EMPTY_EVENT_SLOTS } });
+    const placed = Object.values(s1.slots).find((e) => e?.templateId === "nineYearsWar");
+    expect(placed).toBeDefined();
+    expect(s1.actionLog.some((entry) => entry.kind === "eventNineYearsWarBegins")).toBe(true);
   });
 
   it("clears unresolved scripted row after presenceEndYear", () => {

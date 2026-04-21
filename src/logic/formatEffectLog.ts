@@ -1,7 +1,7 @@
 import { getStatusTemplate } from "../data/statusTemplates";
 import { getCardTemplate } from "../data/cards";
 import { resourceLabelWithIcon } from "./icons";
-import type { Effect } from "../types/effect";
+import type { Effect } from "../levels/types/effect";
 import type { MessageKey } from "../locales";
 
 export function formatEffectLogLine(
@@ -14,6 +14,11 @@ export function formatEffectLogLine(
         resource: resourceLabelWithIcon(effect.resource, t(`resource.${effect.resource}` as MessageKey)),
         delta: effect.delta >= 0 ? `+${effect.delta}` : String(effect.delta),
       });
+    case "modSuccessionTrack": {
+      const d = effect.delta;
+      const signed = d >= 0 ? `+${d}` : String(d);
+      return t("log.effect.modSuccessionTrack", { delta: signed });
+    }
     case "gainFunding":
       return t("log.effect.gainFunding", {
         amount: effect.amount,
@@ -25,6 +30,16 @@ export function formatEffectLogLine(
       const d = effect.delta;
       const signed = d >= 0 ? `+${d}` : String(d);
       return t("log.effect.scheduleNextTurnDrawModifier", { delta: signed });
+    }
+    case "opponentNextTurnDrawModifier": {
+      const d = effect.delta;
+      const signed = d >= 0 ? `+${d}` : String(d);
+      return t("log.effect.opponentNextTurnDrawModifier", { delta: signed });
+    }
+    case "modOpponentStrength": {
+      const d = effect.delta;
+      const signed = d >= 0 ? `+${d}` : String(d);
+      return t("log.effect.modOpponentStrength", { delta: signed });
     }
     case "scheduleDrawModifiers":
       return t("log.effect.scheduleDrawModifiers", {

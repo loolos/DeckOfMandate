@@ -1,5 +1,5 @@
 import { getCardTemplate } from "../data/cards";
-import type { CardTemplateId } from "../types/card";
+import type { CardTemplateId } from "../levels/types/card";
 import type { GameState } from "../types/game";
 import { applyEffects, enforceLegitimacy } from "./applyEffects";
 

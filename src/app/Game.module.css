@@ -45,6 +45,13 @@
   overflow-wrap: anywhere;
 }
 
+.timeStepHint {
+  margin: 0.25rem 0 0;
+  font-size: 0.78rem;
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+
 .help {
   font-size: 0.9rem;
   color: var(--muted);
@@ -182,6 +189,46 @@
   display: block;
   height: 100%;
   background: linear-gradient(90deg, #f59e0b, #ef4444);
+}
+
+.successionProgressTrack {
+  width: 100%;
+  max-width: 14rem;
+  height: 0.38rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--border) 85%, #0d1117);
+  overflow: hidden;
+}
+
+.successionProgressFill {
+  display: block;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, #7c3aed 75%, var(--muted)),
+    color-mix(in srgb, #0ea5e9 80%, var(--muted))
+  );
+}
+
+.opponentHabsburgSections {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  margin-top: 0.35rem;
+}
+
+.opponentHandList {
+  margin: 0;
+  padding-left: 1.1rem;
+  font-size: 0.88rem;
+  line-height: 1.45;
+}
+
+.opponentLastPlayBlock {
+  padding: 0.45rem 0.5rem;
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--muted) 10%, transparent);
+  margin-top: 0.25rem;
 }
 
 .resourceStack {

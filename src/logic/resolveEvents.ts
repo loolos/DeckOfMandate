@@ -1,9 +1,11 @@
 import { getEventTemplate, isContinuedCrisis } from "../data/events";
 import { getLevelContent } from "../data/levelContent";
-import { EVENT_SLOT_ORDER, type SlotId } from "../types/event";
+import { EVENT_SLOT_ORDER, type SlotId } from "../levels/types/event";
 import type { GameState } from "../types/game";
 import { appendActionLog } from "./actionLog";
 import { applyEffects, enforceLegitimacy } from "./applyEffects";
+import { completeSuccessionCrisisAndRevealOpponent, stateAfterUtrechtTreatyEndsWar } from "./opponentHabsburg";
+import { THIRD_MANDATE_LEVEL_ID } from "./thirdMandateConstants";
 
 const SLOTS: readonly SlotId[] = EVENT_SLOT_ORDER;
 
@@ -33,6 +35,29 @@ export function resolveEndOfYearPenalties(state: GameState): GameState {
     }
     if (ev.resolved) continue;
     const tmpl = getEventTemplate(ev.templateId);
+    if (s.levelId === THIRD_MANDATE_LEVEL_ID && ev.templateId === "successionCrisis") {
+      s = appendActionLog(s, {
+        kind: "eventYearEndPenalty",
+        slot,
+        templateId: ev.templateId,
+        effects: tmpl.penaltiesIfUnresolved,
+      });
+      s = applyEffects(s, tmpl.penaltiesIfUnresolved);
+      s = enforceLegitimacy(s);
+      if (s.outcome !== "playing") return s;
+      s = completeSuccessionCrisisAndRevealOpponent(s, slot);
+      continue;
+    }
+    if (s.levelId === THIRD_MANDATE_LEVEL_ID && ev.templateId === "utrechtTreaty") {
+      const raw = s.utrechtTreatyCountdown ?? 6;
+      const next = raw - 1;
+      if (next <= 0) {
+        s = stateAfterUtrechtTreatyEndsWar(s, slot);
+      } else {
+        s = { ...s, utrechtTreatyCountdown: next };
+      }
+      continue;
+    }
     if (schedulers.includes(ev.templateId)) {
       if (ev.templateId === "powerVacuum") {
         s = appendActionLog(s, { kind: "eventPowerVacuumScheduled", slot, templateId: "powerVacuum" });
@@ -50,20 +75,6 @@ export function resolveEndOfYearPenalties(state: GameState): GameState {
       s = applyEffects(s, tmpl.penaltiesIfUnresolved);
       s = enforceLegitimacy(s);
       if (s.outcome !== "playing") return s;
-    }
-    if (ev.templateId === "leagueOfAugsburg") {
-      const upkeep = Math.floor(s.europeAlertProgress / 2);
-      if (upkeep > 0) {
-        if (s.resources.funding >= upkeep) {
-          s = { ...s, resources: { ...s.resources, funding: s.resources.funding - upkeep } };
-        } else {
-          s = applyEffects(s, [
-            { kind: "modResource", resource: "power", delta: -1 },
-            { kind: "modResource", resource: "treasuryStat", delta: -1 },
-          ]);
-        }
-      }
-      continue;
     }
     if (!isContinuedCrisis(tmpl)) {
       s = { ...s, slots: { ...s.slots, [slot]: null } };

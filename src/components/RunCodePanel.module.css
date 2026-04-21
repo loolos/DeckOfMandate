@@ -1,0 +1,128 @@
+.runCodeSection {
+  margin-top: 1rem;
+  padding-top: 0.6rem;
+  border-top: 1px solid color-mix(in srgb, var(--border) 70%, transparent);
+}
+
+.runCodeSectionStartMenu {
+  margin-top: 0.85rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border);
+}
+
+.runCodeToggle {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.3rem 0.4rem;
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  font-size: 0.78rem;
+  line-height: 1.3;
+  cursor: pointer;
+  text-align: left;
+}
+
+.runCodeToggle:hover {
+  color: var(--text);
+}
+
+.runCodeToggleStartMenu {
+  padding: 0.45rem 0.55rem;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: color-mix(in srgb, var(--panel) 88%, #000);
+  font-size: 0.85rem;
+}
+
+.runCodeToggleLabel {
+  font-weight: 600;
+}
+
+.runCodeToggleMeta {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.runCodeBody {
+  margin-top: 0.4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.runCodeRow {
+  display: flex;
+  align-items: stretch;
+  gap: 0.45rem;
+}
+
+.runCodeOutput,
+.runCodeInput {
+  flex: 1;
+  min-width: 0;
+  min-height: 4.4rem;
+  max-height: 10rem;
+  padding: 0.45rem 0.55rem;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: color-mix(in srgb, var(--panel) 92%, #000);
+  color: var(--text);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.78rem;
+  line-height: 1.4;
+  resize: vertical;
+  word-break: break-all;
+}
+
+.runCodeOutput {
+  color: color-mix(in srgb, var(--text) 90%, var(--muted));
+}
+
+.runCodeButton {
+  flex: 0 0 auto;
+  align-self: flex-start;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: #1e2430;
+  color: var(--text);
+  padding: 0.5rem 0.75rem;
+  min-height: 2.5rem;
+  cursor: pointer;
+}
+
+.runCodeButton:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.runCodeError {
+  margin: 0;
+  font-size: 0.78rem;
+  color: #ffb4b4;
+  word-break: break-word;
+}
+
+@media (max-width: 760px) {
+  .runCodeRow {
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  .runCodeButton {
+    align-self: stretch;
+  }
+
+  .runCodeToggle {
+    font-size: 0.74rem;
+  }
+
+  .runCodeOutput,
+  .runCodeInput {
+    font-size: 0.72rem;
+  }
+}
