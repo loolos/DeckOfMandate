@@ -265,6 +265,7 @@ function buildContinuityLevel2State(draft: Level2StartDraft): GameState {
     opponentNextTurnDrawModifier: 0,
     opponentLastPlayedTemplateIds: [],
     successionOutcomeTier: null,
+    utrechtSettlementTier: null,
   };
   const europeAlertIntroKey =
     draft.mode === "continuity" && !draft.warOfDevolutionAttacked

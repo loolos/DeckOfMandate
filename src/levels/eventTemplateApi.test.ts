@@ -28,10 +28,13 @@ describe("getEventRollWeight", () => {
     expect(getEventRollWeight(atZero, "bavarianCourtRealignment")).toBe(0);
     expect(getEventRollWeight(atZero, "portugueseTariffNegotiation")).toBe(0);
     expect(getEventRollWeight(atZero, "imperialElectorsMood")).toBe(0);
+    expect(getEventRollWeight(atZero, "localizedSuccessionWar")).toBe(0);
     expect(getEventRollWeight(atZero, "taxResistance")).toBe(2);
     const moved = { ...atZero, successionTrack: -1 };
     expect(getEventRollWeight(moved, "bavarianCourtRealignment")).toBe(2);
+    expect(getEventRollWeight(moved, "localizedSuccessionWar")).toBe(3);
     expect(shouldDiscardCh3SuccessionGatedProceduralHead(atZero, "bavarianCourtRealignment")).toBe(true);
+    expect(shouldDiscardCh3SuccessionGatedProceduralHead(atZero, "localizedSuccessionWar")).toBe(true);
     expect(shouldDiscardCh3SuccessionGatedProceduralHead(moved, "bavarianCourtRealignment")).toBe(false);
   });
 

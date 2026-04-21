@@ -11,8 +11,10 @@ export type Effect =
   | { kind: "gainFunding"; amount: number }
   | { kind: "drawCards"; count: number }
   | { kind: "scheduleNextTurnDrawModifier"; delta: number }
-  /** Chapter 3 opponent phase only: adjusts opponent's next `beginYear` draw count (base 2). */
+  /** Chapter 3 opponent phase only: adjusts opponent's next `beginYear` draw count (base 1). */
   | { kind: "opponentNextTurnDrawModifier"; delta: number }
+  /** Chapter 3: adjusts Habsburg opponent cost budget (`opponentStrength`). */
+  | { kind: "modOpponentStrength"; delta: number }
   | { kind: "scheduleDrawModifiers"; deltas: number[] }
   | { kind: "addPlayerStatus"; templateId: StatusTemplateId; turns: number }
   | { kind: "addCardsToDeck"; templateId: CardTemplateId; count: number; placement?: CardPlacement };

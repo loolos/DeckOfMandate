@@ -130,6 +130,17 @@ export function normalizeGameState(state: GameState): GameState {
   if (s.successionOutcomeTier === undefined) {
     s = { ...s, successionOutcomeTier: null };
   }
+  if (
+    s.utrechtSettlementTier != null &&
+    s.utrechtSettlementTier !== "habsburg" &&
+    s.utrechtSettlementTier !== "compromise" &&
+    s.utrechtSettlementTier !== "bourbon"
+  ) {
+    s = { ...s, utrechtSettlementTier: null };
+  }
+  if (s.utrechtSettlementTier === undefined) {
+    s = { ...s, utrechtSettlementTier: null };
+  }
   if (!s.cardUsesById || typeof s.cardUsesById !== "object") {
     s = { ...s, cardUsesById: {} };
   }

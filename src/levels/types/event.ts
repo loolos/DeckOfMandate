@@ -40,7 +40,9 @@ export type EventTemplateId =
   | "utrechtTreaty"
   | "bavarianCourtRealignment"
   | "portugueseTariffNegotiation"
-  | "imperialElectorsMood";
+  | "imperialElectorsMood"
+  | "localizedSuccessionWar"
+  | "dualFrontCrisis";
 
 export type EventSolve =
   | { kind: "funding"; amount: number }
@@ -57,7 +59,9 @@ export type EventSolve =
   /** Chapter 3: permanent opponent row — not solved with funding. */
   | { kind: "opponentDisplay" }
   /** Chapter 3: funding scales with ceil(treasuryStat/4) at solve time. */
-  | { kind: "fundingTreasuryQuarterCeil" };
+  | { kind: "fundingTreasuryQuarterCeil" }
+  /** Chapter 3: 1708 dual-front crisis — concede or escalate (dedicated actions). */
+  | { kind: "dualFrontCrisisChoice" };
 
 /** Fixed event columns (max 10); procedural random rolls only fill {@link PROCEDURAL_EVENT_SLOT_ORDER}. */
 export const EVENT_SLOT_ORDER = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"] as const;
@@ -86,6 +90,10 @@ export type EventTemplate = {
   onFundSolveEffects?: readonly Effect[];
   /** Applied in {@link EVENT_SLOT_ORDER} at event resolution if still active and harmful. */
   penaltiesIfUnresolved: Effect[];
+  /**
+   * When true, Crackdown / diplomatic intervention cannot clear this event (funding or scripted choices only).
+   */
+  crackdownImmune?: boolean;
   /**
    * If set to "continued", a harmful unresolved crisis stays on the slot after end-of-year
    * handling (penalties and/or engine scheduling). Otherwise the slot is cleared after that

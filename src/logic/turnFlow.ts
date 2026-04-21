@@ -238,8 +238,13 @@ function clearResolvedSlots(state: GameState): GameState {
       slots[slot] = { ...ev, resolved: false };
       continue;
     }
-    /** Persistent UI slot: remains until the run ends (resolved only marks "no player action"). */
-    if (ev.templateId === "opponentHabsburg") continue;
+    /** Persistent row until Utrecht ends the war; then cleared like other resolved rows. */
+    if (ev.templateId === "opponentHabsburg") {
+      if (state.warEnded) {
+        slots[slot] = null;
+      }
+      continue;
+    }
     slots[slot] = null;
   }
   return { ...state, slots };

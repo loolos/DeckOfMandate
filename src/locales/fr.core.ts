@@ -37,6 +37,9 @@ export const messagesFrCore: Record<keyof typeof messagesEnCore, string> = {
   "ui.successionCrisisDecline": "Ne pas payer — départ à −1 sur la piste",
   "ui.utrechtEndWar": "Mettre fin à la guerre de succession (traité)",
   "ui.utrechtWait": "Attendre ({n} tour(s) restant(s) à la fenêtre)",
+  "ui.dualFrontCrisis.concede": "Céder provisoirement — piste −3 ; budget adverse +1",
+  "ui.dualFrontCrisis.escalate":
+    "Élargir la guerre — piste +1, légitimité −1, +3 Charges fiscales ; budget adverse +1",
   "ui.successionTrack": "Piste de succession",
   "ui.opponentHabsburg": "Adversaire : Habsbourg",
   "ui.opponentStrength": "Budget adversaire",
@@ -135,6 +138,12 @@ export const messagesFrCore: Record<keyof typeof messagesEnCore, string> = {
   "outcome.successionTier.bourbon": "Règlement : avantage Bourbon dans le bilan final.",
   "outcome.successionTier.compromise": "Règlement : équilibre de compromis entre prétentions.",
   "outcome.successionTier.habsburg": "Règlement : avantage Habsbourg dans le bilan final.",
+  "outcome.utrechtVictoryEpilogue.bourbon":
+    "Après la série d’Utrecht, le canon cède au parchemin : l’Europe accepte une Espagne bourbonienne sous garde-fous, et la France échange la peur d’une union catastrophique contre une victoire dynastique défendable.",
+  "outcome.utrechtVictoryEpilogue.compromise":
+    "Les traités ferment les hostilités sans knock-out net : l’héritage est redecoupé, les visages sauvés — la France gagne de l’air, pas un chèque en blanc, sur la succession espagnole.",
+  "outcome.utrechtVictoryEpilogue.habsburg":
+    "La paix reflète la pression de coalition : Philippe peut garder Madrid, mais Versailles accepte des brides plus serrées — freins impériaux et maritimes qui survivront au dernier tonnerre de la guerre de succession.",
   "log.europeAlertProgressShift":
     "[Tour {turn}] Alerte Europe ajustée {from}→{to} (k={k}, chance de déclenchement {pct}%).",
   "log.eventLocalWarChoice.attackOutcome.success":
@@ -191,4 +200,11 @@ export const messagesFrCore: Record<keyof typeof messagesEnCore, string> = {
   "runCode.loadPlaceholder": "Collez un code hexadécimal pour charger…",
   "runCode.load": "Charger",
   "runCode.invalid": "Code invalide : {error}",
+  "log.effect.modOpponentStrength": "Budget de l’adversaire Habsbourg {delta}",
+  "log.eventDualFrontCrisis.concede":
+    "[Tour {turn}] {event} — céder provisoirement ; piste −3 ; budget adverse +1.",
+  "log.eventDualFrontCrisis.escalate":
+    "[Tour {turn}] {event} — élargir la guerre ; piste +1, légitimité −1, +3 Charges fiscales ; budget adverse +1.",
+  "log.eventLocalizedSuccessionWar.resolve":
+    "[Tour {turn}] {event}. Payé {paid} {funding}. {track} {delta} (aléatoire).",
 };

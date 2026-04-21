@@ -242,6 +242,7 @@ export function buildLevel3StateFromDraft(draft: Level3StartDraft): GameState {
     opponentNextTurnDrawModifier: 0,
     opponentLastPlayedTemplateIds: [],
     successionOutcomeTier: null,
+    utrechtSettlementTier: null,
   };
 
   if (draft.mode === "continuity") {

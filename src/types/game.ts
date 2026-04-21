@@ -187,6 +187,22 @@ export type ActionLogEntry =
       id: string;
       turn: number;
       drawnCardIds: string[];
+    }
+  | {
+      kind: "eventDualFrontCrisisChoice";
+      id: string;
+      turn: number;
+      slot: SlotId;
+      /** True: escalate war (+1 track, −1 legitimacy, +3 Fiscal Burden). False: concede (−3 track). Opponent budget +1 either way. */
+      expandWar: boolean;
+    }
+  | {
+      kind: "eventLocalizedSuccessionWarResolve";
+      id: string;
+      turn: number;
+      slot: SlotId;
+      fundingPaid: number;
+      successionDelta: -1 | 0 | 1 | 2;
     };
 
 export type GamePhase = "action" | "retention" | "gameOver";
@@ -317,7 +333,7 @@ export type GameState = {
   opponentCostDiscountThisTurn: number;
   /**
    * Chapter 3: added when the opponent plays certain cards; consumed at `opponentBeginYearDrawPhase`.
-   * Opponent draw count that year is `max(0, 2 + this)`, then this resets to 0.
+   * Opponent draw count that year is `max(0, 1 + this)`, then this resets to 0.
    */
   opponentNextTurnDrawModifier: number;
   /**
@@ -328,4 +344,9 @@ export type GameState = {
    * When `outcome` is `victory` from chapter 3 calendar end, which tier narrative to show.
    */
   successionOutcomeTier: SuccessionIntervalTier | null;
+  /**
+   * Chapter 3: frozen when the Utrecht treaty ends hostilities (`warEnded`), from signing-time
+   * `successionTrack`. Drives `outcome.utrechtVictoryEpilogue.*` on victory.
+   */
+  utrechtSettlementTier: SuccessionIntervalTier | null;
 };

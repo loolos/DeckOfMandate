@@ -70,6 +70,8 @@ const EVENT_ICONS: Record<EventTemplateId, string> = {
   bavarianCourtRealignment: "🏰",
   portugueseTariffNegotiation: "⚓",
   imperialElectorsMood: "🗳️",
+  localizedSuccessionWar: "⚔️",
+  dualFrontCrisis: "⚔️",
 };
 
 const RESOURCE_ICONS: Record<ResourceKey, string> = {

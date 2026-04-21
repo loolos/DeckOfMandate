@@ -83,6 +83,7 @@ export const levelContent: LevelContent = {
     "bavarianCourtRealignment",
     "portugueseTariffNegotiation",
     "imperialElectorsMood",
+    "localizedSuccessionWar",
   ],
   slotEscalations: [],
   eoyEscalationSchedulers: [],
@@ -98,6 +99,12 @@ export const levelContent: LevelContent = {
       presenceStartYear: 1713,
       presenceEndYear: 1720,
       overflowSlot: "E",
+    },
+    {
+      templateId: "dualFrontCrisis",
+      presenceStartYear: 1708,
+      presenceEndYear: 1708,
+      overflowSlot: "F",
     },
   ],
   opening: {

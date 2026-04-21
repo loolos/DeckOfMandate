@@ -32,6 +32,8 @@ export const messagesZhCore = {
   "ui.successionCrisisDecline": "不支付 — 起始进度 −1",
   "ui.utrechtEndWar": "结束王位继承战争（和约）",
   "ui.utrechtWait": "暂不结束（谈判窗口剩余 {n} 回合）",
+  "ui.dualFrontCrisis.concede": "暂时让步 — 王位争夺进度 −3；对手费用上限 +1",
+  "ui.dualFrontCrisis.escalate": "扩大战争 — 王位争夺进度 +1，合法性 −1，向抽牌堆加入 3 张财政负担；对手费用上限 +1",
   "ui.successionTrack": "王位争夺进度",
   "ui.successionStatus.title": "西班牙王位继承之争",
   "ui.successionStatus.detail":
@@ -140,6 +142,12 @@ export const messagesZhCore = {
   "outcome.successionTier.bourbon": "结局：波旁系在最终账面上占优。",
   "outcome.successionTier.compromise": "结局：双方主张形成妥协均势。",
   "outcome.successionTier.habsburg": "结局：哈布斯堡系在最终账面上占优。",
+  "outcome.utrechtVictoryEpilogue.bourbon":
+    "《乌得勒支和约》系列安排落地后，公开交战让位于条文：欧洲在防止法西合并的前提下接受波旁留驻马德里，法国以让渡最坏的合并想象换取可辩护的王朝成果。",
+  "outcome.utrechtVictoryEpilogue.compromise":
+    "和约并未给出单方完胜：遗产被条约重新切块，各方在承认与颜面之间折衷——法国保住西班牙继承的底线空间，却也背负长期均势约束。",
+  "outcome.utrechtVictoryEpilogue.habsburg":
+    "纸面和平折射大同盟压力：波旁虽保西班牙王位，却须在帝国法统与海上秩序前吞下更多让步；继承战的账单将以战略绳套的形式延续。",
   "log.cardPlayed.title": "[第 {turn} 年] {card} — 支付 {cost} {funding}。",
   "log.cardPlayed.effectsLabel": "效果：",
   "log.cardPlayed.noEffects": "无列表效果。",
@@ -153,6 +161,7 @@ export const messagesZhCore = {
   "log.effect.addPlayerStatus": "{status}（{turns} 回合）",
   "log.effect.addCardsToDeck": "向抽牌堆加入 {count} 张{card}",
   "log.effect.modSuccessionTrack": "王位争夺进度 {delta}",
+  "log.effect.modOpponentStrength": "哈布斯堡对手费用上限 {delta}",
   "log.opponentHabsburgPlay.title":
     "[第 {turn} 年] 哈布斯堡阶段：打出合计 {cost} 点对手费用（已减免 {discount}）。",
   "log.opponentHabsburgDraw.title": "[第 {turn} 年] 哈布斯堡摸牌 {n} 张。",
@@ -169,6 +178,12 @@ export const messagesZhCore = {
     "[第 {turn} 年] {event} — 选择进攻，支付 {paid} {funding}；后果：{outcome}。",
   "log.eventLocalWarChoice.appease":
     "[第 {turn} 年] {event} — 选择绥靖；后果：{legitimacy} -1。",
+  "log.eventDualFrontCrisis.concede":
+    "[第 {turn} 年] {event} — 选择暂时让步；王位争夺进度 −3；对手费用上限 +1。",
+  "log.eventDualFrontCrisis.escalate":
+    "[第 {turn} 年] {event} — 选择扩大战争；王位争夺进度 +1，合法性 −1，向抽牌堆加入 3 张财政负担；对手费用上限 +1。",
+  "log.eventLocalizedSuccessionWar.resolve":
+    "[第 {turn} 年] {event}。已支付 {paid} {funding}。{track} {delta}（随机）。",
   "log.eventLocalWarChoice.attackOutcome.success":
     "{power} +1，{legitimacy} +1。前线捷报短暂提振宫廷威望，边境诸邦也暂缓试探法国底线。",
   "log.eventLocalWarChoice.attackOutcome.stalemate":

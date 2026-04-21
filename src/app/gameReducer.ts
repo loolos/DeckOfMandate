@@ -13,7 +13,11 @@ import { applyPlayedCardEffects } from "../logic/resolveCard";
 import { resolveEndOfYearPenalties } from "../logic/resolveEvents";
 import { coalitionUntilTurn, findScriptedCalendarConfig } from "../logic/scriptedCalendar";
 import { rngNext } from "../logic/rng";
-import { completeSuccessionCrisisAndRevealOpponent, opponentEndYearPlayPhase } from "../logic/opponentHabsburg";
+import {
+  completeSuccessionCrisisAndRevealOpponent,
+  opponentEndYearPlayPhase,
+  stateAfterUtrechtTreatyEndsWar,
+} from "../logic/opponentHabsburg";
 import { beginYear, evaluateTimeDefeat, evaluateVictory, retentionCapacity } from "../logic/turnFlow";
 import { THIRD_MANDATE_LEVEL_ID } from "../logic/thirdMandateConstants";
 import { antiFrenchSentimentEventSolveCostPenalty } from "../logic/antiFrenchSentiment";
@@ -40,7 +44,8 @@ export type GameAction =
   | { type: "APPEND_LOG_INFO"; infoKey: LogInfoKey }
   | { type: "CONFIRM_RETENTION"; keepIds: readonly string[] }
   | { type: "PICK_SUCCESSION_CRISIS"; slot: SlotId; pay: boolean }
-  | { type: "PICK_UTRECHT_TREATY"; slot: SlotId; endWar: boolean };
+  | { type: "PICK_UTRECHT_TREATY"; slot: SlotId; endWar: boolean }
+  | { type: "PICK_DUAL_FRONT_CRISIS"; slot: SlotId; expandWar: boolean };
 
 function removeHand(state: GameState, instanceId: string): GameState {
   return { ...state, hand: state.hand.filter((id) => id !== instanceId) };
@@ -192,6 +197,7 @@ function isCrackdownTarget(state: GameState, slot: SlotId): boolean {
   const ev = state.slots[slot];
   if (!ev || ev.resolved) return false;
   const tmpl = getEventTemplate(ev.templateId);
+  if (tmpl.crackdownImmune) return false;
   return tmpl.harmful;
 }
 
@@ -387,14 +393,35 @@ function performUtrechtTreatyPick(state: GameState, slot: SlotId, endWar: boolea
     return state;
   }
   if (endWar) {
-    return {
-      ...state,
-      warEnded: true,
-      utrechtTreatyCountdown: null,
-      slots: { ...state.slots, [slot]: null },
-    };
+    return stateAfterUtrechtTreatyEndsWar(state, slot);
   }
   return state;
+}
+
+function performDualFrontCrisisPick(state: GameState, slot: SlotId, expandWar: boolean): GameState {
+  const ev = state.slots[slot];
+  if (!ev || ev.resolved || ev.templateId !== "dualFrontCrisis" || state.levelId !== THIRD_MANDATE_LEVEL_ID) {
+    return state;
+  }
+  let s = state;
+  if (expandWar) {
+    s = applyEffects(s, [
+      { kind: "modOpponentStrength", delta: 1 },
+      { kind: "modSuccessionTrack", delta: 1 },
+      { kind: "modResource", resource: "legitimacy", delta: -1 },
+      { kind: "addCardsToDeck", templateId: "fiscalBurden", count: 3 },
+    ]);
+  } else {
+    s = applyEffects(s, [
+      { kind: "modOpponentStrength", delta: 1 },
+      { kind: "modSuccessionTrack", delta: -3 },
+    ]);
+  }
+  if (s.outcome !== "playing") return s;
+  s = enforceLegitimacy(s);
+  if (s.outcome !== "playing") return s;
+  s = markSlotResolvedWithLeagueProgress(s, slot);
+  return appendActionLog(s, { kind: "eventDualFrontCrisisChoice", slot, expandWar });
 }
 
 /** After funding is cleared: keep chosen cards, discard the rest, then EOY penalties, then win / time / next year. */
@@ -465,6 +492,25 @@ function performFundSolve(state: GameState, slot: SlotId): GameState {
       outcome: decisiveVictory ? "decisiveVictory" : limitedGains ? "limitedGains" : "stalemate",
       legitimacyDelta,
     });
+  }
+  if (ev.templateId === "localizedSuccessionWar") {
+    const [rng, roll] = rngNext(s.rng);
+    s = { ...s, rng };
+    const deltas = [-1, 0, 1, 2] as const;
+    const idx = Math.min(3, Math.floor(roll * 4));
+    const successionDelta = deltas[idx]!;
+    s = applyEffects(s, [{ kind: "modSuccessionTrack", delta: successionDelta }]);
+    if (s.outcome !== "playing") return appendInflationActivationLogIfNeeded(state, s);
+    s = enforceLegitimacy(s);
+    if (s.outcome !== "playing") return appendInflationActivationLogIfNeeded(state, s);
+    s = markSlotResolvedWithLeagueProgress(s, slot);
+    s = appendActionLog(s, {
+      kind: "eventLocalizedSuccessionWarResolve",
+      slot,
+      fundingPaid: fundingAmount ?? 0,
+      successionDelta,
+    });
+    return appendInflationActivationLogIfNeeded(state, s);
   }
   let treasuryGain = 0;
   if (tmpl.onFundSolveEffects && tmpl.onFundSolveEffects.length > 0) {
@@ -652,6 +698,9 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       const cleared = state.slots[action.slot];
       if (!cleared) return state;
       let s = markSlotResolvedWithLeagueProgress(state, action.slot);
+      if (cleared.templateId === "imperialElectorsMood") {
+        s = applyEffects(s, [{ kind: "opponentNextTurnDrawModifier", delta: 1 }]);
+      }
       s = removeHand(s, p.cardInstanceId);
       const consumed = consumeLimitedUseCard(s, p.cardInstanceId);
       s = consumed.state;
@@ -721,6 +770,13 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
     case "PICK_UTRECHT_TREATY": {
       if (state.outcome !== "playing" || state.phase !== "action" || state.pendingInteraction) return state;
       return appendInflationActivationLogIfNeeded(state, performUtrechtTreatyPick(state, action.slot, action.endWar));
+    }
+    case "PICK_DUAL_FRONT_CRISIS": {
+      if (state.outcome !== "playing" || state.phase !== "action" || state.pendingInteraction) return state;
+      return appendInflationActivationLogIfNeeded(
+        state,
+        performDualFrontCrisisPick(state, action.slot, action.expandWar),
+      );
     }
     default: {
       const _never: never = action;

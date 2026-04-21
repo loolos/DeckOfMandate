@@ -29,6 +29,7 @@ const CH3_SUCCESSION_GATED_ROLL_EVENT_IDS: readonly EventTemplateId[] = [
   "bavarianCourtRealignment",
   "portugueseTariffNegotiation",
   "imperialElectorsMood",
+  "localizedSuccessionWar",
 ];
 
 export function isCh3SuccessionGatedRollEvent(id: EventTemplateId): boolean {

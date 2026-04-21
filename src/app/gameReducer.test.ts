@@ -7,6 +7,7 @@ import { EMPTY_EVENT_SLOTS, type SlotId } from "../levels/types/event";
 import { createInitialState } from "./initialState";
 import { gameReducer } from "./gameReducer";
 import { createStandaloneLevel2Draft } from "./level2Transition";
+import { THIRD_MANDATE_LEVEL_ID } from "../logic/thirdMandateConstants";
 
 describe("gameReducer", () => {
   it("creates deterministic initial layouts for the same seed", () => {
@@ -328,6 +329,103 @@ describe("gameReducer", () => {
       expect(last.templateId).toBe("tradeOpportunity");
       expect(last.treasuryGain).toBe(1);
     }
+  });
+
+  it("Bavarian defection probe fund-solve adds +1 to opponent next-year draw when Habsburg row is active", () => {
+    const s0 = createInitialState(51_001, THIRD_MANDATE_LEVEL_ID);
+    const s1: typeof s0 = {
+      ...s0,
+      resources: { ...s0.resources, funding: 2 },
+      opponentHabsburgUnlocked: true,
+      opponentNextTurnDrawModifier: 0,
+      slots: {
+        ...s0.slots,
+        A: { instanceId: "e_bav", templateId: "bavarianCourtRealignment", resolved: false },
+      },
+    };
+    const after = gameReducer(s1, { type: "SOLVE_EVENT", slot: "A" });
+    expect(after.resources.funding).toBe(0);
+    expect(after.opponentNextTurnDrawModifier).toBe(1);
+  });
+
+  it("Imperial electors fund-solve adds +1 to opponent next-year draw", () => {
+    const s0 = createInitialState(51_003, THIRD_MANDATE_LEVEL_ID);
+    const s1: typeof s0 = {
+      ...s0,
+      resources: { ...s0.resources, funding: 2 },
+      opponentHabsburgUnlocked: true,
+      opponentNextTurnDrawModifier: 0,
+      slots: {
+        ...s0.slots,
+        A: { instanceId: "e_elec", templateId: "imperialElectorsMood", resolved: false },
+      },
+    };
+    const after = gameReducer(s1, { type: "SOLVE_EVENT", slot: "A" });
+    expect(after.resources.funding).toBe(0);
+    expect(after.opponentNextTurnDrawModifier).toBe(1);
+  });
+
+  it("1708 dual-front crisis: concede applies −3 track and +1 opponent budget", () => {
+    const base = createInitialState(51_100, THIRD_MANDATE_LEVEL_ID);
+    const s0: typeof base = {
+      ...base,
+      successionTrack: 0,
+      opponentHabsburgUnlocked: true,
+      opponentStrength: 2,
+      slots: {
+        ...base.slots,
+        A: { instanceId: "e_df", templateId: "dualFrontCrisis", resolved: false },
+      },
+    };
+    const after = gameReducer(s0, { type: "PICK_DUAL_FRONT_CRISIS", slot: "A", expandWar: false });
+    expect(after.successionTrack).toBe(-3);
+    expect(after.opponentStrength).toBe(3);
+    expect(after.slots.A?.resolved).toBe(true);
+  });
+
+  it("1708 dual-front crisis: escalate applies +1 track, −1 legitimacy, +3 fiscal burden, +1 opponent budget", () => {
+    const base = createInitialState(51_101, THIRD_MANDATE_LEVEL_ID);
+    const burdenBefore = Object.values(base.cardsById).filter((c) => c.templateId === "fiscalBurden").length;
+    const s0: typeof base = {
+      ...base,
+      successionTrack: 0,
+      resources: { ...base.resources, legitimacy: 5 },
+      opponentHabsburgUnlocked: true,
+      opponentStrength: 2,
+      slots: {
+        ...base.slots,
+        A: { instanceId: "e_df2", templateId: "dualFrontCrisis", resolved: false },
+      },
+    };
+    const after = gameReducer(s0, { type: "PICK_DUAL_FRONT_CRISIS", slot: "A", expandWar: true });
+    expect(after.successionTrack).toBe(1);
+    expect(after.resources.legitimacy).toBe(4);
+    expect(after.opponentStrength).toBe(3);
+    const burdenAfter = Object.values(after.cardsById).filter((c) => c.templateId === "fiscalBurden").length;
+    expect(burdenAfter).toBe(burdenBefore + 3);
+  });
+
+  it("Imperial electors crackdown intervention adds +1 to opponent next-year draw", () => {
+    const base = createInitialState(51_004, THIRD_MANDATE_LEVEL_ID);
+    const diId = "tmp_di_elec";
+    const s0: typeof base = {
+      ...base,
+      cardsById: {
+        ...base.cardsById,
+        [diId]: { instanceId: diId, templateId: "diplomaticIntervention" },
+      },
+      hand: [diId],
+      resources: { ...base.resources, funding: 0 },
+      opponentHabsburgUnlocked: true,
+      opponentNextTurnDrawModifier: 0,
+      slots: {
+        ...base.slots,
+        A: { instanceId: "e_elec2", templateId: "imperialElectorsMood", resolved: false },
+      },
+    };
+    const afterPlay = gameReducer(s0, { type: "PLAY_CARD", handIndex: 0 });
+    const after = gameReducer(afterPlay, { type: "CRACKDOWN_TARGET", slot: "A" });
+    expect(after.opponentNextTurnDrawModifier).toBe(1);
   });
 
   it("league of augsburg requires 3 resolves and persists between years until remaining reaches zero", () => {

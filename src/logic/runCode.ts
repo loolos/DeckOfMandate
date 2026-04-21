@@ -36,6 +36,7 @@ const ACTION_TAG = {
   CONFIRM_RETENTION: 0x0b,
   PICK_SUCCESSION_CRISIS: 0x0c,
   PICK_UTRECHT_TREATY: 0x0d,
+  PICK_DUAL_FRONT_CRISIS: 0x0e,
 } as const;
 
 /** Action types that we never persist into the run code. */
@@ -233,6 +234,11 @@ function writeAction(w: ByteWriter, a: GameAction): void {
       w.pushU8(slotToByte(a.slot));
       w.pushU8(a.endWar ? 1 : 0);
       return;
+    case "PICK_DUAL_FRONT_CRISIS":
+      w.pushU8(ACTION_TAG.PICK_DUAL_FRONT_CRISIS);
+      w.pushU8(slotToByte(a.slot));
+      w.pushU8(a.expandWar ? 1 : 0);
+      return;
     case "CONFIRM_RETENTION": {
       w.pushU8(ACTION_TAG.CONFIRM_RETENTION);
       // Retained ids are decoded against the live hand at replay time; encode as a bitmask
@@ -328,6 +334,8 @@ function readAction(r: ByteReader, currentHand: readonly string[]): GameAction {
       return { type: "PICK_SUCCESSION_CRISIS", slot: byteToSlot(r.readU8()), pay: r.readU8() !== 0 };
     case ACTION_TAG.PICK_UTRECHT_TREATY:
       return { type: "PICK_UTRECHT_TREATY", slot: byteToSlot(r.readU8()), endWar: r.readU8() !== 0 };
+    case ACTION_TAG.PICK_DUAL_FRONT_CRISIS:
+      return { type: "PICK_DUAL_FRONT_CRISIS", slot: byteToSlot(r.readU8()), expandWar: r.readU8() !== 0 };
     case ACTION_TAG.CONFIRM_RETENTION: {
       const handLength = r.readU8();
       const byteCount = Math.ceil(handLength / 8);

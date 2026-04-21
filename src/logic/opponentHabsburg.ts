@@ -1,9 +1,8 @@
 import { getCardTemplate } from "../data/cards";
 import type { CardTemplateId } from "../levels/types/card";
 import type { Effect } from "../levels/types/effect";
-import type { EventInstance } from "../levels/types/event";
-import type { SlotId } from "../levels/types/event";
-import type { GameState } from "../types/game";
+import { EVENT_SLOT_ORDER, type EventInstance, type SlotId } from "../levels/types/event";
+import type { GameState, SuccessionIntervalTier } from "../types/game";
 import { appendActionLog } from "./actionLog";
 import { applyEffects, enforceLegitimacy, enforceSuccessionImmediateOutcome } from "./applyEffects";
 import { OPPONENT_AI_NEAR_WIN_THRESHOLD, THIRD_MANDATE_LEVEL_ID } from "./thirdMandateConstants";
@@ -257,7 +256,7 @@ export function initOpponentHabsburgPool(state: GameState): GameState {
   const [rng2, shuffled] = shuffle(state.rng, ids);
   let deck = [...shuffled];
   const hand: string[] = [];
-  for (let i = 0; i < 2 && deck.length > 0; i++) {
+  for (let i = 0; i < 1 && deck.length > 0; i++) {
     hand.push(deck[0]!);
     deck = deck.slice(1);
   }
@@ -271,17 +270,49 @@ export function initOpponentHabsburgPool(state: GameState): GameState {
     opponentDiscard: [],
     opponentStrength: 2,
     opponentHabsburgUnlocked: true,
-    opponentNextTurnDrawModifier: 0,
+    opponentNextTurnDrawModifier: state.opponentNextTurnDrawModifier,
   };
 }
 
 /** Opponent draws at year-start so the player can see current rival hand before ending the year. */
+/** Tier at treaty-signing time from succession track (not identical to calendar-end interval tiers). */
+export function utrechtTreatySituationTier(track: number): SuccessionIntervalTier {
+  if (track >= 4) return "bourbon";
+  if (track >= -3) return "compromise";
+  return "habsburg";
+}
+
+/** Player chose Utrecht peace (or countdown expired): end war, drop rival row, freeze settlement tier for epilogue. */
+export function stateAfterUtrechtTreatyEndsWar(state: GameState, utrechtSlot: SlotId): GameState {
+  const tier = utrechtTreatySituationTier(state.successionTrack);
+  const slots: GameState["slots"] = { ...state.slots, [utrechtSlot]: null };
+  for (const slot of EVENT_SLOT_ORDER) {
+    if (slots[slot]?.templateId === "opponentHabsburg") {
+      slots[slot] = null;
+    }
+  }
+  return {
+    ...state,
+    warEnded: true,
+    utrechtTreatyCountdown: null,
+    utrechtSettlementTier: tier,
+    slots,
+    opponentHabsburgUnlocked: false,
+    opponentDeck: [],
+    opponentHand: [],
+    opponentDiscard: [],
+    opponentLastPlayedTemplateIds: [],
+    opponentNextTurnDrawModifier: 0,
+    opponentCostDiscountThisTurn: 0,
+  };
+}
+
 export function opponentBeginYearDrawPhase(state: GameState): GameState {
-  if (state.levelId !== THIRD_MANDATE_LEVEL_ID || !state.opponentHabsburgUnlocked) {
+  if (state.levelId !== THIRD_MANDATE_LEVEL_ID || !state.opponentHabsburgUnlocked || state.warEnded) {
     return { ...state, opponentCostDiscountThisTurn: 0 };
   }
   const drawMod = state.opponentNextTurnDrawModifier;
-  const drawN = Math.max(0, 2 + drawMod);
+  const drawN = Math.max(0, 1 + drawMod);
   const reset = { ...state, opponentCostDiscountThisTurn: 0, opponentNextTurnDrawModifier: 0 };
   const beforeDraw = reset.opponentHand.length;
   const drawnState = opponentDrawFromDeck(reset, drawN);
@@ -291,7 +322,12 @@ export function opponentBeginYearDrawPhase(state: GameState): GameState {
 }
 
 export function opponentEndYearPlayPhase(state: GameState): GameState {
-  if (state.levelId !== THIRD_MANDATE_LEVEL_ID || !state.opponentHabsburgUnlocked || state.outcome !== "playing") {
+  if (
+    state.levelId !== THIRD_MANDATE_LEVEL_ID ||
+    !state.opponentHabsburgUnlocked ||
+    state.outcome !== "playing" ||
+    state.warEnded
+  ) {
     return state;
   }
   let pre = state;

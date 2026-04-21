@@ -207,6 +207,32 @@ function renderEntry(e: ActionLogEntry, t: (key: MessageKey, vars?: Record<strin
         </div>
       );
     }
+    case "eventDualFrontCrisisChoice": {
+      const key = e.expandWar ? "log.eventDualFrontCrisis.escalate" : "log.eventDualFrontCrisis.concede";
+      return (
+        <div className={styles.actionLogHead}>
+          {t(key as MessageKey, {
+            turn: e.turn,
+            event: eventLabelWithIcon("dualFrontCrisis", t(eventTitleKey("dualFrontCrisis"))),
+          })}
+        </div>
+      );
+    }
+    case "eventLocalizedSuccessionWarResolve": {
+      const signed = e.successionDelta > 0 ? `+${e.successionDelta}` : String(e.successionDelta);
+      return (
+        <div className={styles.actionLogHead}>
+          {t("log.eventLocalizedSuccessionWar.resolve", {
+            turn: e.turn,
+            event: eventLabelWithIcon("localizedSuccessionWar", t(eventTitleKey("localizedSuccessionWar"))),
+            paid: e.fundingPaid,
+            funding: fundingLabel,
+            delta: signed,
+            track: t("ui.successionTrack"),
+          })}
+        </div>
+      );
+    }
     case "eventNineYearsWarCampaign": {
       const outcomeKey =
         e.outcome === "decisiveVictory"

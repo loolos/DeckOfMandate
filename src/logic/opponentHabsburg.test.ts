@@ -3,8 +3,10 @@ import { createInitialState } from "../app/initialState";
 import type { GameState } from "../types/game";
 import {
   chooseOpponentPlay,
+  initOpponentHabsburgPool,
   opponentBeginYearDrawPhase,
   opponentEndYearPlayPhase,
+  utrechtTreatySituationTier,
 } from "./opponentHabsburg";
 import { THIRD_MANDATE_LEVEL_ID } from "./thirdMandateConstants";
 
@@ -35,7 +37,7 @@ describe("opponentHabsburg AI", () => {
     expect(pick).toEqual([opp1, opp2]);
   });
 
-  it("draws two opponent cards at begin-year after the rival is unlocked", () => {
+  it("draws one opponent card at begin-year after the rival is unlocked", () => {
     const base = createInitialState(7, THIRD_MANDATE_LEVEL_ID);
     const st: GameState = {
       ...base,
@@ -51,8 +53,8 @@ describe("opponentHabsburg AI", () => {
     };
 
     const next = opponentBeginYearDrawPhase(st);
-    expect(next.opponentHand).toEqual(["opp_a", "opp_b"]);
-    expect(next.opponentDeck).toEqual(["opp_c"]);
+    expect(next.opponentHand).toEqual(["opp_a"]);
+    expect(next.opponentDeck).toEqual(["opp_b", "opp_c"]);
   });
 
   it("Low Countries agitation lowers succession, power, and legitimacy", () => {
@@ -160,7 +162,7 @@ describe("opponentHabsburg AI", () => {
     expect(next.opponentDiscard).toEqual([noteId]);
   });
 
-  it("opponent begin-year draw uses opponentNextTurnDrawModifier (e.g. only 1 card when modifier is −1)", () => {
+  it("opponent begin-year draw uses opponentNextTurnDrawModifier (e.g. 0 cards when base 1 and modifier is −1)", () => {
     const base = createInitialState(103, THIRD_MANDATE_LEVEL_ID);
     const st: GameState = {
       ...base,
@@ -176,8 +178,48 @@ describe("opponentHabsburg AI", () => {
       },
     };
     const next = opponentBeginYearDrawPhase(st);
-    expect(next.opponentHand).toEqual(["opp_x"]);
-    expect(next.opponentDeck).toEqual(["opp_y", "opp_z"]);
+    expect(next.opponentHand).toEqual([]);
+    expect(next.opponentDeck).toEqual(["opp_x", "opp_y", "opp_z"]);
     expect(next.opponentNextTurnDrawModifier).toBe(0);
+  });
+
+  it("begin year skips opponent draw after Utrecht ends war", () => {
+    const base = createInitialState(104, THIRD_MANDATE_LEVEL_ID);
+    const st: GameState = {
+      ...base,
+      opponentHabsburgUnlocked: true,
+      warEnded: true,
+      opponentDeck: ["opp_x"],
+      opponentHand: [],
+      cardsById: {
+        ...base.cardsById,
+        opp_x: { instanceId: "opp_x", templateId: "habsburgImperialLegitimacyNote" },
+      },
+    };
+    const next = opponentBeginYearDrawPhase(st);
+    expect(next.opponentHand).toEqual([]);
+    expect(next.opponentDeck).toEqual(["opp_x"]);
+  });
+
+  it("initOpponentHabsburgPool preserves opponentNextTurnDrawModifier (e.g. from Bavarian fund-solve before unlock)", () => {
+    const base = createInitialState(55_002, THIRD_MANDATE_LEVEL_ID);
+    const st: GameState = {
+      ...base,
+      opponentNextTurnDrawModifier: 1,
+      opponentHabsburgUnlocked: false,
+    };
+    const next = initOpponentHabsburgPool(st);
+    expect(next.opponentNextTurnDrawModifier).toBe(1);
+    expect(next.opponentHabsburgUnlocked).toBe(true);
+  });
+});
+
+describe("utrechtTreatySituationTier", () => {
+  it("maps track bands for treaty epilogue", () => {
+    expect(utrechtTreatySituationTier(10)).toBe("bourbon");
+    expect(utrechtTreatySituationTier(4)).toBe("bourbon");
+    expect(utrechtTreatySituationTier(3)).toBe("compromise");
+    expect(utrechtTreatySituationTier(-3)).toBe("compromise");
+    expect(utrechtTreatySituationTier(-4)).toBe("habsburg");
   });
 });

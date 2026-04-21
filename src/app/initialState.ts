@@ -158,6 +158,7 @@ export function createInitialState(
     opponentNextTurnDrawModifier: 0,
     opponentLastPlayedTemplateIds: [],
     successionOutcomeTier: null,
+    utrechtSettlementTier: null,
   };
 
   return beginYear(base);

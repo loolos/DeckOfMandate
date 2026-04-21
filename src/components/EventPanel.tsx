@@ -334,6 +334,26 @@ export function EventPanel({
                       </button>
                     </>
                   ) : null}
+                  {!ev.resolved && solveKind === "dualFrontCrisisChoice" ? (
+                    <>
+                      <button
+                        type="button"
+                        className={styles.btn}
+                        disabled={Boolean(state.pendingInteraction)}
+                        onClick={() => dispatch({ type: "PICK_DUAL_FRONT_CRISIS", slot, expandWar: false })}
+                      >
+                        {t("ui.dualFrontCrisis.concede")}
+                      </button>
+                      <button
+                        type="button"
+                        className={`${styles.btn} ${styles.btnPrimary}`}
+                        disabled={Boolean(state.pendingInteraction)}
+                        onClick={() => dispatch({ type: "PICK_DUAL_FRONT_CRISIS", slot, expandWar: true })}
+                      >
+                        {t("ui.dualFrontCrisis.escalate")}
+                      </button>
+                    </>
+                  ) : null}
                   {!ev.resolved && solveKind === "fundingOrCrackdown" && amount !== null ? (
                     <button
                       type="button"
