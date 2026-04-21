@@ -26,7 +26,7 @@ export const messagesFrThirdMandate = {
   "event.bavarianCourtRealignment.desc": "Payez 2 Fonds : piste +1. Si ignoré : piste −1.",
   "event.portugueseTariffNegotiation.name": "Négociation tarifaire portugaise",
   "event.portugueseTariffNegotiation.desc":
-    "Contexte : pendant la guerre de Succession d’Espagne, le Portugal se réaligne sur la ligue maritime ; les traités de Methuen (1703) échangent des droits favorables sur les vins contre l’accès des lainages anglais, intégrant la politique douanière lisboète à l’économie de guerre de la Grande Alliance.\n\nPayez ceil(Trésor/4) Fonds : Trésor +1 et piste +1. Si ignoré : Trésor +1 seulement.",
+    "Contexte : pendant la guerre de Succession d’Espagne, le Portugal se réaligne sur la ligue maritime ; les traités de Methuen (1703) échangent des droits favorables sur les vins contre l’accès des lainages anglais, intégrant la politique douanière lisboète à l’économie de guerre de la Grande Alliance.\n\nPayez ceil(Trésor/4) Fonds : Trésor +1 et piste +1. Si ignoré : aucun bonus.",
   "event.imperialElectorsMood.name": "Humeur des princes-électeurs",
   "event.imperialElectorsMood.desc": "Payez 2 Fonds ou Intervention. Si ignoré : piste −1 et Légitimité −1.",
 

@@ -399,7 +399,7 @@ export const eventTemplates: Record<EventTemplateId, EventTemplate> = {
       { kind: "modResource", resource: "treasuryStat", delta: 1 },
       { kind: "modSuccessionTrack", delta: 1 },
     ],
-    penaltiesIfUnresolved: [{ kind: "modResource", resource: "treasuryStat", delta: 1 }],
+    penaltiesIfUnresolved: [],
   },
   imperialElectorsMood: {
     id: "imperialElectorsMood",
