@@ -18,6 +18,7 @@ const CARD_ICONS: Record<CardTemplateId, string> = {
   diplomaticCongress: "🕊️",
   suppressHuguenots: "⚔️",
   religiousTensionCard: "⛪",
+  jansenistReservation: "📖",
   jesuitCollege: "🎓",
 };
 

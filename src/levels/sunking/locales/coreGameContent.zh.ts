@@ -27,11 +27,16 @@ export const sunkingCoreGameContentZh = {
   "card.suppressHuguenots.background": "王权动员军警与地方法庭，清剿残余胡格诺网络。",
   "card.suppressHuguenots.desc":
     "临时牌。费用 3。打出后使「遏制胡格诺-剩余势力」-1；降到 0 时移除该状态，并清除所有「镇压胡格诺派」。",
-  "card.religiousTensionCard.name": "宗教矛盾",
+  "card.religiousTensionCard.name": "宗教冲突",
   "card.religiousTensionCard.background":
     "宗派分歧未真正消解，仍以教义、礼仪与地方诉求的形式渗入治理日程，反复牵扯王权注意力。",
   "card.religiousTensionCard.desc":
     "额外牌。可支付 2 经费打出并消除（不会进入弃牌堆）。当「阿米尼乌斯派争论」、「胡格诺地下网络骚动」或「耶稣会庇护」处理时加入抽牌堆。",
+  "card.jansenistReservation.name": "良心保留",
+  "card.jansenistReservation.background":
+    "胡格诺网络被压制后，天主教内部并未自动统一：詹森派的严苛与主教权威相争，良心主张牵制王权议程。",
+  "card.jansenistReservation.desc":
+    "额外牌。费用 2。打出后从牌库循环中移除（非弃牌）。该牌在手牌中时，为其左侧邻牌附加「抗命」标签；带抗命的牌不可打出。",
   "card.jesuitCollege.name": "耶稣会学院",
   "card.jesuitCollege.background":
     "拉弗莱什、路易大帝、克莱蒙等耶稣会精英学院培养与王权立场一致的官员、军官与教士，以辞令、神学与服从为核心训练；其讲坛也是对抗詹森派严苛主义的第一线。",
@@ -70,6 +75,7 @@ export const sunkingCoreGameContentZh = {
   "status.huguenotContainment.name": "遏制胡格诺-剩余势力",
   "status.huguenotContainment.history": "强力镇压依赖连续清剿行动与高压维稳成本。",
   "status.huguenotContainment.hint": "该状态存在时，第二关无法胜利。",
+  "status.huguenotContainment.hintGeneral": "表示镇压带来的压制层数；通过消去场上的「镇压胡格诺」牌可逐步清除层数。",
   "event.jansenistTension.name": "詹森派争议",
   "event.jansenistTension.desc":
     "詹森主义围绕“恩典与救赎”的神学立场长期冲击法国教会与王权关系；波尔-罗亚尔网络的余波再起，主教区与法院出现对立。支付 2 经费进行教区巡察与舆论安抚，否则合法性 -1。",
@@ -83,5 +89,7 @@ export const sunkingCoreGameContentZh = {
   "card.tag.temp": "临时",
   "card.tag.extra": "额外",
   "card.tag.inflation": "通胀",
+  "card.tag.defiance": "抗命",
+  "card.tag.consume": "消耗",
   "card.tag.remainingUses": "剩余{remaining}/{total}",
 } as const;

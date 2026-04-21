@@ -7,6 +7,7 @@ import type { PlayerStatusInstance } from "../levels/types/status";
 export type LogInfoKey =
   | "firstMandateInflationActivated"
   | "chapter2EuropeAlertOn"
+  | "chapter2EuropeAlertContinuityLow"
   | "chapter2EuropeAlertOff"
   | "antiFrenchSentimentActivated"
   | "antiFrenchSentimentEnded"
@@ -14,6 +15,8 @@ export type LogInfoKey =
   | "cardTag.temp"
   | "cardTag.extra"
   | "cardTag.inflation"
+  | "cardTag.defiance"
+  | "cardTag.consume"
   | "cardUse.remainingUses"
   | "cardUse.depleted.crackdownPenalty"
   | "cardUse.depleted.fundingPenalty"
@@ -191,6 +194,9 @@ export type PendingInteraction =
       fundingPaid: number;
     };
 
+/** Set when the player resolves `revocationNantes` in chapter 2; drives chapter-3 standalone/carryover setup. */
+export type NantesPolicyCarryover = "tolerance" | "crackdown";
+
 export type Resources = {
   treasuryStat: number;
   funding: number;
@@ -240,6 +246,11 @@ export type GameState = {
   slots: Record<SlotId, EventInstance | null>;
   /** If true, that slot must become Major Crisis at the next Event phase (before empty rolls). */
   pendingMajorCrisis: Record<SlotId, boolean>;
+  /**
+   * Chapter 2 only (until resolved): records the Edict of Nantes branch taken at `revocationNantes`.
+   * Chapter 3 reads this when continuing from chapter 2; remains null if the event was never resolved.
+   */
+  nantesPolicyCarryover: NantesPolicyCarryover | null;
   /** Timed modifiers (e.g. draw penalty); turns tick after each beginYear draw phase. */
   playerStatuses: PlayerStatusInstance[];
   /** Set when resolving a scripted attack (e.g. War of Devolution); cleared after `untilTurn`. */

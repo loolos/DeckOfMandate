@@ -130,7 +130,7 @@ export function createContinuityLevel2Draft(from: GameState, seed?: number): Lev
     calendarStartYear: carryoverCalendarStartYear,
     resources: inheritedResources,
     warOfDevolutionAttacked: from.warOfDevolutionAttacked,
-    europeAlert: from.warOfDevolutionAttacked,
+    europeAlert: true,
     carryoverCards,
     removedCarryoverIds: [],
   };
@@ -210,8 +210,9 @@ function buildContinuityLevel2State(draft: Level2StartDraft): GameState {
       cardUsesById[card.instanceId] = { total, remaining };
     }
   }
-  const europeAlertPowerLoss = draft.europeAlert ? computeEuropeAlertPowerLoss(draft.resources.power) : 0;
-  const europeAlertProgress = draft.europeAlert ? 3 : 0;
+  const europeAlertPowerLoss = computeEuropeAlertPowerLoss(draft.resources.power);
+  const europeAlertProgress =
+    draft.mode === "continuity" && !draft.warOfDevolutionAttacked ? 1 : 3;
   const resources = draft.resources;
 
   const base: GameState = {
@@ -235,10 +236,11 @@ function buildContinuityLevel2State(draft: Level2StartDraft): GameState {
     cardInflationById,
     slots: { ...EMPTY_EVENT_SLOTS },
     pendingMajorCrisis: { ...EMPTY_PENDING_MAJOR_CRISIS },
+    nantesPolicyCarryover: null,
     playerStatuses: [],
     antiFrenchLeague: null,
     warOfDevolutionAttacked: draft.warOfDevolutionAttacked,
-    europeAlert: draft.europeAlert,
+    europeAlert: true,
     europeAlertPowerLoss,
     europeAlertProgress,
     nymwegenSettlementAchieved: false,
@@ -246,9 +248,13 @@ function buildContinuityLevel2State(draft: Level2StartDraft): GameState {
     proceduralEventSequence: [],
     actionLog: [],
   };
+  const europeAlertIntroKey =
+    draft.mode === "continuity" && !draft.warOfDevolutionAttacked
+      ? "chapter2EuropeAlertContinuityLow"
+      : "chapter2EuropeAlertOn";
   const withEuropeAlertIntro = appendActionLog(base, {
     kind: "info",
-    infoKey: draft.europeAlert ? "chapter2EuropeAlertOn" : "chapter2EuropeAlertOff",
+    infoKey: europeAlertIntroKey,
   });
   return beginYear(withEuropeAlertIntro);
 }

@@ -63,6 +63,7 @@ export const messagesEnCore = {
   "menu.startConfigured": "Start",
   "menu.runCodeLoad": "Load from run code",
   "menu.continueChapter2": "Continue to Chapter 2",
+  "menu.continueChapter3": "Continue to Chapter 3",
   "menu.refit.title": "Chapter Transition Deck Refit",
   "menu.refit.subtitle": "Rebuild your deck for high-pressure governance.",
   "menu.refit.adjustable": "Carryover cards",
@@ -73,6 +74,8 @@ export const messagesEnCore = {
   "menu.refit.startYear": "Chapter 2 start year: {year}",
   "menu.refit.europeAlertOn":
     "Europe Alert: ON (progress starts at 3/10. At progress 1-5, extra-event chance is progress×20%; at 6-10, at least 1 extra event is guaranteed and second-event chance is (progress-5)×20%).",
+  "menu.refit.europeAlertOnLow":
+    "Europe Alert: ON (continuing save without the War of Devolution attack branch: progress starts at 1/10; yearly supplemental-event rules unchanged).",
   "menu.refit.europeAlertOff": "Europe Alert: OFF (standard Chapter 2 pressure).",
   "menu.refit.totalCards": "Deck size: {current} (required {min}–{max})",
   "menu.refit.totalCards.simple": "Deck size after removals: {current}",
@@ -168,9 +171,11 @@ export const messagesEnCore = {
   "log.europeAlertProgressShift":
     "[Turn {turn}] Europe Alert adjusted {from}→{to} (k={k}, trigger chance {pct}%).",
   "log.info.chapter2EuropeAlertOn":
-    "[Turn {turn}] Chapter 2 starts with Europe Alert active: alert progress starts at 3/10 and controls yearly extra events (1-5: progress×20%; 6-10: guaranteed 1 + possible second event).",
+    "[Turn {turn}] The War of Devolution and the diplomatic reckoning around the Peace of Aix-la-Chapelle (1668) left little doubt about French aims in the Low Countries and succession disputes. A truce did not restore trust: Dutch, Imperial, and maritime courts kept coordinating against sudden Bourbon advances—what the age calls “Europe Alert” was already the unspoken mood of chancelleries.",
+  "log.info.chapter2EuropeAlertContinuityLow":
+    "[Turn {turn}] France pressed its claims chiefly through diplomacy and frontier pressure rather than a general European war over the Devolution crisis. Rivals still watched Versailles closely—envoys, armaments, and commercial levers tightened quietly—but the white heat of a continent-wide encirclement, born of shattering defeats or abrupt annexations, had not yet arrived. Suspicion smoldered rather than blazed (Europe Alert still hangs over the border, but at a lower pitch).",
   "log.info.chapter2EuropeAlertOff":
-    "[Turn {turn}] Chapter 2 starts with Europe Alert inactive: no Europe-Alert supplemental event checks.",
+    "[Turn {turn}] At this narrative starting point, outside pressure on France had not yet hardened into institutionalized containment: treaties and secret clauses were still being tested, and grand-alliance mobilization was not yet the rhythm of European politics—chancelleries read caution more often than ultimatums.",
   "log.info.antiFrenchSentimentActivated":
     "[Turn {turn}] Anti-French Sentiment rises: when Power+Treasury exceeds 20, Europe-Alert-linked funding solves gain +1 immediately, then +1 per additional full +5 overflow. The status now also shows Sentiment x (x = Anti-French Containment cards in your full library), and Peace of Ryswick gains an extra +2x Funding while this status is active.",
   "log.info.antiFrenchSentimentEnded":
@@ -183,6 +188,10 @@ export const messagesEnCore = {
     "[Turn {turn}] Tag note “Extra”: this card was added by other effects, is excluded from chapter refit, and is removed when the chapter ends.",
   "log.info.cardTag.inflation":
     "[Turn {turn}] Tag note “Inflation”: once inflation is active, this card’s cost stacks upward whenever it cycles through reshuffle and redraw.",
+  "log.info.cardTag.defiance":
+    "[Turn {turn}] Tag note “Defiance”: while a Reservation of Conscience card sits immediately to the right in your hand, this card gains Defiance and cannot be played.",
+  "log.info.cardTag.consume":
+    "[Turn {turn}] Tag note “Consume”: when played, this card is removed from your library and does not go to discard or reshuffle back into your deck.",
   "log.info.cardUse.remainingUses": "[Turn {turn}] Tag note “Remaining”: this card currently has X/Y uses left; each play spends one, and it leaves circulation at 0.",
   "log.info.cardUse.depleted.crackdownPenalty":
     "[Turn {turn}] Royal Intervention reached 0/3 and was removed from circulation; court coercive leverage slips (Power -1).",

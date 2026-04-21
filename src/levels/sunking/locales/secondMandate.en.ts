@@ -14,7 +14,7 @@ export const messagesEnSecondMandate = {
     "The burdens of hegemony break the regime. Fiscal strain, social unrest, and diplomatic pressure outpace royal control, leaving the crown weakened and isolated.",
   "status.europeAlert.name": "Europe Alert",
   "status.europeAlert.hint":
-    "Europe Alert tracks progress (1-10): start at 3; at 1-5, extra-event chance is progress×20%; at 6-10, at least 1 event is guaranteed and second-event chance is (progress-5)×20%.",
+    "Europe Alert tracks progress (1-10): usually starts at 3; if you continue from Chapter 1 without the War of Devolution attack branch, it starts at 1. At 1-5, extra-event chance is progress×20%; at 6-10, at least 1 event is guaranteed and second-event chance is (progress-5)×20%.",
   "status.europeAlert.history":
     "Earlier French offensives hardened long-run coalition vigilance across Europe.",
   "status.europeAlert.stage.eased.name": "Eased (1-2)",

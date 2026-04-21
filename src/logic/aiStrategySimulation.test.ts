@@ -87,8 +87,8 @@ describe("aiStrategySimulation", () => {
     expect(report).toMatchInlineSnapshot(`
       {
         "averageChapter1EndTurn": 13.62,
-        "averageChapter2EndTurnOnReached": 15.091,
-        "averageChapter2EndTurnOnWin": 23.667,
+        "averageChapter2EndTurnOnReached": 15.227,
+        "averageChapter2EndTurnOnWin": 24.333,
         "chapter1Losses": 156,
         "chapter1WinRate": 0.22,
         "chapter1Wins": 44,

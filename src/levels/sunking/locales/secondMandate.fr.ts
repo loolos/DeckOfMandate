@@ -17,7 +17,7 @@ export const messagesFrSecondMandate: Record<keyof typeof messagesEnSecondMandat
     "Le coût de l'hégémonie brise le régime. Pression fiscale, agitation sociale et contrainte diplomatique dépassent le contrôle royal, laissant la couronne affaiblie et isolée.",
   "status.europeAlert.name": "Alerte Europe",
   "status.europeAlert.hint":
-    "Alerte Europe suit désormais une progression (1-10) : départ à 3 ; progression 1-5, chance d'événement supplémentaire = progression×20% ; progression 6-10, au moins 1 événement garanti et chance de 2e événement = (progression-5)×20%.",
+    "Alerte Europe suit une progression (1-10) : départ habituel à 3 ; en continuité depuis le Chapitre 1 sans la branche d'attaque de la guerre de Dévolution, départ à 1. Progression 1-5, chance d'événement supplémentaire = progression×20% ; progression 6-10, au moins 1 événement garanti et chance de 2e événement = (progression-5)×20%.",
   "status.europeAlert.history":
     "Les offensives françaises antérieures ont durci la vigilance de coalition à long terme en Europe.",
   "status.europeAlert.stage.eased.name": "Accalmie (1-2)",

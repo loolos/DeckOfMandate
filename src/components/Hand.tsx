@@ -52,7 +52,8 @@ export function Hand({
         const cost = getPlayableCardCost(state, id);
         const affordable = state.resources.funding >= cost;
         const blockedByStatus = blockedRoyal && hasCardTag(state, id, "royal");
-        const playable = canPlay && affordable && !blockedByStatus;
+        const blockedByDefiance = hasCardTag(state, id, "defiance");
+        const playable = canPlay && affordable && !blockedByStatus && !blockedByDefiance;
         const title = cardLabelWithIcon(inst.templateId, t(tmpl.titleKey as MessageKey));
         const quickRows = buildCardQuickFrameRows(tmpl, cost);
         const compactSummary = quickRows.map((row) => row.value).join(" · ");

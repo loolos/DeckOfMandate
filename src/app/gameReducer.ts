@@ -4,6 +4,7 @@ import { getChapter2StandaloneDraft } from "../data/levelBootstrap";
 import { getTurnLimitForRun, type LevelId } from "../data/levels";
 import { appendActionLog } from "../logic/actionLog";
 import { applyEffects, enforceLegitimacy } from "../logic/applyEffects";
+import { isCardPlayableInActionPhase } from "../logic/cardPlayability";
 import { hasCardTag } from "../logic/cardTags";
 import { addCardsToHand, enforceHuguenotContainmentInvariant } from "../logic/cardRuntime";
 import { appendInflationActivationLogIfNeeded, getPlayableCardCost } from "../logic/cardCost";
@@ -224,15 +225,6 @@ function canLocalWarAttack(state: GameState, slot: SlotId): boolean {
   const ev = state.slots[slot];
   if (!ev || ev.resolved || ev.templateId !== "localWar") return false;
   return state.resources.funding >= Math.floor(state.europeAlertProgress / 2);
-}
-
-function isCardPlayableUnderStatuses(state: GameState, cardInstanceId: string): boolean {
-  for (const st of state.playerStatuses) {
-    if (st.kind !== "blockCardTag") continue;
-    if (!st.blockedTag) continue;
-    if (hasCardTag(state, cardInstanceId, st.blockedTag)) return false;
-  }
-  return true;
 }
 
 function performScriptedAttack(state: GameState, slot: SlotId): GameState {
@@ -495,7 +487,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       if (!id) return state;
       const inst = state.cardsById[id];
       if (!inst) return state;
-      if (!isCardPlayableUnderStatuses(state, id)) return state;
+      if (!isCardPlayableInActionPhase(state, id)) return state;
       const tmpl = getCardTemplate(inst.templateId);
       const cost = getPlayableCardCost(state, id);
       if (state.resources.funding < cost) return state;
@@ -512,46 +504,17 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
           { kind: "crackdownPickPrompt" },
         );
       }
-      if (inst.templateId === "fiscalBurden") {
-        const removed = removeHand(paid, id);
-        return appendActionLog(removed, {
-          kind: "cardPlayed",
-          templateId: inst.templateId,
-          fundingCost: cost,
-          effects: tmpl.effects,
-        });
-      }
-      if (inst.templateId === "antiFrenchContainment") {
-        const removed = removeHand(paid, id);
-        return appendActionLog(removed, {
-          kind: "cardPlayed",
-          templateId: inst.templateId,
-          fundingCost: cost,
-          effects: tmpl.effects,
-        });
-      }
-      if (inst.templateId === "religiousTensionCard") {
-        const removed = removeHand(paid, id);
-        return appendActionLog(removed, {
-          kind: "cardPlayed",
-          templateId: inst.templateId,
-          fundingCost: cost,
-          effects: tmpl.effects,
-        });
-      }
-      if (inst.templateId === "suppressHuguenots") {
+      if (hasCardTag(paid, id, "consume")) {
         let s: GameState = removeHand(paid, id);
-        // The played card is consumed (no discard), so prune it before resyncing
-        // the containment invariant: turnsRemaining MUST equal the count of
-        // suppressHuguenots cards left in deck/hand/discard.
-        s = enforceHuguenotContainmentInvariant(s);
-        s = appendActionLog(s, {
+        if (inst.templateId === "suppressHuguenots") {
+          s = enforceHuguenotContainmentInvariant(s);
+        }
+        return appendActionLog(s, {
           kind: "cardPlayed",
           templateId: inst.templateId,
           fundingCost: cost,
           effects: tmpl.effects,
         });
-        return s;
       }
       let s = applyPlayedCardEffects(paid, inst.templateId);
       if (inst.templateId === "grainRelief") {
@@ -593,6 +556,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       s = addUniqueStatus(s, "religiousTolerance");
       s = markSlotResolved(s, action.slot);
       s = appendActionLog(s, { kind: "info", infoKey: "nantesPolicy.toleranceNoFontainebleau" });
+      s = { ...s, nantesPolicyCarryover: "tolerance" };
       s = enforceLegitimacy(s);
       return appendInflationActivationLogIfNeeded(state, s);
     }
@@ -609,7 +573,8 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       s = enforceHuguenotContainmentInvariant(s);
       s = markSlotResolved(s, action.slot);
       s = appendActionLog(s, { kind: "info", infoKey: "nantesPolicy.crackdownFontainebleauIssued" });
-      return s;
+      s = { ...s, nantesPolicyCarryover: "crackdown" };
+      return appendInflationActivationLogIfNeeded(state, s);
     }
     case "PICK_LOCAL_WAR_ATTACK": {
       if (state.outcome !== "playing" || state.phase !== "action" || state.pendingInteraction) return state;

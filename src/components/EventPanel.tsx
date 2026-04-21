@@ -53,7 +53,7 @@ export function EventPanel({
         const quickRows = buildScriptedEventQuickFrameRows(state.levelId, tmpl) ?? buildEventQuickFrameRows(tmpl);
         const compactSummary = quickRows.map((row) => row.value).join(" · ");
         const handledOrNoFurtherAction = slotIsHandledOrNoFurtherAction(state, slot);
-        const handledMark = handledOrNoFurtherAction ? " 👌" : "";
+        const handledMark = handledOrNoFurtherAction ? " 🆗" : "";
         const compactSummaryWithHandledMark = `${compactSummary}${handledMark}`;
         const descWithHandledMark = `${desc}${handledMark}`;
         const showDetails = !isSmallScreen || expandedSlot === slot || crack;

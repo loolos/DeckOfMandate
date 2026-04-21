@@ -6,7 +6,10 @@ import { createRngFromSeed, shuffle } from "../logic/rng";
 import { beginYear } from "../logic/turnFlow";
 import type { CardInstance, CardTemplateId } from "../levels/types/card";
 import { EMPTY_EVENT_SLOTS, EMPTY_PENDING_MAJOR_CRISIS } from "../levels/types/event";
-import type { GameState, Resources } from "../types/game";
+import { applyThirdMandateNantesStartingEffects, resolveThirdMandateNantesPolicy } from "../logic/thirdMandateStart";
+import type { GameState, NantesPolicyCarryover, Resources } from "../types/game";
+
+const THIRD_MANDATE_LEVEL_ID = "thirdMandate";
 
 type InitialStateOptions = {
   starterDeckTemplateOrder?: readonly CardTemplateId[];
@@ -16,6 +19,8 @@ type InitialStateOptions = {
   europeAlert?: boolean;
   europeAlertPowerLoss?: number;
   europeAlertProgress?: number;
+  /** Chapter 3: mirrors chapter 2’s Nantes branch; omitted or null defaults to crackdown (镇压). */
+  nantesPolicyCarryover?: NantesPolicyCarryover | null;
 };
 
 export function createInitialState(
@@ -27,11 +32,28 @@ export function createInitialState(
   const runSeed = ((seed ?? Math.floor(Math.random() * 0x7fffffff)) >>> 0) || 0x9e3779b9;
   let rng = createRngFromSeed(runSeed);
   const baseResources = { ...level.startingResources, ...options?.startingResourcesOverride };
-  const europeAlert = options?.europeAlert ?? false;
+  const defaultEuropeAlert = level.features.europeAlertMechanics;
+  const europeAlert = options?.europeAlert ?? defaultEuropeAlert;
+  const warOfDevolutionAttacked =
+    options?.warOfDevolutionAttacked ?? (levelId === "secondMandate" ? true : false);
   const europeAlertPowerLoss =
     options?.europeAlertPowerLoss ?? (europeAlert ? computeEuropeAlertPowerLoss(baseResources.power) : 0);
-  const europeAlertProgress = options?.europeAlertProgress ?? (europeAlert ? 3 : 0);
+  const europeAlertProgress =
+    options?.europeAlertProgress !== undefined
+      ? options.europeAlertProgress
+      : !europeAlert
+        ? 0
+        : defaultEuropeAlert
+          ? warOfDevolutionAttacked
+            ? 3
+            : 1
+          : 3;
   const resources = baseResources;
+
+  const nantesPolicyCarryover: NantesPolicyCarryover | null =
+    levelId === THIRD_MANDATE_LEVEL_ID
+      ? resolveThirdMandateNantesPolicy(options?.nantesPolicyCarryover ?? null)
+      : null;
 
   const starterDeckTemplateOrder =
     options?.starterDeckTemplateOrder ?? getLevelContent(levelId).starterDeckTemplateOrder;
@@ -69,9 +91,10 @@ export function createInitialState(
     cardInflationById: {},
     slots: { ...EMPTY_EVENT_SLOTS },
     pendingMajorCrisis: { ...EMPTY_PENDING_MAJOR_CRISIS },
+    nantesPolicyCarryover,
     playerStatuses: [],
     antiFrenchLeague: null,
-    warOfDevolutionAttacked: options?.warOfDevolutionAttacked ?? false,
+    warOfDevolutionAttacked,
     europeAlert,
     europeAlertPowerLoss,
     europeAlertProgress,
@@ -81,5 +104,10 @@ export function createInitialState(
     actionLog: [],
   };
 
-  return beginYear(base);
+  let ready = base;
+  if (levelId === THIRD_MANDATE_LEVEL_ID) {
+    ready = applyThirdMandateNantesStartingEffects(base, nantesPolicyCarryover!);
+  }
+
+  return beginYear(ready);
 }

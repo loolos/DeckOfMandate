@@ -392,7 +392,7 @@ function cardPlayPriorityStrategyI(state: GameState, cardInstanceId: string): nu
     ryswickSolveAmount !== null && currentFunding < ryswickSolveAmount && currentFunding + 1 >= ryswickSolveAmount;
 
   if (tmpl === "fiscalBurden") return 10_000;
-  if (tmpl === "religiousTensionCard") return 10_000;
+  if (tmpl === "religiousTensionCard" || tmpl === "jansenistReservation") return 10_000;
   if (state.levelId === "secondMandate") {
     switch (tmpl) {
       case "funding":
@@ -446,7 +446,7 @@ function pickCardPlayActions(state: GameState, policy: StrategyPolicyId): GameAc
     if (template === "fiscalBurden") {
       continue;
     }
-    if (template === "religiousTensionCard") {
+    if (template === "religiousTensionCard" || template === "jansenistReservation") {
       continue;
     }
     if (template === "suppressHuguenots" && !hasContainmentStatus) {

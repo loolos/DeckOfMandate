@@ -45,6 +45,7 @@ import {
   type Level2CarryoverCard,
   type Level2StartDraft,
 } from "./level2Transition";
+import { buildLevel3StateFromChapter2 } from "./level3Transition";
 import styles from "./Game.module.css";
 import { retentionCapacity } from "../logic/turnFlow";
 import {
@@ -426,6 +427,22 @@ export function Game() {
     openLevel2Refit(createContinuityLevel2Draft(state));
   };
 
+  const openChapter3Continuity = () => {
+    const next = buildLevel3StateFromChapter2(state);
+    const def = getLevelDef(next.levelId);
+    setPendingNewRun(null);
+    if (levelDefHasIntro(def)) {
+      setPendingHydrateState(next);
+      setPendingIntroLevelId(next.levelId);
+      setLevelIntroOpen(true);
+      setStartMenuOpen(false);
+      return;
+    }
+    setPendingLevelTutorial(tutorialOnEntryMenu);
+    dispatchSafe({ type: "HYDRATE", state: next });
+    setStartMenuOpen(false);
+  };
+
   const introLevelDef =
     levelIntroOpen && pendingIntroLevelId && levelDefHasIntro(getLevelDef(pendingIntroLevelId))
       ? getLevelDef(pendingIntroLevelId)
@@ -604,9 +621,9 @@ export function Game() {
             {t("menu.refit.startYear", { year: level2Draft.calendarStartYear })}
           </p>
           <p className={styles.startMenuMuted}>
-            {level2Draft.europeAlert
-              ? t("menu.refit.europeAlertOn")
-              : t("menu.refit.europeAlertOff")}
+            {level2Draft.mode === "continuity" && !level2Draft.warOfDevolutionAttacked
+              ? t("menu.refit.europeAlertOnLow")
+              : t("menu.refit.europeAlertOn")}
           </p>
           <>
             <h3 className={styles.statusSectionTitle}>{t("menu.refit.adjustable")}</h3>
@@ -828,6 +845,7 @@ export function Game() {
           <h3 className={styles.statusSectionTitle}>{t("ui.statuses")}</h3>
           <StatusBar
             statuses={state.playerStatuses}
+            levelId={state.levelId}
             europeAlertActive={state.europeAlert && state.outcome === "playing"}
             europeAlertPowerLoss={state.europeAlertPowerLoss}
             europeAlertProgress={state.europeAlertProgress}
@@ -980,6 +998,11 @@ export function Game() {
               {state.outcome === "victory" && state.levelId === SUNKING_CH1_ID ? (
                 <button type="button" className={styles.btn} onClick={openChapter2Continuity}>
                   {t("menu.continueChapter2")}
+                </button>
+              ) : null}
+              {state.outcome === "victory" && state.levelId === SUNKING_CH2_ID ? (
+                <button type="button" className={styles.btn} onClick={openChapter3Continuity}>
+                  {t("menu.continueChapter3")}
                 </button>
               ) : null}
             </div>

@@ -15,6 +15,7 @@ export type CardTemplateId =
   | "diplomaticCongress"
   | "suppressHuguenots"
   | "religiousTensionCard"
+  | "jansenistReservation"
   | "jesuitCollege";
 
 export type CardTemplate = {

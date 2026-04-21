@@ -3,6 +3,7 @@ import styles from "../app/Game.module.css";
 import { getStatusTemplate } from "../data/statusTemplates";
 import { useI18n, type MessageKey } from "../locales";
 import { useSmallScreen } from "../logic/useSmallScreen";
+import type { LevelId } from "../data/levels";
 import type { PlayerStatusInstance } from "../levels/types/status";
 
 type StatusViewRow = {
@@ -51,6 +52,7 @@ function statusDetail(
 
 export function StatusBar({
   statuses,
+  levelId,
   coalitionActive,
   coalitionProbabilityPct,
   europeAlertActive,
@@ -59,6 +61,8 @@ export function StatusBar({
   antiFrenchSentimentEmotion,
 }: {
   statuses: readonly PlayerStatusInstance[];
+  /** Used to tune containment hint copy (chapter 2 gates victory on this status). */
+  levelId?: LevelId;
   /** Anti-French League pressure (scripted war follow-up); draw risk is rolled each year in engine. */
   coalitionActive?: boolean;
   /** Rounded percent; shown in status hint (from `antiFrenchLeague.drawPenaltyProbability`). */
@@ -78,6 +82,10 @@ export function StatusBar({
   const pct = coalitionProbabilityPct ?? 0;
 
   const rows = useMemo<StatusViewRow[]>(() => {
+    const containmentHintKey =
+      levelId === "secondMandate"
+        ? ("status.huguenotContainment.hint" as MessageKey)
+        : ("status.huguenotContainment.hintGeneral" as MessageKey);
     const next: StatusViewRow[] = [];
     if (europeAlertActive) {
       const progress = Math.max(1, Math.min(10, europeAlertProgress ?? 3));
@@ -131,14 +139,24 @@ export function StatusBar({
         meta: turnsText,
         detail:
           row.templateId === "huguenotContainment"
-            ? `${effectDetail} ${history} ${t("status.huguenotContainment.hint")}`.trim()
+            ? `${effectDetail} ${history} ${t(containmentHintKey)}`.trim()
             : row.templateId === "antiFrenchSentiment"
               ? `${t("status.antiFrenchSentiment.detail", { x: antiFrenchSentimentEmotion ?? 0, n: (antiFrenchSentimentEmotion ?? 0) * 2 })} ${history}`.trim()
             : `${effectDetail} ${history}`.trim(),
       });
     }
     return next;
-  }, [antiFrenchSentimentEmotion, coalitionActive, europeAlertActive, europeAlertPowerLoss, europeAlertProgress, pct, statuses, t]);
+  }, [
+    antiFrenchSentimentEmotion,
+    coalitionActive,
+    levelId,
+    europeAlertActive,
+    europeAlertPowerLoss,
+    europeAlertProgress,
+    pct,
+    statuses,
+    t,
+  ]);
 
   useEffect(() => {
     if (!isSmallScreen) setExpandedStatusId(null);

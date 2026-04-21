@@ -3,7 +3,9 @@ import type { CardTag } from "../../types/tags";
 
 const ROYAL: readonly CardTag[] = ["royal"];
 const EXTRA: readonly CardTag[] = ["extra"];
+const EXTRA_CONSUME: readonly CardTag[] = ["extra", "consume"];
 const INFLATION: readonly CardTag[] = ["inflation"];
+const CONSUME: readonly CardTag[] = ["consume"];
 
 export const cardTemplates: Record<CardTemplateId, CardTemplate> = {
   funding: {
@@ -36,7 +38,7 @@ export const cardTemplates: Record<CardTemplateId, CardTemplate> = {
   fiscalBurden: {
     id: "fiscalBurden",
     cost: 2,
-    tags: [],
+    tags: CONSUME,
     titleKey: "card.fiscalBurden.name",
     backgroundKey: "card.fiscalBurden.background",
     descriptionKey: "card.fiscalBurden.desc",
@@ -45,7 +47,7 @@ export const cardTemplates: Record<CardTemplateId, CardTemplate> = {
   antiFrenchContainment: {
     id: "antiFrenchContainment",
     cost: 2,
-    tags: [],
+    tags: CONSUME,
     titleKey: "card.antiFrenchContainment.name",
     backgroundKey: "card.antiFrenchContainment.background",
     descriptionKey: "card.antiFrenchContainment.desc",
@@ -117,7 +119,7 @@ export const cardTemplates: Record<CardTemplateId, CardTemplate> = {
   suppressHuguenots: {
     id: "suppressHuguenots",
     cost: 3,
-    tags: EXTRA,
+    tags: EXTRA_CONSUME,
     titleKey: "card.suppressHuguenots.name",
     backgroundKey: "card.suppressHuguenots.background",
     descriptionKey: "card.suppressHuguenots.desc",
@@ -126,10 +128,19 @@ export const cardTemplates: Record<CardTemplateId, CardTemplate> = {
   religiousTensionCard: {
     id: "religiousTensionCard",
     cost: 2,
-    tags: EXTRA,
+    tags: EXTRA_CONSUME,
     titleKey: "card.religiousTensionCard.name",
     backgroundKey: "card.religiousTensionCard.background",
     descriptionKey: "card.religiousTensionCard.desc",
+    effects: [],
+  },
+  jansenistReservation: {
+    id: "jansenistReservation",
+    cost: 2,
+    tags: EXTRA_CONSUME,
+    titleKey: "card.jansenistReservation.name",
+    backgroundKey: "card.jansenistReservation.background",
+    descriptionKey: "card.jansenistReservation.desc",
     effects: [],
   },
   jesuitCollege: {

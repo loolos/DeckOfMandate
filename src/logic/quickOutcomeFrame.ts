@@ -115,6 +115,15 @@ export function buildCardQuickFrameRows(tmpl: CardTemplate, costValue = tmpl.cos
       },
     ];
   }
+  if (tmpl.id === "jansenistReservation") {
+    return [
+      cost,
+      {
+        labelKey: "ui.quickFrame.onPlay",
+        value: "🏷️←",
+      },
+    ];
+  }
   const fx = formatEffectChips(tmpl.effects);
   return [
     cost,

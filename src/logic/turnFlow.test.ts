@@ -277,6 +277,9 @@ describe("beginYear + playerStatuses", () => {
       discard: [],
       cardsById,
       playerStatuses: [],
+      europeAlert: false,
+      europeAlertProgress: 0,
+      europeAlertPowerLoss: 0,
       slots: { ...EMPTY_EVENT_SLOTS },
     };
     const s1 = beginYear(s0);
@@ -312,6 +315,9 @@ describe("beginYear + playerStatuses", () => {
       discard: [],
       cardsById,
       playerStatuses: [],
+      europeAlert: false,
+      europeAlertProgress: 0,
+      europeAlertPowerLoss: 0,
       slots: { ...EMPTY_EVENT_SLOTS },
     };
 

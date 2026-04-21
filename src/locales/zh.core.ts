@@ -62,6 +62,7 @@ export const messagesZhCore = {
   "menu.startConfigured": "开始",
   "menu.runCodeLoad": "从对局码加载",
   "menu.continueChapter2": "进入第二关",
+  "menu.continueChapter3": "进入第三关",
   "menu.refit.title": "过章卡池整编",
   "menu.refit.subtitle": "将第一关牌组重构为第二关高压治理牌组。",
   "menu.refit.adjustable": "继承基础牌",
@@ -72,6 +73,8 @@ export const messagesZhCore = {
   "menu.refit.startYear": "第二关起始年份：{year}",
   "menu.refit.europeAlertOn":
     "欧洲警觉：开启（进度条开局为 3/10。进度 1-5 时，额外事件概率=进度×20%；进度 6-10 时至少触发 1 个，且第二个事件概率=(进度-5)×20%）。",
+  "menu.refit.europeAlertOnLow":
+    "欧洲警觉：开启（承接局且第一关未发动遗产战争军事进攻：进度条从 1/10 起；年度额外事件判定规则同上）。",
   "menu.refit.europeAlertOff": "欧洲警觉：关闭（标准第二关压力）。",
   "menu.refit.totalCards": "总牌数：{current}（需在 {min}–{max}）",
   "menu.refit.totalCards.simple": "删牌后总牌数：{current}",
@@ -165,9 +168,11 @@ export const messagesZhCore = {
   "log.europeAlertProgressShift":
     "[第 {turn} 年] 欧洲警觉进度调整 {from}→{to}（k={k}，触发概率 {pct}%）。",
   "log.info.chapter2EuropeAlertOn":
-    "[第 {turn} 年] 第二关以「欧洲警觉：开启」开局：警觉进度从 3/10 起，并据此判定每年额外事件（1-5：进度×20%；6-10：保底 1 个并可能第 2 个）。",
+    "[第 {turn} 年] 遗产战争与随后的外交摊牌（如 1668 年前后《亚琛和约》缔结之际）已让欧陆诸国切身感到路易十四在低地与继承问题上的决心：停战并未消解疑惧，荷兰、帝国与海上强国之间的串联从临时应急转向更长久的相互戒备——「欧洲警觉」在此刻已是宫廷间心照不宣的现实。",
+  "log.info.chapter2EuropeAlertContinuityLow":
+    "[第 {turn} 年] 法国在遗产与边境争端中更多依靠外交斡旋与边境威慑，而未把欧陆拖入全面军事摊牌；邻国仍紧盯凡尔赛的每一步，使节、军备与贸易杠杆暗中加码，但那种因大战惨败或领土剧变而瞬间抬高的围堵烈度尚未到来——戒备像余烬，而非燎原之火（「欧洲警觉」仍以较低烈度笼罩边境）。",
   "log.info.chapter2EuropeAlertOff":
-    "[第 {turn} 年] 第二关以「欧洲警觉：关闭」开局：不会进行欧洲警觉额外事件判定。",
+    "[第 {turn} 年] 在这一叙事起点上，外部对法兰西的牵制尚未聚合成制度化围堵：和约与密约仍在试探，反法大同盟的动员逻辑尚未成为欧陆日常，宫廷文书里更多是观望而非摊牌。",
   "log.info.antiFrenchSentimentActivated":
     "[第 {turn} 年]「反法情绪」升温：当“权力+财政”大于 20 时，「欧洲警觉」相关且需经费解决的事件费用会先 +1，之后每再多满 5 点再 +1。该状态会显示「情绪x」（x=当前整个牌库中「反法遏制」数量）；且在状态持续期间，「里斯维克和约」费用还会额外 +2x。",
   "log.info.antiFrenchSentimentEnded":
@@ -178,6 +183,10 @@ export const messagesZhCore = {
     "[第 {turn} 年] 标签说明「额外」：该牌由其他效果临时加入，不会出现在过关整编中，并会在本关结束时从牌堆移除。",
   "log.info.cardTag.inflation":
     "[第 {turn} 年] 标签说明「通胀」：当卡牌通胀机制生效后，该牌每次经过洗牌回抽都会叠加费用。",
+  "log.info.cardTag.defiance":
+    "[第 {turn} 年] 标签说明「抗命」：当手牌中紧邻右侧为「良心保留」时，本牌获得抗命且不可打出。",
+  "log.info.cardTag.consume":
+    "[第 {turn} 年] 标签说明「消耗」：打出后从牌库循环中移除，不会进入弃牌堆，也不会再被洗回抽牌堆。",
   "log.info.cardUse.remainingUses": "[第 {turn} 年] 标签说明「剩余」：该卡可用次数为 X/Y；每次打出会消耗 1 次，用尽后将从牌库循环中移除。",
   "log.info.cardUse.depleted.crackdownPenalty":
     "[第 {turn} 年]「王室干预」次数耗尽（0/3），已从牌库循环中移除；王室强制力受损，权力 -1。",

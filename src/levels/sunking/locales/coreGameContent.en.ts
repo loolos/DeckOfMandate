@@ -35,11 +35,16 @@ export const sunkingCoreGameContentEn = {
     "Royal troops, policing, and local courts are mobilized to break remaining Huguenot networks.",
   "card.suppressHuguenots.desc":
     "Temporary. Cost 3. On play, reduce “Contain Huguenot Remnants” by 1; at 0, remove that status and purge all Suppress the Huguenots cards.",
-  "card.religiousTensionCard.name": "Religious Tension",
+  "card.religiousTensionCard.name": "Religious Conflict",
   "card.religiousTensionCard.background":
     "Confessional rifts never fully close: doctrinal disputes, liturgical demands, and provincial grievances keep crowding the royal agenda.",
   "card.religiousTensionCard.desc":
     "Extra. You may pay 2 Funding to purge it (removed, not discarded). Added to your draw pile when Arminian Polemic, Huguenot Underground Agitation, or Jesuit Patronage is resolved.",
+  "card.jansenistReservation.name": "Reservation of Conscience",
+  "card.jansenistReservation.background":
+    "After Huguenot networks were broken, Catholic unity did not follow automatically: Jansenist rigor and episcopal authority clashed, leaving conscience claims that tied up royal policy.",
+  "card.jansenistReservation.desc":
+    "Extra. Cost 2. On play, removed from circulation (not discarded). While in hand, the card immediately to its left gains the Defiance tag and cannot be played.",
   "card.jesuitCollege.name": "Jesuit Collège",
   "card.jesuitCollege.background":
     "La Flèche, Louis-le-Grand, and Clermont train Crown-aligned elites — magistrates, officers, and clergy schooled in rhetoric, theology, and obedience. Their pulpits also doubled as the front line against Jansenist rigorism.",
@@ -86,6 +91,8 @@ export const sunkingCoreGameContentEn = {
   "status.huguenotContainment.history":
     "Harsh repression demands sustained policing campaigns and political bandwidth.",
   "status.huguenotContainment.hint": "While active, Chapter 2 victory is blocked.",
+  "status.huguenotContainment.hintGeneral":
+    "Tracks crackdown suppression stacks; clearing suppress cards from play removes stacks over time.",
   "event.jansenistTension.name": "Jansenist Controversy",
   "event.jansenistTension.desc":
     "Debates over grace and salvation revive Jansenist networks and reopen conflict between bishops, magistrates, and the crown. Pay 2 Funding for clerical inspections and public pacification, or lose 1 Legitimacy.",
@@ -99,5 +106,7 @@ export const sunkingCoreGameContentEn = {
   "card.tag.temp": "Temp",
   "card.tag.extra": "Extra",
   "card.tag.inflation": "Inflation",
+  "card.tag.defiance": "Defiance",
+  "card.tag.consume": "Consume",
   "card.tag.remainingUses": "Remaining {remaining}/{total}",
 } as const;

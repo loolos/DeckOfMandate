@@ -69,6 +69,7 @@ export const messagesFrCore: Record<keyof typeof messagesEnCore, string> = {
   "menu.startConfigured": "Démarrer",
   "menu.runCodeLoad": "Charger depuis un code de partie",
   "menu.continueChapter2": "Continuer au Chapitre 2",
+  "menu.continueChapter3": "Continuer au Chapitre 3",
   "menu.refit.title": "Réajustement du deck entre chapitres",
   "menu.refit.subtitle": "Reconstruisez votre deck pour une gouvernance à haute pression.",
   "menu.refit.adjustable": "Cartes transférées",
@@ -79,6 +80,8 @@ export const messagesFrCore: Record<keyof typeof messagesEnCore, string> = {
   "menu.refit.startYear": "Année de départ du Chapitre 2 : {year}",
   "menu.refit.europeAlertOn":
     "Alerte Europe : ACTIVÉE (la jauge commence à 3/10. Progression 1-5 : chance d'événement supplémentaire = progression×20% ; 6-10 : au moins 1 événement, puis un 2e avec (progression-5)×20%).",
+  "menu.refit.europeAlertOnLow":
+    "Alerte Europe : ACTIVÉE (continuité sans la branche d'attaque de la guerre de Dévolution : la jauge commence à 1/10 ; règles annuelles d'événements supplémentaires inchangées).",
   "menu.refit.europeAlertOff": "Alerte Europe : DÉSACTIVÉE (pression standard du Chapitre 2).",
   "menu.refit.totalCards": "Taille du deck : {current} (requis {min}–{max})",
   "menu.refit.totalCards.simple": "Taille du deck après retraits : {current}",
@@ -138,9 +141,11 @@ export const messagesFrCore: Record<keyof typeof messagesEnCore, string> = {
   "log.huguenotResurgence.history":
     "Note historique : après l'édit de Fontainebleau (1685), les huguenots passent dans la clandestinité ou s'exilent, mais leurs assemblées, leur imprimerie et leurs réseaux d'entraide se reconstruisent dans les campagnes et aux frontières, exigeant de nouvelles vagues de répression tous les quelques années.",
   "log.info.chapter2EuropeAlertOn":
-    "[Tour {turn}] Le Chapitre 2 commence avec l'Alerte Europe active : la jauge démarre à 3/10 et pilote les événements supplémentaires annuels (1-5 : progression×20% ; 6-10 : 1 garanti + possible 2e).",
+    "[Tour {turn}] La guerre de Dévolution et le règlement diplomatique autour de la paix d'Aix-la-Chapelle (1668) ont dissipé les illusions sur les visées françaises aux Pays-Bas et sur les contentieux successoraux. La trêve n'a pas rendu la confiance : cours hollandaise, impériale et maritimes ont poursuivi une coordination contre les coups de force bourboniens—cette « Alerte Europe » était déjà l'ambiance non dite des chancelleries.",
+  "log.info.chapter2EuropeAlertContinuityLow":
+    "[Tour {turn}] La France a surtout fait valoir ses prétentions par la diplomatie et la pression frontalière plutôt que par une guerre généralisée autour de la Dévolution. Les rivaux observent toujours Versailles de près—agents, armements et leviers commerciaux se resserrent dans l'ombre—, mais la fusion d'un encerclement continental, forgé par des défaites éclatantes ou des annexions brutales, n'est pas encore là. La méfiance couve plutôt qu'elle n'embrase (l'Alerte Europe pèse encore sur les frontières, mais à un registre plus bas).",
   "log.info.chapter2EuropeAlertOff":
-    "[Tour {turn}] Le Chapitre 2 commence avec l'Alerte Europe inactive : aucune vérification d'événements supplémentaires liée à l'Alerte Europe.",
+    "[Tour {turn}] À ce point de départ narratif, la pression extérieure sur la France ne s'est pas encore cristallisée en containment institutionnel : traités et clauses secrètes restent à l'essai, et la mobilisation des grandes alliances n'est pas encore le tempo de la politique européenne—les chancelleries lisent la prudence plus souvent que l'ultimatum.",
   "log.info.antiFrenchSentimentActivated":
     "[Tour {turn}] Le sentiment anti-français monte : quand Pouvoir+Trésor dépasse 20, les résolutions financées liées à l'Alerte Europe prennent +1 immédiatement, puis +1 par tranche complète supplémentaire de +5. Le statut affiche aussi Sentiment x (x = nombre de cartes Endiguement anti-français dans toute votre bibliothèque), et la Paix de Ryswick gagne un surcoût supplémentaire de +2x tant que ce statut est actif.",
   "log.info.antiFrenchSentimentEnded":
@@ -159,6 +164,8 @@ export const messagesFrCore: Record<keyof typeof messagesEnCore, string> = {
     "[Tour {turn}] Note de tag « Historique » : cet événement renvoie à un fait historique réel et ce tag n'ajoute aucun effet de jeu.",
   "log.info.cardTag.extra":
     "[Tour {turn}] Note de tag « Supplémentaire » : cette carte est ajoutée par d'autres effets, exclue du réajustement inter-chapitre et retirée à la fin du chapitre.",
+  "log.info.cardTag.consume":
+    "[Tour {turn}] Note de tag « Consommation » : une fois jouée, cette carte quitte votre bibliothèque et ne passe ni par la défausse ni par les mélanges suivants.",
   "log.info.cardUse.remainingUses": "[Tour {turn}] Note de tag « Restant » : cette carte a X/Y utilisations restantes ; chaque activation en consomme 1 et elle quitte le cycle à 0.",
   "help.short":
     "Le Trésor fixe le revenu en Financement par tour. Le Financement paie les cartes et résolutions d'événements. Le Pouvoir fixe les tentatives de pioche. La Légitimité fixe la limite de conservation. Les événements néfastes non résolus sont réglés en séquence.",

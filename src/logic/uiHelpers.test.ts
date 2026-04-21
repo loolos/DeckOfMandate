@@ -34,10 +34,10 @@ describe("slotIsHandledOrNoFurtherAction", () => {
     expect(slotIsHandledOrNoFurtherAction(state, "A")).toBe(false);
   });
 
-  it("returns true when an unresolved harmless event has no feasible action", () => {
+  it("returns false when funding is short but a funding solve path still exists (cards may raise Funding first)", () => {
     const state = createStateWithSingleEvent("tradeOpportunity");
     state.resources = { ...state.resources, funding: 0 };
-    expect(slotIsHandledOrNoFurtherAction(state, "A")).toBe(true);
+    expect(slotIsHandledOrNoFurtherAction(state, "A")).toBe(false);
   });
 
   it("returns false when a harmful event can still be solved via playable crackdown", () => {

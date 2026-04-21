@@ -33,6 +33,9 @@ export function normalizeGameState(state: GameState): GameState {
   if (!Array.isArray(s.playerStatuses)) {
     s = { ...s, playerStatuses: [] };
   }
+  if (s.nantesPolicyCarryover !== "tolerance" && s.nantesPolicyCarryover !== "crackdown") {
+    s = { ...s, nantesPolicyCarryover: null };
+  }
   const eventId = typeof s.nextIds?.event === "number" ? s.nextIds.event : 0;
   const statusId = typeof s.nextIds?.status === "number" ? s.nextIds.status : 0;
   const logId = typeof s.nextIds?.log === "number" ? s.nextIds.log : 0;
@@ -47,7 +50,7 @@ export function normalizeGameState(state: GameState): GameState {
     s = { ...s, warOfDevolutionAttacked: false };
   }
   if (s.europeAlert === undefined) {
-    s = { ...s, europeAlert: false };
+    s = { ...s, europeAlert: getLevelDef(s.levelId).features.europeAlertMechanics };
   }
   if (s.europeAlertPowerLoss === undefined) {
     const legacyDrawPenalty =
@@ -61,7 +64,10 @@ export function normalizeGameState(state: GameState): GameState {
     };
   }
   if (s.europeAlertProgress === undefined) {
-    s = { ...s, europeAlertProgress: s.europeAlert ? 3 : 0 };
+    const mechanics = getLevelDef(s.levelId).features.europeAlertMechanics;
+    const defaultProgress =
+      !s.europeAlert ? 0 : mechanics ? (s.warOfDevolutionAttacked ? 3 : 1) : 3;
+    s = { ...s, europeAlertProgress: defaultProgress };
   } else {
     const clamped = s.europeAlert ? Math.min(10, Math.max(1, Math.floor(s.europeAlertProgress))) : 0;
     if (clamped !== s.europeAlertProgress) {

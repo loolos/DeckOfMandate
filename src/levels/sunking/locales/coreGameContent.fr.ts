@@ -35,11 +35,16 @@ export const sunkingCoreGameContentFr = {
     "Troupes royales, police et tribunaux locaux sont mobilisés pour briser les réseaux huguenots restants.",
   "card.suppressHuguenots.desc":
     "Temporaire. Coût 3. À l'activation, réduisez « Contenir les restes huguenots » de 1 ; à 0, retirez ce statut et épurez toutes les cartes Réprimer les huguenots.",
-  "card.religiousTensionCard.name": "Tension religieuse",
+  "card.religiousTensionCard.name": "Conflit religieux",
   "card.religiousTensionCard.background":
     "Les fractures confessionnelles ne se referment jamais vraiment : disputes doctrinales, exigences liturgiques et griefs provinciaux continuent d'encombrer l'agenda royal.",
   "card.religiousTensionCard.desc":
     "Extra. Vous pouvez payer 2 Financement pour l'épurer (retirée, pas défaussée). Ajoutée à votre pioche quand Polémique arminienne, Agitation huguenote clandestine ou Patronage jésuite est résolu.",
+  "card.jansenistReservation.name": "Réserve de conscience",
+  "card.jansenistReservation.background":
+    "Après la répression des réseaux huguenots, l'unité catholique ne s'impose pas : rigorisme janséniste et autorité épiscopale s'affrontent, et des revendications de conscience encombrent encore l'agenda royal.",
+  "card.jansenistReservation.desc":
+    "Extra. Coût 2. Retirée du cycle après jeu (pas défaussée). En main, la carte immédiatement à sa gauche gagne le tag Désobéissance et ne peut pas être jouée.",
   "card.jesuitCollege.name": "Collège jésuite",
   "card.jesuitCollege.background":
     "La Flèche, Louis-le-Grand et Clermont forment des élites alignées sur la Couronne — magistrats, officiers et clergé instruits dans la rhétorique, la théologie et l'obéissance ; leurs chaires sont aussi en première ligne contre le rigorisme janséniste.",
@@ -90,6 +95,8 @@ export const sunkingCoreGameContentFr = {
   "status.huguenotContainment.history":
     "Une répression dure exige des campagnes policières soutenues et du capital politique.",
   "status.huguenotContainment.hint": "Tant que ce statut est actif, la victoire du Chapitre 2 est bloquée.",
+  "status.huguenotContainment.hintGeneral":
+    "Indique la charge de répression ; retirer les cartes « réprimer les huguenots » en jeu réduit les piles avec le temps.",
   "event.jansenistTension.name": "Controverse janséniste",
   "event.jansenistTension.desc":
     "Les débats sur la grâce et le salut réactivent les réseaux jansénistes et opposent évêques, magistrats et pouvoir royal. Payez 2 Financement pour inspections ecclésiastiques et apaisement public, sinon perdez 1 Légitimité.",
@@ -103,5 +110,7 @@ export const sunkingCoreGameContentFr = {
   "card.tag.temp": "Temp",
   "card.tag.extra": "Supplémentaire",
   "card.tag.inflation": "Inflation",
+  "card.tag.defiance": "Désobéissance",
+  "card.tag.consume": "Consommation",
   "card.tag.remainingUses": "Restant {remaining}/{total}",
 } as const;
