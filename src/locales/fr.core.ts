@@ -44,7 +44,8 @@ export const messagesFrCore: Record<keyof typeof messagesEnCore, string> = {
   "ui.opponentHabsburg": "Adversaire : Habsbourg",
   "ui.opponentStrength": "Budget adversaire",
   "ui.opponentEvent.strengthTag": "Puissance {n}",
-  "ui.opponentEvent.lastPlayCombinedFx": "Dernier coup adverse — effets combinés sur le plateau : {fx}",
+  "ui.opponentEvent.lastPlayCombinedFx": "Total fin d'année précédente : {fx}",
+  "ui.opponentEvent.lastPlayCardBlurb": "{history} En jeu : {fx}",
   "ui.resolved": "Résolu",
   "ui.harmful": "Néfaste",
   "ui.opportunity": "Opportunité",
@@ -175,9 +176,9 @@ export const messagesFrCore: Record<keyof typeof messagesEnCore, string> = {
   "log.info.antiFrenchSentimentEnded":
     "[Tour {turn}] Le sentiment anti-français retombe : dès que Pouvoir+Trésor revient à 20 ou moins, ce surcoût de résolution d'événements est retiré.",
   "log.info.cardUse.depleted.crackdownPenalty":
-    "[Tour {turn}] Intervention royale atteint 0/3 et est retirée du cycle ; la capacité de contrainte de la cour recule (Pouvoir -1).",
+    "[Tour {turn}] Intervention royale : usages épuisés, carte retirée du cycle ; la capacité de contrainte de la cour recule (Pouvoir -1).",
   "log.info.cardUse.depleted.fundingPenalty":
-    "[Tour {turn}] Prélèvement royal atteint 0/3 et est retiré du cycle ; les canaux d'extraction d'urgence s'épuisent (Trésor -1).",
+    "[Tour {turn}] Prélèvement royal : usages épuisés, carte retirée du cycle ; les canaux d'extraction d'urgence s'épuisent (Trésor -1).",
   "log.info.cardUse.depleted.diplomaticIntervention":
     "[Tour {turn}] Intervention diplomatique atteint 0/3 et est retirée du cycle (sans pénalité).",
   "log.info.nantesPolicy.toleranceNoFontainebleau":

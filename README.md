@@ -8,7 +8,7 @@ Single-player, turn-based strategy card game about governance under pressure. Th
 
 - **Tech**: React 18 + TypeScript + Vite 8, fully client-side, no backend/database/API.
 - **State**: centralized reducer state + deterministic RNG (`runSeed`) for reproducible runs.
-- **Content model**: typed card/event/status templates under `src/data/*`.
+- **Content**: campaign packs under `src/levels/<campaignId>/` (each exposes `registerCampaign.ts`; `registerAll.ts` discovers campaigns via `import.meta.glob`). Level registry and thin template re-exports live in `src/data/` (details in [docs/design.md](docs/design.md) under “Code organization” and “Content architecture”).
 - **Modes**:
   - Chapter 1: **The Rising Sun** (`firstMandate`, 1661–1675, 15 turns)
   - Chapter 2: **Long Shadows at Noon** (`secondMandate`, 1676–1700, 25 turns)
@@ -16,11 +16,24 @@ Single-player, turn-based strategy card game about governance under pressure. Th
 
 ## Run locally
 
+Prerequisites: **Node.js 22** (matches CI). Install and run:
+
 ```bash
 npm install --legacy-peer-deps
 npm run dev
 npm test
 npm run build
+npm run preview
+```
+
+- **`npm run dev`** — Vite dev server (default port 5173). Use `npm run dev -- --host 0.0.0.0` to listen on all interfaces.
+- **`npm run preview`** — serve the production build locally after `npm run build`.
+
+Optional Monte Carlo / strategy report scripts (see `package.json`):
+
+```bash
+npm run test:ai:first-mandate:1000
+npm run test:ai:a-strategy-i:1000
 ```
 
 ## Documentation
@@ -34,5 +47,6 @@ npm run build
 
 ## Notes
 
-- There is no lint script in this repo; quality checks are primarily `npm test` and `npm run build`.
+- There is no lint script in this repo; quality checks are primarily `npm test` and `npm run build` (which runs `tsc --noEmit`).
 - `npm install` may require `--legacy-peer-deps` due to Vite/plugin peer resolution in some environments.
+- Vite 8 may log deprecation notices for `esbuild` / `optimizeDeps.rollupOptions`; they are cosmetic and do not affect gameplay.

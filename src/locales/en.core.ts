@@ -45,7 +45,8 @@ export const messagesEnCore = {
   "ui.opponentEvent.lastPlayNone": "No opponent cards were played last phase.",
   "ui.opponentEvent.effectSummary": "Board effects: {fx}",
   "ui.opponentEvent.strengthTag": "Strength {n}",
-  "ui.opponentEvent.lastPlayCombinedFx": "Last opponent play — combined effects on the board: {fx}",
+  "ui.opponentEvent.lastPlayCombinedFx": "Last year-end total: {fx}",
+  "ui.opponentEvent.lastPlayCardBlurb": "{history} In-game: {fx}",
   "ui.opponentHabsburg": "Habsburg opponent",
   "ui.opponentStrength": "Opponent budget",
   "ui.resolved": "Resolved",
@@ -247,9 +248,9 @@ export const messagesEnCore = {
     "[Turn {turn}] Tag note “Opponent”: this card is used only by the Habsburg opponent phase, not from your hand.",
   "log.info.cardUse.remainingUses": "[Turn {turn}] Tag note “Remaining”: this card currently has X/Y uses left; each play spends one, and it leaves circulation at 0.",
   "log.info.cardUse.depleted.crackdownPenalty":
-    "[Turn {turn}] Royal Intervention reached 0/3 and was removed from circulation; court coercive leverage slips (Power -1).",
+    "[Turn {turn}] Royal Intervention was fully depleted and removed from circulation; court coercive leverage slips (Power -1).",
   "log.info.cardUse.depleted.fundingPenalty":
-    "[Turn {turn}] Royal Levy reached 0/3 and was removed from circulation; emergency extraction channels dry up (Treasury -1).",
+    "[Turn {turn}] Royal Levy was fully depleted and removed from circulation; emergency extraction channels dry up (Treasury -1).",
   "log.info.cardUse.depleted.diplomaticIntervention":
     "[Turn {turn}] Diplomatic Intervention reached 0/3 and was removed from circulation.",
   "log.info.cardDraw.fiscalBurdenTriggered":

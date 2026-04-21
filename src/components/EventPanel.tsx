@@ -132,9 +132,11 @@ export function EventPanel({
                                   {cardLabelWithIcon(tid, t(ct.titleKey as MessageKey))}
                                 </div>
                                 <p className={styles.statusDetail}>
-                                  {t("ui.opponentEvent.effectSummary", { fx: singleFx })}
+                                  {t("ui.opponentEvent.lastPlayCardBlurb", {
+                                    history: t(histKey),
+                                    fx: singleFx,
+                                  })}
                                 </p>
-                                <p className={styles.eventBody}>{t(histKey)}</p>
                               </div>
                             );
                           })}
