@@ -75,7 +75,6 @@ export const levelContent: LevelContent = {
     "provincialNoncompliance",
     "risingGrainPrices",
     "taxResistance",
-    "courtScandal",
     "militaryPrestige",
     "commercialExpansion",
     "warWeariness",

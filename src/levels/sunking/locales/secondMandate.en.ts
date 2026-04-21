@@ -91,7 +91,7 @@ export const messagesEnSecondMandate = {
     "A chance to convert battlefield image into authority. Invest 2 Funding for Legitimacy +1.",
   "event.commercialExpansion.name": "Commercial Expansion",
   "event.commercialExpansion.desc":
-    "Merchants request support for growth. Invest 2 Funding for Treasury +1.",
+    "In late 17th-century France, Colbertist policy still backed manufactures, shipping, and chartered companies, but wartime strain and tariff friction kept expansion costly. Merchants request support for growth. Invest 2 Funding for Treasury +1.",
   "event.talentedAdministrator.name": "Talented Administrator",
   "event.talentedAdministrator.desc":
     "A capable official can be elevated. Invest 2 Funding for Power +1.",
