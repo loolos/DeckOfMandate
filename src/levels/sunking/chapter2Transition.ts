@@ -62,7 +62,7 @@ export type Level2Validation = {
   isValid: boolean;
 };
 
-export const LEVEL2_CONTINUITY_MAX_REMOVALS = 3;
+export const LEVEL2_CONTINUITY_MAX_REMOVALS = 0;
 
 export function createStandaloneLevel2Draft(seed?: number): Level2StandaloneDraft {
   const level = getLevelDef(SUNKING_CH2_ID);
@@ -120,8 +120,8 @@ export function createContinuityLevel2Draft(from: GameState, seed?: number): Lev
   const inheritedResources: Resources = {
     treasuryStat: from.resources.treasuryStat,
     power: from.resources.power,
-    legitimacy: from.resources.legitimacy + (from.warOfDevolutionAttacked ? 1 : 0),
-    funding: 0,
+    legitimacy: from.resources.legitimacy,
+    funding: from.resources.funding,
   };
   const carryoverCards = createDeckRefitCarryoverSnapshot(from);
   return {
@@ -209,12 +209,14 @@ function buildContinuityLevel2State(draft: Level2StartDraft): GameState {
     if (card.inflationDelta > 0) {
       cardInflationById[card.instanceId] = card.inflationDelta;
     }
-    const usage = createInitialCardUseState(SUNKING_CH2_ID, card.templateId, card.remainingUses ?? undefined);
-    if (usage) {
-      const total = card.totalUses ?? usage.total;
-      const remaining = Math.max(0, Math.min(total, card.remainingUses ?? usage.remaining));
+    if (card.totalUses != null && card.remainingUses != null) {
+      const total = Math.max(0, card.totalUses);
+      const remaining = Math.max(0, Math.min(total, card.remainingUses));
       cardUsesById[card.instanceId] = { total, remaining };
+      continue;
     }
+    const usage = createInitialCardUseState(SUNKING_CH2_ID, card.templateId);
+    if (usage) cardUsesById[card.instanceId] = usage;
   }
   const europeAlertPowerLoss = computeEuropeAlertPowerLoss(draft.resources.power);
   const europeAlertProgress =

@@ -70,7 +70,17 @@ describe("level3Transition / thirdMandate Nantes carryover", () => {
   });
 
   it("continuity merges carryover and six chapter-3 cards in the opening shuffle, then inserts four Nantes cards at random deck positions", () => {
-    const ch2 = createInitialState(777, "secondMandate");
+    const baseCh2 = createInitialState(777, "secondMandate");
+    const ch2 = {
+      ...baseCh2,
+      resources: {
+        ...baseCh2.resources,
+        treasuryStat: 6,
+        power: 5,
+        legitimacy: 4,
+        funding: 2,
+      },
+    };
     const carryoverCount = createDeckRefitCarryoverSnapshot(ch2).length;
     const st = buildLevel3StateFromChapter2(ch2, 888);
     const allIds = [...st.deck, ...st.discard, ...st.hand];
@@ -79,5 +89,7 @@ describe("level3Transition / thirdMandate Nantes carryover", () => {
     expect(Object.values(st.cardsById).filter((c) => c.templateId === "bourbonMarriageProclamation").length).toBe(2);
     expect(Object.values(st.cardsById).filter((c) => c.templateId === "jansenistReservation").length).toBe(4);
     expect(st.resources.treasuryStat).toBe(ch2.resources.treasuryStat);
+    expect(st.resources.power).toBe(ch2.resources.power);
+    expect(st.resources.legitimacy).toBe(ch2.resources.legitimacy);
   });
 });
