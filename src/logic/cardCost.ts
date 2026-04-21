@@ -26,6 +26,9 @@ export function getCardInflationDelta(state: GameState, cardInstanceId: string):
 export function getPlayableCardCost(state: GameState, cardInstanceId: string): number {
   const inst = state.cardsById[cardInstanceId];
   if (!inst) return 0;
+  if (inst.templateId === "fiscalBurden") {
+    return Math.floor(state.resources.treasuryStat / 5) + 1;
+  }
   if (inst.templateId === "antiFrenchContainment") {
     return Math.max(1, Math.floor(state.europeAlertProgress / 2));
   }

@@ -191,6 +191,8 @@ export const messagesFrCore: Record<keyof typeof messagesEnCore, string> = {
     "[Tour {turn}] Note de tag « Supplémentaire » : cette carte est ajoutée par d'autres effets, exclue du réajustement inter-chapitre et retirée à la fin du chapitre.",
   "log.info.cardTag.consume":
     "[Tour {turn}] Note de tag « Consommation » : une fois jouée, cette carte quitte votre bibliothèque et ne passe ni par la défausse ni par les mélanges suivants.",
+  "log.info.cardTag.successionContest":
+    "[Tour {turn}] Note de tag « Conflit successoral » : cette carte relève de la guerre de Succession d'Espagne. Le tag n'ajoute aucun effet de jeu direct et sert de repère historique sur la rivalité bourbonno-habsbourgeoise autour de la légitimité dynastique, de la diplomatie et du financement de la guerre.",
   "log.info.cardUse.remainingUses": "[Tour {turn}] Note de tag « Restant » : cette carte a X/Y utilisations restantes ; chaque activation en consomme 1 et elle quitte le cycle à 0.",
   "help.short":
     "Le Trésor fixe le revenu en Financement par tour. Le Financement paie les cartes et résolutions d'événements. Le Pouvoir fixe les tentatives de pioche. La Légitimité fixe la limite de conservation. Les événements néfastes non résolus sont réglés en séquence.",

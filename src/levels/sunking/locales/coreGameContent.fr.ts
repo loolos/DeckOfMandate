@@ -112,5 +112,6 @@ export const sunkingCoreGameContentFr = {
   "card.tag.inflation": "Inflation",
   "card.tag.defiance": "Désobéissance",
   "card.tag.consume": "Consommation",
+  "card.tag.successionContest": "Conflit successoral",
   "card.tag.remainingUses": "Restant {remaining}/{total}",
 } as const;

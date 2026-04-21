@@ -782,7 +782,7 @@ describe("gameReducer", () => {
     expect(after.deck).toEqual(expect.arrayContaining(burdenIds));
   });
 
-  it("playing fiscal burden purges it without adding to discard", () => {
+  it("playing fiscal burden uses floor(treasury/5)+1 cost and purges without adding to discard", () => {
     const base = createInitialState(202_603, "secondMandate");
     const fiscalBurden = "fb_manual";
     const withCard: typeof base = {
@@ -793,10 +793,10 @@ describe("gameReducer", () => {
       },
       hand: [fiscalBurden],
       deck: base.deck.filter((id) => id !== fiscalBurden),
-      resources: { ...base.resources, funding: 2 },
+      resources: { ...base.resources, funding: 2, treasuryStat: 4 },
     };
     const after = gameReducer(withCard, { type: "PLAY_CARD", handIndex: 0 });
-    expect(after.resources.funding).toBe(0);
+    expect(after.resources.funding).toBe(1);
     expect(after.hand.includes(fiscalBurden)).toBe(false);
     expect(after.discard.includes(fiscalBurden)).toBe(false);
   });

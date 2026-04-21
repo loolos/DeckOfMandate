@@ -255,6 +255,8 @@ export const messagesZhCore = {
     "[第 {turn} 年] 标签说明「抗命」：当手牌中紧邻右侧为「良心保留」时，本牌获得抗命且不可打出。",
   "log.info.cardTag.consume":
     "[第 {turn} 年] 标签说明「消耗」：打出后从牌库循环中移除，不会进入弃牌堆，也不会再被洗回抽牌堆。",
+  "log.info.cardTag.successionContest":
+    "[第 {turn} 年] 标签说明「继承争夺」：该牌属于西班牙王位继承战争的博弈语境。此标签本身不产生额外机制效果，仅用于呈现波旁与哈布斯堡围绕法统、外交与战区财政拉锯的历史背景。",
   "log.info.cardTag.opponent":
     "[第 {turn} 年] 标签说明「对手」：该牌仅用于哈布斯堡对手阶段，不能从玩家手牌打出。",
   "log.info.cardUse.remainingUses": "[第 {turn} 年] 标签说明「剩余」：该卡可用次数为 X/Y；每次打出会消耗 1 次，用尽后将从牌库循环中移除。",
