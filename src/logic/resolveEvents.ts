@@ -48,6 +48,21 @@ export function resolveEndOfYearPenalties(state: GameState): GameState {
       s = completeSuccessionCrisisAndRevealOpponent(s, slot);
       continue;
     }
+    if (s.levelId === THIRD_MANDATE_LEVEL_ID && ev.templateId === "utrechtTreaty") {
+      const raw = s.utrechtTreatyCountdown ?? 6;
+      const next = raw - 1;
+      if (next <= 0) {
+        s = {
+          ...s,
+          warEnded: true,
+          utrechtTreatyCountdown: null,
+          slots: { ...s.slots, [slot]: null },
+        };
+      } else {
+        s = { ...s, utrechtTreatyCountdown: next };
+      }
+      continue;
+    }
     if (schedulers.includes(ev.templateId)) {
       if (ev.templateId === "powerVacuum") {
         s = appendActionLog(s, { kind: "eventPowerVacuumScheduled", slot, templateId: "powerVacuum" });

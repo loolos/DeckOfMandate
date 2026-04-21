@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { createInitialState } from "../app/initialState";
 import type { GameState } from "../types/game";
-import { chooseOpponentPlay } from "./opponentHabsburg";
+import { chooseOpponentPlay, opponentBeginYearDrawPhase } from "./opponentHabsburg";
 import { THIRD_MANDATE_LEVEL_ID } from "./thirdMandateConstants";
 
 describe("opponentHabsburg AI", () => {
@@ -29,5 +29,25 @@ describe("opponentHabsburg AI", () => {
     };
     const pick = chooseOpponentPlay(st);
     expect(pick).toEqual([opp1, opp2]);
+  });
+
+  it("draws two opponent cards at begin-year after the rival is unlocked", () => {
+    const base = createInitialState(7, THIRD_MANDATE_LEVEL_ID);
+    const st: GameState = {
+      ...base,
+      opponentHabsburgUnlocked: true,
+      opponentDeck: ["opp_a", "opp_b", "opp_c"],
+      opponentHand: [],
+      cardsById: {
+        ...base.cardsById,
+        opp_a: { instanceId: "opp_a", templateId: "habsburgImperialLegitimacyNote" },
+        opp_b: { instanceId: "opp_b", templateId: "habsburgLowCountriesAgitation" },
+        opp_c: { instanceId: "opp_c", templateId: "habsburgGrandAllianceLevy" },
+      },
+    };
+
+    const next = opponentBeginYearDrawPhase(st);
+    expect(next.opponentHand).toEqual(["opp_a", "opp_b"]);
+    expect(next.opponentDeck).toEqual(["opp_c"]);
   });
 });
