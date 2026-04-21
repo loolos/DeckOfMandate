@@ -217,6 +217,12 @@ function firstUnresolvedSlotByTemplate(state: GameState, templateId: string): Sl
   return null;
 }
 
+function remainingCardUses(state: GameState, cardInstanceId: string): number | null {
+  const usage = state.cardUsesById[cardInstanceId];
+  if (!usage) return null;
+  return usage.remaining;
+}
+
 function minFundingSolveAmount(
   state: GameState,
   predicate: (templateId: string, harmful: boolean) => boolean,
@@ -250,14 +256,23 @@ function strategyISolvePriority(state: GameState, slot: SlotId, amount: number):
   const ev = state.slots[slot];
   if (!ev) return 1_000_000;
   const id = ev.templateId;
+  const power = state.resources.power;
   if (id === "ryswickPeace") return -30_000 + amount;
   if (id === "versaillesExpenditure") return -28_000 + amount;
+  if (id === "mercenaryRaiders") return -27_800 + amount;
   if (id === "taxResistance") return -27_500 + amount;
+  if (id === "nobleResentment") return -27_250 + amount;
   if (id === "frontierGarrisons") return -27_000 + amount;
   if (id === "warWeariness") return -26_500 + amount;
   if (id === "risingGrainPrices") return -26_000 + amount;
   if (id === "courtScandal") return -25_500 + amount;
   if (id === "provincialNoncompliance") return -25_000 + amount;
+  if (id === "grainReliefCrisis") return -24_500 + amount;
+  if (id === "nymwegenSettlement") {
+    // Nijmegen solve trades away power immediately; delay it when power is already fragile.
+    if (power <= 4) return -21_000 + amount;
+    return -24_000 + amount;
+  }
   if (id === "nymwegenSettlement") return -24_000 + amount;
   if (id === "leagueOfAugsburg" || id === "nineYearsWar") return -23_000 + amount;
   if (getEventTemplate(id).harmful) return -22_000 + amount;
@@ -407,13 +422,13 @@ function cardPlayPriorityStrategyI(state: GameState, cardInstanceId: string): nu
       case "grainRelief":
         return unresolvedRisingGrain ? 2 : state.resources.legitimacy <= 6 ? 4 : 22;
       case "diplomaticCongress":
-        return state.resources.power < 8 ? 3 : 24;
+        return state.resources.power < 6 ? 2 : state.resources.power < 8 ? 4 : 24;
       case "taxRebalance":
-        return state.resources.treasuryStat < 4 ? 5 : state.resources.treasuryStat < 6 ? 9 : 30;
+        return state.resources.treasuryStat < 3 ? 5 : state.resources.treasuryStat < 5 ? 12 : 35;
       case "development":
-        return state.resources.treasuryStat < 7 ? 4 : state.resources.treasuryStat < 9 ? 8 : 26;
+        return state.resources.treasuryStat < 5 ? 3 : state.resources.treasuryStat < 7 ? 6 : 24;
       case "reform":
-        return state.resources.power < 6 ? 4 : state.resources.power < 8 ? 8 : 26;
+        return state.resources.power < 5 ? 2 : state.resources.power < 7 ? 5 : 24;
       case "ceremony":
         return state.resources.legitimacy < 6 ? 3 : state.resources.legitimacy < 9 ? 7 : 26;
       case "suppressHuguenots":
@@ -442,6 +457,13 @@ function pickCardPlayActions(state: GameState, policy: StrategyPolicyId): GameAc
     const template = inst.templateId;
     if ((template === "crackdown" || template === "diplomaticIntervention") && !unresolvedHarmful) {
       continue;
+    }
+    if (policy === "a-strategy-i" && template === "crackdown") {
+      const remaining = remainingCardUses(state, id);
+      if (remaining === 1 && state.resources.power <= 3) {
+        // Preserve the final crackdown charge to avoid depletion-driven power collapse.
+        continue;
+      }
     }
     if (template === "fiscalBurden") {
       continue;
