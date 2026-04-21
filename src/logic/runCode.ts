@@ -156,7 +156,7 @@ class ByteReader {
     let shift = 0;
     while (true) {
       const byte = this.readU8();
-      result += (byte & 0x7f) * Math.pow(2, shift);
+      result |= (byte & 0x7f) << shift;
       if ((byte & 0x80) === 0) return result;
       shift += 7;
       if (shift > 35) throw new Error("runCode: varuint too long");
@@ -173,10 +173,15 @@ function bytesToHex(bytes: Uint8Array): string {
 }
 
 function hexToBytes(hex: string): Uint8Array {
-  const cleaned = hex.replace(/\s+/g, "").toLowerCase();
+  let s = hex.trim();
+  if (s.toLowerCase().startsWith("0x")) {
+    s = s.slice(2);
+  }
+  // Accept spaces, commas, line breaks, labels, etc. (after optional 0x — stripping only
+  // non-hex would keep the leading "0" from "0x" and corrupt the length).
+  const cleaned = s.replace(/[^0-9a-f]/gi, "").toLowerCase();
   if (cleaned.length === 0) throw new Error("runCode: empty input");
   if (cleaned.length % 2 !== 0) throw new Error("runCode: hex length must be even");
-  if (!/^[0-9a-f]*$/.test(cleaned)) throw new Error("runCode: invalid hex characters");
   const out = new Uint8Array(cleaned.length / 2);
   for (let i = 0; i < out.length; i++) {
     out[i] = parseInt(cleaned.slice(i * 2, i * 2 + 2), 16);

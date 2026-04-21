@@ -214,4 +214,87 @@ describe("runCode", () => {
     ).toBe(false);
     expect(shouldRecordAction({ type: "END_YEAR" })).toBe(true);
   });
+
+  it("accepts hex with 0x prefix and non-hex separators (same bytes as plain hex)", () => {
+    const session: SessionRecord = [
+      { level: "firstMandate", mode: "standalone", seed: 0x10030003 >>> 0, removedIndices: [], actions: [] },
+    ];
+    const plain = encodeSession(session);
+    const spaced = plain.match(/.{1,2}/g)!.join(" ");
+    expect(decodeSession(`0x${plain}`).session).toEqual(decodeSession(plain).session);
+    expect(decodeSession(spaced).session).toEqual(decodeSession(plain).session);
+  });
+
+  it("decodes a long firstMandate session hex (regression)", () => {
+    const hex =
+      "dc0201000c66697273744d616e646174650c64746d100300030102030001000100020b03050103090001010101020300010102";
+    const decoded = decodeSession(hex);
+    expect(decoded.session[0]?.level).toBe("firstMandate");
+    expect(decoded.session[0]?.actions.length).toBeGreaterThan(0);
+  });
+
+  /**
+   * Mirrors the old Game.tsx bug: recording used `gameReducer(state, a)` with a stale `state`
+   * for every action in the same event tick. After PLAY_CARD (crackdown), CRACKDOWN_CANCEL must
+   * be predicted from the post-play state or it is wrongly treated as a no-op and omitted.
+   */
+  it("chains predicted state when recording crackdown play + cancel (regression)", () => {
+    let found: { seed: number; s0: GameState } | null = null;
+    for (let seed = 0; seed < 50_000; seed++) {
+      const s0 = createInitialState(seed, "firstMandate");
+      const id0 = s0.hand[0];
+      if (!id0) continue;
+      const inst = s0.cardsById[id0];
+      if (!inst || inst.templateId !== "crackdown") continue;
+      const s1 = gameReducer(s0, { type: "PLAY_CARD", handIndex: 0 });
+      if (s1 === s0 || s1.pendingInteraction?.type !== "crackdownPick") continue;
+      const s2 = gameReducer(s1, { type: "CRACKDOWN_CANCEL" });
+      if (s2 !== s1) {
+        found = { seed, s0 };
+        break;
+      }
+    }
+    if (!found) {
+      throw new Error("expected a seed with crackdown at index 0 and cancellable pick");
+    }
+    const { seed, s0 } = found!;
+    const play: GameAction = { type: "PLAY_CARD", handIndex: 0 };
+    const cancel: GameAction = { type: "CRACKDOWN_CANCEL" };
+
+    const staleRecorded: GameAction[] = [];
+    if (shouldRecordAction(play)) {
+      const n1 = gameReducer(s0, play);
+      if (n1 !== s0) staleRecorded.push(play);
+    }
+    if (shouldRecordAction(cancel)) {
+      const n2 = gameReducer(s0, cancel);
+      if (n2 !== s0) staleRecorded.push(cancel);
+    }
+    expect(staleRecorded.length).toBe(1);
+
+    let pending = s0;
+    const chainedRecorded: GameAction[] = [];
+    for (const a of [play, cancel]) {
+      const next = gameReducer(pending, a);
+      if (shouldRecordAction(a) && next !== pending) {
+        chainedRecorded.push(a);
+      }
+      pending = next;
+    }
+    expect(chainedRecorded).toEqual([play, cancel]);
+
+    const sessionStale: SessionRecord = [
+      { level: "firstMandate", mode: "standalone", seed, removedIndices: [], actions: staleRecorded },
+    ];
+    const sessionChained: SessionRecord = [
+      { level: "firstMandate", mode: "standalone", seed, removedIndices: [], actions: chainedRecorded },
+    ];
+    expect(() => replaySession(sessionStale)).not.toThrow();
+    expect(() => replaySession(sessionChained)).not.toThrow();
+    const finalStale = replaySession(sessionStale);
+    const finalChained = replaySession(sessionChained);
+    const finalExpected = gameReducer(gameReducer(s0, play), cancel);
+    expectEquivalent(finalChained, finalExpected);
+    expectEquivalent(finalStale, gameReducer(s0, play));
+  });
 });

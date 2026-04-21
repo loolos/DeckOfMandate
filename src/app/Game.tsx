@@ -151,6 +151,9 @@ export function Game() {
   );
   const mobileRefitRowLastTapAt = useRef<Record<string, number>>({});
   const sessionRef = useRef<SessionRecord>([]);
+  /** Predicted state for the next action — chains across multiple dispatches in one event before React re-renders. */
+  const pendingStateRef = useRef(state);
+  pendingStateRef.current = state;
   const [codeHex, setCodeHex] = useState("");
 
   const refreshCodeHex = useCallback(() => {
@@ -276,17 +279,18 @@ export function Game() {
     selectedIds.every((id) => state.hand.includes(id));
 
   const dispatchSafe = (a: GameAction) => {
-    if (shouldRecordAction(a)) {
-      const next = gameReducer(state, a);
-      if (next !== state) {
-        const head = sessionRef.current[sessionRef.current.length - 1];
-        if (head) {
-          const recorded = a.type === "CONFIRM_RETENTION" ? annotateConfirmRetention(a, state) : a;
-          head.actions.push(recorded);
-          refreshCodeHex();
-        }
+    const before = pendingStateRef.current;
+    const next = gameReducer(before, a);
+    if (shouldRecordAction(a) && next !== before) {
+      const head = sessionRef.current[sessionRef.current.length - 1];
+      if (head) {
+        const recorded =
+          a.type === "CONFIRM_RETENTION" ? annotateConfirmRetention(a, before) : a;
+        head.actions.push(recorded);
+        refreshCodeHex();
       }
     }
+    pendingStateRef.current = next;
     dispatch(a);
   };
 

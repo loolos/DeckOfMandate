@@ -113,6 +113,12 @@ export function RunCodePanel({ variant = "inGame", code, onLoad }: RunCodePanelP
                 setDraft(e.target.value);
                 if (error) setError(null);
               }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.shiftKey) {
+                  e.preventDefault();
+                  handleLoad();
+                }
+              }}
             />
             <button
               type="button"
