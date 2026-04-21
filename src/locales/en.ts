@@ -1,12 +1,10 @@
 import { messagesEnCore } from "./en.core";
-import { messagesEnFirstMandate } from "./levels/firstMandate/en";
-import { messagesEnSecondMandate } from "./levels/secondMandate/en";
+import { sunkingMessagesEn } from "../levels/sunking/sunkingLocales";
 
-/** Merged English bundle: {@link messagesEnCore} + level `firstMandate`. */
+/** Merged English bundle: framework core + Sun King campaign (see `src/levels/sunking`). */
 export const messagesEn = {
   ...messagesEnCore,
-  ...messagesEnFirstMandate,
-  ...messagesEnSecondMandate,
-} as const;
+  ...sunkingMessagesEn,
+};
 
 export type MessageKey = keyof typeof messagesEn;

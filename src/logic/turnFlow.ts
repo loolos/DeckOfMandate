@@ -1,17 +1,22 @@
-import { getEventRollWeight, getEventTemplate } from "../data/events";
+import {
+  getEventRollWeight,
+  getEventTemplate,
+  shouldDiscardCh3SuccessionGatedProceduralHead,
+} from "../data/events";
 import { getLevelContent } from "../data/levelContent";
 import { getLevelDef, getTurnLimitForRun } from "../data/levels";
-import type { CardTemplateId } from "../types/card";
+import { currentCalendarYear } from "./scriptedCalendar";
+import type { CardTemplateId } from "../levels/types/card";
 import { appendActionLog } from "./actionLog";
 import {
   EVENT_SLOT_ORDER,
   PROCEDURAL_EVENT_SLOT_ORDER,
   type EventInstance,
   type SlotId,
-} from "../types/event";
+} from "../levels/types/event";
 import type { GameState } from "../types/game";
-import type { PlayerStatusInstance } from "../types/status";
-import { applyOnDrawCardEffects } from "./cardRuntime";
+import type { PlayerStatusInstance } from "../levels/types/status";
+import { applyOnDrawCardEffects, enforceHuguenotContainmentInvariant } from "./cardRuntime";
 import { applyInflationFromDeckRefill } from "./cardCost";
 import { drawUpToPower } from "./draw";
 import { drawAttemptsFromPower } from "./drawScaling";
@@ -24,7 +29,11 @@ import {
 import { antiFrenchSentimentActive } from "./antiFrenchSentiment";
 import { applyScriptedCalendarPhase, rollAntiFrenchLeagueDrawAdjustment } from "./scriptedCalendar";
 import { rngNext, shuffle } from "./rng";
-import { applyEffects } from "./applyEffects";
+import { opponentBeginYearDrawPhase } from "./opponentHabsburg";
+import { applyEffects, enforceLegitimacy } from "./applyEffects";
+import { addCardsToDeck } from "./cardRuntime";
+
+const HUGUENOT_RESURGENCE_INTERVAL = 2;
 const EUROPE_ALERT_SUPPLEMENTAL_POOL = [
   "frontierGarrisons",
   "tradeDisruption",
@@ -32,17 +41,13 @@ const EUROPE_ALERT_SUPPLEMENTAL_POOL = [
   "mercenaryRaiders",
   "localWar",
 ] as const;
-const RELIGIOUS_TENSION_TRIGGER_PROBABILITY = 0.3;
+const RELIGIOUS_TENSION_BRANCH_PROBABILITY = 0.15;
+const RELIGIOUS_TENSION_EVENTS: readonly EventInstance["templateId"][] = [
+  "jansenistTension",
+  "arminianTension",
+  "huguenotTension",
+];
 const PROCEDURAL_SEQUENCE_LOW_WATERMARK = 3;
-const SECOND_MANDATE_EARLIEST_VICTORY_YEAR = 1696;
-const FIRST_MANDATE_OPENING_EVENTS: readonly EventInstance["templateId"][] = [
-  "tradeOpportunity",
-  "administrativeDelay",
-];
-const SECOND_MANDATE_STANDALONE_OPENING_EVENTS: readonly EventInstance["templateId"][] = [
-  "versaillesExpenditure",
-  "taxResistance",
-];
 type EventCountOption = {
   count: number;
   weight: number;
@@ -105,26 +110,36 @@ function buildProceduralSequenceBlock(state: GameState): [GameState["rng"], Even
   return shuffle(state.rng, expanded);
 }
 
+function isStandaloneChapter2Start(state: GameState): boolean {
+  const prefix = getLevelContent(state.levelId).opening.standaloneCarryoverIdPrefix;
+  if (!prefix) return false;
+  return Object.keys(state.cardsById).some((id) => id.startsWith(prefix));
+}
+
 function buildOpeningSequencePrefix(state: GameState): EventInstance["templateId"][] {
   if (state.turn !== 1) return [];
-  if (state.levelId === "firstMandate") return [...FIRST_MANDATE_OPENING_EVENTS];
-  if (state.levelId !== "secondMandate") return [];
-  if (!isSecondMandateStandaloneStart(state)) return [];
-  return [...SECOND_MANDATE_STANDALONE_OPENING_EVENTS];
+  const oc = getLevelContent(state.levelId).opening;
+  if (isStandaloneChapter2Start(state) && oc.standaloneTurnOnePrefix?.length) {
+    return [...oc.standaloneTurnOnePrefix];
+  }
+  return [...oc.turnOnePrefix];
 }
 
-function isSecondMandateStandaloneStart(state: GameState): boolean {
-  return Object.keys(state.cardsById).some((id) => id.startsWith("standalone_old_"));
+function shouldForceStandaloneChapter2Opening(state: GameState): boolean {
+  const oc = getLevelContent(state.levelId).opening;
+  if (!oc.standaloneTurnOnePrefix?.length || state.turn !== 1) return false;
+  return isStandaloneChapter2Start(state);
 }
 
-function shouldForceSecondMandateStandaloneOpening(state: GameState): boolean {
-  if (state.levelId !== "secondMandate" || state.turn !== 1) return false;
-  return isSecondMandateStandaloneStart(state);
+function isStandaloneChapter2OpeningTurn(state: GameState): boolean {
+  return shouldForceStandaloneChapter2Opening(state);
 }
 
-function forceSecondMandateStandaloneOpening(state: GameState): GameState {
-  if (!shouldForceSecondMandateStandaloneOpening(state)) return state;
-  const [first, second] = SECOND_MANDATE_STANDALONE_OPENING_EVENTS;
+function forceStandaloneChapter2Opening(state: GameState): GameState {
+  if (!shouldForceStandaloneChapter2Opening(state)) return state;
+  const pair = getLevelContent(state.levelId).opening.standaloneTurnOnePrefix;
+  const first = pair?.[0];
+  const second = pair?.[1];
   if (!first || !second) return state;
   let st = state;
   st = placeEventTemplateOnSlot(st, "A", first);
@@ -158,6 +173,7 @@ function drawFromProceduralSequence(
     const [head, ...rest] = s.proceduralEventSequence;
     s = { ...s, proceduralEventSequence: rest };
     if (!head) continue;
+    if (shouldDiscardCh3SuccessionGatedProceduralHead(s, head)) continue;
     if (used.has(head)) continue;
     picked.push(head);
     used.add(head);
@@ -222,6 +238,13 @@ function clearResolvedSlots(state: GameState): GameState {
       slots[slot] = { ...ev, resolved: false };
       continue;
     }
+    /** Persistent row until Utrecht ends the war; then cleared like other resolved rows. */
+    if (ev.templateId === "opponentHabsburg") {
+      if (state.warEnded) {
+        slots[slot] = null;
+      }
+      continue;
+    }
     slots[slot] = null;
   }
   return { ...state, slots };
@@ -252,12 +275,15 @@ function pickWeightedEventCount(options: readonly EventCountOption[], roll: numb
 }
 
 export function desiredProceduralEventCountWhenAllEmpty(state: GameState, roll: number): number {
-  if (state.levelId === "firstMandate" && state.turn === 1) return 2;
+  const lc = getLevelContent(state.levelId);
+  if (state.turn === 1 && lc.procedural.firstTurnEmptyBoardCount != null) {
+    return lc.procedural.firstTurnEmptyBoardCount;
+  }
   const resourceSum = sumCoreResources(state);
   const matchedRule = EMPTY_BOARD_EVENT_COUNT_RULES.find((rule) => inRange(resourceSum, rule));
   const baseCount = matchedRule ? pickWeightedEventCount(matchedRule.options, roll) : 1;
-  if (state.levelId === "secondMandate" && state.turn === 1 && isSecondMandateStandaloneStart(state)) {
-    return Math.max(3, baseCount);
+  if (state.turn === 1 && isStandaloneChapter2Start(state) && lc.procedural.firstTurnStandaloneEmptyBoardMin != null) {
+    return Math.max(lc.procedural.firstTurnStandaloneEmptyBoardMin, baseCount);
   }
   return baseCount;
 }
@@ -280,6 +306,7 @@ function syncAntiFrenchSentimentStatus(state: GameState): GameState {
 }
 
 function fillEmptySlots(state: GameState): GameState {
+  if (isStandaloneChapter2OpeningTurn(state)) return state;
   let st = state;
   if (allSlotsEmpty(st)) {
     const [rng, u] = rngNext(st.rng);
@@ -309,16 +336,50 @@ function runEventPhase(state: GameState): GameState {
   let s = applyScheduledTransforms(state);
   s = clearResolvedSlots(s);
   s = applyScriptedCalendarPhase(s);
-  s = forceSecondMandateStandaloneOpening(s);
+  s = forceStandaloneChapter2Opening(s);
   s = fillEmptySlots(s);
   s = syncAntiFrenchSentimentStatus(s);
   s = maybeAddEuropeAlertSupplementalEvent(s);
   s = maybeAddReligiousTensionEvent(s);
+  s = maybeTriggerHuguenotResurgence(s);
+  return s;
+}
+
+/**
+ * While `huguenotContainment` is active, every {@link HUGUENOT_RESURGENCE_INTERVAL} beginYear
+ * ticks adds a fresh `suppressHuguenots` card to the deck and bumps containment stacks +1.
+ *
+ * Models the "残余势力卷土重来" pressure: as long as the crown keeps the crackdown going
+ * but does not finish it, new cells of resistance keep regenerating.
+ */
+export function maybeTriggerHuguenotResurgence(state: GameState): GameState {
+  const containment = state.playerStatuses.find((s) => s.templateId === "huguenotContainment");
+  if (!containment) {
+    if (state.huguenotResurgenceCounter === 0) return state;
+    return { ...state, huguenotResurgenceCounter: 0 };
+  }
+  const nextCounter = state.huguenotResurgenceCounter + 1;
+  if (nextCounter < HUGUENOT_RESURGENCE_INTERVAL) {
+    return { ...state, huguenotResurgenceCounter: nextCounter };
+  }
+  let s: GameState = { ...state, huguenotResurgenceCounter: 0 };
+  s = addCardsToDeck(s, "suppressHuguenots", 1);
+  // Resync `turnsRemaining` to the live count of suppressHuguenots cards (this
+  // makes the +1 stack bump implicit and guarantees status === card count).
+  s = enforceHuguenotContainmentInvariant(s);
+  const refreshed = s.playerStatuses.find((p) => p.templateId === "huguenotContainment");
+  const remainingStacks = refreshed?.turnsRemaining ?? containment.turnsRemaining + 1;
+  s = appendActionLog(s, {
+    kind: "huguenotResurgence",
+    addedCount: 1,
+    remainingStacks,
+  });
   return s;
 }
 
 export function maybeAddEuropeAlertSupplementalEvent(state: GameState): GameState {
-  if (!state.europeAlert || state.levelId !== "secondMandate") return state;
+  if (isStandaloneChapter2OpeningTurn(state)) return state;
+  if (!state.europeAlert || !getLevelDef(state.levelId).features.europeAlertMechanics) return state;
   let s = state;
   const [rngPrimary, uPrimary] = rngNext(s.rng);
   s = { ...s, rng: rngPrimary };
@@ -384,7 +445,7 @@ function hasUnresolvedLocalWar(state: GameState): boolean {
 }
 
 function maybeAdjustEuropeAlertProgressAtYearStart(state: GameState): GameState {
-  if (!state.europeAlert || state.levelId !== "secondMandate") return state;
+  if (!state.europeAlert || !getLevelDef(state.levelId).features.europeAlertMechanics) return state;
   const from = clampEuropeAlertProgress(state.europeAlertProgress);
   const k = europeAlertPressureDeltaK(
     state.resources.treasuryStat,
@@ -432,12 +493,16 @@ function tickPlayerStatusesAfterDraw(statuses: readonly PlayerStatusInstance[]):
 export function beginYear(state: GameState): GameState {
   if (state.outcome !== "playing") return state;
   let s: GameState = { ...state, pendingInteraction: null };
+  s = opponentBeginYearDrawPhase(s);
+  if (s.outcome !== "playing") return s;
   let league = s.antiFrenchLeague;
   if (league && s.turn > league.untilTurn) {
     league = null;
   }
   s = { ...s, antiFrenchLeague: league };
   s = applyBeginYearResourceStatusEffects(s);
+  s = enforceLegitimacy(s);
+  if (s.outcome !== "playing") return s;
   s = maybeAdjustEuropeAlertProgressAtYearStart(s);
   const localWarIncomePenalty = hasUnresolvedLocalWar(s) ? 2 : 0;
   const fundingIncome = Math.max(0, s.resources.treasuryStat - localWarIncomePenalty);
@@ -490,25 +555,61 @@ export function beginYear(state: GameState): GameState {
   }
   for (const cardId of drawn.drawnCardIds) {
     s = applyOnDrawCardEffects(s, cardId);
+    s = enforceLegitimacy(s);
+    if (s.outcome !== "playing") return s;
   }
   s = { ...s, playerStatuses: tickPlayerStatusesAfterDraw(s.playerStatuses) };
   s = runEventPhase(s);
+  if (s.outcome !== "playing") return s;
   return { ...s, phase: "action" };
 }
 
-export function evaluateVictory(state: GameState): GameState {
-  const currentYear = state.calendarStartYear + state.turn - 1;
+function successionIntervalTier(track: number): import("../types/game").SuccessionIntervalTier {
+  if (track >= 4 && track <= 9) return "bourbon";
+  if (track >= -3 && track <= 3) return "compromise";
+  return "habsburg";
+}
 
-  if (state.levelId === "secondMandate") {
-    const reachedVictoryYear = currentYear >= SECOND_MANDATE_EARLIEST_VICTORY_YEAR;
+export function evaluateVictory(state: GameState): GameState {
+  if (state.outcome !== "playing") return state;
+  if (state.resources.power <= 0 || state.resources.legitimacy <= 0) {
+    return { ...state, phase: "gameOver", outcome: "defeatLegitimacy" };
+  }
+
+  const def = getLevelDef(state.levelId);
+  const vr = def.victoryRule;
+
+  if (vr.kind === "successionWar") {
+    if (state.successionTrack >= 10) {
+      return { ...state, phase: "gameOver", outcome: "victory", successionOutcomeTier: null };
+    }
+    const lim = getTurnLimitForRun(state.levelId, state.calendarStartYear);
+    if (state.turn >= lim && state.successionTrack > -10 && state.successionTrack < 10) {
+      return {
+        ...state,
+        phase: "gameOver",
+        outcome: "victory",
+        successionOutcomeTier: successionIntervalTier(state.successionTrack),
+      };
+    }
+    return state;
+  }
+
+  if (vr.kind === "gated") {
+    const currentYear = currentCalendarYear(state);
+    const reachedVictoryYear = currentYear >= vr.earliestCalendarYear;
     const europeAlertResolved = !state.europeAlert;
-    if (reachedVictoryYear && europeAlertResolved) {
+    const huguenotResidualResolved = !state.playerStatuses.some(
+      (s) => s.templateId === "huguenotContainment",
+    );
+    const legitimacyOk = state.resources.legitimacy >= vr.minLegitimacy;
+    if (reachedVictoryYear && europeAlertResolved && huguenotResidualResolved && legitimacyOk) {
       return { ...state, phase: "gameOver", outcome: "victory" };
     }
     return state;
   }
 
-  const t = getLevelDef(state.levelId).winTargets;
+  const t = def.winTargets;
   const { treasuryStat, power, legitimacy } = state.resources;
   if (treasuryStat >= t.treasuryStat && power >= t.power && legitimacy >= t.legitimacy) {
     return { ...state, phase: "gameOver", outcome: "victory" };
@@ -518,6 +619,10 @@ export function evaluateVictory(state: GameState): GameState {
 
 export function evaluateTimeDefeat(state: GameState): GameState {
   if (state.outcome !== "playing") return state;
+  const def = getLevelDef(state.levelId);
+  if (def.victoryRule.kind === "successionWar") {
+    return state;
+  }
   if (state.turn === getTurnLimitForRun(state.levelId, state.calendarStartYear)) {
     return { ...state, phase: "gameOver", outcome: "defeatTime" };
   }
@@ -525,17 +630,28 @@ export function evaluateTimeDefeat(state: GameState): GameState {
 }
 export function maybeAddReligiousTensionEvent(state: GameState): GameState {
   if (!state.playerStatuses.some((s) => s.templateId === "religiousTolerance")) return state;
-  const alreadyOnBoard = EVENT_SLOT_ORDER.some((slot) => state.slots[slot]?.templateId === "religiousTension");
+  const alreadyOnBoard = EVENT_SLOT_ORDER.some((slot) => {
+    const templateId = state.slots[slot]?.templateId;
+    return templateId != null && RELIGIOUS_TENSION_EVENTS.includes(templateId);
+  });
   if (alreadyOnBoard) return state;
   const target = EVENT_SLOT_ORDER.find((slot) => !state.slots[slot]);
   if (!target) return state;
   let s = state;
   const [rngRoll, uRoll] = rngNext(s.rng);
   s = { ...s, rng: rngRoll };
-  if (uRoll >= RELIGIOUS_TENSION_TRIGGER_PROBABILITY) return s;
+  let templateId: EventInstance["templateId"] | null = null;
+  if (uRoll < RELIGIOUS_TENSION_BRANCH_PROBABILITY) {
+    templateId = "jansenistTension";
+  } else if (uRoll < RELIGIOUS_TENSION_BRANCH_PROBABILITY * 2) {
+    templateId = "arminianTension";
+  } else if (uRoll < RELIGIOUS_TENSION_BRANCH_PROBABILITY * 3) {
+    templateId = "huguenotTension";
+  }
+  if (!templateId) return s;
   const instance: EventInstance = {
     instanceId: `evt_${s.nextIds.event}`,
-    templateId: "religiousTension",
+    templateId,
     resolved: false,
   };
   return {

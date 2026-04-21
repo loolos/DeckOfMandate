@@ -19,3 +19,21 @@ export function antiFrenchSentimentEventSolveCostPenalty(state: GameState): numb
   const overflow = sumPowerAndTreasury(state) - ANTI_FRENCH_SENTIMENT_TRIGGER_SUM;
   return Math.ceil(overflow / ANTI_FRENCH_SENTIMENT_COST_STEP);
 }
+
+function antiFrenchContainmentCardsInLibrary(state: GameState): number {
+  const pool = [...state.deck, ...state.hand, ...state.discard];
+  let count = 0;
+  for (const id of pool) {
+    if (state.cardsById[id]?.templateId === "antiFrenchContainment") count += 1;
+  }
+  return count;
+}
+
+export function antiFrenchSentimentEmotionValue(state: GameState): number {
+  if (!antiFrenchSentimentActive(state)) return 0;
+  return antiFrenchContainmentCardsInLibrary(state);
+}
+
+export function antiFrenchSentimentRyswickSurcharge(state: GameState): number {
+  return antiFrenchSentimentEmotionValue(state) * 2;
+}

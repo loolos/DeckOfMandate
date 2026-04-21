@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { getLevelContent } from "./levelContent";
-import { getCardTemplate } from "./cards";
-import { getEventSolveFundingAmount, getEventTemplate } from "./events";
-import { createInitialState } from "../app/initialState";
+import { createInitialState } from "../../app/initialState";
+import { getLevelContent } from "../../data/levelContent";
+import { getCardTemplate } from "../../data/cards";
+import { getEventSolveFundingAmount, getEventTemplate } from "../../data/events";
 
 describe("secondMandate balance data", () => {
   it("applies requested chapter 2 new-card costs", () => {
@@ -53,6 +53,7 @@ describe("secondMandate balance data", () => {
     const fiscalBurden = getCardTemplate("fiscalBurden");
     expect(fiscalBurden.effects).toEqual([]);
     expect(fiscalBurden.tags.includes("royal")).toBe(false);
+    expect(fiscalBurden.tags.includes("consume")).toBe(true);
 
     expect(getCardTemplate("funding").tags.includes("royal")).toBe(true);
     expect(getCardTemplate("crackdown").tags.includes("royal")).toBe(true);
@@ -134,12 +135,16 @@ describe("secondMandate balance data", () => {
     expect(getEventTemplate("expansionRemembered").harmful).toBe(false);
     expect(getEventTemplate("cautiousCrown").harmful).toBe(false);
     expect(getEventTemplate("revocationNantes").harmful).toBe(false);
-    expect(getEventTemplate("grainReliefCrisis").harmful).toBe(false);
     expect(getEventTemplate("leagueOfAugsburg").harmful).toBe(false);
     expect(getEventTemplate("nineYearsWar").harmful).toBe(false);
+    expect(getEventTemplate("nineYearsWar").solve).toEqual({ kind: "funding", amount: 2 });
     expect(getEventTemplate("ryswickPeace").harmful).toBe(false);
     expect(getEventTemplate("leagueOfAugsburg").crisisPersistence).toBe("continued");
     expect(getEventTemplate("leagueOfAugsburg").continuedDurationTurns).toBe(3);
+    expect(getEventTemplate("leagueOfAugsburg").penaltiesIfUnresolved).toEqual([
+      { kind: "modResource", resource: "power", delta: -1 },
+      { kind: "modResource", resource: "treasuryStat", delta: -1 },
+    ]);
     expect(getEventTemplate("ryswickPeace").crisisPersistence).toBe("continued");
     expect(getEventTemplate("ryswickPeace").penaltiesIfUnresolved).toEqual([
       { kind: "modResource", resource: "legitimacy", delta: -1 },
@@ -192,13 +197,27 @@ describe("secondMandate balance data", () => {
     ]);
   });
 
-  it("uses chapter-2 revocation branch mechanics and religious tension event", () => {
+  it("uses chapter-2 revocation branch mechanics and split religious tension events", () => {
     expect(getEventTemplate("revocationNantes").solve).toEqual({ kind: "nantesPolicyChoice" });
     expect(getEventTemplate("revocationNantes").crisisPersistence).toBe("continued");
     expect(getEventTemplate("revocationNantes").penaltiesIfUnresolved).toEqual([
       { kind: "scheduleNextTurnDrawModifier", delta: -2 },
     ]);
-    expect(getEventTemplate("religiousTension").solve).toEqual({ kind: "funding", amount: 2 });
+    expect(getEventTemplate("jansenistTension").solve).toEqual({ kind: "funding", amount: 2 });
+    expect(getEventTemplate("arminianTension").solve).toEqual({ kind: "funding", amount: 1 });
+    expect(getEventTemplate("huguenotTension").solve).toEqual({ kind: "funding", amount: 1 });
+    expect(getEventTemplate("arminianTension").onFundSolveEffects).toEqual([
+      { kind: "addCardsToDeck", templateId: "religiousTensionCard", count: 1 },
+    ]);
+    expect(getEventTemplate("huguenotTension").onFundSolveEffects).toEqual([
+      { kind: "addCardsToDeck", templateId: "religiousTensionCard", count: 1 },
+    ]);
+    expect(getEventTemplate("huguenotTension").penaltiesIfUnresolved).toEqual([
+      { kind: "modResource", resource: "treasuryStat", delta: -1 },
+    ]);
     expect(getCardTemplate("suppressHuguenots").cost).toBe(3);
+    expect(getCardTemplate("religiousTensionCard").cost).toBe(2);
+    expect(getCardTemplate("religiousTensionCard").tags).toContain("extra");
+    expect(getCardTemplate("religiousTensionCard").effects).toEqual([]);
   });
 });

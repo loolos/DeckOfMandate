@@ -1,14 +1,17 @@
 import { describe, expect, it } from "vitest";
 import { createInitialState } from "../app/initialState";
+import { getTurnLimitForRun } from "../data/levels";
 import { buildLevel2StateFromDraft, createStandaloneLevel2Draft } from "../app/level2Transition";
-import type { CardInstance } from "../types/card";
-import { EMPTY_EVENT_SLOTS } from "../types/event";
+import type { CardInstance } from "../levels/types/card";
+import { EMPTY_EVENT_SLOTS } from "../levels/types/event";
 import type { GameState } from "../types/game";
 import {
   beginYear,
   desiredProceduralEventCountWhenAllEmpty,
+  evaluateVictory,
   maybeAddEuropeAlertSupplementalEvent,
   maybeAddReligiousTensionEvent,
+  maybeTriggerHuguenotResurgence,
   retentionCapacity,
 } from "./turnFlow";
 
@@ -275,6 +278,9 @@ describe("beginYear + playerStatuses", () => {
       discard: [],
       cardsById,
       playerStatuses: [],
+      europeAlert: false,
+      europeAlertProgress: 0,
+      europeAlertPowerLoss: 0,
       slots: { ...EMPTY_EVENT_SLOTS },
     };
     const s1 = beginYear(s0);
@@ -290,6 +296,37 @@ describe("beginYear + playerStatuses", () => {
             entry.infoKey === "cardDraw.antiFrenchContainmentLegitimacyLoss"),
       ),
     ).toBe(true);
+  });
+
+  it("immediately declares defeat when anti-french containment draw drops legitimacy to 0", () => {
+    const started = createInitialState(55_780, "secondMandate");
+    const cardsById: Record<string, CardInstance> = {
+      a0: { instanceId: "a0", templateId: "antiFrenchContainment" },
+    };
+    const s0: GameState = {
+      ...started,
+      outcome: "playing",
+      phase: "action",
+      // rng.state=1 => antiFrenchContainment branches to legitimacy loss (u >= 0.5)
+      rng: { state: 1 },
+      resources: { treasuryStat: 1, funding: 0, power: 2, legitimacy: 1 },
+      nextTurnDrawModifier: 0,
+      hand: [],
+      deck: ["a0"],
+      discard: [],
+      cardsById,
+      playerStatuses: [],
+      europeAlert: false,
+      europeAlertProgress: 0,
+      europeAlertPowerLoss: 0,
+      slots: { ...EMPTY_EVENT_SLOTS },
+    };
+
+    const s1 = beginYear(s0);
+
+    expect(s1.resources.legitimacy).toBe(0);
+    expect(s1.outcome).toBe("defeatLegitimacy");
+    expect(s1.phase).toBe("gameOver");
   });
 
   it("chapter 2 reshuffle applies inflation stack to inflation-tag cards", () => {
@@ -428,11 +465,20 @@ describe("beginYear + playerStatuses", () => {
     expect(s0.slots.B?.templateId).toBe("taxResistance");
   });
 
-  it("ensures standalone second-mandate year-1 opening includes at least one non-fixed procedural event", () => {
+  it("keeps standalone second-mandate year-1 opening fixed to exactly two events", () => {
     const draft = createStandaloneLevel2Draft(424_244);
     const s0 = buildLevel2StateFromDraft(draft);
     expect(s0.turn).toBe(1);
-    expect(s0.slots.C).not.toBeNull();
+    const occupiedSlots = Object.values(s0.slots).filter((slot) => slot !== null);
+    expect(occupiedSlots).toHaveLength(2);
+    expect(s0.slots.C).toBeNull();
+    expect(s0.slots.D).toBeNull();
+    expect(s0.slots.E).toBeNull();
+    expect(s0.slots.F).toBeNull();
+    expect(s0.slots.G).toBeNull();
+    expect(s0.slots.H).toBeNull();
+    expect(s0.slots.I).toBeNull();
+    expect(s0.slots.J).toBeNull();
   });
 
   it("does not place duplicate procedural templates within the same all-empty refill", () => {
@@ -697,10 +743,10 @@ describe("beginYear + playerStatuses", () => {
     expect(retentionCapacity(s0)).toBe(3);
   });
 
-  it("religious tolerance can inject religious tension with 30% gate", () => {
+  it("religious tolerance can inject each confessional tension branch at 15%", () => {
     const started = createInitialState(444_001, "secondMandate");
-    const pickState = (() => {
-      for (let st = 1; st < 2_000_000; st++) {
+    const pickStateFor = (targetTemplateId: "jansenistTension" | "arminianTension" | "huguenotTension") => {
+      for (let st = 1; st < 3_000_000; st++) {
         const s0 = {
           ...started,
           rng: { state: st },
@@ -716,26 +762,33 @@ describe("beginYear + playerStatuses", () => {
           ],
         };
         const s1 = maybeAddReligiousTensionEvent(s0);
-        if (Object.values(s1.slots).some((ev) => ev?.templateId === "religiousTension")) return st;
+        if (Object.values(s1.slots).some((ev) => ev?.templateId === targetTemplateId)) return st;
       }
-      throw new Error("failed to find rng state for religious tension injection");
-    })();
-    const s0: GameState = {
-      ...started,
-      rng: { state: pickState },
-      slots: { ...EMPTY_EVENT_SLOTS },
-      playerStatuses: [
-        {
-          instanceId: "st_rt",
-          templateId: "religiousTolerance",
-          kind: "drawAttemptsDelta",
-          delta: 0,
-          turnsRemaining: 99,
-        },
-      ],
+      throw new Error(`failed to find rng state for ${targetTemplateId} injection`);
     };
-    const s1 = maybeAddReligiousTensionEvent(s0);
-    expect(Object.values(s1.slots).some((ev) => ev?.templateId === "religiousTension")).toBe(true);
+    const targets: readonly ("jansenistTension" | "arminianTension" | "huguenotTension")[] = [
+      "jansenistTension",
+      "arminianTension",
+      "huguenotTension",
+    ];
+    for (const targetTemplateId of targets) {
+      const s0: GameState = {
+        ...started,
+        rng: { state: pickStateFor(targetTemplateId) },
+        slots: { ...EMPTY_EVENT_SLOTS },
+        playerStatuses: [
+          {
+            instanceId: "st_rt",
+            templateId: "religiousTolerance",
+            kind: "drawAttemptsDelta",
+            delta: 0,
+            turnsRemaining: 99,
+          },
+        ],
+      };
+      const s1 = maybeAddReligiousTensionEvent(s0);
+      expect(Object.values(s1.slots).some((ev) => ev?.templateId === targetTemplateId)).toBe(true);
+    }
   });
 
   it("religious tolerance and containment statuses do not auto-expire at beginYear", () => {
@@ -806,5 +859,262 @@ describe("beginYear + playerStatuses", () => {
     if (overflowEntry?.kind === "drawOverflowDiscarded") {
       expect(overflowEntry.cardTemplateIds).toEqual(["development"]);
     }
+  });
+});
+
+describe("maybeTriggerHuguenotResurgence", () => {
+  function makeStateWithContainment(turnsRemaining: number): GameState {
+    const base = createInitialState(404_001, "secondMandate");
+    // Strict invariant: every `huguenotContainment` stack must be backed by an
+    // actual `suppressHuguenots` card in deck/hand/discard.
+    const cardsById = { ...base.cardsById };
+    const seededDeck: string[] = [];
+    for (let i = 0; i < turnsRemaining; i += 1) {
+      const id = `seed_sup_${i}`;
+      cardsById[id] = { instanceId: id, templateId: "suppressHuguenots" };
+      seededDeck.push(id);
+    }
+    return {
+      ...base,
+      cardsById,
+      deck: [...seededDeck, ...base.deck],
+      huguenotResurgenceCounter: 0,
+      playerStatuses: [
+        ...base.playerStatuses.filter((s) => s.templateId !== "huguenotContainment"),
+        {
+          instanceId: "st_hug_test",
+          templateId: "huguenotContainment",
+          kind: "drawAttemptsDelta",
+          delta: 0,
+          turnsRemaining,
+        },
+      ],
+    };
+  }
+
+  it("does not trigger when containment status is absent", () => {
+    const base = createInitialState(404_002, "secondMandate");
+    const s0: GameState = { ...base, huguenotResurgenceCounter: 1 };
+    const s1 = maybeTriggerHuguenotResurgence(s0);
+    expect(s1.huguenotResurgenceCounter).toBe(0);
+    const beforeSuppress = Object.values(s0.cardsById).filter((c) => c.templateId === "suppressHuguenots").length;
+    const afterSuppress = Object.values(s1.cardsById).filter((c) => c.templateId === "suppressHuguenots").length;
+    expect(afterSuppress).toBe(beforeSuppress);
+  });
+
+  it("increments counter on the first tick without spawning a card", () => {
+    const s0 = makeStateWithContainment(2);
+    const s1 = maybeTriggerHuguenotResurgence(s0);
+    expect(s1.huguenotResurgenceCounter).toBe(1);
+    expect(s1.playerStatuses.find((s) => s.templateId === "huguenotContainment")?.turnsRemaining).toBe(2);
+    const before = Object.values(s0.cardsById).filter((c) => c.templateId === "suppressHuguenots").length;
+    const after = Object.values(s1.cardsById).filter((c) => c.templateId === "suppressHuguenots").length;
+    expect(after).toBe(before);
+    expect(s1.actionLog.some((e) => e.kind === "huguenotResurgence")).toBe(false);
+  });
+
+  it("on the second tick spawns 1 suppress card, increments stacks, logs and resets counter", () => {
+    const s0 = makeStateWithContainment(2);
+    const s1 = maybeTriggerHuguenotResurgence(s0);
+    const s2 = maybeTriggerHuguenotResurgence(s1);
+    expect(s2.huguenotResurgenceCounter).toBe(0);
+    expect(s2.playerStatuses.find((s) => s.templateId === "huguenotContainment")?.turnsRemaining).toBe(3);
+    const before = Object.values(s0.cardsById).filter((c) => c.templateId === "suppressHuguenots").length;
+    const after = Object.values(s2.cardsById).filter((c) => c.templateId === "suppressHuguenots").length;
+    expect(after).toBe(before + 1);
+    const entry = s2.actionLog.find((e) => e.kind === "huguenotResurgence");
+    expect(entry).toBeTruthy();
+    if (entry?.kind === "huguenotResurgence") {
+      expect(entry.addedCount).toBe(1);
+      expect(entry.remainingStacks).toBe(3);
+    }
+  });
+
+  it("over a full beginYear cycle, two ticks add one suppress card and bump containment", () => {
+    const base = createInitialState(404_003, "secondMandate");
+    // Seed three real suppressHuguenots cards so the status (turnsRemaining=3)
+    // matches the live card count, satisfying the strict invariant.
+    const seededIds = ["seed_cycle_0", "seed_cycle_1", "seed_cycle_2"];
+    const cardsById = { ...base.cardsById };
+    for (const id of seededIds) {
+      cardsById[id] = { instanceId: id, templateId: "suppressHuguenots" };
+    }
+    const s0: GameState = {
+      ...base,
+      cardsById,
+      deck: [...seededIds, ...base.deck],
+      huguenotResurgenceCounter: 0,
+      playerStatuses: [
+        ...base.playerStatuses.filter((s) => s.templateId !== "huguenotContainment"),
+        {
+          instanceId: "st_hug_cycle",
+          templateId: "huguenotContainment",
+          kind: "drawAttemptsDelta",
+          delta: 0,
+          turnsRemaining: 3,
+        },
+      ],
+    };
+    const startSuppress = Object.values(s0.cardsById).filter((c) => c.templateId === "suppressHuguenots").length;
+    const s1 = beginYear(s0);
+    expect(s1.huguenotResurgenceCounter).toBe(1);
+    expect(s1.playerStatuses.find((s) => s.templateId === "huguenotContainment")?.turnsRemaining).toBe(3);
+    const s2 = beginYear({ ...s1, phase: "action" });
+    expect(s2.huguenotResurgenceCounter).toBe(0);
+    expect(s2.playerStatuses.find((s) => s.templateId === "huguenotContainment")?.turnsRemaining).toBe(4);
+    const endSuppress = Object.values(s2.cardsById).filter((c) => c.templateId === "suppressHuguenots").length;
+    expect(endSuppress).toBe(startSuppress + 1);
+  });
+
+  it("strict invariant: when status drifts above card count, sync brings it back down", () => {
+    const base = createInitialState(404_004, "secondMandate");
+    const onlyId = "seed_drift_only";
+    const cardsById = {
+      ...base.cardsById,
+      [onlyId]: { instanceId: onlyId, templateId: "suppressHuguenots" as const },
+    };
+    const s0: GameState = {
+      ...base,
+      cardsById,
+      deck: [onlyId, ...base.deck],
+      huguenotResurgenceCounter: 1,
+      playerStatuses: [
+        ...base.playerStatuses.filter((p) => p.templateId !== "huguenotContainment"),
+        {
+          instanceId: "st_hug_drift",
+          templateId: "huguenotContainment",
+          kind: "drawAttemptsDelta",
+          delta: 0,
+          turnsRemaining: 99,
+        },
+      ],
+    };
+    const s1 = maybeTriggerHuguenotResurgence(s0);
+    const status = s1.playerStatuses.find((p) => p.templateId === "huguenotContainment");
+    const liveCount = [...s1.deck, ...s1.hand, ...s1.discard].filter(
+      (id) => s1.cardsById[id]?.templateId === "suppressHuguenots",
+    ).length;
+    expect(status?.turnsRemaining).toBe(liveCount);
+    expect(status?.turnsRemaining).toBe(2);
+  });
+});
+
+describe("evaluateVictory (secondMandate)", () => {
+  function makeSecondMandateBaseAtYear(year: number): GameState {
+    const base = createInitialState(909_001, "secondMandate");
+    return {
+      ...base,
+      levelId: "secondMandate",
+      phase: "action",
+      outcome: "playing",
+      turn: year - base.calendarStartYear + 1,
+      europeAlert: false,
+      resources: { ...base.resources, legitimacy: Math.max(6, base.resources.legitimacy) },
+      playerStatuses: base.playerStatuses.filter(
+        (s) => s.templateId !== "huguenotContainment",
+      ),
+    };
+  }
+
+  it("does not declare victory before the earliest victory year", () => {
+    const s = makeSecondMandateBaseAtYear(1695);
+    const r = evaluateVictory(s);
+    expect(r.outcome).toBe("playing");
+    expect(r.phase).toBe("action");
+  });
+
+  it("does not declare victory while europeAlert is still active", () => {
+    const base = makeSecondMandateBaseAtYear(1696);
+    const s: GameState = { ...base, europeAlert: true };
+    const r = evaluateVictory(s);
+    expect(r.outcome).toBe("playing");
+  });
+
+  it("does not declare victory while legitimacy is below 6", () => {
+    const base = makeSecondMandateBaseAtYear(1696);
+    const s: GameState = {
+      ...base,
+      resources: { ...base.resources, legitimacy: 5 },
+    };
+    const r = evaluateVictory(s);
+    expect(r.outcome).toBe("playing");
+    expect(r.phase).toBe("action");
+  });
+
+  it("does not declare victory while huguenotContainment status is still on the player", () => {
+    const base = makeSecondMandateBaseAtYear(1696);
+    const s: GameState = {
+      ...base,
+      playerStatuses: [
+        ...base.playerStatuses,
+        {
+          instanceId: "st_hug_block_victory",
+          templateId: "huguenotContainment",
+          kind: "drawAttemptsDelta",
+          delta: 0,
+          turnsRemaining: 2,
+        },
+      ],
+    };
+    const r = evaluateVictory(s);
+    expect(r.outcome).toBe("playing");
+    expect(r.phase).toBe("action");
+  });
+
+  it("declares victory once year is reached, europeAlert cleared, no huguenotContainment remains, and legitimacy >= 6", () => {
+    const s = makeSecondMandateBaseAtYear(1696);
+    const r = evaluateVictory(s);
+    expect(r.outcome).toBe("victory");
+    expect(r.phase).toBe("gameOver");
+  });
+});
+
+describe("evaluateVictory (thirdMandate successionWar)", () => {
+  it("does not grant track +10 victory when Power is 0", () => {
+    const base = createInitialState(909_002, "thirdMandate");
+    const s: GameState = {
+      ...base,
+      phase: "action",
+      outcome: "playing",
+      successionTrack: 10,
+      resources: {
+        ...base.resources,
+        power: 0,
+        legitimacy: Math.max(1, base.resources.legitimacy),
+      },
+    };
+    const r = evaluateVictory(s);
+    expect(r.outcome).toBe("defeatLegitimacy");
+    expect(r.phase).toBe("gameOver");
+  });
+
+  it("does not grant track +10 victory when Legitimacy is 0", () => {
+    const base = createInitialState(909_003, "thirdMandate");
+    const s: GameState = {
+      ...base,
+      phase: "action",
+      outcome: "playing",
+      successionTrack: 10,
+      resources: { ...base.resources, power: Math.max(1, base.resources.power), legitimacy: 0 },
+    };
+    const r = evaluateVictory(s);
+    expect(r.outcome).toBe("defeatLegitimacy");
+    expect(r.phase).toBe("gameOver");
+  });
+
+  it("does not grant turn-limit tiered victory when a core resource is 0", () => {
+    const base = createInitialState(909_004, "thirdMandate");
+    const lim = getTurnLimitForRun("thirdMandate", base.calendarStartYear);
+    const s: GameState = {
+      ...base,
+      phase: "action",
+      outcome: "playing",
+      turn: lim,
+      successionTrack: 2,
+      resources: { ...base.resources, power: 0, legitimacy: 4 },
+    };
+    const r = evaluateVictory(s);
+    expect(r.outcome).toBe("defeatLegitimacy");
+    expect(r.phase).toBe("gameOver");
   });
 });

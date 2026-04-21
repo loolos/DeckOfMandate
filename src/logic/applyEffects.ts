@@ -1,20 +1,32 @@
 import { getStatusTemplate } from "../data/statusTemplates";
-import type { CardTemplateId } from "../types/card";
-import type { Effect } from "../types/effect";
+import type { CardTemplateId } from "../levels/types/card";
+import type { Effect } from "../levels/types/effect";
 import type { GameState } from "../types/game";
-import type { PlayerStatusInstance } from "../types/status";
+import { THIRD_MANDATE_LEVEL_ID } from "./thirdMandateConstants";
+import type { PlayerStatusInstance } from "../levels/types/status";
 import { appendActionLog } from "./actionLog";
-import { addCardsToDeck, applyOnDrawCardEffects } from "./cardRuntime";
+import { addGeneratedCards, applyOnDrawCardEffects } from "./cardRuntime";
 import { applyInflationFromDeckRefill } from "./cardCost";
 import { drawUpToPower } from "./draw";
 
 export function enforceLegitimacy(s: GameState): GameState {
-  if (
-    s.resources.legitimacy <= 0 ||
-    s.resources.treasuryStat <= 0 ||
-    s.resources.power <= 0
-  ) {
+  if (s.resources.legitimacy <= 0 || s.resources.power <= 0) {
     return { ...s, phase: "gameOver", outcome: "defeatLegitimacy" };
+  }
+  return s;
+}
+
+/** Instant win/loss on succession track at ±10 (chapter 3). */
+export function enforceSuccessionImmediateOutcome(s: GameState): GameState {
+  if (s.levelId !== THIRD_MANDATE_LEVEL_ID || s.outcome !== "playing") return s;
+  if (s.resources.power <= 0 || s.resources.legitimacy <= 0) {
+    return { ...s, phase: "gameOver", outcome: "defeatLegitimacy" };
+  }
+  if (s.successionTrack >= 10) {
+    return { ...s, phase: "gameOver", outcome: "victory", successionOutcomeTier: null };
+  }
+  if (s.successionTrack <= -10) {
+    return { ...s, phase: "gameOver", outcome: "defeatSuccession", successionOutcomeTier: null };
   }
   return s;
 }
@@ -31,6 +43,10 @@ export function applyEffect(state: GameState, e: Effect): GameState {
         r[e.resource] = Math.max(0, next);
       }
       return { ...state, resources: r };
+    }
+    case "modSuccessionTrack": {
+      const successionTrack = Math.max(-10, Math.min(10, state.successionTrack + e.delta));
+      return enforceSuccessionImmediateOutcome({ ...state, successionTrack });
     }
     case "gainFunding":
       return {
@@ -61,6 +77,16 @@ export function applyEffect(state: GameState, e: Effect): GameState {
         ...state,
         nextTurnDrawModifier: state.nextTurnDrawModifier + e.delta,
       };
+    case "opponentNextTurnDrawModifier":
+      return {
+        ...state,
+        opponentNextTurnDrawModifier: state.opponentNextTurnDrawModifier + e.delta,
+      };
+    case "modOpponentStrength":
+      return {
+        ...state,
+        opponentStrength: Math.max(1, state.opponentStrength + e.delta),
+      };
     case "scheduleDrawModifiers":
       return {
         ...state,
@@ -85,7 +111,7 @@ export function applyEffect(state: GameState, e: Effect): GameState {
       };
     }
     case "addCardsToDeck":
-      return addCardsToDeck(state, e.templateId, e.count);
+      return addGeneratedCards(state, e.templateId, e.count, e.placement ?? "deckRandom");
     default: {
       const _exhaustive: never = e;
       return _exhaustive;
@@ -97,6 +123,8 @@ export function applyEffects(state: GameState, list: readonly Effect[]): GameSta
   let s = state;
   for (const e of list) {
     s = applyEffect(s, e);
+    s = enforceSuccessionImmediateOutcome(s);
+    if (s.outcome !== "playing") return s;
     s = enforceLegitimacy(s);
     if (s.outcome !== "playing") return s;
   }

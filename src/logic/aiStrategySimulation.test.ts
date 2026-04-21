@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { createInitialState } from "../app/initialState";
-import { getLevelDef } from "../data/levels";
+import { getLevelDef, getTurnLimitForRun } from "../data/levels";
 import {
   simulateFirstMandateBatch,
   simulateFirstMandateRun,
@@ -14,21 +14,23 @@ describe("aiStrategySimulation", () => {
     const run = simulateFirstMandateRun(202_604);
     expect(run.outcome).not.toBe("playing");
     expect(run.endTurn).toBeGreaterThan(0);
-    expect(run.endTurn).toBeLessThanOrEqual(getLevelDef("firstMandate").turnLimit);
+    expect(run.endTurn).toBeLessThanOrEqual(
+      getTurnLimitForRun("firstMandate", getLevelDef("firstMandate").calendarStartYear),
+    );
   });
 
   it("keeps the benchmark summary stable for first mandate", () => {
     const report = simulateFirstMandateBatch({ seedStart: 1, runCount: 200 });
     expect(report).toMatchInlineSnapshot(`
       {
-        "averageEndTurn": 13.615,
-        "averageEndTurnOnLoss": 13.615,
+        "averageEndTurn": 13.62,
+        "averageEndTurnOnLoss": 13.622,
         "averageEndTurnOnWin": 13.614,
         "averageEndingResources": {
-          "funding": 0.01,
+          "funding": 0,
           "legitimacy": 4.31,
           "power": 5.355,
-          "treasuryStat": 4.785,
+          "treasuryStat": 4.79,
         },
         "levelId": "firstMandate",
         "losses": 156,
@@ -51,7 +53,9 @@ describe("aiStrategySimulation", () => {
     const run = simulateSecondMandateStandaloneRun(202_605);
     expect(run.outcome).not.toBe("playing");
     expect(run.endTurn).toBeGreaterThan(0);
-    expect(run.endTurn).toBeLessThanOrEqual(getLevelDef("secondMandate").turnLimit);
+    expect(run.endTurn).toBeLessThanOrEqual(
+      getTurnLimitForRun("secondMandate", getLevelDef("secondMandate").calendarStartYear),
+    );
   });
 
   it("keeps strategy I standalone chapter-2 benchmark stable", () => {

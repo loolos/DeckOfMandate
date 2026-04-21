@@ -1,0 +1,68 @@
+import type { StatusTemplate, StatusTemplateId } from "../../types/status";
+
+export const statusTemplates: Record<StatusTemplateId, StatusTemplate> = {
+  powerLeak: {
+    id: "powerLeak",
+    kind: "drawAttemptsDelta",
+    delta: -1,
+    titleKey: "status.powerLeak.name",
+    historyKey: "status.powerLeak.history",
+  },
+  drawPenalty: {
+    id: "drawPenalty",
+    kind: "drawAttemptsDelta",
+    delta: -1,
+    titleKey: "status.drawPenalty.name",
+    historyKey: "status.drawPenalty.history",
+  },
+  retentionBoost: {
+    id: "retentionBoost",
+    kind: "retentionCapacityDelta",
+    delta: 1,
+    titleKey: "status.retentionBoost.name",
+    historyKey: "status.retentionBoost.history",
+  },
+  royalBan: {
+    id: "royalBan",
+    kind: "blockCardTag",
+    blockedTag: "royal",
+    titleKey: "status.royalBan.name",
+    historyKey: "status.royalBan.history",
+  },
+  grainReliefDrawBoost: {
+    id: "grainReliefDrawBoost",
+    kind: "drawAttemptsDelta",
+    delta: 1,
+    titleKey: "status.grainReliefDrawBoost.name",
+    historyKey: "status.grainReliefDrawBoost.history",
+  },
+  grainReliefLegitimacyBoost: {
+    id: "grainReliefLegitimacyBoost",
+    kind: "beginYearResourceDelta",
+    resource: "legitimacy",
+    delta: 1,
+    titleKey: "status.grainReliefLegitimacyBoost.name",
+    historyKey: "status.grainReliefLegitimacyBoost.history",
+  },
+  religiousTolerance: {
+    id: "religiousTolerance",
+    kind: "drawAttemptsDelta",
+    delta: 0,
+    titleKey: "status.religiousTolerance.name",
+    historyKey: "status.religiousTolerance.history",
+  },
+  huguenotContainment: {
+    id: "huguenotContainment",
+    kind: "drawAttemptsDelta",
+    delta: 0,
+    titleKey: "status.huguenotContainment.name",
+    historyKey: "status.huguenotContainment.history",
+  },
+  antiFrenchSentiment: {
+    id: "antiFrenchSentiment",
+    kind: "drawAttemptsDelta",
+    delta: 0,
+    titleKey: "status.antiFrenchSentiment.name",
+    historyKey: "status.antiFrenchSentiment.history",
+  },
+};
