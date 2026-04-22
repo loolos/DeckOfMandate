@@ -267,6 +267,32 @@ describe("opponentHabsburg AI", () => {
     expect(next.nextTurnDrawModifier).toBe(-1);
     expect(next.opponentDiscard).toEqual([cardId]);
   });
+
+  it("Rhine magazine embargo applies succession −1 and schedules only −1 next-year funding income", () => {
+    const base = createInitialState(108, THIRD_MANDATE_LEVEL_ID);
+    const cardId = "opp_rhine_test";
+    const st: GameState = {
+      ...base,
+      opponentHabsburgUnlocked: true,
+      opponentHand: [cardId],
+      opponentDeck: [],
+      opponentDiscard: [],
+      opponentStrength: 2,
+      opponentCostDiscountThisTurn: 0,
+      opponentLastPlayedTemplateIds: [],
+      nextTurnDrawModifier: 0,
+      nextTurnFundingIncomeModifier: 0,
+      cardsById: {
+        ...base.cardsById,
+        [cardId]: { instanceId: cardId, templateId: "habsburgRhineMagazineEmbargo" },
+      },
+    };
+    const next = opponentEndYearPlayPhase(st);
+    expect(next.successionTrack).toBe(base.successionTrack - 1);
+    expect(next.nextTurnFundingIncomeModifier).toBe(-1);
+    expect(next.nextTurnDrawModifier).toBe(0);
+    expect(next.opponentDiscard).toEqual([cardId]);
+  });
 });
 
 describe("utrechtTreatySituationTier", () => {

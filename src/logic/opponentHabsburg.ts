@@ -10,7 +10,6 @@ import { shuffle } from "./rng";
 
 const HABSURG_FUNDING_DRAW_PRESSURE_IDS: readonly CardTemplateId[] = [
   "habsburgAngloDutchMaritimeInterdiction",
-  "habsburgRhineMagazineEmbargo",
 ];
 
 function isHabsburgFundingDrawPressureCard(id: CardTemplateId): boolean {
@@ -38,6 +37,8 @@ function opponentEffectDelta(templateId: CardTemplateId): OppDelta {
       return { seq: -2, pow: 0, leg: 0, tre: 0 };
     case "habsburgImperialCustomsDelay":
       return { seq: 0, pow: 0, leg: 0, tre: -1 };
+    case "habsburgRhineMagazineEmbargo":
+      return { seq: -1, pow: 0, leg: 0, tre: 0 };
     default:
       return { seq: 0, pow: 0, leg: 0, tre: 0 };
   }
@@ -66,6 +67,10 @@ export function opponentTemplatesToAppliedEffects(ids: readonly CardTemplateId[]
   if (fundingDrawPressureCount > 0) {
     out.push({ kind: "scheduleNextTurnFundingIncomeModifier", delta: -2 * fundingDrawPressureCount });
     out.push({ kind: "scheduleNextTurnDrawModifier", delta: -fundingDrawPressureCount });
+  }
+  const rhineEmbargoCount = ids.filter((id) => id === "habsburgRhineMagazineEmbargo").length;
+  if (rhineEmbargoCount > 0) {
+    out.push({ kind: "scheduleNextTurnFundingIncomeModifier", delta: -rhineEmbargoCount });
   }
   if (d.pow !== 0) out.push({ kind: "modResource", resource: "power", delta: d.pow });
   if (d.leg !== 0) out.push({ kind: "modResource", resource: "legitimacy", delta: d.leg });
@@ -204,6 +209,9 @@ function applyOpponentCardToState(state: GameState, templateId: CardTemplateId):
       { kind: "scheduleNextTurnFundingIncomeModifier", delta: -2 },
       { kind: "scheduleNextTurnDrawModifier", delta: -1 },
     );
+  }
+  if (templateId === "habsburgRhineMagazineEmbargo") {
+    effects.push({ kind: "scheduleNextTurnFundingIncomeModifier", delta: -1 });
   }
   if (effects.length === 0) return state;
   return applyEffects(state, effects);

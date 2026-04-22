@@ -92,7 +92,7 @@ export const messagesZhThirdMandate = {
   "card.habsburgRhineMagazineEmbargo.name": "莱茵军需辎重禁运",
   "card.habsburgRhineMagazineEmbargo.background": "河道辎重线",
   "card.habsburgRhineMagazineEmbargo.desc":
-    "对手费用 1。你下一年年初由财政转入的回合经费 −2（合计不低于 0）；抽牌次数 −1（仍至少 1 次）。",
+    "对手费用 1。你下一年年初由财政转入的回合经费 −1（合计不低于 0）；王位争夺进度 −1。",
   "card.habsburgRhineMagazineEmbargo.opponentHistory":
-    "帝国与莱茵诸邦以临时禁令、加税与扣押迟滞法军火药、草料与平底船租约，前线辎重与后方贴现同时吃紧。局内：下一年国库转回合经费 −2（总收入不低于 0）、抽牌 −1（最低 1）。",
+    "帝国与莱茵诸邦以临时禁令、加税与扣押迟滞法军火药、草料与平底船租约，前线辎重与后方贴现同时吃紧。局内：下一年国库转回合经费 −1（总收入不低于 0），并使王位争夺进度 −1。",
 } as const;

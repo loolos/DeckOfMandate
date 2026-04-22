@@ -94,7 +94,7 @@ export const messagesFrThirdMandate = {
   "card.habsburgRhineMagazineEmbargo.name": "Embargo des magasins rhénans",
   "card.habsburgRhineMagazineEmbargo.background": "Étranglement logistique",
   "card.habsburgRhineMagazineEmbargo.desc":
-    "Coût adverse 1. L’année suivante, le Financement issu du Trésor au début d’année est réduit de 2 (pas en dessous de 0 au total) et les tentatives de pioche −1 (minimum 1).",
+    "Coût adverse 1. L’année suivante, le Financement issu du Trésor au début d’année est réduit de 1 (pas en dessous de 0 au total), et la piste de succession −1.",
   "card.habsburgRhineMagazineEmbargo.opponentHistory":
-    "Cercles impériaux et princes riverains ralentissent poudre, fourrage et affrètements de bacs : interdits « provisoires », péages et saisies grippe l’arrière-front rhénan. En jeu : Financement depuis le Trésor l’année suivante −2 (min 0 au total) et tentatives de pioche −1 (min 1).",
+    "Cercles impériaux et princes riverains ralentissent poudre, fourrage et affrètements de bacs : interdits « provisoires », péages et saisies grippe l’arrière-front rhénan. En jeu : Financement depuis le Trésor l’année suivante −1 (min 0 au total), et piste de succession −1.",
 } as const;

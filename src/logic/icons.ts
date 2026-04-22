@@ -108,9 +108,8 @@ export function resourceLabelWithIcon(resource: ResourceKey, label: string): str
   return withIcon(RESOURCE_ICONS[resource], label);
 }
 
-/** Habsburg opponent-phase budget / card cost as repeated emoji (one pip per point). */
+/** Habsburg opponent-phase budget / card cost as emoji + number (e.g. 👊2). */
 export function opponentBudgetEmojiPips(n: number): string {
   const k = Math.max(0, Math.min(12, Math.floor(Number.isFinite(n) ? n : 0)));
-  if (k === 0) return "○";
-  return "👊".repeat(k);
+  return `👊${k}`;
 }

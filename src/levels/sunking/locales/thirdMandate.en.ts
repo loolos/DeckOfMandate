@@ -95,7 +95,7 @@ export const messagesEnThirdMandate = {
   "card.habsburgRhineMagazineEmbargo.name": "Rhine magazine embargo",
   "card.habsburgRhineMagazineEmbargo.background": "Corridor squeeze",
   "card.habsburgRhineMagazineEmbargo.desc":
-    "Opponent cost 1. Next year, your treasury-to-funding income is reduced by 2 (not below 0) and draw attempts −1 (still at least 1).",
+    "Opponent cost 1. Next year, your treasury-to-funding income is reduced by 1 (not below 0), and succession track −1.",
   "card.habsburgRhineMagazineEmbargo.opponentHistory":
-    "Imperial and allied circles slow French contracts for powder, fodder, and river barges—extra tolls, seizures, and “temporary” bans on magazines feeding the Rhine front. In play: next year’s funding from treasury −2 (min 0 total) and draw attempts −1 (min 1).",
+    "Imperial and allied circles slow French contracts for powder, fodder, and river barges—extra tolls, seizures, and “temporary” bans on magazines feeding the Rhine front. In play: next year’s funding from treasury −1 (min 0 total), and succession track −1.",
 } as const;
