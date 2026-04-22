@@ -61,28 +61,28 @@ export const messagesZhThirdMandate = {
   "card.italianTheaterTroopRedeploy.background": "阿尔卑斯战线",
   "card.italianTheaterTroopRedeploy.desc":
     "背景：萨伏依、米兰与那不勒斯方向的机动与会战，把战果转化为对波旁继承主张的硬支撑，但国库为阿尔卑斯—波河轴线持续出血。\n\n王位争夺进度 +2；向抽牌堆加入 1 张财政负担。",
-  "card.habsburgImperialLegitimacyNote.name": "帝国法统照会",
+  "card.habsburgImperialLegitimacyNote.name": "正朔诏令",
   "card.habsburgImperialLegitimacyNote.background": "法统压力",
   "card.habsburgImperialLegitimacyNote.desc":
-    "对手费用 1。王位争夺进度 −1；结算时对手立即从手牌随机弃置 1 张（若结算后手牌已空则不再弃置）。",
+    "对手费用 1。王位争夺进度 −1；对手下一年年初摸牌 −1（基数为 1，最低为 0）。",
   "card.habsburgImperialLegitimacyNote.opponentHistory":
-    "帝国法学家以照会质疑波旁继统合法性。局内会让王位争夺进度 −1，并在对手仍有手牌时立即随机弃置其中 1 张。",
+    "帝国法学家以诏令质疑波旁继统合法性。局内会让王位争夺进度 −1，并使对手下一年年初摸牌 −1（最低为 0）。",
   "card.habsburgLowCountriesAgitation.name": "低地鼓动",
   "card.habsburgLowCountriesAgitation.background": "西北战线",
   "card.habsburgLowCountriesAgitation.desc": "对手费用 2。进度 −1，权力 −1，合法性 −1。",
   "card.habsburgLowCountriesAgitation.opponentHistory":
     "西属尼德兰的动荡会放大大同盟对法压力。局内会同时压低进度、权力、合法性（各 −1）。",
-  "card.habsburgGrandAllianceLevy.name": "大同盟军费动员",
+  "card.habsburgGrandAllianceLevy.name": "同盟征饷",
   "card.habsburgGrandAllianceLevy.background": "同盟军费",
   "card.habsburgGrandAllianceLevy.desc": "对手费用 2。王位争夺进度 −2；向抽牌堆随机位置加入 1 张财政负担。",
   "card.habsburgGrandAllianceLevy.opponentHistory":
     "反法同盟的补助与贷款让战争消耗持续。局内会让王位争夺进度 −2，并向牌库加入 1 张财政负担。",
-  "card.habsburgImperialCustomsDelay.name": "帝国报关拖延",
+  "card.habsburgImperialCustomsDelay.name": "关税梗阻",
   "card.habsburgImperialCustomsDelay.background": "口岸迟滞",
   "card.habsburgImperialCustomsDelay.desc":
     "对手费用 2。财政 −1；向抽牌堆随机位置加入 1 张财政负担；下一年抽牌次数 −1（仍至少 1 次）。",
   "card.habsburgImperialCustomsDelay.opponentHistory":
-    "帝国口岸的报关拖延会直接卡住现金流。局内会财政 −1、加入 1 张财政负担，且下一年抽牌次数 −1（最低 1）。",
+    "帝国口岸的关税梗阻会直接卡住现金流。局内会财政 −1、加入 1 张财政负担，且下一年抽牌次数 −1（最低 1）。",
   "card.habsburgAngloDutchMaritimeInterdiction.name": "英荷迟押",
   "card.habsburgAngloDutchMaritimeInterdiction.background": "海上缉拿与汇票迟押",
   "card.habsburgAngloDutchMaritimeInterdiction.desc":

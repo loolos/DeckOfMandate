@@ -60,7 +60,7 @@ export function opponentTemplatesToAppliedEffects(ids: readonly CardTemplateId[]
   }
   const legitimacyNoteCount = ids.filter((id) => id === "habsburgImperialLegitimacyNote").length;
   if (legitimacyNoteCount > 0) {
-    out.push({ kind: "opponentHandDiscardNow", count: legitimacyNoteCount });
+    out.push({ kind: "opponentNextTurnDrawModifier", delta: -legitimacyNoteCount });
   }
   const fundingDrawPressureCount = ids.filter((id) => isHabsburgFundingDrawPressureCard(id)).length;
   if (fundingDrawPressureCount > 0) {
@@ -188,7 +188,7 @@ function applyOpponentCardToState(state: GameState, templateId: CardTemplateId):
   if (d.leg !== 0) effects.push({ kind: "modResource" as const, resource: "legitimacy" as const, delta: d.leg });
   if (d.tre !== 0) effects.push({ kind: "modResource" as const, resource: "treasuryStat" as const, delta: d.tre });
   if (templateId === "habsburgImperialLegitimacyNote") {
-    effects.push({ kind: "opponentHandDiscardNow", count: 1 });
+    effects.push({ kind: "opponentNextTurnDrawModifier", delta: -1 });
   }
   if (templateId === "habsburgGrandAllianceLevy") {
     effects.push({ kind: "addCardsToDeck", templateId: "fiscalBurden", count: 1 });

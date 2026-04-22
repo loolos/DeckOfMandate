@@ -65,9 +65,9 @@ export const messagesEnThirdMandate = {
   "card.habsburgImperialLegitimacyNote.name": "Imperial legitimacy note",
   "card.habsburgImperialLegitimacyNote.background": "Legalist pressure",
   "card.habsburgImperialLegitimacyNote.desc":
-    "Opponent cost 1. Succession track −1; when resolved, the opponent immediately discards 1 random card from hand (no extra discard if their hand is already empty).",
+    "Opponent cost 1. Succession track −1; opponent next-year draw −1 (base 1, minimum 0).",
   "card.habsburgImperialLegitimacyNote.opponentHistory":
-    "Chancelleries invoke imperial privilege and old Habsburg ties to Spain. In play: succession track −1, and an immediate random 1-card discard from the opponent’s remaining hand when possible.",
+    "Chancelleries invoke imperial privilege and old Habsburg ties to Spain. In play: succession track −1, and opponent next-year draw −1 (minimum 0).",
   "card.habsburgLowCountriesAgitation.name": "Low Countries agitation",
   "card.habsburgLowCountriesAgitation.background": "Northwestern front",
   "card.habsburgLowCountriesAgitation.desc":

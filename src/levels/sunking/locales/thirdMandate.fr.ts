@@ -65,9 +65,9 @@ export const messagesFrThirdMandate = {
   "card.habsburgImperialLegitimacyNote.name": "Note de légitimité impériale",
   "card.habsburgImperialLegitimacyNote.background": "Pression juridique",
   "card.habsburgImperialLegitimacyNote.desc":
-    "Coût adverse 1. Piste de succession −1 ; à la résolution, l’adversaire défausse immédiatement 1 carte au hasard depuis la main (aucune défausse supplémentaire si la main est déjà vide).",
+    "Coût adverse 1. Piste de succession −1 ; pioche adverse l’année suivante −1 (base 1, minimum 0).",
   "card.habsburgImperialLegitimacyNote.opponentHistory":
-    "Les juristes impériaux contestent la légitimité bourbonienne par notes et mémoires. En jeu : piste −1, et défausse immédiate d’1 carte au hasard parmi les cartes restantes en main adverse si possible.",
+    "Les juristes impériaux contestent la légitimité bourbonienne par notes et mémoires. En jeu : piste −1, et pioche adverse l’année suivante −1 (minimum 0).",
   "card.habsburgLowCountriesAgitation.name": "Agitation dans les Pays-Bas",
   "card.habsburgLowCountriesAgitation.background": "Front du Nord-Ouest",
   "card.habsburgLowCountriesAgitation.desc": "Coût adverse 2. Piste −1, Pouvoir −1, Légitimité −1.",

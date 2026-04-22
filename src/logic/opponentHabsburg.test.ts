@@ -137,7 +137,7 @@ describe("opponentHabsburg AI", () => {
     expect(next.opponentDiscard).toEqual([customsId]);
   });
 
-  it("Imperial legitimacy note lowers succession track and does not defer draw modifier", () => {
+  it("Imperial legitimacy note lowers succession track and defers opponent draw by −1", () => {
     const base = createInitialState(102, THIRD_MANDATE_LEVEL_ID);
     const noteId = "opp_note_test";
     const trackBefore = base.successionTrack;
@@ -158,11 +158,11 @@ describe("opponentHabsburg AI", () => {
     };
     const next = opponentEndYearPlayPhase(st);
     expect(next.successionTrack).toBe(trackBefore - 1);
-    expect(next.opponentNextTurnDrawModifier).toBe(0);
+    expect(next.opponentNextTurnDrawModifier).toBe(-1);
     expect(next.opponentDiscard).toEqual([noteId]);
   });
 
-  it("Imperial legitimacy note discards one random remaining hand card when budget forces only the note", () => {
+  it("Imperial legitimacy note does not force random discard when budget forces only the note", () => {
     const base = createInitialState(106, THIRD_MANDATE_LEVEL_ID);
     const noteId = "opp_note_disc";
     const levyId = "opp_levy_side";
@@ -185,9 +185,9 @@ describe("opponentHabsburg AI", () => {
     };
     const next = opponentEndYearPlayPhase(st);
     expect(next.successionTrack).toBe(trackBefore - 1);
-    expect(next.opponentNextTurnDrawModifier).toBe(0);
-    expect(next.opponentHand).toEqual([]);
-    expect([...next.opponentDiscard].sort()).toEqual([noteId, levyId].sort());
+    expect(next.opponentNextTurnDrawModifier).toBe(-1);
+    expect(next.opponentHand).toEqual([levyId]);
+    expect(next.opponentDiscard).toEqual([noteId]);
   });
 
   it("opponent begin-year draw uses opponentNextTurnDrawModifier (e.g. 0 cards when base 1 and modifier is −1)", () => {
