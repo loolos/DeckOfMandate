@@ -2,7 +2,7 @@ import type { LevelContent, LevelDef } from "../../../data/levelTypes";
 import type { CardTemplateId } from "../../types/card";
 
 /** Eight chapter-3-only templates shuffled into the full library with the rest; opening deal is two cards. */
-export const LEVEL3_STARTING_HAND_TEMPLATE_ORDER: readonly CardTemplateId[] = [
+const CHAPTER3_REFIT_STARTING_HAND_ORDER: readonly CardTemplateId[] = [
   "bourbonMarriageProclamation",
   "bourbonMarriageProclamation",
   "grandAllianceInfiltrationDiplomacy",
@@ -127,4 +127,6 @@ export const levelContent: LevelContent = {
   procedural: {
     firstTurnEmptyBoardCount: 2,
   },
+  chapter3RefitStartingHandOrder: CHAPTER3_REFIT_STARTING_HAND_ORDER,
+  opponentBoardEventTemplateId: "opponentHabsburg",
 };

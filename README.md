@@ -42,7 +42,7 @@ npm run test:ai:a-strategy-i:1000
 | --- | --- |
 | [docs/gameplay.md](docs/gameplay.md) | Rules reference: resources, turn order, win/lose checks, draw scaling, statuses |
 | [docs/card.md](docs/card.md) | Card catalog, tags, inflation, limited-use lifecycle |
-| [docs/太阳王战役.md](docs/太阳王战役.md) | Chinese full campaign reference (Chapter 1 + Chapter 2) |
+| [src/levels/sunking/docs/太阳王战役.md](src/levels/sunking/docs/太阳王战役.md) | Chinese full campaign reference (Sun King pack; chapters 1–3) |
 | [docs/design.md](docs/design.md) | Architecture, state model, data flow, testing strategy |
 
 ## Notes

@@ -26,6 +26,7 @@ import { EVENT_SLOT_ORDER, type EventTemplateId } from "../levels/types/event";
 import type { SlotId } from "../levels/types/event";
 import type { GameState } from "../types/game";
 import type { LogInfoKey } from "../types/game";
+import { tryCampaignReducerBridge } from "../levels/campaignReducerBridge";
 import { createInitialState } from "./initialState";
 import { buildLevel2StateFromDraft } from "./level2Transition";
 
@@ -634,6 +635,8 @@ function addUniqueStatus(state: GameState, templateId: "religiousTolerance" | "h
 }
 
 export function gameReducer(state: GameState, action: GameAction): GameState {
+  const bridged = tryCampaignReducerBridge(state, action);
+  if (bridged) return bridged;
   switch (action.type) {
     case "HYDRATE":
       return normalizeGameState(action.state);

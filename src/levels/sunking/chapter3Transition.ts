@@ -10,46 +10,39 @@ import { calendarYearForTurn } from "../../logic/scriptedCalendar";
 import { beginYear } from "../../logic/turnFlow";
 import type { CardInstance, CardTemplateId } from "../types/card";
 import { EMPTY_EVENT_SLOTS, EMPTY_PENDING_MAJOR_CRISIS } from "../types/event";
-import type { GameState, NantesPolicyCarryover, Resources } from "../../types/game";
-import { LEVEL3_STARTING_HAND_TEMPLATE_ORDER } from "./chapters/thirdMandate";
+import type { GameState, Resources } from "../../types/game";
+import {
+  CONTINUITY_REFIT_MAX_CARD_REMOVALS,
+  type Level3CarryoverCard,
+  type Level3ContinuityDraft,
+  type Level3StandaloneDraft,
+  type Level3StartDraft,
+} from "../../types/continuity";
 import {
   createDeckRefitCarryoverSnapshot,
-  LEVEL2_CONTINUITY_MAX_REMOVALS,
   SUNKING_CH2_ID,
-  type Level2CarryoverCard,
   type Level2Validation,
 } from "./chapter2Transition";
 
-export const LEVEL3_CONTINUITY_MAX_REMOVALS = LEVEL2_CONTINUITY_MAX_REMOVALS;
-export type Level3CarryoverCard = Level2CarryoverCard;
+export const LEVEL3_CONTINUITY_MAX_REMOVALS = CONTINUITY_REFIT_MAX_CARD_REMOVALS;
 
-const LEVEL3_HAND_NEW_COUNT = LEVEL3_STARTING_HAND_TEMPLATE_ORDER.length;
+function thirdMandateRefitStartingHandOrder(): readonly CardTemplateId[] {
+  const o = getLevelContent(THIRD_MANDATE_LEVEL_ID).chapter3RefitStartingHandOrder;
+  if (!o?.length) {
+    throw new Error("levelRegistry: thirdMandate.chapter3RefitStartingHandOrder is required");
+  }
+  return o;
+}
+
+export type {
+  Level3CarryoverCard,
+  Level3ContinuityDraft,
+  Level3StandaloneDraft,
+  Level3StartDraft,
+};
+
 const STANDALONE_CH3_REMOVED_TEMPLATES = new Set<CardTemplateId>(["funding", "crackdown"]);
 const STANDALONE_CH3_INFLATION_TARGET_COST = 4;
-
-export type Level3StandaloneDraft = {
-  mode: "standalone";
-  seed?: number;
-  calendarStartYear: number;
-  resources: Resources;
-  warOfDevolutionAttacked: boolean;
-  nantesPolicyCarryover: NantesPolicyCarryover | null;
-  carryoverCards: readonly Level3CarryoverCard[];
-  removedCarryoverIds: readonly string[];
-};
-
-export type Level3ContinuityDraft = {
-  mode: "continuity";
-  seed?: number;
-  calendarStartYear: number;
-  resources: Resources;
-  warOfDevolutionAttacked: boolean;
-  nantesPolicyCarryover: NantesPolicyCarryover | null;
-  carryoverCards: readonly Level3CarryoverCard[];
-  removedCarryoverIds: readonly string[];
-};
-
-export type Level3StartDraft = Level3StandaloneDraft | Level3ContinuityDraft;
 
 /** Synthetic chapter-2-equivalent library for main-menu chapter 3 (same removal rules as continuity). */
 export function createStandaloneLevel3Draft(seed?: number): Level3StandaloneDraft {
@@ -113,10 +106,10 @@ export function validateLevel3Draft(draft: Level3StartDraft): Level2Validation {
   const uniqueRemoved = new Set(draft.removedCarryoverIds);
   const removedCards = uniqueRemoved.size;
   const keptCarryover = draft.carryoverCards.length - removedCards;
-  const totalCards = keptCarryover + LEVEL3_HAND_NEW_COUNT;
+  const totalCards = keptCarryover + thirdMandateRefitStartingHandOrder().length;
   return {
     totalCards,
-    totalNewCards: LEVEL3_HAND_NEW_COUNT,
+    totalNewCards: thirdMandateRefitStartingHandOrder().length,
     adjustableChanges: removedCards,
     maxAdjustableChanges: LEVEL3_CONTINUITY_MAX_REMOVALS,
     isValid: removedCards <= LEVEL3_CONTINUITY_MAX_REMOVALS && keptCarryover > 0,
@@ -149,8 +142,9 @@ export function buildLevel3StateFromDraft(draft: Level3StartDraft): GameState {
   }
 
   const ch3Ids: string[] = [];
-  for (let i = 0; i < LEVEL3_STARTING_HAND_TEMPLATE_ORDER.length; i++) {
-    const templateId = LEVEL3_STARTING_HAND_TEMPLATE_ORDER[i]! as CardTemplateId;
+  const refitOrder = thirdMandateRefitStartingHandOrder();
+  for (let i = 0; i < refitOrder.length; i++) {
+    const templateId = refitOrder[i]!;
     const instanceId = `ch3_hand_${i}_${templateId}`;
     cardsById[instanceId] = { instanceId, templateId };
     ch3Ids.push(instanceId);

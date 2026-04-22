@@ -2,13 +2,13 @@ import { getLevelDef } from "../../../data/levels";
 import { EVENT_SLOT_ORDER, type EventInstance } from "../../types/event";
 import type { GameState } from "../../../types/game";
 import { appendActionLog } from "./actionLog";
-import { enforceHuguenotContainmentInvariant, addCardsToDeck } from "../../../logic/cardRuntime";
+import { enforceHuguenotContainmentInvariant, addCardsToDeck } from "./cardRuntime";
 import {
   clampEuropeAlertProgress,
   europeAlertPressureDeltaK,
   europeAlertProgressShiftProbability,
   rollEuropeAlertSupplementalEventCount,
-} from "../../../logic/europeAlert";
+} from "./europeAlert";
 import { antiFrenchSentimentActive } from "./antiFrenchSentiment";
 import { applyEffects } from "../../../logic/applyEffects";
 import { rngNext } from "../../../logic/rng";

@@ -1,6 +1,9 @@
 import { sunkingCoreGameContentEn } from "./locales/coreGameContent.en";
 import { sunkingCoreGameContentFr } from "./locales/coreGameContent.fr";
 import { sunkingCoreGameContentZh } from "./locales/coreGameContent.zh";
+import { sunkingShellContentEn } from "./locales/shellContent.en";
+import { sunkingShellContentFr } from "./locales/shellContent.fr";
+import { sunkingShellContentZh } from "./locales/shellContent.zh";
 import { messagesEnFirstMandate } from "./locales/firstMandate.en";
 import { messagesFrFirstMandate } from "./locales/firstMandate.fr";
 import { messagesZhFirstMandate } from "./locales/firstMandate.zh";
@@ -120,6 +123,7 @@ export const sunkingMessagesEn = {
   ...messagesEnSecondMandate,
   ...messagesEnThirdMandate,
   ...sunkingCoreGameContentEn,
+  ...sunkingShellContentEn,
   ...sunkingExtraEn,
 } as const;
 
@@ -128,6 +132,7 @@ export const sunkingMessagesFr = {
   ...messagesFrSecondMandate,
   ...messagesFrThirdMandate,
   ...sunkingCoreGameContentFr,
+  ...sunkingShellContentFr,
   ...sunkingExtraFr,
 } as const;
 
@@ -136,5 +141,6 @@ export const sunkingMessagesZh = {
   ...messagesZhSecondMandate,
   ...messagesZhThirdMandate,
   ...sunkingCoreGameContentZh,
+  ...sunkingShellContentZh,
   ...sunkingExtraZh,
 } as const;

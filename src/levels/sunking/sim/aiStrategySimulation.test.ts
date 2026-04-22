@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { createInitialState } from "../app/initialState";
-import { getLevelDef, getTurnLimitForRun } from "../data/levels";
+import { createInitialState } from "../../../app/initialState";
+import { getLevelDef, getTurnLimitForRun } from "../../../data/levels";
 import {
   simulateFirstMandateBatch,
   simulateFirstMandateRun,
@@ -62,22 +62,22 @@ describe("aiStrategySimulation", () => {
     const report = simulateSecondMandateStandaloneBatch({ seedStart: 1, runCount: 200 });
     expect(report).toMatchInlineSnapshot(`
       {
-        "averageEndTurn": 12.97,
-        "averageEndTurnOnLoss": 12.869,
-        "averageEndTurnOnWin": 23,
+        "averageEndTurn": 13.31,
+        "averageEndTurnOnLoss": 13.152,
+        "averageEndTurnOnWin": 23.667,
         "averageEndingResources": {
-          "funding": 0.15,
-          "legitimacy": 3.205,
-          "power": 0.43,
-          "treasuryStat": 2.565,
+          "funding": 0.125,
+          "legitimacy": 3.47,
+          "power": 0.445,
+          "treasuryStat": 2.99,
         },
         "levelId": "secondMandate",
-        "losses": 198,
+        "losses": 197,
         "runCount": 200,
         "startMode": "standalone",
         "strategyId": "a-strategy-i",
-        "winRate": 0.01,
-        "wins": 2,
+        "winRate": 0.015,
+        "wins": 3,
       }
     `);
   });
@@ -87,7 +87,7 @@ describe("aiStrategySimulation", () => {
     expect(report).toMatchInlineSnapshot(`
       {
         "averageChapter1EndTurn": 13.74,
-        "averageChapter2EndTurnOnReached": 15.161,
+        "averageChapter2EndTurnOnReached": 15.516,
         "averageChapter2EndTurnOnWin": 23.5,
         "chapter1Losses": 169,
         "chapter1WinRate": 0.155,

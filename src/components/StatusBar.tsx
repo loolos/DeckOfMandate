@@ -3,7 +3,7 @@ import styles from "../app/Game.module.css";
 import { getStatusTemplate } from "../data/statusTemplates";
 import { useI18n, type MessageKey } from "../locales";
 import { useSmallScreen } from "../logic/useSmallScreen";
-import type { LevelId } from "../data/levels";
+import { tryGetLevelDef, type LevelId } from "../data/levels";
 import type { PlayerStatusInstance } from "../levels/types/status";
 
 type StatusViewRow = {
@@ -85,12 +85,14 @@ export function StatusBar({
   const pct = coalitionProbabilityPct ?? 0;
 
   const rows = useMemo<StatusViewRow[]>(() => {
-    const containmentHintKey =
-      levelId === "secondMandate"
-        ? ("status.huguenotContainment.hint" as MessageKey)
-        : ("status.huguenotContainment.hintGeneral" as MessageKey);
+    const levelDef = levelId ? tryGetLevelDef(levelId) : undefined;
+    const gatedEuropePressureChapter =
+      levelDef?.victoryRule.kind === "gated" && levelDef.features.europeAlertMechanics;
+    const containmentHintKey = gatedEuropePressureChapter
+      ? ("status.huguenotContainment.hint" as MessageKey)
+      : ("status.huguenotContainment.hintGeneral" as MessageKey);
     const next: StatusViewRow[] = [];
-    if (successionTrack !== undefined && levelId === "thirdMandate") {
+    if (successionTrack !== undefined && levelDef?.victoryRule.kind === "successionWar") {
       const clamped = Math.max(-10, Math.min(10, Math.floor(successionTrack)));
       const signed = clamped > 0 ? `+${clamped}` : `${clamped}`;
       next.push({

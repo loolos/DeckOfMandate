@@ -1,4 +1,5 @@
 import type { GameState } from "../types/game";
+import type { Level3ContinuityDraft, Level3StandaloneDraft, Level3StartDraft } from "../types/continuity";
 import {
   applyRemovedIndicesToLevel3Draft,
   buildLevel3StateFromDraft,
@@ -6,11 +7,9 @@ import {
   createStandaloneLevel3Draft,
   LEVEL3_CONTINUITY_MAX_REMOVALS,
   validateLevel3Draft,
-  type Level3ContinuityDraft,
-  type Level3StandaloneDraft,
-  type Level3StartDraft,
-} from "../levels/sunking/chapter3Transition";
+} from "../levels/campaignChapterTransitions";
 
+export type { Level3ContinuityDraft, Level3StandaloneDraft, Level3StartDraft };
 export {
   applyRemovedIndicesToLevel3Draft,
   buildLevel3StateFromDraft,
@@ -18,9 +17,6 @@ export {
   createStandaloneLevel3Draft,
   LEVEL3_CONTINUITY_MAX_REMOVALS,
   validateLevel3Draft,
-  type Level3ContinuityDraft,
-  type Level3StandaloneDraft,
-  type Level3StartDraft,
 };
 
 export const SUNKING_CH3_ID = "thirdMandate" as const;

@@ -8,7 +8,7 @@ import { appendActionLog } from "./actionLog";
 import {
   canApplyOpponentHandDiscardNow,
   enforceSuccessionImmediateOutcomeHook,
-} from "../levels/sunking/logic/effectHooks";
+} from "../levels/campaignLogicBundle";
 import { addGeneratedCards, applyOnDrawCardEffects } from "./cardRuntime";
 import { applyInflationFromDeckRefill } from "./cardCost";
 import { drawUpToPower } from "./draw";

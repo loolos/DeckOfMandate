@@ -12,12 +12,12 @@ export const sunkingCoreGameContentEn = {
   "card.fiscalBurden.background":
     "Debt obligations and emergency liabilities now crowd the books and constrain every cycle.",
   "card.fiscalBurden.desc":
-    "When drawn, lose 1 Funding. You may pay floor(Treasury/5)+1 Funding to purge it (removed, not discarded).",
+    "When drawn, lose 1 Funding. You may pay a Funding cost tied to Treasury to purge it (removed, not discarded).",
   "card.antiFrenchContainment.name": "Anti-French Containment",
   "card.antiFrenchContainment.background":
     "European courts coordinate tariffs, credit pressure, and maritime checks to narrow French options.",
   "card.antiFrenchContainment.desc":
-    "When drawn, 50/50: lose 1 Power or lose 1 Legitimacy. You may pay max(1, floor(Europe Alert progress/2)) Funding to purge it (removed, not discarded).",
+    "When drawn, 50/50: lose 1 Power or lose 1 Legitimacy. You may pay a Funding cost tied to Europe Alert (at least 1) to purge it (removed, not discarded).",
   "card.reform.name": "Administrative Reform",
   "card.reform.background":
     "Registers and reporting lines are redrawn; the bureaucracy tightens under royal direction.",

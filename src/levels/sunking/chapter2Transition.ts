@@ -9,6 +9,15 @@ import { beginYear } from "../../logic/turnFlow";
 import type { CardInstance, CardTemplateId } from "../types/card";
 import { EMPTY_EVENT_SLOTS, EMPTY_PENDING_MAJOR_CRISIS } from "../types/event";
 import type { GameState, Resources } from "../../types/game";
+import {
+  CONTINUITY_REFIT_MAX_CARD_REMOVALS,
+  type Level2CarryoverCard,
+  type Level2ContinuityDraft,
+  type Level2StandaloneDraft,
+  type Level2StartDraft,
+  type Level2StartMode,
+  type Level2Validation,
+} from "../../types/continuity";
 
 export const SUNKING_CH1_ID = "firstMandate";
 export const SUNKING_CH2_ID = "secondMandate";
@@ -20,49 +29,17 @@ export const LEVEL2_FIXED_NEW_IDS = [
   "taxRebalance",
   "diplomaticCongress",
 ] as const;
-export type Level2StartMode = "standalone" | "continuity";
 
-export type Level2CarryoverCard = {
-  instanceId: string;
-  templateId: CardTemplateId;
-  inflationDelta: number;
-  remainingUses: number | null;
-  totalUses: number | null;
+export type {
+  Level2CarryoverCard,
+  Level2ContinuityDraft,
+  Level2StandaloneDraft,
+  Level2StartDraft,
+  Level2StartMode,
+  Level2Validation,
 };
 
-export type Level2StandaloneDraft = {
-  mode: "standalone";
-  seed?: number;
-  calendarStartYear: number;
-  resources: Resources;
-  warOfDevolutionAttacked: boolean;
-  europeAlert: boolean;
-  carryoverCards: readonly Level2CarryoverCard[];
-  removedCarryoverIds: readonly string[];
-};
-
-export type Level2ContinuityDraft = {
-  mode: "continuity";
-  seed?: number;
-  calendarStartYear: number;
-  resources: Resources;
-  warOfDevolutionAttacked: boolean;
-  europeAlert: boolean;
-  carryoverCards: readonly Level2CarryoverCard[];
-  removedCarryoverIds: readonly string[];
-};
-
-export type Level2StartDraft = Level2StandaloneDraft | Level2ContinuityDraft;
-
-export type Level2Validation = {
-  totalCards: number;
-  totalNewCards: number;
-  adjustableChanges: number;
-  maxAdjustableChanges: number;
-  isValid: boolean;
-};
-
-export const LEVEL2_CONTINUITY_MAX_REMOVALS = 3;
+export const LEVEL2_CONTINUITY_MAX_REMOVALS = CONTINUITY_REFIT_MAX_CARD_REMOVALS;
 
 export function createStandaloneLevel2Draft(seed?: number): Level2StandaloneDraft {
   const level = getLevelDef(SUNKING_CH2_ID);

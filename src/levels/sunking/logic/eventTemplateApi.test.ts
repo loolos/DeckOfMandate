@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { createInitialState } from "../app/initialState";
+import { createInitialState } from "../../../app/initialState";
 import {
   getEventRollWeight,
   getEventSolveFundingAmount,

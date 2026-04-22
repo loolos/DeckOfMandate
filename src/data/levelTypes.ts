@@ -100,6 +100,15 @@ export type LevelContent = {
   scriptedCalendarEvents: readonly ScriptedCalendarEventConfig[];
   opening: LevelOpeningConfig;
   procedural: LevelProceduralConfig;
+  /**
+   * When set (e.g. chapter 3), templates for new cards in continuity/standalone refit UI and shuffle pool.
+   */
+  chapter3RefitStartingHandOrder?: readonly CardTemplateId[];
+  /**
+   * When an unresolved event with this template id is on the board, render it with the
+   * opponent-hand UI (deck + last play). Campaign-specific; omit for levels without that row.
+   */
+  opponentBoardEventTemplateId?: EventTemplateId;
 };
 
 export type LevelFeatures = {
@@ -107,6 +116,12 @@ export type LevelFeatures = {
   inflation: InflationRule;
   /** Logged once when inflation first becomes enabled (pressure-threshold chapters). */
   inflationActivationLogKey?: LogInfoKey;
+};
+
+/** Post-victory CTA: open the campaign continuity refit draft from the shell. */
+export type PostVictoryContinuity = {
+  continueLabelKey: string;
+  draftKind: "level2FromPrior" | "level3FromPrior";
 };
 
 export type LevelDef = {
@@ -145,4 +160,6 @@ export type LevelDef = {
   menuBriefKey: string;
   /** Optional override for the in-run targets panel (otherwise `ui.targets`). */
   targetsUiKey?: string;
+  /** If set, victory modal shows one button that opens the matching continuity refit flow. */
+  postVictoryContinuity?: PostVictoryContinuity;
 };

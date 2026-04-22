@@ -1,13 +1,13 @@
 import { describe, expect, it } from "vitest";
-import { messagesEnCore } from "./en.core";
-import { messagesZhCore } from "./zh.core";
-import { messagesFrCore } from "./fr.core";
+import { messagesEn } from "./en";
+import { messagesZh } from "./zh";
+import { messagesFr } from "./fr";
 import { CARD_TAGS } from "../levels/types/tags";
 
 const bundles = {
-  en: messagesEnCore,
-  zh: messagesZhCore,
-  fr: messagesFrCore,
+  en: messagesEn,
+  zh: messagesZh,
+  fr: messagesFr,
 } as const;
 
 describe("tag info log entries", () => {

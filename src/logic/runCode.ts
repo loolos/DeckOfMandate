@@ -7,11 +7,11 @@ import {
   applyRemovedIndicesToLevel3Draft,
   buildLevel3StateFromDraft,
   createContinuityLevel3Draft,
-} from "../levels/sunking/chapter3Transition";
+} from "../app/level3Transition";
 import { gameReducer, type GameAction } from "../app/gameReducer";
 import { createInitialState } from "../app/initialState";
 import { getChapter2StandaloneDraft } from "../data/levelBootstrap";
-import { getLevelDef, isLevelId, type LevelId } from "../data/levels";
+import { getLevelDef, getRegisteredLevelIds, isLevelId, type LevelId } from "../data/levels";
 import { EVENT_SLOT_ORDER, type SlotId } from "../levels/types/event";
 import type { GameState } from "../types/game";
 
@@ -68,14 +68,23 @@ export type RunRecord = {
 export type SessionRecord = RunRecord[];
 
 /** Whether removed-index bytes are written/read for this run (deck refit). */
-function writesRefitRemovals(level: LevelId, mode: "standalone" | "continuity"): boolean {
+function writesRefitRemovals(level: LevelId, _mode: "standalone" | "continuity"): boolean {
   const b = getLevelDef(level).bootstrap;
   if (b === "chapter2Standalone") return true;
-  if (b === "chapter3Standalone") return mode === "standalone";
-  return level === "thirdMandate" && mode === "continuity";
+  /** Chapter 3 uses refit indices for both menu standalone and continuity from chapter 2. */
+  if (b === "chapter3Standalone") return true;
+  return false;
 }
 
-const LEVEL_ID_BY_BIT_V1: readonly LevelId[] = ["firstMandate", "secondMandate"];
+/** Legacy v1 wire format: two level ids by single-bit encoding (first two registered with initial/ch2 bootstrap). */
+const LEVEL_ID_BY_BIT_V1: readonly LevelId[] = (() => {
+  const ids = getRegisteredLevelIds().filter((id) => {
+    const b = getLevelDef(id).bootstrap;
+    return b === "initial" || b === "chapter2Standalone";
+  });
+  if (ids.length >= 2) return [ids[0]!, ids[1]!];
+  return ["firstMandate", "secondMandate"];
+})();
 
 function bitToLevelV1(bit: 0 | 1): LevelId {
   return LEVEL_ID_BY_BIT_V1[bit]!;
@@ -433,13 +442,13 @@ function readRunRecordV1(r: ByteReader, prevRunFinalState: GameState | null): {
   const level = bitToLevelV1(levelBit);
   const seed = r.readU32LE();
   let removedIndices: number[] = [];
-  if (mode === "continuity" && level !== "secondMandate") {
-    throw new Error("runCode: continuity mode is only valid for secondMandate");
+  if (mode === "continuity" && level !== LEVEL_ID_BY_BIT_V1[1]) {
+    throw new Error("runCode: v1 continuity is only valid for the chapter-2 level slot");
   }
   if (mode === "continuity" && !prevRunFinalState) {
     throw new Error("runCode: continuity run requires a previous run");
   }
-  if (level === "secondMandate") {
+  if (level === LEVEL_ID_BY_BIT_V1[1]) {
     const count = r.readU8();
     for (let i = 0; i < count; i++) removedIndices.push(r.readU8());
   }
@@ -465,7 +474,7 @@ function startStateFor(
 ): GameState {
   if (mode === "continuity") {
     if (!prevFinalState) throw new Error("runCode: continuity needs prev state");
-    if (level === "thirdMandate") {
+    if (getLevelDef(level).bootstrap === "chapter3Standalone") {
       const baseDraft = createContinuityLevel3Draft(prevFinalState, seed);
       const draft = applyRemovedIndicesToLevel3Draft(baseDraft, removedIndices);
       return buildLevel3StateFromDraft(draft);

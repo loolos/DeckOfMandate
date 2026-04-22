@@ -153,6 +153,8 @@ describe("secondMandate balance data", () => {
     expect(getEventTemplate("cautiousCrown").harmful).toBe(false);
     expect(getEventTemplate("revocationNantes").harmful).toBe(false);
     expect(getEventTemplate("leagueOfAugsburg").harmful).toBe(false);
+    expect(getEventTemplate("leagueOfAugsburg").solve).toEqual({ kind: "funding", amount: 2 });
+    expect(getEventTemplate("leagueOfAugsburg").crackdownImmune).toBe(true);
     expect(getEventTemplate("nineYearsWar").harmful).toBe(true);
     expect(getEventTemplate("nineYearsWar").solve).toEqual({ kind: "fundingOrCrackdown", amount: 2 });
     expect(getEventTemplate("ryswickPeace").harmful).toBe(false);

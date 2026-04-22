@@ -1,0 +1,32 @@
+/** App-facing re-exports so `src/app` does not import campaign chapter paths under this package directly. */
+export {
+  buildLevel2StateFromDraft,
+  createContinuityLevel2Draft,
+  createDeckRefitCarryoverSnapshot,
+  createStandaloneLevel2Draft,
+  LEVEL2_CONTINUITY_MAX_REMOVALS,
+  LEVEL2_FIXED_NEW_IDS,
+  SUNKING_CH1_ID,
+  SUNKING_CH2_ID,
+  toggleContinuityCardRemoval,
+  validateLevel2ContinuityRefit,
+  validateLevel2Draft,
+  type Level2CarryoverCard,
+  type Level2ContinuityDraft,
+  type Level2StandaloneDraft,
+  type Level2StartDraft,
+  type Level2StartMode,
+  type Level2Validation,
+} from "./sunking/chapter2Transition";
+export {
+  applyRemovedIndicesToLevel3Draft,
+  buildLevel3StateFromDraft,
+  createContinuityLevel3Draft,
+  createStandaloneLevel3Draft,
+  LEVEL3_CONTINUITY_MAX_REMOVALS,
+  validateLevel3Draft,
+  type Level3CarryoverCard,
+  type Level3ContinuityDraft,
+  type Level3StandaloneDraft,
+  type Level3StartDraft,
+} from "./sunking/chapter3Transition";

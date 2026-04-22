@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { createInitialState } from "../app/initialState";
-import { createRngFromSeed } from "./rng";
+import { createInitialState } from "../../../app/initialState";
+import { createRngFromSeed } from "../../../logic/rng";
 import { addCardsToDeck, addGeneratedCards } from "./cardRuntime";
 
 describe("addCardsToDeck", () => {

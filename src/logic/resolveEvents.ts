@@ -7,7 +7,7 @@ import { applyEffects, enforceLegitimacy } from "./applyEffects";
 import {
   handleThirdMandateSuccessionCrisisAtEoy,
   handleThirdMandateUtrechtAtEoy,
-} from "../levels/sunking/logic/resolveEventsHooks";
+} from "../levels/campaignLogicBundle";
 
 const SLOTS: readonly SlotId[] = EVENT_SLOT_ORDER;
 

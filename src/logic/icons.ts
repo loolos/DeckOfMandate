@@ -5,4 +5,4 @@ export {
   getResourceIcon,
   opponentBudgetEmojiPips,
   resourceLabelWithIcon,
-} from "../levels/sunking/logic/icons";
+} from "../levels/campaignLogicBundle";

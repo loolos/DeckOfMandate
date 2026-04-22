@@ -42,6 +42,10 @@ export const levelDef: LevelDef = {
     inflation: { kind: "always" },
   },
   bootstrap: "chapter2Standalone",
+  postVictoryContinuity: {
+    continueLabelKey: "menu.continueChapter3",
+    draftKind: "level3FromPrior",
+  },
   menuBriefKey: "menu.levelBrief.secondMandate",
   targetsUiKey: "ui.targets.secondMandate",
   turnBannerKey: "banner.turn.sunKingAnnual",

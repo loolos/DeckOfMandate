@@ -1,14 +1,14 @@
 import { describe, expect, it } from "vitest";
-import { createInitialState } from "../app/initialState";
-import type { GameState } from "../types/game";
+import { createInitialState } from "../../../app/initialState";
+import type { GameState } from "../../../types/game";
 import {
   chooseOpponentPlay,
   initOpponentHabsburgPool,
   opponentBeginYearDrawPhase,
   opponentEndYearPlayPhase,
   utrechtTreatySituationTier,
-} from "./opponentHabsburg";
-import { THIRD_MANDATE_LEVEL_ID } from "./thirdMandateConstants";
+} from "../../../logic/opponentHabsburg";
+import { THIRD_MANDATE_LEVEL_ID } from "../../../logic/thirdMandateConstants";
 
 describe("opponentHabsburg AI", () => {
   it("returns null when opponent not unlocked", () => {

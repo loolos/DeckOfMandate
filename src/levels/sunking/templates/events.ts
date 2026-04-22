@@ -110,9 +110,11 @@ export const eventTemplates: Record<EventTemplateId, EventTemplate> = {
     id: "leagueOfAugsburg",
     weight: 0,
     harmful: false,
+    /** Funding only — no Intervention / crackdown alternate (UI + rules align). */
+    crackdownImmune: true,
     titleKey: "event.leagueOfAugsburg.name",
     descriptionKey: "event.leagueOfAugsburg.desc",
-    solve: { kind: "fundingOrCrackdown", amount: 2 },
+    solve: { kind: "funding", amount: 2 },
     crisisPersistence: "continued",
     continuedDurationTurns: 3,
     penaltiesIfUnresolved: [

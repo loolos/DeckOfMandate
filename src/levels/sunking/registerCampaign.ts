@@ -1,7 +1,7 @@
 import { registerChapter2StandaloneFactory } from "../../data/levelBootstrap";
 import type { LevelContent, LevelDef } from "../../data/levelTypes";
 import { registerLevel, setDefaultLevelId } from "../../data/levelRegistry";
-import type { Level2StartDraft } from "./chapter2Transition";
+import type { Level2StartDraft } from "../../types/continuity";
 
 type ChapterModule = {
   levelDef: LevelDef;

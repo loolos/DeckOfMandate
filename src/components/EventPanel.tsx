@@ -1,5 +1,6 @@
 import { getCardTemplate } from "../data/cards";
 import { getEventTemplate } from "../data/events";
+import { getLevelContent } from "../data/levelRegistry";
 import { useState } from "react";
 import type { GameAction } from "../app/gameReducer";
 import { OutcomeQuickFrame } from "./OutcomeQuickFrame";
@@ -39,6 +40,7 @@ export function EventPanel({
   const [expandedSlot, setExpandedSlot] = useState<string | null>(null);
   const visibleSlots = EVENT_SLOT_ORDER.filter((slot) => state.slots[slot] != null);
   const pending = state.pendingInteraction?.type === "crackdownPick";
+  const opponentBoardTemplateId = getLevelContent(state.levelId).opponentBoardEventTemplateId;
 
   if (visibleSlots.length === 0) return null;
 
@@ -47,7 +49,7 @@ export function EventPanel({
       {visibleSlots.map((slot) => {
         const ev = state.slots[slot]!;
         const tmpl = getEventTemplate(ev.templateId);
-        if (ev.templateId === "opponentHabsburg") {
+        if (opponentBoardTemplateId && ev.templateId === opponentBoardTemplateId) {
           const title = eventLabelWithIcon(tmpl.id, t(tmpl.titleKey as MessageKey));
           const intro = t(tmpl.descriptionKey as MessageKey);
           const showDetails = !isSmallScreen || expandedSlot === slot;

@@ -4,4 +4,4 @@ export {
   antiFrenchSentimentEmotionValue,
   antiFrenchSentimentEventSolveCostPenalty,
   antiFrenchSentimentRyswickSurcharge,
-} from "../levels/sunking/logic/antiFrenchSentiment";
+} from "../levels/campaignLogicBundle";

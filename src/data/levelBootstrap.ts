@@ -1,4 +1,4 @@
-import type { Level2StartDraft } from "../levels/sunking/chapter2Transition";
+import type { Level2StartDraft } from "../types/continuity";
 
 const chapter2StandaloneFactories: Record<string, (seed?: number) => Level2StartDraft> = {};
 

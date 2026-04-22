@@ -1,1 +1,1 @@
-export { isHistoricalEventTemplateId } from "../levels/sunking/logic/eventTags";
+export { isHistoricalEventTemplateId } from "../levels/campaignLogicBundle";

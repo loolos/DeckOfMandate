@@ -9,12 +9,12 @@ export const sunkingCoreGameContentZh = {
   "card.fiscalBurden.name": "财政负担",
   "card.fiscalBurden.background": "债务与紧急开支挤入账册，持续拖慢每个回合的财政回旋。",
   "card.fiscalBurden.desc":
-    "抽到时经费 -1。可支付 floor(财政/5)+1 经费打出并消除（不会进入弃牌堆）。",
+    "抽到时经费 -1。打出费用与财政相关，可支付经费将其消除（不会进入弃牌堆）。",
   "card.antiFrenchContainment.name": "反法遏制",
   "card.antiFrenchContainment.background":
     "欧洲宫廷以关税、信用与海上执法协同掣肘法国，任何对抗都要先吞下政治代价。",
   "card.antiFrenchContainment.desc":
-    "抽到时以 50%/50% 概率使权力 -1 或合法性 -1。可支付 max(1, floor(欧洲警觉进度/2)) 经费打出并消除（不会进入弃牌堆）。",
+    "抽到时以 50%/50% 概率使权力 -1 或合法性 -1。打出费用与欧洲警觉相关（至少 1），可支付经费将其消除（不会进入弃牌堆）。",
   "card.reform.name": "行政整编",
   "card.reform.background": "册籍与汇报线重划，官僚体系在王权下收得更紧。",
   "card.reform.desc": "权力 +1（影响下回合抽牌阶段）。立即抽 1（手牌上限 12）。",

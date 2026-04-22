@@ -14,7 +14,7 @@
   - `docs/gameplay.md`（核心机制 / 回合管线）
   - `docs/card.md`（卡牌系统）
   - `docs/design.md`（设计目标）
-  - `docs/太阳王战役.md`（按关卡顺序的机制 / 事件 / 卡牌 / 状态总表）
+  - `src/levels/sunking/docs/太阳王战役.md`（按关卡顺序的机制 / 事件 / 卡牌 / 状态总表）
 - 代码事实源（authoritative source）：
   - `src/app/*`：`gameReducer.ts`、`initialState.ts`、`level2Transition.ts`
   - `src/logic/*`：`turnFlow.ts`、`actionLog.ts`、`aiStrategySimulation.ts`、`cardUsage.ts`、`icons.ts`、`normalizeGameState.ts`

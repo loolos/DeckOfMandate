@@ -18,6 +18,7 @@ import {
   type LevelEndingCopyKeys,
   type LevelId,
 } from "../data/levels";
+import { getLevelContent } from "../data/levelRegistry";
 import { cardLabelWithIcon, resourceLabelWithIcon } from "../logic/icons";
 import { normalizeGameState } from "../logic/normalizeGameState";
 import { currentCalendarYear } from "../logic/scriptedCalendar";
@@ -28,6 +29,7 @@ import { buildCardQuickFrameRows } from "../logic/quickOutcomeFrame";
 import type { MessageKey } from "../locales";
 import { useI18n } from "../locales";
 import type { GameState } from "../types/game";
+import type { CardTemplateId } from "../levels/types/card";
 import type { CardTag } from "../levels/types/tags";
 import { EVENT_SLOT_ORDER } from "../levels/types/event";
 import { gameReducer, type GameAction } from "./gameReducer";
@@ -35,8 +37,6 @@ import { createInitialState } from "./initialState";
 import {
   LEVEL2_CONTINUITY_MAX_REMOVALS,
   LEVEL2_FIXED_NEW_IDS,
-  SUNKING_CH1_ID,
-  SUNKING_CH2_ID,
   buildLevel2StateFromDraft,
   createContinuityLevel2Draft,
   createStandaloneLevel2Draft,
@@ -50,10 +50,8 @@ import {
   createContinuityLevel3Draft,
   createStandaloneLevel3Draft,
   validateLevel3Draft,
-  SUNKING_CH3_ID,
   type Level3StartDraft,
 } from "./level3Transition";
-import { LEVEL3_STARTING_HAND_TEMPLATE_ORDER } from "../levels/sunking/chapters/thirdMandate";
 import styles from "./Game.module.css";
 import { retentionCapacity } from "../logic/turnFlow";
 import {
@@ -64,6 +62,16 @@ import {
   type RunRecord,
   type SessionRecord,
 } from "../logic/runCode";
+
+function readRegisteredChapter3RefitHandOrder(): readonly CardTemplateId[] {
+  for (const id of getRegisteredLevelIds()) {
+    const o = getLevelContent(id).chapter3RefitStartingHandOrder;
+    if (o?.length) return o;
+  }
+  throw new Error("Game: no registered level defines chapter3RefitStartingHandOrder");
+}
+
+const CHAPTER3_REFIT_STARTING_HAND_ORDER: readonly CardTemplateId[] = readRegisteredChapter3RefitHandOrder();
 
 type PendingNewRun = { seed?: number; levelId: LevelId };
 
@@ -177,29 +185,12 @@ export function Game() {
     [refreshCodeHex],
   );
 
-  const appendContinuitySession = useCallback(
-    (seed: number, removedIndices: number[]) => {
+  const appendContinuityChapterSession = useCallback(
+    (targetLevelId: LevelId, seed: number, removedIndices: number[]) => {
       sessionRef.current = [
         ...sessionRef.current,
         {
-          level: SUNKING_CH2_ID,
-          mode: "continuity",
-          seed: seed >>> 0,
-          removedIndices,
-          actions: [],
-        },
-      ];
-      refreshCodeHex();
-    },
-    [refreshCodeHex],
-  );
-
-  const appendChapter3ContinuitySession = useCallback(
-    (seed: number, removedIndices: number[]) => {
-      sessionRef.current = [
-        ...sessionRef.current,
-        {
-          level: SUNKING_CH3_ID,
+          level: targetLevelId,
           mode: "continuity",
           seed: seed >>> 0,
           removedIndices,
@@ -227,6 +218,8 @@ export function Game() {
   }, [state, startMenuOpen]);
 
   const level = useMemo(() => getLevelDef(state.levelId), [state.levelId]);
+  const successionTrackUiActive =
+    level.victoryRule.kind === "successionWar" && state.outcome === "playing" && !state.warEnded;
   const runTurnLimit = useMemo(
     () => getTurnLimitForRun(state.levelId, state.calendarStartYear),
     [state.levelId, state.calendarStartYear],
@@ -476,9 +469,9 @@ export function Game() {
       if (removedSet.has(card.instanceId)) removedIndices.push(idx);
     });
     if (level2Draft.mode === "continuity") {
-      appendContinuitySession(nextState.runSeed, removedIndices);
+      appendContinuityChapterSession(nextState.levelId, nextState.runSeed, removedIndices);
     } else {
-      startStandaloneSession(SUNKING_CH2_ID, nextState.runSeed, removedIndices);
+      startStandaloneSession(nextState.levelId, nextState.runSeed, removedIndices);
     }
     setLevel2Draft(null);
     setLevel2DraftInitial(null);
@@ -528,9 +521,9 @@ export function Game() {
       if (removedSet.has(card.instanceId)) removedIndices.push(idx);
     });
     if (level3Draft.mode === "continuity") {
-      appendChapter3ContinuitySession(nextState.runSeed, removedIndices);
+      appendContinuityChapterSession(nextState.levelId, nextState.runSeed, removedIndices);
     } else {
-      startStandaloneSession(SUNKING_CH3_ID, nextState.runSeed, removedIndices);
+      startStandaloneSession(nextState.levelId, nextState.runSeed, removedIndices);
     }
     setLevel3Draft(null);
     setLevel3DraftInitial(null);
@@ -781,7 +774,7 @@ export function Game() {
     );
   };
 
-  const renderLevel3FixedNewCardPreviewRow = (templateId: (typeof LEVEL3_STARTING_HAND_TEMPLATE_ORDER)[number], rowKey: string) => {
+  const renderLevel3FixedNewCardPreviewRow = (templateId: CardTemplateId, rowKey: string) => {
     if (!level3Draft) return null;
     const tmpl = getCardTemplate(templateId);
     const visibleTags = displayRefitTags("continuity", tmpl.tags);
@@ -864,7 +857,7 @@ export function Game() {
             ) : null}
             {level3Draft.carryoverCards.map((card) => renderLevel3RefitCardRow(card))}
             <h3 className={styles.statusSectionTitle}>{t("menu.refit.newCardsChapter3")}</h3>
-            {LEVEL3_STARTING_HAND_TEMPLATE_ORDER.map((id, idx) =>
+            {CHAPTER3_REFIT_STARTING_HAND_ORDER.map((id, idx) =>
               renderLevel3FixedNewCardPreviewRow(id, `preview-ch3-${idx}-${id}`),
             )}
           </>
@@ -876,7 +869,7 @@ export function Game() {
               <p className={styles.startMenuMuted}>
                 {t("menu.refit.newCardTotal", {
                   current: level3Validation.totalNewCards,
-                  max: LEVEL3_STARTING_HAND_TEMPLATE_ORDER.length,
+                  max: CHAPTER3_REFIT_STARTING_HAND_ORDER.length,
                 })}
               </p>
               <p className={styles.startMenuMuted}>
@@ -1188,11 +1181,7 @@ export function Game() {
                 ? Math.round(state.antiFrenchLeague.drawPenaltyProbability * 100)
                 : undefined
             }
-            successionTrack={
-              state.levelId === SUNKING_CH3_ID && state.outcome === "playing" && !state.warEnded
-                ? state.successionTrack
-                : undefined
-            }
+            successionTrack={successionTrackUiActive ? state.successionTrack : undefined}
           />
         </section>
 
@@ -1312,13 +1301,14 @@ export function Game() {
                 const ending = levelEndingKeys(getLevelDef(state.levelId));
                 if (!ending) return null;
                 if (state.outcome === "victory") {
+                  const successionLevel = level.victoryRule.kind === "successionWar";
                   const successionTrackCapVictory =
-                    state.levelId === SUNKING_CH3_ID &&
+                    successionLevel &&
                     state.successionTrack >= 10 &&
                     ending.victorySuccessionTrackCapBodyKey != null;
                   const settlementTier = state.utrechtSettlementTier ?? state.successionOutcomeTier;
                   const chapter3TierVictoryKey =
-                    state.levelId === SUNKING_CH3_ID &&
+                    successionLevel &&
                     !successionTrackCapVictory &&
                     settlementTier &&
                     ending.victoryBodyByTierKeys?.[settlementTier]
@@ -1330,19 +1320,11 @@ export function Game() {
                       : chapter3TierVictoryKey ?? ending.victoryBodyKey;
                   return (
                     <div className={styles.gameOverBody}>
-                      {state.levelId === SUNKING_CH3_ID &&
-                      !successionTrackCapVictory &&
-                      settlementTier ? (
+                      {successionLevel && !successionTrackCapVictory && settlementTier ? (
                         <p>{t(`outcome.utrechtVictoryEpilogue.${settlementTier}` as MessageKey)}</p>
-                      ) : state.levelId === SUNKING_CH3_ID &&
-                        !successionTrackCapVictory &&
-                        settlementTier ? (
-                        <p>{t(`outcome.successionTier.${settlementTier}` as MessageKey)}</p>
                       ) : null}
                       <p>{t(victoryMainKey as MessageKey)}</p>
-                      {state.levelId === SUNKING_CH3_ID &&
-                      !successionTrackCapVictory &&
-                      state.successionOutcomeTier ? (
+                      {successionLevel && !successionTrackCapVictory && state.successionOutcomeTier ? (
                         <p>
                           {t(
                             `outcome.successionCalendar1720Extra.${state.utrechtSettlementTier ?? state.successionOutcomeTier}` as MessageKey,
@@ -1356,7 +1338,7 @@ export function Game() {
                   );
                 }
                 const defeatMainKey =
-                  state.levelId === SUNKING_CH3_ID &&
+                  level.victoryRule.kind === "successionWar" &&
                   state.outcome === "defeatSuccession" &&
                   ending.defeatSuccessionTrackFloorBodyKey
                     ? ending.defeatSuccessionTrackFloorBodyKey
@@ -1370,14 +1352,18 @@ export function Game() {
               <button type="button" className={`${styles.btn} ${styles.btnPrimary}`} onClick={() => restartCurrentLevelRun()}>
                 {t("ui.newGame")}
               </button>
-              {state.outcome === "victory" && state.levelId === SUNKING_CH1_ID ? (
-                <button type="button" className={styles.btn} onClick={openChapter2Continuity}>
-                  {t("menu.continueChapter2")}
-                </button>
-              ) : null}
-              {state.outcome === "victory" && state.levelId === SUNKING_CH2_ID ? (
-                <button type="button" className={styles.btn} onClick={openChapter3Continuity}>
-                  {t("menu.continueChapter3")}
+              {state.outcome === "victory" && level.postVictoryContinuity ? (
+                <button
+                  type="button"
+                  className={styles.btn}
+                  onClick={() => {
+                    const c = level.postVictoryContinuity;
+                    if (!c) return;
+                    if (c.draftKind === "level2FromPrior") openChapter2Continuity();
+                    else openChapter3Continuity();
+                  }}
+                >
+                  {t(level.postVictoryContinuity.continueLabelKey as MessageKey)}
                 </button>
               ) : null}
             </div>

@@ -8,7 +8,6 @@ import { createRngFromSeed, shuffle } from "../logic/rng";
 import { beginYear } from "../logic/turnFlow";
 import type { CardInstance, CardTemplateId } from "../levels/types/card";
 import { EMPTY_EVENT_SLOTS, EMPTY_PENDING_MAJOR_CRISIS } from "../levels/types/event";
-import { LEVEL3_STARTING_HAND_TEMPLATE_ORDER } from "../levels/sunking/chapters/thirdMandate";
 import { registerNantesStarterCardsForThirdMandate, resolveThirdMandateNantesPolicy } from "../logic/thirdMandateStart";
 import { THIRD_MANDATE_LEVEL_ID } from "../logic/thirdMandateConstants";
 import type { GameState, NantesPolicyCarryover, Resources } from "../types/game";
@@ -79,9 +78,13 @@ export function createInitialState(
   let deckInstanceIds: string[];
 
   if (levelId === THIRD_MANDATE_LEVEL_ID) {
+    const ch3RefitOrder = getLevelContent(THIRD_MANDATE_LEVEL_ID).chapter3RefitStartingHandOrder;
+    if (!ch3RefitOrder?.length) {
+      throw new Error("initialState: thirdMandate.chapter3RefitStartingHandOrder is required");
+    }
     const ch3Ids: string[] = [];
-    for (let i = 0; i < LEVEL3_STARTING_HAND_TEMPLATE_ORDER.length; i++) {
-      const templateId = LEVEL3_STARTING_HAND_TEMPLATE_ORDER[i]!;
+    for (let i = 0; i < ch3RefitOrder.length; i++) {
+      const templateId = ch3RefitOrder[i]!;
       const instanceId = `ch3_hand_${i}_${templateId}`;
       cardsById[instanceId] = { instanceId, templateId };
       ch3Ids.push(instanceId);

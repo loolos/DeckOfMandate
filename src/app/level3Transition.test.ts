@@ -1,11 +1,11 @@
 import { describe, expect, it } from "vitest";
 import { getCardTemplate } from "../data/cards";
 import { getLevelContent } from "../data/levelRegistry";
-import { createDeckRefitCarryoverSnapshot } from "../levels/sunking/chapter2Transition";
 import {
+  createDeckRefitCarryoverSnapshot,
   createStandaloneLevel3Draft,
   validateLevel3Draft,
-} from "../levels/sunking/chapter3Transition";
+} from "../levels/campaignChapterTransitions";
 import { createInitialState } from "./initialState";
 import { SUNKING_CH3_ID, buildLevel3StateFromChapter2 } from "./level3Transition";
 

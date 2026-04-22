@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { createInitialState } from "../app/initialState";
-import { getCardTagsForInstance, hasCardTag } from "./cardTags";
+import { createInitialState } from "../../../app/initialState";
+import { getCardTagsForInstance, hasCardTag } from "../../../logic/cardTags";
 
 describe("cardTags", () => {
   it("hides chapter-1 inflation tag before pressure threshold", () => {

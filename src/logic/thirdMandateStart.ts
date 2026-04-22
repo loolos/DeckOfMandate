@@ -1,4 +1,4 @@
 export {
   registerNantesStarterCardsForThirdMandate,
   resolveThirdMandateNantesPolicy,
-} from "../levels/sunking/logic/thirdMandateStart";
+} from "../levels/campaignLogicBundle";

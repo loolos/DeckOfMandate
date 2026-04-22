@@ -38,6 +38,10 @@ export const levelDef: LevelDef = {
     inflationActivationLogKey: "firstMandateInflationActivated",
   },
   bootstrap: "initial",
+  postVictoryContinuity: {
+    continueLabelKey: "menu.continueChapter2",
+    draftKind: "level2FromPrior",
+  },
   menuBriefKey: "menu.levelBrief.firstMandate",
   targetsUiKey: "ui.targets.firstMandate",
   turnBannerKey: "banner.turn.sunKingAnnual",
