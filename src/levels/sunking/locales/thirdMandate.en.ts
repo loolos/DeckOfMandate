@@ -7,21 +7,21 @@ export const messagesEnThirdMandate = {
   "level.successionWar.introBody":
     "When the Spanish Habsburg line failed with Charles II, half of Europe was suddenly negotiable. Madrid’s vast composite monarchy—Castile and Aragon, Naples and Milan, much of the Low Countries, and overseas silver—sat at the centre of every balance-of-power calculation. France backed Bourbon claims through dynastic marriages and the will’s language; Vienna and the emperor’s court argued for Habsburg continuity and for limits to Bourbon encirclement. London and The Hague, fearing French primacy in both Channel and Mediterranean, tilted toward coalitions that could restrain Versailles without surrendering their own commercial empires.\n\nWhat followed was less a single war than a shifting lattice of fronts: fortresses and bargainers in the Spanish Netherlands, Piedmont and the Alpine passes, Rhine principalities squeezed between imperial and French armies, and the naval math of trade and colonies. Treaties would later try to fix the map; this chapter is the long strain of French kingship stretched between tribute, tax, and the envy of other crowns.",
   "level.successionWar.ending.victory":
-    "France secures a durable settlement. The crown navigates coalition war and dynastic rivalry without losing the political center.",
+    "When cannon-fire gives way to clauses, France does not inherit a cost-free map—but it does preserve dynastic continuity and the machinery of rule. In a war this long, ending with a governable state is itself a hard-won victory.",
   "level.successionWar.ending.victoryByTier.bourbon":
-    "Under the Utrecht frame, the Bourbon tier closes on terms France can defend: Madrid stays within the Bourbon inheritance story under anti-union guardrails, turning battlefield exhaustion into a durable dynastic balance sheet.",
+    "In the Bourbon-leaning tier, the treaty ledger bends your way: Madrid remains within a Bourbon succession narrative, and Versailles can translate years of blood and debt into defensible dynastic gain—even under anti-union guardrails.",
   "level.successionWar.ending.victoryByTier.compromise":
-    "The Utrecht close lands in a compromise tier: France preserves its inheritance floor, but every retained position carries a counterweight. This is not a knockout, but an enforceable equilibrium you can govern inside.",
+    "Historically aligned compromise: Utrecht–Rastatt–Baden does not crown a single hegemon. Philip V remains in Madrid, while renunciations, border adjustments, and maritime-commercial clauses prevent a Franco-Spanish union. Your ending is not continental domination, but a signed, enforceable balance.",
   "level.successionWar.ending.victoryByTier.habsburg":
-    "Peace arrives, but in a Habsburg-leaning tier: France avoids total exclusion yet accepts tighter limits on frontiers, sea lanes, and dynastic room to maneuver. A victory in form, purchased at strategic cost.",
+    "A Habsburg-leaning settlement means you win mostly by avoiding catastrophe: France keeps a voice at the table, but under tighter frontier, legal, and maritime constraints. The title says victory; the fine print records the price.",
   "level.successionWar.ending.victoryWarDevolutionExtra":
     "Earlier French offensives still color how neighbors read your moves, but disciplined diplomacy limits the backlash.",
   "level.successionWar.ending.defeat":
-    "The succession crisis overwhelms the monarchy. Resources collapse, legitimacy frays, and France pays the price of overstretch.",
+    "You fail to turn succession war into order. Treasury, legitimacy, and command discipline unravel together, and by the final page France has lost more than leverage—it has lost the confidence that it can still anchor the system it tried to lead.",
   "level.successionWar.ending.victorySuccessionTrackCap":
     "The contest of crowns ends in brilliance: Bourbon right and French grandeur, forged in testament, steel, and chancellery, stand as an unanswerable triumph. Philip of Anjou in Madrid is no longer a wager but a proclamation writ in sunlight—envy and leagues from the Channel to the Mediterranean must bend before your victory march. This is the Sun King’s hour at its zenith: the Spanish inheritance and the Bourbon diadem made one, and history will remember the day in gold.",
   "level.successionWar.ending.defeatSuccessionTrackFloor":
-    "Across Vienna’s chancery, The Hague, and the Reichstag’s jurists, the Habsburg reading of the Spanish inheritance swallowed Bourbon testamentary theater. Subsidies, imperial bans, and hard years on the Rhine and in the Low Countries turned the track’s collapse into a common verdict: France could not enforce Charles II’s will without conceding so much abroad—partition talk, Austrian candidacy, Protestant guarantees—that Versailles lost the pen that writes the settlement, even before the treaties do.",
+    "At the floor, initiative is gone: Viennese legal framing, Dutch-British finance and sea pressure, and imperial security politics fuse into a common anti-French grammar. Versailles can still protest in memoranda, but no longer writes the settlement. This defeat is not only territorial—it is narrative sovereignty lost.",
 
   "event.successionCrisis.name": "Succession Crisis",
   "event.successionCrisis.desc":
