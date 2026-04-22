@@ -9,6 +9,8 @@ export type LevelLocaleId = "en" | "zh" | "fr";
 /** Locale keys for the end-of-run narrative (shown in the game-over modal). */
 export type LevelEndingCopyKeys = {
   victoryBodyKey: string;
+  /** Chapter 3: victory body copy by Utrecht settlement tier (`bourbon` | `compromise` | `habsburg`). */
+  victoryBodyByTierKeys?: Partial<Record<import("../types/game").SuccessionIntervalTier, string>>;
   victoryWarDevolutionExtraKey: string;
   defeatBodyKey: string;
   /** Chapter 3: shown on victory when the succession track reached +10 (instant win). */

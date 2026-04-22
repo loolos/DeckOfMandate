@@ -1316,20 +1316,28 @@ export function Game() {
                     state.levelId === SUNKING_CH3_ID &&
                     state.successionTrack >= 10 &&
                     ending.victorySuccessionTrackCapBodyKey != null;
+                  const settlementTier = state.utrechtSettlementTier ?? state.successionOutcomeTier;
+                  const chapter3TierVictoryKey =
+                    state.levelId === SUNKING_CH3_ID &&
+                    !successionTrackCapVictory &&
+                    settlementTier &&
+                    ending.victoryBodyByTierKeys?.[settlementTier]
+                      ? ending.victoryBodyByTierKeys[settlementTier]
+                      : null;
                   const victoryMainKey =
                     successionTrackCapVictory && ending.victorySuccessionTrackCapBodyKey
                       ? ending.victorySuccessionTrackCapBodyKey
-                      : ending.victoryBodyKey;
+                      : chapter3TierVictoryKey ?? ending.victoryBodyKey;
                   return (
                     <div className={styles.gameOverBody}>
                       {state.levelId === SUNKING_CH3_ID &&
                       !successionTrackCapVictory &&
-                      state.utrechtSettlementTier ? (
-                        <p>{t(`outcome.utrechtVictoryEpilogue.${state.utrechtSettlementTier}` as MessageKey)}</p>
+                      settlementTier ? (
+                        <p>{t(`outcome.utrechtVictoryEpilogue.${settlementTier}` as MessageKey)}</p>
                       ) : state.levelId === SUNKING_CH3_ID &&
                         !successionTrackCapVictory &&
-                        state.successionOutcomeTier ? (
-                        <p>{t(`outcome.successionTier.${state.successionOutcomeTier}` as MessageKey)}</p>
+                        settlementTier ? (
+                        <p>{t(`outcome.successionTier.${settlementTier}` as MessageKey)}</p>
                       ) : null}
                       <p>{t(victoryMainKey as MessageKey)}</p>
                       {state.levelId === SUNKING_CH3_ID &&
