@@ -43,6 +43,7 @@ export const messagesFrCore: Record<keyof typeof messagesEnCore, string> = {
   "ui.opponentHabsburg": "Adversaire : Habsbourg",
   "ui.opponentStrength": "Budget adversaire",
   "ui.opponentEvent.strengthTag": "Puissance {n}",
+  "ui.opponentEvent.lastPlayCost": "Coût cumulé fin d'année précédente : {pips} ({n})",
   "ui.opponentEvent.lastPlayCombinedFx": "Total fin d'année précédente : {fx}",
   "ui.opponentEvent.lastPlayCardBlurb": "{history} En jeu : {fx}",
   "ui.resolved": "Résolu",

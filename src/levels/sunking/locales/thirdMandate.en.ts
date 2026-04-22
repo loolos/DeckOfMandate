@@ -65,9 +65,9 @@ export const messagesEnThirdMandate = {
   "card.habsburgImperialLegitimacyNote.name": "Imperial legitimacy note",
   "card.habsburgImperialLegitimacyNote.background": "Legalist pressure",
   "card.habsburgImperialLegitimacyNote.desc":
-    "Opponent cost 1. Succession track −1; opponent next-year draw −1 (base 1, minimum 0).",
+    "Opponent cost 1. Succession track −1.",
   "card.habsburgImperialLegitimacyNote.opponentHistory":
-    "Chancelleries invoke imperial privilege and old Habsburg ties to Spain. In play: succession track −1, and opponent next-year draw −1 (minimum 0).",
+    "Chancelleries invoke imperial privilege and old Habsburg ties to Spain. In play: succession track −1.",
   "card.habsburgLowCountriesAgitation.name": "Low Countries agitation",
   "card.habsburgLowCountriesAgitation.background": "Northwestern front",
   "card.habsburgLowCountriesAgitation.desc":
@@ -92,7 +92,7 @@ export const messagesEnThirdMandate = {
     "Opponent cost 1. Next year, your treasury-to-funding income is reduced by 2 (not below 0) and draw attempts −1 (still at least 1).",
   "card.habsburgAngloDutchMaritimeInterdiction.opponentHistory":
     "Letters of marque, stricter convoys, and seizures along the Channel and North Sea routes delay bills of exchange and tighten liquidity for Versailles’ war chest. In play: next year’s funding from treasury −2 (min 0 total) and draw attempts −1 (min 1).",
-  "card.habsburgRhineMagazineEmbargo.name": "Rhine magazine embargo",
+  "card.habsburgRhineMagazineEmbargo.name": "Magazine embargo",
   "card.habsburgRhineMagazineEmbargo.background": "Corridor squeeze",
   "card.habsburgRhineMagazineEmbargo.desc":
     "Opponent cost 1. Next year, your treasury-to-funding income is reduced by 1 (not below 0), and succession track −1.",

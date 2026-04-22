@@ -64,9 +64,9 @@ export const messagesZhThirdMandate = {
   "card.habsburgImperialLegitimacyNote.name": "正朔诏令",
   "card.habsburgImperialLegitimacyNote.background": "法统压力",
   "card.habsburgImperialLegitimacyNote.desc":
-    "对手费用 1。王位争夺进度 −1；对手下一年年初摸牌 −1（基数为 1，最低为 0）。",
+    "对手费用 1。王位争夺进度 −1。",
   "card.habsburgImperialLegitimacyNote.opponentHistory":
-    "帝国法学家以诏令质疑波旁继统合法性。局内会让王位争夺进度 −1，并使对手下一年年初摸牌 −1（最低为 0）。",
+    "帝国法学家以诏令质疑波旁继统合法性。局内会让王位争夺进度 −1。",
   "card.habsburgLowCountriesAgitation.name": "低地鼓动",
   "card.habsburgLowCountriesAgitation.background": "西北战线",
   "card.habsburgLowCountriesAgitation.desc": "对手费用 2。进度 −1，权力 −1，合法性 −1。",
@@ -89,7 +89,7 @@ export const messagesZhThirdMandate = {
     "对手费用 1。你下一年年初由财政转入的回合经费 −2（合计不低于 0）；抽牌次数 −1（仍至少 1 次）。",
   "card.habsburgAngloDutchMaritimeInterdiction.opponentHistory":
     "大同盟侧以私掠证、护航与查扣压缩英吉利—北海航路，汇票与辎重汇款被迟滞，凡尔赛可动用的现金头寸在账面上变薄。局内：下一年国库转回合经费 −2（总收入不低于 0）、抽牌 −1（最低 1）。",
-  "card.habsburgRhineMagazineEmbargo.name": "莱茵军需辎重禁运",
+  "card.habsburgRhineMagazineEmbargo.name": "需辎重禁运",
   "card.habsburgRhineMagazineEmbargo.background": "河道辎重线",
   "card.habsburgRhineMagazineEmbargo.desc":
     "对手费用 1。你下一年年初由财政转入的回合经费 −1（合计不低于 0）；王位争夺进度 −1。",

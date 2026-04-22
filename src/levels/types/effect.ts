@@ -13,7 +13,7 @@ export type Effect =
   | { kind: "scheduleNextTurnDrawModifier"; delta: number }
   /** Applied at next `beginYear` when computing treasury→funding income (then reset with draw modifier). */
   | { kind: "scheduleNextTurnFundingIncomeModifier"; delta: number }
-  /** Chapter 3 opponent phase only: adjusts opponent's next `beginYear` draw count (base 1). */
+  /** Chapter 3 opponent phase only: adjusts opponent's next `beginYear` draw count (base 2). */
   | { kind: "opponentNextTurnDrawModifier"; delta: number }
   /** Chapter 3: immediately discard `count` random cards from the Habsburg opponent's hand (played-card phase). */
   | { kind: "opponentHandDiscardNow"; count: number }

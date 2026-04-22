@@ -37,7 +37,7 @@ describe("opponentHabsburg AI", () => {
     expect(pick).toEqual([opp1, opp2]);
   });
 
-  it("draws one opponent card at begin-year after the rival is unlocked", () => {
+  it("draws two opponent cards at begin-year after the rival is unlocked", () => {
     const base = createInitialState(7, THIRD_MANDATE_LEVEL_ID);
     const st: GameState = {
       ...base,
@@ -53,8 +53,8 @@ describe("opponentHabsburg AI", () => {
     };
 
     const next = opponentBeginYearDrawPhase(st);
-    expect(next.opponentHand).toEqual(["opp_a"]);
-    expect(next.opponentDeck).toEqual(["opp_b", "opp_c"]);
+    expect(next.opponentHand).toEqual(["opp_a", "opp_b"]);
+    expect(next.opponentDeck).toEqual(["opp_c"]);
   });
 
   it("Low Countries agitation lowers succession, power, and legitimacy", () => {
@@ -137,7 +137,7 @@ describe("opponentHabsburg AI", () => {
     expect(next.opponentDiscard).toEqual([customsId]);
   });
 
-  it("Imperial legitimacy note lowers succession track and defers opponent draw by −1", () => {
+  it("Imperial legitimacy note lowers succession track without changing next-year opponent draw", () => {
     const base = createInitialState(102, THIRD_MANDATE_LEVEL_ID);
     const noteId = "opp_note_test";
     const trackBefore = base.successionTrack;
@@ -158,7 +158,7 @@ describe("opponentHabsburg AI", () => {
     };
     const next = opponentEndYearPlayPhase(st);
     expect(next.successionTrack).toBe(trackBefore - 1);
-    expect(next.opponentNextTurnDrawModifier).toBe(-1);
+    expect(next.opponentNextTurnDrawModifier).toBe(0);
     expect(next.opponentDiscard).toEqual([noteId]);
   });
 
@@ -185,12 +185,12 @@ describe("opponentHabsburg AI", () => {
     };
     const next = opponentEndYearPlayPhase(st);
     expect(next.successionTrack).toBe(trackBefore - 1);
-    expect(next.opponentNextTurnDrawModifier).toBe(-1);
+    expect(next.opponentNextTurnDrawModifier).toBe(0);
     expect(next.opponentHand).toEqual([levyId]);
     expect(next.opponentDiscard).toEqual([noteId]);
   });
 
-  it("opponent begin-year draw uses opponentNextTurnDrawModifier (e.g. 0 cards when base 1 and modifier is −1)", () => {
+  it("opponent begin-year draw is always at least 2 cards", () => {
     const base = createInitialState(103, THIRD_MANDATE_LEVEL_ID);
     const st: GameState = {
       ...base,
@@ -206,8 +206,8 @@ describe("opponentHabsburg AI", () => {
       },
     };
     const next = opponentBeginYearDrawPhase(st);
-    expect(next.opponentHand).toEqual([]);
-    expect(next.opponentDeck).toEqual(["opp_x", "opp_y", "opp_z"]);
+    expect(next.opponentHand).toEqual(["opp_x", "opp_y"]);
+    expect(next.opponentDeck).toEqual(["opp_z"]);
     expect(next.opponentNextTurnDrawModifier).toBe(0);
   });
 

@@ -258,7 +258,7 @@ function buildContinuityLevel2State(draft: Level2StartDraft): GameState {
     proceduralEventPoolOrder: [],
     actionLog: [],
     successionTrack: 0,
-    opponentStrength: 2,
+    opponentStrength: 3,
     opponentHabsburgUnlocked: false,
     warEnded: false,
     utrechtTreatyCountdown: null,

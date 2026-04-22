@@ -377,7 +377,7 @@ export type GameState = {
   actionLog: readonly ActionLogEntry[];
   /** Chapter 3: Spanish succession contest, -10..+10. */
   successionTrack: number;
-  /** Chapter 3: max opponent-cost budget per opponent phase (fixed at 2 in this version). */
+  /** Chapter 3: max opponent-cost budget per opponent phase (fixed at 3 in this version). */
   opponentStrength: number;
   /** Chapter 3: after `successionCrisis` resolves; enables opponent draw/play. */
   opponentHabsburgUnlocked: boolean;
@@ -396,7 +396,7 @@ export type GameState = {
   opponentCostDiscountThisTurn: number;
   /**
    * Chapter 3: added when the opponent plays certain cards; consumed at `opponentBeginYearDrawPhase`.
-   * Opponent draw count that year is `max(0, 1 + this)`, then this resets to 0.
+   * Opponent draw count that year is `max(0, 2 + this)`, then this resets to 0.
    */
   opponentNextTurnDrawModifier: number;
   /**

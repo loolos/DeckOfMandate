@@ -122,7 +122,7 @@ export function normalizeGameState(state: GameState): GameState {
     s = { ...s, successionTrack: Math.max(-10, Math.min(10, Math.floor(s.successionTrack))) };
   }
   if (typeof s.opponentStrength !== "number" || !Number.isFinite(s.opponentStrength)) {
-    s = { ...s, opponentStrength: 2 };
+    s = { ...s, opponentStrength: 3 };
   }
   if (typeof s.opponentHabsburgUnlocked !== "boolean") {
     s = { ...s, opponentHabsburgUnlocked: false };

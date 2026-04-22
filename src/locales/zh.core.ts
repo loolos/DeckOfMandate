@@ -43,6 +43,7 @@ export const messagesZhCore = {
   "ui.opponentEvent.lastPlayNone": "上一对手阶段未出牌。",
   "ui.opponentEvent.effectSummary": "盘面效果：{fx}",
   "ui.opponentEvent.strengthTag": "实力{n}",
+  "ui.opponentEvent.lastPlayCost": "上年末累计耗用：{pips}（{n}）",
   "ui.opponentEvent.lastPlayCombinedFx": "上年末合计：{fx}",
   "ui.opponentEvent.lastPlayCardBlurb": "{history} 局内效果：{fx}",
   "ui.opponentHabsburg": "对手：哈布斯堡",

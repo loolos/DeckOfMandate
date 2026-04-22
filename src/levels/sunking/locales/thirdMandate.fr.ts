@@ -65,9 +65,9 @@ export const messagesFrThirdMandate = {
   "card.habsburgImperialLegitimacyNote.name": "Note de légitimité impériale",
   "card.habsburgImperialLegitimacyNote.background": "Pression juridique",
   "card.habsburgImperialLegitimacyNote.desc":
-    "Coût adverse 1. Piste de succession −1 ; pioche adverse l’année suivante −1 (base 1, minimum 0).",
+    "Coût adverse 1. Piste de succession −1.",
   "card.habsburgImperialLegitimacyNote.opponentHistory":
-    "Les juristes impériaux contestent la légitimité bourbonienne par notes et mémoires. En jeu : piste −1, et pioche adverse l’année suivante −1 (minimum 0).",
+    "Les juristes impériaux contestent la légitimité bourbonienne par notes et mémoires. En jeu : piste −1.",
   "card.habsburgLowCountriesAgitation.name": "Agitation dans les Pays-Bas",
   "card.habsburgLowCountriesAgitation.background": "Front du Nord-Ouest",
   "card.habsburgLowCountriesAgitation.desc": "Coût adverse 2. Piste −1, Pouvoir −1, Légitimité −1.",
@@ -91,7 +91,7 @@ export const messagesFrThirdMandate = {
     "Coût adverse 1. L’année suivante, le Financement issu du Trésor au début d’année est réduit de 2 (pas en dessous de 0 au total) et les tentatives de pioche −1 (minimum 1).",
   "card.habsburgAngloDutchMaritimeInterdiction.opponentHistory":
     "Lettres de marque, convois plus serrés et saisies sur la Manche et la mer du Nord retardent lettres de change et caisses : Versailles voit sa liquidité opérationnelle amincie. En jeu : Financement depuis le Trésor l’année suivante −2 (min 0 au total) et tentatives de pioche −1 (min 1).",
-  "card.habsburgRhineMagazineEmbargo.name": "Embargo des magasins rhénans",
+  "card.habsburgRhineMagazineEmbargo.name": "Embargo des magasins",
   "card.habsburgRhineMagazineEmbargo.background": "Étranglement logistique",
   "card.habsburgRhineMagazineEmbargo.desc":
     "Coût adverse 1. L’année suivante, le Financement issu du Trésor au début d’année est réduit de 1 (pas en dessous de 0 au total), et la piste de succession −1.",

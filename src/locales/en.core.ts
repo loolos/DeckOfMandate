@@ -44,6 +44,7 @@ export const messagesEnCore = {
   "ui.opponentEvent.lastPlayNone": "No opponent cards were played last phase.",
   "ui.opponentEvent.effectSummary": "Board effects: {fx}",
   "ui.opponentEvent.strengthTag": "Strength {n}",
+  "ui.opponentEvent.lastPlayCost": "Last year-end spent: {pips} ({n})",
   "ui.opponentEvent.lastPlayCombinedFx": "Last year-end total: {fx}",
   "ui.opponentEvent.lastPlayCardBlurb": "{history} In-game: {fx}",
   "ui.opponentHabsburg": "Habsburg opponent",

@@ -59,10 +59,6 @@ export function opponentTemplatesToAppliedEffects(ids: readonly CardTemplateId[]
   if (customsCount > 0) {
     out.push({ kind: "scheduleNextTurnDrawModifier", delta: -customsCount });
   }
-  const legitimacyNoteCount = ids.filter((id) => id === "habsburgImperialLegitimacyNote").length;
-  if (legitimacyNoteCount > 0) {
-    out.push({ kind: "opponentNextTurnDrawModifier", delta: -legitimacyNoteCount });
-  }
   const fundingDrawPressureCount = ids.filter((id) => isHabsburgFundingDrawPressureCard(id)).length;
   if (fundingDrawPressureCount > 0) {
     out.push({ kind: "scheduleNextTurnFundingIncomeModifier", delta: -2 * fundingDrawPressureCount });
@@ -192,9 +188,6 @@ function applyOpponentCardToState(state: GameState, templateId: CardTemplateId):
   if (d.pow !== 0) effects.push({ kind: "modResource" as const, resource: "power" as const, delta: d.pow });
   if (d.leg !== 0) effects.push({ kind: "modResource" as const, resource: "legitimacy" as const, delta: d.leg });
   if (d.tre !== 0) effects.push({ kind: "modResource" as const, resource: "treasuryStat" as const, delta: d.tre });
-  if (templateId === "habsburgImperialLegitimacyNote") {
-    effects.push({ kind: "opponentNextTurnDrawModifier", delta: -1 });
-  }
   if (templateId === "habsburgGrandAllianceLevy") {
     effects.push({ kind: "addCardsToDeck", templateId: "fiscalBurden", count: 1 });
   }
@@ -302,7 +295,7 @@ export function initOpponentHabsburgPool(state: GameState): GameState {
     opponentDeck: deck,
     opponentHand: hand,
     opponentDiscard: [],
-    opponentStrength: 2,
+    opponentStrength: 3,
     opponentHabsburgUnlocked: true,
     opponentNextTurnDrawModifier: state.opponentNextTurnDrawModifier,
   };
@@ -360,7 +353,7 @@ export function opponentBeginYearDrawPhase(state: GameState): GameState {
     return { ...state, opponentCostDiscountThisTurn: 0 };
   }
   const drawMod = state.opponentNextTurnDrawModifier;
-  const drawN = Math.max(0, 1 + drawMod);
+  const drawN = Math.max(2, 2 + drawMod);
   const reset = { ...state, opponentCostDiscountThisTurn: 0, opponentNextTurnDrawModifier: 0 };
   const beforeDraw = reset.opponentHand.length;
   const drawnState = opponentDrawFromDeck(reset, drawN);

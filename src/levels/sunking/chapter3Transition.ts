@@ -235,7 +235,7 @@ export function buildLevel3StateFromDraft(draft: Level3StartDraft): GameState {
     proceduralEventPoolOrder: [],
     actionLog: [],
     successionTrack: 0,
-    opponentStrength: 2,
+    opponentStrength: 3,
     opponentHabsburgUnlocked: false,
     warEnded: false,
     utrechtTreatyCountdown: null,

@@ -53,6 +53,7 @@ export function EventPanel({
           const showDetails = !isSmallScreen || expandedSlot === slot;
           const toggleCard = () => setExpandedSlot((prev) => (prev === slot ? null : slot));
           const lastIds = state.opponentLastPlayedTemplateIds;
+          const lastCostSum = lastIds.reduce((sum, tid) => sum + (getCardTemplate(tid).opponentCost ?? 0), 0);
           const lastAppliedFx = formatEffectChips(opponentTemplatesToAppliedEffects(lastIds));
           return (
             <div
@@ -119,6 +120,12 @@ export function EventPanel({
                         <p className={styles.statusDetail}>{t("ui.opponentEvent.lastPlayNone")}</p>
                       ) : (
                         <>
+                          <p className={styles.statusDetail}>
+                            {t("ui.opponentEvent.lastPlayCost", {
+                              pips: opponentBudgetEmojiPips(lastCostSum),
+                              n: lastCostSum,
+                            })}
+                          </p>
                           <p className={styles.statusDetail}>
                             {t("ui.opponentEvent.lastPlayCombinedFx", { fx: lastAppliedFx })}
                           </p>

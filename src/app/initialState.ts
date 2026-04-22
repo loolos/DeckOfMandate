@@ -149,7 +149,7 @@ export function createInitialState(
     proceduralEventPoolOrder: [],
     actionLog: [],
     successionTrack: 0,
-    opponentStrength: 2,
+    opponentStrength: 3,
     opponentHabsburgUnlocked: false,
     warEnded: false,
     utrechtTreatyCountdown: null,
