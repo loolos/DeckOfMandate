@@ -62,7 +62,7 @@ export type Level2Validation = {
   isValid: boolean;
 };
 
-export const LEVEL2_CONTINUITY_MAX_REMOVALS = 0;
+export const LEVEL2_CONTINUITY_MAX_REMOVALS = 3;
 
 export function createStandaloneLevel2Draft(seed?: number): Level2StandaloneDraft {
   const level = getLevelDef(SUNKING_CH2_ID);

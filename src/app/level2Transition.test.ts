@@ -127,14 +127,17 @@ describe("level2Transition", () => {
     ).toBe(true);
   });
 
-  it("continuity refit does not allow carryover removals", () => {
+  it("continuity refit blocks removals beyond max", () => {
     const chapter1Win = createInitialState(778, "firstMandate");
     const draft = createContinuityLevel2Draft(chapter1Win);
+    expect(draft.carryoverCards.length).toBeGreaterThan(LEVEL2_CONTINUITY_MAX_REMOVALS);
     let d = draft;
     for (let i = 0; i < LEVEL2_CONTINUITY_MAX_REMOVALS; i++) {
       d = toggleContinuityCardRemoval(d, d.carryoverCards[i]!.instanceId);
     }
-    const blocked = toggleContinuityCardRemoval(d, d.carryoverCards[0]!.instanceId);
+    const nextCard = d.carryoverCards[LEVEL2_CONTINUITY_MAX_REMOVALS]!;
+    const blocked = toggleContinuityCardRemoval(d, nextCard.instanceId);
+    expect(blocked).toBe(d);
     expect(blocked.removedCarryoverIds.length).toBe(LEVEL2_CONTINUITY_MAX_REMOVALS);
     const v = validateLevel2ContinuityRefit(blocked);
     expect(v.adjustableChanges).toBe(LEVEL2_CONTINUITY_MAX_REMOVALS);
