@@ -8,6 +8,12 @@ export const messagesFrThirdMandate = {
     "Avec la mort de Charles II sans héritier, l’arbre des Habsbourg espagnols s’éteint et toute l’Europe recompose la carte. De Castille aux Pays-Bas méridionaux, de Naples aux routes de l’argent américain, le « trône d’Espagne » n’est pas seulement une couronne : c’est un faisceau de ressources impériales et maritimes. La France soutient des prétentions bourbonniennes par mariages et interprétations testamentaires ; Vienne et la Cour impériale invoquent la continuité habsbourgeoise et la peur d’un cernement bourbon. Londres et La Haye, jalouses de la Manche et du commerce, se rangent à des coalitions qui doivent contenir Versailles sans sacrifier leurs propires empires marchands.\n\nCe qui s’ensuit tient moins d’une guerre unique que d’un réseau mobile de fronts : places fortes et négociateurs dans les Pays-Bas espagnols, passages alpins entre Piémont et Rhin, principautés rhénanes écrasées entre armées françaises et impériales, et arithmétique navale des colonies. Les traités d’Utrecht tenteront de fixer durablement la carte ; ce chapitre est la longue traction où la monarchie française étire tribut, fiscalité et prestige sous l’envie des autres couronnes.",
   "level.successionWar.ending.victory":
     "La France obtient un arrangement durable. La monarchie traverse coalition et rivalité dynastique sans perdre son centre politique.",
+  "level.successionWar.ending.victoryByTier.bourbon":
+    "Dans le cadre d’Utrecht, le palier bourbon se ferme sur des termes défendables pour Versailles : Madrid reste dans l’orbite dynastique bourbonienne sous garde-fous anti-union, et l’usure militaire se convertit en bilan politique soutenable.",
+  "level.successionWar.ending.victoryByTier.compromise":
+    "La clôture d’Utrecht tombe sur un palier de compromis : la France garde l’essentiel de sa ligne d’héritage, mais chaque acquis est contrebalancé. Ce n’est pas un K.-O., c’est un équilibre exécutoire à administrer.",
+  "level.successionWar.ending.victoryByTier.habsburg":
+    "La paix arrive sur un palier favorable aux Habsbourg : la France évite l’exclusion totale, mais accepte des bornes plus serrées sur frontières, mers et marge dynastique. Une victoire de forme, achetée au prix stratégique.",
   "level.successionWar.ending.victoryWarDevolutionExtra":
     "Les offensives françaises antérieures colorent encore la lecture des voisins, mais une diplomatie disciplinée limite la riposte.",
   "level.successionWar.ending.defeat":

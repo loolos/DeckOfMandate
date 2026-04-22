@@ -39,6 +39,11 @@ export const levelDef: LevelDef = {
   introBodyKey: "level.successionWar.introBody",
   ending: {
     victoryBodyKey: "level.successionWar.ending.victory",
+    victoryBodyByTierKeys: {
+      bourbon: "level.successionWar.ending.victoryByTier.bourbon",
+      compromise: "level.successionWar.ending.victoryByTier.compromise",
+      habsburg: "level.successionWar.ending.victoryByTier.habsburg",
+    },
     victoryWarDevolutionExtraKey: "level.successionWar.ending.victoryWarDevolutionExtra",
     defeatBodyKey: "level.successionWar.ending.defeat",
     victorySuccessionTrackCapBodyKey: "level.successionWar.ending.victorySuccessionTrackCap",

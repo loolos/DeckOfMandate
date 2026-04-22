@@ -8,6 +8,12 @@ export const messagesEnThirdMandate = {
     "When the Spanish Habsburg line failed with Charles II, half of Europe was suddenly negotiable. Madrid’s vast composite monarchy—Castile and Aragon, Naples and Milan, much of the Low Countries, and overseas silver—sat at the centre of every balance-of-power calculation. France backed Bourbon claims through dynastic marriages and the will’s language; Vienna and the emperor’s court argued for Habsburg continuity and for limits to Bourbon encirclement. London and The Hague, fearing French primacy in both Channel and Mediterranean, tilted toward coalitions that could restrain Versailles without surrendering their own commercial empires.\n\nWhat followed was less a single war than a shifting lattice of fronts: fortresses and bargainers in the Spanish Netherlands, Piedmont and the Alpine passes, Rhine principalities squeezed between imperial and French armies, and the naval math of trade and colonies. Treaties would later try to fix the map; this chapter is the long strain of French kingship stretched between tribute, tax, and the envy of other crowns.",
   "level.successionWar.ending.victory":
     "France secures a durable settlement. The crown navigates coalition war and dynastic rivalry without losing the political center.",
+  "level.successionWar.ending.victoryByTier.bourbon":
+    "Under the Utrecht frame, the Bourbon tier closes on terms France can defend: Madrid stays within the Bourbon inheritance story under anti-union guardrails, turning battlefield exhaustion into a durable dynastic balance sheet.",
+  "level.successionWar.ending.victoryByTier.compromise":
+    "The Utrecht close lands in a compromise tier: France preserves its inheritance floor, but every retained position carries a counterweight. This is not a knockout, but an enforceable equilibrium you can govern inside.",
+  "level.successionWar.ending.victoryByTier.habsburg":
+    "Peace arrives, but in a Habsburg-leaning tier: France avoids total exclusion yet accepts tighter limits on frontiers, sea lanes, and dynastic room to maneuver. A victory in form, purchased at strategic cost.",
   "level.successionWar.ending.victoryWarDevolutionExtra":
     "Earlier French offensives still color how neighbors read your moves, but disciplined diplomacy limits the backlash.",
   "level.successionWar.ending.defeat":
