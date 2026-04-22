@@ -52,25 +52,25 @@ export const sunkingCoreGameContentFr = {
     "Extra. Restant 1/1 — usage unique. Coût 2. À l'activation, Légitimité +1 ; s'il existe un événement Controverse janséniste non résolu sur le plateau, il en est résolu un immédiatement (sans coût de Financement). Après activation, retirée du circuit.",
   "event.budgetStrain.name": "Dépenses excessives de la cour",
   "event.budgetStrain.desc":
-    "L'expansion de Versailles et le rituel de cour poussent les dépenses au-delà du budget. Payez 2 Financement ou perdez 1 Trésor.",
+    "Sous Louis XIV, le chantier de Versailles et la maison royale dépassent souvent les prévisions ordinaires des recettes. L'expansion de Versailles et le rituel de cour poussent les dépenses au-delà du budget. Payez 2 Financement ou perdez 1 Trésor.",
   "event.publicUnrest.name": "Troubles à Paris",
   "event.publicUnrest.desc":
-    "Prix du pain et rumeurs envahissent les rues. Intervention uniquement, sinon perdez 1 Légitimité.",
+    "Dans la capitale, foules et rumeurs sur le pain réagissaient vite aux nouvelles de police. Prix du pain et rumeurs envahissent les rues. Intervention uniquement, sinon perdez 1 Légitimité.",
   "event.administrativeDelay.name": "Retard administratif",
   "event.administrativeDelay.desc":
-    "Les officiels provinciaux ralentissent l'application des nouveaux ordres de la cour. Payez 1 Financement ou piochez une carte de moins au prochain tour (min 1).",
+    "Parlements, états provinciaux et fermiers testaient souvent les édits contre leurs privilèges. Les officiels provinciaux ralentissent l'application des nouveaux ordres de la cour. Payez 1 Financement ou piochez une carte de moins au prochain tour (min 1).",
   "event.tradeOpportunity.name": "Boom du commerce colonial",
   "event.tradeOpportunity.desc":
-    "Routes maritimes et marchands demandent le soutien de la couronne. Payez 1 Financement pour gagner +1 Trésor. Aucune pénalité si ignoré.",
+    "Routes atlantiques et coloniales : sucre, tabac et capitaux affluaient vers Bordeaux ou La Rochelle. Routes maritimes et marchands demandent le soutien de la couronne. Payez 1 Financement pour gagner +1 Trésor. Aucune pénalité si ignoré.",
   "event.powerVacuum.name": "Gouverneur provincial ascendant",
   "event.powerVacuum.desc":
-    "Un gouverneur contourne la cour. Payez 2 Financement ou Intervention, sinon cela escalade en Crise royale au prochain tour.",
+    "Un intendant ou gouverneur fort pouvait devancer Versailles quand l'attention de la cour se dispersait. Un gouverneur contourne la cour. Payez 2 Financement ou Intervention, sinon cela escalade en Crise royale au prochain tour.",
   "event.majorCrisis.name": "Crise royale",
   "event.majorCrisis.desc":
-    "Intervention uniquement. Tag Continu : si non résolu, il reste au tour suivant et répète Légitimité -1 plus pénalité de pioche chaque année jusqu'à résolution.",
+    "Le souvenir de la Fronde rendait toute cassure visible du commandement royal explosive. Intervention uniquement. Tag Continu : si non résolu, il reste au tour suivant et répète Légitimité -1 plus pénalité de pioche chaque année jusqu'à résolution.",
   "event.politicalGridlock.name": "Résistance nobiliaire",
   "event.politicalGridlock.desc":
-    "Les grands nobles s'unissent contre votre plan fiscal. Payez 2 Financement ou subissez Perte d'autorité pendant 3 tours (−1 tentative de pioche par tour, min 1).",
+    "Les grands se coalisaient vite contre une centralisation fiscale qui rappelait les levées de Mazarin. Les grands nobles s'unissent contre votre plan fiscal. Payez 2 Financement ou subissez Perte d'autorité pendant 3 tours (−1 tentative de pioche par tour, min 1).",
   "status.powerLeak.name": "Perte d'autorité",
   "status.powerLeak.history":
     "La résistance provinciale et les frictions de factions affaiblissent progressivement l'exécution centrale.",
@@ -99,13 +99,13 @@ export const sunkingCoreGameContentFr = {
     "Indique la charge de répression ; retirer les cartes « réprimer les huguenots » en jeu réduit les piles avec le temps.",
   "event.jansenistTension.name": "Controverse janséniste",
   "event.jansenistTension.desc":
-    "Les débats sur la grâce et le salut réactivent les réseaux jansénistes et opposent évêques, magistrats et pouvoir royal. Payez 2 Financement pour inspections ecclésiastiques et apaisement public, sinon perdez 1 Légitimité.",
+    "Depuis Richelieu, le rigorisme port-royaliste et l'autorité épiscopale heurtent Rome et Versailles. Les débats sur la grâce et le salut réactivent les réseaux jansénistes et opposent évêques, magistrats et pouvoir royal. Payez 2 Financement pour inspections ecclésiastiques et apaisement public, sinon perdez 1 Légitimité.",
   "event.arminianTension.name": "Polémique arminienne",
   "event.arminianTension.desc":
-    "Les disputes arminiennes sur libre arbitre et prédestination se diffusent dans les chaires et académies, affaiblissant la coordination doctrinale. Payez 1 Financement pour resserrer séminaires et censure (la résolution ajoute 1 Tension religieuse à votre pioche), sinon perdez 1 Pouvoir.",
+    "Les polémiques sur la grâce venues des Pays-Bas circulent dans les facultés françaises avec la défensive gallicane. Les disputes arminiennes sur libre arbitre et prédestination se diffusent dans les chaires et académies, affaiblissant la coordination doctrinale. Payez 1 Financement pour resserrer séminaires et censure (la résolution ajoute 1 Tension religieuse à votre pioche), sinon perdez 1 Pouvoir.",
   "event.huguenotTension.name": "Agitation huguenote clandestine",
   "event.huguenotTension.desc":
-    "Après la révocation, des communautés huguenotes reconstruisent des réseaux d'entraide clandestins dans ports et zones frontalières, ce qui pèse sur police et fiscalité. Payez 1 Financement pour renforcer ordre public et secours (la résolution ajoute 1 Tension religieuse à votre pioche), sinon perdez 1 Trésor.",
+    "Après 1685, ports et douanes signalent contrebande et secours discrets vers les réseaux d'exil. Après la révocation, des communautés huguenotes reconstruisent des réseaux d'entraide clandestins dans ports et zones frontalières, ce qui pèse sur police et fiscalité. Payez 1 Financement pour renforcer ordre public et secours (la résolution ajoute 1 Tension religieuse à votre pioche), sinon perdez 1 Trésor.",
   "card.tag.royal": "Royal",
   "card.tag.temp": "Temp",
   "card.tag.extra": "Supplémentaire",

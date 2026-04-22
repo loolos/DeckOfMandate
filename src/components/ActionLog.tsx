@@ -468,6 +468,20 @@ function renderEntry(e: ActionLogEntry, t: (key: MessageKey, vars?: Record<strin
           {t("log.opponentHabsburgDraw.title", { turn: e.turn, n: e.drawnCardIds.length })}
         </div>
       );
+    case "utrechtPeaceSettlement": {
+      const historyKey = `log.utrechtPeaceSettlement.body.${e.tier}` as MessageKey;
+      return (
+        <div>
+          <div className={styles.actionLogHead}>
+            {t("log.utrechtPeaceSettlement.title", {
+              turn: e.turn,
+              event: eventLabelWithIcon("utrechtTreaty", t(eventTitleKey("utrechtTreaty"))),
+            })}
+          </div>
+          <div className={styles.actionLogSubMuted}>{t(historyKey)}</div>
+        </div>
+      );
+    }
     default: {
       const _never: never = e;
       return _never;

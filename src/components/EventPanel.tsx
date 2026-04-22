@@ -150,7 +150,10 @@ export function EventPanel({
           );
         }
         const title = eventLabelWithIcon(tmpl.id, t(tmpl.titleKey as MessageKey));
-        const desc = t(tmpl.descriptionKey as MessageKey);
+        const desc =
+          tmpl.id === "utrechtTreaty"
+            ? t(tmpl.descriptionKey as MessageKey, { n: state.utrechtTreatyCountdown ?? 6 })
+            : t(tmpl.descriptionKey as MessageKey);
         const affordable = slotFundSolveAffordable(state, slot);
         const canClickFund = slotAllowsFundSolve(state, slot);
         const scriptedAffordable = slotScriptedAttackAffordable(state, slot);
@@ -317,24 +320,14 @@ export function EventPanel({
                     </>
                   ) : null}
                   {!ev.resolved && solveKind === "utrechtTreatyChoice" ? (
-                    <>
-                      <button
-                        type="button"
-                        className={`${styles.btn} ${styles.btnPrimary}`}
-                        disabled={Boolean(state.pendingInteraction)}
-                        onClick={() => dispatch({ type: "PICK_UTRECHT_TREATY", slot, endWar: true })}
-                      >
-                        {t("ui.utrechtEndWar")}
-                      </button>
-                      <button
-                        type="button"
-                        className={styles.btn}
-                        disabled={Boolean(state.pendingInteraction)}
-                        onClick={() => dispatch({ type: "PICK_UTRECHT_TREATY", slot, endWar: false })}
-                      >
-                        {t("ui.utrechtWait", { n: state.utrechtTreatyCountdown ?? 6 })}
-                      </button>
-                    </>
+                    <button
+                      type="button"
+                      className={`${styles.btn} ${styles.btnPrimary}`}
+                      disabled={Boolean(state.pendingInteraction)}
+                      onClick={() => dispatch({ type: "PICK_UTRECHT_TREATY", slot, endWar: true })}
+                    >
+                      {t("ui.utrechtEndWar")}
+                    </button>
                   ) : null}
                   {!ev.resolved && solveKind === "dualFrontCrisisChoice" ? (
                     <>

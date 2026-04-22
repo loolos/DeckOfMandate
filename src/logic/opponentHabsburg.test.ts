@@ -137,7 +137,7 @@ describe("opponentHabsburg AI", () => {
     expect(next.opponentDiscard).toEqual([customsId]);
   });
 
-  it("Imperial legitimacy note lowers succession track and schedules −1 opponent draw next year", () => {
+  it("Imperial legitimacy note lowers succession track and does not defer draw modifier", () => {
     const base = createInitialState(102, THIRD_MANDATE_LEVEL_ID);
     const noteId = "opp_note_test";
     const trackBefore = base.successionTrack;
@@ -158,8 +158,36 @@ describe("opponentHabsburg AI", () => {
     };
     const next = opponentEndYearPlayPhase(st);
     expect(next.successionTrack).toBe(trackBefore - 1);
-    expect(next.opponentNextTurnDrawModifier).toBe(-1);
+    expect(next.opponentNextTurnDrawModifier).toBe(0);
     expect(next.opponentDiscard).toEqual([noteId]);
+  });
+
+  it("Imperial legitimacy note discards one random remaining hand card when budget forces only the note", () => {
+    const base = createInitialState(106, THIRD_MANDATE_LEVEL_ID);
+    const noteId = "opp_note_disc";
+    const levyId = "opp_levy_side";
+    const trackBefore = base.successionTrack;
+    const st: GameState = {
+      ...base,
+      opponentHabsburgUnlocked: true,
+      opponentHand: [noteId, levyId],
+      opponentDeck: [],
+      opponentDiscard: [],
+      opponentStrength: 1,
+      opponentCostDiscountThisTurn: 0,
+      opponentNextTurnDrawModifier: 0,
+      opponentLastPlayedTemplateIds: [],
+      cardsById: {
+        ...base.cardsById,
+        [noteId]: { instanceId: noteId, templateId: "habsburgImperialLegitimacyNote" },
+        [levyId]: { instanceId: levyId, templateId: "habsburgGrandAllianceLevy" },
+      },
+    };
+    const next = opponentEndYearPlayPhase(st);
+    expect(next.successionTrack).toBe(trackBefore - 1);
+    expect(next.opponentNextTurnDrawModifier).toBe(0);
+    expect(next.opponentHand).toEqual([]);
+    expect([...next.opponentDiscard].sort()).toEqual([noteId, levyId].sort());
   });
 
   it("opponent begin-year draw uses opponentNextTurnDrawModifier (e.g. 0 cards when base 1 and modifier is −1)", () => {
@@ -212,16 +240,41 @@ describe("opponentHabsburg AI", () => {
     expect(next.opponentNextTurnDrawModifier).toBe(1);
     expect(next.opponentHabsburgUnlocked).toBe(true);
     expect(next.opponentHand).toHaveLength(2);
-    expect(next.opponentDeck).toHaveLength(6);
+    expect(next.opponentDeck).toHaveLength(10);
+  });
+
+  it("Anglo-Dutch deferrals card schedules −2 next-year funding income and −1 draw", () => {
+    const base = createInitialState(107, THIRD_MANDATE_LEVEL_ID);
+    const cardId = "opp_maritime_test";
+    const st: GameState = {
+      ...base,
+      opponentHabsburgUnlocked: true,
+      opponentHand: [cardId],
+      opponentDeck: [],
+      opponentDiscard: [],
+      opponentStrength: 2,
+      opponentCostDiscountThisTurn: 0,
+      opponentLastPlayedTemplateIds: [],
+      nextTurnDrawModifier: 0,
+      nextTurnFundingIncomeModifier: 0,
+      cardsById: {
+        ...base.cardsById,
+        [cardId]: { instanceId: cardId, templateId: "habsburgAngloDutchMaritimeInterdiction" },
+      },
+    };
+    const next = opponentEndYearPlayPhase(st);
+    expect(next.nextTurnFundingIncomeModifier).toBe(-2);
+    expect(next.nextTurnDrawModifier).toBe(-1);
+    expect(next.opponentDiscard).toEqual([cardId]);
   });
 });
 
 describe("utrechtTreatySituationTier", () => {
   it("maps track bands for treaty epilogue", () => {
     expect(utrechtTreatySituationTier(10)).toBe("bourbon");
-    expect(utrechtTreatySituationTier(4)).toBe("bourbon");
-    expect(utrechtTreatySituationTier(3)).toBe("compromise");
-    expect(utrechtTreatySituationTier(-3)).toBe("compromise");
-    expect(utrechtTreatySituationTier(-4)).toBe("habsburg");
+    expect(utrechtTreatySituationTier(5)).toBe("bourbon");
+    expect(utrechtTreatySituationTier(4)).toBe("compromise");
+    expect(utrechtTreatySituationTier(-4)).toBe("compromise");
+    expect(utrechtTreatySituationTier(-5)).toBe("habsburg");
   });
 });

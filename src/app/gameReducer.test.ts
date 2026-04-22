@@ -7,6 +7,7 @@ import { EMPTY_EVENT_SLOTS, type SlotId } from "../levels/types/event";
 import { createInitialState } from "./initialState";
 import { gameReducer } from "./gameReducer";
 import { createStandaloneLevel2Draft } from "./level2Transition";
+import { initOpponentHabsburgPool } from "../logic/opponentHabsburg";
 import { THIRD_MANDATE_LEVEL_ID } from "../logic/thirdMandateConstants";
 
 describe("gameReducer", () => {
@@ -331,12 +332,12 @@ describe("gameReducer", () => {
     }
   });
 
-  it("Bavarian defection probe fund-solve adds +1 to opponent next-year draw when Habsburg row is active", () => {
-    const s0 = createInitialState(51_001, THIRD_MANDATE_LEVEL_ID);
+  it("Bavarian defection probe fund-solve draws one immediate opponent card when Habsburg row is active", () => {
+    const s0 = initOpponentHabsburgPool(createInitialState(51_001, THIRD_MANDATE_LEVEL_ID));
+    const handBefore = s0.opponentHand.length;
     const s1: typeof s0 = {
       ...s0,
       resources: { ...s0.resources, funding: 2 },
-      opponentHabsburgUnlocked: true,
       opponentNextTurnDrawModifier: 0,
       slots: {
         ...s0.slots,
@@ -345,15 +346,16 @@ describe("gameReducer", () => {
     };
     const after = gameReducer(s1, { type: "SOLVE_EVENT", slot: "A" });
     expect(after.resources.funding).toBe(0);
-    expect(after.opponentNextTurnDrawModifier).toBe(1);
+    expect(after.opponentNextTurnDrawModifier).toBe(0);
+    expect(after.opponentHand.length).toBe(handBefore + 1);
   });
 
-  it("Imperial electors fund-solve adds +1 to opponent next-year draw", () => {
-    const s0 = createInitialState(51_003, THIRD_MANDATE_LEVEL_ID);
+  it("Imperial electors fund-solve draws one immediate opponent card", () => {
+    const s0 = initOpponentHabsburgPool(createInitialState(51_003, THIRD_MANDATE_LEVEL_ID));
+    const handBefore = s0.opponentHand.length;
     const s1: typeof s0 = {
       ...s0,
       resources: { ...s0.resources, funding: 2 },
-      opponentHabsburgUnlocked: true,
       opponentNextTurnDrawModifier: 0,
       slots: {
         ...s0.slots,
@@ -362,7 +364,8 @@ describe("gameReducer", () => {
     };
     const after = gameReducer(s1, { type: "SOLVE_EVENT", slot: "A" });
     expect(after.resources.funding).toBe(0);
-    expect(after.opponentNextTurnDrawModifier).toBe(1);
+    expect(after.opponentNextTurnDrawModifier).toBe(0);
+    expect(after.opponentHand.length).toBe(handBefore + 1);
   });
 
   it("1708 dual-front crisis: concede applies −3 track and +1 opponent budget", () => {
@@ -405,8 +408,9 @@ describe("gameReducer", () => {
     expect(burdenAfter).toBe(burdenBefore + 3);
   });
 
-  it("Imperial electors crackdown intervention adds +1 to opponent next-year draw", () => {
-    const base = createInitialState(51_004, THIRD_MANDATE_LEVEL_ID);
+  it("Imperial electors crackdown intervention draws one immediate opponent card", () => {
+    const base = initOpponentHabsburgPool(createInitialState(51_004, THIRD_MANDATE_LEVEL_ID));
+    const handBefore = base.opponentHand.length;
     const diId = "tmp_di_elec";
     const s0: typeof base = {
       ...base,
@@ -416,7 +420,6 @@ describe("gameReducer", () => {
       },
       hand: [diId],
       resources: { ...base.resources, funding: 0 },
-      opponentHabsburgUnlocked: true,
       opponentNextTurnDrawModifier: 0,
       slots: {
         ...base.slots,
@@ -425,7 +428,8 @@ describe("gameReducer", () => {
     };
     const afterPlay = gameReducer(s0, { type: "PLAY_CARD", handIndex: 0 });
     const after = gameReducer(afterPlay, { type: "CRACKDOWN_TARGET", slot: "A" });
-    expect(after.opponentNextTurnDrawModifier).toBe(1);
+    expect(after.opponentNextTurnDrawModifier).toBe(0);
+    expect(after.opponentHand.length).toBe(handBefore + 1);
   });
 
   it("league of augsburg requires 3 resolves and persists between years until remaining reaches zero", () => {

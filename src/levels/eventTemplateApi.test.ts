@@ -36,6 +36,11 @@ describe("getEventRollWeight", () => {
     expect(shouldDiscardCh3SuccessionGatedProceduralHead(atZero, "bavarianCourtRealignment")).toBe(true);
     expect(shouldDiscardCh3SuccessionGatedProceduralHead(atZero, "localizedSuccessionWar")).toBe(true);
     expect(shouldDiscardCh3SuccessionGatedProceduralHead(moved, "bavarianCourtRealignment")).toBe(false);
+    const afterPeace = { ...moved, warEnded: true };
+    expect(getEventRollWeight(afterPeace, "bavarianCourtRealignment")).toBe(0);
+    expect(getEventRollWeight(afterPeace, "localizedSuccessionWar")).toBe(0);
+    expect(shouldDiscardCh3SuccessionGatedProceduralHead(afterPeace, "bavarianCourtRealignment")).toBe(true);
+    expect(shouldDiscardCh3SuccessionGatedProceduralHead(afterPeace, "taxResistance")).toBe(false);
   });
 
   it("scales nymwegen settlement funding cost by europe alert progress", () => {

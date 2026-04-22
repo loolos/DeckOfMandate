@@ -23,7 +23,9 @@ export type CardTemplateId =
   | "habsburgGrandAllianceLevy"
   | "habsburgImperialCustomsDelay"
   | "habsburgImperialLegitimacyNote"
-  | "habsburgLowCountriesAgitation";
+  | "habsburgLowCountriesAgitation"
+  | "habsburgAngloDutchMaritimeInterdiction"
+  | "habsburgRhineMagazineEmbargo";
 
 export type CardTemplate = {
   id: CardTemplateId;

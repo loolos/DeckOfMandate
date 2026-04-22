@@ -31,7 +31,6 @@ export const messagesEnCore = {
   "ui.successionCrisisPay": "Pay 3 Funding — claim +1 on the succession track",
   "ui.successionCrisisDecline": "Decline payment — start at −1 on the succession track",
   "ui.utrechtEndWar": "End the war of succession (treaty)",
-  "ui.utrechtWait": "Wait ({n} round(s) left in the negotiation window)",
   "ui.dualFrontCrisis.concede": "Temporarily concede — succession track −3; opponent budget +1",
   "ui.dualFrontCrisis.escalate":
     "Expand the war — succession track +1, legitimacy −1, +3 Fiscal Burden, opponent budget +1",
@@ -153,6 +152,12 @@ export const messagesEnCore = {
     "The treaties close the fighting season without a clean knockout: claims are partitioned and face is saved on all sides—France secures breathing room, not a blank cheque, in the Spanish inheritance.",
   "outcome.utrechtVictoryEpilogue.habsburg":
     "The peace mirrors coalition pressure: Philip may keep Madrid, but France accepts tighter straps—imperial and maritime checks that will long outlast the last cannonade of the succession war.",
+  "outcome.successionCalendar1720Extra.bourbon":
+    "The calendar stops at 1720 while the Utrecht-era map still reads kindly to Bourbon arithmetic: time turned truces into precedent, and Versailles can argue—without shouting—that the inheritance war ended in a ledger France can defend.",
+  "outcome.successionCalendar1720Extra.compromise":
+    "1720 closes the chapter without crowning a single victor’s sermon: the treaty years left a patchwork everyone can sign, and your court learns to live inside the compromise—proof that survival here is a discipline, not a triumph speech.",
+  "outcome.successionCalendar1720Extra.habsburg":
+    "When the last year ticks over, the Utrecht settlement’s tighter clauses still bite: coalition ink framed what cannons could not finish, and the long tail of checks on union and empire is the extra price written into your epilogue.",
   "log.cardPlayed.title": "[Turn {turn}] {card} — paid {cost} {funding}.",
   "log.cardPlayed.effectsLabel": "Effects:",
   "log.cardPlayed.noEffects": "No listed effects.",
@@ -160,7 +165,9 @@ export const messagesEnCore = {
   "log.effect.gainFunding": "{funding} +{amount}",
   "log.effect.drawCards": "Draw {count}",
   "log.effect.scheduleNextTurnDrawModifier": "Next-year draw modifier {delta}",
+  "log.effect.scheduleNextTurnFundingIncomeModifier": "Next-year treasury funding income modifier {delta}",
   "log.effect.opponentNextTurnDrawModifier": "Opponent next-year draw modifier {delta}",
+  "log.effect.opponentHandDiscardNow": "Habsburg opponent discards {count} from hand now",
   "log.effect.scheduleDrawModifiers": "Multi-year draw modifiers {deltas}",
   "log.effect.setCardTagBlocked": "Block {tag} cards ({turns} turns)",
   "log.effect.addPlayerStatus": "{status} ({turns} turns)",

@@ -1189,7 +1189,9 @@ export function Game() {
                 : undefined
             }
             successionTrack={
-              state.levelId === SUNKING_CH3_ID && state.outcome === "playing" ? state.successionTrack : undefined
+              state.levelId === SUNKING_CH3_ID && state.outcome === "playing" && !state.warEnded
+                ? state.successionTrack
+                : undefined
             }
           />
         </section>
@@ -1310,23 +1312,50 @@ export function Game() {
                 const ending = levelEndingKeys(getLevelDef(state.levelId));
                 if (!ending) return null;
                 if (state.outcome === "victory") {
+                  const successionTrackCapVictory =
+                    state.levelId === SUNKING_CH3_ID &&
+                    state.successionTrack >= 10 &&
+                    ending.victorySuccessionTrackCapBodyKey != null;
+                  const victoryMainKey =
+                    successionTrackCapVictory && ending.victorySuccessionTrackCapBodyKey
+                      ? ending.victorySuccessionTrackCapBodyKey
+                      : ending.victoryBodyKey;
                   return (
                     <div className={styles.gameOverBody}>
-                      {state.levelId === SUNKING_CH3_ID && state.utrechtSettlementTier ? (
+                      {state.levelId === SUNKING_CH3_ID &&
+                      !successionTrackCapVictory &&
+                      state.utrechtSettlementTier ? (
                         <p>{t(`outcome.utrechtVictoryEpilogue.${state.utrechtSettlementTier}` as MessageKey)}</p>
-                      ) : state.levelId === SUNKING_CH3_ID && state.successionOutcomeTier ? (
+                      ) : state.levelId === SUNKING_CH3_ID &&
+                        !successionTrackCapVictory &&
+                        state.successionOutcomeTier ? (
                         <p>{t(`outcome.successionTier.${state.successionOutcomeTier}` as MessageKey)}</p>
                       ) : null}
-                      <p>{t(ending.victoryBodyKey as MessageKey)}</p>
+                      <p>{t(victoryMainKey as MessageKey)}</p>
+                      {state.levelId === SUNKING_CH3_ID &&
+                      !successionTrackCapVictory &&
+                      state.successionOutcomeTier ? (
+                        <p>
+                          {t(
+                            `outcome.successionCalendar1720Extra.${state.utrechtSettlementTier ?? state.successionOutcomeTier}` as MessageKey,
+                          )}
+                        </p>
+                      ) : null}
                       {state.warOfDevolutionAttacked ? (
                         <p>{t(ending.victoryWarDevolutionExtraKey as MessageKey)}</p>
                       ) : null}
                     </div>
                   );
                 }
+                const defeatMainKey =
+                  state.levelId === SUNKING_CH3_ID &&
+                  state.outcome === "defeatSuccession" &&
+                  ending.defeatSuccessionTrackFloorBodyKey
+                    ? ending.defeatSuccessionTrackFloorBodyKey
+                    : ending.defeatBodyKey;
                 return (
                   <div className={styles.gameOverBody}>
-                    <p>{t(ending.defeatBodyKey as MessageKey)}</p>
+                    <p>{t(defeatMainKey as MessageKey)}</p>
                   </div>
                 );
               })()}

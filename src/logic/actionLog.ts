@@ -1,7 +1,7 @@
 import type { CardTemplateId } from "../levels/types/card";
 import type { Effect } from "../levels/types/effect";
 import type { EventTemplateId, SlotId } from "../levels/types/event";
-import type { ActionLogEntry, GameState, LogInfoKey } from "../types/game";
+import type { ActionLogEntry, GameState, LogInfoKey, SuccessionIntervalTier } from "../types/game";
 
 export const MAX_ACTION_LOG = 150;
 
@@ -85,7 +85,8 @@ export type ActionLogPayload =
       slot: SlotId;
       fundingPaid: number;
       successionDelta: -1 | 0 | 1 | 2;
-    };
+    }
+  | { kind: "utrechtPeaceSettlement"; tier: SuccessionIntervalTier };
 
 export function appendActionLog(state: GameState, payload: ActionLogPayload): GameState {
   const logSeq = state.nextIds.log ?? 0;

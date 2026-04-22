@@ -246,6 +246,12 @@ export type ActionLogEntry =
       slot: SlotId;
       fundingPaid: number;
       successionDelta: -1 | 0 | 1 | 2;
+    }
+  | {
+      kind: "utrechtPeaceSettlement";
+      id: string;
+      turn: number;
+      tier: SuccessionIntervalTier;
     };
 
 export type GamePhase = "action" | "retention" | "gameOver";
@@ -314,6 +320,11 @@ export type GameState = {
    * Draw attempts = max(1, power + this), then reset to 0.
    */
   nextTurnDrawModifier: number;
+  /**
+   * Consumed at the next `beginYear` when adding treasury-based funding income (additive with treasury
+   * stat and local-war penalty), then reset to 0 with `nextTurnDrawModifier`.
+   */
+  nextTurnFundingIncomeModifier: number;
   /** Queue of per-year draw modifiers; index 0 applies this year then is shifted. */
   scheduledDrawModifiers: number[];
   deck: string[];
@@ -370,7 +381,11 @@ export type GameState = {
   opponentStrength: number;
   /** Chapter 3: after `successionCrisis` resolves; enables opponent draw/play. */
   opponentHabsburgUnlocked: boolean;
-  /** Chapter 3: player ended the war via Utrecht event or countdown. */
+  /**
+   * Chapter 3: player ended the war via Utrecht event or countdown.
+   * While true: succession track is frozen (hidden in UI), `modSuccessionTrack` has no effect,
+   * chapter-3 succession-gated random events are not rolled, and ±10 track instant outcomes are off.
+   */
   warEnded: boolean;
   /** Chapter 3: Utrecht event rounds remaining while active; null when not in negotiation. */
   utrechtTreatyCountdown: number | null;
@@ -394,7 +409,8 @@ export type GameState = {
   successionOutcomeTier: SuccessionIntervalTier | null;
   /**
    * Chapter 3: frozen when the Utrecht treaty ends hostilities (`warEnded`), from signing-time
-   * `successionTrack`. Drives `outcome.utrechtVictoryEpilogue.*` on victory.
+   * `successionTrack` via `utrechtTreatySituationTier` (bourbon ≥+5, compromise −4..+4, habsburg ≤−5).
+   * Drives `outcome.utrechtVictoryEpilogue.*` on victory.
    */
   utrechtSettlementTier: SuccessionIntervalTier | null;
 };

@@ -58,58 +58,58 @@ export const messagesFrSecondMandate: Record<keyof typeof messagesEnSecondMandat
     "Les termes de paix peuvent restaurer l'ordre. Investissez (progression Alerte Europe + 2) Financement pour gagner Légitimité +1 et lever l'Alerte Europe. Si la Guerre de Neuf Ans n'est pas encore terminée, ce coût gagne +4 supplémentaire. Tant que le Sentiment anti-français est actif, ce coût gagne aussi +2x (x = nombre actuel de cartes Endiguement anti-français dans toute votre bibliothèque). Résoudre cet événement met aussi fin définitivement à la Guerre de Neuf Ans. Cet événement est Continu : s'il n'est pas résolu, Légitimité -1 chaque tour.",
   "event.versaillesExpenditure.name": "Dépenses de Versailles",
   "event.versaillesExpenditure.desc":
-    "Les dépenses de cour montent encore. Payez 3 Financement ou utilisez Intervention ; si non résolu, perdez 2 Trésor.",
+    "Pensions, offices et grands travaux du palais grignotaient une part croissante des recettes ordinaires. Les dépenses de cour montent encore. Payez 3 Financement ou utilisez Intervention ; si non résolu, perdez 2 Trésor.",
   "event.nobleResentment.name": "Ressentiment nobiliaire",
   "event.nobleResentment.desc":
-    "La résistance des élites grandit à la cour et en province. Payez 2 Financement ou Intervention, sinon gagnez Perte d'autorité pendant 3 tours.",
+    "Les grandes familles regrettaient leurs clientèles militaires et les audits fiscaux qui rappelaient les levées de Mazarin. La résistance des élites grandit à la cour et en province. Payez 2 Financement ou Intervention, sinon gagnez Perte d'autorité pendant 3 tours.",
   "event.provincialNoncompliance.name": "Non-conformité provinciale",
   "event.provincialNoncompliance.desc":
-    "Les officiels locaux ralentissent l'application. Payez 2 Financement ou subissez pioche -2 l'an prochain, puis pioche -1 chacune des deux années suivantes.",
+    "Parlements et états provinciaux testaient encore les intendants contre chartes et immunités. Les officiels locaux ralentissent l'application. Payez 2 Financement ou subissez pioche -2 l'an prochain, puis pioche -1 chacune des deux années suivantes.",
   "event.risingGrainPrices.name": "Hausse des prix du grain",
   "event.risingGrainPrices.desc":
-    "La pression alimentaire provoque des troubles. Payez 3 Financement ou Intervention ; si non résolu, perdez 2 Légitimité.",
+    "Mauvaises récoltes et politique du grain pouvaient transformer émeutes de subsistance en crise politique en quelques jours. La pression alimentaire provoque des troubles. Payez 3 Financement ou Intervention ; si non résolu, perdez 2 Légitimité.",
   "event.taxResistance.name": "Résistance fiscale",
   "event.taxResistance.desc":
-    "Communautés et élites résistent aux levées. Payez 2 Financement ou Intervention ; si non résolu, perdez 1 Trésor et 1 Légitimité.",
+    "Révisions de taille et aides nouvelles crispaient villes et ordres privilégiés. Communautés et élites résistent aux levées. Payez 2 Financement ou Intervention ; si non résolu, perdez 1 Trésor et 1 Légitimité.",
   "event.frontierGarrisons.name": "Garnisons frontalières",
   "event.frontierGarrisons.desc":
-    "Les garnisons frontalières absorbent les recettes. Payez 3 Financement ou perdez 1 Trésor et subissez une pénalité de pioche l'an prochain.",
+    "Rhin et Pays-Bas : garnisons et sièges absorbèrent les budgets des années 1680-1690. Les garnisons frontalières absorbent les recettes. Payez 3 Financement ou perdez 1 Trésor et subissez une pénalité de pioche l'an prochain.",
   "event.tradeDisruption.name": "Perturbation commerciale",
   "event.tradeDisruption.desc":
-    "Les risques sur routes maritimes et convois réduisent la marge de gouvernance. Payez 1 Financement ou subissez un modificateur de pioche -2 l'an prochain.",
+    "Guerre de convois et corsaires anglo-hollandais pinçaient les recettes atlantiques. Les risques sur routes maritimes et convois réduisent la marge de gouvernance. Payez 1 Financement ou subissez un modificateur de pioche -2 l'an prochain.",
   "event.embargoCoalition.name": "Coalition d'embargo",
   "event.embargoCoalition.desc":
-    "Les restrictions maritimes se resserrent autour du commerce français. Payez 2 Financement, ou perdez 1 Trésor et subissez une pénalité de pioche l'an prochain.",
+    "Les marines de la Grande Alliance resserrèrent les cordons maritimes quand la guerre de coalition devint la norme. Les restrictions maritimes se resserrent autour du commerce français. Payez 2 Financement, ou perdez 1 Trésor et subissez une pénalité de pioche l'an prochain.",
   "event.mercenaryRaiders.name": "Raiders mercenaires",
   "event.mercenaryRaiders.desc":
-    "Des pillards frontaliers à gages perturbent l'ordre local et l'autorité de la couronne. Payez 2 Financement, ou perdez 1 Pouvoir et 1 Légitimité.",
+    "Entre deux campagnes, compagnies libres et raids payés hantaient encore les marches. Des pillards frontaliers à gages perturbent l'ordre local et l'autorité de la couronne. Payez 2 Financement, ou perdez 1 Pouvoir et 1 Légitimité.",
   "event.localWar.name": "Guerre locale",
   "event.localWar.desc":
-    "L'Alerte Europe alimente un conflit régional. Intervention ne peut pas résoudre cet événement. Choisissez Attaquer (payez floor(progression Alerte Europe/2) Financement, puis appliquez le surcoût Sentiment anti-français si actif ; trois issues équiprobables : Victoire locale [Pouvoir +1, Légitimité +1], Enlisement [aucun effet], Pertes limitées [Pouvoir -1]) ou Apaiser (sans coût, mais Légitimité -1). C'est un événement Continu : s'il reste non résolu, le revenu de Financement du prochain tour est réduit de 2 (minimum 0).",
+    "Entre grands traités, la France enchaînait encore escarmouches rhénanes et crises italiennes. L'Alerte Europe alimente un conflit régional. Intervention ne peut pas résoudre cet événement. Choisissez Attaquer (payez floor(progression Alerte Europe/2) Financement, puis appliquez le surcoût Sentiment anti-français si actif ; trois issues équiprobables : Victoire locale [Pouvoir +1, Légitimité +1], Enlisement [aucun effet], Pertes limitées [Pouvoir -1]) ou Apaiser (sans coût, mais Légitimité -1). C'est un événement Continu : s'il reste non résolu, le revenu de Financement du prochain tour est réduit de 2 (minimum 0).",
   "event.courtScandal.name": "Scandale de cour",
   "event.courtScandal.desc":
-    "Les intrigues de faction affaiblissent l'autorité. Payez 3 Financement pour contenir ; sinon, Légitimité -1 et toutes les cartes taguées Royal sont bloquées au prochain tour.",
+    "Cabinet du lit et rivalités ministérielles à Versailles alimentaient feuilles volantes et rumeurs publiques. Les intrigues de faction affaiblissent l'autorité. Payez 3 Financement pour contenir ; sinon, Légitimité -1 et toutes les cartes taguées Royal sont bloquées au prochain tour.",
   "event.militaryPrestige.name": "Prestige militaire",
   "event.militaryPrestige.desc":
-    "Une occasion de convertir l'image du champ de bataille en autorité. Investissez 2 Financement pour Légitimité +1.",
+    "Des sièges comme Namur étaient exhibés comme preuve des armes bourboniennes et du droit divin. Une occasion de convertir l'image du champ de bataille en autorité. Investissez 2 Financement pour Légitimité +1.",
   "event.commercialExpansion.name": "Expansion commerciale",
   "event.commercialExpansion.desc":
     "Dans la France de la fin du XVIIe siècle, l'héritage colbertiste continue de soutenir manufactures, marine marchande et compagnies à privilège, mais les guerres et les frictions tarifaires rendent l'essor commercial coûteux. Les marchands demandent un soutien à la croissance. Investissez 2 Financement pour Trésor +1.",
   "event.talentedAdministrator.name": "Administrateur talentueux",
   "event.talentedAdministrator.desc":
-    "Un officier capable peut être promu. Investissez 2 Financement pour Pouvoir +1.",
+    "Les successeurs de Colbert promouvaient secrétaires et intendants capables de contourner la routine vénale. Un officier capable peut être promu. Investissez 2 Financement pour Pouvoir +1.",
   "event.warWeariness.name": "Lassitude de guerre",
   "event.warWeariness.desc":
-    "Le conflit prolongé épuise le soutien. Payez 3 Financement ou Intervention, sinon perdez 1 Légitimité et gagnez Perte d'autorité pour 2 tours.",
+    "Pendant la guerre de Neuf Ans, même les victoires ne masquaient plus la tension fiscale au pays. Le conflit prolongé épuise le soutien. Payez 3 Financement ou Intervention, sinon perdez 1 Légitimité et gagnez Perte d'autorité pour 2 tours.",
   "event.jesuitPatronage.name": "Patronage jésuite",
   "event.jesuitPatronage.desc":
-    "Le père François de La Chaise, confesseur jésuite de Louis XIV depuis 1675, relaie le patronage de la Compagnie de Jésus. Ses collèges d'élite — La Flèche (où Descartes fit ses études), Louis-le-Grand à Paris et Clermont — forment officiers, magistrats et clergé selon une doctrine alignée sur la Couronne, intégrant l'État dans un réseau d'éducation et de mission catholique transnational. Depuis la querelle de l'Augustinus dans les années 1640, les théologiens jésuites sont aussi les adversaires les plus tranchants du jansénisme, et leurs chaires peuvent étouffer une agitation janséniste locale lorsque la Couronne s'appuie sur eux. Cette même prééminence nourrit toutefois la rancœur de l'épiscopat gallican, des théologiens de la Sorbonne et des cercles jansénistes, qui voient l'ultramontanisme jésuite comme une menace pour l'autonomie ecclésiastique française. Payez 2 Financement pour approfondir le partenariat : ajoutez 2 cartes Collège jésuite (coût 2, Restant 1/1, Légitimité +1, et résout immédiatement à l'activation un événement Controverse janséniste non résolu) et 1 carte Tension religieuse à votre pioche. Si non résolu, aucune pénalité.",
+    "Depuis 1675, des confesseurs jésuites comme le père de La Chaise rapprochent la Compagnie de la Couronne ; les collèges d'élite forment des cadres alignés et contrecarrent souvent le jansénisme, mais attisent les tensions religieuses. Payez 2 Financement : ajoutez à votre pioche 2 cartes Collège jésuite (coût 2, Restant 1/1, Légitimité +1 ; à l'activation, résolvez une Controverse janséniste non résolue) et 1 carte Tension religieuse. Aucune pénalité si ignoré.",
   "event.expansionRemembered.name": "Expansion encore présente",
   "event.expansionRemembered.desc":
-    "L'expansion passée projette toujours une ombre longue. Payez 2 Financement pour la contenir et ajouter 2 cartes Fardeau fiscal à votre deck ; si non résolu, 3 cartes Fardeau fiscal sont ajoutées.",
+    "Les chancelleries rivales chiffraient encore les gains français des guerres de Dévolution et de Hollande. L'expansion passée projette toujours une ombre longue. Payez 2 Financement pour la contenir et ajouter 2 cartes Fardeau fiscal à votre deck ; si non résolu, 3 cartes Fardeau fiscal sont ajoutées.",
   "event.cautiousCrown.name": "Couronne prudente",
   "event.cautiousCrown.desc":
-    "La retenue passée n'offre qu'une marge limitée. Payez 2 Financement pour résoudre ; si ignoré, perdez 1 Pouvoir chaque année.",
+    "La respiration diplomatique après Nimègue n'effaçait pas la méfiance stratégique. La retenue passée n'offre qu'une marge limitée. Payez 2 Financement pour résoudre ; si ignoré, perdez 1 Pouvoir chaque année.",
   "card.grainRelief.name": "Programme de secours céréaliers",
   "card.grainRelief.background":
     "Achat d'urgence de grain et canaux de secours provinciaux refroidissent les troubles avant que les pénuries ne deviennent révolte.",
@@ -117,7 +117,7 @@ export const messagesFrSecondMandate: Record<keyof typeof messagesEnSecondMandat
     "Gagnez Coordination des secours et Confiance dans les secours pendant 1 tour (tour suivant : +1 tentative de pioche et Légitimité +1). Si un événement Hausse des prix du grain non résolu existe, résolvez-en un immédiatement.",
   "card.taxRebalance.name": "Rééquilibrage fiscal",
   "card.taxRebalance.background":
-    "Réallouer les charges et fermer les failles pour maintenir les recettes sans rupture immédiate.",
+    "Les guerres de Louis XIV imposent réévaluations de la taille et droits indirects plus serrés ; réallouer les charges maintient les recettes mais attise souvent les frictions provinciales.",
   "card.taxRebalance.desc": "Trésor +1. Gagnez Fatigue de pioche (pioche -1) pendant 2 tours.",
   "card.diplomaticCongress.name": "Congrès diplomatique",
   "card.diplomaticCongress.background":

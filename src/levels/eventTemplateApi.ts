@@ -46,21 +46,18 @@ export function getEventRollWeight(state: GameState, id: EventTemplateId): numbe
   const base = getEventTemplate(id).weight;
   if (
     state.levelId === THIRD_MANDATE_LEVEL_ID &&
-    state.successionTrack === 0 &&
-    isCh3SuccessionGatedRollEvent(id)
+    isCh3SuccessionGatedRollEvent(id) &&
+    (state.successionTrack === 0 || state.warEnded)
   ) {
     return 0;
   }
   return base;
 }
 
-/** Procedural queue may contain gated ids from an older turn; discard while track is still 0. */
+/** Procedural queue may contain gated ids from an older turn; discard while track is still 0 or after Utrecht ends the war. */
 export function shouldDiscardCh3SuccessionGatedProceduralHead(state: GameState, id: EventTemplateId): boolean {
-  return (
-    state.levelId === THIRD_MANDATE_LEVEL_ID &&
-    state.successionTrack === 0 &&
-    isCh3SuccessionGatedRollEvent(id)
-  );
+  if (state.levelId !== THIRD_MANDATE_LEVEL_ID || !isCh3SuccessionGatedRollEvent(id)) return false;
+  return state.successionTrack === 0 || state.warEnded;
 }
 
 export function getEventSolveFundingAmount(state: GameState, id: EventTemplateId): number | null {

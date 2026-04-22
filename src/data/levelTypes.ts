@@ -11,6 +11,10 @@ export type LevelEndingCopyKeys = {
   victoryBodyKey: string;
   victoryWarDevolutionExtraKey: string;
   defeatBodyKey: string;
+  /** Chapter 3: shown on victory when the succession track reached +10 (instant win). */
+  victorySuccessionTrackCapBodyKey?: string;
+  /** Chapter 3: shown on `defeatSuccession` when the track reached −10 (not used for legitimacy defeat). */
+  defeatSuccessionTrackFloorBodyKey?: string;
 };
 
 export type TurnLimitRule =

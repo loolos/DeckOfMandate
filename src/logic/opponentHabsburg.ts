@@ -8,11 +8,22 @@ import { applyEffects, enforceLegitimacy, enforceSuccessionImmediateOutcome } fr
 import { OPPONENT_AI_NEAR_WIN_THRESHOLD, THIRD_MANDATE_LEVEL_ID } from "./thirdMandateConstants";
 import { shuffle } from "./rng";
 
+const HABSURG_FUNDING_DRAW_PRESSURE_IDS: readonly CardTemplateId[] = [
+  "habsburgAngloDutchMaritimeInterdiction",
+  "habsburgRhineMagazineEmbargo",
+];
+
+function isHabsburgFundingDrawPressureCard(id: CardTemplateId): boolean {
+  return HABSURG_FUNDING_DRAW_PRESSURE_IDS.includes(id);
+}
+
 const HABSURG_TIE_ORDER: readonly CardTemplateId[] = [
   "habsburgGrandAllianceLevy",
   "habsburgImperialCustomsDelay",
   "habsburgImperialLegitimacyNote",
   "habsburgLowCountriesAgitation",
+  "habsburgAngloDutchMaritimeInterdiction",
+  "habsburgRhineMagazineEmbargo",
 ];
 
 type OppDelta = { seq: number; pow: number; leg: number; tre: number };
@@ -49,7 +60,12 @@ export function opponentTemplatesToAppliedEffects(ids: readonly CardTemplateId[]
   }
   const legitimacyNoteCount = ids.filter((id) => id === "habsburgImperialLegitimacyNote").length;
   if (legitimacyNoteCount > 0) {
-    out.push({ kind: "opponentNextTurnDrawModifier", delta: -legitimacyNoteCount });
+    out.push({ kind: "opponentHandDiscardNow", count: legitimacyNoteCount });
+  }
+  const fundingDrawPressureCount = ids.filter((id) => isHabsburgFundingDrawPressureCard(id)).length;
+  if (fundingDrawPressureCount > 0) {
+    out.push({ kind: "scheduleNextTurnFundingIncomeModifier", delta: -2 * fundingDrawPressureCount });
+    out.push({ kind: "scheduleNextTurnDrawModifier", delta: -fundingDrawPressureCount });
   }
   if (d.pow !== 0) out.push({ kind: "modResource", resource: "power", delta: d.pow });
   if (d.leg !== 0) out.push({ kind: "modResource", resource: "legitimacy", delta: d.leg });
@@ -172,7 +188,7 @@ function applyOpponentCardToState(state: GameState, templateId: CardTemplateId):
   if (d.leg !== 0) effects.push({ kind: "modResource" as const, resource: "legitimacy" as const, delta: d.leg });
   if (d.tre !== 0) effects.push({ kind: "modResource" as const, resource: "treasuryStat" as const, delta: d.tre });
   if (templateId === "habsburgImperialLegitimacyNote") {
-    effects.push({ kind: "opponentNextTurnDrawModifier", delta: -1 });
+    effects.push({ kind: "opponentHandDiscardNow", count: 1 });
   }
   if (templateId === "habsburgGrandAllianceLevy") {
     effects.push({ kind: "addCardsToDeck", templateId: "fiscalBurden", count: 1 });
@@ -180,6 +196,12 @@ function applyOpponentCardToState(state: GameState, templateId: CardTemplateId):
   if (templateId === "habsburgImperialCustomsDelay") {
     effects.push(
       { kind: "addCardsToDeck", templateId: "fiscalBurden", count: 1 },
+      { kind: "scheduleNextTurnDrawModifier", delta: -1 },
+    );
+  }
+  if (isHabsburgFundingDrawPressureCard(templateId)) {
+    effects.push(
+      { kind: "scheduleNextTurnFundingIncomeModifier", delta: -2 },
       { kind: "scheduleNextTurnDrawModifier", delta: -1 },
     );
   }
@@ -243,6 +265,10 @@ export function initOpponentHabsburgPool(state: GameState): GameState {
     "habsburgImperialLegitimacyNote",
     "habsburgLowCountriesAgitation",
     "habsburgLowCountriesAgitation",
+    "habsburgAngloDutchMaritimeInterdiction",
+    "habsburgAngloDutchMaritimeInterdiction",
+    "habsburgRhineMagazineEmbargo",
+    "habsburgRhineMagazineEmbargo",
   ];
   const cardsById = { ...state.cardsById };
   const ids: string[] = [];
@@ -275,10 +301,10 @@ export function initOpponentHabsburgPool(state: GameState): GameState {
 }
 
 /** Opponent draws at year-start so the player can see current rival hand before ending the year. */
-/** Tier at treaty-signing time from succession track (not identical to calendar-end interval tiers). */
+/** Tier at treaty-signing time from succession track: bourbon ≥+5, compromise −4..+4, habsburg ≤−5. */
 export function utrechtTreatySituationTier(track: number): SuccessionIntervalTier {
-  if (track >= 4) return "bourbon";
-  if (track >= -3) return "compromise";
+  if (track >= 5) return "bourbon";
+  if (track >= -4) return "compromise";
   return "habsburg";
 }
 
@@ -291,7 +317,7 @@ export function stateAfterUtrechtTreatyEndsWar(state: GameState, utrechtSlot: Sl
       slots[slot] = null;
     }
   }
-  return {
+  const next: GameState = {
     ...state,
     warEnded: true,
     utrechtTreatyCountdown: null,
@@ -305,6 +331,20 @@ export function stateAfterUtrechtTreatyEndsWar(state: GameState, utrechtSlot: Sl
     opponentNextTurnDrawModifier: 0,
     opponentCostDiscountThisTurn: 0,
   };
+  return appendActionLog(next, { kind: "utrechtPeaceSettlement", tier });
+}
+
+/** When the player resolves certain events: opponent draws extra cards now (not deferred to next year-start). */
+export function opponentImmediateExtraDraw(state: GameState, count: number): GameState {
+  if (count <= 0) return state;
+  if (state.levelId !== THIRD_MANDATE_LEVEL_ID || !state.opponentHabsburgUnlocked || state.warEnded) {
+    return state;
+  }
+  const beforeDraw = state.opponentHand.length;
+  const drawnState = opponentDrawFromDeck(state, count);
+  const drawn = drawnState.opponentHand.slice(beforeDraw);
+  if (drawn.length === 0) return drawnState;
+  return appendActionLog(drawnState, { kind: "opponentHabsburgDraw", drawnCardIds: drawn });
 }
 
 export function opponentBeginYearDrawPhase(state: GameState): GameState {

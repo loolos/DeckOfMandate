@@ -212,6 +212,7 @@ export function buildLevel3StateFromDraft(draft: Level3StartDraft): GameState {
     nextIds: { event: 0, status: 0, log: 0 },
     resources: draft.resources,
     nextTurnDrawModifier: 0,
+    nextTurnFundingIncomeModifier: 0,
     scheduledDrawModifiers: [],
     deck: deckIds,
     discard: [],

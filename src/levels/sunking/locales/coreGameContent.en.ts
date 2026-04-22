@@ -52,25 +52,25 @@ export const sunkingCoreGameContentEn = {
     "Extra. Remaining 1/1 — single use. Cost 2. On play, Legitimacy +1; if a Jansenist Controversy event is unresolved on the board, immediately resolve one (no Funding cost). After play, removed from circulation.",
   "event.budgetStrain.name": "Court Overspending",
   "event.budgetStrain.desc":
-    "Versailles expansion and court ritual push spending past the budget. Pay 2 Funding or lose 1 Treasury.",
+    "Louis XIV's palace works and household scale routinely overshot ordinary revenue forecasts. Versailles expansion and court ritual push spending past the budget. Pay 2 Funding or lose 1 Treasury.",
   "event.publicUnrest.name": "Paris Unrest",
   "event.publicUnrest.desc":
-    "Bread prices and rumor fill the streets. Intervention only, or lose 1 Legitimacy.",
+    "Ancien-régime crowds moved fast on bread rumors and police gossip. Bread prices and rumor fill the streets. Intervention only, or lose 1 Legitimacy.",
   "event.administrativeDelay.name": "Bureaucratic Delay",
   "event.administrativeDelay.desc":
-    "Provincial officials slow-walk new orders from the court. Pay 1 Funding or draw one fewer next turn (min 1 draw).",
+    "Provincial estates, parlements, and tax farmers often tested new edicts against local privilege. Provincial officials slow-walk new orders from the court. Pay 1 Funding or draw one fewer next turn (min 1 draw).",
   "event.tradeOpportunity.name": "Colonial Trade Boom",
   "event.tradeOpportunity.desc":
-    "Sea lanes and merchants ask for crown support. Pay 1 Funding to gain +1 Treasury. No penalty if ignored.",
+    "Atlantic and colonial routes tied sugar, tobacco, and slaves to Bordeaux and La Rochelle capital. Sea lanes and merchants ask for crown support. Pay 1 Funding to gain +1 Treasury. No penalty if ignored.",
   "event.powerVacuum.name": "Provincial Governor Ascendant",
   "event.powerVacuum.desc":
-    "A governor bypasses the court. Pay 2 Funding or Intervention, or escalate to Royal Crisis next turn.",
+    "Strong intendants or governors could outpace Versailles on the ground when court attention drifted. A governor bypasses the court. Pay 2 Funding or Intervention, or escalate to Royal Crisis next turn.",
   "event.majorCrisis.name": "Royal Crisis",
   "event.majorCrisis.desc":
-    "Intervention only. Tagged Continued: if unresolved it remains into next turn and repeats Legitimacy -1 plus draw penalty each year until solved.",
+    "Fronde memory made any visible break in royal command politically explosive. Intervention only. Tagged Continued: if unresolved it remains into next turn and repeats Legitimacy -1 plus draw penalty each year until solved.",
   "event.politicalGridlock.name": "Noble Resistance",
   "event.politicalGridlock.desc":
-    "Great nobles unite against your fiscal scheme. Pay 2 Funding or suffer Loss of Authority for 3 turns (−1 draw attempt each turn, min 1 draw).",
+    "Great families still combined quickly against fiscal centralization that recalled Mazarin’s levies. Great nobles unite against your fiscal scheme. Pay 2 Funding or suffer Loss of Authority for 3 turns (−1 draw attempt each turn, min 1 draw).",
   "status.powerLeak.name": "Loss of Authority",
   "status.powerLeak.history": "Provincial resistance and factional drag steadily weaken central execution.",
   "status.drawPenalty.name": "Draw Fatigue",
@@ -95,13 +95,13 @@ export const sunkingCoreGameContentEn = {
     "Tracks crackdown suppression stacks; clearing suppress cards from play removes stacks over time.",
   "event.jansenistTension.name": "Jansenist Controversy",
   "event.jansenistTension.desc":
-    "Debates over grace and salvation revive Jansenist networks and reopen conflict between bishops, magistrates, and the crown. Pay 2 Funding for clerical inspections and public pacification, or lose 1 Legitimacy.",
+    "Port-Royal rigor and episcopal authority had clashed with Rome and Versailles since Richelieu's day. Debates over grace and salvation revive Jansenist networks and reopen conflict between bishops, magistrates, and the crown. Pay 2 Funding for clerical inspections and public pacification, or lose 1 Legitimacy.",
   "event.arminianTension.name": "Arminian Polemic",
   "event.arminianTension.desc":
-    "Arminian disputes over free will and predestination spread through pulpits and academies, weakening doctrinal coordination. Pay 1 Funding to consolidate seminaries and censorship channels (resolving adds 1 Religious Tension to your draw pile), or lose 1 Power.",
+    "Dutch-influenced polemics on grace circulated in French faculties alongside Gallican defensiveness. Arminian disputes over free will and predestination spread through pulpits and academies, weakening doctrinal coordination. Pay 1 Funding to consolidate seminaries and censorship channels (resolving adds 1 Religious Tension to your draw pile), or lose 1 Power.",
   "event.huguenotTension.name": "Huguenot Underground Agitation",
   "event.huguenotTension.desc":
-    "Post-revocation Huguenot communities rebuild covert aid networks in ports and border towns, straining police and tax enforcement. Pay 1 Funding to reinforce security and relief (resolving adds 1 Religious Tension to your draw pile), or lose 1 Treasury.",
+    "After 1685, Channel ports logged smuggling and covert relief tied to refugee networks abroad. Post-revocation Huguenot communities rebuild covert aid networks in ports and border towns, straining police and tax enforcement. Pay 1 Funding to reinforce security and relief (resolving adds 1 Religious Tension to your draw pile), or lose 1 Treasury.",
   "card.tag.royal": "Royal",
   "card.tag.temp": "Temp",
   "card.tag.extra": "Extra",

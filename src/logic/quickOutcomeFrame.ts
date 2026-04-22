@@ -25,10 +25,14 @@ function formatSingleEffectChip(e: Effect): string {
       return `🃏+${e.count}`;
     case "scheduleNextTurnDrawModifier":
       return `📜${signedInt(e.delta)}`;
+    case "scheduleNextTurnFundingIncomeModifier":
+      return `💰⌛${signedInt(e.delta)}`;
     case "opponentNextTurnDrawModifier":
-      return `🦅🃏${signedInt(e.delta)}`;
+      return `👊🃏${signedInt(e.delta)}`;
+    case "opponentHandDiscardNow":
+      return `👊🃏−${e.count}`;
     case "modOpponentStrength":
-      return `🦅${signedInt(e.delta)}`;
+      return `👊${signedInt(e.delta)}`;
     case "scheduleDrawModifiers":
       return `📜${e.deltas.map((d) => signedInt(d)).join("/")}`;
     case "addCardsToDeck":
@@ -87,6 +91,12 @@ function eventPayChips(tmpl: EventTemplate): string {
 function eventSolveOutcomeChips(tmpl: EventTemplate): string {
   if (tmpl.solve.kind === "localWarChoice") {
     return `${getResourceIcon("power")}+1/${signedInt(-1)} · ${getResourceIcon("legitimacy")}+1/${signedInt(-1)}`;
+  }
+  if (tmpl.id === "bavarianCourtRealignment" || tmpl.id === "imperialElectorsMood") {
+    const solvedEffects = tmpl.onFundSolveEffects ?? [];
+    const chips = formatEffectChips(solvedEffects);
+    const drawChip = "👊🃏+1";
+    return chips ? `${chips} · ${drawChip}` : drawChip;
   }
   const solvedEffects = tmpl.onFundSolveEffects ?? [];
   const chips = formatEffectChips(solvedEffects);
@@ -189,7 +199,7 @@ export function buildEventQuickFrameRows(tmpl: EventTemplate): QuickFrameRow[] {
       { labelKey: "ui.quickFrame.pay", value: "—" },
       {
         labelKey: "ui.quickFrame.ifSolved",
-        value: "⚖️−3 · 🦅+1 │ ⚖️+1 · 👑−1 · ⛓️+3 · 🦅+1",
+        value: "⚖️−3 · 👊+1 │ ⚖️+1 · 👑−1 · ⛓️+3 · 👊+1",
       },
       {
         labelKey: "ui.quickFrame.yearEnd",

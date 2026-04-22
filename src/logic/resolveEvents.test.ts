@@ -220,6 +220,7 @@ describe("resolveEndOfYearPenalties", () => {
     expect(s1.utrechtSettlementTier).toBe("compromise");
     expect(s1.opponentHand.length).toBe(0);
     expect(s1.opponentDeck.length).toBe(0);
+    expect(s1.actionLog.some((e) => e.kind === "utrechtPeaceSettlement" && e.tier === "compromise")).toBe(true);
   });
 
   it("third mandate utrecht countdown zero also clears opponent row and sets tier from track", () => {

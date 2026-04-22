@@ -8,6 +8,7 @@ import { appendActionLog } from "./actionLog";
 import { addGeneratedCards, applyOnDrawCardEffects } from "./cardRuntime";
 import { applyInflationFromDeckRefill } from "./cardCost";
 import { drawUpToPower } from "./draw";
+import { shuffle } from "./rng";
 
 export function enforceLegitimacy(s: GameState): GameState {
   if (s.resources.legitimacy <= 0 || s.resources.power <= 0) {
@@ -22,6 +23,7 @@ export function enforceSuccessionImmediateOutcome(s: GameState): GameState {
   if (s.resources.power <= 0 || s.resources.legitimacy <= 0) {
     return { ...s, phase: "gameOver", outcome: "defeatLegitimacy" };
   }
+  if (s.warEnded) return s;
   if (s.successionTrack >= 10) {
     return { ...s, phase: "gameOver", outcome: "victory", successionOutcomeTier: null };
   }
@@ -45,6 +47,9 @@ export function applyEffect(state: GameState, e: Effect): GameState {
       return { ...state, resources: r };
     }
     case "modSuccessionTrack": {
+      if (state.levelId === THIRD_MANDATE_LEVEL_ID && state.warEnded) {
+        return state;
+      }
       const successionTrack = Math.max(-10, Math.min(10, state.successionTrack + e.delta));
       return enforceSuccessionImmediateOutcome({ ...state, successionTrack });
     }
@@ -77,11 +82,32 @@ export function applyEffect(state: GameState, e: Effect): GameState {
         ...state,
         nextTurnDrawModifier: state.nextTurnDrawModifier + e.delta,
       };
+    case "scheduleNextTurnFundingIncomeModifier":
+      return {
+        ...state,
+        nextTurnFundingIncomeModifier: state.nextTurnFundingIncomeModifier + e.delta,
+      };
     case "opponentNextTurnDrawModifier":
       return {
         ...state,
         opponentNextTurnDrawModifier: state.opponentNextTurnDrawModifier + e.delta,
       };
+    case "opponentHandDiscardNow": {
+      const n = Math.max(0, Math.floor(e.count));
+      if (n === 0) return state;
+      if (state.levelId !== THIRD_MANDATE_LEVEL_ID || !state.opponentHabsburgUnlocked || state.warEnded) {
+        return state;
+      }
+      if (state.opponentHand.length === 0) return state;
+      const take = Math.min(n, state.opponentHand.length);
+      const [rng2, shuffled] = shuffle(state.rng, state.opponentHand);
+      return {
+        ...state,
+        rng: rng2,
+        opponentHand: shuffled.slice(take),
+        opponentDiscard: [...state.opponentDiscard, ...shuffled.slice(0, take)],
+      };
+    }
     case "modOpponentStrength":
       return {
         ...state,

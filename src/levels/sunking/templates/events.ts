@@ -385,10 +385,7 @@ export const eventTemplates: Record<EventTemplateId, EventTemplate> = {
     titleKey: "event.bavarianCourtRealignment.name",
     descriptionKey: "event.bavarianCourtRealignment.desc",
     solve: { kind: "funding", amount: 2 },
-    onFundSolveEffects: [
-      { kind: "modSuccessionTrack", delta: 1 },
-      { kind: "opponentNextTurnDrawModifier", delta: 1 },
-    ],
+    onFundSolveEffects: [{ kind: "modSuccessionTrack", delta: 1 }],
     penaltiesIfUnresolved: [{ kind: "modSuccessionTrack", delta: -1 }],
   },
   portugueseTariffNegotiation: {
@@ -411,7 +408,6 @@ export const eventTemplates: Record<EventTemplateId, EventTemplate> = {
     titleKey: "event.imperialElectorsMood.name",
     descriptionKey: "event.imperialElectorsMood.desc",
     solve: { kind: "fundingOrCrackdown", amount: 2 },
-    onFundSolveEffects: [{ kind: "opponentNextTurnDrawModifier", delta: 1 }],
     penaltiesIfUnresolved: [
       { kind: "modSuccessionTrack", delta: -1 },
       { kind: "modResource", resource: "legitimacy", delta: -1 },

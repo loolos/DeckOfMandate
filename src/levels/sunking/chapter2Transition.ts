@@ -235,6 +235,7 @@ function buildContinuityLevel2State(draft: Level2StartDraft): GameState {
     nextIds: { event: 0, status: 0, log: 0 },
     resources,
     nextTurnDrawModifier: 0,
+    nextTurnFundingIncomeModifier: 0,
     scheduledDrawModifiers: [],
     deck: shuffled.map((c) => c.instanceId),
     discard: [],

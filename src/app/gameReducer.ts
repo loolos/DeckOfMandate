@@ -16,6 +16,7 @@ import { rngNext } from "../logic/rng";
 import {
   completeSuccessionCrisisAndRevealOpponent,
   opponentEndYearPlayPhase,
+  opponentImmediateExtraDraw,
   stateAfterUtrechtTreatyEndsWar,
 } from "../logic/opponentHabsburg";
 import { beginYear, evaluateTimeDefeat, evaluateVictory, retentionCapacity } from "../logic/turnFlow";
@@ -557,6 +558,12 @@ function performFundSolve(state: GameState, slot: SlotId): GameState {
     }
     s = applyEffects(s, tmpl.onFundSolveEffects);
   }
+  if (
+    (ev.templateId === "bavarianCourtRealignment" || ev.templateId === "imperialElectorsMood") &&
+    s.outcome === "playing"
+  ) {
+    s = opponentImmediateExtraDraw(s, 1);
+  }
   if (ev.templateId === "nymwegenSettlement") {
     s = {
       ...s,
@@ -742,7 +749,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
           ? attemptNineYearsWarCampaign(state, action.slot, "intervention", p.fundingPaid)
           : markSlotResolvedWithLeagueProgress(state, action.slot);
       if (cleared.templateId === "imperialElectorsMood") {
-        s = applyEffects(s, [{ kind: "opponentNextTurnDrawModifier", delta: 1 }]);
+        s = opponentImmediateExtraDraw(s, 1);
       }
       s = removeHand(s, p.cardInstanceId);
       const consumed = consumeLimitedUseCard(s, p.cardInstanceId);

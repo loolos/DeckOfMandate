@@ -41,6 +41,8 @@ export const levelDef: LevelDef = {
     victoryBodyKey: "level.successionWar.ending.victory",
     victoryWarDevolutionExtraKey: "level.successionWar.ending.victoryWarDevolutionExtra",
     defeatBodyKey: "level.successionWar.ending.defeat",
+    victorySuccessionTrackCapBodyKey: "level.successionWar.ending.victorySuccessionTrackCap",
+    defeatSuccessionTrackFloorBodyKey: "level.successionWar.ending.defeatSuccessionTrackFloor",
   },
   calendarStartYear: 1701,
   yearsPerTurn: 1,

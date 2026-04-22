@@ -55,58 +55,58 @@ export const messagesEnSecondMandate = {
     "Peace terms can restore order. Invest (Europe Alert progress + 2) Funding to gain Legitimacy +1 and clear Europe Alert. If the Nine Years' War is still active, this solve cost gains an additional +4. While Anti-French Sentiment is active, this cost also gains +2x (x = current Anti-French Containment cards in your full library). Resolving this event also ends the Nine Years' War completely. This event is Continued: if unresolved, Legitimacy -1 each turn.",
   "event.versaillesExpenditure.name": "Versailles Expenditure",
   "event.versaillesExpenditure.desc":
-    "Court spending rises again. Pay 3 Funding or use Intervention; if unresolved, lose 2 Treasury.",
+    "Pensions, offices, and palace works absorbed an ever-larger share of ordinary revenue as the reign lengthened. Court spending rises again. Pay 3 Funding or use Intervention; if unresolved, lose 2 Treasury.",
   "event.nobleResentment.name": "Noble Resentment",
   "event.nobleResentment.desc":
-    "Elite resistance grows at court and in the provinces. Pay 2 Funding or Intervention, or gain Loss of Authority for 3 turns.",
+    "Great families resented lost military clienteles and new fiscal audits that recalled Mazarin's levies. Elite resistance grows at court and in the provinces. Pay 2 Funding or Intervention, or gain Loss of Authority for 3 turns.",
   "event.provincialNoncompliance.name": "Provincial Noncompliance",
   "event.provincialNoncompliance.desc":
-    "Local officials stall implementation. Pay 2 Funding or suffer draw -2 next year, then draw -1 in each of the next two years.",
+    "Parlements and provincial estates still tested intendants against charters and tax immunities. Local officials stall implementation. Pay 2 Funding or suffer draw -2 next year, then draw -1 in each of the next two years.",
   "event.risingGrainPrices.name": "Rising Grain Prices",
   "event.risingGrainPrices.desc":
-    "Food pressure drives unrest. Pay 3 Funding or use Intervention; if unresolved, lose 2 Legitimacy.",
+    "Bad harvests and royal grain politics could turn bread riots into political crises within days. Food pressure drives unrest. Pay 3 Funding or use Intervention; if unresolved, lose 2 Legitimacy.",
   "event.taxResistance.name": "Tax Resistance",
   "event.taxResistance.desc":
-    "Communities and elites resist levies. Pay 2 Funding or use Intervention; if unresolved, lose 1 Treasury and 1 Legitimacy.",
+    "Taille revisions and aides sharpened pushback from towns and privileged orders alike. Communities and elites resist levies. Pay 2 Funding or use Intervention; if unresolved, lose 1 Treasury and 1 Legitimacy.",
   "event.frontierGarrisons.name": "Frontier Garrisons",
   "event.frontierGarrisons.desc":
-    "Border garrisons consume revenue. Pay 3 Funding or lose 1 Treasury and take a draw penalty next year.",
+    "Rhine and Low Countries garrisons soaked budgets during the league wars of the 1680s–1690s. Border garrisons consume revenue. Pay 3 Funding or lose 1 Treasury and take a draw penalty next year.",
   "event.tradeDisruption.name": "Trade Disruption",
   "event.tradeDisruption.desc":
-    "Sea lanes and convoy risk cut into policy bandwidth. Pay 1 Funding or take a -2 draw modifier next year.",
+    "Anglo-Dutch convoy war and privateering squeezed receipts from Atlantic routes. Sea lanes and convoy risk cut into policy bandwidth. Pay 1 Funding or take a -2 draw modifier next year.",
   "event.embargoCoalition.name": "Embargo Coalition",
   "event.embargoCoalition.desc":
-    "Maritime restrictions tighten around French commerce. Pay 2 Funding, or lose 1 Treasury and suffer a draw penalty next year.",
+    "Grand Alliance navies tightened maritime cordons as coalition war became routine. Maritime restrictions tighten around French commerce. Pay 2 Funding, or lose 1 Treasury and suffer a draw penalty next year.",
   "event.mercenaryRaiders.name": "Mercenary Raiders",
   "event.mercenaryRaiders.desc":
-    "Paid border raiders disrupt local order and crown authority. Pay 2 Funding, or lose 1 Power and 1 Legitimacy.",
+    "Between campaigns, free companies and paid raiders still haunted frontier marches. Paid border raiders disrupt local order and crown authority. Pay 2 Funding, or lose 1 Power and 1 Legitimacy.",
   "event.localWar.name": "Local War",
   "event.localWar.desc":
-    "Europe Alert fuels a regional conflict. Intervention cannot resolve this event. Choose Attack (pay floor(Europe Alert progress / 2) Funding, then apply Anti-French Sentiment surcharge if active; equal 1/3 outcomes: Local Victory [Power +1, Legitimacy +1], Stalemate [no change], Minor Loss [Power -1]) or Appease (no Funding cost, Legitimacy -1). This is a Continued event: if left unresolved, next turn's Funding income is reduced by 2 (not below 0).",
+    "Between major treaties France still fought limited flare-ups on the Rhine and in Italy. Europe Alert fuels a regional conflict. Intervention cannot resolve this event. Choose Attack (pay floor(Europe Alert progress / 2) Funding, then apply Anti-French Sentiment surcharge if active; equal 1/3 outcomes: Local Victory [Power +1, Legitimacy +1], Stalemate [no change], Minor Loss [Power -1]) or Appease (no Funding cost, Legitimacy -1). This is a Continued event: if left unresolved, next turn's Funding income is reduced by 2 (not below 0).",
   "event.courtScandal.name": "Court Scandal",
   "event.courtScandal.desc":
-    "Factional intrigue weakens authority. Pay 3 Funding to contain it; if unresolved, Legitimacy -1 and all Royal-tag cards are blocked next turn.",
+    "Bedroom politics and ministerial feuds at Versailles routinely spilled into broadsheet rumor. Factional intrigue weakens authority. Pay 3 Funding to contain it; if unresolved, Legitimacy -1 and all Royal-tag cards are blocked next turn.",
   "event.militaryPrestige.name": "Military Prestige",
   "event.militaryPrestige.desc":
-    "A chance to convert battlefield image into authority. Invest 2 Funding for Legitimacy +1.",
+    "Sieges like Namur were staged as proof of Bourbon arms and divine kingship. A chance to convert battlefield image into authority. Invest 2 Funding for Legitimacy +1.",
   "event.commercialExpansion.name": "Commercial Expansion",
   "event.commercialExpansion.desc":
     "In late 17th-century France, Colbertist policy still backed manufactures, shipping, and chartered companies, but wartime strain and tariff friction kept expansion costly. Merchants request support for growth. Invest 2 Funding for Treasury +1.",
   "event.talentedAdministrator.name": "Talented Administrator",
   "event.talentedAdministrator.desc":
-    "A capable official can be elevated. Invest 2 Funding for Power +1.",
+    "Colbert's successors promoted secretaries and intendants who could bypass venal deadwood. A capable official can be elevated. Invest 2 Funding for Power +1.",
   "event.warWeariness.name": "War Weariness",
   "event.warWeariness.desc":
-    "Long conflict exhausts support. Pay 3 Funding or Intervention, or lose 1 Legitimacy and gain Loss of Authority for 2 turns.",
+    "By the Nine Years' War even victory parades could not mask fiscal strain at home. Long conflict exhausts support. Pay 3 Funding or Intervention, or lose 1 Legitimacy and gain Loss of Authority for 2 turns.",
   "event.jesuitPatronage.name": "Jesuit Patronage",
   "event.jesuitPatronage.desc":
-    "Père François de La Chaise, Louis XIV's Jesuit confessor since 1675, channels the Society of Jesus' patronage. Its elite collèges — La Flèche (where Descartes was schooled), Louis-le-Grand in Paris, and Clermont — train officers, magistrates, and clergy under royal-aligned doctrine, weaving the Crown into a transnational Catholic education and missionary network. Jesuit theologians had also been the sharpest opponents of Jansenism since the Augustinus controversy of the 1640s, and their pulpits could blunt local Jansenist agitation when the Crown leaned on them. The same prominence, however, fuels resentment from the Gallican episcopate, the Sorbonne, and Jansenist circles who see Jesuit ultramontanism as a threat to French ecclesiastical autonomy. Pay 2 Funding to deepen the partnership: add 2 Jesuit Collège cards (cost 2, Remaining 1/1, Legitimacy +1, also instantly resolves one unresolved Jansenist Controversy on play) and 1 Religious Tension card to your draw pile. If unresolved, no penalty.",
+    "Since 1675, Jesuit confessors like Père de La Chaise have bound the Society to the Crown; elite collèges train royal-aligned elites and counter Jansenism, but stir Gallican and Jansenist unease. Pay 2 Funding: add to your draw pile 2 Jesuit Collège cards (cost 2, Remaining 1/1, Legitimacy +1; on play, resolve one unresolved Jansenist Controversy) and 1 Religious Tension card. No penalty if ignored.",
   "event.expansionRemembered.name": "Expansion Remembered",
   "event.expansionRemembered.desc":
-    "Earlier expansion still casts a long shadow. Pay 2 Funding to contain it and add 2 Fiscal Burden cards to your deck; if unresolved, 3 Fiscal Burden cards are added.",
+    "Rival chancelleries still priced in French gains from the Devolution and Dutch wars. Earlier expansion still casts a long shadow. Pay 2 Funding to contain it and add 2 Fiscal Burden cards to your deck; if unresolved, 3 Fiscal Burden cards are added.",
   "event.cautiousCrown.name": "Cautious Crown",
   "event.cautiousCrown.desc":
-    "Earlier restraint buys only limited room. Pay 2 Funding to resolve it; if ignored, lose 1 Power each year.",
+    "Diplomatic breathing room after Nijmegen did not dissolve strategic mistrust abroad. Earlier restraint buys only limited room. Pay 2 Funding to resolve it; if ignored, lose 1 Power each year.",
   "card.grainRelief.name": "Grain Relief Program",
   "card.grainRelief.background":
     "Emergency grain purchasing and provincial relief channels cool unrest before shortages become revolt.",
@@ -114,7 +114,7 @@ export const messagesEnSecondMandate = {
     "Gain Relief Coordination and Relief Confidence for 1 turn (next turn: +1 draw attempt and Legitimacy +1). If an unresolved Rising Grain Prices event exists, immediately resolve one.",
   "card.taxRebalance.name": "Tax Rebalancing",
   "card.taxRebalance.background":
-    "Reallocate burdens and close loopholes to keep revenue flowing without immediate breakdown.",
+    "Louis XIV's wars forced repeated taille reassessments and tighter indirect levies; reallocating burdens kept revenue moving but stirred provincial friction.",
   "card.taxRebalance.desc": "Treasury +1. Gain Draw Penalty (draw -1) for 2 turns.",
   "card.diplomaticCongress.name": "Diplomatic Congress",
   "card.diplomaticCongress.background":

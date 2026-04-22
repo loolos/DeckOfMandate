@@ -44,20 +44,26 @@ export const sunkingCoreGameContentZh = {
   "card.jesuitCollege.desc":
     "额外牌。剩余 1/1，只能使用一次。费用 2。打出时合法性 +1；若棋盘上存在未解决的「詹森派争议」事件，则立即解决一次（无须额外经费）。打出后从牌库循环中移除。",
   "event.budgetStrain.name": "宫廷超支",
-  "event.budgetStrain.desc": "凡尔赛扩建与宫廷礼仪再度推高开支。支付 2 经费，否则财政 -1。",
+  "event.budgetStrain.desc":
+    "路易十四朝凡尔赛营建与王室日常规模常突破常轨岁入预期。凡尔赛扩建与宫廷礼仪再度推高开支。支付 2 经费，否则财政 -1。",
   "event.publicUnrest.name": "巴黎骚动",
-  "event.publicUnrest.desc": "面包价与流言挤满街头。仅可用干预，否则合法性 -1。",
+  "event.publicUnrest.desc":
+    "旧制度下首都民众对粮价与警讯极为敏感。面包价与流言挤满街头。仅可用干预，否则合法性 -1。",
   "event.administrativeDelay.name": "官僚拖延",
-  "event.administrativeDelay.desc": "地方官员拖延执行宫廷新令。支付 1 经费，否则下一回合少抽 1（至少仍抽 1）。",
+  "event.administrativeDelay.desc":
+    "高等法院、省三级会议与包税利益常拖延或改写中央敕令。地方官员拖延执行宫廷新令。支付 1 经费，否则下一回合少抽 1（至少仍抽 1）。",
   "event.tradeOpportunity.name": "殖民贸易机遇",
-  "event.tradeOpportunity.desc": "航线与商人请求王室支持。支付 1 经费获得财政 +1。忽略无惩罚。",
+  "event.tradeOpportunity.desc":
+    "大西洋与加勒比航线把蔗糖、烟草等商品压入波尔多、拉罗谢尔资本圈。航线与商人请求王室支持。支付 1 经费获得财政 +1。忽略无惩罚。",
   "event.powerVacuum.name": "地方总督坐大",
-  "event.powerVacuum.desc": "总督绕过宫廷自行其是。支付 2 经费或使用干预，否则下一年槽位升级为「王权危机」。",
+  "event.powerVacuum.desc":
+    "当宫廷注意力外移，强势总督或督办可在地方压过凡尔赛节奏。总督绕过宫廷自行其是。支付 2 经费或使用干预，否则下一年槽位升级为「王权危机」。",
   "event.majorCrisis.name": "王权危机",
-  "event.majorCrisis.desc": "仅可用干预解决。带有「持续」标签：若未处理将留到下一回合，并在每回合继续触发合法性 -1 与抽牌惩罚，直到被解决。",
+  "event.majorCrisis.desc":
+    "投石党记忆使任何「王权失灵」的观感都极具政治爆炸性。仅可用干预解决。带有「持续」标签：若未处理将留到下一回合，并在每回合继续触发合法性 -1 与抽牌惩罚，直到被解决。",
   "event.politicalGridlock.name": "贵族阻挠",
   "event.politicalGridlock.desc":
-    "大贵族联合反对新税方案。支付 2 经费，否则获得「权力流失」3 回合（每回合抽牌 -1，仍至少抽 1）。",
+    "大贵族对中央加税与削权仍易迅速串联，常令人联想到马扎然时期的财政反弹。大贵族联合反对新税方案。支付 2 经费，否则获得「权力流失」3 回合（每回合抽牌 -1，仍至少抽 1）。",
   "status.powerLeak.name": "权力流失",
   "status.powerLeak.history": "地方与派系掣肘上升，中央命令的执行效率持续下滑。",
   "status.drawPenalty.name": "疲态",
@@ -79,13 +85,13 @@ export const sunkingCoreGameContentZh = {
   "status.huguenotContainment.hintGeneral": "表示镇压带来的压制层数；通过消去场上的「镇压胡格诺」牌可逐步清除层数。",
   "event.jansenistTension.name": "詹森派争议",
   "event.jansenistTension.desc":
-    "詹森主义围绕“恩典与救赎”的神学立场长期冲击法国教会与王权关系；波尔-罗亚尔网络的余波再起，主教区与法院出现对立。支付 2 经费进行教区巡察与舆论安抚，否则合法性 -1。",
+    "自黎塞留时代起，波尔-罗亚尔的严苛与主教权威、教廷立场便屡生摩擦。詹森主义围绕“恩典与救赎”的神学立场长期冲击法国教会与王权关系；波尔-罗亚尔网络的余波再起，主教区与法院出现对立。支付 2 经费进行教区巡察与舆论安抚，否则合法性 -1。",
   "event.arminianTension.name": "阿米尼乌斯派争论",
   "event.arminianTension.desc":
-    "阿米尼乌斯派关于自由意志与预定论的争论，经由讲坛、学院与印刷传播扩大，削弱了王室推动统一教义的效率。支付 1 经费整合神学院与审查体系（处理后向抽牌堆加入 1 张「宗教矛盾」），否则权力 -1。",
+    "尼德兰等地的恩典争论经学院、印刷与讲坛渗入法国，与高卢派戒心交织。阿米尼乌斯派关于自由意志与预定论的争论，经由讲坛、学院与印刷传播扩大，削弱了王室推动统一教义的效率。支付 1 经费整合神学院与审查体系（处理后向抽牌堆加入 1 张「宗教矛盾」），否则权力 -1。",
   "event.huguenotTension.name": "胡格诺地下网络骚动",
   "event.huguenotTension.desc":
-    "撤销《南特敕令》后被迫地下化的胡格诺社群在边境与港市重建互助网络，地方警备与税务执行受到牵制。支付 1 经费加固治安与赈济（处理后向抽牌堆加入 1 张「宗教矛盾」），否则财政 -1。",
+    "1685 年后，海峡港口的走私与对海外流亡社群的暗助屡见于督办报告。撤销《南特敕令》后被迫地下化的胡格诺社群在边境与港市重建互助网络，地方警备与税务执行受到牵制。支付 1 经费加固治安与赈济（处理后向抽牌堆加入 1 张「宗教矛盾」），否则财政 -1。",
   "card.tag.royal": "王室",
   "card.tag.temp": "临时",
   "card.tag.extra": "额外",

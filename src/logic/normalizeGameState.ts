@@ -107,6 +107,9 @@ export function normalizeGameState(state: GameState): GameState {
   if (!Array.isArray(s.scheduledDrawModifiers)) {
     s = { ...s, scheduledDrawModifiers: [] };
   }
+  if (typeof s.nextTurnFundingIncomeModifier !== "number" || !Number.isFinite(s.nextTurnFundingIncomeModifier)) {
+    s = { ...s, nextTurnFundingIncomeModifier: 0 };
+  }
   if (!Array.isArray(s.proceduralEventSequence)) {
     s = { ...s, proceduralEventSequence: [] };
   }

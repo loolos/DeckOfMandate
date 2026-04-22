@@ -31,7 +31,6 @@ export const messagesZhCore = {
   "ui.successionCrisisPay": "支付 3 经费 — 王位争夺进度 +1",
   "ui.successionCrisisDecline": "不支付 — 起始进度 −1",
   "ui.utrechtEndWar": "结束王位继承战争（和约）",
-  "ui.utrechtWait": "暂不结束（谈判窗口剩余 {n} 回合）",
   "ui.dualFrontCrisis.concede": "暂时让步 — 王位争夺进度 −3；对手费用上限 +1",
   "ui.dualFrontCrisis.escalate": "扩大战争 — 王位争夺进度 +1，合法性 −1，向抽牌堆加入 3 张财政负担；对手费用上限 +1",
   "ui.successionTrack": "王位争夺进度",
@@ -149,6 +148,12 @@ export const messagesZhCore = {
     "和约并未给出单方完胜：遗产被条约重新切块，各方在承认与颜面之间折衷——法国保住西班牙继承的底线空间，却也背负长期均势约束。",
   "outcome.utrechtVictoryEpilogue.habsburg":
     "纸面和平折射大同盟压力：波旁虽保西班牙王位，却须在帝国法统与海上秩序前吞下更多让步；继承战的账单将以战略绳套的形式延续。",
+  "outcome.successionCalendar1720Extra.bourbon":
+    "历法停在 1720 年，而乌得勒支诸和所固定的版图仍向波旁一侧倾斜：停战与让步已被时间磨成先例，凡尔赛不必高声辩白，也能主张这场继业之争最终落在一张可辩护的资产负债表上。",
+  "outcome.successionCalendar1720Extra.compromise":
+    "最后一年的钟声并不为任何一方加冕：条约年代留下的是各方都能签字的拼缝版图，你的宫廷学会在妥协的夹缝里执政——在这里，存续本身就是一种纪律，而非凯旋演说。",
+  "outcome.successionCalendar1720Extra.habsburg":
+    "当年历翻过终点，乌得勒支纸面上更苛刻的条款仍在收紧缰绳：大同盟的墨水框定了大炮未能写尽的边界，对法西合并与帝国秩序的长期钳制，便是写进你这篇终章的额外价码。",
   "log.cardPlayed.title": "[第 {turn} 年] {card} — 支付 {cost} {funding}。",
   "log.cardPlayed.effectsLabel": "效果：",
   "log.cardPlayed.noEffects": "无列表效果。",
@@ -156,7 +161,9 @@ export const messagesZhCore = {
   "log.effect.gainFunding": "{funding} +{amount}",
   "log.effect.drawCards": "抽牌 {count}",
   "log.effect.scheduleNextTurnDrawModifier": "下一年抽牌修正 {delta}",
+  "log.effect.scheduleNextTurnFundingIncomeModifier": "下一年国库转回合经费收入修正 {delta}",
   "log.effect.opponentNextTurnDrawModifier": "对手下一年摸牌修正 {delta}",
+  "log.effect.opponentHandDiscardNow": "哈布斯堡对手立即从手牌弃置 {count} 张",
   "log.effect.scheduleDrawModifiers": "后续多年抽牌修正 {deltas}",
   "log.effect.setCardTagBlocked": "禁用 {tag} 牌（{turns} 回合）",
   "log.effect.addPlayerStatus": "{status}（{turns} 回合）",

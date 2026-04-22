@@ -31,11 +31,18 @@ export function formatEffectLogLine(
       const signed = d >= 0 ? `+${d}` : String(d);
       return t("log.effect.scheduleNextTurnDrawModifier", { delta: signed });
     }
+    case "scheduleNextTurnFundingIncomeModifier": {
+      const d = effect.delta;
+      const signed = d >= 0 ? `+${d}` : String(d);
+      return t("log.effect.scheduleNextTurnFundingIncomeModifier", { delta: signed });
+    }
     case "opponentNextTurnDrawModifier": {
       const d = effect.delta;
       const signed = d >= 0 ? `+${d}` : String(d);
       return t("log.effect.opponentNextTurnDrawModifier", { delta: signed });
     }
+    case "opponentHandDiscardNow":
+      return t("log.effect.opponentHandDiscardNow", { count: effect.count });
     case "modOpponentStrength": {
       const d = effect.delta;
       const signed = d >= 0 ? `+${d}` : String(d);

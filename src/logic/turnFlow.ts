@@ -537,13 +537,14 @@ export function beginYear(state: GameState): GameState {
   if (s.outcome !== "playing") return s;
   s = maybeAdjustEuropeAlertProgressAtYearStart(s);
   const localWarIncomePenalty = hasUnresolvedLocalWar(s) ? 2 : 0;
-  const fundingIncome = Math.max(0, s.resources.treasuryStat - localWarIncomePenalty);
+  const fundingIncome = Math.max(0, s.resources.treasuryStat - localWarIncomePenalty + s.nextTurnFundingIncomeModifier);
   s = {
     ...s,
     resources: {
       ...s.resources,
       funding: s.resources.funding + fundingIncome,
     },
+    nextTurnFundingIncomeModifier: 0,
   };
   const scheduledDrawModifier = s.scheduledDrawModifiers[0] ?? 0;
   s = { ...s, scheduledDrawModifiers: s.scheduledDrawModifiers.slice(1) };
@@ -596,9 +597,10 @@ export function beginYear(state: GameState): GameState {
   return { ...s, phase: "action" };
 }
 
+/** Calendar-end tier (chapter 3, track in (−10,10)): bourbon ≥+5, compromise −4..+4, habsburg ≤−5. */
 function successionIntervalTier(track: number): import("../types/game").SuccessionIntervalTier {
-  if (track >= 4 && track <= 9) return "bourbon";
-  if (track >= -3 && track <= 3) return "compromise";
+  if (track >= 5) return "bourbon";
+  if (track >= -4) return "compromise";
   return "habsburg";
 }
 
@@ -612,7 +614,7 @@ export function evaluateVictory(state: GameState): GameState {
   const vr = def.victoryRule;
 
   if (vr.kind === "successionWar") {
-    if (state.successionTrack >= 10) {
+    if (!state.warEnded && state.successionTrack >= 10) {
       return { ...state, phase: "gameOver", outcome: "victory", successionOutcomeTier: null };
     }
     const lim = getTurnLimitForRun(state.levelId, state.calendarStartYear);

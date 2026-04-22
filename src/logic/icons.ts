@@ -27,6 +27,8 @@ const CARD_ICONS: Record<CardTemplateId, string> = {
   habsburgImperialCustomsDelay: "📋",
   habsburgImperialLegitimacyNote: "📜",
   habsburgLowCountriesAgitation: "🗺️",
+  habsburgAngloDutchMaritimeInterdiction: "🚢",
+  habsburgRhineMagazineEmbargo: "🌉",
 };
 
 const EVENT_ICONS: Record<EventTemplateId, string> = {
@@ -65,7 +67,7 @@ const EVENT_ICONS: Record<EventTemplateId, string> = {
   localWar: "⚔️",
   jesuitPatronage: "📚",
   successionCrisis: "👑",
-  opponentHabsburg: "🦅",
+  opponentHabsburg: "👊",
   utrechtTreaty: "📜",
   bavarianCourtRealignment: "🏰",
   portugueseTariffNegotiation: "⚓",
@@ -110,5 +112,5 @@ export function resourceLabelWithIcon(resource: ResourceKey, label: string): str
 export function opponentBudgetEmojiPips(n: number): string {
   const k = Math.max(0, Math.min(12, Math.floor(Number.isFinite(n) ? n : 0)));
   if (k === 0) return "○";
-  return "🪙".repeat(k);
+  return "👊".repeat(k);
 }
