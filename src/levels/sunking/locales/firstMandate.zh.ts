@@ -24,9 +24,9 @@ export const messagesZhFirstMandate = {
   "log.eventScriptedAttack.war.summary":
     "法军推进「遗产」主张（史实 1667–1668）。已支付 {paid} {funding}。{power} +{powerDelta}。",
   "log.eventScriptedAttack.war.treasuryYes":
-    "城镇赎金与征发好于预期（额外财政判定为 {rollPct}%）：{treasury} +{gain}。",
+    "低地与弗朗什孔泰战区的占领征收与赎城赔款阶段性回流王室账目（额外财政判定为 {rollPct}%）：{treasury} +{gain}。",
   "log.eventScriptedAttack.war.treasuryNo":
-    "本季战利与账目未达预期（额外财政判定 {rollPct}% 未成功）。",
+    "低地与弗朗什孔泰战区的占领征收与赎城赔款未如预期回流（额外财政判定 {rollPct}% 未成功）。",
   "log.eventScriptedAttack.war.coalitionNote":
     "法军速胜震动伦敦、海牙与斯德哥尔摩，推动英荷瑞走向三国同盟式围堵——此后数年，外交牵制可能不时压缩你的施政余地。",
   "log.antiFrenchLeagueDraw.title":
