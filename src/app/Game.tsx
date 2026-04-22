@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useReducer, useRef, useState, type PointerEvent } from "react";
 import { ActionLog } from "../components/ActionLog";
 import { EventPanel } from "../components/EventPanel";
 import { Hand } from "../components/Hand";
@@ -38,20 +38,18 @@ import {
   LEVEL2_CONTINUITY_MAX_REMOVALS,
   LEVEL2_FIXED_NEW_IDS,
   buildLevel2StateFromDraft,
+  buildLevel3StateFromDraft,
   createContinuityLevel2Draft,
+  createContinuityLevel3Draft,
   createStandaloneLevel2Draft,
+  createStandaloneLevel3Draft,
   toggleContinuityCardRemoval,
   validateLevel2Draft,
+  validateLevel3Draft,
   type Level2CarryoverCard,
   type Level2StartDraft,
-} from "./level2Transition";
-import {
-  buildLevel3StateFromDraft,
-  createContinuityLevel3Draft,
-  createStandaloneLevel3Draft,
-  validateLevel3Draft,
   type Level3StartDraft,
-} from "./level3Transition";
+} from "./levelTransitions";
 import styles from "./Game.module.css";
 import { retentionCapacity } from "../logic/turnFlow";
 import {
@@ -72,6 +70,26 @@ function readRegisteredChapter3RefitHandOrder(): readonly CardTemplateId[] {
 }
 
 const CHAPTER3_REFIT_STARTING_HAND_ORDER: readonly CardTemplateId[] = readRegisteredChapter3RefitHandOrder();
+
+const GRID_SPLIT_STORAGE_KEY = "deckOfMandate_ui_gridSplit";
+const GRID_WIDE_MEDIA = "(min-width: 900px)";
+
+function clampGridSplit(n: number): number {
+  return Math.min(0.72, Math.max(0.28, n));
+}
+
+function readInitialGridSplit(): number {
+  if (typeof window === "undefined") return 0.5;
+  try {
+    const raw = localStorage.getItem(GRID_SPLIT_STORAGE_KEY);
+    if (raw == null) return 0.5;
+    const v = Number(raw);
+    if (!Number.isFinite(v)) return 0.5;
+    return clampGridSplit(v);
+  } catch {
+    return 0.5;
+  }
+}
 
 type PendingNewRun = { seed?: number; levelId: LevelId };
 
@@ -157,6 +175,14 @@ export function Game() {
   const [isSmallRefitViewport, setIsSmallRefitViewport] = useState(() =>
     typeof window !== "undefined" ? window.matchMedia("(max-width: 800px)").matches : false,
   );
+  const [gridSplit, setGridSplit] = useState(readInitialGridSplit);
+  const [wideGameGrid, setWideGameGrid] = useState(() =>
+    typeof window !== "undefined" ? window.matchMedia(GRID_WIDE_MEDIA).matches : false,
+  );
+  const gridRef = useRef<HTMLDivElement>(null);
+  const gridColumnDragRef = useRef<{ startX: number; startSplit: number; width: number } | null>(null);
+  const gridSplitRef = useRef(gridSplit);
+  gridSplitRef.current = gridSplit;
   const mobileRefitRowLastTapAt = useRef<Record<string, number>>({});
   const sessionRef = useRef<SessionRecord>([]);
   /** Predicted state for the next action — chains across multiple dispatches in one event before React re-renders. */
@@ -256,6 +282,77 @@ export function Game() {
     media.addEventListener("change", onChange);
     return () => media.removeEventListener("change", onChange);
   }, []);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const media = window.matchMedia(GRID_WIDE_MEDIA);
+    const onChange = (event: MediaQueryListEvent) => {
+      setWideGameGrid(event.matches);
+    };
+    setWideGameGrid(media.matches);
+    media.addEventListener("change", onChange);
+    return () => media.removeEventListener("change", onChange);
+  }, []);
+
+  const persistGridSplit = useCallback(() => {
+    try {
+      localStorage.setItem(GRID_SPLIT_STORAGE_KEY, String(gridSplitRef.current));
+    } catch {
+      /* ignore quota / private mode */
+    }
+  }, []);
+
+  const onGridColumnPointerDown = useCallback((e: PointerEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    const g = gridRef.current;
+    if (!g) return;
+    gridColumnDragRef.current = {
+      startX: e.clientX,
+      startSplit: gridSplitRef.current,
+      width: g.getBoundingClientRect().width,
+    };
+    e.currentTarget.setPointerCapture(e.pointerId);
+  }, []);
+
+  const onGridColumnPointerMove = useCallback((e: PointerEvent<HTMLButtonElement>) => {
+    const d = gridColumnDragRef.current;
+    if (!d) return;
+    const handle = 10;
+    const gapApprox = 32;
+    const track = Math.max(160, d.width - handle - gapApprox);
+    const delta = e.clientX - d.startX;
+    const next = clampGridSplit(d.startSplit + delta / track);
+    gridSplitRef.current = next;
+    setGridSplit(next);
+  }, []);
+
+  const onGridColumnPointerUp = useCallback(
+    (e: PointerEvent<HTMLButtonElement>) => {
+      if (gridColumnDragRef.current == null) return;
+      gridColumnDragRef.current = null;
+      try {
+        e.currentTarget.releasePointerCapture(e.pointerId);
+      } catch {
+        /* not captured */
+      }
+      persistGridSplit();
+    },
+    [persistGridSplit],
+  );
+
+  const onGridColumnPointerCancel = useCallback(
+    (e: PointerEvent<HTMLButtonElement>) => {
+      if (gridColumnDragRef.current == null) return;
+      gridColumnDragRef.current = null;
+      try {
+        e.currentTarget.releasePointerCapture(e.pointerId);
+      } catch {
+        /* ignore */
+      }
+      persistGridSplit();
+    },
+    [persistGridSplit],
+  );
 
   const canEndYear =
     state.outcome === "playing" &&
@@ -1116,6 +1213,12 @@ export function Game() {
   const showLevelTutorial =
     pendingLevelTutorial && state.outcome === "playing" && state.phase === "action";
 
+  const hasEventsPanel =
+    EVENT_SLOT_ORDER.some((id) => state.slots[id] != null) ||
+    state.pendingInteraction?.type === "crackdownPick";
+  const gridTemplateColumns =
+    wideGameGrid && hasEventsPanel ? `${gridSplit * 2}fr 10px ${(1 - gridSplit) * 2}fr` : "1fr";
+
   return (
     <div className={styles.root}>
       {showLevelTutorial ? (
@@ -1159,7 +1262,7 @@ export function Game() {
 
       <p className={styles.help}>{t("help.short")}</p>
 
-      <div className={styles.grid}>
+      <div ref={gridRef} className={styles.grid} style={{ gridTemplateColumns }}>
         <section className={styles.panel} id="tutorial-resources">
           <h2>{t("ui.resources")}</h2>
           <ResourceBar resources={state.resources} />
@@ -1185,8 +1288,19 @@ export function Game() {
           />
         </section>
 
-        {EVENT_SLOT_ORDER.some((id) => state.slots[id] != null) ||
-        state.pendingInteraction?.type === "crackdownPick" ? (
+        {wideGameGrid && hasEventsPanel ? (
+          <button
+            type="button"
+            className={styles.columnResizer}
+            aria-label={t("ui.columnResizeHint")}
+            onPointerDown={onGridColumnPointerDown}
+            onPointerMove={onGridColumnPointerMove}
+            onPointerUp={onGridColumnPointerUp}
+            onPointerCancel={onGridColumnPointerCancel}
+          />
+        ) : null}
+
+        {hasEventsPanel ? (
           <section className={`${styles.panel} ${styles.eventsPanel}`} id="tutorial-events">
             <h2>{t("ui.events")}</h2>
             <div className={styles.eventsResizable} title={t("ui.eventsResizeHint")}>

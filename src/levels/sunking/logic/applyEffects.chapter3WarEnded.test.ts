@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { createInitialState } from "../app/initialState";
-import { applyEffects, enforceSuccessionImmediateOutcome } from "./applyEffects";
+import { createInitialState } from "../../../app/initialState";
+import { applyEffects, enforceSuccessionImmediateOutcome } from "../../../logic/applyEffects";
 import { THIRD_MANDATE_LEVEL_ID } from "./thirdMandateConstants";
 
 describe("chapter 3 after Utrecht (warEnded)", () => {

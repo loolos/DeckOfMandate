@@ -15,7 +15,7 @@
 
 ## 3. Code organization
 
-- `src/app/`: reducer, initialization, main game composition; `level2Transition.ts` re-exports chapter-2 builders from the Sun King campaign pack.
+- `src/app/`: reducer, initialization, main game composition; `levelTransitions.ts` re-exports chapter-2/3 transition builders from the campaign pack (`campaignChapterTransitions`).
 - `src/data/`: **level registry** (`levelRegistry.ts`, `levelTypes.ts`) and thin re-exports (`levels.ts`, `levelContent.ts`, `cards.ts`, `events.ts`, `statusTemplates.ts` → Sun King pack); playable levels are registered at startup, not hardcoded here. Each `LevelDef` carries calendar pacing (`yearsPerTurn`), win/victory rules, turn-limit rule, and optional UI keys for goals / turn counter / time-step hint.
 - `src/levels/`: **campaign packs** plus **template type shapes** (`levels/types/` — `CardTemplateId`, `EventTemplateId`, `Effect`, tags, status templates; current unions match the Sun King data). Each top-level subdirectory `<campaignId>/` ships `registerCampaign.ts`; `registerAll.ts` uses `import.meta.glob("./*/registerCampaign.ts")` so new campaigns are picked up without editing `main.tsx`. Chapters are discovered within a campaign (e.g. Sun King `sunking/chapters/*.ts`). The Sun King campaign lives under `src/levels/sunking/` (chapter-2 transition, **card/event/status template data** under `templates/`, and merged locale fragments under `locales/`).
 - `src/logic/`: pure-ish gameplay operations (draw, effects, event resolution, scripted calendar, scaling).

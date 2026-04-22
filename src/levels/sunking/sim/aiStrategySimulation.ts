@@ -3,7 +3,7 @@ import {
   buildLevel2StateFromDraft,
   createContinuityLevel2Draft,
   createStandaloneLevel2Draft,
-} from "../../../app/level2Transition";
+} from "../../../app/levelTransitions";
 import { gameReducer, type GameAction } from "../../../app/gameReducer";
 import { getCardTemplate } from "../../../data/cards";
 import { getEventSolveFundingAmount, getEventTemplate } from "../../../data/events";

@@ -1,9 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { createInitialState } from "../app/initialState";
-import { EMPTY_EVENT_SLOTS } from "../levels/types/event";
-import type { EventTemplateId } from "../levels/types/event";
-import type { GameState } from "../types/game";
-import { slotIsHandledOrNoFurtherAction } from "./uiHelpers";
+import { createInitialState } from "../../../app/initialState";
+import { EMPTY_EVENT_SLOTS, type EventTemplateId } from "../../types/event";
+import type { GameState } from "../../../types/game";
+import { slotIsHandledOrNoFurtherAction } from "../../../logic/uiHelpers";
 
 function createStateWithSingleEvent(templateId: EventTemplateId): GameState {
   const base = createInitialState(515_151, "secondMandate");

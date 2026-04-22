@@ -24,6 +24,7 @@ export {
   createContinuityLevel3Draft,
   createStandaloneLevel3Draft,
   LEVEL3_CONTINUITY_MAX_REMOVALS,
+  SUNKING_CH3_ID,
   validateLevel3Draft,
   type Level3CarryoverCard,
   type Level3ContinuityDraft,

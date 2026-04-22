@@ -28,6 +28,8 @@ export const messagesZhCore = {
   "ui.hand": "手牌",
   "ui.events": "事件",
   "ui.eventsResizeHint": "拖动右下角可调整事件区域高度。",
+  "ui.columnResizeHint": "左右拖动中间分隔条，在「资源与状态」与「事件」两栏之间分配宽度；会保存在本机。",
+  "ui.actionLogResizeHint": "拖动右下角可调整行动日志区域高度。",
   "ui.mobileLogTapHint": "小屏操作：事件、状态与手牌单击可展开详情；略缩图或详细图里双击手牌即可出牌。",
   "ui.playThisCard": "打出这张牌",
   "ui.cancel": "取消",

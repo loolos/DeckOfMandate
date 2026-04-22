@@ -527,35 +527,45 @@ export function ActionLog({
     el.scrollTop = el.scrollHeight;
   }, [entries.length, lastEntryId, followTail]);
 
+  const logScroll = (
+    <div
+      ref={wrapRef}
+      className={styles.actionLogScroll}
+      onScroll={onScroll}
+      tabIndex={0}
+      role="log"
+      aria-live="polite"
+      aria-relevant="additions"
+    >
+      {isSmallScreen && showMobileTapGuide ? (
+        <div className={styles.actionLogRow}>
+          <p className={styles.actionLogEmpty} style={{ marginTop: 0 }}>
+            {t("ui.mobileLogTapHint")}
+          </p>
+        </div>
+      ) : null}
+      {entries.length === 0 ? (
+        <p className={styles.actionLogEmpty}>{t("ui.actionLog.empty")}</p>
+      ) : (
+        entries.map((e) => (
+          <div key={e.id} className={styles.actionLogRow}>
+            {renderEntry(e, t)}
+          </div>
+        ))
+      )}
+    </div>
+  );
+
   return (
     <section className={`${styles.panel} ${styles.actionLogSection}`} aria-label={t("ui.actionLog")}>
       <h2 className={styles.actionLogHeading}>{t("ui.actionLog")}</h2>
-      <div
-        ref={wrapRef}
-        className={styles.actionLogScroll}
-        onScroll={onScroll}
-        tabIndex={0}
-        role="log"
-        aria-live="polite"
-        aria-relevant="additions"
-      >
-        {isSmallScreen && showMobileTapGuide ? (
-          <div className={styles.actionLogRow}>
-            <p className={styles.actionLogEmpty} style={{ marginTop: 0 }}>
-              {t("ui.mobileLogTapHint")}
-            </p>
-          </div>
-        ) : null}
-        {entries.length === 0 ? (
-          <p className={styles.actionLogEmpty}>{t("ui.actionLog.empty")}</p>
-        ) : (
-          entries.map((e) => (
-            <div key={e.id} className={styles.actionLogRow}>
-              {renderEntry(e, t)}
-            </div>
-          ))
-        )}
-      </div>
+      {isSmallScreen ? (
+        logScroll
+      ) : (
+        <div className={styles.actionLogResizable} title={t("ui.actionLogResizeHint")}>
+          {logScroll}
+        </div>
+      )}
     </section>
   );
 }

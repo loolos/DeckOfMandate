@@ -28,6 +28,8 @@ export const messagesEnCore = {
   "ui.hand": "Hand",
   "ui.events": "Events",
   "ui.eventsResizeHint": "Drag the bottom-right corner to resize the events area.",
+  "ui.columnResizeHint": "Drag sideways to widen the resources column or the events column. This width is saved on this device.",
+  "ui.actionLogResizeHint": "Drag the bottom-right corner to resize the action log height.",
   "ui.mobileLogTapHint": "Small screen: tap events, statuses, and hand cards to expand details; double-click any hand card (compact or expanded) to play it.",
   "ui.playThisCard": "Play this card",
   "ui.cancel": "Cancel",

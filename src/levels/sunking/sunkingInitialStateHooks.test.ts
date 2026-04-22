@@ -1,15 +1,16 @@
 import { describe, expect, it } from "vitest";
-import { getCardTemplate } from "../data/cards";
-import { getLevelContent } from "../data/levelRegistry";
+import { getCardTemplate } from "../../data/cards";
+import { getLevelContent } from "../../data/levelRegistry";
 import {
   createDeckRefitCarryoverSnapshot,
   createStandaloneLevel3Draft,
+  SUNKING_CH3_ID,
   validateLevel3Draft,
-} from "../levels/campaignChapterTransitions";
-import { createInitialState } from "./initialState";
-import { SUNKING_CH3_ID, buildLevel3StateFromChapter2 } from "./level3Transition";
+} from "../campaignChapterTransitions";
+import { createInitialState } from "../../app/initialState";
+import { buildLevel3StateFromChapter2 } from "../../app/levelTransitions";
 
-describe("level3Transition / thirdMandate Nantes carryover", () => {
+describe("Sun King initialState hooks (chapter 3)", () => {
   it("standalone chapter 3 draft uses a full chapter-2-sized carryover pool for refit", () => {
     const draft = createStandaloneLevel3Draft(50_001);
     expect(draft.mode).toBe("standalone");

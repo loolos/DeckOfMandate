@@ -10,9 +10,9 @@ import {
   toggleContinuityCardRemoval,
   validateLevel2ContinuityRefit,
   validateLevel2Draft,
-} from "./level2Transition";
+} from "./levelTransitions";
 
-describe("level2Transition", () => {
+describe("levelTransitions / chapter2", () => {
   it("creates a valid standalone chapter 2 draft with chapter-1 carryover cards", () => {
     const draft = createStandaloneLevel2Draft(123);
     const v = validateLevel2Draft(draft);

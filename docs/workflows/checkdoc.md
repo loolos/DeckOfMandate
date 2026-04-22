@@ -16,7 +16,7 @@
   - `docs/design.md`（设计目标）
   - `src/levels/sunking/docs/太阳王战役.md`（按关卡顺序的机制 / 事件 / 卡牌 / 状态总表）
 - 代码事实源（authoritative source）：
-  - `src/app/*`：`gameReducer.ts`、`initialState.ts`、`level2Transition.ts`
+  - `src/app/*`：`gameReducer.ts`、`initialState.ts`、`levelTransitions.ts`
   - `src/logic/*`：`turnFlow.ts`、`actionLog.ts`、`aiStrategySimulation.ts`、`cardUsage.ts`、`icons.ts`、`normalizeGameState.ts`
   - `src/data/*`：`cards.ts`、`events.ts`、`levelContent.ts`
   - 太阳王战役平衡断言：`src/levels/sunking/secondMandateBalance.test.ts`
@@ -59,7 +59,7 @@
      - 卡牌定义 → `src/data/cards.ts`
      - 事件 / 历史脚本 / 关卡填充 → `src/data/events.ts`、`src/data/levelContent.ts`
      - 回合管线 / 抽牌 / 留任 → `src/logic/turnFlow.ts`
-     - 关卡过渡 → `src/app/level2Transition.ts`
+     - 关卡过渡 → `src/app/levelTransitions.ts`
      - 派发与状态结算 → `src/app/gameReducer.ts`
 
 3. **判定**
@@ -74,7 +74,7 @@
    - 欧洲警觉漂移公式 `k = x - 12 - y*3`、双事件阈值。
    - 通胀触发条件（如 `财政+权力+合法性 >= 12`）与叠加规则（"弃牌回洗入牌库时按实例叠加费用"）。
    - 有限耐久卡（`royalLevy` / `royalIntervention` / `jesuitCollege` 等）剩余次数与耗尽惩罚。
-   - 关卡过渡保留 / 清理的卡与状态（`level2Transition.ts`）。
+   - 关卡过渡保留 / 清理的卡与状态（`levelTransitions.ts`）。
    - AI 模拟 / 平衡测试里的硬编码假设（`secondMandateBalance.test.ts`）是否仍与 `events.ts` 同步。
 
 ---

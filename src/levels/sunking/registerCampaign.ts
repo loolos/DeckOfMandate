@@ -2,6 +2,9 @@ import { registerChapter2StandaloneFactory } from "../../data/levelBootstrap";
 import type { LevelContent, LevelDef } from "../../data/levelTypes";
 import { registerLevel, setDefaultLevelId } from "../../data/levelRegistry";
 import type { Level2StartDraft } from "../../types/continuity";
+import { registerCampaignReducerBridge } from "../campaignReducerBridge";
+import { trySunkingCampaignReducerBridge } from "./logic/campaignReducerBridgeImpl";
+import { registerSunkingInitialStateHooks } from "./sunkingInitialStateHooks";
 
 type ChapterModule = {
   levelDef: LevelDef;
@@ -13,6 +16,8 @@ type ChapterModule = {
 const chapterModules = import.meta.glob("./chapters/*.ts", { eager: true }) as Record<string, ChapterModule>;
 
 export function registerSunking(): void {
+  registerCampaignReducerBridge(trySunkingCampaignReducerBridge);
+  registerSunkingInitialStateHooks();
   let defaultLevelId: string | null = null;
   for (const path of Object.keys(chapterModules).sort()) {
     const mod = chapterModules[path];

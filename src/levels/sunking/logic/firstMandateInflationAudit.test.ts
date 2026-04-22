@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { simulateFirstMandateEndState } from "./aiStrategySimulation";
-import type { CardTemplateId } from "../levels/types/card";
+import type { CardTemplateId } from "../../types/card";
+import { simulateFirstMandateEndState } from "../../../logic/aiStrategySimulation";
 
 type AuditSummary = {
   seed: number;

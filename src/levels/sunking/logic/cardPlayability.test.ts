@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { createInitialState } from "../app/initialState";
-import { hasCardTag } from "./cardTags";
-import type { GameState } from "../types/game";
-import { isCardPlayableInActionPhase } from "./cardPlayability";
+import { createInitialState } from "../../../app/initialState";
+import { hasCardTag } from "../../../logic/cardTags";
+import { isCardPlayableInActionPhase } from "../../../logic/cardPlayability";
+import type { GameState } from "../../../types/game";
 
 describe("cardPlayability / defiance (Jansenist neighbor)", () => {
   it("gives Defiance tag to the card left of Reservation of Conscience; that card cannot be played", () => {

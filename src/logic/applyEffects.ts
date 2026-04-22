@@ -2,12 +2,12 @@ import { getStatusTemplate } from "../data/statusTemplates";
 import type { CardTemplateId } from "../levels/types/card";
 import type { Effect } from "../levels/types/effect";
 import type { GameState } from "../types/game";
-import { THIRD_MANDATE_LEVEL_ID } from "./thirdMandateConstants";
 import type { PlayerStatusInstance } from "../levels/types/status";
 import { appendActionLog } from "./actionLog";
 import {
   canApplyOpponentHandDiscardNow,
   enforceSuccessionImmediateOutcomeHook,
+  shouldBlockModSuccessionTrackWhenWarEnded,
 } from "../levels/campaignLogicBundle";
 import { addGeneratedCards, applyOnDrawCardEffects } from "./cardRuntime";
 import { applyInflationFromDeckRefill } from "./cardCost";
@@ -40,7 +40,7 @@ export function applyEffect(state: GameState, e: Effect): GameState {
       return { ...state, resources: r };
     }
     case "modSuccessionTrack": {
-      if (state.levelId === THIRD_MANDATE_LEVEL_ID && state.warEnded) {
+      if (shouldBlockModSuccessionTrackWhenWarEnded(state)) {
         return state;
       }
       const successionTrack = Math.max(-10, Math.min(10, state.successionTrack + e.delta));

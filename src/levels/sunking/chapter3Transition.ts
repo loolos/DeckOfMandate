@@ -24,6 +24,9 @@ import {
   type Level2Validation,
 } from "./chapter2Transition";
 
+/** Sun King chapter 3 level id (same as `THIRD_MANDATE_LEVEL_ID`). */
+export const SUNKING_CH3_ID = THIRD_MANDATE_LEVEL_ID;
+
 export const LEVEL3_CONTINUITY_MAX_REMOVALS = CONTINUITY_REFIT_MAX_CARD_REMOVALS;
 
 function thirdMandateRefitStartingHandOrder(): readonly CardTemplateId[] {

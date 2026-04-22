@@ -122,12 +122,11 @@ export const messagesFrSecondMandate: Record<keyof typeof messagesEnSecondMandat
   "card.diplomaticCongress.name": "Congrès diplomatique",
   "card.diplomaticCongress.background":
     "Émissaires, conférences et garanties achètent du répit pendant que vos rivaux testent vos frontières.",
-  "card.diplomaticCongress.desc": "Pouvoir +1. Ajoutez 1 Intervention diplomatique supplémentaire à votre main.",
+  "card.diplomaticCongress.desc": "Pouvoir +1. Ajoutez 1 Intervention diplomatique à votre main.",
   "card.diplomaticIntervention.name": "Intervention diplomatique",
   "card.diplomaticIntervention.background":
     "Exercez une pression via émissaires et leviers de traité plutôt que par commandement royal direct.",
-  "card.diplomaticIntervention.desc":
-    "Carte supplémentaire. Résolvez un événement néfaste (pas Boom du commerce colonial). N'est pas une carte taguée Royal ; quand « Restant » est épuisé, il n'y a pas de pénalité supplémentaire et elle quitte simplement le cycle. Exclue du réajustement inter-chapitre et retirée à la fin du chapitre.",
+  "card.diplomaticIntervention.desc": "Résolvez un événement néfaste. Pas de tag Royal.",
   "log.eventNineYearsWarAttempt.method.funding": "opérations financées",
   "log.eventNineYearsWarAttempt.method.intervention": "intervention diplomatique",
   "log.eventNineYearsWarAttempt.title":

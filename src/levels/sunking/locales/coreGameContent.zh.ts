@@ -8,13 +8,12 @@ export const sunkingCoreGameContentZh = {
   "card.crackdown.desc": "解决一个有害事件。若「剩余」用尽：权力 -1。",
   "card.fiscalBurden.name": "财政负担",
   "card.fiscalBurden.background": "债务与紧急开支挤入账册，持续拖慢每个回合的财政回旋。",
-  "card.fiscalBurden.desc":
-    "抽到时经费 -1。打出费用与财政相关，可支付经费将其消除（不会进入弃牌堆）。",
+  "card.fiscalBurden.desc": "抽到时经费 -1。可按财政相关费用付经费打出，移出循环（非弃牌）。",
   "card.antiFrenchContainment.name": "反法遏制",
   "card.antiFrenchContainment.background":
     "欧洲宫廷以关税、信用与海上执法协同掣肘法国，任何对抗都要先吞下政治代价。",
   "card.antiFrenchContainment.desc":
-    "抽到时以 50%/50% 概率使权力 -1 或合法性 -1。打出费用与欧洲警觉相关（至少 1），可支付经费将其消除（不会进入弃牌堆）。",
+    "抽到时 50%/50%：权力 -1 或合法性 -1。可按欧洲警觉相关费用（至少 1）付经费打出，移出循环（非弃牌）。",
   "card.reform.name": "行政整编",
   "card.reform.background": "册籍与汇报线重划，官僚体系在王权下收得更紧。",
   "card.reform.desc": "权力 +1（影响下回合抽牌阶段）。立即抽 1（手牌上限 12）。",
@@ -27,22 +26,22 @@ export const sunkingCoreGameContentZh = {
   "card.suppressHuguenots.name": "镇压胡格诺派",
   "card.suppressHuguenots.background": "王权动员军警与地方法庭，清剿残余胡格诺网络。",
   "card.suppressHuguenots.desc":
-    "临时牌。费用 3。打出后使「遏制胡格诺-剩余势力」-1；降到 0 时移除该状态，并清除所有「镇压胡格诺派」。",
+    "打出：「遏制胡格诺-剩余势力」-1；降至 0 时清除该状态与所有「镇压胡格诺派」。",
   "card.religiousTensionCard.name": "宗教冲突",
   "card.religiousTensionCard.background":
     "宗派分歧未真正消解，仍以教义、礼仪与地方诉求的形式渗入治理日程，反复牵扯王权注意力。",
   "card.religiousTensionCard.desc":
-    "额外牌。可支付 2 经费打出并消除（不会进入弃牌堆）。当「阿米尼乌斯派争论」、「胡格诺地下网络骚动」或「耶稣会庇护」处理时加入抽牌堆。",
+    "「阿米尼乌斯派争论」「胡格诺地下网络骚动」「耶稣会庇护」处理时加入抽牌堆。可付 2 经费打出，移出循环（非弃牌）。",
   "card.jansenistReservation.name": "良心保留",
   "card.jansenistReservation.background":
     "胡格诺网络被压制后，天主教内部并未自动统一：詹森派的严苛与主教权威相争，良心主张牵制王权议程。",
   "card.jansenistReservation.desc":
-    "额外牌。费用 2。打出后从牌库循环中移除（非弃牌）。该牌在手牌中时，为其左侧邻牌附加「抗命」标签；带抗命的牌不可打出。",
+    "在手牌中为左侧邻牌附加「抗命」；该邻牌不可打出。打出后移出循环（非弃牌）。",
   "card.jesuitCollege.name": "耶稣会学院",
   "card.jesuitCollege.background":
     "拉弗莱什、路易大帝、克莱蒙等耶稣会精英学院培养与王权立场一致的官员、军官与教士，以辞令、神学与服从为核心训练；其讲坛也是对抗詹森派严苛主义的第一线。",
   "card.jesuitCollege.desc":
-    "额外牌。剩余 1/1，只能使用一次。费用 2。打出时合法性 +1；若棋盘上存在未解决的「詹森派争议」事件，则立即解决一次（无须额外经费）。打出后从牌库循环中移除。",
+    "打出：合法性 +1；场上有未解决的「詹森派争议」时免费解决一次。用尽后移出循环。",
   "event.budgetStrain.name": "宫廷超支",
   "event.budgetStrain.desc":
     "路易十四朝凡尔赛营建与王室日常规模常突破常轨岁入预期。凡尔赛扩建与宫廷礼仪再度推高开支。支付 2 经费，否则财政 -1。",

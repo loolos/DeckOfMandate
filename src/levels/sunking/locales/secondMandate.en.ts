@@ -119,12 +119,11 @@ export const messagesEnSecondMandate = {
   "card.diplomaticCongress.name": "Diplomatic Congress",
   "card.diplomaticCongress.background":
     "Envoys, conferences, and guarantees buy breathing room while rivals test your frontiers.",
-  "card.diplomaticCongress.desc": "Power +1. Add 1 extra Diplomatic Intervention to your hand.",
+  "card.diplomaticCongress.desc": "Power +1. Add 1 Diplomatic Intervention to your hand.",
   "card.diplomaticIntervention.name": "Diplomatic Intervention",
   "card.diplomaticIntervention.background":
     "Apply pressure through envoys and treaty leverage rather than direct royal command.",
-  "card.diplomaticIntervention.desc":
-    "Extra card. Resolve one harmful event (not Colonial Trade Boom). Not a Royal-tag card; when Remaining is exhausted there is no extra penalty, it simply leaves circulation. Excluded from chapter refit and removed when the chapter ends.",
+  "card.diplomaticIntervention.desc": "Resolve one harmful event. Not Royal-tagged.",
   "log.eventNineYearsWarAttempt.method.funding": "funding operations",
   "log.eventNineYearsWarAttempt.method.intervention": "diplomatic intervention",
   "log.eventNineYearsWarAttempt.title":

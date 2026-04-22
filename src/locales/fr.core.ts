@@ -46,6 +46,8 @@ export const messagesFrCore: Record<keyof typeof messagesEnCore, string> = {
   "ui.endTurn": "Terminer le tour",
   "ui.events": "Événements",
   "ui.eventsResizeHint": "Glissez le coin inférieur droit pour redimensionner la zone d'événements.",
+  "ui.columnResizeHint": "Faites glisser horizontalement pour élargir la colonne des ressources ou celle des événements. La largeur est mémorisée sur cet appareil.",
+  "ui.actionLogResizeHint": "Glissez le coin inférieur droit pour redimensionner la hauteur du journal d'actions.",
   "ui.hand": "Main",
   "ui.language": "Langue",
   "ui.levelLocaleFallback": "Ce niveau n’est pas entièrement traduit pour la langue d’interface actuelle. Les textes propres au niveau peuvent s’afficher en anglais.",

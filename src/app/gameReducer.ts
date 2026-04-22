@@ -6,29 +6,29 @@ import { appendActionLog } from "../logic/actionLog";
 import { applyEffects, enforceLegitimacy } from "../logic/applyEffects";
 import { isCardPlayableInActionPhase } from "../logic/cardPlayability";
 import { hasCardTag } from "../logic/cardTags";
-import { addCardsToHand, enforceHuguenotContainmentInvariant } from "../logic/cardRuntime";
+import { enforceHuguenotContainmentInvariant } from "../logic/cardRuntime";
 import { appendInflationActivationLogIfNeeded, getPlayableCardCost } from "../logic/cardCost";
+import { limitedUseCardDepletionPenalty } from "../logic/limitedUseCardDepletion";
 import { normalizeGameState } from "../logic/normalizeGameState";
 import { applyPlayedCardEffects } from "../logic/resolveCard";
 import { resolveEndOfYearPenalties } from "../logic/resolveEvents";
 import { coalitionUntilTurn, findScriptedCalendarConfig } from "../logic/scriptedCalendar";
 import { rngNext } from "../logic/rng";
-import {
-  completeSuccessionCrisisAndRevealOpponent,
-  opponentEndYearPlayPhase,
-  opponentImmediateExtraDraw,
-  stateAfterUtrechtTreatyEndsWar,
-} from "../logic/opponentHabsburg";
+import { opponentEndYearPlayPhase, opponentImmediateExtraDraw } from "../logic/opponentHabsburg";
 import { beginYear, evaluateTimeDefeat, evaluateVictory, retentionCapacity } from "../logic/turnFlow";
-import { THIRD_MANDATE_LEVEL_ID } from "../logic/thirdMandateConstants";
+import { markSlotResolved, markSlotResolvedWithLeagueProgress } from "../logic/eventSlotOps";
 import { antiFrenchSentimentEventSolveCostPenalty } from "../logic/antiFrenchSentiment";
-import { EVENT_SLOT_ORDER, type EventTemplateId } from "../levels/types/event";
 import type { SlotId } from "../levels/types/event";
 import type { GameState } from "../types/game";
 import type { LogInfoKey } from "../types/game";
+import {
+  applySunkingPlayCardExtras,
+  attemptNineYearsWarCampaign,
+  performFundSolve,
+} from "../levels/campaignLogicBundle";
 import { tryCampaignReducerBridge } from "../levels/campaignReducerBridge";
 import { createInitialState } from "./initialState";
-import { buildLevel2StateFromDraft } from "./level2Transition";
+import { buildLevel2StateFromDraft } from "./levelTransitions";
 
 export type GameAction =
   | { type: "NEW_GAME"; seed?: number; levelId?: LevelId }
@@ -99,105 +99,13 @@ function consumeLimitedUseCard(
     return { state: { ...state, cardUsesById }, exhausted: false };
   }
   delete cardUsesById[instanceId];
-  const inst = state.cardsById[instanceId];
   let s: GameState = { ...state, cardUsesById };
-  let infoKey: LogInfoKey | null = null;
-  if (inst?.templateId === "crackdown") {
-    s = {
-      ...s,
-      resources: {
-        ...s.resources,
-        power: Math.max(0, s.resources.power - 1),
-      },
-    };
-    infoKey = "cardUse.depleted.crackdownPenalty";
-  } else if (inst?.templateId === "funding") {
-    s = {
-      ...s,
-      resources: {
-        ...s.resources,
-        treasuryStat: Math.max(0, s.resources.treasuryStat - 1),
-      },
-    };
-    infoKey = "cardUse.depleted.fundingPenalty";
-  } else if (inst?.templateId === "diplomaticIntervention") {
-    infoKey = "cardUse.depleted.diplomaticIntervention";
-  }
-  if (infoKey) {
-    s = appendActionLog(s, { kind: "info", infoKey });
+  const depleted = limitedUseCardDepletionPenalty(s, instanceId);
+  s = depleted.state;
+  if (depleted.infoKey) {
+    s = appendActionLog(s, { kind: "info", infoKey: depleted.infoKey });
   }
   return { state: s, exhausted: true };
-}
-
-function markSlotResolved(state: GameState, slot: SlotId): GameState {
-  const ev = state.slots[slot];
-  if (!ev) return state;
-  return {
-    ...state,
-    slots: { ...state.slots, [slot]: { ...ev, resolved: true } },
-  };
-}
-
-function markSlotResolvedWithLeagueProgress(state: GameState, slot: SlotId): GameState {
-  const ev = state.slots[slot];
-  if (!ev) return state;
-  if (ev.templateId !== "leagueOfAugsburg") return markSlotResolved(state, slot);
-  const totalNeeded = getEventTemplate("leagueOfAugsburg").continuedDurationTurns ?? 3;
-  const remainingAfterSolve = Math.max(0, (ev.remainingTurns ?? totalNeeded) - 1);
-  return {
-    ...state,
-    slots: {
-      ...state.slots,
-      [slot]: { ...ev, resolved: true, remainingTurns: remainingAfterSolve },
-    },
-  };
-}
-
-function markSlotResolvedWithNineYearsWarPersistence(
-  state: GameState,
-  slot: SlotId,
-  keepOnBoard: boolean,
-): GameState {
-  const ev = state.slots[slot];
-  if (!ev || ev.templateId !== "nineYearsWar") return state;
-  return {
-    ...state,
-    slots: {
-      ...state.slots,
-      [slot]: { ...ev, resolved: true, remainingTurns: keepOnBoard ? undefined : 0 },
-    },
-  };
-}
-
-function resolveFirstUnresolvedEventByTemplate(
-  state: GameState,
-  templateId: EventTemplateId,
-): GameState {
-  for (const slot of EVENT_SLOT_ORDER) {
-    const ev = state.slots[slot];
-    if (!ev || ev.resolved) continue;
-    if (ev.templateId !== templateId) continue;
-    return markSlotResolved(state, slot);
-  }
-  return state;
-}
-
-function removeEventsByTemplate(
-  state: GameState,
-  templateId: EventTemplateId,
-): { state: GameState; removedCount: number } {
-  const slots = { ...state.slots };
-  let removedCount = 0;
-  for (const slot of EVENT_SLOT_ORDER) {
-    const ev = slots[slot];
-    if (!ev || ev.templateId !== templateId) continue;
-    slots[slot] = null;
-    removedCount += 1;
-  }
-  return {
-    state: removedCount > 0 ? { ...state, slots } : state,
-    removedCount,
-  };
 }
 
 function isCrackdownTarget(state: GameState, slot: SlotId): boolean {
@@ -228,43 +136,6 @@ function canFundSolve(state: GameState, slot: SlotId): boolean {
     return amount !== null && state.resources.funding >= amount;
   }
   return false;
-}
-
-function attemptNineYearsWarCampaign(
-  state: GameState,
-  slot: SlotId,
-  method: "funding" | "intervention",
-  fundingPaid: number,
-): GameState {
-  const ev = state.slots[slot];
-  if (!ev || ev.resolved || ev.templateId !== "nineYearsWar") return state;
-  const [rng, u] = rngNext(state.rng);
-  const roll = Math.floor(u * 9) + 1;
-  let s: GameState = { ...state, rng };
-  if (roll === 1) {
-    s = { ...s, slots: { ...s.slots, [slot]: null } };
-    return appendActionLog(s, {
-      kind: "eventNineYearsWarAttempt",
-      slot,
-      method,
-      fundingPaid,
-      roll,
-      outcome: "majorVictory",
-    });
-  }
-  if (roll >= 6) {
-    s = applyEffects(s, [{ kind: "modResource", resource: "legitimacy", delta: 1 }]);
-  }
-  s = markSlotResolvedWithNineYearsWarPersistence(s, slot, true);
-  s = appendActionLog(s, {
-    kind: "eventNineYearsWarAttempt",
-    slot,
-    method,
-    fundingPaid,
-    roll,
-    outcome: roll <= 5 ? "stalemate" : "minorGains",
-  });
-  return enforceLegitimacy(s);
 }
 
 function canScriptedAttack(state: GameState, slot: SlotId): boolean {
@@ -414,99 +285,6 @@ function performLocalWarAppease(state: GameState, slot: SlotId): GameState {
   });
 }
 
-function performSuccessionCrisisPick(state: GameState, slot: SlotId, pay: boolean): GameState {
-  const ev = state.slots[slot];
-  if (!ev || ev.resolved || ev.templateId !== "successionCrisis" || state.levelId !== THIRD_MANDATE_LEVEL_ID) {
-    return state;
-  }
-  let s = state;
-  const fundingPaid = pay ? 3 : 0;
-  const successionDelta: 1 | -1 = pay ? 1 : -1;
-  if (pay) {
-    if (s.resources.funding < 3) return state;
-    s = { ...s, resources: { ...s.resources, funding: s.resources.funding - 3 } };
-    s = applyEffects(s, [{ kind: "modSuccessionTrack", delta: 1 }]);
-  } else {
-    s = applyEffects(s, [{ kind: "modSuccessionTrack", delta: -1 }]);
-  }
-  const crisisLog = {
-    kind: "eventSuccessionCrisisChoice" as const,
-    slot,
-    pay,
-    fundingPaid,
-    successionDelta,
-  };
-  if (s.outcome !== "playing") {
-    return appendActionLog(s, crisisLog);
-  }
-  s = completeSuccessionCrisisAndRevealOpponent(s, slot);
-  s = appendActionLog(s, crisisLog);
-  return appendInflationActivationLogIfNeeded(state, s);
-}
-
-function performUtrechtTreatyPick(state: GameState, slot: SlotId, endWar: boolean): GameState {
-  const ev = state.slots[slot];
-  if (!ev || ev.resolved || ev.templateId !== "utrechtTreaty" || state.levelId !== THIRD_MANDATE_LEVEL_ID) {
-    return state;
-  }
-  if (endWar) {
-    return stateAfterUtrechtTreatyEndsWar(state, slot);
-  }
-  return state;
-}
-
-function performDualFrontCrisisPick(state: GameState, slot: SlotId, expandWar: boolean): GameState {
-  const ev = state.slots[slot];
-  if (!ev || ev.resolved || ev.templateId !== "dualFrontCrisis" || state.levelId !== THIRD_MANDATE_LEVEL_ID) {
-    return state;
-  }
-  let s = state;
-  if (expandWar) {
-    s = applyEffects(s, [
-      { kind: "modOpponentStrength", delta: 1 },
-      { kind: "modSuccessionTrack", delta: 1 },
-      { kind: "modResource", resource: "legitimacy", delta: -1 },
-      { kind: "addCardsToDeck", templateId: "fiscalBurden", count: 3 },
-    ]);
-  } else {
-    s = applyEffects(s, [
-      { kind: "modOpponentStrength", delta: 1 },
-      { kind: "modSuccessionTrack", delta: -3 },
-    ]);
-  }
-  if (s.outcome !== "playing") return s;
-  s = enforceLegitimacy(s);
-  if (s.outcome !== "playing") return s;
-  s = markSlotResolvedWithLeagueProgress(s, slot);
-  return appendActionLog(s, { kind: "eventDualFrontCrisisChoice", slot, expandWar });
-}
-
-function performLouisXivLegacyPick(state: GameState, slot: SlotId, directRule: boolean): GameState {
-  const ev = state.slots[slot];
-  if (!ev || ev.resolved || ev.templateId !== "louisXivLegacy1715" || state.levelId !== THIRD_MANDATE_LEVEL_ID) {
-    return state;
-  }
-  let s = state;
-  if (directRule) {
-    s = applyEffects(s, [
-      { kind: "modResource", resource: "power", delta: 1 },
-      { kind: "addCardsToDeck", templateId: "fiscalBurden", count: 3 },
-      { kind: "addPlayerStatus", templateId: "minorRegencyDoubt", turns: 99 },
-    ]);
-  } else {
-    s = applyEffects(s, [
-      { kind: "modResource", resource: "power", delta: -1 },
-      { kind: "modResource", resource: "legitimacy", delta: -1 },
-      { kind: "addCardsToDeck", templateId: "fiscalBurden", count: 1 },
-    ]);
-  }
-  if (s.outcome !== "playing") return s;
-  s = enforceLegitimacy(s);
-  if (s.outcome !== "playing") return s;
-  s = markSlotResolvedWithLeagueProgress(s, slot);
-  return appendActionLog(s, { kind: "eventLouisXivLegacyChoice", slot, directRule });
-}
-
 /** After funding is cleared: keep chosen cards, discard the rest, then EOY penalties, then win / time / next year. */
 function completeYearAfterRetention(state: GameState, keepIds: readonly string[]): GameState {
   const retainedIds = keepIds.filter((id) => !isTemporaryCardInstance(state, id));
@@ -532,106 +310,6 @@ function completeYearAfterRetention(state: GameState, keepIds: readonly string[]
   s = { ...s, turn: s.turn + 1 };
   s = beginYear(s);
   return s;
-}
-
-function performFundSolve(state: GameState, slot: SlotId): GameState {
-  const ev = state.slots[slot];
-  if (!ev || ev.resolved) return state;
-  const tmpl = getEventTemplate(ev.templateId);
-  const fundingAmount = getEventSolveFundingAmount(state, ev.templateId);
-  let s = state;
-  if (tmpl.solve.kind === "funding" || tmpl.solve.kind === "fundingTreasuryQuarterCeil") {
-    if (fundingAmount === null) return state;
-    s = {
-      ...s,
-      resources: { ...s.resources, funding: s.resources.funding - fundingAmount },
-    };
-  } else if (tmpl.solve.kind === "fundingOrCrackdown") {
-    if (fundingAmount === null) return state;
-    s = {
-      ...s,
-      resources: { ...s.resources, funding: s.resources.funding - fundingAmount },
-    };
-  } else {
-    return state;
-  }
-  if (ev.templateId === "nineYearsWar") {
-    return attemptNineYearsWarCampaign(s, slot, "funding", fundingAmount ?? 0);
-  }
-  if (ev.templateId === "localizedSuccessionWar") {
-    const [rng, roll] = rngNext(s.rng);
-    s = { ...s, rng };
-    const deltas = [-1, 0, 1, 2] as const;
-    const idx = Math.min(3, Math.floor(roll * 4));
-    const successionDelta = deltas[idx]!;
-    s = applyEffects(s, [{ kind: "modSuccessionTrack", delta: successionDelta }]);
-    if (s.outcome !== "playing") return appendInflationActivationLogIfNeeded(state, s);
-    s = enforceLegitimacy(s);
-    if (s.outcome !== "playing") return appendInflationActivationLogIfNeeded(state, s);
-    s = markSlotResolvedWithLeagueProgress(s, slot);
-    s = appendActionLog(s, {
-      kind: "eventLocalizedSuccessionWarResolve",
-      slot,
-      fundingPaid: fundingAmount ?? 0,
-      successionDelta,
-    });
-    return appendInflationActivationLogIfNeeded(state, s);
-  }
-  let treasuryGain = 0;
-  if (tmpl.onFundSolveEffects && tmpl.onFundSolveEffects.length > 0) {
-    for (const effect of tmpl.onFundSolveEffects) {
-      if (effect.kind === "modResource" && effect.resource === "treasuryStat" && effect.delta > 0) {
-        treasuryGain += effect.delta;
-      }
-    }
-    s = applyEffects(s, tmpl.onFundSolveEffects);
-  }
-  if (
-    (ev.templateId === "bavarianCourtRealignment" || ev.templateId === "imperialElectorsMood") &&
-    s.outcome === "playing"
-  ) {
-    s = opponentImmediateExtraDraw(s, 1);
-  }
-  if (ev.templateId === "nymwegenSettlement") {
-    s = {
-      ...s,
-      nymwegenSettlementAchieved: true,
-    };
-  }
-  if (ev.templateId === "ryswickPeace") {
-    s = {
-      ...s,
-      europeAlert: false,
-      europeAlertProgress: 0,
-    };
-    const removed = removeEventsByTemplate(s, "nineYearsWar");
-    s = removed.state;
-    if (removed.removedCount > 0) {
-      s = appendActionLog(s, { kind: "eventNineYearsWarEndedByRyswick", removedCount: removed.removedCount });
-    }
-  }
-  s = markSlotResolvedWithLeagueProgress(s, slot);
-  s = enforceLegitimacy(s);
-  const fundingPaid =
-    tmpl.solve.kind === "funding" ||
-    tmpl.solve.kind === "fundingTreasuryQuarterCeil" ||
-    tmpl.solve.kind === "fundingOrCrackdown"
-      ? (fundingAmount ?? 0)
-      : 0;
-  s = appendActionLog(s, {
-    kind: "eventFundSolved",
-    slot,
-    templateId: ev.templateId,
-    fundingPaid,
-    treasuryGain,
-  });
-  return s;
-}
-
-function addUniqueStatus(state: GameState, templateId: "religiousTolerance" | "huguenotContainment"): GameState {
-  const existing = state.playerStatuses.find((s) => s.templateId === templateId);
-  if (existing) return state;
-  return applyEffects(state, [{ kind: "addPlayerStatus", templateId, turns: 99 }]);
 }
 
 export function gameReducer(state: GameState, action: GameAction): GameState {
@@ -688,18 +366,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
         });
       }
       let s = applyPlayedCardEffects(paid, inst.templateId);
-      if (inst.templateId === "grandAllianceInfiltrationDiplomacy") {
-        s = { ...s, opponentCostDiscountThisTurn: 1 };
-      }
-      if (inst.templateId === "grainRelief") {
-        s = resolveFirstUnresolvedEventByTemplate(s, "risingGrainPrices");
-      }
-      if (inst.templateId === "diplomaticCongress") {
-        s = addCardsToHand(s, "diplomaticIntervention", 1);
-      }
-      if (inst.templateId === "jesuitCollege") {
-        s = resolveFirstUnresolvedEventByTemplate(s, "jansenistTension");
-      }
+      s = applySunkingPlayCardExtras(s, inst.templateId);
       s = removeHand(s, id);
       const consumed = consumeLimitedUseCard(s, id);
       s = consumed.state;
@@ -722,33 +389,10 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       if (!canFundSolve(state, action.slot)) return state;
       return appendInflationActivationLogIfNeeded(state, performFundSolve(state, action.slot));
     }
-    case "PICK_NANTES_TOLERANCE": {
-      if (state.outcome !== "playing" || state.phase !== "action" || state.pendingInteraction) return state;
-      const ev = state.slots[action.slot];
-      if (!ev || ev.resolved || ev.templateId !== "revocationNantes") return state;
-      let s: GameState = applyEffects(state, [{ kind: "modResource", resource: "legitimacy", delta: -1 }]);
-      s = addUniqueStatus(s, "religiousTolerance");
-      s = markSlotResolved(s, action.slot);
-      s = appendActionLog(s, { kind: "info", infoKey: "nantesPolicy.toleranceNoFontainebleau" });
-      s = { ...s, nantesPolicyCarryover: "tolerance" };
-      s = enforceLegitimacy(s);
-      return appendInflationActivationLogIfNeeded(state, s);
-    }
+    case "PICK_NANTES_TOLERANCE":
     case "PICK_NANTES_CRACKDOWN": {
       if (state.outcome !== "playing" || state.phase !== "action" || state.pendingInteraction) return state;
-      const ev = state.slots[action.slot];
-      if (!ev || ev.resolved || ev.templateId !== "revocationNantes") return state;
-      let s: GameState = addUniqueStatus(state, "huguenotContainment");
-      s = { ...s, huguenotResurgenceCounter: 0 };
-      s = applyEffects(s, [{ kind: "addCardsToDeck", templateId: "suppressHuguenots", count: 3 }]);
-      // Resync `turnsRemaining` to the live count of suppressHuguenots cards so
-      // the status's number is always equal to the cards currently in play
-      // (e.g. if some prior crackdown branch already added cards/status).
-      s = enforceHuguenotContainmentInvariant(s);
-      s = markSlotResolved(s, action.slot);
-      s = appendActionLog(s, { kind: "info", infoKey: "nantesPolicy.crackdownFontainebleauIssued" });
-      s = { ...s, nantesPolicyCarryover: "crackdown" };
-      return appendInflationActivationLogIfNeeded(state, s);
+      return state;
     }
     case "PICK_LOCAL_WAR_ATTACK": {
       if (state.outcome !== "playing" || state.phase !== "action" || state.pendingInteraction) return state;
@@ -843,24 +487,12 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       if (action.keepIds.length > retentionCapacity(state)) return state;
       return appendInflationActivationLogIfNeeded(state, completeYearAfterRetention(state, action.keepIds));
     }
-    case "PICK_SUCCESSION_CRISIS": {
-      if (state.outcome !== "playing" || state.phase !== "action" || state.pendingInteraction) return state;
-      return appendInflationActivationLogIfNeeded(state, performSuccessionCrisisPick(state, action.slot, action.pay));
-    }
-    case "PICK_UTRECHT_TREATY": {
-      if (state.outcome !== "playing" || state.phase !== "action" || state.pendingInteraction) return state;
-      return appendInflationActivationLogIfNeeded(state, performUtrechtTreatyPick(state, action.slot, action.endWar));
-    }
-    case "PICK_DUAL_FRONT_CRISIS": {
-      if (state.outcome !== "playing" || state.phase !== "action" || state.pendingInteraction) return state;
-      return appendInflationActivationLogIfNeeded(
-        state,
-        performDualFrontCrisisPick(state, action.slot, action.expandWar),
-      );
-    }
+    case "PICK_SUCCESSION_CRISIS":
+    case "PICK_UTRECHT_TREATY":
+    case "PICK_DUAL_FRONT_CRISIS":
     case "PICK_LOUIS_XIV_LEGACY": {
       if (state.outcome !== "playing" || state.phase !== "action" || state.pendingInteraction) return state;
-      return appendInflationActivationLogIfNeeded(state, performLouisXivLegacyPick(state, action.slot, action.directRule));
+      return state;
     }
     default: {
       const _never: never = action;

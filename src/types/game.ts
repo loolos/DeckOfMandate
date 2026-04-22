@@ -309,6 +309,7 @@ export type RngSerialized = {
   state: number;
 };
 
+/** Sun King campaign–specific keys are catalogued in `./sunKingCampaignState.ts` for future multi-campaign splits. */
 export type GameState = {
   /** Active level; drives turn limit, win targets, calendar, and starting layout on new runs. */
   levelId: LevelId;

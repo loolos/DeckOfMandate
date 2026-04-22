@@ -8,6 +8,8 @@ Deck of Mandate is a fully client-side, single-player, turn-based strategy card 
 
 Playable **levels** load via `src/levels/registerAll.ts`, which discovers `src/levels/<campaignId>/registerCampaign.ts` (one file per campaign folder). Each campaign’s `registerCampaign.ts` merges chapter modules from that folder (e.g. `sunking/chapters/*.ts`). **Template-related TypeScript types** (`CardTemplateId`, events, effects, tags, statuses) live in `src/levels/types/`. Sun King **card/event/status template data** lives under `src/levels/sunking/templates/` (re-exported from `src/data/`). Campaign i18n is merged from `src/levels/sunking/` (e.g. `sunkingLocales.ts`, `locales/*`). Vitest preloads the same registration through `src/test/setupLevels.ts`.
 
+Several files under `src/logic/` are **campaign façades**: they only re-export APIs from `src/levels/campaignLogicBundle.ts` (which merges the active campaign pack, today Sun King). Examples include `eventTags.ts`, `opponentHabsburg.ts`, `cardCost.ts`, `turnFlow.ts`, and `antiFrenchSentiment.ts`. Content-level and wire-level tests for those features generally live next to the campaign under `src/levels/sunking/logic/*.test.ts`; `src/logic/*.test.ts` keeps thin smoke tests where a stable framework import path is still useful.
+
 ### Running the app
 
 Standard npm scripts are defined in `package.json`:

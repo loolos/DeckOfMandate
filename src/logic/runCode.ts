@@ -1,13 +1,11 @@
 import {
-  buildLevel2StateFromDraft,
-  createContinuityLevel2Draft,
-  type Level2StartDraft,
-} from "../app/level2Transition";
-import {
   applyRemovedIndicesToLevel3Draft,
+  buildLevel2StateFromDraft,
   buildLevel3StateFromDraft,
+  createContinuityLevel2Draft,
   createContinuityLevel3Draft,
-} from "../app/level3Transition";
+  type Level2StartDraft,
+} from "../app/levelTransitions";
 import { gameReducer, type GameAction } from "../app/gameReducer";
 import { createInitialState } from "../app/initialState";
 import { getChapter2StandaloneDraft } from "../data/levelBootstrap";
@@ -83,10 +81,15 @@ const LEVEL_ID_BY_BIT_V1: readonly LevelId[] = (() => {
     return b === "initial" || b === "chapter2Standalone";
   });
   if (ids.length >= 2) return [ids[0]!, ids[1]!];
-  return ["firstMandate", "secondMandate"];
+  return [];
 })();
 
 function bitToLevelV1(bit: 0 | 1): LevelId {
+  if (LEVEL_ID_BY_BIT_V1.length < 2) {
+    throw new Error(
+      "runCode: v1 session cannot be decoded without at least two registered levels (initial + chapter2Standalone)",
+    );
+  }
   return LEVEL_ID_BY_BIT_V1[bit]!;
 }
 
