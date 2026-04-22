@@ -1,10 +1,10 @@
 import { messagesEnCore } from "./en.core";
-import { sunkingMessagesEn } from "../levels/sunking/sunkingLocales";
+import { campaignMessagesEn } from "../levels/load";
 
 /** Merged English bundle: framework core + Sun King campaign (see `src/levels/sunking`). */
 export const messagesEn = {
   ...messagesEnCore,
-  ...sunkingMessagesEn,
+  ...campaignMessagesEn,
 };
 
 export type MessageKey = keyof typeof messagesEn;

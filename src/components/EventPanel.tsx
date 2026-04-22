@@ -220,7 +220,7 @@ export function EventPanel({
                         logEventTag("eventTag.historical");
                       }}
                     >
-                      {t("ui.historical")}
+                      {t("ui.historical" as MessageKey)}
                     </button>
                   ) : tmpl.harmful ? (
                     <button
@@ -231,7 +231,7 @@ export function EventPanel({
                         logEventTag("eventTag.harmful");
                       }}
                     >
-                      {t("ui.harmful")}
+                      {t("ui.harmful" as MessageKey)}
                     </button>
                   ) : (
                     <button
@@ -242,7 +242,7 @@ export function EventPanel({
                         logEventTag("eventTag.opportunity");
                       }}
                     >
-                      {t("ui.opportunity")}
+                      {t("ui.opportunity" as MessageKey)}
                     </button>
                   )}
                   {tmpl.crisisPersistence === "continued" ? (
@@ -256,9 +256,9 @@ export function EventPanel({
                     >
                       {ev.remainingTurns != null
                         ? tmpl.id === "leagueOfAugsburg"
-                          ? t("ui.remainingTurns", { n: ev.remainingTurns })
-                          : t("ui.continuedTurns", { n: ev.remainingTurns })
-                        : t("ui.continued")}
+                          ? t("ui.remainingTurns" as MessageKey, { n: ev.remainingTurns })
+                          : t("ui.continuedTurns" as MessageKey, { n: ev.remainingTurns })
+                        : t("ui.continued" as MessageKey)}
                     </button>
                   ) : null}
                   {ev.resolved ? (
@@ -270,7 +270,7 @@ export function EventPanel({
                         logEventTag("eventTag.resolved");
                       }}
                     >
-                      {t("ui.resolved")}
+                      {t("ui.resolved" as MessageKey)}
                     </button>
                   ) : null}
                 </div>
@@ -353,6 +353,26 @@ export function EventPanel({
                         onClick={() => dispatch({ type: "PICK_DUAL_FRONT_CRISIS", slot, expandWar: true })}
                       >
                         {t("ui.dualFrontCrisis.escalate")}
+                      </button>
+                    </>
+                  ) : null}
+                  {!ev.resolved && solveKind === "louisXivLegacyChoice" ? (
+                    <>
+                      <button
+                        type="button"
+                        className={styles.btn}
+                        disabled={Boolean(state.pendingInteraction)}
+                        onClick={() => dispatch({ type: "PICK_LOUIS_XIV_LEGACY", slot, directRule: false })}
+                      >
+                        {t("ui.louisXivLegacy.regencyCustody")}
+                      </button>
+                      <button
+                        type="button"
+                        className={`${styles.btn} ${styles.btnPrimary}`}
+                        disabled={Boolean(state.pendingInteraction)}
+                        onClick={() => dispatch({ type: "PICK_LOUIS_XIV_LEGACY", slot, directRule: true })}
+                      >
+                        {t("ui.louisXivLegacy.youngKingDirectRule")}
                       </button>
                     </>
                   ) : null}

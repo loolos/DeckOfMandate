@@ -85,6 +85,9 @@ function eventPayChips(tmpl: EventTemplate): string {
   if (sk.kind === "dualFrontCrisisChoice") {
     return "—";
   }
+  if (sk.kind === "louisXivLegacyChoice") {
+    return "—";
+  }
   return `🛡️ · ${getResourceIcon("funding")}1`;
 }
 
@@ -200,6 +203,21 @@ export function buildEventQuickFrameRows(tmpl: EventTemplate): QuickFrameRow[] {
       {
         labelKey: "ui.quickFrame.ifSolved",
         value: "⚖️−3 · 👊+1 │ ⚖️+1 · 👑−1 · ⛓️+3 · 👊+1",
+      },
+      {
+        labelKey: "ui.quickFrame.yearEnd",
+        value: yEnd ?? "—",
+        muted: yEnd === "∅",
+      },
+    ];
+  }
+  if (tmpl.id === "louisXivLegacy1715") {
+    const yEnd = eventYearEndChips(tmpl);
+    return [
+      { labelKey: "ui.quickFrame.pay", value: "—" },
+      {
+        labelKey: "ui.quickFrame.ifSolved",
+        value: `Regency custody: ${getResourceIcon("power")}-1 · ${getResourceIcon("legitimacy")}-1 · 🧩+1 │ Young king direct rule: ${getResourceIcon("power")}+1 · 🧩+3 · 📜−1×99⌛`,
       },
       {
         labelKey: "ui.quickFrame.yearEnd",

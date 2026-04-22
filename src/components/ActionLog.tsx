@@ -304,6 +304,17 @@ function renderEntry(e: ActionLogEntry, t: (key: MessageKey, vars?: Record<strin
         </div>
       );
     }
+    case "eventLouisXivLegacyChoice": {
+      const key = e.directRule ? "log.eventLouisXivLegacy.youngKingDirectRule" : "log.eventLouisXivLegacy.regencyCustody";
+      return (
+        <div className={styles.actionLogHead}>
+          {t(key as MessageKey, {
+            turn: e.turn,
+            event: eventLabelWithIcon("louisXivLegacy1715", t(eventTitleKey("louisXivLegacy1715"))),
+          })}
+        </div>
+      );
+    }
     case "eventLocalizedSuccessionWarResolve": {
       const signed = e.successionDelta > 0 ? `+${e.successionDelta}` : String(e.successionDelta);
       const narrativeKey: MessageKey =

@@ -113,6 +113,12 @@ export const levelContent: LevelContent = {
       presenceEndYear: 1708,
       overflowSlot: "F",
     },
+    {
+      templateId: "louisXivLegacy1715",
+      presenceStartYear: 1715,
+      presenceEndYear: 1715,
+      overflowSlot: "G",
+    },
   ],
   opening: {
     turnOnePrefix: [],

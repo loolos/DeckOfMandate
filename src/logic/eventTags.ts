@@ -1,16 +1,1 @@
-import type { EventTemplateId } from "../levels/types/event";
-
-const HISTORICAL_EVENT_IDS = new Set<EventTemplateId>([
-  "warOfDevolution",
-  "expansionRemembered",
-  "cautiousCrown",
-  "nymwegenSettlement",
-  "revocationNantes",
-  "leagueOfAugsburg",
-  "nineYearsWar",
-  "ryswickPeace",
-]);
-
-export function isHistoricalEventTemplateId(id: EventTemplateId): boolean {
-  return HISTORICAL_EVENT_IDS.has(id);
-}
+export { isHistoricalEventTemplateId } from "../levels/sunking/logic/eventTags";

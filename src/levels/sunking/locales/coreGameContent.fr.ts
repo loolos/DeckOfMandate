@@ -100,6 +100,9 @@ export const sunkingCoreGameContentFr = {
   "status.legitimacyCrisis.name": "Crise de légitimité",
   "status.legitimacyCrisis.history":
     "Forcer la succession hors protocole accélère la course au trône, mais érode ensuite durablement la crédibilité royale.",
+  "status.minorRegencyDoubt.name": "Doute de minorité",
+  "status.minorRegencyDoubt.history":
+    "Après la mort de Louis XIV, l'autorité d'un roi mineur nourrit les doutes de cour et ralentit la chaîne d'exécution chaque année.",
   "event.jansenistTension.name": "Controverse janséniste",
   "event.jansenistTension.desc":
     "Depuis Richelieu, le rigorisme port-royaliste et l'autorité épiscopale heurtent Rome et Versailles. Les débats sur la grâce et le salut réactivent les réseaux jansénistes et opposent évêques, magistrats et pouvoir royal. Payez 2 Financement pour inspections ecclésiastiques et apaisement public, sinon perdez 1 Légitimité.",

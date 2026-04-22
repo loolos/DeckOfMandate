@@ -39,6 +39,10 @@ export const messagesFrCore: Record<keyof typeof messagesEnCore, string> = {
   "ui.dualFrontCrisis.concede": "Céder provisoirement — piste −3 ; budget adverse +1",
   "ui.dualFrontCrisis.escalate":
     "Élargir la guerre — piste +1, légitimité −1, +3 Charges fiscales ; budget adverse +1",
+  "ui.louisXivLegacy.regencyCustody":
+    "Régence de garde — Pouvoir −1, Légitimité −1, ajouter 1 Fardeau fiscal",
+  "ui.louisXivLegacy.youngKingDirectRule":
+    "Gouvernement direct du jeune roi — Pouvoir +1, +3 Fardeaux fiscaux, gagne Doute de minorité",
   "ui.successionTrack": "Piste de succession",
   "ui.opponentHabsburg": "Adversaire : Habsbourg",
   "ui.opponentStrength": "Budget adversaire",
@@ -46,13 +50,6 @@ export const messagesFrCore: Record<keyof typeof messagesEnCore, string> = {
   "ui.opponentEvent.lastPlayCost": "Coût cumulé fin d'année précédente : {pips} ({n})",
   "ui.opponentEvent.lastPlayCombinedFx": "Total fin d'année précédente : {fx}",
   "ui.opponentEvent.lastPlayCardBlurb": "{history} En jeu : {fx}",
-  "ui.resolved": "Résolu",
-  "ui.harmful": "Néfaste",
-  "ui.opportunity": "Opportunité",
-  "ui.historical": "Historique",
-  "ui.continued": "Continu",
-  "ui.continuedTurns": "Continu {n}",
-  "ui.remainingTurns": "Restant {n}",
   "ui.deck": "Pioche",
   "ui.discard": "Défausse",
   "ui.quickFrame.cost": "Coût",
@@ -191,8 +188,6 @@ export const messagesFrCore: Record<keyof typeof messagesEnCore, string> = {
     "[Tour {turn}] Vous choisissez la tolérance religieuse : la couronne n'édicte pas, cette année, une révocation générale de type Fontainebleau. La tension immédiate baisse, mais les conflits confessionnels reviendront.",
   "log.info.nantesPolicy.crackdownFontainebleauIssued":
     "[Tour {turn}] Vous choisissez la répression sévère : la monarchie bascule vers une ligne de type édit de Fontainebleau, retire des protections aux protestants et durcit les conversions forcées. L'obéissance progresse à court terme, mais le coût politique augmente.",
-  "log.info.eventTag.historical":
-    "[Tour {turn}] Note de tag « Historique » : cet événement renvoie à un fait historique réel et ce tag n'ajoute aucun effet de jeu.",
   "log.info.cardTag.extra":
     "[Tour {turn}] Note de tag « Supplémentaire » : cette carte est ajoutée par d'autres effets, exclue du réajustement inter-chapitre et retirée à la fin du chapitre.",
   "log.info.cardTag.consume":
@@ -215,6 +210,10 @@ export const messagesFrCore: Record<keyof typeof messagesEnCore, string> = {
     "[Tour {turn}] {event} — céder provisoirement ; piste −3 ; budget adverse +1.",
   "log.eventDualFrontCrisis.escalate":
     "[Tour {turn}] {event} — élargir la guerre ; piste +1, légitimité −1, +3 Charges fiscales ; budget adverse +1.",
+  "log.eventLouisXivLegacy.regencyCustody":
+    "[Tour {turn}] {event} — choix « Régence de garde » ; Pouvoir −1, Légitimité −1, et +1 Fardeau fiscal.",
+  "log.eventLouisXivLegacy.youngKingDirectRule":
+    "[Tour {turn}] {event} — choix « Gouvernement direct du jeune roi » ; Pouvoir +1, +3 Fardeaux fiscaux, et gain de Doute de minorité.",
   "log.opponentHabsburgPlay.cardsLine": "Jouées : {cards}.",
   "log.eventSuccessionCrisisChoice.payTitle":
     "[Tour {turn}] {event} — payé {paid} {funding} ; {track} +1.",

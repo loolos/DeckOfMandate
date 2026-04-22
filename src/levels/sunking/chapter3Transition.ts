@@ -1,6 +1,6 @@
 import { getCardTemplate } from "../../data/cards";
 import { getLevelContent, getLevelDef } from "../../data/levelRegistry";
-import { appendActionLog } from "../../logic/actionLog";
+import { appendActionLog } from "./logic/actionLog";
 import { insertCardsIntoDeckAtRandomPositions } from "../../logic/cardRuntime";
 import { createInitialCardUseState } from "../../logic/cardUsage";
 import { THIRD_MANDATE_LEVEL_ID } from "../../logic/thirdMandateConstants";

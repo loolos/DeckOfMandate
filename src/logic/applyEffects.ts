@@ -5,6 +5,10 @@ import type { GameState } from "../types/game";
 import { THIRD_MANDATE_LEVEL_ID } from "./thirdMandateConstants";
 import type { PlayerStatusInstance } from "../levels/types/status";
 import { appendActionLog } from "./actionLog";
+import {
+  canApplyOpponentHandDiscardNow,
+  enforceSuccessionImmediateOutcomeHook,
+} from "../levels/sunking/logic/effectHooks";
 import { addGeneratedCards, applyOnDrawCardEffects } from "./cardRuntime";
 import { applyInflationFromDeckRefill } from "./cardCost";
 import { drawUpToPower } from "./draw";
@@ -19,18 +23,7 @@ export function enforceLegitimacy(s: GameState): GameState {
 
 /** Instant win/loss on succession track at ±10 (chapter 3). */
 export function enforceSuccessionImmediateOutcome(s: GameState): GameState {
-  if (s.levelId !== THIRD_MANDATE_LEVEL_ID || s.outcome !== "playing") return s;
-  if (s.resources.power <= 0 || s.resources.legitimacy <= 0) {
-    return { ...s, phase: "gameOver", outcome: "defeatLegitimacy" };
-  }
-  if (s.warEnded) return s;
-  if (s.successionTrack >= 10) {
-    return { ...s, phase: "gameOver", outcome: "victory", successionOutcomeTier: null };
-  }
-  if (s.successionTrack <= -10) {
-    return { ...s, phase: "gameOver", outcome: "defeatSuccession", successionOutcomeTier: null };
-  }
-  return s;
+  return enforceSuccessionImmediateOutcomeHook(s);
 }
 
 export function applyEffect(state: GameState, e: Effect): GameState {
@@ -95,7 +88,7 @@ export function applyEffect(state: GameState, e: Effect): GameState {
     case "opponentHandDiscardNow": {
       const n = Math.max(0, Math.floor(e.count));
       if (n === 0) return state;
-      if (state.levelId !== THIRD_MANDATE_LEVEL_ID || !state.opponentHabsburgUnlocked || state.warEnded) {
+      if (!canApplyOpponentHandDiscardNow(state)) {
         return state;
       }
       if (state.opponentHand.length === 0) return state;

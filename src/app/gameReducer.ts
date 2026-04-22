@@ -46,7 +46,8 @@ export type GameAction =
   | { type: "CONFIRM_RETENTION"; keepIds: readonly string[] }
   | { type: "PICK_SUCCESSION_CRISIS"; slot: SlotId; pay: boolean }
   | { type: "PICK_UTRECHT_TREATY"; slot: SlotId; endWar: boolean }
-  | { type: "PICK_DUAL_FRONT_CRISIS"; slot: SlotId; expandWar: boolean };
+  | { type: "PICK_DUAL_FRONT_CRISIS"; slot: SlotId; expandWar: boolean }
+  | { type: "PICK_LOUIS_XIV_LEGACY"; slot: SlotId; directRule: boolean };
 
 function removeHand(state: GameState, instanceId: string): GameState {
   return { ...state, hand: state.hand.filter((id) => id !== instanceId) };
@@ -479,6 +480,32 @@ function performDualFrontCrisisPick(state: GameState, slot: SlotId, expandWar: b
   return appendActionLog(s, { kind: "eventDualFrontCrisisChoice", slot, expandWar });
 }
 
+function performLouisXivLegacyPick(state: GameState, slot: SlotId, directRule: boolean): GameState {
+  const ev = state.slots[slot];
+  if (!ev || ev.resolved || ev.templateId !== "louisXivLegacy1715" || state.levelId !== THIRD_MANDATE_LEVEL_ID) {
+    return state;
+  }
+  let s = state;
+  if (directRule) {
+    s = applyEffects(s, [
+      { kind: "modResource", resource: "power", delta: 1 },
+      { kind: "addCardsToDeck", templateId: "fiscalBurden", count: 3 },
+      { kind: "addPlayerStatus", templateId: "minorRegencyDoubt", turns: 99 },
+    ]);
+  } else {
+    s = applyEffects(s, [
+      { kind: "modResource", resource: "power", delta: -1 },
+      { kind: "modResource", resource: "legitimacy", delta: -1 },
+      { kind: "addCardsToDeck", templateId: "fiscalBurden", count: 1 },
+    ]);
+  }
+  if (s.outcome !== "playing") return s;
+  s = enforceLegitimacy(s);
+  if (s.outcome !== "playing") return s;
+  s = markSlotResolvedWithLeagueProgress(s, slot);
+  return appendActionLog(s, { kind: "eventLouisXivLegacyChoice", slot, directRule });
+}
+
 /** After funding is cleared: keep chosen cards, discard the rest, then EOY penalties, then win / time / next year. */
 function completeYearAfterRetention(state: GameState, keepIds: readonly string[]): GameState {
   const retainedIds = keepIds.filter((id) => !isTemporaryCardInstance(state, id));
@@ -827,6 +854,10 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
         state,
         performDualFrontCrisisPick(state, action.slot, action.expandWar),
       );
+    }
+    case "PICK_LOUIS_XIV_LEGACY": {
+      if (state.outcome !== "playing" || state.phase !== "action" || state.pendingInteraction) return state;
+      return appendInflationActivationLogIfNeeded(state, performLouisXivLegacyPick(state, action.slot, action.directRule));
     }
     default: {
       const _never: never = action;

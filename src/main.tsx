@@ -1,5 +1,4 @@
-import "./levels/registerAll";
-import "./levels/loadAllTemplateModules";
+import "./levels/load";
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { Game } from "./app/Game";

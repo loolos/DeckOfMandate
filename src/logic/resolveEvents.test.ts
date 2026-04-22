@@ -249,6 +249,26 @@ describe("resolveEndOfYearPenalties", () => {
     expect(s1.utrechtSettlementTier).toBe("bourbon");
   });
 
+  it("third mandate unresolved louis xiv legacy applies regency-custody fallback at year end", () => {
+    const base = createInitialState(5_103, "thirdMandate");
+    const beforeCardCount = Object.keys(base.cardsById).length;
+    const s0 = {
+      ...base,
+      resources: { ...base.resources, power: 8, legitimacy: 9 },
+      slots: {
+        ...EMPTY_EVENT_SLOTS,
+        A: { instanceId: "e_legacy", templateId: "louisXivLegacy1715" as const, resolved: false },
+      },
+    };
+    const s1 = resolveEndOfYearPenalties(s0);
+    const burdenCount = Object.values(s1.cardsById).filter((c) => c.templateId === "fiscalBurden").length;
+    expect(s1.resources.power).toBe(7);
+    expect(s1.resources.legitimacy).toBe(8);
+    expect(Object.keys(s1.cardsById).length).toBe(beforeCardCount + 1);
+    expect(burdenCount).toBe(1);
+    expect(s1.slots.A).toBeNull();
+  });
+
   it("nine years war still adds fiscal burden at year end when present", () => {
     const base = createInitialState(5_005, "secondMandate");
     const beforeCards = Object.keys(base.cardsById).length;

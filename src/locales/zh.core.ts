@@ -33,6 +33,8 @@ export const messagesZhCore = {
   "ui.utrechtEndWar": "结束王位继承战争（和约）",
   "ui.dualFrontCrisis.concede": "暂时让步 — 王位争夺进度 −3；对手费用上限 +1",
   "ui.dualFrontCrisis.escalate": "扩大战争 — 王位争夺进度 +1，合法性 −1，向抽牌堆加入 3 张财政负担；对手费用上限 +1",
+  "ui.louisXivLegacy.regencyCustody": "摄政监国 — 权力 −1、合法性 −1，加入 1 张财政负担",
+  "ui.louisXivLegacy.youngKingDirectRule": "少主亲政 — 权力 +1，加入 3 张财政负担，并获得「主少国疑」",
   "ui.successionTrack": "王位争夺进度",
   "ui.successionStatus.title": "西班牙王位继承之争",
   "ui.successionStatus.detail":
@@ -48,13 +50,6 @@ export const messagesZhCore = {
   "ui.opponentEvent.lastPlayCardBlurb": "{history} 局内效果：{fx}",
   "ui.opponentHabsburg": "对手：哈布斯堡",
   "ui.opponentStrength": "对手费用上限",
-  "ui.resolved": "已处理",
-  "ui.harmful": "有害",
-  "ui.opportunity": "机遇",
-  "ui.historical": "史实",
-  "ui.continued": "持续",
-  "ui.continuedTurns": "持续{n}",
-  "ui.remainingTurns": "剩余{n}",
   "ui.deck": "牌库",
   "ui.discard": "弃牌堆",
   "ui.quickFrame.cost": "费用",
@@ -192,6 +187,10 @@ export const messagesZhCore = {
     "[第 {turn} 年] {event} — 选择暂时让步；王位争夺进度 −3；对手费用上限 +1。",
   "log.eventDualFrontCrisis.escalate":
     "[第 {turn} 年] {event} — 选择扩大战争；王位争夺进度 +1，合法性 −1，向抽牌堆加入 3 张财政负担；对手费用上限 +1。",
+  "log.eventLouisXivLegacy.regencyCustody":
+    "[第 {turn} 年] {event} — 选择「摄政监国」；权力 −1、合法性 −1，并向抽牌堆加入 1 张财政负担。",
+  "log.eventLouisXivLegacy.youngKingDirectRule":
+    "[第 {turn} 年] {event} — 选择「少主亲政」；权力 +1，并向抽牌堆加入 3 张财政负担，获得「主少国疑」。",
   "log.eventSuccessionCrisisChoice.payTitle":
     "[第 {turn} 年] {event} — 已支付 {paid} {funding}；{track} +1。",
   "log.eventSuccessionCrisisChoice.payHistory":
@@ -284,13 +283,6 @@ export const messagesZhCore = {
     "[第 {turn} 年] 你选择了宗教宽容路线：宫廷暂不颁布 1685 年《枫丹白露敕令》式的全面撤保政策，地方紧张有所缓和，但宗派争议将长期回潮。",
   "log.info.nantesPolicy.crackdownFontainebleauIssued":
     "[第 {turn} 年] 你选择了严厉镇压路线：王权转向《枫丹白露敕令》式政策，撤销新教群体既有保障并强化驱逐与改宗压力，短期服从上升但长期治理成本加重。",
-  "log.info.eventTag.harmful": "[第 {turn} 年] 标签说明「有害」：若年末仍未解决，会触发惩罚。",
-  "log.info.eventTag.opportunity": "[第 {turn} 年] 标签说明「机遇」：属于可投资机会，不处理通常不会受到惩罚。",
-  "log.info.eventTag.historical":
-    "[第 {turn} 年] 标签说明「史实」：该事件基于历史真实发生，用于叙事说明，本标签本身不附带额外机制效果。",
-  "log.info.eventTag.continued":
-    "[第 {turn} 年] 标签说明「持续」：事件若未解决会保留到下一年，并重复结算其负面后果。",
-  "log.info.eventTag.resolved": "[第 {turn} 年] 标签说明「已解决」：该事件已在本年被处理，不会在年末触发惩罚。",
   "help.short":
     "财政决定每回合转入的经费；经费用于打牌与事件处理。权力决定抽牌次数。合法性决定回合末可保留手牌数。未处理的有害事件依次结算。",
   "runCode.label": "对局码",

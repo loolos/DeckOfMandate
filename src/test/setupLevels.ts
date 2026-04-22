@@ -1,2 +1,1 @@
-import "../levels/registerAll";
-import "../levels/loadAllTemplateModules";
+import "../levels/load";

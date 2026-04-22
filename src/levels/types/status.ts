@@ -20,7 +20,8 @@ export type StatusTemplateId =
   | "religiousTolerance"
   | "huguenotContainment"
   | "antiFrenchSentiment"
-  | "legitimacyCrisis";
+  | "legitimacyCrisis"
+  | "minorRegencyDoubt";
 
 /** Static definition for a player status template (drives UI keys and effect shape). */
 export type StatusTemplate = {

@@ -240,6 +240,13 @@ export type ActionLogEntry =
       successionDelta: 1 | -1;
     }
   | {
+      kind: "eventLouisXivLegacyChoice";
+      id: string;
+      turn: number;
+      slot: SlotId;
+      directRule: boolean;
+    }
+  | {
       kind: "eventLocalizedSuccessionWarResolve";
       id: string;
       turn: number;

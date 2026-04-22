@@ -435,6 +435,19 @@ export const eventTemplates: Record<EventTemplateId, EventTemplate> = {
       { kind: "modOpponentStrength", delta: 1 },
     ],
   },
+  louisXivLegacy1715: {
+    id: "louisXivLegacy1715",
+    weight: 0,
+    harmful: true,
+    titleKey: "event.louisXivLegacy1715.name",
+    descriptionKey: "event.louisXivLegacy1715.desc",
+    solve: { kind: "louisXivLegacyChoice" },
+    penaltiesIfUnresolved: [
+      { kind: "modResource", resource: "power", delta: -1 },
+      { kind: "modResource", resource: "legitimacy", delta: -1 },
+      { kind: "addCardsToDeck", templateId: "fiscalBurden", count: 1 },
+    ],
+  },
   localWar: {
     id: "localWar",
     weight: 0,

@@ -122,7 +122,8 @@ function hasFurtherFeasibleEventAction(state: GameState, slot: SlotId): boolean 
     tmpl.solve.kind === "localWarChoice" ||
     tmpl.solve.kind === "successionCrisisChoice" ||
     tmpl.solve.kind === "utrechtTreatyChoice" ||
-    tmpl.solve.kind === "dualFrontCrisisChoice"
+    tmpl.solve.kind === "dualFrontCrisisChoice" ||
+    tmpl.solve.kind === "louisXivLegacyChoice"
   ) {
     return true;
   }

@@ -34,6 +34,9 @@ export const messagesEnCore = {
   "ui.dualFrontCrisis.concede": "Temporarily concede — succession track −3; opponent budget +1",
   "ui.dualFrontCrisis.escalate":
     "Expand the war — succession track +1, legitimacy −1, +3 Fiscal Burden, opponent budget +1",
+  "ui.louisXivLegacy.regencyCustody": "Regency custody — Power −1, Legitimacy −1, add 1 Fiscal Burden",
+  "ui.louisXivLegacy.youngKingDirectRule":
+    "Young king direct rule — Power +1, add 3 Fiscal Burden, gain Minor Regency Doubt",
   "ui.successionTrack": "Succession track",
   "ui.successionStatus.title": "War of the Spanish Succession",
   "ui.successionStatus.detail":
@@ -49,13 +52,6 @@ export const messagesEnCore = {
   "ui.opponentEvent.lastPlayCardBlurb": "{history} In-game: {fx}",
   "ui.opponentHabsburg": "Habsburg opponent",
   "ui.opponentStrength": "Opponent budget",
-  "ui.resolved": "Resolved",
-  "ui.harmful": "Harmful",
-  "ui.opportunity": "Opportunity",
-  "ui.historical": "Historical",
-  "ui.continued": "Continued",
-  "ui.continuedTurns": "Continued {n}",
-  "ui.remainingTurns": "Remaining {n}",
   "ui.deck": "Deck",
   "ui.discard": "Discard",
   "ui.quickFrame.cost": "Cost",
@@ -196,6 +192,10 @@ export const messagesEnCore = {
     "[Turn {turn}] {event} — temporarily conceded; succession track −3; opponent budget +1.",
   "log.eventDualFrontCrisis.escalate":
     "[Turn {turn}] {event} — expanded the war; succession track +1, legitimacy −1, +3 Fiscal Burden; opponent budget +1.",
+  "log.eventLouisXivLegacy.regencyCustody":
+    "[Turn {turn}] {event} — Regency custody chosen; Power −1, Legitimacy −1, and +1 Fiscal Burden.",
+  "log.eventLouisXivLegacy.youngKingDirectRule":
+    "[Turn {turn}] {event} — Young king direct rule chosen; Power +1, +3 Fiscal Burden, and gained Minor Regency Doubt.",
   "log.eventSuccessionCrisisChoice.payTitle":
     "[Turn {turn}] {event} — paid {paid} {funding}; {track} +1.",
   "log.eventSuccessionCrisisChoice.payHistory":
@@ -290,16 +290,6 @@ export const messagesEnCore = {
     "[Turn {turn}] You chose Religious Tolerance: the crown does not issue a Fontainebleau-style full revocation decree this year. Immediate pressure eases, but confessional disputes will keep resurfacing.",
   "log.info.nantesPolicy.crackdownFontainebleauIssued":
     "[Turn {turn}] You chose Harsh Crackdown: policy shifts toward a Fontainebleau-style decree, withdrawing Protestant protections and intensifying forced conversion pressure. Compliance rises short-term, but long-run governance costs increase.",
-  "log.info.eventTag.harmful":
-    "[Turn {turn}] Tag note “Harmful”: if unresolved at year end, this event applies penalties.",
-  "log.info.eventTag.opportunity":
-    "[Turn {turn}] Tag note “Opportunity”: this is an optional upside event and usually has no penalty if ignored.",
-  "log.info.eventTag.historical":
-    "[Turn {turn}] Tag note “Historical”: this event is based on real history and has no extra gameplay effect by itself.",
-  "log.info.eventTag.continued":
-    "[Turn {turn}] Tag note “Continued”: if unresolved, this event remains into the next year and repeats its negative effects.",
-  "log.info.eventTag.resolved":
-    "[Turn {turn}] Tag note “Resolved”: this event has already been handled this year and will not apply year-end penalties.",
   "help.short":
     "Treasury sets turnly income to Funding. Funding pays for cards and event solves. Power sets draw attempts. Legitimacy sets retention limit. Unresolved harmful events are settled in sequence.",
   "runCode.label": "Run code",

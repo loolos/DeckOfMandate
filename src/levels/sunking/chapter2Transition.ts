@@ -1,6 +1,6 @@
 import { getCardTemplate } from "../../data/cards";
 import { getLevelContent, getLevelDef } from "../../data/levelRegistry";
-import { appendActionLog } from "../../logic/actionLog";
+import { appendActionLog } from "./logic/actionLog";
 import { createInitialCardUseState } from "../../logic/cardUsage";
 import { computeEuropeAlertPowerLoss } from "../../logic/europeAlert";
 import { calendarYearForTurn } from "../../logic/scriptedCalendar";

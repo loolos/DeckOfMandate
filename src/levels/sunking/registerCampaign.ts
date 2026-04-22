@@ -12,7 +12,7 @@ type ChapterModule = {
 
 const chapterModules = import.meta.glob("./chapters/*.ts", { eager: true }) as Record<string, ChapterModule>;
 
-function registerSunking(): void {
+export function registerSunking(): void {
   let defaultLevelId: string | null = null;
   for (const path of Object.keys(chapterModules).sort()) {
     const mod = chapterModules[path];

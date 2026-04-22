@@ -408,6 +408,56 @@ describe("gameReducer", () => {
     expect(burdenAfter).toBe(burdenBefore + 3);
   });
 
+  it("1715 legacy event: regency custody applies power/legitimacy loss with one fiscal burden and no succession-side changes", () => {
+    const base = createInitialState(51_130, THIRD_MANDATE_LEVEL_ID);
+    const burdenBefore = Object.values(base.cardsById).filter((c) => c.templateId === "fiscalBurden").length;
+    const s0: typeof base = {
+      ...base,
+      resources: { ...base.resources, power: 6, legitimacy: 7 },
+      successionTrack: 2,
+      opponentStrength: 4,
+      slots: {
+        ...base.slots,
+        A: { instanceId: "e_legacy", templateId: "louisXivLegacy1715", resolved: false },
+      },
+    };
+    const after = gameReducer(s0, { type: "PICK_LOUIS_XIV_LEGACY", slot: "A", directRule: false });
+    const burdenAfter = Object.values(after.cardsById).filter((c) => c.templateId === "fiscalBurden").length;
+    expect(after.resources.power).toBe(5);
+    expect(after.resources.legitimacy).toBe(6);
+    expect(burdenAfter).toBe(burdenBefore + 1);
+    expect(after.successionTrack).toBe(2);
+    expect(after.opponentStrength).toBe(4);
+    expect(after.slots.A?.resolved).toBe(true);
+    expect(after.actionLog.some((e) => e.kind === "eventLouisXivLegacyChoice" && e.directRule === false)).toBe(true);
+  });
+
+  it("1715 legacy event: young king direct rule grants power, adds three fiscal burdens, and applies permanent minor regency doubt", () => {
+    const base = createInitialState(51_131, THIRD_MANDATE_LEVEL_ID);
+    const burdenBefore = Object.values(base.cardsById).filter((c) => c.templateId === "fiscalBurden").length;
+    const s0: typeof base = {
+      ...base,
+      resources: { ...base.resources, power: 6, legitimacy: 7 },
+      successionTrack: -1,
+      opponentStrength: 3,
+      slots: {
+        ...base.slots,
+        A: { instanceId: "e_legacy2", templateId: "louisXivLegacy1715", resolved: false },
+      },
+    };
+    const after = gameReducer(s0, { type: "PICK_LOUIS_XIV_LEGACY", slot: "A", directRule: true });
+    const burdenAfter = Object.values(after.cardsById).filter((c) => c.templateId === "fiscalBurden").length;
+    const status = after.playerStatuses.find((st) => st.templateId === "minorRegencyDoubt");
+    expect(after.resources.power).toBe(7);
+    expect(after.resources.legitimacy).toBe(7);
+    expect(burdenAfter).toBe(burdenBefore + 3);
+    expect(status?.turnsRemaining).toBe(99);
+    expect(after.successionTrack).toBe(-1);
+    expect(after.opponentStrength).toBe(3);
+    expect(after.slots.A?.resolved).toBe(true);
+    expect(after.actionLog.some((e) => e.kind === "eventLouisXivLegacyChoice" && e.directRule === true)).toBe(true);
+  });
+
   it("usurpation edict grants +2 succession and applies a two-turn end-of-year legitimacy drain", () => {
     const base = createInitialState(51_120, THIRD_MANDATE_LEVEL_ID);
     const usurpationId = "tmp_usurpation";

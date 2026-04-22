@@ -29,6 +29,23 @@ const sunkingExtraEn: Record<string, string> = {
   "levelTime.sunKing.oneTurnOneYear": "Timeline: one full turn corresponds to one year on the scenario calendar.",
   "log.info.firstMandateInflationActivated":
     "[Turn {turn}] As Colbert-style reforms and Versailles court politics scale up together, the stronger the royal machine gets, the more expensive it is to keep running. Chapter 1 inflation is now active: from now on, only cards with the “Inflation” tag gain extra cost when they cycle from discard back into deck.",
+  "ui.resolved": "Resolved",
+  "ui.harmful": "Harmful",
+  "ui.opportunity": "Opportunity",
+  "ui.historical": "Historical",
+  "ui.continued": "Continued",
+  "ui.continuedTurns": "Continued {n}",
+  "ui.remainingTurns": "Remaining {n}",
+  "log.info.eventTag.harmful":
+    "[Turn {turn}] Tag note “Harmful”: if unresolved at year end, this event applies penalties.",
+  "log.info.eventTag.opportunity":
+    "[Turn {turn}] Tag note “Opportunity”: this is an optional upside event and usually has no penalty if ignored.",
+  "log.info.eventTag.historical":
+    "[Turn {turn}] Tag note “Historical”: this event is based on real history and has no extra gameplay effect by itself.",
+  "log.info.eventTag.continued":
+    "[Turn {turn}] Tag note “Continued”: if unresolved, this event remains into the next year and repeats its negative effects.",
+  "log.info.eventTag.resolved":
+    "[Turn {turn}] Tag note “Resolved”: this event has already been handled this year and will not apply year-end penalties.",
 };
 
 const sunkingExtraFr: Record<string, string> = {
@@ -48,6 +65,23 @@ const sunkingExtraFr: Record<string, string> = {
   "levelTime.sunKing.oneTurnOneYear": "Échelle : un tour complet correspond à une année sur le calendrier du scénario.",
   "log.info.firstMandateInflationActivated":
     "[Tour {turn}] Les réformes à la Colbert et la cour de Versailles grossissent ensemble : plus la machine royale est forte, plus elle coûte à faire tourner. L’inflation du Chapitre 1 est active : désormais, seules les cartes avec le tag « Inflation » prennent un coût supplémentaire quand elles reviennent du défausse vers le deck.",
+  "ui.resolved": "Résolu",
+  "ui.harmful": "Néfaste",
+  "ui.opportunity": "Opportunité",
+  "ui.historical": "Historique",
+  "ui.continued": "Continu",
+  "ui.continuedTurns": "Continu {n}",
+  "ui.remainingTurns": "Restant {n}",
+  "log.info.eventTag.harmful":
+    "[Tour {turn}] Note de tag « Néfaste » : s’il n’est pas résolu en fin d’année, cet événement applique des pénalités.",
+  "log.info.eventTag.opportunity":
+    "[Tour {turn}] Note de tag « Opportunité » : c’est un événement d’opportunité, généralement sans pénalité s’il est ignoré.",
+  "log.info.eventTag.historical":
+    "[Tour {turn}] Note de tag « Historique » : cet événement renvoie à un fait historique réel et ce tag n'ajoute aucun effet de jeu.",
+  "log.info.eventTag.continued":
+    "[Tour {turn}] Note de tag « Continu » : non résolu, cet événement reste l’année suivante et répète ses effets négatifs.",
+  "log.info.eventTag.resolved":
+    "[Tour {turn}] Note de tag « Résolu » : cet événement a déjà été traité cette année et n’appliquera plus de pénalités de fin d’année.",
 };
 
 const sunkingExtraZh: Record<string, string> = {
@@ -65,6 +99,20 @@ const sunkingExtraZh: Record<string, string> = {
   "levelTime.sunKing.oneTurnOneYear": "时间尺度：一个完整回合对应剧本时间线上的一个历法年。",
   "log.info.firstMandateInflationActivated":
     "[第 {turn} 年] 科尔贝尔改革与凡尔赛宫廷同步扩张，王权机器越强，维持它的行政与仪式成本也越高。已触发第一关「卡牌通胀」：此后仅带「通胀」标签的牌，在从弃牌堆洗回抽牌堆时才会叠加费用。",
+  "ui.resolved": "已处理",
+  "ui.harmful": "有害",
+  "ui.opportunity": "机遇",
+  "ui.historical": "史实",
+  "ui.continued": "持续",
+  "ui.continuedTurns": "持续{n}",
+  "ui.remainingTurns": "剩余{n}",
+  "log.info.eventTag.harmful": "[第 {turn} 年] 标签说明「有害」：若年末仍未解决，会触发惩罚。",
+  "log.info.eventTag.opportunity": "[第 {turn} 年] 标签说明「机遇」：属于可投资机会，不处理通常不会受到惩罚。",
+  "log.info.eventTag.historical":
+    "[第 {turn} 年] 标签说明「史实」：该事件基于历史真实发生，用于叙事说明，本标签本身不附带额外机制效果。",
+  "log.info.eventTag.continued":
+    "[第 {turn} 年] 标签说明「持续」：事件若未解决会保留到下一年，并重复结算其负面后果。",
+  "log.info.eventTag.resolved": "[第 {turn} 年] 标签说明「已解决」：该事件已在本年被处理，不会在年末触发惩罚。",
 };
 
 export const sunkingMessagesEn = {

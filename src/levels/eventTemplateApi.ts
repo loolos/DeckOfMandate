@@ -8,9 +8,9 @@ import { THIRD_MANDATE_LEVEL_ID } from "../logic/thirdMandateConstants";
 import type { GameState } from "../types/game";
 import { antiFrenchSentimentEventSolveCostPenalty, antiFrenchSentimentRyswickSurcharge } from "../logic/antiFrenchSentiment";
 import { nymwegenSettlementFundingCost } from "../logic/europeAlert";
-import { eventTemplates } from "./loadEventTemplates";
+import { eventTemplates } from "./load/content";
 
-export { eventTemplates } from "./loadEventTemplates";
+export { eventTemplates } from "./load/content";
 
 const EUROPE_ALERT_SUPPLEMENTAL_EVENT_IDS: readonly EventTemplateId[] = [
   "frontierGarrisons",

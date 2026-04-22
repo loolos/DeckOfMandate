@@ -42,7 +42,8 @@ export type EventTemplateId =
   | "portugueseTariffNegotiation"
   | "imperialElectorsMood"
   | "localizedSuccessionWar"
-  | "dualFrontCrisis";
+  | "dualFrontCrisis"
+  | "louisXivLegacy1715";
 
 export type EventSolve =
   | { kind: "funding"; amount: number }
@@ -61,7 +62,9 @@ export type EventSolve =
   /** Chapter 3: funding scales with ceil(treasuryStat/4) at solve time. */
   | { kind: "fundingTreasuryQuarterCeil" }
   /** Chapter 3: 1708 dual-front crisis — concede or escalate (dedicated actions). */
-  | { kind: "dualFrontCrisisChoice" };
+  | { kind: "dualFrontCrisisChoice" }
+  /** Chapter 3: 1715 legacy event — regency custody vs direct young-king rule. */
+  | { kind: "louisXivLegacyChoice" };
 
 /** Fixed event columns (max 10); procedural random rolls only fill {@link PROCEDURAL_EVENT_SLOT_ORDER}. */
 export const EVENT_SLOT_ORDER = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"] as const;

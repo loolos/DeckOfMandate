@@ -72,4 +72,11 @@ export const statusTemplates: Record<StatusTemplateId, StatusTemplate> = {
     titleKey: "status.legitimacyCrisis.name",
     historyKey: "status.legitimacyCrisis.history",
   },
+  minorRegencyDoubt: {
+    id: "minorRegencyDoubt",
+    kind: "drawAttemptsDelta",
+    delta: -1,
+    titleKey: "status.minorRegencyDoubt.name",
+    historyKey: "status.minorRegencyDoubt.history",
+  },
 };
