@@ -83,6 +83,8 @@ export const sunkingCoreGameContentZh = {
   "status.huguenotContainment.history": "强力镇压依赖连续清剿行动与高压维稳成本。",
   "status.huguenotContainment.hint": "该状态存在时，第二关无法胜利。",
   "status.huguenotContainment.hintGeneral": "表示镇压带来的压制层数；通过消去场上的「镇压胡格诺」牌可逐步清除层数。",
+  "status.legitimacyCrisis.name": "合法性危机",
+  "status.legitimacyCrisis.history": "僭越法统程序虽能加速夺位叙事，却会在后续回合持续侵蚀政权信誉。",
   "event.jansenistTension.name": "詹森派争议",
   "event.jansenistTension.desc":
     "自黎塞留时代起，波尔-罗亚尔的严苛与主教权威、教廷立场便屡生摩擦。詹森主义围绕“恩典与救赎”的神学立场长期冲击法国教会与王权关系；波尔-罗亚尔网络的余波再起，主教区与法院出现对立。支付 2 经费进行教区巡察与舆论安抚，否则合法性 -1。",

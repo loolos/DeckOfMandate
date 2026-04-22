@@ -68,6 +68,10 @@ export const messagesEnThirdMandate = {
   "card.italianTheaterTroopRedeploy.background": "Alpine front",
   "card.italianTheaterTroopRedeploy.desc":
     "Context: maneuver and battle around Savoy, Milan, and Naples turn field gains into hard support for Bourbon claims—but the treasury keeps paying for the Alpine–Po corridor.\n\nSuccession track +2. Add 1 Fiscal Burden to your deck.",
+  "card.usurpationEdict.name": "Usurpation edict",
+  "card.usurpationEdict.background": "Protocol broken",
+  "card.usurpationEdict.desc":
+    "Context: forcing recognition through extra-legal succession language can seize narrative momentum in the short run, but it burns dynastic credibility at home and abroad.\n\nSuccession track +2. Gain Legitimacy Crisis for 2 turns (end of each turn: Legitimacy -1).",
   "card.habsburgImperialLegitimacyNote.name": "Imperial legitimacy note",
   "card.habsburgImperialLegitimacyNote.background": "Legalist pressure",
   "card.habsburgImperialLegitimacyNote.desc":

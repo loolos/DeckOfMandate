@@ -1,7 +1,7 @@
 import type { LevelContent, LevelDef } from "../../../data/levelTypes";
 import type { CardTemplateId } from "../../types/card";
 
-/** Six chapter-3-only templates shuffled into the full library with the rest; opening deal is two cards. */
+/** Eight chapter-3-only templates shuffled into the full library with the rest; opening deal is two cards. */
 export const LEVEL3_STARTING_HAND_TEMPLATE_ORDER: readonly CardTemplateId[] = [
   "bourbonMarriageProclamation",
   "bourbonMarriageProclamation",
@@ -9,9 +9,11 @@ export const LEVEL3_STARTING_HAND_TEMPLATE_ORDER: readonly CardTemplateId[] = [
   "grandAllianceInfiltrationDiplomacy",
   "italianTheaterTroopRedeploy",
   "italianTheaterTroopRedeploy",
+  "usurpationEdict",
+  "usurpationEdict",
 ];
 
-/** Same core deck as chapter 2 (16 cards); six chapter-3 templates are part of the shuffled pool. */
+/** Same core deck as chapter 2 (16 cards); eight chapter-3 templates are part of the shuffled pool. */
 const LEVEL3_DECK_TEMPLATE_ORDER: readonly CardTemplateId[] = [
   "funding",
   "funding",

@@ -86,7 +86,7 @@ export const messagesZhSecondMandate = {
     "那慕尔等围城大捷被宣传为波旁武力与神权统治的证明。可将军功转化为统治威望。投入 2 经费，合法性 +1。",
   "event.commercialExpansion.name": "商业扩张",
   "event.commercialExpansion.desc":
-    "17 世纪后期，法国在科尔贝尔主义影响下持续扶持工场手工业、航运与特许贸易公司，但连年战争与关税摩擦也让商业扩张始终伴随高成本。商人请求政策支持。投入 2 经费，财政 +1。",
+    "17 世纪后期，法国在科尔贝尔主义影响下持续扶持工场手工业、航运与特许贸易公司，但连年战争与关税摩擦也让商业扩张始终伴随高成本。商人请求政策支持。投入「floor(财政/5)+1」经费，财政 +1。",
   "event.talentedAdministrator.name": "能臣举荐",
   "event.talentedAdministrator.desc":
     "科尔贝尔一脉仍倾向提拔能干的督办与秘书以绕开冗赘的捐官体系。可提拔能干官员。投入 2 经费，权力 +1。",

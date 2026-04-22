@@ -88,6 +88,15 @@ describe("secondMandate balance data", () => {
       kind: "funding",
       amount: 2,
     });
+    expect(
+      getEventSolveFundingAmount({ ...createInitialState(2_026, "secondMandate"), resources: { treasuryStat: 4, funding: 0, power: 3, legitimacy: 3 } }, "commercialExpansion"),
+    ).toBe(1);
+    expect(
+      getEventSolveFundingAmount({ ...createInitialState(2_027, "secondMandate"), resources: { treasuryStat: 5, funding: 0, power: 3, legitimacy: 3 } }, "commercialExpansion"),
+    ).toBe(2);
+    expect(
+      getEventSolveFundingAmount({ ...createInitialState(2_028, "secondMandate"), resources: { treasuryStat: 11, funding: 0, power: 3, legitimacy: 3 } }, "commercialExpansion"),
+    ).toBe(3);
     expect(getEventTemplate("talentedAdministrator").solve).toEqual({
       kind: "funding",
       amount: 2,

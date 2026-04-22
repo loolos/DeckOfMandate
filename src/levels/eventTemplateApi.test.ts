@@ -103,6 +103,25 @@ describe("getEventRollWeight", () => {
     expect(getEventSolveFundingAmount({ ...base, europeAlertProgress: 9 }, "nineYearsWar")).toBe(5);
   });
 
+  it("scales commercial expansion solve funding to floor(treasury/5) + 1", () => {
+    const base = createInitialState(3_342, "secondMandate");
+    expect(
+      getEventSolveFundingAmount({ ...base, resources: { ...base.resources, treasuryStat: 0 } }, "commercialExpansion"),
+    ).toBe(1);
+    expect(
+      getEventSolveFundingAmount({ ...base, resources: { ...base.resources, treasuryStat: 4 } }, "commercialExpansion"),
+    ).toBe(1);
+    expect(
+      getEventSolveFundingAmount({ ...base, resources: { ...base.resources, treasuryStat: 5 } }, "commercialExpansion"),
+    ).toBe(2);
+    expect(
+      getEventSolveFundingAmount(
+        { ...base, resources: { ...base.resources, treasuryStat: 14 } },
+        "commercialExpansion",
+      ),
+    ).toBe(3);
+  });
+
   it("adds anti-french sentiment solve-cost penalty to europe-alert supplemental pool events only", () => {
     const st = createInitialState(12_347, "secondMandate");
     const atTwenty = { ...st, resources: { ...st.resources, treasuryStat: 10, power: 10 } };

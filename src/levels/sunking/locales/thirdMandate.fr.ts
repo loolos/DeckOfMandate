@@ -68,6 +68,10 @@ export const messagesFrThirdMandate = {
   "card.italianTheaterTroopRedeploy.background": "Front alpin",
   "card.italianTheaterTroopRedeploy.desc":
     "Contexte : manœuvres et combats en Piémont, à Milan et à Naples transforment les gains de campagne en appui concret aux prétentions bourbonnes—mais le trésor saigne pour l’axe alpin et le Pô.\n\nPiste de succession +2. Ajoute 1 Fardeau fiscal au deck.",
+  "card.usurpationEdict.name": "Édit d’usurpation",
+  "card.usurpationEdict.background": "Rituel brisé",
+  "card.usurpationEdict.desc":
+    "Contexte : imposer une reconnaissance par un langage de succession hors protocole peut faire gagner du terrain narratif à court terme, mais entame le crédit dynastique à l’intérieur comme à l’extérieur.\n\nPiste de succession +2. Gagne Crise de légitimité pendant 2 tours (fin de chaque tour : Légitimité -1).",
   "card.habsburgImperialLegitimacyNote.name": "Note de légitimité impériale",
   "card.habsburgImperialLegitimacyNote.background": "Pression juridique",
   "card.habsburgImperialLegitimacyNote.desc":

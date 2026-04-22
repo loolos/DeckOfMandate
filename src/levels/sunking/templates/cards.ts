@@ -190,6 +190,18 @@ export const cardTemplates: Record<CardTemplateId, CardTemplate> = {
       { kind: "addCardsToDeck", templateId: "fiscalBurden", count: 1 },
     ],
   },
+  usurpationEdict: {
+    id: "usurpationEdict",
+    cost: 3,
+    tags: SUCCESSION_CONTEST,
+    titleKey: "card.usurpationEdict.name",
+    backgroundKey: "card.usurpationEdict.background",
+    descriptionKey: "card.usurpationEdict.desc",
+    effects: [
+      { kind: "modSuccessionTrack", delta: 2 },
+      { kind: "addPlayerStatus", templateId: "legitimacyCrisis", turns: 2 },
+    ],
+  },
   habsburgImperialLegitimacyNote: {
     id: "habsburgImperialLegitimacyNote",
     cost: 0,

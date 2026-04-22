@@ -80,6 +80,9 @@ export function getEventSolveFundingAmount(state: GameState, id: EventTemplateId
   if (id === "nineYearsWar") {
     return Math.floor(state.europeAlertProgress / 2) + 1;
   }
+  if (id === "commercialExpansion") {
+    return Math.floor(state.resources.treasuryStat / 5) + 1;
+  }
   return tmpl.solve.amount + antiFrenchPenalty;
 }
 

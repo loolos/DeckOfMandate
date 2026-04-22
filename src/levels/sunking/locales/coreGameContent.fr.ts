@@ -97,6 +97,9 @@ export const sunkingCoreGameContentFr = {
   "status.huguenotContainment.hint": "Tant que ce statut est actif, la victoire du Chapitre 2 est bloquée.",
   "status.huguenotContainment.hintGeneral":
     "Indique la charge de répression ; retirer les cartes « réprimer les huguenots » en jeu réduit les piles avec le temps.",
+  "status.legitimacyCrisis.name": "Crise de légitimité",
+  "status.legitimacyCrisis.history":
+    "Forcer la succession hors protocole accélère la course au trône, mais érode ensuite durablement la crédibilité royale.",
   "event.jansenistTension.name": "Controverse janséniste",
   "event.jansenistTension.desc":
     "Depuis Richelieu, le rigorisme port-royaliste et l'autorité épiscopale heurtent Rome et Versailles. Les débats sur la grâce et le salut réactivent les réseaux jansénistes et opposent évêques, magistrats et pouvoir royal. Payez 2 Financement pour inspections ecclésiastiques et apaisement public, sinon perdez 1 Légitimité.",

@@ -69,7 +69,7 @@ describe("level3Transition / thirdMandate Nantes carryover", () => {
     expect(Object.values(st.cardsById).filter((c) => c.templateId === "jansenistReservation").length).toBe(4);
   });
 
-  it("continuity merges carryover and six chapter-3 cards in the opening shuffle, then inserts four Nantes cards at random deck positions", () => {
+  it("continuity merges carryover and eight chapter-3 cards in the opening shuffle, then inserts four Nantes cards at random deck positions", () => {
     const baseCh2 = createInitialState(777, "secondMandate");
     const ch2 = {
       ...baseCh2,
@@ -85,8 +85,9 @@ describe("level3Transition / thirdMandate Nantes carryover", () => {
     const st = buildLevel3StateFromChapter2(ch2, 888);
     const allIds = [...st.deck, ...st.discard, ...st.hand];
     expect(new Set(allIds).size).toBe(allIds.length);
-    expect(allIds.length).toBe(carryoverCount + 6 + 4);
+    expect(allIds.length).toBe(carryoverCount + 8 + 4);
     expect(Object.values(st.cardsById).filter((c) => c.templateId === "bourbonMarriageProclamation").length).toBe(2);
+    expect(Object.values(st.cardsById).filter((c) => c.templateId === "usurpationEdict").length).toBe(2);
     expect(Object.values(st.cardsById).filter((c) => c.templateId === "jansenistReservation").length).toBe(4);
     expect(st.resources.treasuryStat).toBe(ch2.resources.treasuryStat);
     expect(st.resources.power).toBe(ch2.resources.power);

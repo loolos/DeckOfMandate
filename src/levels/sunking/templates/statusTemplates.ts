@@ -65,4 +65,11 @@ export const statusTemplates: Record<StatusTemplateId, StatusTemplate> = {
     titleKey: "status.antiFrenchSentiment.name",
     historyKey: "status.antiFrenchSentiment.history",
   },
+  legitimacyCrisis: {
+    id: "legitimacyCrisis",
+    kind: "drawAttemptsDelta",
+    delta: 0,
+    titleKey: "status.legitimacyCrisis.name",
+    historyKey: "status.legitimacyCrisis.history",
+  },
 };

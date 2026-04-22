@@ -408,6 +408,45 @@ describe("gameReducer", () => {
     expect(burdenAfter).toBe(burdenBefore + 3);
   });
 
+  it("usurpation edict grants +2 succession and applies a two-turn end-of-year legitimacy drain", () => {
+    const base = createInitialState(51_120, THIRD_MANDATE_LEVEL_ID);
+    const usurpationId = "tmp_usurpation";
+    const withCard: typeof base = {
+      ...base,
+      cardsById: {
+        ...base.cardsById,
+        [usurpationId]: { instanceId: usurpationId, templateId: "usurpationEdict" as const },
+      },
+      hand: [usurpationId],
+      deck: [],
+      discard: [],
+      slots: { ...EMPTY_EVENT_SLOTS },
+      resources: { ...base.resources, funding: 3, legitimacy: 10 },
+      successionTrack: 0,
+      playerStatuses: [],
+    };
+    const afterPlay = gameReducer(withCard, { type: "PLAY_CARD", handIndex: 0 });
+    expect(afterPlay.resources.funding).toBe(0);
+    expect(afterPlay.successionTrack).toBe(2);
+    const crisis = afterPlay.playerStatuses.find((s) => s.templateId === "legitimacyCrisis");
+    expect(crisis?.turnsRemaining).toBe(2);
+
+    const afterFirstEndYear = gameReducer(afterPlay, { type: "END_YEAR" });
+    expect(afterFirstEndYear.resources.legitimacy).toBe(9);
+    expect(afterFirstEndYear.playerStatuses.find((s) => s.templateId === "legitimacyCrisis")?.turnsRemaining).toBe(1);
+
+    const preparedSecondYear: typeof afterFirstEndYear = {
+      ...afterFirstEndYear,
+      phase: "action",
+      hand: [],
+      slots: { ...EMPTY_EVENT_SLOTS },
+      pendingInteraction: null,
+    };
+    const afterSecondEndYear = gameReducer(preparedSecondYear, { type: "END_YEAR" });
+    expect(afterSecondEndYear.resources.legitimacy).toBe(8);
+    expect(afterSecondEndYear.playerStatuses.some((s) => s.templateId === "legitimacyCrisis")).toBe(false);
+  });
+
   it("Imperial electors crackdown intervention draws one immediate opponent card", () => {
     const base = initOpponentHabsburgPool(createInitialState(51_004, THIRD_MANDATE_LEVEL_ID));
     const handBefore = base.opponentHand.length;

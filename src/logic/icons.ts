@@ -23,6 +23,7 @@ const CARD_ICONS: Record<CardTemplateId, string> = {
   bourbonMarriageProclamation: "💒",
   grandAllianceInfiltrationDiplomacy: "🕵️",
   italianTheaterTroopRedeploy: "🗡️",
+  usurpationEdict: "🧾",
   habsburgGrandAllianceLevy: "⚔️",
   habsburgImperialCustomsDelay: "📋",
   habsburgImperialLegitimacyNote: "📜",

@@ -20,6 +20,7 @@ export type CardTemplateId =
   | "bourbonMarriageProclamation"
   | "grandAllianceInfiltrationDiplomacy"
   | "italianTheaterTroopRedeploy"
+  | "usurpationEdict"
   | "habsburgGrandAllianceLevy"
   | "habsburgImperialCustomsDelay"
   | "habsburgImperialLegitimacyNote"

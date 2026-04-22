@@ -12,6 +12,11 @@ const SLOTS: readonly SlotId[] = EVENT_SLOT_ORDER;
 /** After Action phase: harmful unresolved penalties in {@link EVENT_SLOT_ORDER} order. */
 export function resolveEndOfYearPenalties(state: GameState): GameState {
   let s = state;
+  if (s.playerStatuses.some((st) => st.templateId === "legitimacyCrisis")) {
+    s = applyEffects(s, [{ kind: "modResource", resource: "legitimacy", delta: -1 }]);
+    s = enforceLegitimacy(s);
+    if (s.outcome !== "playing") return s;
+  }
   const schedulers = getLevelContent(s.levelId).eoyEscalationSchedulers;
   for (const slot of SLOTS) {
     const ev = s.slots[slot];
