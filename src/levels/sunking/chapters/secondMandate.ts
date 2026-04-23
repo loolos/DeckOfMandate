@@ -153,14 +153,14 @@ export const levelContent: LevelContent = {
     newCardsTemplateOrder: CHAPTER2_REFIT_NEW_CARDS,
     newCardsLabelKey: "menu.refit.newCards",
     standaloneCarryoverSource: {
-      levelId: "firstMandate",
+      levelId: "secondMandate",
       instanceIdPrefix: "standalone_old_",
+      excludeTemplateIds: CHAPTER2_REFIT_NEW_CARDS,
       templateOverrides: {
         reform: { inflationDelta: 1 },
         ceremony: { inflationDelta: 1 },
         funding: { totalUses: 1, remainingUses: 1 },
         crackdown: { totalUses: 1, remainingUses: 1 },
-        development: { totalUses: 1, remainingUses: 1 },
       },
     },
   },

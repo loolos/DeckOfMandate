@@ -15,7 +15,7 @@ import {
 describe("levelTransitions / chapter2", () => {
   const level2NewCards = getLevel2RefitNewCardsTemplateOrder();
 
-  it("creates a valid standalone chapter 2 draft with chapter-1 carryover cards", () => {
+  it("creates a valid standalone chapter 2 draft with chapter-2 base carryover cards", () => {
     const draft = createStandaloneLevel2Draft(123);
     const v = validateLevel2Draft(draft);
     expect(draft.mode).toBe("standalone");
@@ -23,8 +23,8 @@ describe("levelTransitions / chapter2", () => {
     expect(draft.warOfDevolutionAttacked).toBe(true);
     expect(draft.europeAlert).toBe(true);
     expect(draft.resources).toEqual(getLevelDef("secondMandate").standaloneStartingResources);
-    expect(draft.carryoverCards.length).toBe(13);
-    expect(draft.carryoverCards.some((card) => card.templateId === "development")).toBe(true);
+    expect(draft.carryoverCards.length).toBe(8);
+    expect(draft.carryoverCards.some((card) => card.templateId === "development")).toBe(false);
     const standaloneReform = draft.carryoverCards.find((card) => card.templateId === "reform");
     const standaloneCeremony = draft.carryoverCards.find((card) => card.templateId === "ceremony");
     const standaloneFunding = draft.carryoverCards.find((card) => card.templateId === "funding");
@@ -33,11 +33,8 @@ describe("levelTransitions / chapter2", () => {
     expect(standaloneCeremony?.inflationDelta).toBe(1);
     expect(standaloneFunding?.remainingUses).toBe(1);
     expect(standaloneCrackdown?.remainingUses).toBe(1);
-    const standaloneDevelopment = draft.carryoverCards.find((card) => card.templateId === "development");
-    expect(standaloneDevelopment?.remainingUses).toBe(1);
     expect(standaloneFunding?.totalUses).toBe(1);
     expect(standaloneCrackdown?.totalUses).toBe(1);
-    expect(standaloneDevelopment?.totalUses).toBe(1);
     expect(draft.removedCarryoverIds).toEqual([]);
     expect(v.totalNewCards).toBe(level2NewCards.length);
     expect(v.isValid).toBe(true);
@@ -100,7 +97,11 @@ describe("levelTransitions / chapter2", () => {
     expect(st.resources.legitimacy).toBe(standaloneResources.legitimacy);
     expect(st.europeAlertPowerLoss).toBe(0);
     const allTemplateIds = Object.values(st.cardsById).map((c) => c.templateId);
-    expect(allTemplateIds.includes("development")).toBe(true);
+    const baseTemplateIds = allTemplateIds.filter((id) => !level2NewCards.includes(id));
+    for (const id of baseTemplateIds) {
+      expect(["funding", "crackdown", "reform", "ceremony"]).toContain(id);
+    }
+    expect(baseTemplateIds).toHaveLength(7);
     const reformInstanceId = Object.keys(st.cardsById).find((id) => st.cardsById[id]?.templateId === "reform");
     const ceremonyInstanceId = Object.keys(st.cardsById).find((id) => st.cardsById[id]?.templateId === "ceremony");
     if (!reformInstanceId || !ceremonyInstanceId) throw new Error("expected reform and ceremony in standalone deck");
@@ -182,11 +183,9 @@ describe("levelTransitions / chapter2", () => {
     const st = buildLevel2StateFromDraft(draft);
     const fundingId = Object.keys(st.cardsById).find((id) => st.cardsById[id]?.templateId === "funding");
     const crackdownId = Object.keys(st.cardsById).find((id) => st.cardsById[id]?.templateId === "crackdown");
-    const developmentId = Object.keys(st.cardsById).find((id) => st.cardsById[id]?.templateId === "development");
-    if (!fundingId || !crackdownId || !developmentId) throw new Error("expected limited-use carryover cards");
+    if (!fundingId || !crackdownId) throw new Error("expected limited-use carryover cards");
     expect(st.cardUsesById[fundingId]).toEqual({ remaining: 1, total: 1 });
     expect(st.cardUsesById[crackdownId]).toEqual({ remaining: 1, total: 1 });
-    expect(st.cardUsesById[developmentId]).toEqual({ remaining: 1, total: 1 });
   });
 
   it("only snapshots cards in deck/discard/hand for continuity refit", () => {
