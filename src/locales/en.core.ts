@@ -45,7 +45,7 @@ export const messagesEnCore = {
   "menu.startConfigured": "Start",
   "menu.runCodeLoad": "Load from run code",
   "menu.tutorialOnLevelEntry": "Show interface tutorial when entering a level",
-  "menu.tutorialOnLevelEntryHint": "A short walkthrough in your chosen language highlighting goals, resources, events, and your hand. Off by default.",
+  "menu.tutorialOnLevelEntryHint": "A short walkthrough in your chosen language highlighting goals, resources, events, your hand, and the action log. Off by default.",
   "tutorial.title": "Interface tutorial",
   "tutorial.skip": "Skip tutorial",
   "tutorial.back": "Back",
@@ -59,6 +59,8 @@ export const messagesEnCore = {
     "Events are the crises and opportunities on the board. Harmful ones need a solution (often Funding or a special card); opportunities may grant benefits if you invest. Unresolved harmful events can penalize you when you end the turn.",
   "tutorial.step.hand":
     "Your hand is your deck of policy options — each card is a tool to shift resources or the board. Play them to solve events or strengthen the state, then end the turn when you are ready.",
+  "tutorial.step.actionLog":
+    "The action log records each important step in order — card plays, event resolutions, penalties, and major story outcomes. Use it to quickly review what just changed.",
   "ui.statuses": "Ongoing effects",
   "ui.statuses.empty": "No ongoing effects.",
   "ui.statusTurnsRemaining": "{n} turn(s) left",
