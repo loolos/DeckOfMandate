@@ -59,7 +59,7 @@ export function attemptNineYearsWarCampaign(
     s = { ...s, slots: { ...s.slots, [slot]: null } };
     s = applyEffects(s, [
       { kind: "modResource", resource: "legitimacy", delta: 1 },
-      { kind: "modResource", resource: "funding", delta: 3 },
+      { kind: "gainFunding", amount: 3 },
     ]);
     s = appendActionLog(s, {
       kind: "eventNineYearsWarAttempt",

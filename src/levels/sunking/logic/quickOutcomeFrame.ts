@@ -124,6 +124,7 @@ function eventYearEndChips(tmpl: EventTemplate): string | null {
 }
 
 export type QuickFrameRow = { labelKey: MessageKey; value: string; muted?: boolean };
+type QuickFrameTranslator = (key: MessageKey, params?: Record<string, string | number>) => string;
 
 export function buildCardQuickFrameRows(tmpl: CardTemplate, costValue = tmpl.cost): QuickFrameRow[] {
   const cost: QuickFrameRow = {
@@ -182,7 +183,43 @@ export function buildScriptedEventQuickFrameRows(levelId: LevelId, tmpl: EventTe
   return [pay, solvedRow, turnSpanRow];
 }
 
-export function buildEventQuickFrameRows(tmpl: EventTemplate): QuickFrameRow[] {
+export function buildEventQuickFrameRows(
+  tmpl: EventTemplate,
+  t?: QuickFrameTranslator,
+): QuickFrameRow[] {
+  const tt = (key: string, fallback: string, params?: Record<string, string | number>): string =>
+    t ? t(key as MessageKey, params) : fallback;
+
+  if (tmpl.id === "successionCrisis") {
+    const yEnd = eventYearEndChips(tmpl);
+    return [
+      { labelKey: "ui.quickFrame.pay", value: "—" },
+      {
+        labelKey: "ui.quickFrame.ifSolved",
+        value: `${tt("ui.quickFrame.choice.succession.pay", "支付3经费分支")}：⚖️+1 │ ${tt("ui.quickFrame.choice.succession.decline", "拒绝支付分支")}：⚖️−1`,
+      },
+      {
+        labelKey: "ui.quickFrame.yearEnd",
+        value: yEnd ?? "—",
+        muted: yEnd === "∅",
+      },
+    ];
+  }
+  if (tmpl.id === "revocationNantes") {
+    const yEnd = eventYearEndChips(tmpl);
+    return [
+      { labelKey: "ui.quickFrame.pay", value: "—" },
+      {
+        labelKey: "ui.quickFrame.ifSolved",
+        value: `${tt("ui.quickFrame.choice.nantes.tolerance", "宗教宽容")}：${getResourceIcon("legitimacy")}-1 · ☯️ │ ${tt("ui.quickFrame.choice.nantes.crackdown", "严厉镇压")}：⚔️+3`,
+      },
+      {
+        labelKey: "ui.quickFrame.yearEnd",
+        value: yEnd ?? "—",
+        muted: yEnd === "∅",
+      },
+    ];
+  }
   if (tmpl.id === "localizedSuccessionWar") {
     const yEnd = eventYearEndChips(tmpl);
     return [
@@ -204,7 +241,7 @@ export function buildEventQuickFrameRows(tmpl: EventTemplate): QuickFrameRow[] {
       { labelKey: "ui.quickFrame.pay", value: "—" },
       {
         labelKey: "ui.quickFrame.ifSolved",
-        value: "⚖️−3 · 👊+1 │ ⚖️+1 · 👑−1 · ⛓️+3 · 👊+1",
+        value: `${tt("ui.quickFrame.choice.dualFront.concede", "暂时让步")}：⚖️−3 · 👊+1 │ ${tt("ui.quickFrame.choice.dualFront.escalate", "扩大战争")}：⚖️+1 · 👑−1 · ⛓️+3 · 👊+1`,
       },
       {
         labelKey: "ui.quickFrame.yearEnd",
@@ -219,7 +256,7 @@ export function buildEventQuickFrameRows(tmpl: EventTemplate): QuickFrameRow[] {
       { labelKey: "ui.quickFrame.pay", value: "—" },
       {
         labelKey: "ui.quickFrame.ifSolved",
-        value: `Regency custody: ${getResourceIcon("power")}-1 · ${getResourceIcon("legitimacy")}-1 · 🧩+1 │ Young king direct rule: ${getResourceIcon("power")}+1 · 🧩+3 · 📜−1×99⌛`,
+        value: `${tt("ui.quickFrame.choice.louisXiv.regency", "摄政监国")}：${getResourceIcon("power")}-1 · ${getResourceIcon("legitimacy")}-1 · 🧩+1 │ ${tt("ui.quickFrame.choice.louisXiv.direct", "少主亲政")}：${getResourceIcon("power")}+1 · 🧩+3 · 📜−1×99⌛`,
       },
       {
         labelKey: "ui.quickFrame.yearEnd",
@@ -234,7 +271,10 @@ export function buildEventQuickFrameRows(tmpl: EventTemplate): QuickFrameRow[] {
   };
   const solvedRow: QuickFrameRow = {
     labelKey: "ui.quickFrame.ifSolved",
-    value: eventSolveOutcomeChips(tmpl),
+    value:
+      tmpl.id === "localWar"
+        ? `${tt("ui.quickFrame.choice.localWar.attack", "出兵")}：${getResourceIcon("power")}+1/−1 · ${getResourceIcon("legitimacy")}+1 │ ${tt("ui.quickFrame.choice.localWar.appease", "安抚")}：${getResourceIcon("legitimacy")}-1`
+        : eventSolveOutcomeChips(tmpl),
   };
   const yEnd = eventYearEndChips(tmpl);
   const turnEndRow: QuickFrameRow = {

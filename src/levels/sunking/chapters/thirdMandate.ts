@@ -85,6 +85,7 @@ export const levelContent: LevelContent = {
     "risingGrainPrices",
     "taxResistance",
     "commercialExpansion",
+    "sunKingPilgrimage",
     "warWeariness",
     "jesuitPatronage",
     "bavarianCourtRealignment",

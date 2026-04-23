@@ -173,7 +173,7 @@ export function EventPanel({
         const amount = fundSolveLabelAmount(state, slot);
         const crack = slotAllowsCrackdownTarget(state, slot) && pending;
         const solveKind = tmpl.solve.kind;
-        const quickRows = buildScriptedEventQuickFrameRows(state.levelId, tmpl) ?? buildEventQuickFrameRows(tmpl);
+        const quickRows = buildScriptedEventQuickFrameRows(state.levelId, tmpl) ?? buildEventQuickFrameRows(tmpl, t);
         const compactSummary = quickRows.map((row) => row.value).join(" · ");
         const handledOrNoFurtherAction = slotIsHandledOrNoFurtherAction(state, slot);
         const handledMark = handledOrNoFurtherAction ? " 🆗" : "";
