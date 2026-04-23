@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type Ref } from "react";
 import { getCardTemplate } from "../data/cards";
 import type { GameAction } from "../app/gameReducer";
 import { OutcomeQuickFrame } from "./OutcomeQuickFrame";
@@ -18,9 +18,11 @@ import styles from "../app/Game.module.css";
 export function Hand({
   state,
   dispatch,
+  scrollContainerRef,
 }: {
   state: GameState;
   dispatch: (a: GameAction) => void;
+  scrollContainerRef?: Ref<HTMLDivElement>;
 }) {
   const { t } = useI18n();
   const isSmallScreen = useSmallScreen();
@@ -44,7 +46,7 @@ export function Hand({
   }, []);
 
   return (
-    <div className={styles.hand}>
+    <div ref={scrollContainerRef} className={styles.hand}>
       {state.hand.map((id, index) => {
         const inst = state.cardsById[id];
         if (!inst) return null;

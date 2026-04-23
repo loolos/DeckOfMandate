@@ -2,6 +2,7 @@ import { getCardTemplate } from "../data/cards";
 import { getEventTemplate } from "../data/events";
 import { getLevelContent } from "../data/levelRegistry";
 import { useState } from "react";
+import type { Ref } from "react";
 import type { GameAction } from "../app/gameReducer";
 import { OutcomeQuickFrame } from "./OutcomeQuickFrame";
 import {
@@ -31,9 +32,11 @@ import { isHistoricalEventTemplateId } from "../logic/eventTags";
 export function EventPanel({
   state,
   dispatch,
+  scrollContainerRef,
 }: {
   state: GameState;
   dispatch: (a: GameAction) => void;
+  scrollContainerRef?: Ref<HTMLDivElement>;
 }) {
   const { t } = useI18n();
   const isSmallScreen = useSmallScreen();
@@ -45,7 +48,7 @@ export function EventPanel({
   if (visibleSlots.length === 0) return null;
 
   return (
-    <div className={styles.events}>
+    <div ref={scrollContainerRef} className={styles.events}>
       {visibleSlots.map((slot) => {
         const ev = state.slots[slot]!;
         const tmpl = getEventTemplate(ev.templateId);

@@ -211,6 +211,8 @@ export function Game() {
     typeof window !== "undefined" ? window.matchMedia(GRID_WIDE_MEDIA).matches : false,
   );
   const gridRef = useRef<HTMLDivElement>(null);
+  const eventsScrollRef = useRef<HTMLDivElement>(null);
+  const handScrollRef = useRef<HTMLDivElement>(null);
   const gridColumnDragRef = useRef<{ startX: number; startSplit: number; width: number } | null>(null);
   const gridSplitRef = useRef(gridSplit);
   gridSplitRef.current = gridSplit;
@@ -220,6 +222,11 @@ export function Game() {
   const pendingStateRef = useRef(state);
   pendingStateRef.current = state;
   const [codeHex, setCodeHex] = useState("");
+
+  useEffect(() => {
+    eventsScrollRef.current?.scrollTo({ left: 0, behavior: "auto" });
+    handScrollRef.current?.scrollTo({ left: 0, behavior: "auto" });
+  }, [state.turn]);
 
   const refreshCodeHex = useCallback(() => {
     setCodeHex(encodeSession(sessionRef.current));
@@ -1377,7 +1384,7 @@ export function Game() {
           <section className={`${styles.panel} ${styles.eventsPanel}`} id="tutorial-events">
             <h2>{t("ui.events")}</h2>
             <div className={styles.eventsResizable} title={t("ui.eventsResizeHint")}>
-              <EventPanel state={state} dispatch={dispatchSafe} />
+              <EventPanel state={state} dispatch={dispatchSafe} scrollContainerRef={eventsScrollRef} />
             </div>
           </section>
         ) : null}
@@ -1385,7 +1392,7 @@ export function Game() {
 
       <section className={`${styles.panel} ${styles.handPanel}`} id="tutorial-hand">
         <h2>{t("ui.hand")}</h2>
-        <Hand state={state} dispatch={dispatchSafe} />
+        <Hand state={state} dispatch={dispatchSafe} scrollContainerRef={handScrollRef} />
       </section>
 
       <ActionLog
