@@ -932,6 +932,21 @@
   margin: 0.75rem 0;
 }
 
+.retainLegalityOk,
+.retainLegalityBad {
+  margin: 0.35rem 0 0.2rem;
+  font-size: 0.86rem;
+}
+
+.retainLegalityOk {
+  color: color-mix(in srgb, #2e7d32 86%, var(--text));
+}
+
+.retainLegalityBad {
+  color: color-mix(in srgb, #d32f2f 86%, var(--text));
+  font-weight: 600;
+}
+
 .retainRow {
   display: flex;
   gap: 0.5rem;

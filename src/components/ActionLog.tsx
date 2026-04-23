@@ -516,10 +516,13 @@ function renderEntry(e: ActionLogEntry, t: (key: MessageKey, vars?: Record<strin
 export function ActionLog({
   entries,
   showMobileTapGuide,
+  forceScrollToken,
 }: {
   entries: readonly ActionLogEntry[];
   /** Action phase only — small-screen card/event tap hint lives in the log once. */
   showMobileTapGuide?: boolean;
+  /** External trigger that should forcibly scroll the log tail (e.g. after end-of-turn clicks). */
+  forceScrollToken?: number;
 }) {
   const { t } = useI18n();
   const isSmallScreen = useSmallScreen();
@@ -539,6 +542,13 @@ export function ActionLog({
     if (!el || !followTail) return;
     el.scrollTop = el.scrollHeight;
   }, [entries.length, lastEntryId, followTail]);
+
+  useLayoutEffect(() => {
+    const el = wrapRef.current;
+    if (!el) return;
+    el.scrollTop = el.scrollHeight;
+    setFollowTail(true);
+  }, [forceScrollToken]);
 
   const logScroll = (
     <div

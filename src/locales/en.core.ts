@@ -34,6 +34,8 @@ export const messagesEnCore = {
   "ui.playThisCard": "Play this card",
   "ui.cancel": "Cancel",
   "ui.confirmRetention": "Confirm retention",
+  "ui.retentionLegalitySummary": "Selection: keep {keep}, discard {discard} (cap {cap}).",
+  "ui.retentionLegalityOverflow": "{over} over the cap — keep fewer cards.",
   "ui.newGame": "New run",
   "menu.title": "Main menu",
   "menu.resumeSave": "Resume saved run",
