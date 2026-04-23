@@ -10,14 +10,19 @@ import {
 import { gameReducer, type GameAction } from "../../../app/gameReducer";
 import { getCardTemplate } from "../../../data/cards";
 import { getEventSolveFundingAmount, getEventTemplate } from "../../../data/events";
-import { getLevelDef, getTurnLimitForRun } from "../../../data/levels";
 import type { CardTemplateId } from "../../types/card";
 import { EVENT_SLOT_ORDER, type SlotId } from "../../types/event";
 import type { GameOutcome, GameState, Resources } from "../../../types/game";
-import { antiFrenchSentimentEventSolveCostPenalty } from "../../../logic/antiFrenchSentiment";
 import { getPlayableCardCost } from "../../../logic/cardCost";
 import { findScriptedCalendarConfig } from "../../../logic/scriptedCalendar";
 import { retentionCapacity } from "../../../logic/turnFlow";
+import { cardPlayPriorityFirstMandate } from "./strategies/firstMandateStrategy";
+import {
+  cardPlayPrioritySecondMandate,
+  pickSecondMandateChoiceActions,
+  type SecondMandateChoiceOptions,
+} from "./strategies/secondMandateStrategy";
+import { cardPlayPriorityThirdMandate, pickThirdMandateChoiceActions } from "./strategies/thirdMandateStrategy";
 
 const MAX_STEPS_PER_RUN = 4_000;
 
@@ -357,6 +362,36 @@ export type ThreeChapterCampaignBatchReport = {
   averageChapter3EndTurnOnWin: number | null;
 };
 
+export type SecondToThirdCampaignRunResult = {
+  seed: number;
+  secondOutcome: GameOutcome;
+  secondEndTurn: number;
+  thirdOutcome: GameOutcome | null;
+  thirdEndTurn: number | null;
+  /** Set when chapter 3 was reached; derived from the terminal `GameState`. */
+  thirdTerminalKind: ThirdMandateTerminalKind | null;
+};
+
+export type SecondToThirdCampaignBatchReport = {
+  strategyId: typeof STRATEGY_I_ID;
+  runCount: number;
+  chapter2Wins: number;
+  chapter2Losses: number;
+  chapter2WinRate: number;
+  chapter3Runs: number;
+  chapter3Wins: number;
+  chapter3Losses: number;
+  chapter3WinRateAfterCarryover: number | null;
+  /** Counts over runs that reached chapter 3 only (`chapter3Runs`). */
+  chapter3OutcomeBreakdown: ThirdMandateOutcomeBreakdownCounts;
+  chapter3OutcomeBreakdownRates: ThirdMandateOutcomeBreakdownRates;
+  fullCampaignWins: number;
+  fullCampaignWinRate: number;
+  averageChapter2EndTurn: number;
+  averageChapter3EndTurnOnReached: number | null;
+  averageChapter3EndTurnOnWin: number | null;
+};
+
 function round(value: number, digits: number): number {
   const p = 10 ** digits;
   return Math.round(value * p) / p;
@@ -470,60 +505,6 @@ function firstUnresolvedSlotByTemplate(state: GameState, templateId: string): Sl
     if (ev.templateId === templateId) return slot;
   }
   return null;
-}
-
-function countFiscalBurdenInstances(state: GameState): number {
-  let n = 0;
-  for (const inst of Object.values(state.cardsById)) {
-    if (inst?.templateId === "fiscalBurden") n += 1;
-  }
-  return n;
-}
-
-/** Chapter 3 scripted picks (succession / Utrecht / dual front / legacy); Utrecht may defer to END_YEAR. */
-function pickThirdMandateChoiceActions(state: GameState): GameAction[] {
-  if (state.levelId !== "thirdMandate") return [];
-
-  const successionSlot = firstUnresolvedSlotByTemplate(state, "successionCrisis");
-  if (successionSlot) {
-    const pay = state.resources.funding >= 3;
-    return [{ type: "PICK_SUCCESSION_CRISIS", slot: successionSlot, pay }];
-  }
-
-  const dualSlot = firstUnresolvedSlotByTemplate(state, "dualFrontCrisis");
-  if (dualSlot) {
-    const expandWar = state.successionTrack <= -1;
-    return [{ type: "PICK_DUAL_FRONT_CRISIS", slot: dualSlot, expandWar }];
-  }
-
-  const legacySlot = firstUnresolvedSlotByTemplate(state, "louisXivLegacy1715");
-  if (legacySlot) {
-    const burdens = countFiscalBurdenInstances(state);
-    const { power, legitimacy } = state.resources;
-    const directRule =
-      power <= 4 || (power <= 5 && legitimacy >= 6 && burdens < 7) || (burdens < 4 && legitimacy >= 7);
-    return [{ type: "PICK_LOUIS_XIV_LEGACY", slot: legacySlot, directRule }];
-  }
-
-  const utrechtSlot = firstUnresolvedSlotByTemplate(state, "utrechtTreaty");
-  if (utrechtSlot) {
-    const cd = state.utrechtTreatyCountdown;
-    const limit = getTurnLimitForRun(state.levelId, state.calendarStartYear);
-    const turnsLeft = limit - state.turn;
-    const tr = state.successionTrack;
-    const endWar =
-      (cd !== null && cd <= 2) ||
-      turnsLeft <= 4 ||
-      tr >= 7 ||
-      (!state.warEnded &&
-        (state.resources.power <= 4 || state.resources.legitimacy <= 4));
-    if (endWar) {
-      return [{ type: "PICK_UTRECHT_TREATY", slot: utrechtSlot, endWar: true }];
-    }
-    return [];
-  }
-
-  return [];
 }
 
 function remainingCardUses(state: GameState, cardInstanceId: string): number | null {
@@ -666,33 +647,7 @@ function pickScriptedAttackActionsStrategyI(state: GameState): GameAction[] {
 }
 
 function cardPlayPriorityLegacy(state: GameState, cardInstanceId: string): number {
-  const inst = state.cardsById[cardInstanceId];
-  if (!inst) return 1_000;
-  const tmpl = inst.templateId;
-  const harmfulUnresolvedExists = unresolvedSlots(state).some((slot) => {
-    const ev = state.slots[slot];
-    return !!ev && !ev.resolved && getEventTemplate(ev.templateId).harmful;
-  });
-  const win = getLevelDef(state.levelId).winTargets;
-  const treasuryMissing = Math.max(0, win.treasuryStat - state.resources.treasuryStat);
-  const powerMissing = Math.max(0, win.power - state.resources.power);
-  const legitimacyMissing = Math.max(0, win.legitimacy - state.resources.legitimacy);
-
-  switch (tmpl) {
-    case "funding":
-      return harmfulUnresolvedExists ? 0 : 4;
-    case "crackdown":
-    case "diplomaticIntervention":
-      return harmfulUnresolvedExists ? 1 : 60;
-    case "development":
-      return treasuryMissing > 0 ? 2 : 20;
-    case "reform":
-      return powerMissing > 0 ? 2 : 20;
-    case "ceremony":
-      return legitimacyMissing > 0 ? 2 : 20;
-    default:
-      return 30;
-  }
+  return cardPlayPriorityFirstMandate(state, cardInstanceId);
 }
 
 function cardPlayPriorityStrategyI(state: GameState, cardInstanceId: string): number {
@@ -716,80 +671,22 @@ function cardPlayPriorityStrategyI(state: GameState, cardInstanceId: string): nu
   if (tmpl === "fiscalBurden") return 10_000;
   if (tmpl === "religiousTensionCard" || tmpl === "jansenistReservation") return 10_000;
   if (state.levelId === "secondMandate") {
-    switch (tmpl) {
-      case "funding":
-        if (canFundingUnlockRyswick) return 0;
-        if (canFundingUnlockHarmfulSolve) return 1;
-        if (unresolvedRyswickPeace) return 8;
-        if (unresolvedHarmful) return 10;
-        return 16;
-      case "crackdown":
-      case "diplomaticIntervention":
-        return unresolvedHarmful ? (state.resources.power <= 2 ? 7 : 2) : 70;
-      case "grainRelief":
-        return unresolvedRisingGrain ? 2 : state.resources.legitimacy <= 6 ? 4 : 22;
-      case "diplomaticCongress":
-        return state.resources.power < 6 ? 2 : state.resources.power < 8 ? 4 : 24;
-      case "taxRebalance":
-        return state.resources.treasuryStat < 3 ? 5 : state.resources.treasuryStat < 5 ? 12 : 35;
-      case "development":
-        return state.resources.treasuryStat < 5 ? 3 : state.resources.treasuryStat < 7 ? 6 : 24;
-      case "reform":
-        return state.resources.power < 5 ? 2 : state.resources.power < 7 ? 5 : 24;
-      case "ceremony":
-        return state.resources.legitimacy < 6 ? 3 : state.resources.legitimacy < 9 ? 7 : 26;
-      case "suppressHuguenots":
-        return hasContainmentStatus ? 7 : 90;
-      case "jesuitCollege": {
-        const jansenistSlot = firstUnresolvedSlotByTemplate(state, "jansenistTension");
-        if (jansenistSlot) return 2;
-        return state.resources.legitimacy < 9 ? 5 : 12;
-      }
-      default:
-        return 30;
-    }
+    return cardPlayPrioritySecondMandate(state, cardInstanceId, {
+      unresolvedHarmful,
+      unresolvedRyswickPeace,
+      unresolvedRisingGrain,
+      hasContainmentStatus,
+      canFundingUnlockHarmfulSolve,
+      canFundingUnlockRyswick,
+    });
   }
   if (state.levelId === "thirdMandate") {
-    const tr = state.successionTrack;
-    const burdens = countFiscalBurdenInstances(state);
-    switch (tmpl) {
-      case "bourbonMarriageProclamation":
-        return tr < 6 ? 3 : 20;
-      case "grandAllianceInfiltrationDiplomacy":
-        return tr < 5 ? 4 : 18;
-      case "italianTheaterTroopRedeploy":
-        return tr < 5 && burdens < 12 ? 5 : 22;
-      case "usurpationEdict":
-        return tr <= 2 && state.resources.legitimacy >= 6 ? 6 : 38;
-      case "funding":
-        if (canFundingUnlockHarmfulSolve) return 1;
-        if (unresolvedHarmful) return 10;
-        return 16;
-      case "crackdown":
-      case "diplomaticIntervention":
-        return unresolvedHarmful ? (state.resources.power <= 2 ? 7 : 2) : 70;
-      case "grainRelief":
-        return unresolvedRisingGrain ? 2 : state.resources.legitimacy <= 6 ? 4 : 22;
-      case "diplomaticCongress":
-        return state.resources.power < 6 ? 2 : state.resources.power < 8 ? 4 : 24;
-      case "taxRebalance":
-        return state.resources.treasuryStat < 3 ? 5 : state.resources.treasuryStat < 5 ? 12 : 35;
-      case "development":
-        return state.resources.treasuryStat < 5 ? 3 : state.resources.treasuryStat < 7 ? 6 : 24;
-      case "reform":
-        return state.resources.power < 5 ? 2 : state.resources.power < 7 ? 5 : 24;
-      case "ceremony":
-        return state.resources.legitimacy < 6 ? 3 : state.resources.legitimacy < 9 ? 7 : 26;
-      case "suppressHuguenots":
-        return hasContainmentStatus ? 7 : 90;
-      case "jesuitCollege": {
-        const jansenistSlot = firstUnresolvedSlotByTemplate(state, "jansenistTension");
-        if (jansenistSlot) return 2;
-        return state.resources.legitimacy < 9 ? 5 : 12;
-      }
-      default:
-        return 30;
-    }
+    return cardPlayPriorityThirdMandate(state, cardInstanceId, {
+      unresolvedHarmful,
+      unresolvedRisingGrain,
+      hasContainmentStatus,
+      canFundingUnlockHarmfulSolve,
+    });
   }
   return cardPlayPriorityLegacy(state, cardInstanceId);
 }
@@ -930,33 +827,10 @@ function pickSpecialChoiceActionsStrategyI(
   if (state.levelId === "thirdMandate") {
     const ch3 = pickThirdMandateChoiceActions(state);
     if (ch3.length > 0) return ch3;
+    return [];
   }
-  const nantesSlot = firstUnresolvedSlotByTemplate(state, "revocationNantes");
-  if (nantesSlot) {
-    const choice: NantesChoice = options.nantesChoice ?? "crackdown";
-    if (choice === "tolerance") {
-      return [{ type: "PICK_NANTES_TOLERANCE", slot: nantesSlot }];
-    }
-    return [{ type: "PICK_NANTES_CRACKDOWN", slot: nantesSlot }];
-  }
-  const localWarSlot = firstUnresolvedSlotByTemplate(state, "localWar");
-  if (localWarSlot) {
-    const cost = Math.floor(state.europeAlertProgress / 2) + antiFrenchSentimentEventSolveCostPenalty(state);
-    if (state.resources.funding >= cost) {
-      return [{ type: "PICK_LOCAL_WAR_ATTACK", slot: localWarSlot }];
-    }
-    const canPlayFundingCardNow = state.hand.some((id) => {
-      const inst = state.cardsById[id];
-      if (!inst || inst.templateId !== "funding") return false;
-      return state.resources.funding >= getPlayableCardCost(state, id);
-    });
-    if (canPlayFundingCardNow) {
-      return [];
-    }
-    if (state.resources.legitimacy > 1) {
-      return [{ type: "PICK_LOCAL_WAR_APPEASE", slot: localWarSlot }];
-    }
-    return [{ type: "PICK_LOCAL_WAR_APPEASE", slot: localWarSlot }];
+  if (state.levelId === "secondMandate") {
+    return pickSecondMandateChoiceActions(state, options as SecondMandateChoiceOptions);
   }
   return [];
 }
@@ -1232,6 +1106,48 @@ export function simulateFirstToThirdCampaignRun(
   };
 }
 
+export function simulateSecondToThirdCampaignRun(
+  seed: number,
+  options: StrategyOptions = {},
+): SecondToThirdCampaignRunResult {
+  const draft2 = createStandaloneLevel2Draft(seed);
+  const secondStartState = buildLevel2StateFromDraft(draft2);
+  const secondEndState = simulateEndStateWithPolicy(
+    secondStartState,
+    "a-strategy-i",
+    seed,
+    "campaign:secondMandateStandalone",
+    options,
+  );
+  if (secondEndState.outcome !== "victory") {
+    return {
+      seed,
+      secondOutcome: secondEndState.outcome,
+      secondEndTurn: secondEndState.turn,
+      thirdOutcome: null,
+      thirdEndTurn: null,
+      thirdTerminalKind: null,
+    };
+  }
+  const seed3 = campaignThirdStageSeed(seed);
+  const thirdStartState = buildLevel3StateFromChapter2(secondEndState, seed3);
+  const thirdEndState = simulateEndStateWithPolicy(
+    thirdStartState,
+    "a-strategy-i",
+    seed3,
+    "campaign:thirdMandate",
+    options,
+  );
+  return {
+    seed,
+    secondOutcome: secondEndState.outcome,
+    secondEndTurn: secondEndState.turn,
+    thirdOutcome: thirdEndState.outcome,
+    thirdEndTurn: thirdEndState.turn,
+    thirdTerminalKind: classifyThirdMandateEndState(thirdEndState),
+  };
+}
+
 export function simulateFirstMandateBatch(options?: {
   seedStart?: number;
   runCount?: number;
@@ -1476,6 +1392,58 @@ export function simulateFirstToThirdCampaignBatch(options?: {
       chapter2Runs.length > 0 ? round(average(chapter2Runs.map((r) => r.secondEndTurn ?? 0)), 3) : null,
     averageChapter2EndTurnOnWin:
       chapter2Wins.length > 0 ? round(average(chapter2Wins.map((r) => r.secondEndTurn ?? 0)), 3) : null,
+    averageChapter3EndTurnOnReached:
+      chapter3Runs.length > 0 ? round(average(chapter3Runs.map((r) => r.thirdEndTurn ?? 0)), 3) : null,
+    averageChapter3EndTurnOnWin:
+      chapter3Wins.length > 0 ? round(average(chapter3Wins.map((r) => r.thirdEndTurn ?? 0)), 3) : null,
+  };
+}
+
+export function simulateSecondToThirdCampaignBatch(options?: {
+  seedStart?: number;
+  runCount?: number;
+  nantesChoice?: NantesChoice;
+}): SecondToThirdCampaignBatchReport {
+  const seedStart = options?.seedStart ?? 1;
+  const runCount = options?.runCount ?? 200;
+  if (runCount <= 0) {
+    throw new Error("runCount must be > 0");
+  }
+  const strategyOptions: StrategyOptions = {};
+  if (options?.nantesChoice) strategyOptions.nantesChoice = options.nantesChoice;
+  const runs: SecondToThirdCampaignRunResult[] = [];
+  for (let i = 0; i < runCount; i++) {
+    runs.push(simulateSecondToThirdCampaignRun(seedStart + i, strategyOptions));
+  }
+  const chapter2Wins = runs.filter((r) => r.secondOutcome === "victory");
+  const chapter3Runs = runs.filter((r) => r.thirdOutcome !== null);
+  const chapter3Wins = chapter3Runs.filter((r) => r.thirdOutcome === "victory");
+  const chapter3OutcomeBreakdown = emptyThirdMandateOutcomeBreakdown();
+  for (const r of runs) {
+    if (r.thirdTerminalKind !== null) {
+      bumpThirdMandateBreakdown(chapter3OutcomeBreakdown, r.thirdTerminalKind);
+    }
+  }
+  const chapter3OutcomeBreakdownRates = thirdMandateOutcomeRates(
+    chapter3OutcomeBreakdown,
+    chapter3Runs.length,
+  );
+  return {
+    strategyId: STRATEGY_I_ID,
+    runCount,
+    chapter2Wins: chapter2Wins.length,
+    chapter2Losses: runCount - chapter2Wins.length,
+    chapter2WinRate: round(chapter2Wins.length / runCount, 4),
+    chapter3Runs: chapter3Runs.length,
+    chapter3Wins: chapter3Wins.length,
+    chapter3Losses: chapter3Runs.length - chapter3Wins.length,
+    chapter3WinRateAfterCarryover:
+      chapter3Runs.length > 0 ? round(chapter3Wins.length / chapter3Runs.length, 4) : null,
+    chapter3OutcomeBreakdown,
+    chapter3OutcomeBreakdownRates,
+    fullCampaignWins: chapter3Wins.length,
+    fullCampaignWinRate: round(chapter3Wins.length / runCount, 4),
+    averageChapter2EndTurn: round(average(runs.map((r) => r.secondEndTurn)), 3),
     averageChapter3EndTurnOnReached:
       chapter3Runs.length > 0 ? round(average(chapter3Runs.map((r) => r.thirdEndTurn ?? 0)), 3) : null,
     averageChapter3EndTurnOnWin:
