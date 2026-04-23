@@ -39,6 +39,30 @@
   font-size: 0.85rem;
 }
 
+.runCodeToggleGlass {
+  padding: 0.45rem 0.55rem;
+  border-radius: 8px;
+  border: 1px solid color-mix(in srgb, var(--border) 85%, transparent);
+  background: color-mix(in srgb, var(--panel) 72%, transparent);
+  -webkit-backdrop-filter: saturate(1.08) blur(10px);
+  backdrop-filter: saturate(1.08) blur(10px);
+  font-size: 0.85rem;
+}
+
+.runCodeFieldGlass {
+  background: color-mix(in srgb, var(--panel) 68%, transparent) !important;
+  border-color: color-mix(in srgb, var(--border) 85%, transparent) !important;
+  -webkit-backdrop-filter: saturate(1.08) blur(10px);
+  backdrop-filter: saturate(1.08) blur(10px);
+}
+
+.runCodeButtonGlass {
+  background: color-mix(in srgb, #1e2430 55%, transparent) !important;
+  border-color: color-mix(in srgb, var(--border) 85%, transparent) !important;
+  -webkit-backdrop-filter: saturate(1.08) blur(8px);
+  backdrop-filter: saturate(1.08) blur(8px);
+}
+
 .runCodeToggleLabel {
   font-weight: 600;
 }

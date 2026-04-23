@@ -18,5 +18,8 @@ export default defineConfig({
     globals: true,
     environment: "node",
     setupFiles: ["src/test/setupLevels.ts"],
+    /** Long batch scripts set these so console output is visible. */
+    disableConsoleIntercept:
+      process.env.VITEST_LONG_THIRD === "1" || process.env.VITEST_MENU_STANDALONE_LONG === "1",
   },
 });

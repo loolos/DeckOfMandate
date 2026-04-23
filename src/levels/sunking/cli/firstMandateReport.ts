@@ -1,4 +1,4 @@
-import { simulateFirstMandateBatch } from "../src/logic/aiStrategySimulation";
+import { simulateFirstMandateBatch } from "../../campaignAiStrategySimulation";
 
 type CliOptions = {
   seedStart: number;

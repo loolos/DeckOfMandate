@@ -4,7 +4,7 @@ import styles from "./RunCodePanel.module.css";
 
 export type RunCodePanelProps = {
   /** `startMenu`: only paste + load (no current code / copy). Default `inGame`. */
-  variant?: "inGame" | "startMenu";
+  variant?: "inGame" | "inGameGlass" | "startMenu";
   code: string;
   onLoad: (rawHex: string) => { ok: true } | { ok: false; error: string };
 };
@@ -51,6 +51,7 @@ export function RunCodePanel({ variant = "inGame", code, onLoad }: RunCodePanelP
   }, [draft, onLoad]);
 
   const isStartMenu = variant === "startMenu";
+  const isInGameGlass = variant === "inGameGlass";
   const codeLength = code.length;
   const previewSuffix = codeLength > 0 ? `${codeLength}` : "0";
 
@@ -61,7 +62,13 @@ export function RunCodePanel({ variant = "inGame", code, onLoad }: RunCodePanelP
     >
       <button
         type="button"
-        className={isStartMenu ? `${styles.runCodeToggle} ${styles.runCodeToggleStartMenu}` : styles.runCodeToggle}
+        className={
+          isStartMenu
+            ? `${styles.runCodeToggle} ${styles.runCodeToggleStartMenu}`
+            : isInGameGlass
+              ? `${styles.runCodeToggle} ${styles.runCodeToggleGlass}`
+              : styles.runCodeToggle
+        }
         aria-expanded={open}
         onClick={() => setOpen((v) => !v)}
       >
@@ -84,7 +91,7 @@ export function RunCodePanel({ variant = "inGame", code, onLoad }: RunCodePanelP
           {!isStartMenu ? (
             <div className={styles.runCodeRow}>
               <textarea
-                className={styles.runCodeOutput}
+                className={isInGameGlass ? `${styles.runCodeOutput} ${styles.runCodeFieldGlass}` : styles.runCodeOutput}
                 readOnly
                 value={code}
                 spellCheck={false}
@@ -94,7 +101,7 @@ export function RunCodePanel({ variant = "inGame", code, onLoad }: RunCodePanelP
               />
               <button
                 type="button"
-                className={styles.runCodeButton}
+                className={isInGameGlass ? `${styles.runCodeButton} ${styles.runCodeButtonGlass}` : styles.runCodeButton}
                 onClick={handleCopy}
                 disabled={!code}
               >
@@ -104,7 +111,7 @@ export function RunCodePanel({ variant = "inGame", code, onLoad }: RunCodePanelP
           ) : null}
           <div className={styles.runCodeRow}>
             <textarea
-              className={styles.runCodeInput}
+              className={isInGameGlass ? `${styles.runCodeInput} ${styles.runCodeFieldGlass}` : styles.runCodeInput}
               value={draft}
               spellCheck={false}
               wrap="soft"
@@ -122,7 +129,7 @@ export function RunCodePanel({ variant = "inGame", code, onLoad }: RunCodePanelP
             />
             <button
               type="button"
-              className={styles.runCodeButton}
+              className={isInGameGlass ? `${styles.runCodeButton} ${styles.runCodeButtonGlass}` : styles.runCodeButton}
               onClick={handleLoad}
               disabled={draft.trim().length === 0}
             >

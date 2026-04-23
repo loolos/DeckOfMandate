@@ -2,7 +2,7 @@ import {
   simulateFirstToSecondCampaignBatch,
   simulateSecondMandateStandaloneBatch,
   type NantesChoice,
-} from "../src/logic/aiStrategySimulation";
+} from "../../campaignAiStrategySimulation";
 
 type CliOptions = {
   seedStart: number;
@@ -85,9 +85,12 @@ function printReport() {
     );
   }
   if (standaloneRows.length === 2) {
-    const [a, b] = standaloneRows;
-    const delta = b.winRate - a.winRate;
-    console.log(`  delta(tolerance - crackdown): ${(delta * 100).toFixed(2)} pts`);
+    const row0 = standaloneRows[0];
+    const row1 = standaloneRows[1];
+    if (row0 && row1) {
+      const delta = row1.winRate - row0.winRate;
+      console.log(`  delta(tolerance - crackdown): ${(delta * 100).toFixed(2)} pts`);
+    }
   }
   console.log("");
 
@@ -127,13 +130,16 @@ function printReport() {
     );
   }
   if (campaignRows.length === 2) {
-    const [a, b] = campaignRows;
-    if (a.chapter2WinRateAfterCarryover != null && b.chapter2WinRateAfterCarryover != null) {
-      const delta = b.chapter2WinRateAfterCarryover - a.chapter2WinRateAfterCarryover;
-      console.log(`  delta ch2AfterCarry(tolerance - crackdown): ${(delta * 100).toFixed(2)} pts`);
+    const row0 = campaignRows[0];
+    const row1 = campaignRows[1];
+    if (row0 && row1) {
+      if (row0.chapter2WinRateAfterCarryover != null && row1.chapter2WinRateAfterCarryover != null) {
+        const delta = row1.chapter2WinRateAfterCarryover - row0.chapter2WinRateAfterCarryover;
+        console.log(`  delta ch2AfterCarry(tolerance - crackdown): ${(delta * 100).toFixed(2)} pts`);
+      }
+      const fullDelta = row1.fullCampaignWinRate - row0.fullCampaignWinRate;
+      console.log(`  delta fullCampaign(tolerance - crackdown): ${(fullDelta * 100).toFixed(2)} pts`);
     }
-    const fullDelta = b.fullCampaignWinRate - a.fullCampaignWinRate;
-    console.log(`  delta fullCampaign(tolerance - crackdown): ${(fullDelta * 100).toFixed(2)} pts`);
   }
 }
 

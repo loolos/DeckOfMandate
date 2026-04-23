@@ -1,4 +1,16 @@
-import { useCallback, useEffect, useMemo, useReducer, useRef, useState, type PointerEvent } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useReducer,
+  useRef,
+  useState,
+  type CSSProperties,
+  type PointerEvent,
+} from "react";
+import startMenuBackdropUrl from "../img/maintheme.webp";
+import sunkingCampaignBackdropUrl from "../levels/sunking/assets/sunkingCampaignBackdrop.webp";
+import { isSunkingLevelId } from "../levels/sunking/sunkingLevelIds";
 import { ActionLog } from "../components/ActionLog";
 import { EventPanel } from "../components/EventPanel";
 import { Hand } from "../components/Hand";
@@ -71,8 +83,26 @@ function readRegisteredChapter3RefitHandOrder(): readonly CardTemplateId[] {
 
 const CHAPTER3_REFIT_STARTING_HAND_ORDER: readonly CardTemplateId[] = readRegisteredChapter3RefitHandOrder();
 
+/** Start menu only — from `src/img/main.png` via `npm run compress:menu` → maintheme.webp */
+const START_MENU_BACKDROP_STYLE: CSSProperties = {
+  backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.45)), url(${startMenuBackdropUrl})`,
+  backgroundSize: "cover",
+  backgroundPosition: "center",
+  backgroundRepeat: "no-repeat",
+};
+
+/** Sun King: intro / refit / in-run shell — `src/levels/sunking/assets/sunkingCampaignBackdrop.webp` */
+const SUNKING_CAMPAIGN_BACKDROP_STYLE: CSSProperties = {
+  backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.45)), url(${sunkingCampaignBackdropUrl})`,
+  backgroundSize: "cover",
+  backgroundPosition: "center",
+  backgroundRepeat: "no-repeat",
+};
+
 const GRID_SPLIT_STORAGE_KEY = "deckOfMandate_ui_gridSplit";
 const GRID_WIDE_MEDIA = "(min-width: 900px)";
+/** Cold-open splash: show backdrop only, then reveal the main menu panel. */
+const ENTRY_MAIN_MENU_DELAY_MS = 2000;
 
 function clampGridSplit(n: number): number {
   return Math.min(0.72, Math.max(0.28, n));
@@ -159,6 +189,7 @@ export function Game() {
   const [retain, setRetain] = useState<Record<string, boolean>>({});
   const hadSaveOnLaunch = useMemo(() => hasValidStoredSave(), []);
   const [startMenuOpen, setStartMenuOpen] = useState(true);
+  const [entryMainMenuVisible, setEntryMainMenuVisible] = useState(false);
   const [menuLevelId, setMenuLevelId] = useState<LevelId>(() => getDefaultLevelId());
   const [menuSeedText, setMenuSeedText] = useState("");
   const [pendingNewRun, setPendingNewRun] = useState<PendingNewRun | null>(null);
@@ -242,6 +273,11 @@ export function Game() {
     if (startMenuOpen) return;
     saveGame(state);
   }, [state, startMenuOpen]);
+
+  useEffect(() => {
+    const id = window.setTimeout(() => setEntryMainMenuVisible(true), ENTRY_MAIN_MENU_DELAY_MS);
+    return () => window.clearTimeout(id);
+  }, []);
 
   const level = useMemo(() => getLevelDef(state.levelId), [state.levelId]);
   const successionTrackUiActive =
@@ -646,9 +682,17 @@ export function Game() {
       ? getLevelDef(pendingIntroLevelId)
       : null;
 
+  const introSunkingBackdrop = introLevelDef ? isSunkingLevelId(introLevelDef.id) : false;
+
   const levelIntro = introLevelDef ? (
-    <div className={styles.levelIntroScreen} role="dialog" aria-modal="true" aria-labelledby="level-intro-title">
-      <div className={styles.modal}>
+    <div
+      className={styles.levelIntroScreen}
+      style={introSunkingBackdrop ? SUNKING_CAMPAIGN_BACKDROP_STYLE : undefined}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="level-intro-title"
+    >
+      <div className={[styles.modal, introSunkingBackdrop && styles.modalGlass].filter(Boolean).join(" ")}>
         <div className={styles.levelIntroHeader}>
           <h2 id="level-intro-title" className={styles.levelIntroTitle}>
             {t(introLevelDef.introTitleKey as MessageKey)}
@@ -921,8 +965,14 @@ export function Game() {
   };
 
   const level3RefitScreen = level3Draft ? (
-    <div className={styles.startMenuScreen} role="dialog" aria-modal="true" aria-labelledby="level3-refit-title">
-      <div className={styles.modal}>
+    <div
+      className={styles.startMenuScreen}
+      style={SUNKING_CAMPAIGN_BACKDROP_STYLE}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="level3-refit-title"
+    >
+      <div className={`${styles.modal} ${styles.modalGlass}`}>
         <div className={styles.startMenuHeader}>
           <h2 id="level3-refit-title" className={styles.startMenuTitle}>
             {t("menu.refit.titleChapter3")}
@@ -1009,8 +1059,14 @@ export function Game() {
   ) : null;
 
   const level2RefitScreen = level2Draft ? (
-    <div className={styles.startMenuScreen} role="dialog" aria-modal="true" aria-labelledby="level2-refit-title">
-      <div className={styles.modal}>
+    <div
+      className={styles.startMenuScreen}
+      style={SUNKING_CAMPAIGN_BACKDROP_STYLE}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="level2-refit-title"
+    >
+      <div className={`${styles.modal} ${styles.modalGlass}`}>
         <div className={styles.startMenuHeader}>
           <h2 id="level2-refit-title" className={styles.startMenuTitle}>
             {t("menu.refit.title")}
@@ -1102,15 +1158,25 @@ export function Game() {
   ) : null;
 
   const startMenu = (
-    <div className={styles.startMenuScreen} role="dialog" aria-modal="true" aria-labelledby="start-menu-title">
-      <div className={styles.modal}>
-        <div className={styles.startMenuHeader}>
-          <h2 id="start-menu-title" className={styles.startMenuTitle}>
-            {t("menu.title")}
-          </h2>
-          <LanguageToggle />
-        </div>
-        <div className={styles.startMenuForm}>
+    <div
+      className={styles.startMenuScreen}
+      style={START_MENU_BACKDROP_STYLE}
+      aria-busy={!entryMainMenuVisible}
+    >
+      {entryMainMenuVisible ? (
+        <div
+          className={`${styles.modal} ${styles.modalGlass} ${styles.startMenuMainFade}`}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="start-menu-title"
+        >
+          <div className={styles.startMenuHeader}>
+            <h2 id="start-menu-title" className={styles.startMenuTitle}>
+              {t("menu.title")}
+            </h2>
+            <LanguageToggle />
+          </div>
+          <div className={styles.startMenuForm}>
           <label className={styles.startMenuLabel} htmlFor="start-menu-level">
             {t("menu.levelLabel")}
           </label>
@@ -1183,14 +1249,15 @@ export function Game() {
           </button>
           <RunCodePanel variant="startMenu" code="" onLoad={loadFromCode} />
         </div>
-        {hadSaveOnLaunch ? (
-          <div className={styles.startMenuResume}>
-            <button type="button" className={styles.btn} onClick={resumeFromStoredSave}>
-              {t("menu.resumeSave")}
-            </button>
-          </div>
-        ) : null}
-      </div>
+          {hadSaveOnLaunch ? (
+            <div className={styles.startMenuResume}>
+              <button type="button" className={styles.btn} onClick={resumeFromStoredSave}>
+                {t("menu.resumeSave")}
+              </button>
+            </div>
+          ) : null}
+        </div>
+      ) : null}
     </div>
   );
 
@@ -1219,7 +1286,13 @@ export function Game() {
   const gridTemplateColumns =
     wideGameGrid && hasEventsPanel ? `${gridSplit * 2}fr 10px ${(1 - gridSplit) * 2}fr` : "1fr";
 
+  const sunkingPlayShell = isSunkingLevelId(state.levelId);
+
   return (
+    <div
+      className={[styles.playShell, sunkingPlayShell && styles.playShellSunking].filter(Boolean).join(" ")}
+      style={sunkingPlayShell ? SUNKING_CAMPAIGN_BACKDROP_STYLE : undefined}
+    >
     <div className={styles.root}>
       {showLevelTutorial ? (
         <LevelTutorialOverlay open={showLevelTutorial} onDismiss={dismissLevelTutorial} />
@@ -1354,11 +1427,11 @@ export function Game() {
             : t("phase.gameOver")}
       </p>
 
-      <RunCodePanel code={codeHex} onLoad={loadFromCode} />
+      <RunCodePanel variant={sunkingPlayShell ? "inGameGlass" : "inGame"} code={codeHex} onLoad={loadFromCode} />
 
       {state.phase === "retention" && state.outcome === "playing" ? (
         <div className={styles.overlay} role="dialog" aria-modal="true">
-          <div className={styles.modal}>
+          <div className={[styles.modal, sunkingPlayShell && styles.modalGlass].filter(Boolean).join(" ")}>
             <h3>{t("phase.retention")}</h3>
             <p className={styles.help}>
               {resourceLabelWithIcon("legitimacy", t("resource.legitimacy"))}:{" "}
@@ -1400,7 +1473,7 @@ export function Game() {
 
       {state.outcome !== "playing" ? (
         <div className={styles.overlay} role="dialog" aria-modal="true">
-          <div className={styles.modal}>
+          <div className={[styles.modal, sunkingPlayShell && styles.modalGlass].filter(Boolean).join(" ")}>
             <div className={styles.gameOver}>
               <h2>
                 {state.outcome === "victory"
@@ -1484,6 +1557,7 @@ export function Game() {
           </div>
         </div>
       ) : null}
+    </div>
     </div>
   );
 }

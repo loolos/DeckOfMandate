@@ -1,4 +1,4 @@
-import { simulateSecondMandateStandaloneEndState } from "../src/logic/aiStrategySimulation";
+import { simulateSecondMandateStandaloneEndState } from "../src/levels/campaignAiStrategySimulation";
 
 const seed = Number(process.argv[2] ?? 1);
 const choice = (process.argv[3] ?? "crackdown") as "crackdown" | "tolerance";

@@ -109,6 +109,44 @@
   padding: 0.75rem 0.9rem;
 }
 
+/** Sun King in-run shell: frosted panels over campaign backdrop (see `.playShellSunking`). */
+.playShell {
+  width: 100%;
+  min-height: 100vh;
+  min-height: 100dvh;
+  box-sizing: border-box;
+}
+
+.playShellSunking .panel {
+  background: color-mix(in srgb, var(--panel) 72%, transparent);
+  border-color: color-mix(in srgb, var(--border) 85%, transparent);
+  -webkit-backdrop-filter: saturate(1.08) blur(12px);
+  backdrop-filter: saturate(1.08) blur(12px);
+}
+
+.playShellSunking .stat {
+  background: color-mix(in srgb, var(--panel) 70%, transparent);
+  border-color: color-mix(in srgb, var(--border) 88%, transparent);
+  -webkit-backdrop-filter: saturate(1.08) blur(10px);
+  backdrop-filter: saturate(1.08) blur(10px);
+}
+
+.playShellSunking .resourceMobileCompact,
+.playShellSunking .resourceMobileCollapseBar {
+  background: color-mix(in srgb, var(--panel) 72%, transparent);
+  border-color: color-mix(in srgb, var(--border) 85%, transparent);
+  -webkit-backdrop-filter: saturate(1.08) blur(10px);
+  backdrop-filter: saturate(1.08) blur(10px);
+}
+
+.playShellSunking .actionLogResizable,
+.playShellSunking .actionLogScroll {
+  background: color-mix(in srgb, var(--panel) 68%, transparent);
+  border-color: color-mix(in srgb, var(--border) 85%, transparent);
+  -webkit-backdrop-filter: saturate(1.08) blur(10px);
+  backdrop-filter: saturate(1.08) blur(10px);
+}
+
 .panel h2 {
   margin: 0 0 0.5rem;
   font-size: 1rem;
@@ -865,6 +903,13 @@
   margin: auto;
 }
 
+.modal.modalGlass {
+  background: color-mix(in srgb, var(--panel) 72%, transparent);
+  border-color: color-mix(in srgb, var(--border) 82%, transparent);
+  -webkit-backdrop-filter: saturate(1.08) blur(14px);
+  backdrop-filter: saturate(1.08) blur(14px);
+}
+
 .modal h3 {
   margin: 0 0 0.5rem;
 }
@@ -1068,6 +1113,31 @@
   border-top: 1px solid var(--border);
 }
 
+@keyframes startMenuMainFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(0.45rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/** First-run main menu panel only (not chapter refit dialogs). */
+.startMenuMainFade {
+  opacity: 0;
+  animation: startMenuMainFadeIn 1.85s ease-out forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .startMenuMainFade {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}
+
 /** Full viewport start screen — no game layout mounted behind it. */
 .startMenuScreen {
   min-height: 100vh;
@@ -1081,7 +1151,7 @@
   padding: max(1rem, env(safe-area-inset-top, 0px)) max(1.25rem, env(safe-area-inset-right, 0px))
     max(1.5rem, env(safe-area-inset-bottom, 0px)) max(1.25rem, env(safe-area-inset-left, 0px));
   box-sizing: border-box;
-  background: var(--bg);
+  background-color: var(--bg);
   color: var(--text);
 }
 

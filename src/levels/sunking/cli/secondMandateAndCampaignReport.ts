@@ -1,7 +1,7 @@
 import {
   simulateFirstToSecondCampaignBatch,
   simulateSecondMandateStandaloneBatch,
-} from "../src/logic/aiStrategySimulation";
+} from "../../campaignAiStrategySimulation";
 
 type CliOptions = {
   seedStart: number;
