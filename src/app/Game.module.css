@@ -1390,6 +1390,7 @@
   .hand {
     display: flex;
     flex-wrap: nowrap;
+    align-items: flex-start;
     gap: 0.45rem;
     overflow-x: auto;
     overflow-y: hidden;
@@ -1421,6 +1422,7 @@
     width: 4.85rem;
     min-width: 4.85rem;
     max-width: 4.85rem;
+    min-height: 6.1rem;
     padding: 0.3rem 0.2rem;
     display: flex;
     flex-direction: column;
