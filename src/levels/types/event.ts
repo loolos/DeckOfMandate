@@ -26,6 +26,7 @@ export type EventTemplateId =
   | "courtScandal"
   | "militaryPrestige"
   | "commercialExpansion"
+  | "sunKingPilgrimage"
   | "talentedAdministrator"
   | "warWeariness"
   | "expansionRemembered"

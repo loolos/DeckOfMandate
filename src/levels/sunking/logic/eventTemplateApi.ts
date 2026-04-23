@@ -86,6 +86,9 @@ export function getEventSolveFundingAmount(state: GameState, id: EventTemplateId
   if (id === "commercialExpansion") {
     return Math.floor(state.resources.treasuryStat / 5) + 1;
   }
+  if (id === "sunKingPilgrimage") {
+    return Math.floor((state.resources.power + state.resources.legitimacy) / 6) + 1;
+  }
   return tmpl.solve.amount + antiFrenchPenalty;
 }
 

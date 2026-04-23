@@ -3,16 +3,18 @@ import { getLevelDef } from "../data/levels";
 import { createInitialState } from "./initialState";
 import {
   LEVEL2_CONTINUITY_MAX_REMOVALS,
-  LEVEL2_FIXED_NEW_IDS,
   buildLevel2StateFromDraft,
   createContinuityLevel2Draft,
   createStandaloneLevel2Draft,
+  getLevel2RefitNewCardsTemplateOrder,
   toggleContinuityCardRemoval,
   validateLevel2ContinuityRefit,
   validateLevel2Draft,
 } from "./levelTransitions";
 
 describe("levelTransitions / chapter2", () => {
+  const level2NewCards = getLevel2RefitNewCardsTemplateOrder();
+
   it("creates a valid standalone chapter 2 draft with chapter-1 carryover cards", () => {
     const draft = createStandaloneLevel2Draft(123);
     const v = validateLevel2Draft(draft);
@@ -37,7 +39,7 @@ describe("levelTransitions / chapter2", () => {
     expect(standaloneCrackdown?.totalUses).toBe(1);
     expect(standaloneDevelopment?.totalUses).toBe(1);
     expect(draft.removedCarryoverIds).toEqual([]);
-    expect(v.totalNewCards).toBe(LEVEL2_FIXED_NEW_IDS.length);
+    expect(v.totalNewCards).toBe(level2NewCards.length);
     expect(v.isValid).toBe(true);
   });
 
@@ -106,7 +108,7 @@ describe("levelTransitions / chapter2", () => {
     expect(st.cardInflationById[ceremonyInstanceId]).toBe(1);
     expect((allTemplateIds as string[]).includes("patronageOffice")).toBe(false);
     expect(allTemplateIds.includes("diplomaticIntervention")).toBe(false);
-    for (const id of LEVEL2_FIXED_NEW_IDS) {
+    for (const id of level2NewCards) {
       expect(allTemplateIds.includes(id)).toBe(true);
     }
     expect(st.actionLog.some((entry) => entry.kind === "info" && entry.infoKey === "chapter2EuropeAlertOn")).toBe(true);
@@ -170,7 +172,7 @@ describe("levelTransitions / chapter2", () => {
     expect(st.cardsById[removeInflated.instanceId]?.templateId).toBe(removeInflated.templateId);
     expect(st.cardInflationById[removeInflated.instanceId]).toBe(1);
     const allTemplateIds = Object.values(st.cardsById).map((c) => c.templateId);
-    for (const id of LEVEL2_FIXED_NEW_IDS) {
+    for (const id of level2NewCards) {
       expect(allTemplateIds.includes(id)).toBe(true);
     }
   });
@@ -231,8 +233,8 @@ describe("levelTransitions / chapter2", () => {
     const vContinuity = validateLevel2Draft(continuity);
     expect(vStandalone.isValid).toBe(true);
     expect(vContinuity.isValid).toBe(true);
-    expect(vStandalone.totalNewCards).toBe(LEVEL2_FIXED_NEW_IDS.length);
-    expect(vContinuity.totalNewCards).toBe(LEVEL2_FIXED_NEW_IDS.length);
+    expect(vStandalone.totalNewCards).toBe(level2NewCards.length);
+    expect(vContinuity.totalNewCards).toBe(level2NewCards.length);
     expect(vContinuity.maxAdjustableChanges).toBe(LEVEL2_CONTINUITY_MAX_REMOVALS);
   });
 

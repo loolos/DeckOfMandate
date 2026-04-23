@@ -10,6 +10,7 @@ import { calendarYearForTurn } from "../../logic/scriptedCalendar";
 import { unlockHabsburgOpponentForContinuityChapterStart } from "../../logic/opponentHabsburg";
 import { beginYear } from "../../logic/turnFlow";
 import type { CardInstance, CardTemplateId } from "../types/card";
+import type { LevelRefitConfig, StandaloneCarryoverTemplateOverride } from "../types/refit";
 import { EMPTY_EVENT_SLOTS, EMPTY_PENDING_MAJOR_CRISIS } from "../types/event";
 import type { GameState, Resources } from "../../types/game";
 import {
@@ -30,12 +31,38 @@ export const SUNKING_CH3_ID = THIRD_MANDATE_LEVEL_ID;
 
 export const LEVEL3_CONTINUITY_MAX_REMOVALS = CONTINUITY_REFIT_MAX_CARD_REMOVALS;
 
-function thirdMandateRefitStartingHandOrder(): readonly CardTemplateId[] {
-  const o = getLevelContent(THIRD_MANDATE_LEVEL_ID).chapter3RefitStartingHandOrder;
-  if (!o?.length) {
-    throw new Error("levelRegistry: thirdMandate.chapter3RefitStartingHandOrder is required");
-  }
-  return o;
+function level3RefitConfig(): LevelRefitConfig {
+  const cfg = getLevelContent(THIRD_MANDATE_LEVEL_ID).refit;
+  if (!cfg) throw new Error("levelRegistry: thirdMandate.refit is required");
+  return cfg;
+}
+
+export function getLevel3RefitNewCardsTemplateOrder(): readonly CardTemplateId[] {
+  return level3RefitConfig().newCardsTemplateOrder;
+}
+
+export function getLevel3RefitNewCardsLabelKey(): string {
+  return level3RefitConfig().newCardsLabelKey ?? "menu.refit.newCardsChapter3";
+}
+
+function standaloneInflationDeltaFromConfig(templateId: CardTemplateId): number {
+  const source = level3RefitConfig().standaloneCarryoverSource;
+  const targetInflationCost = source?.inflationTargetCostByTag?.inflation;
+  if (targetInflationCost == null) return 0;
+  const tmpl = getCardTemplate(templateId);
+  if (!tmpl.tags.includes("inflation")) return 0;
+  return Math.max(0, targetInflationCost - tmpl.cost);
+}
+
+function applyStandaloneCarryoverOverride(
+  override: StandaloneCarryoverTemplateOverride | undefined,
+  fallbackInflationDelta: number,
+  fallbackUsage: { remaining: number; total: number } | null,
+): { inflationDelta: number; remainingUses: number | null; totalUses: number | null } {
+  const inflationDelta = Math.max(0, override?.inflationDelta ?? fallbackInflationDelta);
+  const remainingUses = override?.remainingUses ?? fallbackUsage?.remaining ?? null;
+  const totalUses = override?.totalUses ?? fallbackUsage?.total ?? null;
+  return { inflationDelta, remainingUses, totalUses };
 }
 
 export type {
@@ -45,29 +72,31 @@ export type {
   Level3StartDraft,
 };
 
-const STANDALONE_CH3_REMOVED_TEMPLATES = new Set<CardTemplateId>(["funding", "crackdown"]);
-const STANDALONE_CH3_INFLATION_TARGET_COST = 4;
-
 /** Synthetic chapter-2-equivalent library for main-menu chapter 3 (same removal rules as continuity). */
 export function createStandaloneLevel3Draft(seed?: number): Level3StandaloneDraft {
   const level = getLevelDef(THIRD_MANDATE_LEVEL_ID);
-  const ch2Templates = getLevelContent(SUNKING_CH2_ID).starterDeckTemplateOrder;
-  const carryoverCards: Level3CarryoverCard[] = ch2Templates
-    .filter((templateId) => !STANDALONE_CH3_REMOVED_TEMPLATES.has(templateId))
+  const refit = level3RefitConfig();
+  const source = refit.standaloneCarryoverSource;
+  if (!source) throw new Error("levelRegistry: thirdMandate.refit.standaloneCarryoverSource is required");
+  const excludes = new Set(source.excludeTemplateIds ?? []);
+  const sourceTemplates = getLevelContent(source.levelId).starterDeckTemplateOrder;
+  const carryoverCards: Level3CarryoverCard[] = sourceTemplates
+    .filter((templateId) => !excludes.has(templateId))
     .map((templateId, i) => {
-      const tmpl = getCardTemplate(templateId);
-      const targetInflationDelta = tmpl.tags.includes("inflation")
-        ? Math.max(0, STANDALONE_CH3_INFLATION_TARGET_COST - tmpl.cost)
-        : 0;
+      const targetInflationDelta = standaloneInflationDeltaFromConfig(templateId);
       const usage = createInitialCardUseState(THIRD_MANDATE_LEVEL_ID, templateId);
-      const standaloneRoyalUses =
-        templateId === "funding" || templateId === "crackdown" || templateId === "development" ? 1 : null;
+      const override = source.templateOverrides?.[templateId];
+      const next = applyStandaloneCarryoverOverride(
+        override,
+        targetInflationDelta,
+        usage ? { remaining: usage.remaining, total: usage.total } : null,
+      );
       return {
-        instanceId: `standalone_ch3_old_${i}_${templateId}`,
+        instanceId: `${source.instanceIdPrefix}${i}_${templateId}`,
         templateId,
-        inflationDelta: targetInflationDelta,
-        remainingUses: standaloneRoyalUses ?? usage?.remaining ?? null,
-        totalUses: standaloneRoyalUses ?? usage?.total ?? null,
+        inflationDelta: next.inflationDelta,
+        remainingUses: next.remainingUses,
+        totalUses: next.totalUses,
       };
     });
   return {
@@ -102,13 +131,14 @@ export function createContinuityLevel3Draft(from: GameState, seed?: number): Lev
 }
 
 export function validateLevel3Draft(draft: Level3StartDraft): Level2Validation {
+  const newCards = getLevel3RefitNewCardsTemplateOrder();
   const uniqueRemoved = new Set(draft.removedCarryoverIds);
   const removedCards = uniqueRemoved.size;
   const keptCarryover = draft.carryoverCards.length - removedCards;
-  const totalCards = keptCarryover + thirdMandateRefitStartingHandOrder().length;
+  const totalCards = keptCarryover + newCards.length;
   return {
     totalCards,
-    totalNewCards: thirdMandateRefitStartingHandOrder().length,
+    totalNewCards: newCards.length,
     adjustableChanges: removedCards,
     maxAdjustableChanges: LEVEL3_CONTINUITY_MAX_REMOVALS,
     isValid: removedCards <= LEVEL3_CONTINUITY_MAX_REMOVALS && keptCarryover > 0,
@@ -141,7 +171,7 @@ export function buildLevel3StateFromDraft(draft: Level3StartDraft): GameState {
   }
 
   const ch3Ids: string[] = [];
-  const refitOrder = thirdMandateRefitStartingHandOrder();
+  const refitOrder = getLevel3RefitNewCardsTemplateOrder();
   for (let i = 0; i < refitOrder.length; i++) {
     const templateId = refitOrder[i]!;
     const instanceId = `ch3_hand_${i}_${templateId}`;
@@ -180,16 +210,6 @@ export function buildLevel3StateFromDraft(draft: Level3StartDraft): GameState {
     const usage = createInitialCardUseState(THIRD_MANDATE_LEVEL_ID, inst.templateId);
     if (usage) {
       cardUsesById[id] = usage;
-    }
-  }
-
-  if (draft.mode === "standalone") {
-    for (const card of keptCards) {
-      const id = card.instanceId;
-      const tid = cardsById[id]?.templateId;
-      if (!tid || !getCardTemplate(tid).tags.includes("inflation")) continue;
-      const targetDelta = Math.max(0, STANDALONE_CH3_INFLATION_TARGET_COST - getCardTemplate(tid).cost);
-      cardInflationById[id] = Math.max(cardInflationById[id] ?? 0, targetDelta);
     }
   }
 

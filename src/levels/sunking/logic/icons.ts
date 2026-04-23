@@ -58,6 +58,7 @@ const EVENT_ICONS: Record<EventTemplateId, string> = {
   courtScandal: "🎭",
   militaryPrestige: "🎖️",
   commercialExpansion: "📈",
+  sunKingPilgrimage: "☀️",
   talentedAdministrator: "🧠",
   warWeariness: "🥀",
   expansionRemembered: "🦅",

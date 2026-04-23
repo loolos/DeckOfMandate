@@ -57,7 +57,11 @@ export function attemptNineYearsWarCampaign(
   let s: GameState = { ...state, rng };
   if (roll === 1) {
     s = { ...s, slots: { ...s.slots, [slot]: null } };
-    return appendActionLog(s, {
+    s = applyEffects(s, [
+      { kind: "modResource", resource: "legitimacy", delta: 1 },
+      { kind: "modResource", resource: "funding", delta: 3 },
+    ]);
+    s = appendActionLog(s, {
       kind: "eventNineYearsWarAttempt",
       slot,
       method,
@@ -65,6 +69,7 @@ export function attemptNineYearsWarCampaign(
       roll,
       outcome: "majorVictory",
     });
+    return enforceLegitimacy(s);
   }
   if (roll >= 6) {
     s = applyEffects(s, [{ kind: "modResource", resource: "legitimacy", delta: 1 }]);

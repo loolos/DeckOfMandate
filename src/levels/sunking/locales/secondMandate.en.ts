@@ -12,6 +12,8 @@ export const messagesEnSecondMandate = {
     "Europe still remembers your earlier offensives. Rivals never fully trust French restraint, but careful reconstruction after war keeps the crown standing.",
   "level.gloryUnderStrain.ending.defeat":
     "The burdens of hegemony break the regime. Fiscal strain, social unrest, and diplomatic pressure outpace royal control, leaving the crown weakened and isolated.",
+  "level.gloryUnderStrain.ending.defeatTimeHuguenotRemain":
+    "The year 1700 arrives, yet Huguenot forces still confront royal authority between the provinces and the center. You reached the end of the timeline, but not the end of the underground network: each sweep breeds another pocket of resistance. Versailles keeps its posture abroad, while at home the crown keeps bleeding strength into policing, taxation, and confessional pressure.",
   "status.europeAlert.name": "Europe Alert",
   "status.europeAlert.hint":
     "Europe Alert tracks progress (1-10): usually starts at 3; if you continue from Chapter 1 without the War of Devolution attack branch, it starts at 1. At 1-5, extra-event chance is progress×20%; at 6-10, at least 1 event is guaranteed and second-event chance is (progress-5)×20%.",
@@ -92,6 +94,9 @@ export const messagesEnSecondMandate = {
   "event.commercialExpansion.name": "Commercial Expansion",
   "event.commercialExpansion.desc":
     "In late 17th-century France, Colbertist policy still backed manufactures, shipping, and chartered companies, but wartime strain and tariff friction kept expansion costly. Merchants request support for growth. Invest a Funding cost tied to Treasury for Treasury +1.",
+  "event.sunKingPilgrimage.name": "Sun King's Pilgrimage",
+  "event.sunKingPilgrimage.desc":
+    "A carefully staged royal pilgrimage through major shrines and provincial capitals can turn court ritual into public loyalty. Invest a Funding cost tied to (Power + Legitimacy) for Legitimacy +2, Power +1, and add 1 Fiscal Burden to your draw pile.",
   "event.talentedAdministrator.name": "Talented Administrator",
   "event.talentedAdministrator.desc":
     "Colbert's successors promoted secretaries and intendants who could bypass venal deadwood. A capable official can be elevated. Invest 2 Funding for Power +1.",

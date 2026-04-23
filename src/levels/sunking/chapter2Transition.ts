@@ -7,6 +7,7 @@ import { calendarYearForTurn } from "../../logic/scriptedCalendar";
 import { createRngFromSeed, shuffle } from "../../logic/rng";
 import { beginYear } from "../../logic/turnFlow";
 import type { CardInstance, CardTemplateId } from "../types/card";
+import type { LevelRefitConfig, StandaloneCarryoverTemplateOverride } from "../types/refit";
 import { EMPTY_EVENT_SLOTS, EMPTY_PENDING_MAJOR_CRISIS } from "../types/event";
 import type { GameState, Resources } from "../../types/game";
 import {
@@ -22,15 +23,6 @@ import {
 export const SUNKING_CH1_ID = "firstMandate";
 export const SUNKING_CH2_ID = "secondMandate";
 
-export const LEVEL2_FIXED_NEW_IDS = [
-  "grainRelief",
-  "grainRelief",
-  "taxRebalance",
-  "taxRebalance",
-  "diplomaticCongress",
-  "diplomaticCongress",
-] as const;
-
 export type {
   Level2CarryoverCard,
   Level2ContinuityDraft,
@@ -42,20 +34,55 @@ export type {
 
 export const LEVEL2_CONTINUITY_MAX_REMOVALS = CONTINUITY_REFIT_MAX_CARD_REMOVALS;
 
+function level2RefitConfig(): LevelRefitConfig {
+  const cfg = getLevelContent(SUNKING_CH2_ID).refit;
+  if (!cfg) throw new Error("levelRegistry: secondMandate.refit is required");
+  return cfg;
+}
+
+export function getLevel2RefitNewCardsTemplateOrder(): readonly CardTemplateId[] {
+  return level2RefitConfig().newCardsTemplateOrder;
+}
+
+export function getLevel2RefitNewCardsLabelKey(): string {
+  return level2RefitConfig().newCardsLabelKey ?? "menu.refit.newCards";
+}
+
+function applyStandaloneCarryoverOverride(
+  override: StandaloneCarryoverTemplateOverride | undefined,
+  fallbackInflationDelta: number,
+  fallbackUsage: { remaining: number; total: number } | null,
+): { inflationDelta: number; remainingUses: number | null; totalUses: number | null } {
+  const inflationDelta = Math.max(0, override?.inflationDelta ?? fallbackInflationDelta);
+  const remainingUses = override?.remainingUses ?? fallbackUsage?.remaining ?? null;
+  const totalUses = override?.totalUses ?? fallbackUsage?.total ?? null;
+  return { inflationDelta, remainingUses, totalUses };
+}
+
 export function createStandaloneLevel2Draft(seed?: number): Level2StandaloneDraft {
   const level = getLevelDef(SUNKING_CH2_ID);
-  const carryoverCards = getLevelContent(SUNKING_CH1_ID).starterDeckTemplateOrder.map((templateId, i) => {
-    const usage = createInitialCardUseState(SUNKING_CH2_ID, templateId);
-    const standaloneRoyalUses =
-      templateId === "funding" || templateId === "crackdown" || templateId === "development" ? 1 : null;
-    return {
-      instanceId: `standalone_old_${i}_${templateId}`,
-      templateId,
-      inflationDelta: templateId === "reform" || templateId === "ceremony" ? 1 : 0,
-      remainingUses: standaloneRoyalUses ?? usage?.remaining ?? null,
-      totalUses: standaloneRoyalUses ?? usage?.total ?? null,
-    };
-  });
+  const refit = level2RefitConfig();
+  const source = refit.standaloneCarryoverSource;
+  if (!source) throw new Error("levelRegistry: secondMandate.refit.standaloneCarryoverSource is required");
+  const excludes = new Set(source.excludeTemplateIds ?? []);
+  const carryoverCards = getLevelContent(source.levelId).starterDeckTemplateOrder
+    .filter((templateId) => !excludes.has(templateId))
+    .map((templateId, i) => {
+      const usage = createInitialCardUseState(SUNKING_CH2_ID, templateId);
+      const override = source.templateOverrides?.[templateId];
+      const next = applyStandaloneCarryoverOverride(
+        override,
+        0,
+        usage ? { remaining: usage.remaining, total: usage.total } : null,
+      );
+      return {
+        instanceId: `${source.instanceIdPrefix}${i}_${templateId}`,
+        templateId,
+        inflationDelta: next.inflationDelta,
+        remainingUses: next.remainingUses,
+        totalUses: next.totalUses,
+      };
+    });
   return {
     mode: "standalone",
     seed,
@@ -133,13 +160,14 @@ export function toggleContinuityCardRemoval<T extends DeckRefitDraft>(draft: T, 
 }
 
 export function validateLevel2ContinuityRefit(draft: Level2StartDraft): Level2Validation {
+  const newCards = getLevel2RefitNewCardsTemplateOrder();
   const uniqueRemoved = new Set(draft.removedCarryoverIds);
   const removedCards = uniqueRemoved.size;
   const keptCarryover = draft.carryoverCards.length - removedCards;
-  const totalCards = keptCarryover + LEVEL2_FIXED_NEW_IDS.length;
+  const totalCards = keptCarryover + newCards.length;
   return {
     totalCards,
-    totalNewCards: LEVEL2_FIXED_NEW_IDS.length,
+    totalNewCards: newCards.length,
     adjustableChanges: removedCards,
     maxAdjustableChanges: LEVEL2_CONTINUITY_MAX_REMOVALS,
     isValid: removedCards <= LEVEL2_CONTINUITY_MAX_REMOVALS && keptCarryover > 0,
@@ -159,12 +187,13 @@ function buildContinuityLevel2State(draft: Level2StartDraft): GameState {
   let rng = createRngFromSeed(runSeed);
   const removed = new Set(draft.removedCarryoverIds);
   const keptCards = draft.carryoverCards.filter((card) => !removed.has(card.instanceId));
+  const newCards = getLevel2RefitNewCardsTemplateOrder();
   const deckOrder: Array<{ instanceId: string; templateId: CardTemplateId }> = keptCards.map((card) => ({
     instanceId: card.instanceId,
     templateId: card.templateId,
   }));
   const occupied = new Set(deckOrder.map((card) => card.instanceId));
-  for (const id of LEVEL2_FIXED_NEW_IDS) {
+  for (const id of newCards) {
     let counter = 1;
     let instanceId = `chapter2_new_${id}_${counter}`;
     while (occupied.has(instanceId)) {

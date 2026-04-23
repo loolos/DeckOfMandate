@@ -127,8 +127,23 @@ export const levelContent: LevelContent = {
   procedural: {
     firstTurnEmptyBoardCount: 2,
   },
-  chapter3RefitStartingHandOrder: CHAPTER3_REFIT_STARTING_HAND_ORDER,
-  refitNewCardsLabelKey: "menu.refit.newCardsChapter3",
+  refit: {
+    newCardsTemplateOrder: CHAPTER3_REFIT_STARTING_HAND_ORDER,
+    newCardsLabelKey: "menu.refit.newCardsChapter3",
+    standaloneCarryoverSource: {
+      levelId: "secondMandate",
+      instanceIdPrefix: "standalone_ch3_old_",
+      excludeTemplateIds: ["funding", "crackdown"],
+      inflationTargetCostByTag: {
+        inflation: 4,
+      },
+      templateOverrides: {
+        funding: { totalUses: 1, remainingUses: 1 },
+        crackdown: { totalUses: 1, remainingUses: 1 },
+        development: { totalUses: 1, remainingUses: 1 },
+      },
+    },
+  },
   limitedUseByTemplateId: {
     funding: { totalUses: 3 },
     crackdown: { totalUses: 3 },

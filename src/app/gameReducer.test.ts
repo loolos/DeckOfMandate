@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { levelContentByLevelId } from "../data/levelContent";
 import { getLevelDef, getTurnLimitForRun } from "../data/levels";
 import { getCardTemplate } from "../data/cards";
-import { getEventTemplate } from "../data/events";
+import { getEventSolveFundingAmount, getEventTemplate } from "../data/events";
 import { EMPTY_EVENT_SLOTS, type SlotId } from "../levels/types/event";
 import { createInitialState } from "./initialState";
 import { gameReducer } from "./gameReducer";
@@ -1138,6 +1138,52 @@ describe("gameReducer", () => {
     const after = gameReducer(s0, { type: "SOLVE_EVENT", slot: "A" });
     expect(after.slots.A?.templateId).toBe("nineYearsWar");
     expect(after.slots.A?.remainingTurns).toBeUndefined();
+  });
+
+  it("nine years war major victory ends war and grants legitimacy +1 and funding +3 reparations", () => {
+    const base = createInitialState(202_904_3, "secondMandate");
+    const rngState = (() => {
+      for (let st = 1; st < 200_000; st++) {
+        const s0: typeof base = {
+          ...base,
+          rng: { state: st },
+          europeAlert: true,
+          europeAlertProgress: 5,
+          resources: { ...base.resources, funding: 9, legitimacy: 5 },
+          slots: {
+            ...base.slots,
+            A: { instanceId: "e_nine", templateId: "nineYearsWar" as const, resolved: false },
+          },
+        };
+        const after = gameReducer(s0, { type: "SOLVE_EVENT", slot: "A" });
+        if (after.slots.A === null) {
+          return st;
+        }
+      }
+      throw new Error("failed to find deterministic rng state for decisive nine years war campaign");
+    })();
+    const s0: typeof base = {
+      ...base,
+      rng: { state: rngState },
+      europeAlert: true,
+      europeAlertProgress: 5,
+      resources: { ...base.resources, funding: 9, legitimacy: 5 },
+      slots: {
+        ...base.slots,
+        A: { instanceId: "e_nine", templateId: "nineYearsWar" as const, resolved: false },
+      },
+    };
+    const fundingPaid = getEventSolveFundingAmount(s0, "nineYearsWar");
+    if (fundingPaid === null) throw new Error("expected nine years war to have a funding solve cost");
+    const after = gameReducer(s0, { type: "SOLVE_EVENT", slot: "A" });
+    expect(after.slots.A).toBeNull();
+    expect(after.resources.legitimacy).toBe(s0.resources.legitimacy + 1);
+    expect(after.resources.funding).toBe(s0.resources.funding - fundingPaid + 3);
+    const last = after.actionLog[after.actionLog.length - 1];
+    expect(last).toMatchObject({
+      kind: "eventNineYearsWarAttempt",
+      outcome: "majorVictory",
+    });
   });
 
   it("chapter 2 cannot win from 1696 onward while europe alert is still active", () => {

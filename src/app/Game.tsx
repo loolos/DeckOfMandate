@@ -30,7 +30,6 @@ import {
   type LevelEndingCopyKeys,
   type LevelId,
 } from "../data/levels";
-import { getLevelContent } from "../data/levelRegistry";
 import { cardLabelWithIcon, resourceLabelWithIcon } from "../logic/icons";
 import { normalizeGameState } from "../logic/normalizeGameState";
 import { currentCalendarYear } from "../logic/scriptedCalendar";
@@ -48,14 +47,16 @@ import { gameReducer, type GameAction } from "./gameReducer";
 import { createInitialState } from "./initialState";
 import {
   LEVEL2_CONTINUITY_MAX_REMOVALS,
-  LEVEL2_FIXED_NEW_IDS,
-  SUNKING_CH2_ID,
   buildLevel2StateFromDraft,
   buildLevel3StateFromDraft,
   createContinuityLevel2Draft,
   createContinuityLevel3Draft,
   createStandaloneLevel2Draft,
   createStandaloneLevel3Draft,
+  getLevel2RefitNewCardsLabelKey,
+  getLevel2RefitNewCardsTemplateOrder,
+  getLevel3RefitNewCardsLabelKey,
+  getLevel3RefitNewCardsTemplateOrder,
   toggleContinuityCardRemoval,
   validateLevel2Draft,
   validateLevel3Draft,
@@ -73,29 +74,10 @@ import {
   type RunRecord,
   type SessionRecord,
 } from "../logic/runCode";
-
-function readRegisteredChapter3RefitConfig(): {
-  handOrder: readonly CardTemplateId[];
-  newCardsLabelKey: MessageKey;
-} {
-  for (const id of getRegisteredLevelIds()) {
-    const content = getLevelContent(id);
-    const handOrder = content.chapter3RefitStartingHandOrder;
-    if (handOrder?.length) {
-      return {
-        handOrder,
-        newCardsLabelKey: (content.refitNewCardsLabelKey ?? "menu.refit.newCardsChapter3") as MessageKey,
-      };
-    }
-  }
-  throw new Error("Game: no registered level defines chapter3RefitStartingHandOrder");
-}
-
-const CHAPTER3_REFIT_CONFIG = readRegisteredChapter3RefitConfig();
-const CHAPTER3_REFIT_STARTING_HAND_ORDER: readonly CardTemplateId[] = CHAPTER3_REFIT_CONFIG.handOrder;
-const CHAPTER3_REFIT_NEW_CARDS_LABEL_KEY: MessageKey = CHAPTER3_REFIT_CONFIG.newCardsLabelKey;
-const LEVEL2_REFIT_NEW_CARDS_LABEL_KEY: MessageKey = (getLevelContent(SUNKING_CH2_ID).refitNewCardsLabelKey ??
-  "menu.refit.newCards") as MessageKey;
+const LEVEL2_REFIT_NEW_CARDS = getLevel2RefitNewCardsTemplateOrder();
+const LEVEL3_REFIT_NEW_CARDS = getLevel3RefitNewCardsTemplateOrder();
+const CHAPTER3_REFIT_NEW_CARDS_LABEL_KEY: MessageKey = getLevel3RefitNewCardsLabelKey() as MessageKey;
+const LEVEL2_REFIT_NEW_CARDS_LABEL_KEY: MessageKey = getLevel2RefitNewCardsLabelKey() as MessageKey;
 
 /** Start menu only — from `src/img/main.png` via `npm run compress:menu` → maintheme.webp */
 const START_MENU_BACKDROP_STYLE: CSSProperties = {
@@ -816,7 +798,7 @@ export function Game() {
     );
   };
 
-  const renderFixedNewCardPreviewRow = (id: (typeof LEVEL2_FIXED_NEW_IDS)[number]) => {
+  const renderFixedNewCardPreviewRow = (id: CardTemplateId) => {
     if (!level2Draft) return null;
     const tmpl = getCardTemplate(id);
     const visibleTags = displayRefitTags(level2Draft.mode, tmpl.tags);
@@ -1034,7 +1016,7 @@ export function Game() {
             ) : null}
             {level3Draft.carryoverCards.map((card) => renderLevel3RefitCardRow(card))}
             <h3 className={styles.statusSectionTitle}>{t(CHAPTER3_REFIT_NEW_CARDS_LABEL_KEY)}</h3>
-            {CHAPTER3_REFIT_STARTING_HAND_ORDER.map((id, idx) =>
+            {LEVEL3_REFIT_NEW_CARDS.map((id, idx) =>
               renderLevel3FixedNewCardPreviewRow(id, `preview-ch3-${idx}-${id}`),
             )}
           </>
@@ -1046,7 +1028,7 @@ export function Game() {
               <p className={styles.startMenuMuted}>
                 {t("menu.refit.newCardTotal", {
                   current: level3Validation.totalNewCards,
-                  max: CHAPTER3_REFIT_STARTING_HAND_ORDER.length,
+                  max: LEVEL3_REFIT_NEW_CARDS.length,
                 })}
               </p>
               <p className={styles.startMenuMuted}>
@@ -1135,7 +1117,7 @@ export function Game() {
             ) : null}
             {level2Draft.carryoverCards.map((card) => renderContinuityCardRow(card))}
             <h3 className={styles.statusSectionTitle}>{t(LEVEL2_REFIT_NEW_CARDS_LABEL_KEY)}</h3>
-            {LEVEL2_FIXED_NEW_IDS.map((id) => renderFixedNewCardPreviewRow(id))}
+            {LEVEL2_REFIT_NEW_CARDS.map((id) => renderFixedNewCardPreviewRow(id))}
           </>
           {level2Validation ? (
             <>
@@ -1145,7 +1127,7 @@ export function Game() {
               <p className={styles.startMenuMuted}>
                 {t("menu.refit.newCardTotal", {
                   current: level2Validation.totalNewCards,
-                  max: LEVEL2_FIXED_NEW_IDS.length,
+                  max: LEVEL2_REFIT_NEW_CARDS.length,
                 })}
               </p>
               <p className={styles.startMenuMuted}>
@@ -1563,10 +1545,15 @@ export function Game() {
                     </div>
                   );
                 }
+                const hasHuguenotContainment = state.playerStatuses.some((s) => s.templateId === "huguenotContainment");
                 const defeatMainKey =
-                  level.victoryRule.kind === "successionWar" &&
-                  state.outcome === "defeatSuccession" &&
-                  ending.defeatSuccessionTrackFloorBodyKey
+                  state.outcome === "defeatTime" &&
+                  hasHuguenotContainment &&
+                  ending.defeatTimeWithHuguenotContainmentBodyKey
+                    ? ending.defeatTimeWithHuguenotContainmentBodyKey
+                    : level.victoryRule.kind === "successionWar" &&
+                        state.outcome === "defeatSuccession" &&
+                        ending.defeatSuccessionTrackFloorBodyKey
                     ? ending.defeatSuccessionTrackFloorBodyKey
                     : ending.defeatBodyKey;
                 return (

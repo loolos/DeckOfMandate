@@ -15,8 +15,12 @@ describe("Sun King initialState hooks (chapter 3)", () => {
   it("standalone chapter 3 draft uses a full chapter-2-sized carryover pool for refit", () => {
     const draft = createStandaloneLevel3Draft(50_001);
     expect(draft.mode).toBe("standalone");
-    const ch2Count = getLevelContent("secondMandate").starterDeckTemplateOrder.length;
-    expect(draft.carryoverCards.length).toBe(ch2Count - 7);
+    const ch2Content = getLevelContent("secondMandate");
+    const removedInStandalone = new Set(
+      getLevelContent("thirdMandate").refit?.standaloneCarryoverSource?.excludeTemplateIds ?? [],
+    );
+    const expectedCarryoverCount = ch2Content.starterDeckTemplateOrder.filter((id) => !removedInStandalone.has(id)).length;
+    expect(draft.carryoverCards.length).toBe(expectedCarryoverCount);
     expect(draft.carryoverCards.some((c) => c.templateId === "funding" || c.templateId === "crackdown")).toBe(false);
     expect(validateLevel3Draft(draft).isValid).toBe(true);
   });

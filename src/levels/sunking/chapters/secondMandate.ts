@@ -1,6 +1,15 @@
 import type { LevelContent, LevelDef } from "../../../data/levelTypes";
 import { createStandaloneLevel2Draft } from "../chapter2Transition";
 
+const CHAPTER2_REFIT_NEW_CARDS = [
+  "grainRelief",
+  "grainRelief",
+  "taxRebalance",
+  "taxRebalance",
+  "diplomaticCongress",
+  "diplomaticCongress",
+] as const;
+
 export const levelDef: LevelDef = {
   id: "secondMandate",
   supportedLocales: ["en", "fr", "zh"],
@@ -11,6 +20,7 @@ export const levelDef: LevelDef = {
     victoryBodyKey: "level.gloryUnderStrain.ending.victory",
     victoryWarDevolutionExtraKey: "level.gloryUnderStrain.ending.victoryWarDevolutionExtra",
     defeatBodyKey: "level.gloryUnderStrain.ending.defeat",
+    defeatTimeWithHuguenotContainmentBodyKey: "level.gloryUnderStrain.ending.defeatTimeHuguenotRemain",
   },
   calendarStartYear: 1676,
   yearsPerTurn: 1,
@@ -21,7 +31,7 @@ export const levelDef: LevelDef = {
     legitimacy: 3,
   },
   standaloneStartingResources: {
-    treasuryStat: 7,
+    treasuryStat: 8,
     funding: 0,
     power: 7,
     legitimacy: 5,
@@ -56,9 +66,6 @@ export const levelContent: LevelContent = {
   starterDeckTemplateOrder: [
     "funding",
     "funding",
-    "funding",
-    "funding",
-    "crackdown",
     "crackdown",
     "crackdown",
     "reform",
@@ -81,6 +88,7 @@ export const levelContent: LevelContent = {
     "courtScandal",
     "militaryPrestige",
     "commercialExpansion",
+    "sunKingPilgrimage",
     "talentedAdministrator",
     "warWeariness",
     "jesuitPatronage",
@@ -141,7 +149,21 @@ export const levelContent: LevelContent = {
   procedural: {
     firstTurnStandaloneEmptyBoardMin: 3,
   },
-  refitNewCardsLabelKey: "menu.refit.newCards",
+  refit: {
+    newCardsTemplateOrder: CHAPTER2_REFIT_NEW_CARDS,
+    newCardsLabelKey: "menu.refit.newCards",
+    standaloneCarryoverSource: {
+      levelId: "firstMandate",
+      instanceIdPrefix: "standalone_old_",
+      templateOverrides: {
+        reform: { inflationDelta: 1 },
+        ceremony: { inflationDelta: 1 },
+        funding: { totalUses: 1, remainingUses: 1 },
+        crackdown: { totalUses: 1, remainingUses: 1 },
+        development: { totalUses: 1, remainingUses: 1 },
+      },
+    },
+  },
   limitedUseByTemplateId: {
     funding: { totalUses: 3, defaultRemainingUses: 1 },
     crackdown: { totalUses: 3, defaultRemainingUses: 1 },

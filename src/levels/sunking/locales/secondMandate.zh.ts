@@ -12,6 +12,8 @@ export const messagesZhSecondMandate = {
     "欧洲仍记得你早年的强势进攻。邻国从未完全放下戒心，但你在战后修复中守住了王权中枢。",
   "level.gloryUnderStrain.ending.defeat":
     "霸权成本最终压垮了体制。财政失衡、社会不安与外交围堵超出了宫廷控制，王冠变得虚弱而孤立。",
+  "level.gloryUnderStrain.ending.defeatTimeHuguenotRemain":
+    "1700 年的钟声响起，胡格诺势力仍在地方与中央之间持续对抗。你熬到了年代尽头，却没能熬尽地下网络：每一次清剿都换来新的潜伏与重组。凡尔赛对外要维持体面，对内却不得不继续在治安、税赋与宗教高压之间透支国力。太阳尚在天顶，但王权的阴影已先一步落下。",
   "status.europeAlert.name": "欧洲警觉",
   "status.europeAlert.hint":
     "对外冲突压力持续。欧洲警觉采用 1-10 进度：常见开局为 3；若承接第一关且未发动遗产战争军事进攻，则从 1 起；进度 1-5 时额外事件概率=进度×20%；进度 6-10 时必出至少 1 个，且第二个事件概率=(进度-5)×20%。",
@@ -87,6 +89,9 @@ export const messagesZhSecondMandate = {
   "event.commercialExpansion.name": "商业扩张",
   "event.commercialExpansion.desc":
     "17 世纪后期，法国在科尔贝尔主义影响下持续扶持工场手工业、航运与特许贸易公司，但连年战争与关税摩擦也让商业扩张始终伴随高成本。商人请求政策支持。投入与财政相关的经费，财政 +1。",
+  "event.sunKingPilgrimage.name": "太阳王巡礼",
+  "event.sunKingPilgrimage.desc":
+    "17 世纪后期，路易十四常以王室巡行、宗教庆典与圣地礼仪展示“天主教君主”的统治正当性：地方主教团、城市议会与旧贵族会在巡礼中公开宣誓效忠，边省与新并入地区也借机被重新纳入凡尔赛叙事。但这类政治仪式往往伴随沿途赈济、治安调度、宫廷接待与象征性工程，短期可换来服从与威望，长期却会把额外开支沉淀为债务尾负。机制简述：支付与（权力 + 合法性）相关的经费，合法性 +2、权力 +1，并向抽牌堆加入 1 张「财政负担」。",
   "event.talentedAdministrator.name": "能臣举荐",
   "event.talentedAdministrator.desc":
     "科尔贝尔一脉仍倾向提拔能干的督办与秘书以绕开冗赘的捐官体系。可提拔能干官员。投入 2 经费，权力 +1。",

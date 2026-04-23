@@ -98,6 +98,33 @@ describe("secondMandate balance data", () => {
     expect(
       getEventSolveFundingAmount({ ...createInitialState(2_028, "secondMandate"), resources: { treasuryStat: 11, funding: 0, power: 3, legitimacy: 3 } }, "commercialExpansion"),
     ).toBe(3);
+    expect(getEventTemplate("sunKingPilgrimage").solve).toEqual({
+      kind: "funding",
+      amount: 2,
+    });
+    expect(
+      getEventSolveFundingAmount(
+        {
+          ...createInitialState(2_029, "secondMandate"),
+          resources: { treasuryStat: 4, funding: 0, power: 5, legitimacy: 6 },
+        },
+        "sunKingPilgrimage",
+      ),
+    ).toBe(2);
+    expect(
+      getEventSolveFundingAmount(
+        {
+          ...createInitialState(2_030, "secondMandate"),
+          resources: { treasuryStat: 4, funding: 0, power: 10, legitimacy: 9 },
+        },
+        "sunKingPilgrimage",
+      ),
+    ).toBe(4);
+    expect(getEventTemplate("sunKingPilgrimage").onFundSolveEffects).toEqual([
+      { kind: "modResource", resource: "legitimacy", delta: 2 },
+      { kind: "modResource", resource: "power", delta: 1 },
+      { kind: "addCardsToDeck", templateId: "fiscalBurden", count: 1 },
+    ]);
     expect(getEventTemplate("talentedAdministrator").solve).toEqual({
       kind: "funding",
       amount: 2,
@@ -185,6 +212,7 @@ describe("secondMandate balance data", () => {
     expect(pool.includes("tradeDisruption")).toBe(false);
     expect(pool.includes("embargoCoalition")).toBe(false);
     expect(pool.includes("mercenaryRaiders")).toBe(false);
+    expect(pool.includes("sunKingPilgrimage")).toBe(true);
   });
 
   it("chapter 2 starter deck uses 4x funding, 3x crackdown, and 2x each chapter-2 core add-on card", () => {

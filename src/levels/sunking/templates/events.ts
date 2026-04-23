@@ -268,6 +268,20 @@ export const eventTemplates: Record<EventTemplateId, EventTemplate> = {
     onFundSolveEffects: [{ kind: "modResource", resource: "treasuryStat", delta: 1 }],
     penaltiesIfUnresolved: [],
   },
+  sunKingPilgrimage: {
+    id: "sunKingPilgrimage",
+    weight: 2,
+    harmful: false,
+    titleKey: "event.sunKingPilgrimage.name",
+    descriptionKey: "event.sunKingPilgrimage.desc",
+    solve: { kind: "funding", amount: 2 },
+    onFundSolveEffects: [
+      { kind: "modResource", resource: "legitimacy", delta: 2 },
+      { kind: "modResource", resource: "power", delta: 1 },
+      { kind: "addCardsToDeck", templateId: "fiscalBurden", count: 1 },
+    ],
+    penaltiesIfUnresolved: [],
+  },
   talentedAdministrator: {
     id: "talentedAdministrator",
     weight: 1,

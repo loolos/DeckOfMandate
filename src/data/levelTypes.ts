@@ -1,5 +1,6 @@
 import type { CardTemplateId } from "../levels/types/card";
 import type { EventTemplateId, SlotId } from "../levels/types/event";
+import type { LevelRefitConfig } from "../levels/types/refit";
 import type { Resources } from "../types/game";
 import type { LogInfoKey } from "../types/game";
 
@@ -13,6 +14,8 @@ export type LevelEndingCopyKeys = {
   victoryBodyByTierKeys?: Partial<Record<import("../types/game").SuccessionIntervalTier, string>>;
   victoryWarDevolutionExtraKey: string;
   defeatBodyKey: string;
+  /** Chapter 2: defeat-at-time-limit copy when huguenot containment still remains. */
+  defeatTimeWithHuguenotContainmentBodyKey?: string;
   /** Chapter 3: shown on victory when the succession track reached +10 (instant win). */
   victorySuccessionTrackCapBodyKey?: string;
   /** Chapter 3: shown on `defeatSuccession` when the track reached −10 (not used for legitimacy defeat). */
@@ -100,12 +103,8 @@ export type LevelContent = {
   scriptedCalendarEvents: readonly ScriptedCalendarEventConfig[];
   opening: LevelOpeningConfig;
   procedural: LevelProceduralConfig;
-  /**
-   * When set (e.g. chapter 3), templates for new cards in continuity/standalone refit UI and shuffle pool.
-   */
-  chapter3RefitStartingHandOrder?: readonly CardTemplateId[];
-  /** Optional i18n key for the "new cards" section label in refit UI. */
-  refitNewCardsLabelKey?: string;
+  /** Optional chapter refit config (new cards + standalone synthetic carryover source). */
+  refit?: LevelRefitConfig;
   /**
    * Optional per-template limited-use defaults used by the "remaining uses (X/Y)" badge.
    * Keep campaign-specific balances in chapter files instead of hardcoding in shared logic.

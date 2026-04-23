@@ -12,13 +12,26 @@ import type { CardInstance } from "../types/card";
 import { SUNKING_CH2_ID } from "./chapter2Transition";
 import { THIRD_MANDATE_LEVEL_ID } from "./logic/thirdMandateConstants";
 
-const STANDALONE_CH3_INFLATION_TARGET_COST = 4;
+function thirdMandateRefitConfig() {
+  const cfg = getLevelContent(THIRD_MANDATE_LEVEL_ID).refit;
+  if (!cfg) throw new Error("initialState: thirdMandate.refit is required");
+  return cfg;
+}
+
+function thirdMandateRefitNewCards() {
+  const newCards = thirdMandateRefitConfig().newCardsTemplateOrder;
+  if (!newCards.length) {
+    throw new Error("initialState: thirdMandate.refit.newCardsTemplateOrder is required");
+  }
+  return newCards;
+}
+
+function thirdMandateStandaloneInflationTargetCost(): number | null {
+  return thirdMandateRefitConfig().standaloneCarryoverSource?.inflationTargetCostByTag?.inflation ?? null;
+}
 
 function thirdMandateShuffleOpening(ctx: OpeningShuffleContext): OpeningShuffleResult {
-  const ch3RefitOrder = getLevelContent(THIRD_MANDATE_LEVEL_ID).chapter3RefitStartingHandOrder;
-  if (!ch3RefitOrder?.length) {
-    throw new Error("initialState: thirdMandate.chapter3RefitStartingHandOrder is required");
-  }
+  const ch3RefitOrder = thirdMandateRefitNewCards();
   const cardsById: Record<string, CardInstance> = { ...ctx.cardsById };
   const ch3Ids: string[] = [];
   for (let i = 0; i < ch3RefitOrder.length; i++) {
@@ -44,10 +57,12 @@ function thirdMandateShuffleOpening(ctx: OpeningShuffleContext): OpeningShuffleR
 
 function thirdMandateOpeningInflation(cardsById: Record<string, CardInstance>): Record<string, number> {
   const cardInflationById: Record<string, number> = {};
+  const targetCost = thirdMandateStandaloneInflationTargetCost();
+  if (targetCost == null) return cardInflationById;
   for (const id of Object.keys(cardsById)) {
     const t = cardsById[id]?.templateId;
     if (t && getCardTemplate(t).tags.includes("inflation")) {
-      cardInflationById[id] = Math.max(0, STANDALONE_CH3_INFLATION_TARGET_COST - getCardTemplate(t).cost);
+      cardInflationById[id] = Math.max(0, targetCost - getCardTemplate(t).cost);
     }
   }
   return cardInflationById;

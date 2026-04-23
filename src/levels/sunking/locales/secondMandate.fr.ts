@@ -15,6 +15,8 @@ export const messagesFrSecondMandate: Record<keyof typeof messagesEnSecondMandat
     "L'Europe se souvient encore de vos offensives passées. Les rivaux ne font jamais totalement confiance à la retenue française, mais une reconstruction prudente après guerre maintient la couronne.",
   "level.gloryUnderStrain.ending.defeat":
     "Le coût de l'hégémonie brise le régime. Pression fiscale, agitation sociale et contrainte diplomatique dépassent le contrôle royal, laissant la couronne affaiblie et isolée.",
+  "level.gloryUnderStrain.ending.defeatTimeHuguenotRemain":
+    "L'an 1700 arrive, mais les forces huguenotes opposent encore les provinces et le pouvoir central. Vous avez atteint la fin du calendrier, pas celle du réseau clandestin : chaque rafle nourrit une nouvelle reconstitution. Versailles maintient l'apparence de force à l'extérieur, tandis qu'à l'intérieur la couronne s'épuise entre police, fiscalité et pression confessionnelle.",
   "status.europeAlert.name": "Alerte Europe",
   "status.europeAlert.hint":
     "Alerte Europe suit une progression (1-10) : départ habituel à 3 ; en continuité depuis le Chapitre 1 sans la branche d'attaque de la guerre de Dévolution, départ à 1. Progression 1-5, chance d'événement supplémentaire = progression×20% ; progression 6-10, au moins 1 événement garanti et chance de 2e événement = (progression-5)×20%.",
@@ -95,6 +97,9 @@ export const messagesFrSecondMandate: Record<keyof typeof messagesEnSecondMandat
   "event.commercialExpansion.name": "Expansion commerciale",
   "event.commercialExpansion.desc":
     "Dans la France de la fin du XVIIe siècle, l'héritage colbertiste continue de soutenir manufactures, marine marchande et compagnies à privilège, mais les guerres et les frictions tarifaires rendent l'essor commercial coûteux. Les marchands demandent un soutien à la croissance. Investissez un coût en Financement lié au Trésor pour Trésor +1.",
+  "event.sunKingPilgrimage.name": "Pelerinage du Roi-Soleil",
+  "event.sunKingPilgrimage.desc":
+    "Une pelerinage royal soigneusement mis en scene a travers sanctuaires et villes clefs peut convertir le ceremonial en adhesion politique. Investissez un cout en Financement lie a (Pouvoir + Legitimite) pour Légitimité +2, Pouvoir +1, et ajoutez 1 Fardeau fiscal a votre pioche.",
   "event.talentedAdministrator.name": "Administrateur talentueux",
   "event.talentedAdministrator.desc":
     "Les successeurs de Colbert promouvaient secrétaires et intendants capables de contourner la routine vénale. Un officier capable peut être promu. Investissez 2 Financement pour Pouvoir +1.",
