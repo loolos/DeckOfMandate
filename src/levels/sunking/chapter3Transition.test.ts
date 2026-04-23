@@ -10,9 +10,9 @@ describe("chapter3 continuity transition", () => {
     const ch2 = createInitialState(88_201, "secondMandate");
     const ch2Late = { ...ch2, turn: 24 };
     const draft = createContinuityLevel3Draft(ch2Late, 88_202);
-    expect(draft.resources.treasuryStat).toBe(14);
-    expect(draft.resources.power).toBe(10);
-    expect(draft.resources.legitimacy).toBe(10);
+    expect(draft.resources.treasuryStat).toBe(ch2Late.resources.treasuryStat);
+    expect(draft.resources.power).toBe(ch2Late.resources.power);
+    expect(draft.resources.legitimacy).toBe(ch2Late.resources.legitimacy);
     expect(draft.resources.funding).toBe(ch2Late.resources.funding);
     expect(draft.calendarStartYear).toBe(1699);
 
