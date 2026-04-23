@@ -354,16 +354,25 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
         );
       }
       if (hasCardTag(paid, id, "consume")) {
+        const hadHuguenotContainment = paid.playerStatuses.some((p) => p.templateId === "huguenotContainment");
         let s: GameState = removeHand(paid, id);
         if (inst.templateId === "suppressHuguenots") {
           s = enforceHuguenotContainmentInvariant(s);
         }
-        return appendActionLog(s, {
+        s = appendActionLog(s, {
           kind: "cardPlayed",
           templateId: inst.templateId,
           fundingCost: cost,
           effects: tmpl.effects,
         });
+        if (
+          inst.templateId === "suppressHuguenots" &&
+          hadHuguenotContainment &&
+          !s.playerStatuses.some((p) => p.templateId === "huguenotContainment")
+        ) {
+          s = appendActionLog(s, { kind: "info", infoKey: "huguenotContainmentCleared" });
+        }
+        return s;
       }
       let s = applyPlayedCardEffects(paid, inst.templateId);
       s = applySunkingPlayCardExtras(s, inst.templateId);

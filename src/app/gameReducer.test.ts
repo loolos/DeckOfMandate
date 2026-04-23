@@ -1272,6 +1272,9 @@ describe("gameReducer", () => {
     };
     const after = gameReducer(withCards, { type: "PLAY_CARD", handIndex: 0 });
     expect(after.playerStatuses.some((s) => s.templateId === "huguenotContainment")).toBe(false);
+    expect(
+      after.actionLog.some((e) => e.kind === "info" && e.infoKey === "huguenotContainmentCleared"),
+    ).toBe(true);
     expect(after.hand.includes(cardId)).toBe(false);
     const liveSuppress = [...after.deck, ...after.hand, ...after.discard].filter(
       (id) => after.cardsById[id]?.templateId === "suppressHuguenots",

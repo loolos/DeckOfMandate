@@ -442,8 +442,21 @@ function renderEntry(e: ActionLogEntry, t: (key: MessageKey, vars?: Record<strin
         </div>
       );
     }
-    case "info":
+    case "info": {
+      if (e.infoKey === "huguenotContainmentCleared") {
+        return (
+          <>
+            <div className={styles.actionLogHead}>
+              {t("log.info.huguenotContainmentCleared" as MessageKey, { turn: e.turn })}
+            </div>
+            <div className={styles.actionLogSubMuted}>
+              {t("log.info.huguenotContainmentCleared.history" as MessageKey)}
+            </div>
+          </>
+        );
+      }
       return <div className={styles.actionLogHead}>{t(`log.info.${e.infoKey}` as MessageKey, { turn: e.turn })}</div>;
+    }
     case "opponentHabsburgPlay": {
       const cardLine = e.playedTemplateIds
         .map((id) => cardLabelWithIcon(id, t(cardTitleKey(id))))

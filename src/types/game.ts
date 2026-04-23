@@ -28,6 +28,7 @@ export type LogInfoKey =
   | "cardDraw.antiFrenchContainmentLegitimacyLoss"
   | "nantesPolicy.toleranceNoFontainebleau"
   | "nantesPolicy.crackdownFontainebleauIssued"
+  | "huguenotContainmentCleared"
   | "eventTag.harmful"
   | "eventTag.opportunity"
   | "eventTag.historical"

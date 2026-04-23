@@ -111,7 +111,8 @@ export const sunkingShellContentFr = {
   "log.eventNineYearsWarCampaign.title": "[Turn {turn}] {event}: used {method} (paid {paid} {funding}) — {outcome}.",
   "log.eventNineYearsWarCampaign.method.funding": "Funding",
   "log.eventNineYearsWarCampaign.method.intervention": "Intervention",
-  "log.eventNineYearsWarCampaign.outcome.decisiveVictory": "victoire décisive ; la pression de guerre prend fin. Du Rhin aux Pays-Bas, l'élan de coalition s'essouffle et les offensives coordonnées ralentissent.",
+  "log.eventNineYearsWarCampaign.outcome.decisiveVictory":
+    "victoire décisive ; la pression de guerre prend fin. Dépêches et gazettes célèbrent les armées du roi en Flandre et sur le Rhin — succès de campagne et levées de siège traduits en élan coalisé brisé, ouvrant la voie à une sortie négociée.",
   "log.eventNineYearsWarCampaign.outcome.stalemate": "enlisement ; le front reste inchangé. La logique d'équilibre européen reste piégée dans un duel d'endurance fiscale et de crédit.",
   "log.eventNineYearsWarCampaign.outcome.limitedGains": "gains partiels ; {legitimacy} +1. Le succès tactique rassure l'intérieur, sans rompre la dynamique d'usure d'une guerre longue.",
   "log.eventNineYearsWarCampaign.history": "Historical note: the Nine Years' War (1688–1697) stretched from the Rhineland and Low Countries to maritime theaters, exhausting state finances across Europe.",
@@ -143,5 +144,9 @@ export const sunkingShellContentFr = {
   "log.info.cardDraw.antiFrenchContainmentLegitimacyLoss": "[Turn {turn}] On draw, Anti-French Containment triggered: Legitimacy -1.",
   "log.info.nantesPolicy.toleranceNoFontainebleau": "[Tour {turn}] Vous choisissez la tolérance religieuse : la couronne n'édicte pas, cette année, une révocation générale de type Fontainebleau. La tension immédiate baisse, mais les conflits confessionnels reviendront.",
   "log.info.nantesPolicy.crackdownFontainebleauIssued": "[Tour {turn}] Vous choisissez la répression sévère : la monarchie bascule vers une ligne de type édit de Fontainebleau, retire des protections aux protestants et durcit les conversions forcées. L'obéissance progresse à court terme, mais le coût politique augmente.",
+  "log.info.huguenotContainmentCleared":
+    "[Tour {turn}] Dernière vague de « Réprimer les huguenots » : gendarmes et intendances signalent des assemblées clandestines et des filières de contrebande religieuse brisées. Le statut « Contenir les restes huguenots » est levé et toutes les cartes « Réprimer les huguenots » sont retirées de votre bibliothèque.",
+  "log.info.huguenotContainmentCleared.history":
+    "Contexte : après l'édit de Fontainebleau (1685), le culte protestant public fut interdit et une partie des élites partit à l'étranger, mais culte clandestin, imprimerie et entraide se reconstituèrent pendant des années dans les ports et sur les frontières. La police d'État visa autant la religion que les routes de contrebande et les solidarités avec l'exil ; clore ce dossier revenait à présenter la menace huguenote organisée comme enfin contenue — au prix d'un coût fiscal, social et diplomatique durable pour la France.",
   "help.short": "Le Trésor fixe le revenu en Financement par tour. Le Financement paie les cartes et résolutions d'événements. Le Pouvoir fixe les tentatives de pioche. La Légitimité fixe la limite de conservation. Les événements néfastes non résolus sont réglés en séquence."
 } as const;

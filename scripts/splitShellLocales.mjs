@@ -103,6 +103,7 @@ function shouldMoveKey(k) {
   if (k.startsWith("log.info.cardUse")) return true;
   if (k.startsWith("log.info.cardDraw")) return true;
   if (k.startsWith("log.info.nantesPolicy")) return true;
+  if (k.startsWith("log.info.huguenotContainmentCleared")) return true;
   if (k === "help.short") return true;
   return false;
 }

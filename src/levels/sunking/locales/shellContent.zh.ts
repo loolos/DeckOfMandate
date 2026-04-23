@@ -111,7 +111,8 @@ export const sunkingShellContentZh = {
   "log.eventNineYearsWarCampaign.title": "[第 {turn} 年] {event}：以「{method}」推进战事（支付 {paid} {funding}）——{outcome}。",
   "log.eventNineYearsWarCampaign.method.funding": "经费",
   "log.eventNineYearsWarCampaign.method.intervention": "干预",
-  "log.eventNineYearsWarCampaign.outcome.decisiveVictory": "决定性胜利，战争压力终结。自莱茵到低地的战线终于松动，奥格斯堡同盟短期内难再组织同等强度的协同攻势。",
+  "log.eventNineYearsWarCampaign.outcome.decisiveVictory":
+    "决定性胜利，战争压力终结。军驿与公报盛传法军在低地、莱茵方向会战得势、解围告成，舆论歌颂王师锋锐，大同盟协同攻势顿挫，终获体面收束战事的窗口。",
   "log.eventNineYearsWarCampaign.outcome.stalemate": "僵持不下，前线局势未改。欧洲均势博弈继续把冲突拖入财政与信用的耐力战，谁都无法迅速脱身。",
   "log.eventNineYearsWarCampaign.outcome.limitedGains": "取得局部战果，{legitimacy} +1。局部胜利稳住了国内观感，但尚不足以改写九年战争的长期消耗格局。",
   "log.eventNineYearsWarCampaign.history": "史实背景：九年战争（1688–1697）从莱茵兰、低地到海上战场全面延伸，长期动员几乎压垮各国财政。",
@@ -143,5 +144,9 @@ export const sunkingShellContentZh = {
   "log.info.cardDraw.antiFrenchContainmentLegitimacyLoss": "[第 {turn} 年] 抓到「反法遏制」并触发：合法性 -1。",
   "log.info.nantesPolicy.toleranceNoFontainebleau": "[第 {turn} 年] 你选择了宗教宽容路线：宫廷暂不颁布 1685 年《枫丹白露敕令》式的全面撤保政策，地方紧张有所缓和，但宗派争议将长期回潮。",
   "log.info.nantesPolicy.crackdownFontainebleauIssued": "[第 {turn} 年] 你选择了严厉镇压路线：王权转向《枫丹白露敕令》式政策，撤销新教群体既有保障并强化驱逐与改宗压力，短期服从上升但长期治理成本加重。",
+  "log.info.huguenotContainmentCleared":
+    "[第 {turn} 年] 最后一轮「镇压胡格诺」落地：军警与监察报告称地下聚会、走私与读经网络被掐断，「遏制胡格诺-剩余势力」已撤除，所有「镇压胡格诺」牌从牌库循环中清除。",
+  "log.info.huguenotContainmentCleared.history":
+    "史实背景：1685 年《枫丹白露敕令》后，胡格诺派失去公开礼拜与法人社团保障，转入地下的聚会、印刷与互助仍在沿海与边境长期存在；王权依赖连串稽查、驻军与罚没以压制再结社。此处收束象征朝廷终于能把「余波」压到可宣布止息的程度——代价是多年监控成本、财政失血与欧洲舆论对法兰西宗教政策的长期反弹。",
   "help.short": "财政决定每回合转入的经费；经费用于打牌与事件处理。权力决定抽牌次数。合法性决定回合末可保留手牌数。未处理的有害事件依次结算。"
 } as const;

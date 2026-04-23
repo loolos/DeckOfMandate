@@ -86,10 +86,12 @@ Ensure `src/test/setupLevels.ts` still loads every campaign that production load
 
 ## 6. How to invoke this workflow in chat
 
+This file is **`docs/workflows/decouple.md`** (short name: **decouple**).
+
 Examples:
 
-> “Run decoupleAndLevelEntry review on this PR.”  
-> “decoupleAndLevelEntry: new chapter module + bridge hook.”
+> “Run decouple review on this PR.”  
+> “decouple: new chapter module + bridge hook.”
 
 Scope hints (optional):
 

@@ -111,7 +111,8 @@ export const sunkingShellContentEn = {
   "log.eventNineYearsWarCampaign.title": "[Turn {turn}] {event}: used {method} (paid {paid} {funding}) — {outcome}.",
   "log.eventNineYearsWarCampaign.method.funding": "Funding",
   "log.eventNineYearsWarCampaign.method.intervention": "Intervention",
-  "log.eventNineYearsWarCampaign.outcome.decisiveVictory": "decisive victory; war pressure ends. From the Rhineland to the Low Countries, coalition momentum falters and coordinated offensives lose pace.",
+  "log.eventNineYearsWarCampaign.outcome.decisiveVictory":
+    "decisive victory; war pressure ends. Dispatches and gazettes trumpet French successes in Flanders and along the Rhine—set-piece wins and relieved sieges read as a faltering Grand Alliance, buying room to wind the war down with honor.",
   "log.eventNineYearsWarCampaign.outcome.stalemate": "stalemate; front remains unchanged. The balance-of-power struggle stays locked in a fiscal and credit endurance contest.",
   "log.eventNineYearsWarCampaign.outcome.limitedGains": "limited gains; {legitimacy} +1. Tactical success steadies domestic confidence, but does not yet break the long-war attrition pattern.",
   "log.eventNineYearsWarCampaign.history": "Historical note: the Nine Years' War (1688–1697) stretched from the Rhineland and Low Countries to maritime theaters, exhausting state finances across Europe.",
@@ -143,5 +144,9 @@ export const sunkingShellContentEn = {
   "log.info.cardDraw.antiFrenchContainmentLegitimacyLoss": "[Turn {turn}] On draw, Anti-French Containment triggered: Legitimacy -1.",
   "log.info.nantesPolicy.toleranceNoFontainebleau": "[Turn {turn}] You chose Religious Tolerance: the crown does not issue a Fontainebleau-style full revocation decree this year. Immediate pressure eases, but confessional disputes will keep resurfacing.",
   "log.info.nantesPolicy.crackdownFontainebleauIssued": "[Turn {turn}] You chose Harsh Crackdown: policy shifts toward a Fontainebleau-style decree, withdrawing Protestant protections and intensifying forced conversion pressure. Compliance rises short-term, but long-run governance costs increase.",
+  "log.info.huguenotContainmentCleared":
+    "[Turn {turn}] Final “Suppress the Huguenots” sweep: gendarmes and intendants report clandestine assemblies and contraband Bible-reading lines broken. “Contain Huguenot Remnants” is lifted and every Suppress the Huguenots card is purged from your library.",
+  "log.info.huguenotContainmentCleared.history":
+    "Historical note: after the 1685 Edict of Fontainebleau, Protestant public worship was outlawed and many elites fled abroad, yet underground worship, printing, and mutual aid kept resurfacing in ports and borderlands for years. The crown’s long policing campaign targeted not only doctrine but smuggling routes and ties to exile networks; closing that ledger meant France could finally present the crisis of organized Protestantism as contained—at heavy fiscal, social, and reputational cost across Europe.",
   "help.short": "Treasury sets turnly income to Funding. Funding pays for cards and event solves. Power sets draw attempts. Legitimacy sets retention limit. Unresolved harmful events are settled in sequence."
 } as const;

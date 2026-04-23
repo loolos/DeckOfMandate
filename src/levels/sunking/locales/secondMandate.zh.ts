@@ -121,7 +121,7 @@ export const messagesZhSecondMandate = {
   "log.eventNineYearsWarAttempt.title":
     "[第 {turn} 年] {event}（{slot}）— 以{method}投入 {paid} {funding} 发动战役（1/9 判定掷点：{roll}）。",
   "log.eventNineYearsWarAttempt.outcome.majorVictory":
-    "历史回响：1697 年《里斯维克和约》式的全面停战窗口出现，战线整体收束，事件结束。",
+    "历史回响：军驿捷报络绎入都——低地与莱茵战线传来法会战得势、解围告成之快讯；公报与将领疏奏把局面写成大同盟协同受挫、敌军退却，凡尔赛与巴黎舆论振奋，歌颂王师锋锐。此轮胜势足以压倒持久消耗下的厌战声浪，推动体面收束大部战事，本事件结束。",
   "log.eventNineYearsWarAttempt.outcome.stalemate":
     "历史回响：同盟体系与补给消耗形成长期拉锯，前线僵持，局势未见实质变化。",
   "log.eventNineYearsWarAttempt.outcome.minorGains":
