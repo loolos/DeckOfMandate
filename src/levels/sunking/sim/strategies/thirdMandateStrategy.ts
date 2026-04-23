@@ -1,4 +1,3 @@
-import { getTurnLimitForRun } from "../../../../data/levels";
 import type { GameAction } from "../../../../app/gameReducer";
 import type { GameState } from "../../../../types/game";
 import { EVENT_SLOT_ORDER, type SlotId } from "../../../types/event";
@@ -29,6 +28,7 @@ function countFiscalBurdenInstances(state: GameState): number {
 
 export function pickThirdMandateChoiceActions(state: GameState): GameAction[] {
   if (state.levelId !== "thirdMandate") return [];
+  const { power, legitimacy } = state.resources;
 
   const successionSlot = firstUnresolvedSlotByTemplate(state, "successionCrisis");
   if (successionSlot) {
@@ -38,34 +38,22 @@ export function pickThirdMandateChoiceActions(state: GameState): GameAction[] {
 
   const dualSlot = firstUnresolvedSlotByTemplate(state, "dualFrontCrisis");
   if (dualSlot) {
-    const expandWar = state.successionTrack <= -1;
+    const expandWar = legitimacy >= 2;
     return [{ type: "PICK_DUAL_FRONT_CRISIS", slot: dualSlot, expandWar }];
   }
 
   const legacySlot = firstUnresolvedSlotByTemplate(state, "louisXivLegacy1715");
   if (legacySlot) {
     const burdens = countFiscalBurdenInstances(state);
-    const { power, legitimacy } = state.resources;
-    const directRule =
-      power <= 4 || (power <= 5 && legitimacy >= 6 && burdens < 7) || (burdens < 4 && legitimacy >= 7);
+    const directRule = power <= 2 || (power <= 3 && legitimacy <= 4) || (burdens < 3 && legitimacy >= 7);
     return [{ type: "PICK_LOUIS_XIV_LEGACY", slot: legacySlot, directRule }];
   }
 
   const utrechtSlot = firstUnresolvedSlotByTemplate(state, "utrechtTreaty");
   if (utrechtSlot) {
-    const cd = state.utrechtTreatyCountdown;
-    const limit = getTurnLimitForRun(state.levelId, state.calendarStartYear);
-    const turnsLeft = limit - state.turn;
-    const tr = state.successionTrack;
-    const endWar =
-      (cd !== null && cd <= 2) ||
-      turnsLeft <= 4 ||
-      tr >= 7 ||
-      (!state.warEnded && (state.resources.power <= 4 || state.resources.legitimacy <= 4));
-    if (endWar) {
-      return [{ type: "PICK_UTRECHT_TREATY", slot: utrechtSlot, endWar: true }];
-    }
-    return [];
+    // For win-rate optimization, lock settlement immediately once Utrecht appears:
+    // this removes opponent pressure and stops late-track collapses.
+    return [{ type: "PICK_UTRECHT_TREATY", slot: utrechtSlot, endWar: true }];
   }
 
   return [];
