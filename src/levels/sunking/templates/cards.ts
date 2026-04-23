@@ -78,7 +78,7 @@ export const cardTemplates: Record<CardTemplateId, CardTemplate> = {
   },
   development: {
     id: "development",
-    cost: 4,
+    cost: 3,
     tags: INFLATION,
     titleKey: "card.development.name",
     backgroundKey: "card.development.background",
