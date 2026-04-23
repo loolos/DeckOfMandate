@@ -20,7 +20,7 @@ export const sunkingCoreGameContentFr = {
     "Quand piochée, 50/50 : perdez 1 Pouvoir ou 1 Légitimité. Payez le coût lié à l'Alerte Europe (au moins 1) pour jouer et retirer du cycle.",
   "card.reform.name": "Réforme administrative",
   "card.reform.background":
-    "Registres et chaînes de rapport sont redessinés ; la bureaucratie se resserre sous la direction royale.",
+    "Après le début du règne personnel de Louis XIV, intendants et réseaux de cour versaillais recentrent l'autorité provinciale, en redessinant registres et circuits de rapport.",
   "card.reform.desc": "Pouvoir +1 (appliqué à la prochaine phase de pioche). Piochez 1 maintenant (main max 12).",
   "card.ceremony.name": "Cérémonie de Versailles",
   "card.ceremony.background":

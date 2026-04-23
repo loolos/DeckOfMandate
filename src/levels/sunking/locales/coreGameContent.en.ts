@@ -20,7 +20,7 @@ export const sunkingCoreGameContentEn = {
     "When drawn, 50/50: lose 1 Power or lose 1 Legitimacy. Pay the Europe Alert–scaled Funding (min 1) to play and purge from circulation.",
   "card.reform.name": "Administrative Reform",
   "card.reform.background":
-    "Registers and reporting lines are redrawn; the bureaucracy tightens under royal direction.",
+    "After Louis XIV's personal rule began, intendants and Versailles court networks pulled provincial power back to the center, redrawing registers and reporting lines.",
   "card.reform.desc": "Power +1 (applies next draw phase). Draw 1 now (hand cap 12).",
   "card.ceremony.name": "Versailles Ceremony",
   "card.ceremony.background":

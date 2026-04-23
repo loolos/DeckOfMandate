@@ -32,7 +32,7 @@ function removeEventsByTemplate(
   let removedCount = 0;
   for (const slot of EVENT_SLOT_ORDER) {
     const ev = slots[slot];
-    if (!ev || ev.resolved) continue;
+    if (!ev) continue;
     if (ev.templateId !== templateId) continue;
     slots[slot] = null;
     removedCount += 1;

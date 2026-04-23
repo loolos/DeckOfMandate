@@ -1082,6 +1082,24 @@ describe("gameReducer", () => {
     expect(after.slots.B).toBeNull();
   });
 
+  it("ryswick peace also clears nine years war if it was already attempted this turn", () => {
+    const base = createInitialState(202_904_11, "secondMandate");
+    const s0: typeof base = {
+      ...base,
+      europeAlert: true,
+      europeAlertProgress: 5,
+      resources: { ...base.resources, funding: 11 },
+      slots: {
+        ...base.slots,
+        A: { instanceId: "e_ryswick", templateId: "ryswickPeace" as const, resolved: false },
+        B: { instanceId: "e_nine", templateId: "nineYearsWar" as const, resolved: true },
+      },
+    };
+    const after = gameReducer(s0, { type: "SOLVE_EVENT", slot: "A" });
+    expect(after.slots.B).toBeNull();
+    expect(after.actionLog.some((entry) => entry.kind === "eventNineYearsWarEndedByRyswick")).toBe(true);
+  });
+
   it("keeps nine years war as plain continued (no continued-turn counter) after a non-decisive campaign", () => {
     const base = createInitialState(202_904_2, "secondMandate");
     const rngState = (() => {

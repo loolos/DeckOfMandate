@@ -14,8 +14,8 @@ export const sunkingCoreGameContentZh = {
     "欧洲宫廷以关税、信用与海上执法协同掣肘法国，任何对抗都要先吞下政治代价。",
   "card.antiFrenchContainment.desc":
     "抽到时 50%/50%：权力 -1 或合法性 -1。可按欧洲警觉相关费用（至少 1）付经费打出，移出循环（非弃牌）。",
-  "card.reform.name": "行政整编",
-  "card.reform.background": "册籍与汇报线重划，官僚体系在王权下收得更紧。",
+  "card.reform.name": "王室集权",
+  "card.reform.background": "路易十四亲政后以行省监理官（intendants）与凡尔赛廷臣网络收束地方权力，册籍与汇报线随之重划。",
   "card.reform.desc": "权力 +1（影响下回合抽牌阶段）。立即抽 1（手牌上限 12）。",
   "card.ceremony.name": "凡尔赛庆典",
   "card.ceremony.background": "仪仗、誓词与排场——让各派都看清谁仍站在中心。",

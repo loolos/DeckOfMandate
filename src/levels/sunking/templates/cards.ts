@@ -5,6 +5,7 @@ const ROYAL: readonly CardTag[] = ["royal"];
 const EXTRA: readonly CardTag[] = ["extra"];
 const EXTRA_CONSUME: readonly CardTag[] = ["extra", "consume"];
 const INFLATION: readonly CardTag[] = ["inflation"];
+const ROYAL_INFLATION: readonly CardTag[] = ["royal", "inflation"];
 const CONSUME: readonly CardTag[] = ["consume"];
 const OPPONENT: readonly CardTag[] = ["opponent"];
 const SUCCESSION_CONTEST: readonly CardTag[] = ["successionContest"];
@@ -58,7 +59,7 @@ export const cardTemplates: Record<CardTemplateId, CardTemplate> = {
   reform: {
     id: "reform",
     cost: 2,
-    tags: INFLATION,
+    tags: ROYAL_INFLATION,
     titleKey: "card.reform.name",
     backgroundKey: "card.reform.background",
     descriptionKey: "card.reform.desc",
