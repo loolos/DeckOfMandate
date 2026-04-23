@@ -141,6 +141,14 @@ export const levelContent: LevelContent = {
   procedural: {
     firstTurnStandaloneEmptyBoardMin: 3,
   },
+  refitNewCardsLabelKey: "menu.refit.newCards",
+  limitedUseByTemplateId: {
+    funding: { totalUses: 3, defaultRemainingUses: 1 },
+    crackdown: { totalUses: 3, defaultRemainingUses: 1 },
+    development: { totalUses: 3, defaultRemainingUses: 1 },
+    diplomaticIntervention: { totalUses: 2 },
+    jesuitCollege: { totalUses: 1 },
+  },
 };
 
 export const chapter2StandaloneFactory = createStandaloneLevel2Draft;

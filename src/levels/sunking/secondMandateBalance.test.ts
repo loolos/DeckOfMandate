@@ -187,11 +187,15 @@ describe("secondMandate balance data", () => {
     expect(pool.includes("mercenaryRaiders")).toBe(false);
   });
 
-  it("chapter 2 starter deck includes two grain relief, two tax rebalance, and two diplomatic congress cards", () => {
+  it("chapter 2 starter deck uses 4x funding, 3x crackdown, and 2x each chapter-2 core add-on card", () => {
     const starter = getLevelContent("secondMandate").starterDeckTemplateOrder;
+    const fundingCount = starter.filter((id) => id === "funding").length;
+    const crackdownCount = starter.filter((id) => id === "crackdown").length;
     const grainCount = starter.filter((id) => id === "grainRelief").length;
     const taxCount = starter.filter((id) => id === "taxRebalance").length;
     const congressCount = starter.filter((id) => id === "diplomaticCongress").length;
+    expect(fundingCount).toBe(4);
+    expect(crackdownCount).toBe(3);
     expect(grainCount).toBe(2);
     expect(taxCount).toBe(2);
     expect(congressCount).toBe(2);

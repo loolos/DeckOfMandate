@@ -263,7 +263,7 @@ describe("gameReducer", () => {
       hand: [developmentId],
       deck: [],
       discard: [],
-      resources: { ...base.resources, treasuryStat: 4, funding: 3 },
+      resources: { ...base.resources, treasuryStat: 4, funding: 4 },
     };
     const after = gameReducer(withCard, { type: "PLAY_CARD", handIndex: 0 });
     expect(after.cardUsesById[developmentId]).toBeUndefined();
@@ -713,7 +713,7 @@ describe("gameReducer", () => {
         [congressId]: { instanceId: congressId, templateId: "diplomaticCongress" as const },
       },
       hand: [congressId],
-      resources: { ...base.resources, funding: 3 },
+      resources: { ...base.resources, funding: 4 },
       playerStatuses: [],
     };
     const after = gameReducer(withCongress, { type: "PLAY_CARD", handIndex: 0 });
@@ -1010,7 +1010,7 @@ describe("gameReducer", () => {
       hand: [developmentId],
       deck: [],
       discard: [],
-      resources: { treasuryStat: 3, funding: 3, power: 5, legitimacy: 3 },
+      resources: { treasuryStat: 3, funding: 4, power: 5, legitimacy: 3 },
       slots: { ...EMPTY_EVENT_SLOTS },
     };
     const after = gameReducer(withCard, { type: "PLAY_CARD", handIndex: 0 });

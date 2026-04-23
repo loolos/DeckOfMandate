@@ -104,6 +104,13 @@ export type LevelContent = {
    * When set (e.g. chapter 3), templates for new cards in continuity/standalone refit UI and shuffle pool.
    */
   chapter3RefitStartingHandOrder?: readonly CardTemplateId[];
+  /** Optional i18n key for the "new cards" section label in refit UI. */
+  refitNewCardsLabelKey?: string;
+  /**
+   * Optional per-template limited-use defaults used by the "remaining uses (X/Y)" badge.
+   * Keep campaign-specific balances in chapter files instead of hardcoding in shared logic.
+   */
+  limitedUseByTemplateId?: Partial<Record<CardTemplateId, { totalUses: number; defaultRemainingUses?: number }>>;
   /**
    * When an unresolved event with this template id is on the board, render it with the
    * opponent-hand UI (deck + last play). Campaign-specific; omit for levels without that row.

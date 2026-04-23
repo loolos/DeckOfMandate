@@ -1,4 +1,5 @@
 import type { LevelId } from "../../../data/levels";
+import { getLevelContent } from "../../../data/levelRegistry";
 import type { CardInstance, CardTemplateId } from "../../types/card";
 import type { CardUseState, GameState } from "../../../types/game";
 
@@ -27,6 +28,10 @@ export function isLimitedUseTemplateId(templateId: CardTemplateId): templateId i
 }
 
 function getLimitedCardTotalUses(levelId: LevelId, templateId: LimitedUseTemplateId): number {
+  const configured = getLevelContent(levelId).limitedUseByTemplateId?.[templateId];
+  if (configured) {
+    return Math.max(0, configured.totalUses);
+  }
   if (levelId === "firstMandate" && (templateId === "funding" || templateId === "crackdown")) {
     return FIRST_MANDATE_ROYAL_TOTAL_USES;
   }
@@ -43,6 +48,12 @@ function getLimitedCardTotalUses(levelId: LevelId, templateId: LimitedUseTemplat
 }
 
 function getDefaultRemainingUses(levelId: LevelId, templateId: LimitedUseTemplateId): number {
+  const configured = getLevelContent(levelId).limitedUseByTemplateId?.[templateId];
+  if (configured) {
+    const total = getLimitedCardTotalUses(levelId, templateId);
+    const configuredRemaining = configured.defaultRemainingUses ?? configured.totalUses;
+    return Math.max(0, Math.min(total, configuredRemaining));
+  }
   if (
     (templateId === "funding" || templateId === "crackdown" || templateId === "development") &&
     levelId === "secondMandate"

@@ -93,10 +93,10 @@ describe("Sun King initialState hooks (chapter 3)", () => {
     expect(Object.values(st.cardsById).filter((c) => c.templateId === "bourbonMarriageProclamation").length).toBe(2);
     expect(Object.values(st.cardsById).filter((c) => c.templateId === "usurpationEdict").length).toBe(2);
     expect(Object.values(st.cardsById).filter((c) => c.templateId === "jansenistReservation").length).toBe(4);
-    expect(st.resources.treasuryStat).toBe(14);
-    expect(st.resources.power).toBe(10);
-    expect(st.resources.legitimacy).toBe(10);
+    expect(st.resources.treasuryStat).toBe(ch2.resources.treasuryStat);
+    expect(st.resources.power).toBe(ch2.resources.power);
+    expect(st.resources.legitimacy).toBe(ch2.resources.legitimacy);
     // Draft carries over chapter-2 funding; first beginYear adds treasury-based income.
-    expect(st.resources.funding).toBe(ch2.resources.funding + st.resources.treasuryStat);
+    expect(st.resources.funding).toBe(ch2.resources.funding + ch2.resources.treasuryStat);
   });
 });

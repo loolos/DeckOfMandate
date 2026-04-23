@@ -128,5 +128,13 @@ export const levelContent: LevelContent = {
     firstTurnEmptyBoardCount: 2,
   },
   chapter3RefitStartingHandOrder: CHAPTER3_REFIT_STARTING_HAND_ORDER,
+  refitNewCardsLabelKey: "menu.refit.newCardsChapter3",
+  limitedUseByTemplateId: {
+    funding: { totalUses: 3 },
+    crackdown: { totalUses: 3 },
+    development: { totalUses: 3 },
+    diplomaticIntervention: { totalUses: 2 },
+    jesuitCollege: { totalUses: 1 },
+  },
   opponentBoardEventTemplateId: "opponentHabsburg",
 };

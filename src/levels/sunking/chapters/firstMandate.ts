@@ -100,6 +100,13 @@ export const levelContent: LevelContent = {
   procedural: {
     firstTurnEmptyBoardCount: 2,
   },
+  limitedUseByTemplateId: {
+    funding: { totalUses: 4 },
+    crackdown: { totalUses: 4 },
+    development: { totalUses: 2 },
+    diplomaticIntervention: { totalUses: 2 },
+    jesuitCollege: { totalUses: 1 },
+  },
 };
 
 /** Start-menu default for this campaign (one chapter may set this). */

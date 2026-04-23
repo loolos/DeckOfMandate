@@ -49,6 +49,7 @@ import { createInitialState } from "./initialState";
 import {
   LEVEL2_CONTINUITY_MAX_REMOVALS,
   LEVEL2_FIXED_NEW_IDS,
+  SUNKING_CH2_ID,
   buildLevel2StateFromDraft,
   buildLevel3StateFromDraft,
   createContinuityLevel2Draft,
@@ -73,15 +74,28 @@ import {
   type SessionRecord,
 } from "../logic/runCode";
 
-function readRegisteredChapter3RefitHandOrder(): readonly CardTemplateId[] {
+function readRegisteredChapter3RefitConfig(): {
+  handOrder: readonly CardTemplateId[];
+  newCardsLabelKey: MessageKey;
+} {
   for (const id of getRegisteredLevelIds()) {
-    const o = getLevelContent(id).chapter3RefitStartingHandOrder;
-    if (o?.length) return o;
+    const content = getLevelContent(id);
+    const handOrder = content.chapter3RefitStartingHandOrder;
+    if (handOrder?.length) {
+      return {
+        handOrder,
+        newCardsLabelKey: (content.refitNewCardsLabelKey ?? "menu.refit.newCardsChapter3") as MessageKey,
+      };
+    }
   }
   throw new Error("Game: no registered level defines chapter3RefitStartingHandOrder");
 }
 
-const CHAPTER3_REFIT_STARTING_HAND_ORDER: readonly CardTemplateId[] = readRegisteredChapter3RefitHandOrder();
+const CHAPTER3_REFIT_CONFIG = readRegisteredChapter3RefitConfig();
+const CHAPTER3_REFIT_STARTING_HAND_ORDER: readonly CardTemplateId[] = CHAPTER3_REFIT_CONFIG.handOrder;
+const CHAPTER3_REFIT_NEW_CARDS_LABEL_KEY: MessageKey = CHAPTER3_REFIT_CONFIG.newCardsLabelKey;
+const LEVEL2_REFIT_NEW_CARDS_LABEL_KEY: MessageKey = (getLevelContent(SUNKING_CH2_ID).refitNewCardsLabelKey ??
+  "menu.refit.newCards") as MessageKey;
 
 /** Start menu only — from `src/img/main.png` via `npm run compress:menu` → maintheme.webp */
 const START_MENU_BACKDROP_STYLE: CSSProperties = {
@@ -1019,7 +1033,7 @@ export function Game() {
               <p className={styles.startMenuMuted}>{t("menu.refit.mobileDoubleToggleHint")}</p>
             ) : null}
             {level3Draft.carryoverCards.map((card) => renderLevel3RefitCardRow(card))}
-            <h3 className={styles.statusSectionTitle}>{t("menu.refit.newCardsChapter3")}</h3>
+            <h3 className={styles.statusSectionTitle}>{t(CHAPTER3_REFIT_NEW_CARDS_LABEL_KEY)}</h3>
             {CHAPTER3_REFIT_STARTING_HAND_ORDER.map((id, idx) =>
               renderLevel3FixedNewCardPreviewRow(id, `preview-ch3-${idx}-${id}`),
             )}
@@ -1120,7 +1134,7 @@ export function Game() {
               <p className={styles.startMenuMuted}>{t("menu.refit.mobileDoubleToggleHint")}</p>
             ) : null}
             {level2Draft.carryoverCards.map((card) => renderContinuityCardRow(card))}
-            <h3 className={styles.statusSectionTitle}>{t("menu.refit.newCards")}</h3>
+            <h3 className={styles.statusSectionTitle}>{t(LEVEL2_REFIT_NEW_CARDS_LABEL_KEY)}</h3>
             {LEVEL2_FIXED_NEW_IDS.map((id) => renderFixedNewCardPreviewRow(id))}
           </>
           {level2Validation ? (
