@@ -57,6 +57,8 @@ export const messagesFrCore: Record<keyof typeof messagesEnCore, string> = {
   "ui.actionLog.empty": "Aucun effet enregistré dans cette partie.",
   "ui.cancel": "Annuler",
   "ui.confirmRetention": "Confirmer la conservation",
+  "ui.retentionLegalitySummary": "Sélection : conserver {keep}, défausser {discard} (limite {cap}).",
+  "ui.retentionLegalityOverflow": "{over} au-dessus de la limite — conservez moins de cartes.",
   "ui.deck": "Pioche",
   "ui.discard": "Défausse",
   "ui.endTurn": "Terminer le tour",

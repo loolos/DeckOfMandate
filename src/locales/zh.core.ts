@@ -34,6 +34,8 @@ export const messagesZhCore = {
   "ui.playThisCard": "打出这张牌",
   "ui.cancel": "取消",
   "ui.confirmRetention": "确认保留",
+  "ui.retentionLegalitySummary": "当前选择：保留 {keep} 张，弃置 {discard} 张（上限 {cap}）。",
+  "ui.retentionLegalityOverflow": "超出上限 {over} 张，请减少保留。",
   "ui.newGame": "新开一局",
   "menu.title": "主菜单",
   "menu.resumeSave": "读取本地存档",

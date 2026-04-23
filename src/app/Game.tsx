@@ -210,6 +210,7 @@ export function Game() {
   const [wideGameGrid, setWideGameGrid] = useState(() =>
     typeof window !== "undefined" ? window.matchMedia(GRID_WIDE_MEDIA).matches : false,
   );
+  const [logForceScrollToken, setLogForceScrollToken] = useState(0);
   const gridRef = useRef<HTMLDivElement>(null);
   const eventsScrollRef = useRef<HTMLDivElement>(null);
   const handScrollRef = useRef<HTMLDivElement>(null);
@@ -410,6 +411,11 @@ export function Game() {
     state.phase === "retention" &&
     selectedIds.length <= retentionCapacity(state) &&
     selectedIds.every((id) => state.hand.includes(id));
+  const retentionCap = state.phase === "retention" ? retentionCapacity(state) : 0;
+  const retentionKeepCount = selectedIds.length;
+  const retentionDiscardCount = Math.max(state.hand.length - retentionKeepCount, 0);
+  const retentionOverLimit = Math.max(retentionKeepCount - retentionCap, 0);
+  const retentionSelectionLegal = state.phase === "retention" && retentionOverLimit === 0;
 
   const dispatchSafe = (a: GameAction) => {
     const before = pendingStateRef.current;
@@ -422,6 +428,9 @@ export function Game() {
         head.actions.push(recorded);
         refreshCodeHex();
       }
+    }
+    if (a.type === "END_YEAR" || a.type === "CONFIRM_RETENTION") {
+      setLogForceScrollToken((prev) => prev + 1);
     }
     pendingStateRef.current = next;
     dispatch(a);
@@ -1398,6 +1407,7 @@ export function Game() {
       <ActionLog
         entries={state.actionLog}
         showMobileTapGuide={state.outcome === "playing" && state.phase === "action"}
+        forceScrollToken={logForceScrollToken}
       />
 
       <div className={styles.footerRow}>
@@ -1443,6 +1453,14 @@ export function Game() {
             <p className={styles.help}>
               {resourceLabelWithIcon("legitimacy", t("resource.legitimacy"))}:{" "}
               {retentionCapacity(state)}
+            </p>
+            <p className={retentionSelectionLegal ? styles.retainLegalityOk : styles.retainLegalityBad}>
+              {t("ui.retentionLegalitySummary", {
+                cap: retentionCap,
+                keep: retentionKeepCount,
+                discard: retentionDiscardCount,
+              })}
+              {retentionOverLimit > 0 ? ` ${t("ui.retentionLegalityOverflow", { over: retentionOverLimit })}` : ""}
             </p>
             <div className={styles.retainList}>
               {state.hand.map((id) => {
