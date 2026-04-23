@@ -138,7 +138,7 @@ export const sunkingShellContentZh = {
   "log.info.cardUse.remainingUses": "[第 {turn} 年] 标签说明「剩余」：该卡可用次数为 X/Y；每次打出会消耗 1 次，用尽后将从牌库循环中移除。",
   "log.info.cardUse.depleted.crackdownPenalty": "[第 {turn} 年]「王室干预」次数耗尽，已从牌库循环中移除；王室强制力受损，权力 -1。",
   "log.info.cardUse.depleted.fundingPenalty": "[第 {turn} 年]「王室征收」次数耗尽，已从牌库循环中移除；非常规筹资渠道枯竭，财政 -1。",
-  "log.info.cardUse.depleted.diplomaticIntervention": "[第 {turn} 年]「外交干预」次数耗尽（0/3），已从牌库循环中移除（无额外惩罚）。",
+  "log.info.cardUse.depleted.diplomaticIntervention": "[第 {turn} 年]「外交干预」次数耗尽（0/2），已从牌库循环中移除（无额外惩罚）。",
   "log.info.cardDraw.fiscalBurdenTriggered": "[第 {turn} 年] 抓到「财政负担」并触发：剩余经费 -1。",
   "log.info.cardDraw.antiFrenchContainmentPowerLoss": "[第 {turn} 年] 抓到「反法遏制」并触发：权力 -1。",
   "log.info.cardDraw.antiFrenchContainmentLegitimacyLoss": "[第 {turn} 年] 抓到「反法遏制」并触发：合法性 -1。",

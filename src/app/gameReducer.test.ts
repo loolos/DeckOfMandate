@@ -9,6 +9,7 @@ import { gameReducer } from "./gameReducer";
 import { createStandaloneLevel2Draft } from "./levelTransitions";
 import { initOpponentHabsburgPool } from "../logic/opponentHabsburg";
 import { THIRD_MANDATE_LEVEL_ID } from "../logic/thirdMandateConstants";
+import { createInitialCardUseState } from "../levels/sunking/logic/cardUsage";
 
 describe("gameReducer", () => {
   it("creates deterministic initial layouts for the same seed", () => {
@@ -666,8 +667,9 @@ describe("gameReducer", () => {
     expect(afterPlay.resources.funding).toBe(0);
   });
 
-  it("diplomatic intervention starts at 3/3 and is removed on depletion without penalty", () => {
+  it("diplomatic intervention starts at 2/2 and is removed on depletion without penalty", () => {
     const base = createInitialState(123_010, "secondMandate");
+    expect(createInitialCardUseState("secondMandate", "diplomaticIntervention")).toEqual({ remaining: 2, total: 2 });
     const diplomaticIntervention = "tmp_di_limited";
     const withCardInHand: typeof base = {
       ...base,
@@ -680,7 +682,7 @@ describe("gameReducer", () => {
       },
       cardUsesById: {
         ...base.cardUsesById,
-        [diplomaticIntervention]: { remaining: 1, total: 3 },
+        [diplomaticIntervention]: { remaining: 1, total: 2 },
       },
       hand: [diplomaticIntervention],
       resources: { ...base.resources, funding: 0, power: 5, treasuryStat: 5 },
