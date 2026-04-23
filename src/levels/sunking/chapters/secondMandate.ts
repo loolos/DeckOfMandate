@@ -70,6 +70,7 @@ export const levelContent: LevelContent = {
     "taxRebalance",
     "taxRebalance",
     "diplomaticCongress",
+    "diplomaticCongress",
   ],
   rollableEventIds: [
     "versaillesExpenditure",

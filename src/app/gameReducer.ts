@@ -278,7 +278,6 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
         );
       }
       if (hasCardTag(paid, id, "consume")) {
-        const hadHuguenotContainment = paid.playerStatuses.some((p) => p.templateId === "huguenotContainment");
         let s: GameState = removeHand(paid, id);
         if (inst.templateId === "suppressHuguenots") {
           s = enforceHuguenotContainmentInvariant(s);
@@ -289,7 +288,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
           fundingCost: cost,
           effects: tmpl.effects,
         });
-        s = maybeAppendHuguenotContainmentClearedLog(s, inst.templateId, hadHuguenotContainment);
+        s = maybeAppendHuguenotContainmentClearedLog(paid, s, inst.templateId);
         return s;
       }
       let s = applyPlayedCardEffects(paid, inst.templateId);

@@ -186,12 +186,14 @@ describe("secondMandate balance data", () => {
     expect(pool.includes("mercenaryRaiders")).toBe(false);
   });
 
-  it("chapter 2 starter deck includes two grain relief and two tax rebalance cards", () => {
+  it("chapter 2 starter deck includes two grain relief, two tax rebalance, and two diplomatic congress cards", () => {
     const starter = getLevelContent("secondMandate").starterDeckTemplateOrder;
     const grainCount = starter.filter((id) => id === "grainRelief").length;
     const taxCount = starter.filter((id) => id === "taxRebalance").length;
+    const congressCount = starter.filter((id) => id === "diplomaticCongress").length;
     expect(grainCount).toBe(2);
     expect(taxCount).toBe(2);
+    expect(congressCount).toBe(2);
   });
 
   it("uses status-driven effects for draw penalty and royal ban", () => {

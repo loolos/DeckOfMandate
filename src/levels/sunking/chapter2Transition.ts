@@ -28,6 +28,7 @@ export const LEVEL2_FIXED_NEW_IDS = [
   "taxRebalance",
   "taxRebalance",
   "diplomaticCongress",
+  "diplomaticCongress",
 ] as const;
 
 export type {

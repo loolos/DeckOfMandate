@@ -38,11 +38,14 @@ export function applySunkingPlayCardExtras(state: GameState, templateId: CardTem
 
 /** After a consume play removes the last suppress card while containment was active, append the cleared log. */
 export function maybeAppendHuguenotContainmentClearedLog(
+  beforePlayState: GameState,
   state: GameState,
   templateId: CardTemplateId,
-  hadHuguenotContainmentBeforePlay: boolean,
 ): GameState {
   if (templateId !== "suppressHuguenots") return state;
+  const hadHuguenotContainmentBeforePlay = beforePlayState.playerStatuses.some(
+    (p) => p.templateId === "huguenotContainment",
+  );
   if (
     hadHuguenotContainmentBeforePlay &&
     !state.playerStatuses.some((p) => p.templateId === "huguenotContainment")
