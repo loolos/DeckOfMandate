@@ -78,7 +78,7 @@ export const cardTemplates: Record<CardTemplateId, CardTemplate> = {
   },
   development: {
     id: "development",
-    cost: 3,
+    cost: 4,
     tags: INFLATION,
     titleKey: "card.development.name",
     backgroundKey: "card.development.background",
@@ -111,7 +111,7 @@ export const cardTemplates: Record<CardTemplateId, CardTemplate> = {
   },
   diplomaticCongress: {
     id: "diplomaticCongress",
-    cost: 3,
+    cost: 4,
     tags: [],
     titleKey: "card.diplomaticCongress.name",
     backgroundKey: "card.diplomaticCongress.background",

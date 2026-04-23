@@ -16,7 +16,7 @@ describe("secondMandate balance data", () => {
     const expectedCosts = {
       grainRelief: 3,
       taxRebalance: 2,
-      diplomaticCongress: 3,
+      diplomaticCongress: 4,
       diplomaticIntervention: 0,
       fiscalBurden: 2,
     } as const;
