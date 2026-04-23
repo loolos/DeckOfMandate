@@ -54,9 +54,9 @@ export const levelDef: LevelDef = {
   calendarStartYear: 1701,
   yearsPerTurn: 1,
   startingResources: {
-    treasuryStat: 12,
+    treasuryStat: 14,
     funding: 0,
-    power: 8,
+    power: 10,
     legitimacy: 10,
   },
   winTargets: {

@@ -49,7 +49,7 @@ export const cardTemplates: Record<CardTemplateId, CardTemplate> = {
   antiFrenchContainment: {
     id: "antiFrenchContainment",
     cost: 2,
-    tags: CONSUME,
+    tags: EXTRA_CONSUME,
     titleKey: "card.antiFrenchContainment.name",
     backgroundKey: "card.antiFrenchContainment.background",
     descriptionKey: "card.antiFrenchContainment.desc",

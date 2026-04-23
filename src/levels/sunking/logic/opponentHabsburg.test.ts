@@ -239,8 +239,16 @@ describe("opponentHabsburg AI", () => {
     const next = initOpponentHabsburgPool(st);
     expect(next.opponentNextTurnDrawModifier).toBe(1);
     expect(next.opponentHabsburgUnlocked).toBe(true);
+    expect(next.opponentStrength).toBe(3);
     expect(next.opponentHand).toHaveLength(2);
     expect(next.opponentDeck).toHaveLength(10);
+  });
+
+  it("initOpponentHabsburgPool accepts initial opponent strength", () => {
+    const base = createInitialState(55_003, THIRD_MANDATE_LEVEL_ID);
+    const next = initOpponentHabsburgPool(base, { initialOpponentStrength: 2 });
+    expect(next.opponentStrength).toBe(2);
+    expect(next.opponentHabsburgUnlocked).toBe(true);
   });
 
   it("Anglo-Dutch deferrals card schedules −2 next-year funding income and −1 draw", () => {

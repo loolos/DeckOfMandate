@@ -40,7 +40,9 @@ function formatSingleEffectChip(e: Effect): string {
     case "addPlayerStatus": {
       const st = getStatusTemplate(e.templateId);
       if (st.kind === "drawAttemptsDelta") {
-        return `📜${signedInt(st.delta ?? 0)}×${e.turns}⌛`;
+        const d = st.delta ?? 0;
+        if (d !== 0) return `📜${signedInt(d)}×${e.turns}⌛`;
+        return `⏳×${e.turns}⌛`;
       }
       if (st.kind === "beginYearResourceDelta") {
         const resource = st.resource ?? "legitimacy";

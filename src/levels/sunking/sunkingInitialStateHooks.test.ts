@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { getCardTemplate } from "../../data/cards";
 import { getLevelContent } from "../../data/levelRegistry";
 import {
+  createContinuityLevel3Draft,
   createDeckRefitCarryoverSnapshot,
   createStandaloneLevel3Draft,
   SUNKING_CH3_ID,
@@ -83,6 +84,8 @@ describe("Sun King initialState hooks (chapter 3)", () => {
       },
     };
     const carryoverCount = createDeckRefitCarryoverSnapshot(ch2).length;
+    const draft = createContinuityLevel3Draft(ch2);
+    expect(draft.resources.funding).toBe(ch2.resources.funding);
     const st = buildLevel3StateFromChapter2(ch2, 888);
     const allIds = [...st.deck, ...st.discard, ...st.hand];
     expect(new Set(allIds).size).toBe(allIds.length);
@@ -90,8 +93,10 @@ describe("Sun King initialState hooks (chapter 3)", () => {
     expect(Object.values(st.cardsById).filter((c) => c.templateId === "bourbonMarriageProclamation").length).toBe(2);
     expect(Object.values(st.cardsById).filter((c) => c.templateId === "usurpationEdict").length).toBe(2);
     expect(Object.values(st.cardsById).filter((c) => c.templateId === "jansenistReservation").length).toBe(4);
-    expect(st.resources.treasuryStat).toBe(ch2.resources.treasuryStat);
-    expect(st.resources.power).toBe(ch2.resources.power);
-    expect(st.resources.legitimacy).toBe(ch2.resources.legitimacy);
+    expect(st.resources.treasuryStat).toBe(14);
+    expect(st.resources.power).toBe(10);
+    expect(st.resources.legitimacy).toBe(10);
+    // Draft carries over chapter-2 funding; first beginYear adds treasury-based income.
+    expect(st.resources.funding).toBe(ch2.resources.funding + st.resources.treasuryStat);
   });
 });

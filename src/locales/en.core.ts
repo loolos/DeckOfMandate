@@ -45,7 +45,20 @@ export const messagesEnCore = {
   "menu.startConfigured": "Start",
   "menu.runCodeLoad": "Load from run code",
   "menu.tutorialOnLevelEntry": "Show interface tutorial when entering a level",
-  "menu.tutorialOnLevelEntryHint": "A short English walkthrough highlighting goals, resources, events, and your hand. Off by default.",
+  "menu.tutorialOnLevelEntryHint": "A short walkthrough in your chosen language highlighting goals, resources, events, and your hand. Off by default.",
+  "tutorial.title": "Interface tutorial",
+  "tutorial.skip": "Skip tutorial",
+  "tutorial.back": "Back",
+  "tutorial.next": "Next",
+  "tutorial.done": "Done",
+  "tutorial.step.targets":
+    "These are your level goals: reach the listed Treasury, Power, and Legitimacy before the turn limit. The banner shows the current year and how many turns you have left.",
+  "tutorial.step.resources":
+    "Resources drive everything: Treasury adds to your yearly Funding; Funding pays to play cards and solve events; Power sets how many cards you draw each turn; Legitimacy caps how many cards you may keep at year-end — and the run ends if Legitimacy hits zero.",
+  "tutorial.step.events":
+    "Events are the crises and opportunities on the board. Harmful ones need a solution (often Funding or a special card); opportunities may grant benefits if you invest. Unresolved harmful events can penalize you when you end the turn.",
+  "tutorial.step.hand":
+    "Your hand is your deck of policy options — each card is a tool to shift resources or the board. Play them to solve events or strengthen the state, then end the turn when you are ready.",
   "ui.statuses": "Ongoing effects",
   "ui.statuses.empty": "No ongoing effects.",
   "ui.statusTurnsRemaining": "{n} turn(s) left",

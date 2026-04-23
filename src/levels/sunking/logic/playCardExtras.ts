@@ -1,3 +1,4 @@
+import { appendActionLog } from "../../../logic/actionLog";
 import { addCardsToHand } from "../../../logic/cardRuntime";
 import { markSlotResolved } from "../../../logic/eventSlotOps";
 import type { GameState } from "../../../types/game";
@@ -33,4 +34,20 @@ export function applySunkingPlayCardExtras(state: GameState, templateId: CardTem
     s = resolveFirstUnresolvedEventByTemplate(s, "jansenistTension");
   }
   return s;
+}
+
+/** After a consume play removes the last suppress card while containment was active, append the cleared log. */
+export function maybeAppendHuguenotContainmentClearedLog(
+  state: GameState,
+  templateId: CardTemplateId,
+  hadHuguenotContainmentBeforePlay: boolean,
+): GameState {
+  if (templateId !== "suppressHuguenots") return state;
+  if (
+    hadHuguenotContainmentBeforePlay &&
+    !state.playerStatuses.some((p) => p.templateId === "huguenotContainment")
+  ) {
+    return appendActionLog(state, { kind: "info", infoKey: "huguenotContainmentCleared" });
+  }
+  return state;
 }

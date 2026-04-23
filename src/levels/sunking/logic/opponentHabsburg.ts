@@ -242,6 +242,12 @@ export function opponentDrawFromDeck(state: GameState, count: number): GameState
 }
 
 export function completeSuccessionCrisisAndRevealOpponent(state: GameState, slot: SlotId): GameState {
+  if (state.opponentHabsburgUnlocked) {
+    const delta = 3 - state.opponentStrength;
+    const s = delta !== 0 ? applyEffects(state, [{ kind: "modOpponentStrength", delta }]) : state;
+    const slots: GameState["slots"] = { ...s.slots, [slot]: null };
+    return { ...s, slots };
+  }
   let s = initOpponentHabsburgPool(state);
   const instance: EventInstance = {
     instanceId: `evt_${s.nextIds.event}`,
@@ -256,7 +262,35 @@ export function completeSuccessionCrisisAndRevealOpponent(state: GameState, slot
   };
 }
 
-export function initOpponentHabsburgPool(state: GameState): GameState {
+function firstEmptyEventSlot(slots: GameState["slots"]): SlotId | null {
+  for (const sl of EVENT_SLOT_ORDER) {
+    if (!slots[sl]) return sl;
+  }
+  return null;
+}
+
+/** Continuity chapter 3: rival row active from first year at strength 2 (1701 crisis later bumps to 3). */
+export function unlockHabsburgOpponentForContinuityChapterStart(state: GameState): GameState {
+  if (state.levelId !== THIRD_MANDATE_LEVEL_ID || state.opponentHabsburgUnlocked) return state;
+  const target = firstEmptyEventSlot(state.slots);
+  if (!target) return state;
+  const s = initOpponentHabsburgPool(state, { initialOpponentStrength: 2 });
+  const instance: EventInstance = {
+    instanceId: `evt_${s.nextIds.event}`,
+    templateId: "opponentHabsburg",
+    resolved: true,
+  };
+  return {
+    ...s,
+    nextIds: { ...s.nextIds, event: s.nextIds.event + 1 },
+    slots: { ...s.slots, [target]: instance },
+  };
+}
+
+export function initOpponentHabsburgPool(
+  state: GameState,
+  opts?: { initialOpponentStrength?: number },
+): GameState {
   const templates: CardTemplateId[] = [
     "habsburgGrandAllianceLevy",
     "habsburgGrandAllianceLevy",
@@ -287,6 +321,7 @@ export function initOpponentHabsburgPool(state: GameState): GameState {
     hand.push(deck[0]!);
     deck = deck.slice(1);
   }
+  const initialOpponentStrength = opts?.initialOpponentStrength ?? 3;
   return {
     ...state,
     rng: rng2,
@@ -295,7 +330,7 @@ export function initOpponentHabsburgPool(state: GameState): GameState {
     opponentDeck: deck,
     opponentHand: hand,
     opponentDiscard: [],
-    opponentStrength: 3,
+    opponentStrength: initialOpponentStrength,
     opponentHabsburgUnlocked: true,
     opponentNextTurnDrawModifier: state.opponentNextTurnDrawModifier,
   };

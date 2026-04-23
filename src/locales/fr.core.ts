@@ -18,7 +18,21 @@ export const messagesFrCore: Record<keyof typeof messagesEnCore, string> = {
   "menu.startConfigured": "Démarrer",
   "menu.title": "Menu principal",
   "menu.tutorialOnLevelEntry": "Afficher le tutoriel d'interface à l'entrée du niveau",
-  "menu.tutorialOnLevelEntryHint": "Une courte présentation en anglais mettant en évidence objectifs, ressources, événements et main. Désactivé par défaut.",
+  "menu.tutorialOnLevelEntryHint":
+    "Une courte présentation dans la langue choisie mettant en évidence objectifs, ressources, événements et main. Désactivé par défaut.",
+  "tutorial.title": "Tutoriel d'interface",
+  "tutorial.skip": "Passer",
+  "tutorial.back": "Retour",
+  "tutorial.next": "Suivant",
+  "tutorial.done": "Terminé",
+  "tutorial.step.targets":
+    "Voici les objectifs du niveau : atteignez les valeurs indiquées pour Trésor, Pouvoir et Légitimité avant la limite de tours. La bannière affiche l'année en cours et le nombre de tours restants.",
+  "tutorial.step.resources":
+    "Les ressources régulent tout : le Trésor augmente votre Financement annuel ; le Financement sert à jouer des cartes et à résoudre des événements ; le Pouvoir détermine combien de cartes vous piochez chaque tour ; la Légitimité limite combien de cartes vous pouvez conserver en fin d'année — et la partie s'arrête si la Légitimité tombe à zéro.",
+  "tutorial.step.events":
+    "Les événements sont crises et opportunités sur le plateau. Les événements nuisibles demandent une solution (souvent du Financement ou une carte spéciale) ; les opportunités peuvent donner des avantages si vous y investissez. Les nuisibles non résolus peuvent vous pénaliser en fin de tour.",
+  "tutorial.step.hand":
+    "Votre main est votre jeu d'options politiques — chaque carte modifie les ressources ou le plateau. Jouez-les pour résoudre les événements ou renforcer l'État, puis terminez le tour quand vous êtes prêt.",
   "phase.action": "Phase d'action — jouez des cartes, résolvez les événements, puis terminez le tour.",
   "phase.gameOver": "Partie terminée.",
   "phase.retention": "Fin du tour — choisissez les cartes à conserver (jusqu'à la Légitimité).",

@@ -45,7 +45,20 @@ export const messagesZhCore = {
   "menu.startConfigured": "开始",
   "menu.runCodeLoad": "从对局码加载",
   "menu.tutorialOnLevelEntry": "进入关卡时显示界面教程",
-  "menu.tutorialOnLevelEntryHint": "以英文分步高亮说明目标、资源、事件与手牌；默认关闭。",
+  "menu.tutorialOnLevelEntryHint": "按您选择的语言分步说明目标、资源、事件与手牌；默认关闭。",
+  "tutorial.title": "界面教程",
+  "tutorial.skip": "跳过教程",
+  "tutorial.back": "上一步",
+  "tutorial.next": "下一步",
+  "tutorial.done": "完成",
+  "tutorial.step.targets":
+    "这些是关卡目标：在回合上限内达到所列的财政、权力与合法性。顶栏显示当前年份与剩余回合计数。",
+  "tutorial.step.resources":
+    "资源驱动整个流程：财政增加每回合的经费；经费用于打出卡牌与解决事件；权力决定每回合抽牌次数；合法性限制年末可保留的手牌张数——若合法性归零则本局失败。",
+  "tutorial.step.events":
+    "事件是棋盘上的危机与机遇。有害事件通常需要投入经费或特定卡牌来解决；机遇类事件在投资后可能带来收益。若有害事件未在结束回合前解决，可能会受到惩罚。",
+  "tutorial.step.hand":
+    "手牌是你的政策选择：每张牌都能调整资源或盘面。打出它们以处理事件或强化国家，准备好后结束本回合即可。",
   "ui.statuses": "持续状态",
   "ui.statuses.empty": "暂无持续效果。",
   "ui.statusTurnsRemaining": "剩余 {n} 回合",

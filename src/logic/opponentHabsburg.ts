@@ -3,6 +3,7 @@ export {
   chooseOpponentPlay,
   completeSuccessionCrisisAndRevealOpponent,
   initOpponentHabsburgPool,
+  unlockHabsburgOpponentForContinuityChapterStart,
   opponentBeginYearDrawPhase,
   opponentDrawFromDeck,
   opponentEndYearPlayPhase,

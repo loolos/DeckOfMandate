@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import { LEVEL_TUTORIAL_STEPS } from "../data/tutorialCopy";
+import { useI18n } from "../locales";
 import styles from "./LevelTutorialOverlay.module.css";
 
 type Props = {
@@ -16,6 +17,7 @@ function measureTarget(targetId: string): DOMRect | null {
 }
 
 export function LevelTutorialOverlay({ open, onDismiss }: Props) {
+  const { t } = useI18n();
   const [stepIndex, setStepIndex] = useState(0);
   const [steps, setSteps] = useState<readonly (typeof LEVEL_TUTORIAL_STEPS)[number][]>(LEVEL_TUTORIAL_STEPS);
   const [rect, setRect] = useState<DOMRect | null>(null);
@@ -115,21 +117,21 @@ export function LevelTutorialOverlay({ open, onDismiss }: Props) {
       <div className={styles.dim} aria-hidden />
       <div className={styles.spot} style={spotStyle} />
       <div className={styles.card} style={{ top: cardTop }}>
-        <h2 id="level-tutorial-title">Interface tutorial</h2>
+        <h2 id="level-tutorial-title">{t("tutorial.title")}</h2>
         <p className={styles.body} aria-live="polite">
-          {step.body}
+          {t(step.bodyKey)}
         </p>
         <div className={styles.actions}>
           <button type="button" className={styles.skip} onClick={onDismiss}>
-            Skip tutorial
+            {t("tutorial.skip")}
           </button>
           {stepIndex > 0 ? (
             <button type="button" className={styles.btn} onClick={goBack}>
-              Back
+              {t("tutorial.back")}
             </button>
           ) : null}
           <button ref={primaryBtnRef} type="button" className={styles.btnPrimary} onClick={goNext}>
-            {isLast ? "Done" : "Next"}
+            {isLast ? t("tutorial.done") : t("tutorial.next")}
           </button>
         </div>
       </div>

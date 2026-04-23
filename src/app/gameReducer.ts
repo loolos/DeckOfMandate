@@ -3,7 +3,7 @@ import { getEventSolveFundingAmount, getEventTemplate } from "../data/events";
 import { getChapter2StandaloneDraft } from "../data/levelBootstrap";
 import { getTurnLimitForRun, type LevelId } from "../data/levels";
 import { appendActionLog } from "../logic/actionLog";
-import { applyEffects, enforceLegitimacy } from "../logic/applyEffects";
+import { enforceLegitimacy } from "../logic/applyEffects";
 import { isCardPlayableInActionPhase } from "../logic/cardPlayability";
 import { hasCardTag } from "../logic/cardTags";
 import { enforceHuguenotContainmentInvariant } from "../logic/cardRuntime";
@@ -14,17 +14,20 @@ import { applyPlayedCardEffects } from "../logic/resolveCard";
 import { resolveEndOfYearPenalties } from "../logic/resolveEvents";
 import { coalitionUntilTurn, findScriptedCalendarConfig } from "../logic/scriptedCalendar";
 import { rngNext } from "../logic/rng";
-import { opponentEndYearPlayPhase, opponentImmediateExtraDraw } from "../logic/opponentHabsburg";
+import { opponentEndYearPlayPhase } from "../logic/opponentHabsburg";
 import { beginYear, evaluateTimeDefeat, evaluateVictory, retentionCapacity } from "../logic/turnFlow";
-import { markSlotResolved, markSlotResolvedWithLeagueProgress } from "../logic/eventSlotOps";
-import { antiFrenchSentimentEventSolveCostPenalty } from "../logic/antiFrenchSentiment";
+import { markSlotResolved } from "../logic/eventSlotOps";
 import type { SlotId } from "../levels/types/event";
 import type { GameState } from "../types/game";
 import type { LogInfoKey } from "../types/game";
 import {
+  applyAntiFrenchContainmentDeckAfterRetentionYear,
+  applyScriptedAttackCampaignFlags,
   applySunkingPlayCardExtras,
-  attemptNineYearsWarCampaign,
+  cardPlayOpensCrackdownPicker,
+  maybeAppendHuguenotContainmentClearedLog,
   performFundSolve,
+  stateAfterHarmfulEventCrackdown,
 } from "../levels/campaignLogicBundle";
 import { tryCampaignReducerBridge } from "../levels/campaignReducerBridge";
 import { createInitialState } from "./initialState";
@@ -149,14 +152,6 @@ function canScriptedAttack(state: GameState, slot: SlotId): boolean {
   return state.resources.funding >= cfg.attack.fundingCost;
 }
 
-function canLocalWarAttack(state: GameState, slot: SlotId): boolean {
-  if (state.phase !== "action" || state.pendingInteraction?.type === "crackdownPick") return false;
-  const ev = state.slots[slot];
-  if (!ev || ev.resolved || ev.templateId !== "localWar") return false;
-  const cost = Math.floor(state.europeAlertProgress / 2) + antiFrenchSentimentEventSolveCostPenalty(state);
-  return state.resources.funding >= cost;
-}
-
 function performScriptedAttack(state: GameState, slot: SlotId): GameState {
   const ev = state.slots[slot];
   if (!ev || ev.resolved) return state;
@@ -202,9 +197,7 @@ function performScriptedAttack(state: GameState, slot: SlotId): GameState {
   };
 
   s = markSlotResolved(s, slot);
-  if (ev.templateId === "warOfDevolution") {
-    s = { ...s, warOfDevolutionAttacked: true };
-  }
+  s = applyScriptedAttackCampaignFlags(s, ev.templateId);
   s = enforceLegitimacy(s);
   s = appendActionLog(s, {
     kind: "eventScriptedAttack",
@@ -218,73 +211,6 @@ function performScriptedAttack(state: GameState, slot: SlotId): GameState {
   return s;
 }
 
-function performLocalWarAttack(state: GameState, slot: SlotId): GameState {
-  const ev = state.slots[slot];
-  if (!ev || ev.resolved || ev.templateId !== "localWar") return state;
-  const cost = Math.floor(state.europeAlertProgress / 2) + antiFrenchSentimentEventSolveCostPenalty(state);
-  if (state.resources.funding < cost) return state;
-  let powerDelta = 0;
-  let legitimacyDelta = 0;
-  let s: GameState = {
-    ...state,
-    resources: {
-      ...state.resources,
-      funding: state.resources.funding - cost,
-    },
-  };
-  const [rng, roll] = rngNext(s.rng);
-  s = { ...s, rng };
-  if (roll < 1 / 3) {
-    powerDelta = 1;
-    legitimacyDelta = 1;
-    s = {
-      ...s,
-      resources: {
-        ...s.resources,
-        power: s.resources.power + 1,
-        legitimacy: s.resources.legitimacy + 1,
-      },
-    };
-  } else if (roll >= 2 / 3) {
-    powerDelta = -1;
-    s = {
-      ...s,
-      resources: {
-        ...s.resources,
-        power: Math.max(0, s.resources.power - 1),
-      },
-    };
-  }
-  s = markSlotResolved(s, slot);
-  s = enforceLegitimacy(s);
-  return appendActionLog(s, {
-    kind: "eventLocalWarChoice",
-    slot,
-    templateId: "localWar",
-    choice: "attack",
-    fundingPaid: cost,
-    powerDelta,
-    legitimacyDelta,
-  });
-}
-
-function performLocalWarAppease(state: GameState, slot: SlotId): GameState {
-  const ev = state.slots[slot];
-  if (!ev || ev.resolved || ev.templateId !== "localWar") return state;
-  let s: GameState = applyEffects(state, [{ kind: "modResource", resource: "legitimacy", delta: -1 }]);
-  s = markSlotResolved(s, slot);
-  s = enforceLegitimacy(s);
-  return appendActionLog(s, {
-    kind: "eventLocalWarChoice",
-    slot,
-    templateId: "localWar",
-    choice: "appease",
-    fundingPaid: 0,
-    powerDelta: 0,
-    legitimacyDelta: -1,
-  });
-}
-
 /** After funding is cleared: keep chosen cards, discard the rest, then EOY penalties, then win / time / next year. */
 function completeYearAfterRetention(state: GameState, keepIds: readonly string[]): GameState {
   const retainedIds = keepIds.filter((id) => !isTemporaryCardInstance(state, id));
@@ -296,9 +222,7 @@ function completeYearAfterRetention(state: GameState, keepIds: readonly string[]
     discard: [...state.discard, ...discardIds],
     phase: "action",
   };
-  if (s.playerStatuses.some((st) => st.templateId === "antiFrenchSentiment")) {
-    s = applyEffects(s, [{ kind: "addCardsToDeck", templateId: "antiFrenchContainment", count: 1 }]);
-  }
+  s = applyAntiFrenchContainmentDeckAfterRetentionYear(s);
   s = resolveEndOfYearPenalties(s);
   if (s.outcome !== "playing") return purgeExtraCardsIfLevelEnded(s);
   s = opponentEndYearPlayPhase(s);
@@ -344,7 +268,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
         ...state,
         resources: { ...state.resources, funding: state.resources.funding - cost },
       };
-      if (inst.templateId === "crackdown" || inst.templateId === "diplomaticIntervention") {
+      if (cardPlayOpensCrackdownPicker(inst.templateId)) {
         return appendActionLog(
           {
             ...paid,
@@ -365,13 +289,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
           fundingCost: cost,
           effects: tmpl.effects,
         });
-        if (
-          inst.templateId === "suppressHuguenots" &&
-          hadHuguenotContainment &&
-          !s.playerStatuses.some((p) => p.templateId === "huguenotContainment")
-        ) {
-          s = appendActionLog(s, { kind: "info", infoKey: "huguenotContainmentCleared" });
-        }
+        s = maybeAppendHuguenotContainmentClearedLog(s, inst.templateId, hadHuguenotContainment);
         return s;
       }
       let s = applyPlayedCardEffects(paid, inst.templateId);
@@ -403,17 +321,9 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       if (state.outcome !== "playing" || state.phase !== "action" || state.pendingInteraction) return state;
       return state;
     }
-    case "PICK_LOCAL_WAR_ATTACK": {
-      if (state.outcome !== "playing" || state.phase !== "action" || state.pendingInteraction) return state;
-      if (!canLocalWarAttack(state, action.slot)) return state;
-      return appendInflationActivationLogIfNeeded(state, performLocalWarAttack(state, action.slot));
-    }
-    case "PICK_LOCAL_WAR_APPEASE": {
-      if (state.outcome !== "playing" || state.phase !== "action" || state.pendingInteraction) return state;
-      const ev = state.slots[action.slot];
-      if (!ev || ev.resolved || ev.templateId !== "localWar") return state;
-      return appendInflationActivationLogIfNeeded(state, performLocalWarAppease(state, action.slot));
-    }
+    case "PICK_LOCAL_WAR_ATTACK":
+    case "PICK_LOCAL_WAR_APPEASE":
+      return state;
     case "SCRIPTED_EVENT_ATTACK": {
       if (state.outcome !== "playing" || state.phase !== "action" || state.pendingInteraction) {
         return state;
@@ -427,13 +337,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       if (!isCrackdownTarget(state, action.slot)) return state;
       const cleared = state.slots[action.slot];
       if (!cleared) return state;
-      let s =
-        cleared.templateId === "nineYearsWar"
-          ? attemptNineYearsWarCampaign(state, action.slot, "intervention", p.fundingPaid)
-          : markSlotResolvedWithLeagueProgress(state, action.slot);
-      if (cleared.templateId === "imperialElectorsMood") {
-        s = opponentImmediateExtraDraw(s, 1);
-      }
+      let s = stateAfterHarmfulEventCrackdown(state, action.slot, cleared.templateId, p.fundingPaid);
       s = removeHand(s, p.cardInstanceId);
       const consumed = consumeLimitedUseCard(s, p.cardInstanceId);
       s = consumed.state;

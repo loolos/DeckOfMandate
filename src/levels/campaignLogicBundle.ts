@@ -16,6 +16,7 @@ export {
   chooseOpponentPlay,
   completeSuccessionCrisisAndRevealOpponent,
   initOpponentHabsburgPool,
+  unlockHabsburgOpponentForContinuityChapterStart,
   opponentBeginYearDrawPhase,
   opponentDrawFromDeck,
   opponentEndYearPlayPhase,
@@ -47,8 +48,14 @@ export {
 export { OPPONENT_AI_NEAR_WIN_THRESHOLD, THIRD_MANDATE_LEVEL_ID } from "./sunking/logic/thirdMandateConstants";
 export { limitedUseCardDepletionPenalty } from "./sunking/logic/limitedUseCardDepletion";
 export { shouldBlockModSuccessionTrackWhenWarEnded } from "./sunking/logic/applyEffectsSuccessionGate";
-export { shouldDeferPlayedCardEffectApplication } from "./sunking/logic/playedCardTemplatePolicy";
-export { applySunkingPlayCardExtras } from "./sunking/logic/playCardExtras";
+export {
+  cardPlayOpensCrackdownPicker,
+  shouldDeferPlayedCardEffectApplication,
+} from "./sunking/logic/playedCardTemplatePolicy";
+export { applySunkingPlayCardExtras, maybeAppendHuguenotContainmentClearedLog } from "./sunking/logic/playCardExtras";
+export { applyScriptedAttackCampaignFlags } from "./sunking/logic/scriptedAttackFollowup";
+export { stateAfterHarmfulEventCrackdown } from "./sunking/logic/crackdownHarmfulSolve";
+export { applyAntiFrenchContainmentDeckAfterRetentionYear } from "./sunking/logic/eoyRetentionCampaign";
 export { attemptNineYearsWarCampaign, performFundSolve } from "./sunking/logic/fundSolve";
 export {
   maybeAddEuropeAlertSupplementalEventHook,

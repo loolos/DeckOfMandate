@@ -7,6 +7,7 @@ import { THIRD_MANDATE_LEVEL_ID } from "../../logic/thirdMandateConstants";
 import { registerNantesStarterCardsForThirdMandate, resolveThirdMandateNantesPolicy } from "../../logic/thirdMandateStart";
 import { createRngFromSeed, shuffle } from "../../logic/rng";
 import { calendarYearForTurn } from "../../logic/scriptedCalendar";
+import { unlockHabsburgOpponentForContinuityChapterStart } from "../../logic/opponentHabsburg";
 import { beginYear } from "../../logic/turnFlow";
 import type { CardInstance, CardTemplateId } from "../types/card";
 import { EMPTY_EVENT_SLOTS, EMPTY_PENDING_MAJOR_CRISIS } from "../types/event";
@@ -87,9 +88,9 @@ export function createContinuityLevel3Draft(from: GameState, seed?: number): Lev
   }
   const carryoverCalendarStartYear = calendarYearForTurn(from.levelId, from.calendarStartYear, from.turn);
   const inheritedResources: Resources = {
-    treasuryStat: from.resources.treasuryStat,
-    power: from.resources.power,
-    legitimacy: from.resources.legitimacy,
+    treasuryStat: 14,
+    power: 10,
+    legitimacy: 10,
     funding: from.resources.funding,
   };
   const carryoverCards = createDeckRefitCarryoverSnapshot(from);
@@ -197,6 +198,8 @@ export function buildLevel3StateFromDraft(draft: Level3StartDraft): GameState {
     }
   }
 
+  const opponentStrengthPreUnlock = draft.mode === "continuity" ? 2 : 3;
+
   const base: GameState = {
     levelId: THIRD_MANDATE_LEVEL_ID,
     calendarStartYear: draft.calendarStartYear,
@@ -232,7 +235,7 @@ export function buildLevel3StateFromDraft(draft: Level3StartDraft): GameState {
     proceduralEventPoolOrder: [],
     actionLog: [],
     successionTrack: 0,
-    opponentStrength: 3,
+    opponentStrength: opponentStrengthPreUnlock,
     opponentHabsburgUnlocked: false,
     warEnded: false,
     utrechtTreatyCountdown: null,
@@ -247,7 +250,8 @@ export function buildLevel3StateFromDraft(draft: Level3StartDraft): GameState {
   };
 
   if (draft.mode === "continuity") {
-    return beginYear(appendActionLog(base, { kind: "info", infoKey: "chapter3ContinuityIntro" }));
+    const withOpponent = unlockHabsburgOpponentForContinuityChapterStart(base);
+    return beginYear(appendActionLog(withOpponent, { kind: "info", infoKey: "chapter3ContinuityIntro" }));
   }
   return beginYear(base);
 }

@@ -34,16 +34,22 @@ function statusDetail(
   t: (key: MessageKey, vars?: Record<string, string | number>) => string,
 ): string {
   if (status.kind === "drawAttemptsDelta") {
-    return t("ui.statusDetail.drawAttemptsDelta", { delta: signedValue(status.delta ?? 0) });
+    const delta = status.delta ?? 0;
+    if (delta === 0) return "";
+    return t("ui.statusDetail.drawAttemptsDelta", { delta: signedValue(delta) });
   }
   if (status.kind === "retentionCapacityDelta") {
-    return t("ui.statusDetail.retentionCapacityDelta", { delta: signedValue(status.delta ?? 0) });
+    const delta = status.delta ?? 0;
+    if (delta === 0) return "";
+    return t("ui.statusDetail.retentionCapacityDelta", { delta: signedValue(delta) });
   }
   if (status.kind === "beginYearResourceDelta") {
+    const delta = status.delta ?? 0;
+    if (delta === 0) return "";
     const resource = status.resource ?? "legitimacy";
     return t("ui.statusDetail.beginYearResourceDelta", {
       resource: t(`resource.${resource}` as MessageKey),
-      delta: signedValue(status.delta ?? 0),
+      delta: signedValue(delta),
     });
   }
   const tagKey = `card.tag.${status.blockedTag ?? "royal"}` as MessageKey;

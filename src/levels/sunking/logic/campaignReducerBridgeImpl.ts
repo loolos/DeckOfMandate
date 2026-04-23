@@ -11,6 +11,7 @@ import {
 import type { GameState } from "../../../types/game";
 import type { SlotId } from "../../types/event";
 import { THIRD_MANDATE_LEVEL_ID } from "./thirdMandateConstants";
+import { canLocalWarAttack, performLocalWarAppease, performLocalWarAttack } from "./localWarSolve";
 
 const SUNKING_LEVEL_IDS = new Set(["firstMandate", "secondMandate", "thirdMandate"]);
 
@@ -152,6 +153,18 @@ export function trySunkingCampaignReducerBridge(state: GameState, action: GameAc
       return appendInflationActivationLogIfNeeded(state, performPickNantesTolerance(state, action.slot));
     }
     return appendInflationActivationLogIfNeeded(state, performPickNantesCrackdown(state, action.slot));
+  }
+
+  if (action.type === "PICK_LOCAL_WAR_ATTACK" || action.type === "PICK_LOCAL_WAR_APPEASE") {
+    if (!isSunkingLevel(state.levelId)) return null;
+    if (state.outcome !== "playing" || state.phase !== "action" || state.pendingInteraction) return null;
+    if (action.type === "PICK_LOCAL_WAR_ATTACK") {
+      if (!canLocalWarAttack(state, action.slot)) return null;
+      return appendInflationActivationLogIfNeeded(state, performLocalWarAttack(state, action.slot));
+    }
+    const evLw = state.slots[action.slot];
+    if (!evLw || evLw.resolved || evLw.templateId !== "localWar") return null;
+    return appendInflationActivationLogIfNeeded(state, performLocalWarAppease(state, action.slot));
   }
 
   if (state.levelId !== THIRD_MANDATE_LEVEL_ID) return null;
