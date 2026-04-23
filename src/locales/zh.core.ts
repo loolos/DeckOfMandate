@@ -45,7 +45,7 @@ export const messagesZhCore = {
   "menu.startConfigured": "开始",
   "menu.runCodeLoad": "从对局码加载",
   "menu.tutorialOnLevelEntry": "进入关卡时显示界面教程",
-  "menu.tutorialOnLevelEntryHint": "按您选择的语言分步说明目标、资源、事件与手牌；默认关闭。",
+  "menu.tutorialOnLevelEntryHint": "按您选择的语言分步说明目标、资源、事件、手牌与行动日志；默认关闭。",
   "tutorial.title": "界面教程",
   "tutorial.skip": "跳过教程",
   "tutorial.back": "上一步",
@@ -59,6 +59,8 @@ export const messagesZhCore = {
     "事件是棋盘上的危机与机遇。有害事件通常需要投入经费或特定卡牌来解决；机遇类事件在投资后可能带来收益。若有害事件未在结束回合前解决，可能会受到惩罚。",
   "tutorial.step.hand":
     "手牌是你的政策选择：每张牌都能调整资源或盘面。打出它们以处理事件或强化国家，准备好后结束本回合即可。",
+  "tutorial.step.actionLog":
+    "行动日志会按时间顺序记录关键变化：包括出牌、事件解决、年末惩罚和重要叙事结果。拿不准刚刚发生了什么时，先看这里。",
   "ui.statuses": "持续状态",
   "ui.statuses.empty": "暂无持续效果。",
   "ui.statusTurnsRemaining": "剩余 {n} 回合",

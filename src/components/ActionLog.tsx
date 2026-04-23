@@ -570,7 +570,11 @@ export function ActionLog({
   );
 
   return (
-    <section className={`${styles.panel} ${styles.actionLogSection}`} aria-label={t("ui.actionLog")}>
+    <section
+      className={`${styles.panel} ${styles.actionLogSection}`}
+      id="tutorial-action-log"
+      aria-label={t("ui.actionLog")}
+    >
       <h2 className={styles.actionLogHeading}>{t("ui.actionLog")}</h2>
       {isSmallScreen ? (
         logScroll
