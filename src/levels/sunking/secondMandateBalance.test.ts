@@ -53,6 +53,7 @@ describe("secondMandate balance data", () => {
     const fiscalBurden = getCardTemplate("fiscalBurden");
     expect(fiscalBurden.effects).toEqual([]);
     expect(fiscalBurden.tags.includes("royal")).toBe(false);
+    expect(fiscalBurden.tags.includes("extra")).toBe(true);
     expect(fiscalBurden.tags.includes("consume")).toBe(true);
 
     expect(getCardTemplate("funding").tags.includes("royal")).toBe(true);

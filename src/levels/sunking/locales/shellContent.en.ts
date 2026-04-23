@@ -138,7 +138,7 @@ export const sunkingShellContentEn = {
   "log.info.cardUse.remainingUses": "[Turn {turn}] Tag note “Remaining”: this card currently has X/Y uses left; each play spends one, and it leaves circulation at 0.",
   "log.info.cardUse.depleted.crackdownPenalty": "[Turn {turn}] Royal Intervention was fully depleted and removed from circulation; court coercive leverage slips (Power -1).",
   "log.info.cardUse.depleted.fundingPenalty": "[Turn {turn}] Royal Levy was fully depleted and removed from circulation; emergency extraction channels dry up (Treasury -1).",
-  "log.info.cardUse.depleted.diplomaticIntervention": "[Turn {turn}] Diplomatic Intervention reached 0/3 and was removed from circulation.",
+  "log.info.cardUse.depleted.diplomaticIntervention": "[Turn {turn}] Diplomatic Intervention reached 0/2 and was removed from circulation.",
   "log.info.cardDraw.fiscalBurdenTriggered": "[Turn {turn}] On draw, Fiscal Burden triggered: Funding -1.",
   "log.info.cardDraw.antiFrenchContainmentPowerLoss": "[Turn {turn}] On draw, Anti-French Containment triggered: Power -1.",
   "log.info.cardDraw.antiFrenchContainmentLegitimacyLoss": "[Turn {turn}] On draw, Anti-French Containment triggered: Legitimacy -1.",

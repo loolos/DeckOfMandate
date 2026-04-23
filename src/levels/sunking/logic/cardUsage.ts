@@ -3,6 +3,7 @@ import type { CardInstance, CardTemplateId } from "../../types/card";
 import type { CardUseState, GameState } from "../../../types/game";
 
 const DEFAULT_LIMITED_CARD_TOTAL_USES = 3;
+const DIPLOMATIC_INTERVENTION_TOTAL_USES = 2;
 const FIRST_MANDATE_ROYAL_TOTAL_USES = 4;
 const FIRST_MANDATE_DEVELOPMENT_TOTAL_USES = 2;
 const CHAPTER2_STARTING_ROYAL_REMAINING_USES = 1;
@@ -31,6 +32,9 @@ function getLimitedCardTotalUses(levelId: LevelId, templateId: LimitedUseTemplat
   }
   if (levelId === "firstMandate" && templateId === "development") {
     return FIRST_MANDATE_DEVELOPMENT_TOTAL_USES;
+  }
+  if (templateId === "diplomaticIntervention") {
+    return DIPLOMATIC_INTERVENTION_TOTAL_USES;
   }
   if (templateId === "jesuitCollege") {
     return JESUIT_COLLEGE_TOTAL_USES;

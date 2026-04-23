@@ -138,7 +138,7 @@ export const sunkingShellContentFr = {
   "log.info.cardUse.remainingUses": "[Tour {turn}] Note de tag « Restant » : cette carte a X/Y utilisations restantes ; chaque activation en consomme 1 et elle quitte le cycle à 0.",
   "log.info.cardUse.depleted.crackdownPenalty": "[Tour {turn}] Intervention royale : usages épuisés, carte retirée du cycle ; la capacité de contrainte de la cour recule (Pouvoir -1).",
   "log.info.cardUse.depleted.fundingPenalty": "[Tour {turn}] Prélèvement royal : usages épuisés, carte retirée du cycle ; les canaux d'extraction d'urgence s'épuisent (Trésor -1).",
-  "log.info.cardUse.depleted.diplomaticIntervention": "[Tour {turn}] Intervention diplomatique atteint 0/3 et est retirée du cycle (sans pénalité).",
+  "log.info.cardUse.depleted.diplomaticIntervention": "[Tour {turn}] Intervention diplomatique atteint 0/2 et est retirée du cycle (sans pénalité).",
   "log.info.cardDraw.fiscalBurdenTriggered": "[Turn {turn}] On draw, Fiscal Burden triggered: Funding -1.",
   "log.info.cardDraw.antiFrenchContainmentPowerLoss": "[Turn {turn}] On draw, Anti-French Containment triggered: Power -1.",
   "log.info.cardDraw.antiFrenchContainmentLegitimacyLoss": "[Turn {turn}] On draw, Anti-French Containment triggered: Legitimacy -1.",
