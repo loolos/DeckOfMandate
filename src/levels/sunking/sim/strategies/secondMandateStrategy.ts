@@ -33,7 +33,11 @@ export function pickSecondMandateChoiceActions(
   if (state.levelId !== "secondMandate") return [];
   const nantesSlot = firstUnresolvedSlotByTemplate(state, "revocationNantes");
   if (nantesSlot) {
-    const choice = options.nantesChoice ?? "crackdown";
+    const choice =
+      options.nantesChoice ??
+      // Dynamic default: if legitimacy is already fragile, avoid the immediate -1 hit from tolerance.
+      // Otherwise prefer tolerance to skip long-tail containment pressure.
+      (state.resources.legitimacy <= 5 ? "crackdown" : "tolerance");
     if (choice === "tolerance") {
       return [{ type: "PICK_NANTES_TOLERANCE", slot: nantesSlot }];
     }
@@ -43,6 +47,10 @@ export function pickSecondMandateChoiceActions(
   if (localWarSlot) {
     const cost = Math.floor(state.europeAlertProgress / 2) + antiFrenchSentimentEventSolveCostPenalty(state);
     if (state.resources.funding >= cost) {
+      // Attack can randomly drop power by 1; avoid coin-flip defeat when power is already at 1.
+      if (state.resources.power <= 1 && state.resources.legitimacy > 1) {
+        return [{ type: "PICK_LOCAL_WAR_APPEASE", slot: localWarSlot }];
+      }
       return [{ type: "PICK_LOCAL_WAR_ATTACK", slot: localWarSlot }];
     }
     const canPlayFundingCardNow = state.hand.some((id) => {

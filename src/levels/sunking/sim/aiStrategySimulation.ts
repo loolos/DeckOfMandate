@@ -694,6 +694,7 @@ function cardPlayPriorityStrategyI(state: GameState, cardInstanceId: string): nu
 function pickCardPlayActions(state: GameState, policy: StrategyPolicyId): GameAction[] {
   const ranked: Array<{ handIndex: number; priority: number; cost: number }> = [];
   const unresolvedHarmful = hasUnresolvedHarmfulEvents(state);
+  const crackdownTargetAvailable = pickCrackdownTarget(state) !== null;
   const hasContainmentStatus = state.playerStatuses.some((st) => st.templateId === "huguenotContainment");
   for (let i = 0; i < state.hand.length; i++) {
     const id = state.hand[i];
@@ -702,6 +703,9 @@ function pickCardPlayActions(state: GameState, policy: StrategyPolicyId): GameAc
     if (!inst) continue;
     const template = inst.templateId;
     if ((template === "crackdown" || template === "diplomaticIntervention") && !unresolvedHarmful) {
+      continue;
+    }
+    if ((template === "crackdown" || template === "diplomaticIntervention") && !crackdownTargetAvailable) {
       continue;
     }
     if (policy === "a-strategy-i" && template === "crackdown") {
