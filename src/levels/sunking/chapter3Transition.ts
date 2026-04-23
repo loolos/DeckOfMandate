@@ -87,12 +87,7 @@ export function createContinuityLevel3Draft(from: GameState, seed?: number): Lev
     throw new Error("chapter3Transition: expected chapter 2 (secondMandate) end state");
   }
   const carryoverCalendarStartYear = calendarYearForTurn(from.levelId, from.calendarStartYear, from.turn);
-  const inheritedResources: Resources = {
-    treasuryStat: 14,
-    power: 10,
-    legitimacy: 10,
-    funding: from.resources.funding,
-  };
+  const inheritedResources: Resources = { ...from.resources };
   const carryoverCards = createDeckRefitCarryoverSnapshot(from);
   return {
     mode: "continuity",
