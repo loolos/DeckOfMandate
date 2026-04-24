@@ -159,7 +159,7 @@ export const eventTemplates: Record<EventTemplateId, EventTemplate> = {
     titleKey: "event.nobleResentment.name",
     descriptionKey: "event.nobleResentment.desc",
     solve: { kind: "fundingOrCrackdown", amount: 2 },
-    penaltiesIfUnresolved: [{ kind: "addPlayerStatus", templateId: "powerLeak", turns: 3 }],
+    penaltiesIfUnresolved: [{ kind: "modResource", resource: "power", delta: -1 }],
   },
   provincialNoncompliance: {
     id: "provincialNoncompliance",
@@ -467,7 +467,7 @@ export const eventTemplates: Record<EventTemplateId, EventTemplate> = {
   localWar: {
     id: "localWar",
     weight: 0,
-    harmful: false,
+    harmful: true,
     crisisPersistence: "continued",
     titleKey: "event.localWar.name",
     descriptionKey: "event.localWar.desc",

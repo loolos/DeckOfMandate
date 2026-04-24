@@ -63,7 +63,7 @@ export const messagesFrSecondMandate: Record<keyof typeof messagesEnSecondMandat
     "Pensions, offices et grands travaux du palais grignotaient une part croissante des recettes ordinaires. Les dépenses de cour montent encore. Payez 3 Financement ou utilisez Intervention ; si non résolu, perdez 2 Trésor.",
   "event.nobleResentment.name": "Ressentiment nobiliaire",
   "event.nobleResentment.desc":
-    "Les grandes familles regrettaient leurs clientèles militaires et les audits fiscaux qui rappelaient les levées de Mazarin. La résistance des élites grandit à la cour et en province. Payez 2 Financement ou Intervention, sinon gagnez Perte d'autorité pendant 3 tours.",
+    "Les grandes familles regrettaient leurs clientèles militaires et les audits fiscaux qui rappelaient les levées de Mazarin. La résistance des élites grandit à la cour et en province. Payez 2 Financement ou Intervention ; sinon, perdez 1 Pouvoir.",
   "event.provincialNoncompliance.name": "Non-conformité provinciale",
   "event.provincialNoncompliance.desc":
     "Parlements et états provinciaux testaient encore les intendants contre chartes et immunités. Les officiels locaux ralentissent l'application. Payez 2 Financement ou subissez pioche -2 l'an prochain, puis pioche -1 chacune des deux années suivantes.",
@@ -87,7 +87,7 @@ export const messagesFrSecondMandate: Record<keyof typeof messagesEnSecondMandat
     "Entre deux campagnes, compagnies libres et raids payés hantaient encore les marches. Des pillards frontaliers à gages perturbent l'ordre local et l'autorité de la couronne. Payez 2 Financement, ou perdez 1 Pouvoir et 1 Légitimité.",
   "event.localWar.name": "Guerre locale",
   "event.localWar.desc":
-    "Entre grands traités, la France enchaînait encore escarmouches rhénanes et crises italiennes. L'Alerte Europe alimente un conflit régional. Intervention ne peut pas résoudre cet événement. Choisissez Attaquer (payez un coût en Financement lié à l'Alerte Europe, puis appliquez le surcoût Sentiment anti-français si actif ; trois issues équiprobables : Victoire locale [Pouvoir +1, Légitimité +1], Enlisement [aucun effet], Pertes limitées [Pouvoir -1]) ou Apaiser (sans coût, mais Légitimité -1). C'est un événement Continu : s'il reste non résolu, le revenu de Financement du prochain tour est réduit de 2 (minimum 0).",
+    "Entre grands traités, la France enchaînait encore escarmouches rhénanes et crises italiennes. L'Alerte Europe alimente un conflit régional. Vous pouvez aussi résoudre cet événement avec Intervention. Si vous n'utilisez pas Intervention, choisissez Attaquer (payez un coût en Financement lié à l'Alerte Europe, puis appliquez le surcoût Sentiment anti-français si actif ; trois issues équiprobables : Victoire locale [Pouvoir +1, Légitimité +1], Enlisement [aucun effet], Pertes limitées [Pouvoir -1]) ou Apaiser (sans coût, mais Légitimité -1). C'est un événement Continu : s'il reste non résolu, le revenu de Financement du prochain tour est réduit de 2 (minimum 0).",
   "event.courtScandal.name": "Scandale de cour",
   "event.courtScandal.desc":
     "Cabinet du lit et rivalités ministérielles à Versailles alimentaient feuilles volantes et rumeurs publiques. Les intrigues de faction affaiblissent l'autorité. Payez 3 Financement pour contenir ; sinon, Légitimité -1 et toutes les cartes taguées Royal sont bloquées au prochain tour.",
@@ -127,7 +127,7 @@ export const messagesFrSecondMandate: Record<keyof typeof messagesEnSecondMandat
   "card.diplomaticCongress.name": "Congrès diplomatique",
   "card.diplomaticCongress.background":
     "Émissaires, conférences et garanties achètent du répit pendant que vos rivaux testent vos frontières.",
-  "card.diplomaticCongress.desc": "Pouvoir +1. Ajoutez 1 Intervention diplomatique à votre main.",
+  "card.diplomaticCongress.desc": "Pouvoir +1. Piochez +1 au prochain tour. Ajoutez 1 Intervention diplomatique à votre main.",
   "card.diplomaticIntervention.name": "Intervention diplomatique",
   "card.diplomaticIntervention.background":
     "Exercez une pression via émissaires et leviers de traité plutôt que par commandement royal direct.",

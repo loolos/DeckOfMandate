@@ -115,6 +115,21 @@ describe("resolveEndOfYearPenalties", () => {
     expect(s1.slots.A).toEqual(s0.slots.A);
   });
 
+  it("noble resentment unresolved reduces power by 1", () => {
+    const base = createInitialState(5_006, "secondMandate");
+    const s0 = {
+      ...base,
+      resources: { ...base.resources, power: 4 },
+      slots: {
+        ...EMPTY_EVENT_SLOTS,
+        A: { instanceId: "e_noble", templateId: "nobleResentment" as const, resolved: false },
+      },
+    };
+    const s1 = resolveEndOfYearPenalties(s0);
+    expect(s1.resources.power).toBe(3);
+    expect(s1.playerStatuses.some((st) => st.templateId === "powerLeak")).toBe(false);
+  });
+
   it("keeps unresolved ryswick peace and applies legitimacy -1 each year", () => {
     const base = createInitialState(5_003, "secondMandate");
     const s0 = {

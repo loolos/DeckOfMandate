@@ -60,7 +60,7 @@ export const messagesEnSecondMandate = {
     "Pensions, offices, and palace works absorbed an ever-larger share of ordinary revenue as the reign lengthened. Court spending rises again. Pay 3 Funding or use Intervention; if unresolved, lose 2 Treasury.",
   "event.nobleResentment.name": "Noble Resentment",
   "event.nobleResentment.desc":
-    "Great families resented lost military clienteles and new fiscal audits that recalled Mazarin's levies. Elite resistance grows at court and in the provinces. Pay 2 Funding or Intervention, or gain Loss of Authority for 3 turns.",
+    "Great families resented lost military clienteles and new fiscal audits that recalled Mazarin's levies. Elite resistance grows at court and in the provinces. Pay 2 Funding or Intervention, or lose 1 Power.",
   "event.provincialNoncompliance.name": "Provincial Noncompliance",
   "event.provincialNoncompliance.desc":
     "Parlements and provincial estates still tested intendants against charters and tax immunities. Local officials stall implementation. Pay 2 Funding or suffer draw -2 next year, then draw -1 in each of the next two years.",
@@ -84,7 +84,7 @@ export const messagesEnSecondMandate = {
     "Between campaigns, free companies and paid raiders still haunted frontier marches. Paid border raiders disrupt local order and crown authority. Pay 2 Funding, or lose 1 Power and 1 Legitimacy.",
   "event.localWar.name": "Local War",
   "event.localWar.desc":
-    "Between major treaties France still fought limited flare-ups on the Rhine and in Italy. Europe Alert fuels a regional conflict. Intervention cannot resolve this event. Choose Attack (pay a Funding cost tied to Europe Alert, then apply Anti-French Sentiment surcharge if active; equal 1/3 outcomes: Local Victory [Power +1, Legitimacy +1], Stalemate [no change], Minor Loss [Power -1]) or Appease (no Funding cost, Legitimacy -1). This is a Continued event: if left unresolved, next turn's Funding income is reduced by 2 (not below 0).",
+    "Between major treaties France still fought limited flare-ups on the Rhine and in Italy. Europe Alert fuels a regional conflict. You may also resolve this event with Intervention. If not using Intervention, choose Attack (pay a Funding cost tied to Europe Alert, then apply Anti-French Sentiment surcharge if active; equal 1/3 outcomes: Local Victory [Power +1, Legitimacy +1], Stalemate [no change], Minor Loss [Power -1]) or Appease (no Funding cost, Legitimacy -1). This is a Continued event: if left unresolved, next turn's Funding income is reduced by 2 (not below 0).",
   "event.courtScandal.name": "Court Scandal",
   "event.courtScandal.desc":
     "Bedroom politics and ministerial feuds at Versailles routinely spilled into broadsheet rumor. Factional intrigue weakens authority. Pay 3 Funding to contain it; if unresolved, Legitimacy -1 and all Royal-tag cards are blocked next turn.",
@@ -124,7 +124,7 @@ export const messagesEnSecondMandate = {
   "card.diplomaticCongress.name": "Diplomatic Congress",
   "card.diplomaticCongress.background":
     "Envoys, conferences, and guarantees buy breathing room while rivals test your frontiers.",
-  "card.diplomaticCongress.desc": "Power +1. Add 1 Diplomatic Intervention to your hand.",
+  "card.diplomaticCongress.desc": "Power +1. Draw +1 next turn. Add 1 Diplomatic Intervention to your hand.",
   "card.diplomaticIntervention.name": "Diplomatic Intervention",
   "card.diplomaticIntervention.background":
     "Apply pressure through envoys and treaty leverage rather than direct royal command.",
