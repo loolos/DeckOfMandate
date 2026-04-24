@@ -87,6 +87,7 @@ export const sunkingShellContentZh = {
   "outcome.successionCalendar1720Extra.compromise": "最后一年的钟声并不为任何一方加冕：条约年代留下的是各方都能签字的拼缝版图，你的宫廷学会在妥协的夹缝里执政——在这里，存续本身就是一种纪律，而非凯旋演说。",
   "outcome.successionCalendar1720Extra.habsburg": "当年历翻过终点，乌得勒支纸面上更苛刻的条款仍在收紧缰绳：大同盟的墨水框定了大炮未能写尽的边界，对法西合并与帝国秩序的长期钳制，便是写进你这篇终章的额外价码。",
   "log.effect.opponentHandDiscardNow": "哈布斯堡对手立即从手牌弃置 {count} 张",
+  "log.effect.modEuropeAlertProgress": "欧洲警觉进度 {delta}",
   "log.effect.modSuccessionTrack": "王位争夺进度 {delta}",
   "log.effect.modOpponentStrength": "哈布斯堡对手费用上限 {delta}",
   "log.opponentHabsburgPlay.title": "[第 {turn} 年] 哈布斯堡阶段：打出合计 {cost} 点对手费用（已减免 {discount}）。",

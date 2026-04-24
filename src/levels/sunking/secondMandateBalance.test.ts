@@ -43,7 +43,11 @@ describe("secondMandate balance data", () => {
     expect(taxRebalance.tags.includes("inflation")).toBe(true);
 
     const congress = getCardTemplate("diplomaticCongress");
-    expect(congress.effects).toEqual([{ kind: "modResource", resource: "power", delta: 1 }]);
+    expect(congress.effects).toEqual([
+      { kind: "modResource", resource: "power", delta: 1 },
+      { kind: "scheduleNextTurnDrawModifier", delta: 1 },
+      { kind: "modEuropeAlertProgress", delta: -1 },
+    ]);
 
     const diplomaticIntervention = getCardTemplate("diplomaticIntervention");
     expect(diplomaticIntervention.effects).toEqual([]);
@@ -81,6 +85,7 @@ describe("secondMandate balance data", () => {
       kind: "funding",
       amount: 3,
     });
+    expect(getEventTemplate("frontierGarrisons").onFundSolveEffects).toEqual([{ kind: "modEuropeAlertProgress", delta: -1 }]);
     expect(getEventTemplate("militaryPrestige").solve).toEqual({
       kind: "funding",
       amount: 2,
@@ -133,6 +138,7 @@ describe("secondMandate balance data", () => {
       kind: "fundingOrCrackdown",
       amount: 3,
     });
+    expect(getEventTemplate("embargoCoalition").onFundSolveEffects).toEqual([{ kind: "modEuropeAlertProgress", delta: -1 }]);
     expect(getEventTemplate("provincialNoncompliance").penaltiesIfUnresolved).toEqual([
       { kind: "scheduleDrawModifiers", deltas: [-2, -1, -1] },
     ]);

@@ -87,6 +87,7 @@ export const sunkingShellContentFr = {
   "outcome.successionCalendar1720Extra.compromise": "1720 referme le chapitre sans sacraliser un seul récit de victoire : les années de traités ont laissé un assemblage que chacun peut signer, et votre cour apprend à tenir dans le compromis — preuve qu’ici survivre est une discipline, pas un hymne.",
   "outcome.successionCalendar1720Extra.habsburg": "Quand la dernière année tombe, les clauses plus dures d’Utrecht mordent encore : l’encre de la coalition a cadré ce que les canons n’ont pas clos, et la longue traîne des garde-fous sur l’union et l’empire est le surcoût inscrit dans votre épilogue.",
   "log.effect.opponentHandDiscardNow": "L’adversaire Habsbourg défausse {count} carte(s) de la main tout de suite",
+  "log.effect.modEuropeAlertProgress": "Progression d'Alerte Europe {delta}",
   "log.effect.modSuccessionTrack": "Succession track {delta}",
   "log.effect.modOpponentStrength": "Budget de l’adversaire Habsbourg {delta}",
   "log.opponentHabsburgPlay.title": "[Turn {turn}] Habsburg phase: played for {cost} opponent cost (discount {discount}).",

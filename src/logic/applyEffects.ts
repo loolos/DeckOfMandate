@@ -46,6 +46,12 @@ export function applyEffect(state: GameState, e: Effect): GameState {
       const successionTrack = Math.max(-10, Math.min(10, state.successionTrack + e.delta));
       return enforceSuccessionImmediateOutcome({ ...state, successionTrack });
     }
+    case "modEuropeAlertProgress":
+      if (!state.europeAlert) return state;
+      return {
+        ...state,
+        europeAlertProgress: Math.max(0, Math.min(10, state.europeAlertProgress + e.delta)),
+      };
     case "gainFunding":
       return {
         ...state,

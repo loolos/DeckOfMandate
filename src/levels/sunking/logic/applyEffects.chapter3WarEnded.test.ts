@@ -27,4 +27,18 @@ describe("chapter 3 after Utrecht (warEnded)", () => {
     expect(after.outcome).toBe("playing");
     expect(after.phase).toBe(base.phase);
   });
+
+  it("does not change Europe Alert progress when Europe Alert is inactive", () => {
+    const base = createInitialState(52_003, "secondMandate");
+    const s = { ...base, europeAlert: false, europeAlertProgress: 4 };
+    const after = applyEffects(s, [{ kind: "modEuropeAlertProgress", delta: -1 }]);
+    expect(after.europeAlertProgress).toBe(4);
+  });
+
+  it("changes Europe Alert progress when Europe Alert is active", () => {
+    const base = createInitialState(52_004, "secondMandate");
+    const s = { ...base, europeAlert: true, europeAlertProgress: 4 };
+    const after = applyEffects(s, [{ kind: "modEuropeAlertProgress", delta: -1 }]);
+    expect(after.europeAlertProgress).toBe(3);
+  });
 });
