@@ -196,8 +196,10 @@ export function Game() {
   const [pendingLevelTutorial, setPendingLevelTutorial] = useState(false);
   const [level2Draft, setLevel2Draft] = useState<Level2StartDraft | null>(null);
   const [level2DraftInitial, setLevel2DraftInitial] = useState<Level2StartDraft | null>(null);
+  const [level2RefitNeedsIntroOnConfirm, setLevel2RefitNeedsIntroOnConfirm] = useState(true);
   const [level3Draft, setLevel3Draft] = useState<Level3StartDraft | null>(null);
   const [level3DraftInitial, setLevel3DraftInitial] = useState<Level3StartDraft | null>(null);
+  const [level3RefitNeedsIntroOnConfirm, setLevel3RefitNeedsIntroOnConfirm] = useState(true);
   const [expandedRefitCardId, setExpandedRefitCardId] = useState<string | null>(null);
   const [isSmallRefitViewport, setIsSmallRefitViewport] = useState(() =>
     typeof window !== "undefined" ? window.matchMedia("(max-width: 800px)").matches : false,
@@ -433,6 +435,14 @@ export function Game() {
   };
 
   const restartCurrentLevelRun = useCallback(() => {
+    const currentLevelDef = getLevelDef(state.levelId);
+    if (currentLevelDef.bootstrap === "chapter2Standalone" || currentLevelDef.bootstrap === "chapter3Standalone") {
+      setPendingHydrateState(null);
+      setPendingNewRun({ levelId: state.levelId });
+      setPendingIntroLevelId(state.levelId);
+      setLevelIntroOpen(true);
+      return;
+    }
     const next = gameReducer(state, { type: "NEW_GAME" });
     dispatch({ type: "NEW_GAME" });
     startStandaloneSession(next.levelId, next.runSeed);
@@ -475,11 +485,20 @@ export function Game() {
     setPendingLevelTutorial(false);
   }, []);
 
-  const openLevel2Refit = (draft: Level2StartDraft) => {
+  const openLevel2Refit = useCallback((draft: Level2StartDraft, needsIntroOnConfirm = true) => {
     const snapshot = cloneLevel2Draft(draft);
     setLevel2Draft(snapshot);
     setLevel2DraftInitial(cloneLevel2Draft(snapshot));
-  };
+    setLevel2RefitNeedsIntroOnConfirm(needsIntroOnConfirm);
+  }, []);
+
+  const openLevel3Refit = useCallback((draft: Level3StartDraft, needsIntroOnConfirm = true) => {
+    const snapshot = cloneLevel3Draft(draft);
+    setLevel3Draft(snapshot);
+    setLevel3DraftInitial(cloneLevel3Draft(snapshot));
+    setExpandedRefitCardId(null);
+    setLevel3RefitNeedsIntroOnConfirm(needsIntroOnConfirm);
+  }, []);
 
   const resetLevel2Refit = () => {
     if (!level2DraftInitial) return;
@@ -523,20 +542,21 @@ export function Game() {
     [isSmallRefitViewport, toggleRefitRemovalLevel3],
   );
 
-  const beginConfiguredRun = (seed: number | undefined, levelId: LevelId) => {
+  const beginConfiguredRun = (
+    seed: number | undefined,
+    levelId: LevelId,
+    introAlreadyShownForThisStart = false,
+  ) => {
     setPendingHydrateState(null);
     setPendingIntroLevelId(null);
     if (getLevelDef(levelId).bootstrap === "chapter2Standalone") {
-      openLevel2Refit(createStandaloneLevel2Draft(seed));
+      openLevel2Refit(createStandaloneLevel2Draft(seed), !introAlreadyShownForThisStart);
       setLevelIntroOpen(false);
       setPendingNewRun(null);
       return;
     }
     if (getLevelDef(levelId).bootstrap === "chapter3Standalone") {
-      const snapshot = cloneLevel3Draft(createStandaloneLevel3Draft(seed));
-      setLevel3Draft(snapshot);
-      setLevel3DraftInitial(cloneLevel3Draft(snapshot));
-      setExpandedRefitCardId(null);
+      openLevel3Refit(createStandaloneLevel3Draft(seed), !introAlreadyShownForThisStart);
       setLevelIntroOpen(false);
       setPendingNewRun(null);
       return;
@@ -550,14 +570,26 @@ export function Game() {
     setPendingNewRun(null);
   };
 
+  const requestRunStart = useCallback(
+    (levelId: LevelId, seed: number | undefined) => {
+      const def = getLevelDef(levelId);
+      if (levelDefHasIntro(def)) {
+        setPendingNewRun({ seed, levelId });
+        setPendingHydrateState(null);
+        setPendingIntroLevelId(levelId);
+        setLevelIntroOpen(true);
+        return;
+      }
+      beginConfiguredRun(seed, levelId);
+    },
+    [beginConfiguredRun],
+  );
+
   const requestStartFromMenu = () => {
     const seed = menuSeedParsed === "empty" ? undefined : (menuSeedParsed as number);
     const def = getLevelDef(menuLevelId);
     if (levelDefHasIntro(def)) {
-      setPendingNewRun({ seed, levelId: menuLevelId });
-      setPendingHydrateState(null);
-      setPendingIntroLevelId(menuLevelId);
-      setLevelIntroOpen(true);
+      requestRunStart(menuLevelId, seed);
     } else {
       beginConfiguredRun(seed, menuLevelId);
     }
@@ -579,7 +611,7 @@ export function Game() {
       return;
     }
     if (!pendingNewRun) return;
-    beginConfiguredRun(pendingNewRun.seed, pendingNewRun.levelId);
+    beginConfiguredRun(pendingNewRun.seed, pendingNewRun.levelId, true);
   };
 
   const resumeFromStoredSave = () => {
@@ -622,7 +654,7 @@ export function Game() {
     setLevel2DraftInitial(null);
     setPendingNewRun(null);
     const def = getLevelDef(nextState.levelId);
-    if (levelDefHasIntro(def)) {
+    if (levelDefHasIntro(def) && level2RefitNeedsIntroOnConfirm) {
       setPendingHydrateState(nextState);
       setPendingIntroLevelId(nextState.levelId);
       setLevelIntroOpen(true);
@@ -637,14 +669,11 @@ export function Game() {
   };
 
   const openChapter2Continuity = () => {
-    openLevel2Refit(createContinuityLevel2Draft(state));
+    openLevel2Refit(createContinuityLevel2Draft(state), true);
   };
 
   const openChapter3Continuity = () => {
-    const snapshot = cloneLevel3Draft(createContinuityLevel3Draft(state));
-    setLevel3Draft(snapshot);
-    setLevel3DraftInitial(cloneLevel3Draft(snapshot));
-    setExpandedRefitCardId(null);
+    openLevel3Refit(createContinuityLevel3Draft(state), true);
     setPendingNewRun(null);
   };
 
@@ -674,7 +703,7 @@ export function Game() {
     setLevel3DraftInitial(null);
     setPendingNewRun(null);
     const def = getLevelDef(nextState.levelId);
-    if (levelDefHasIntro(def)) {
+    if (levelDefHasIntro(def) && level3RefitNeedsIntroOnConfirm) {
       setPendingHydrateState(nextState);
       setPendingIntroLevelId(nextState.levelId);
       setLevelIntroOpen(true);
