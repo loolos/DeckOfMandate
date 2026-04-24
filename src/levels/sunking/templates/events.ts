@@ -198,6 +198,7 @@ export const eventTemplates: Record<EventTemplateId, EventTemplate> = {
     titleKey: "event.frontierGarrisons.name",
     descriptionKey: "event.frontierGarrisons.desc",
     solve: { kind: "funding", amount: 3 },
+    onFundSolveEffects: [{ kind: "modEuropeAlertProgress", delta: -1 }],
     penaltiesIfUnresolved: [
       { kind: "modResource", resource: "treasuryStat", delta: -1 },
       { kind: "scheduleNextTurnDrawModifier", delta: -1 },
@@ -219,6 +220,7 @@ export const eventTemplates: Record<EventTemplateId, EventTemplate> = {
     titleKey: "event.embargoCoalition.name",
     descriptionKey: "event.embargoCoalition.desc",
     solve: { kind: "funding", amount: 2 },
+    onFundSolveEffects: [{ kind: "modEuropeAlertProgress", delta: -1 }],
     penaltiesIfUnresolved: [
       { kind: "modResource", resource: "treasuryStat", delta: -1 },
       { kind: "scheduleNextTurnDrawModifier", delta: -1 },

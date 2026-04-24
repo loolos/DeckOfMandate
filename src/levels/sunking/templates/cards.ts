@@ -119,6 +119,7 @@ export const cardTemplates: Record<CardTemplateId, CardTemplate> = {
     effects: [
       { kind: "modResource", resource: "power", delta: 1 },
       { kind: "scheduleNextTurnDrawModifier", delta: 1 },
+      { kind: "modEuropeAlertProgress", delta: -1 },
     ],
   },
   suppressHuguenots: {

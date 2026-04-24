@@ -117,7 +117,7 @@ export const messagesZhSecondMandate = {
   "card.taxRebalance.desc": "财政 +1，并获得「抽牌受限」2 回合（每回合抽牌 -1）。",
   "card.diplomaticCongress.name": "外交会议",
   "card.diplomaticCongress.background": "通过使节与会议换取喘息，减轻短期外部压力。",
-  "card.diplomaticCongress.desc": "权力 +1。下个回合多摸 1 张牌。向手牌加入 1 张「外交干预」。",
+  "card.diplomaticCongress.desc": "权力 +1。下个回合多摸 1 张牌。若存在「欧洲警觉」，其进度 -1。向手牌加入 1 张「外交干预」。",
   "card.diplomaticIntervention.name": "外交干预",
   "card.diplomaticIntervention.background": "通过使节施压与条约操作解决危机，而非直接动用王室强制力。",
   "card.diplomaticIntervention.desc": "解决有害事件；非王室牌。",

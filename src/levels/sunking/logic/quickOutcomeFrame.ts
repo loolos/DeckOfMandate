@@ -17,6 +17,8 @@ function formatSingleEffectChip(e: Effect): string {
   switch (e.kind) {
     case "modResource":
       return `${getResourceIcon(e.resource)}${signedInt(e.delta)}`;
+    case "modEuropeAlertProgress":
+      return `🌍⚠️${signedInt(e.delta)}`;
     case "modSuccessionTrack":
       return `⚖️${signedInt(e.delta)}`;
     case "gainFunding":

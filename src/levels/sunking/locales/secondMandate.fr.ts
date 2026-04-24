@@ -127,7 +127,8 @@ export const messagesFrSecondMandate: Record<keyof typeof messagesEnSecondMandat
   "card.diplomaticCongress.name": "Congrès diplomatique",
   "card.diplomaticCongress.background":
     "Émissaires, conférences et garanties achètent du répit pendant que vos rivaux testent vos frontières.",
-  "card.diplomaticCongress.desc": "Pouvoir +1. Piochez +1 au prochain tour. Ajoutez 1 Intervention diplomatique à votre main.",
+  "card.diplomaticCongress.desc":
+    "Pouvoir +1. Piochez +1 au prochain tour. Si l'Alerte Europe est active, réduisez sa progression de 1. Ajoutez 1 Intervention diplomatique à votre main.",
   "card.diplomaticIntervention.name": "Intervention diplomatique",
   "card.diplomaticIntervention.background":
     "Exercez une pression via émissaires et leviers de traité plutôt que par commandement royal direct.",

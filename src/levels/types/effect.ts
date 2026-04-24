@@ -7,6 +7,7 @@ export type CardPlacement = "deckRandom" | "deckTop" | "deckBottom" | "discard";
 /** Typed effects used by cards and event resolution (no string DSL). */
 export type Effect =
   | { kind: "modResource"; resource: ResourceStat; delta: number }
+  | { kind: "modEuropeAlertProgress"; delta: number }
   | { kind: "modSuccessionTrack"; delta: number }
   | { kind: "gainFunding"; amount: number }
   | { kind: "drawCards"; count: number }
