@@ -62,7 +62,7 @@ export const messagesEnThirdMandate = {
   "card.bourbonMarriageProclamation.name": "Bourbon marriage proclamation",
   "card.bourbonMarriageProclamation.background": "Dynastic narrative",
   "card.bourbonMarriageProclamation.desc":
-    "Context: Bourbon marriage ties and succession law are staged as public narrative—asserting Anjou’s right to Madrid abroad and at home while squeezing Habsburg room in the court of opinion.\n\nPower +1. Succession track +1.",
+    "Context: Bourbon marriage ties and succession law are staged as public narrative—asserting Anjou’s right to Madrid abroad and at home while squeezing Habsburg room in the court of opinion.\n\nPower +1. Succession track +1. Gain Dynastic alliance composure for 2 turns (+1 hand retention cap at year-end).",
   "card.grandAllianceInfiltrationDiplomacy.name": "Grand Alliance infiltration diplomacy",
   "card.grandAllianceInfiltrationDiplomacy.background": "Divide the coalition",
   "card.grandAllianceInfiltrationDiplomacy.desc":
@@ -74,7 +74,7 @@ export const messagesEnThirdMandate = {
   "card.usurpationEdict.name": "Usurpation edict",
   "card.usurpationEdict.background": "Protocol broken",
   "card.usurpationEdict.desc":
-    "Context: forcing recognition through extra-legal succession language can seize narrative momentum in the short run, but it burns dynastic credibility at home and abroad.\n\nSuccession track +2. Gain Legitimacy Crisis for 2 turns (end of each turn: Legitimacy -1).",
+    "Context: forcing recognition through extra-legal succession language can seize narrative momentum in the short run, but it burns dynastic credibility at home and abroad.\n\nSuccession track +2. Draw 1. Gain Legitimacy Crisis for 2 turns (end of each turn: Legitimacy -1).",
   "card.habsburgImperialLegitimacyNote.name": "Imperial legitimacy note",
   "card.habsburgImperialLegitimacyNote.background": "Legalist pressure",
   "card.habsburgImperialLegitimacyNote.desc":

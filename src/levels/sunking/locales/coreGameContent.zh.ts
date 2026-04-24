@@ -87,6 +87,9 @@ export const sunkingCoreGameContentZh = {
   "status.minorRegencyDoubt.name": "主少国疑",
   "status.minorRegencyDoubt.history":
     "路易十四去世后，幼主在位与监国并行使朝局反复生疑，王令传导每年更易迟滞。",
+  "status.bourbonMarriageRetention.name": "鸾盟礼序",
+  "status.bourbonMarriageRetention.history":
+    "以联姻与继承法理为公开叙事，短期内稳住文书与廷议节奏，年末可多留一张手牌。",
   "event.jansenistTension.name": "詹森派争议",
   "event.jansenistTension.desc":
     "自黎塞留时代起，波尔-罗亚尔的严苛与主教权威、教廷立场便屡生摩擦。詹森主义围绕“恩典与救赎”的神学立场长期冲击法国教会与王权关系；波尔-罗亚尔网络的余波再起，主教区与法院出现对立。支付 2 经费进行教区巡察与舆论安抚，否则合法性 -1。",

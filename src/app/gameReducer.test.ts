@@ -10,6 +10,7 @@ import { createStandaloneLevel2Draft } from "./levelTransitions";
 import { initOpponentHabsburgPool } from "../logic/opponentHabsburg";
 import { THIRD_MANDATE_LEVEL_ID } from "../logic/thirdMandateConstants";
 import { createInitialCardUseState } from "../levels/sunking/logic/cardUsage";
+import { retentionCapacity } from "../levels/sunking/logic/turnFlow";
 
 describe("gameReducer", () => {
   it("creates deterministic initial layouts for the same seed", () => {
@@ -369,17 +370,19 @@ describe("gameReducer", () => {
     expect(after.opponentHand.length).toBe(handBefore + 1);
   });
 
-  it("usurpation edict grants +2 succession and applies a two-turn end-of-year legitimacy drain", () => {
+  it("usurpation edict grants +2 succession, draws one card, and applies a two-turn end-of-year legitimacy drain", () => {
     const base = createInitialState(51_120, THIRD_MANDATE_LEVEL_ID);
     const usurpationId = "tmp_usurpation";
+    const drawId = "tmp_usurpation_draw";
     const withCard: typeof base = {
       ...base,
       cardsById: {
         ...base.cardsById,
         [usurpationId]: { instanceId: usurpationId, templateId: "usurpationEdict" as const },
+        [drawId]: { instanceId: drawId, templateId: "funding" as const },
       },
       hand: [usurpationId],
-      deck: [],
+      deck: [drawId],
       discard: [],
       slots: { ...EMPTY_EVENT_SLOTS },
       resources: { ...base.resources, funding: 3, legitimacy: 10 },
@@ -389,6 +392,7 @@ describe("gameReducer", () => {
     const afterPlay = gameReducer(withCard, { type: "PLAY_CARD", handIndex: 0 });
     expect(afterPlay.resources.funding).toBe(0);
     expect(afterPlay.successionTrack).toBe(2);
+    expect(afterPlay.hand).toContain(drawId);
     const crisis = afterPlay.playerStatuses.find((s) => s.templateId === "legitimacyCrisis");
     expect(crisis?.turnsRemaining).toBe(2);
 
@@ -406,6 +410,32 @@ describe("gameReducer", () => {
     const afterSecondEndYear = gameReducer(preparedSecondYear, { type: "END_YEAR" });
     expect(afterSecondEndYear.resources.legitimacy).toBe(8);
     expect(afterSecondEndYear.playerStatuses.some((s) => s.templateId === "legitimacyCrisis")).toBe(false);
+  });
+
+  it("bourbon marriage proclamation grants a two-turn +1 retention cap status", () => {
+    const base = createInitialState(51_121, THIRD_MANDATE_LEVEL_ID);
+    const cardId = "tmp_bourbon_marriage";
+    const s0: typeof base = {
+      ...base,
+      cardsById: {
+        ...base.cardsById,
+        [cardId]: { instanceId: cardId, templateId: "bourbonMarriageProclamation" as const },
+      },
+      hand: [cardId],
+      resources: { ...base.resources, funding: 3, legitimacy: 4, power: 2 },
+      successionTrack: 0,
+      playerStatuses: [],
+    };
+    expect(retentionCapacity(s0)).toBe(4);
+    const afterPlay = gameReducer(s0, { type: "PLAY_CARD", handIndex: 0 });
+    expect(afterPlay.resources.funding).toBe(0);
+    expect(afterPlay.resources.power).toBe(3);
+    expect(afterPlay.successionTrack).toBe(1);
+    const st = afterPlay.playerStatuses.find((p) => p.templateId === "bourbonMarriageRetention");
+    expect(st?.kind).toBe("retentionCapacityDelta");
+    expect(st?.delta).toBe(1);
+    expect(st?.turnsRemaining).toBe(2);
+    expect(retentionCapacity(afterPlay)).toBe(5);
   });
 
   it("Imperial electors crackdown intervention draws one immediate opponent card", () => {

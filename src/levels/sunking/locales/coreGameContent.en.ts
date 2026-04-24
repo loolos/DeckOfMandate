@@ -99,6 +99,9 @@ export const sunkingCoreGameContentEn = {
   "status.minorRegencyDoubt.name": "Minor Regency Doubt",
   "status.minorRegencyDoubt.history":
     "After Louis XIV's death, a child-king court invites factional doubt and slows command relay each year.",
+  "status.bourbonMarriageRetention.name": "Dynastic alliance composure",
+  "status.bourbonMarriageRetention.history":
+    "A staged marriage-and-succession narrative steadies court paperwork and briefings enough to carry one extra card across the year-end reckoning.",
   "event.jansenistTension.name": "Jansenist Controversy",
   "event.jansenistTension.desc":
     "Port-Royal rigor and episcopal authority had clashed with Rome and Versailles since Richelieu's day. Debates over grace and salvation revive Jansenist networks and reopen conflict between bishops, magistrates, and the crown. Pay 2 Funding for clerical inspections and public pacification, or lose 1 Legitimacy.",

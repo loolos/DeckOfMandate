@@ -62,7 +62,7 @@ export const messagesFrThirdMandate = {
   "card.bourbonMarriageProclamation.name": "Proclamation du mariage bourbon",
   "card.bourbonMarriageProclamation.background": "Narratif dynastique",
   "card.bourbonMarriageProclamation.desc":
-    "Contexte : alliances bourbonniennes et droit successoral servent de récit public pour affirmer la légitimité de la branche d’Anjou sur le trône espagnol et réduire l’espace de manœuvre habsbourgeois.\n\nPouvoir +1. Piste de succession +1.",
+    "Contexte : alliances bourbonniennes et droit successoral servent de récit public pour affirmer la légitimité de la branche d’Anjou sur le trône espagnol et réduire l’espace de manœuvre habsbourgeois.\n\nPouvoir +1. Piste de succession +1. Gagnez Sérénité de l'alliance dynastique pendant 2 tours (+1 carte conservée en fin d'année).",
   "card.grandAllianceInfiltrationDiplomacy.name": "Diplomatie d’infiltration de la Grande Alliance",
   "card.grandAllianceInfiltrationDiplomacy.background": "Diviser la coalition",
   "card.grandAllianceInfiltrationDiplomacy.desc":
@@ -74,7 +74,7 @@ export const messagesFrThirdMandate = {
   "card.usurpationEdict.name": "Édit d’usurpation",
   "card.usurpationEdict.background": "Rituel brisé",
   "card.usurpationEdict.desc":
-    "Contexte : imposer une reconnaissance par un langage de succession hors protocole peut faire gagner du terrain narratif à court terme, mais entame le crédit dynastique à l’intérieur comme à l’extérieur.\n\nPiste de succession +2. Gagne Crise de légitimité pendant 2 tours (fin de chaque tour : Légitimité -1).",
+    "Contexte : imposer une reconnaissance par un langage de succession hors protocole peut faire gagner du terrain narratif à court terme, mais entame le crédit dynastique à l’intérieur comme à l’extérieur.\n\nPiste de succession +2. Pioche 1. Gagne Crise de légitimité pendant 2 tours (fin de chaque tour : Légitimité -1).",
   "card.habsburgImperialLegitimacyNote.name": "Note de légitimité impériale",
   "card.habsburgImperialLegitimacyNote.background": "Pression juridique",
   "card.habsburgImperialLegitimacyNote.desc":

@@ -61,7 +61,7 @@ export const messagesZhThirdMandate = {
   "card.bourbonMarriageProclamation.name": "鸾盟昭世",
   "card.bourbonMarriageProclamation.background": "王朝叙事",
   "card.bourbonMarriageProclamation.desc":
-    "背景：以波旁联姻与继承法理为公开叙事，向国内外宣示安茹系对西班牙王座的正当性，压缩哈布斯堡舆论空间。\n\n权力 +1，王位争夺进度 +1。",
+    "背景：以波旁联姻与继承法理为公开叙事，向国内外宣示安茹系对西班牙王座的正当性，压缩哈布斯堡舆论空间。\n\n权力 +1，王位争夺进度 +1；获得「鸾盟礼序」2 回合（年末可保留手牌上限 +1）。",
   "card.grandAllianceInfiltrationDiplomacy.name": "暗通列邦",
   "card.grandAllianceInfiltrationDiplomacy.background": "分化同盟",
   "card.grandAllianceInfiltrationDiplomacy.desc":
@@ -73,7 +73,7 @@ export const messagesZhThirdMandate = {
   "card.usurpationEdict.name": "僭位诏书",
   "card.usurpationEdict.background": "越礼夺统",
   "card.usurpationEdict.desc":
-    "背景：以非常规继位措辞强推宫廷与外廷承认，短期能抢占王位争夺叙事高地，却会透支王朝法统信用。\n\n王位争夺进度 +2；获得「合法性危机」2 回合（每回合结束合法性 -1）。",
+    "背景：以非常规继位措辞强推宫廷与外廷承认，短期能抢占王位争夺叙事高地，却会透支王朝法统信用。\n\n王位争夺进度 +2；立即抽 1；获得「合法性危机」2 回合（每回合结束合法性 -1）。",
   "card.habsburgImperialLegitimacyNote.name": "正朔诏令",
   "card.habsburgImperialLegitimacyNote.background": "法统压力",
   "card.habsburgImperialLegitimacyNote.desc":

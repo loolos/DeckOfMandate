@@ -1448,9 +1448,6 @@ export function simulateFirstToSecondCampaignBatch(options?: {
   const chapter1Wins = runs.filter((r) => r.firstOutcome === "victory");
   const chapter2Runs = runs.filter((r) => r.secondOutcome !== null);
   const chapter2Wins = chapter2Runs.filter((r) => r.secondOutcome === "victory");
-  const chapter2WinResources = chapter2Wins
-    .map((r) => r.secondEndResources)
-    .filter((v): v is Resources => v !== null);
   return {
     strategyId: STRATEGY_I_ID,
     runCount,

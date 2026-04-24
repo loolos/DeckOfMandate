@@ -15,13 +15,6 @@ const CHAPTER3_REFIT_STARTING_HAND_ORDER: readonly CardTemplateId[] = [
 
 /** Same core deck as chapter 2 (16 cards); eight chapter-3 templates are part of the shuffled pool. */
 const LEVEL3_DECK_TEMPLATE_ORDER: readonly CardTemplateId[] = [
-  "funding",
-  "funding",
-  "funding",
-  "funding",
-  "crackdown",
-  "crackdown",
-  "crackdown",
   "reform",
   "reform",
   "ceremony",
@@ -30,6 +23,7 @@ const LEVEL3_DECK_TEMPLATE_ORDER: readonly CardTemplateId[] = [
   "grainRelief",
   "taxRebalance",
   "taxRebalance",
+  "diplomaticCongress",
   "diplomaticCongress",
 ];
 

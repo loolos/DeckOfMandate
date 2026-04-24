@@ -164,6 +164,7 @@ export const cardTemplates: Record<CardTemplateId, CardTemplate> = {
     effects: [
       { kind: "modResource", resource: "power", delta: 1 },
       { kind: "modSuccessionTrack", delta: 1 },
+      { kind: "addPlayerStatus", templateId: "bourbonMarriageRetention", turns: 2 },
     ],
   },
   grandAllianceInfiltrationDiplomacy: {
@@ -199,6 +200,7 @@ export const cardTemplates: Record<CardTemplateId, CardTemplate> = {
     descriptionKey: "card.usurpationEdict.desc",
     effects: [
       { kind: "modSuccessionTrack", delta: 2 },
+      { kind: "drawCards", count: 1 },
       { kind: "addPlayerStatus", templateId: "legitimacyCrisis", turns: 2 },
     ],
   },
