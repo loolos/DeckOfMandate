@@ -9,14 +9,14 @@ This document reflects current runtime behavior in `src/app/*`, `src/logic/*`, a
 - **Power**: governs draw attempts via threshold scaling, and chapter objectives.
 - **Legitimacy**: political stability, retention capacity baseline, and hard fail resource.
 
-### Starting values (from `src/data/levels.ts`)
+### Starting values (from `src/levels/sunking/chapters/firstMandate.ts` and `secondMandate.ts`)
 
 | Mode | Treasury | Funding | Power | Legitimacy |
 | --- | ---: | ---: | ---: | ---: |
 | Chapter 1 (`firstMandate`) | 2 | 0 | 2 | 2 |
 | Chapter 1 standalone | 2 | 0 | 2 | 2 |
 | Chapter 2 (`secondMandate`, continuity carry-in) | 3 | 0 | 3 | 3 |
-| Chapter 2 standalone | 7 | 0 | 7 | 5 |
+| Chapter 2 standalone | 8 | 0 | 7 | 5 |
 
 Continuity-mode Chapter 2 in practice carries the Chapter 1 final resources rather than these baseline `3 / 3 / 3` numbers (the baseline only matters when carry-over is missing); see §8 for the `warOfDevolutionAttacked` `legitimacy +1` bump.
 
