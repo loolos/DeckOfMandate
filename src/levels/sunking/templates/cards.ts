@@ -116,7 +116,10 @@ export const cardTemplates: Record<CardTemplateId, CardTemplate> = {
     titleKey: "card.diplomaticCongress.name",
     backgroundKey: "card.diplomaticCongress.background",
     descriptionKey: "card.diplomaticCongress.desc",
-    effects: [{ kind: "modResource", resource: "power", delta: 1 }],
+    effects: [
+      { kind: "modResource", resource: "power", delta: 1 },
+      { kind: "scheduleNextTurnDrawModifier", delta: 1 },
+    ],
   },
   suppressHuguenots: {
     id: "suppressHuguenots",

@@ -678,7 +678,7 @@ describe("gameReducer", () => {
       resources: { ...base.resources, funding: 0 },
       slots: {
         ...base.slots,
-        A: { instanceId: "e_harm", templateId: "nobleResentment" as const, resolved: false },
+        A: { instanceId: "e_harm", templateId: "localWar" as const, resolved: false },
       },
       playerStatuses: [
         ...base.playerStatuses,
@@ -733,7 +733,7 @@ describe("gameReducer", () => {
     expect(infoLog).toBeTruthy();
   });
 
-  it("playing diplomatic congress adds a temporary diplomatic intervention to hand", () => {
+  it("playing diplomatic congress adds intervention and +1 next-turn draw", () => {
     const base = createInitialState(202_701, "secondMandate");
     const congressId = "tmp_congress";
     const withCongress: typeof base = {
@@ -750,6 +750,7 @@ describe("gameReducer", () => {
     const tempInHand = after.hand.find((id) => after.cardsById[id]?.templateId === "diplomaticIntervention");
     expect(tempInHand).toBeTruthy();
     expect(after.discard).toContain(congressId);
+    expect(after.nextTurnDrawModifier).toBe(withCongress.nextTurnDrawModifier + 1);
   });
 
   it("extra diplomatic intervention can enter discard during year-end retention", () => {
