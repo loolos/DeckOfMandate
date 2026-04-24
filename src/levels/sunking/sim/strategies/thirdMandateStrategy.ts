@@ -73,9 +73,9 @@ export function cardPlayPriorityThirdMandate(
 
   switch (tmpl) {
     case "bourbonMarriageProclamation":
-      return tr < 6 ? 3 : 20;
+      return tr < 6 ? 2 : 20;
     case "grandAllianceInfiltrationDiplomacy":
-      return tr < 5 ? 4 : 18;
+      return tr < 5 ? 3 : 18;
     case "italianTheaterTroopRedeploy":
       return tr < 5 && burdens < 12 ? 5 : 22;
     case "usurpationEdict":

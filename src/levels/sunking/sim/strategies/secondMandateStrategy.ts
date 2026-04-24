@@ -35,9 +35,8 @@ export function pickSecondMandateChoiceActions(
   if (nantesSlot) {
     const choice =
       options.nantesChoice ??
-      // Dynamic default: if legitimacy is already fragile, avoid the immediate -1 hit from tolerance.
-      // Otherwise prefer tolerance to skip long-tail containment pressure.
-      (state.resources.legitimacy <= 5 ? "crackdown" : "tolerance");
+      // Prefer tolerance for long-run consistency; only switch to crackdown when legitimacy is fragile.
+      (state.resources.legitimacy <= 4 ? "crackdown" : "tolerance");
     if (choice === "tolerance") {
       return [{ type: "PICK_NANTES_TOLERANCE", slot: nantesSlot }];
     }
@@ -98,6 +97,7 @@ export function cardPlayPrioritySecondMandate(
     case "diplomaticIntervention":
       return unresolvedHarmful ? (state.resources.power <= 2 ? 7 : 2) : 70;
     case "grainRelief":
+      if (state.resources.legitimacy <= 4) return 1;
       return unresolvedRisingGrain ? 2 : state.resources.legitimacy <= 6 ? 4 : 22;
     case "diplomaticCongress":
       return state.resources.power < 6 ? 2 : state.resources.power < 8 ? 4 : 24;
@@ -112,6 +112,7 @@ export function cardPlayPrioritySecondMandate(
     case "reform":
       return state.resources.power < 5 ? 2 : state.resources.power < 7 ? 5 : 24;
     case "ceremony":
+      if (legitimacy <= 4) return 1;
       return legitimacy < 6 ? 3 : legitimacy < 9 ? 7 : 26;
     case "suppressHuguenots":
       return hasContainmentStatus ? 7 : 90;

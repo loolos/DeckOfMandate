@@ -15,19 +15,30 @@ export function cardPlayPriorityFirstMandate(state: GameState, cardInstanceId: s
   const treasuryMissing = Math.max(0, win.treasuryStat - state.resources.treasuryStat);
   const powerMissing = Math.max(0, win.power - state.resources.power);
   const legitimacyMissing = Math.max(0, win.legitimacy - state.resources.legitimacy);
+  const turnsLeft = Math.max(0, 15 - state.turn + 1);
+  const nearDeadline = turnsLeft <= 4;
+  const severeDeficit = treasuryMissing + powerMissing + legitimacyMissing >= 4;
 
   switch (tmpl) {
     case "funding":
-      return harmfulUnresolvedExists ? 0 : 4;
+      if (harmfulUnresolvedExists) return 0;
+      if (nearDeadline && severeDeficit) return 1;
+      return 4;
     case "crackdown":
     case "diplomaticIntervention":
-      return harmfulUnresolvedExists ? 1 : 60;
+      return harmfulUnresolvedExists ? 1 : 70;
     case "development":
-      return treasuryMissing > 0 ? 2 : 20;
+      if (treasuryMissing >= 2) return 1;
+      if (nearDeadline && treasuryMissing > 0) return 1;
+      return treasuryMissing > 0 ? 2 : 22;
     case "reform":
-      return powerMissing > 0 ? 2 : 20;
+      if (powerMissing >= 2) return 1;
+      if (nearDeadline && powerMissing > 0) return 1;
+      return powerMissing > 0 ? 2 : 22;
     case "ceremony":
-      return legitimacyMissing > 0 ? 2 : 20;
+      if (legitimacyMissing >= 2) return 1;
+      if (nearDeadline && legitimacyMissing > 0) return 1;
+      return legitimacyMissing > 0 ? 2 : 22;
     default:
       return 30;
   }
