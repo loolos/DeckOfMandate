@@ -99,6 +99,8 @@ const GRID_SPLIT_STORAGE_KEY = "deckOfMandate_ui_gridSplit";
 const GRID_WIDE_MEDIA = "(min-width: 900px)";
 /** Cold-open splash: show backdrop only, then reveal the main menu panel. */
 const ENTRY_MAIN_MENU_DELAY_MS = 2000;
+/** Level intro: show backdrop for 1s, then fade intro panel in for 2s. */
+const LEVEL_INTRO_CONTENT_DELAY_MS = 1000;
 
 function clampGridSplit(n: number): number {
   return Math.min(0.72, Math.max(0.28, n));
@@ -192,6 +194,7 @@ export function Game() {
   const [pendingHydrateState, setPendingHydrateState] = useState<GameState | null>(null);
   const [pendingIntroLevelId, setPendingIntroLevelId] = useState<LevelId | null>(null);
   const [levelIntroOpen, setLevelIntroOpen] = useState(false);
+  const [levelIntroContentVisible, setLevelIntroContentVisible] = useState(false);
   const [tutorialOnEntryMenu, setTutorialOnEntryMenu] = useState(() => readTutorialOnLevelEntry());
   const [pendingLevelTutorial, setPendingLevelTutorial] = useState(false);
   const [level2Draft, setLevel2Draft] = useState<Level2StartDraft | null>(null);
@@ -284,6 +287,16 @@ export function Game() {
     const id = window.setTimeout(() => setEntryMainMenuVisible(true), ENTRY_MAIN_MENU_DELAY_MS);
     return () => window.clearTimeout(id);
   }, []);
+
+  useEffect(() => {
+    if (!levelIntroOpen) {
+      setLevelIntroContentVisible(false);
+      return;
+    }
+    setLevelIntroContentVisible(false);
+    const id = window.setTimeout(() => setLevelIntroContentVisible(true), LEVEL_INTRO_CONTENT_DELAY_MS);
+    return () => window.clearTimeout(id);
+  }, [levelIntroOpen, pendingIntroLevelId]);
 
   const level = useMemo(() => getLevelDef(state.levelId), [state.levelId]);
   const successionTrackUiActive =
@@ -733,18 +746,24 @@ export function Game() {
       aria-modal="true"
       aria-labelledby="level-intro-title"
     >
-      <div className={[styles.modal, introSunkingBackdrop && styles.modalGlass].filter(Boolean).join(" ")}>
-        <div className={styles.levelIntroHeader}>
-          <h2 id="level-intro-title" className={styles.levelIntroTitle}>
-            {t(introLevelDef.introTitleKey as MessageKey)}
-          </h2>
-          <LanguageToggle />
+      {levelIntroContentVisible ? (
+        <div
+          className={[styles.modal, introSunkingBackdrop && styles.modalGlass, styles.levelIntroMainFade]
+            .filter(Boolean)
+            .join(" ")}
+        >
+          <div className={styles.levelIntroHeader}>
+            <h2 id="level-intro-title" className={styles.levelIntroTitle}>
+              {t(introLevelDef.introTitleKey as MessageKey)}
+            </h2>
+            <LanguageToggle />
+          </div>
+          <div className={styles.levelIntroBody}>{t(introLevelDef.introBodyKey as MessageKey)}</div>
+          <button type="button" className={`${styles.btn} ${styles.btnPrimary}`} onClick={confirmLevelIntro}>
+            {t("menu.introContinue")}
+          </button>
         </div>
-        <div className={styles.levelIntroBody}>{t(introLevelDef.introBodyKey as MessageKey)}</div>
-        <button type="button" className={`${styles.btn} ${styles.btnPrimary}`} onClick={confirmLevelIntro}>
-          {t("menu.introContinue")}
-        </button>
-      </div>
+      ) : null}
     </div>
   ) : null;
 

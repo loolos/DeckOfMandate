@@ -71,6 +71,17 @@ describe("desiredProceduralEventCountWhenAllEmpty", () => {
     expect(desiredProceduralEventCountWhenAllEmpty(state, 0.89)).toBe(3);
     expect(desiredProceduralEventCountWhenAllEmpty(state, 0.9)).toBe(4);
   });
+
+  it("caps first-mandate all-empty procedural refill to 2 for turns 1-5", () => {
+    const s0 = createInitialState(101_005, "firstMandate");
+    const state: GameState = {
+      ...s0,
+      levelId: "firstMandate",
+      turn: 4,
+      resources: { ...s0.resources, treasuryStat: 10, power: 8, legitimacy: 2 },
+    };
+    expect(desiredProceduralEventCountWhenAllEmpty(state, 0.95)).toBe(2);
+  });
 });
 
 describe("beginYear + playerStatuses", () => {

@@ -99,6 +99,10 @@ export const levelContent: LevelContent = {
   },
   procedural: {
     firstTurnEmptyBoardCount: 2,
+    earlyTurnAllEmptyBoardMax: {
+      untilTurnInclusive: 5,
+      maxCount: 2,
+    },
   },
   limitedUseByTemplateId: {
     funding: { totalUses: 4 },

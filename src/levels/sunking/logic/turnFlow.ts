@@ -298,6 +298,10 @@ export function desiredProceduralEventCountWhenAllEmpty(state: GameState, roll: 
   if (state.turn === 1 && isStandaloneChapter2Start(state) && lc.procedural.firstTurnStandaloneEmptyBoardMin != null) {
     return Math.max(lc.procedural.firstTurnStandaloneEmptyBoardMin, baseCount);
   }
+  const earlyTurnCap = lc.procedural.earlyTurnAllEmptyBoardMax;
+  if (earlyTurnCap && state.turn <= earlyTurnCap.untilTurnInclusive) {
+    return Math.min(baseCount, earlyTurnCap.maxCount);
+  }
   return baseCount;
 }
 

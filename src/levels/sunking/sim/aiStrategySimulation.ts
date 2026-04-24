@@ -1,8 +1,8 @@
 import { createInitialState } from "../../../app/initialState";
 import {
   buildLevel2StateFromDraft,
-  buildLevel3StateFromChapter2,
   buildLevel3StateFromDraft,
+  createContinuityLevel3Draft,
   createContinuityLevel2Draft,
   createStandaloneLevel2Draft,
   createStandaloneLevel3Draft,
@@ -16,6 +16,7 @@ import type { GameOutcome, GameState, Resources } from "../../../types/game";
 import { getPlayableCardCost } from "../../../logic/cardCost";
 import { findScriptedCalendarConfig } from "../../../logic/scriptedCalendar";
 import { retentionCapacity } from "../../../logic/turnFlow";
+import { CONTINUITY_REFIT_MAX_CARD_REMOVALS } from "../../../types/continuity";
 import { cardPlayPriorityFirstMandate } from "./strategies/firstMandateStrategy";
 import {
   cardPlayPrioritySecondMandate,
@@ -330,6 +331,7 @@ export type ThreeChapterCampaignRunResult = {
   firstEndTurn: number;
   secondOutcome: GameOutcome | null;
   secondEndTurn: number | null;
+  secondEndResources: Resources | null;
   thirdOutcome: GameOutcome | null;
   thirdEndTurn: number | null;
   /** Set when chapter 3 was reached; derived from the terminal `GameState`. */
@@ -342,10 +344,38 @@ export type ThreeChapterCampaignBatchReport = {
   chapter1Wins: number;
   chapter1Losses: number;
   chapter1WinRate: number;
+  chapter1OutcomeBreakdown: {
+    victory: number;
+    defeatLegitimacy: number;
+    defeatTime: number;
+    defeatSuccession: number;
+    other: number;
+  };
+  chapter1OutcomeBreakdownRates: {
+    victory: number;
+    defeatLegitimacy: number;
+    defeatTime: number;
+    defeatSuccession: number;
+    other: number;
+  };
   chapter2Runs: number;
   chapter2Wins: number;
   chapter2Losses: number;
   chapter2WinRateAfterCarryover: number | null;
+  chapter2OutcomeBreakdown: {
+    victory: number;
+    defeatLegitimacy: number;
+    defeatTime: number;
+    defeatSuccession: number;
+    other: number;
+  };
+  chapter2OutcomeBreakdownRates: {
+    victory: number;
+    defeatLegitimacy: number;
+    defeatTime: number;
+    defeatSuccession: number;
+    other: number;
+  };
   chapter3Runs: number;
   chapter3Wins: number;
   chapter3Losses: number;
@@ -358,6 +388,7 @@ export type ThreeChapterCampaignBatchReport = {
   averageChapter1EndTurn: number;
   averageChapter2EndTurnOnReached: number | null;
   averageChapter2EndTurnOnWin: number | null;
+  averageChapter2EndingResourcesOnWin: Resources | null;
   averageChapter3EndTurnOnReached: number | null;
   averageChapter3EndTurnOnWin: number | null;
 };
@@ -400,6 +431,97 @@ function round(value: number, digits: number): number {
 function average(values: readonly number[]): number {
   if (values.length === 0) return 0;
   return values.reduce((sum, n) => sum + n, 0) / values.length;
+}
+
+type CarryoverDraftLike = {
+  carryoverCards: readonly {
+    instanceId: string;
+    templateId: CardTemplateId;
+    inflationDelta: number;
+    remainingUses: number | null;
+    totalUses: number | null;
+  }[];
+  removedCarryoverIds: readonly string[];
+};
+
+const HARD_PROTECTED_REFIT_TEMPLATES = new Set<CardTemplateId>([
+  "funding",
+  "crackdown",
+  "diplomaticIntervention",
+]);
+
+const SOFT_PROTECTED_REFIT_TEMPLATES = new Set<CardTemplateId>([
+  "development",
+  "reform",
+  "ceremony",
+  "taxRebalance",
+  "grainRelief",
+  "diplomaticCongress",
+  "jesuitCollege",
+  "usurpationEdict",
+  "bourbonMarriageProclamation",
+  "grandAllianceInfiltrationDiplomacy",
+  "italianTheaterTroopRedeploy",
+  "suppressHuguenots",
+]);
+
+function refitRemovalSort(
+  a: { instanceId: string; templateId: CardTemplateId; inflationDelta: number },
+  b: { instanceId: string; templateId: CardTemplateId; inflationDelta: number },
+): number {
+  if (a.inflationDelta !== b.inflationDelta) return b.inflationDelta - a.inflationDelta;
+  const ac = getCardTemplate(a.templateId).cost;
+  const bc = getCardTemplate(b.templateId).cost;
+  if (ac !== bc) return bc - ac;
+  return a.instanceId.localeCompare(b.instanceId);
+}
+
+function withAutoInflationRefit<T extends CarryoverDraftLike>(draft: T): T {
+  if (draft.carryoverCards.length <= 1) return draft;
+  const maxRemovals = Math.min(
+    CONTINUITY_REFIT_MAX_CARD_REMOVALS,
+    draft.carryoverCards.length - 1,
+  );
+  if (maxRemovals <= 0) return draft;
+  const inflationCards = draft.carryoverCards.filter((card) => card.inflationDelta > 0);
+  if (inflationCards.length === 0) return draft;
+
+  // Pass 1: remove only non-protected, inflated cards.
+  const pass1 = inflationCards
+    .filter(
+      (card) =>
+        !HARD_PROTECTED_REFIT_TEMPLATES.has(card.templateId) &&
+        !SOFT_PROTECTED_REFIT_TEMPLATES.has(card.templateId),
+    )
+    .sort(refitRemovalSort);
+
+  const removedCarryoverIds: string[] = pass1.slice(0, maxRemovals).map((card) => card.instanceId);
+  if (removedCarryoverIds.length >= maxRemovals) {
+    return { ...draft, removedCarryoverIds };
+  }
+
+  // Pass 2: if removal slots remain, trim duplicated high-inflation soft-protected cards.
+  const countsByTemplate = new Map<CardTemplateId, number>();
+  for (const card of draft.carryoverCards) {
+    countsByTemplate.set(card.templateId, (countsByTemplate.get(card.templateId) ?? 0) + 1);
+  }
+  const alreadyRemoved = new Set(removedCarryoverIds);
+  const pass2 = inflationCards
+    .filter((card) => {
+      if (alreadyRemoved.has(card.instanceId)) return false;
+      if (HARD_PROTECTED_REFIT_TEMPLATES.has(card.templateId)) return false;
+      if (!SOFT_PROTECTED_REFIT_TEMPLATES.has(card.templateId)) return false;
+      if (card.inflationDelta < 3) return false;
+      return (countsByTemplate.get(card.templateId) ?? 0) > 1;
+    })
+    .sort(refitRemovalSort);
+
+  for (const card of pass2) {
+    if (removedCarryoverIds.length >= maxRemovals) break;
+    removedCarryoverIds.push(card.instanceId);
+  }
+  if (removedCarryoverIds.length === 0) return draft;
+  return { ...draft, removedCarryoverIds };
 }
 
 function unresolvedSlots(state: GameState): SlotId[] {
@@ -1013,7 +1135,7 @@ export function simulateFirstToSecondCampaignRun(
     };
   }
   const seed2 = campaignSecondStageSeed(seed);
-  const draft = createContinuityLevel2Draft(firstEndState, seed2);
+  const draft = withAutoInflationRefit(createContinuityLevel2Draft(firstEndState, seed2));
   const secondStartState = buildLevel2StateFromDraft(draft);
   const secondEndState = simulateEndStateWithPolicy(
     secondStartState,
@@ -1039,6 +1161,7 @@ function simulateFirstToThirdCampaignPhaseStates(
   firstEndTurn: number;
   secondOutcome: GameOutcome | null;
   secondEndTurn: number | null;
+  secondEndResources: Resources | null;
   thirdEndState: GameState | null;
 } {
   const firstEndState = simulateEndStateWithPolicy(
@@ -1053,11 +1176,12 @@ function simulateFirstToThirdCampaignPhaseStates(
       firstEndTurn: firstEndState.turn,
       secondOutcome: null,
       secondEndTurn: null,
+      secondEndResources: null,
       thirdEndState: null,
     };
   }
   const seed2 = campaignSecondStageSeed(seed);
-  const draft2 = createContinuityLevel2Draft(firstEndState, seed2);
+  const draft2 = withAutoInflationRefit(createContinuityLevel2Draft(firstEndState, seed2));
   const secondStartState = buildLevel2StateFromDraft(draft2);
   const secondEndState = simulateEndStateWithPolicy(
     secondStartState,
@@ -1072,11 +1196,13 @@ function simulateFirstToThirdCampaignPhaseStates(
       firstEndTurn: firstEndState.turn,
       secondOutcome: secondEndState.outcome,
       secondEndTurn: secondEndState.turn,
+      secondEndResources: { ...secondEndState.resources },
       thirdEndState: null,
     };
   }
   const seed3 = campaignThirdStageSeed(seed2);
-  const thirdStartState = buildLevel3StateFromChapter2(secondEndState, seed3);
+  const draft3 = withAutoInflationRefit(createContinuityLevel3Draft(secondEndState, seed3));
+  const thirdStartState = buildLevel3StateFromDraft(draft3);
   const thirdEndState = simulateEndStateWithPolicy(
     thirdStartState,
     "a-strategy-i",
@@ -1089,6 +1215,7 @@ function simulateFirstToThirdCampaignPhaseStates(
     firstEndTurn: firstEndState.turn,
     secondOutcome: secondEndState.outcome,
     secondEndTurn: secondEndState.turn,
+    secondEndResources: { ...secondEndState.resources },
     thirdEndState,
   };
 }
@@ -1104,6 +1231,7 @@ export function simulateFirstToThirdCampaignRun(
     firstEndTurn: p.firstEndTurn,
     secondOutcome: p.secondOutcome,
     secondEndTurn: p.secondEndTurn,
+    secondEndResources: p.secondEndResources,
     thirdOutcome: p.thirdEndState?.outcome ?? null,
     thirdEndTurn: p.thirdEndState?.turn ?? null,
     thirdTerminalKind: p.thirdEndState ? classifyThirdMandateEndState(p.thirdEndState) : null,
@@ -1134,7 +1262,8 @@ export function simulateSecondToThirdCampaignRun(
     };
   }
   const seed3 = campaignThirdStageSeed(seed);
-  const thirdStartState = buildLevel3StateFromChapter2(secondEndState, seed3);
+  const draft3 = withAutoInflationRefit(createContinuityLevel3Draft(secondEndState, seed3));
+  const thirdStartState = buildLevel3StateFromDraft(draft3);
   const thirdEndState = simulateEndStateWithPolicy(
     thirdStartState,
     "a-strategy-i",
@@ -1319,6 +1448,9 @@ export function simulateFirstToSecondCampaignBatch(options?: {
   const chapter1Wins = runs.filter((r) => r.firstOutcome === "victory");
   const chapter2Runs = runs.filter((r) => r.secondOutcome !== null);
   const chapter2Wins = chapter2Runs.filter((r) => r.secondOutcome === "victory");
+  const chapter2WinResources = chapter2Wins
+    .map((r) => r.secondEndResources)
+    .filter((v): v is Resources => v !== null);
   return {
     strategyId: STRATEGY_I_ID,
     runCount,
@@ -1357,8 +1489,75 @@ export function simulateFirstToThirdCampaignBatch(options?: {
     runs.push(simulateFirstToThirdCampaignRun(seedStart + i, strategyOptions));
   }
   const chapter1Wins = runs.filter((r) => r.firstOutcome === "victory");
+  const chapter1OutcomeBreakdown = {
+    victory: 0,
+    defeatLegitimacy: 0,
+    defeatTime: 0,
+    defeatSuccession: 0,
+    other: 0,
+  };
+  for (const r of runs) {
+    switch (r.firstOutcome) {
+      case "victory":
+        chapter1OutcomeBreakdown.victory += 1;
+        break;
+      case "defeatLegitimacy":
+        chapter1OutcomeBreakdown.defeatLegitimacy += 1;
+        break;
+      case "defeatTime":
+        chapter1OutcomeBreakdown.defeatTime += 1;
+        break;
+      case "defeatSuccession":
+        chapter1OutcomeBreakdown.defeatSuccession += 1;
+        break;
+      default:
+        chapter1OutcomeBreakdown.other += 1;
+        break;
+    }
+  }
+  const chapter1OutcomeBreakdownRates = {
+    victory: round(chapter1OutcomeBreakdown.victory / runCount, 4),
+    defeatLegitimacy: round(chapter1OutcomeBreakdown.defeatLegitimacy / runCount, 4),
+    defeatTime: round(chapter1OutcomeBreakdown.defeatTime / runCount, 4),
+    defeatSuccession: round(chapter1OutcomeBreakdown.defeatSuccession / runCount, 4),
+    other: round(chapter1OutcomeBreakdown.other / runCount, 4),
+  };
   const chapter2Runs = runs.filter((r) => r.secondOutcome !== null);
   const chapter2Wins = chapter2Runs.filter((r) => r.secondOutcome === "victory");
+  const chapter2OutcomeBreakdown = {
+    victory: 0,
+    defeatLegitimacy: 0,
+    defeatTime: 0,
+    defeatSuccession: 0,
+    other: 0,
+  };
+  for (const r of chapter2Runs) {
+    switch (r.secondOutcome) {
+      case "victory":
+        chapter2OutcomeBreakdown.victory += 1;
+        break;
+      case "defeatLegitimacy":
+        chapter2OutcomeBreakdown.defeatLegitimacy += 1;
+        break;
+      case "defeatTime":
+        chapter2OutcomeBreakdown.defeatTime += 1;
+        break;
+      case "defeatSuccession":
+        chapter2OutcomeBreakdown.defeatSuccession += 1;
+        break;
+      default:
+        chapter2OutcomeBreakdown.other += 1;
+        break;
+    }
+  }
+  const chapter2Denom = chapter2Runs.length;
+  const chapter2OutcomeBreakdownRates = {
+    victory: chapter2Denom > 0 ? round(chapter2OutcomeBreakdown.victory / chapter2Denom, 4) : 0,
+    defeatLegitimacy: chapter2Denom > 0 ? round(chapter2OutcomeBreakdown.defeatLegitimacy / chapter2Denom, 4) : 0,
+    defeatTime: chapter2Denom > 0 ? round(chapter2OutcomeBreakdown.defeatTime / chapter2Denom, 4) : 0,
+    defeatSuccession: chapter2Denom > 0 ? round(chapter2OutcomeBreakdown.defeatSuccession / chapter2Denom, 4) : 0,
+    other: chapter2Denom > 0 ? round(chapter2OutcomeBreakdown.other / chapter2Denom, 4) : 0,
+  };
   const chapter3Runs = runs.filter((r) => r.thirdOutcome !== null);
   const chapter3Wins = chapter3Runs.filter((r) => r.thirdOutcome === "victory");
   const chapter3OutcomeBreakdown = emptyThirdMandateOutcomeBreakdown();
@@ -1371,17 +1570,24 @@ export function simulateFirstToThirdCampaignBatch(options?: {
     chapter3OutcomeBreakdown,
     chapter3Runs.length,
   );
+  const chapter2WinResources = chapter2Wins
+    .map((r) => r.secondEndResources)
+    .filter((v): v is Resources => v !== null);
   return {
     strategyId: STRATEGY_I_ID,
     runCount,
     chapter1Wins: chapter1Wins.length,
     chapter1Losses: runCount - chapter1Wins.length,
     chapter1WinRate: round(chapter1Wins.length / runCount, 4),
+    chapter1OutcomeBreakdown,
+    chapter1OutcomeBreakdownRates,
     chapter2Runs: chapter2Runs.length,
     chapter2Wins: chapter2Wins.length,
     chapter2Losses: chapter2Runs.length - chapter2Wins.length,
     chapter2WinRateAfterCarryover:
       chapter2Runs.length > 0 ? round(chapter2Wins.length / chapter2Runs.length, 4) : null,
+    chapter2OutcomeBreakdown,
+    chapter2OutcomeBreakdownRates,
     chapter3Runs: chapter3Runs.length,
     chapter3Wins: chapter3Wins.length,
     chapter3Losses: chapter3Runs.length - chapter3Wins.length,
@@ -1396,6 +1602,15 @@ export function simulateFirstToThirdCampaignBatch(options?: {
       chapter2Runs.length > 0 ? round(average(chapter2Runs.map((r) => r.secondEndTurn ?? 0)), 3) : null,
     averageChapter2EndTurnOnWin:
       chapter2Wins.length > 0 ? round(average(chapter2Wins.map((r) => r.secondEndTurn ?? 0)), 3) : null,
+    averageChapter2EndingResourcesOnWin:
+      chapter2WinResources.length > 0
+        ? {
+            treasuryStat: round(average(chapter2WinResources.map((r) => r.treasuryStat)), 3),
+            funding: round(average(chapter2WinResources.map((r) => r.funding)), 3),
+            power: round(average(chapter2WinResources.map((r) => r.power)), 3),
+            legitimacy: round(average(chapter2WinResources.map((r) => r.legitimacy)), 3),
+          }
+        : null,
     averageChapter3EndTurnOnReached:
       chapter3Runs.length > 0 ? round(average(chapter3Runs.map((r) => r.thirdEndTurn ?? 0)), 3) : null,
     averageChapter3EndTurnOnWin:

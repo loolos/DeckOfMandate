@@ -89,6 +89,11 @@ export type LevelProceduralConfig = {
   firstTurnEmptyBoardCount?: number;
   /** Standalone ch2 turn 1: at least this many when all empty (second mandate: 3). */
   firstTurnStandaloneEmptyBoardMin?: number;
+  /** Optional cap for all-empty procedural refill during early turns. */
+  earlyTurnAllEmptyBoardMax?: {
+    untilTurnInclusive: number;
+    maxCount: number;
+  };
 };
 
 /**

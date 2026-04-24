@@ -82,6 +82,11 @@ export function cardPlayPrioritySecondMandate(
     canFundingUnlockHarmfulSolve,
     canFundingUnlockRyswick,
   } = context;
+  const treasury = state.resources.treasuryStat;
+  const power = state.resources.power;
+  const legitimacy = state.resources.legitimacy;
+  const hasUrgentStabilizationNeed = unresolvedHarmful || power <= 4 || legitimacy <= 5;
+  const shouldPushTreasury = !hasUrgentStabilizationNeed && treasury < 8;
   switch (tmpl) {
     case "funding":
       if (canFundingUnlockRyswick) return 0;
@@ -97,13 +102,17 @@ export function cardPlayPrioritySecondMandate(
     case "diplomaticCongress":
       return state.resources.power < 6 ? 2 : state.resources.power < 8 ? 4 : 24;
     case "taxRebalance":
-      return state.resources.treasuryStat < 3 ? 5 : state.resources.treasuryStat < 5 ? 12 : 35;
+      if (shouldPushTreasury && treasury < 6) return 2;
+      if (shouldPushTreasury && treasury < 8) return 4;
+      return treasury < 3 ? 5 : treasury < 5 ? 12 : 35;
     case "development":
-      return state.resources.treasuryStat < 5 ? 3 : state.resources.treasuryStat < 7 ? 6 : 24;
+      if (shouldPushTreasury && treasury < 6) return 1;
+      if (shouldPushTreasury && treasury < 8) return 3;
+      return treasury < 5 ? 3 : treasury < 7 ? 6 : 24;
     case "reform":
       return state.resources.power < 5 ? 2 : state.resources.power < 7 ? 5 : 24;
     case "ceremony":
-      return state.resources.legitimacy < 6 ? 3 : state.resources.legitimacy < 9 ? 7 : 26;
+      return legitimacy < 6 ? 3 : legitimacy < 9 ? 7 : 26;
     case "suppressHuguenots":
       return hasContainmentStatus ? 7 : 90;
     case "jesuitCollege": {
