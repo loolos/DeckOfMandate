@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import type { Resources } from "../types/game";
 import { getResourceIcon, resourceLabelWithIcon } from "../logic/icons";
+import { drawAttemptsFromPower } from "../logic/drawScaling";
 import { useSmallScreen } from "../logic/useSmallScreen";
 import { useI18n, type MessageKey } from "../locales";
 import styles from "../app/Game.module.css";
@@ -27,10 +28,22 @@ const LABEL_FOR_KEY: Record<keyof Resources, MessageKey> = {
   legitimacy: "resource.legitimacy",
 };
 
+function powerThresholdForDraw(draws: number): number {
+  if (draws <= 1) return 1;
+  return 1 + ((draws - 1) * draws) / 2;
+}
+
 export function ResourceBar({ resources }: { resources: Resources }) {
   const { t } = useI18n();
   const isSmallScreen = useSmallScreen();
   const [mobileExpanded, setMobileExpanded] = useState(false);
+  const powerDraws = drawAttemptsFromPower(resources.power);
+  const nextPower = powerThresholdForDraw(powerDraws + 1);
+  const dropPower = powerDraws <= 1 ? null : powerThresholdForDraw(powerDraws) - 1;
+  const powerHint =
+    dropPower === null
+      ? t("resource.power.hint.min", { current: powerDraws, next: nextPower })
+      : t("resource.power.hint", { current: powerDraws, next: nextPower, prev: dropPower });
 
   useEffect(() => {
     if (!isSmallScreen) setMobileExpanded(false);
@@ -56,7 +69,7 @@ export function ResourceBar({ resources }: { resources: Resources }) {
           <div key={it.key} className={styles.stat}>
             <div className={styles.statLabel}>{resourceLabelWithIcon(it.key, t(it.labelKey))}</div>
             <div className={styles.statValue}>{resources[it.key]}</div>
-            <div className={styles.statHint}>{t(it.hintKey)}</div>
+            <div className={styles.statHint}>{it.key === "power" ? powerHint : t(it.hintKey)}</div>
           </div>
         ))}
       </div>
