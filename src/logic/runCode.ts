@@ -377,7 +377,7 @@ function readAction(r: ByteReader, currentHand: readonly string[]): GameAction {
       const keepIds = keepIndices
         .map((idx) => currentHand[idx])
         .filter((id): id is string => typeof id === "string");
-      return { type: "CONFIRM_RETENTION", keepIds };
+      return { type: "CONFIRM_RETENTION", keepIds, __retentionMeta: { handLength, keepIndices } } as RetentionEncodedAction;
     }
     default:
       throw new Error(`runCode: unknown action tag 0x${tag.toString(16)}`);

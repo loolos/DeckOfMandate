@@ -124,6 +124,30 @@ describe("runCode", () => {
     }
   });
 
+  it("can re-encode a decoded session containing CONFIRM_RETENTION (regression)", () => {
+    const seed = 0x5eed;
+    let state = createInitialState(seed, "firstMandate");
+    const recorded: GameAction[] = [];
+    let guard = 0;
+    while (state.phase !== "retention" && state.outcome === "playing" && guard < 12) {
+      state = dispatchAndRecord(state, { type: "END_YEAR" }, recorded);
+      guard++;
+    }
+    expect(state.phase).toBe("retention");
+    const keepIds = state.hand.slice(0, Math.min(1, state.hand.length));
+    state = dispatchAndRecord(state, { type: "CONFIRM_RETENTION", keepIds }, recorded);
+
+    const session: SessionRecord = [
+      { level: "firstMandate", mode: "standalone", seed, removedIndices: [], actions: recorded },
+    ];
+    const firstHex = encodeSession(session);
+    const decodedOnce = decodeSession(firstHex);
+
+    expect(() => encodeSession(decodedOnce.session)).not.toThrow();
+    const decodedTwice = decodeSession(encodeSession(decodedOnce.session));
+    expectEquivalent(decodedTwice.finalState, state);
+  });
+
   it("encodes and decodes a standalone secondMandate session", () => {
     const seed = 22_222;
     let state = buildLevel2StateFromDraft(createStandaloneLevel2Draft(seed));
