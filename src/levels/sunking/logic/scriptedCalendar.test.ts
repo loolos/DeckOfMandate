@@ -49,6 +49,28 @@ describe("scriptedCalendar", () => {
     expect(s1.actionLog.some((entry) => entry.kind === "eventNineYearsWarBegins")).toBe(true);
   });
 
+  it("injecting ryswick with full board does not overwrite an active nine years war", () => {
+    const cal = getLevelDef("secondMandate").calendarStartYear;
+    const turn = 1697 - cal + 1;
+    const s0 = createInitialState(191919, "secondMandate");
+    const s1 = applyScriptedCalendarPhase({
+      ...s0,
+      turn,
+      phase: "action",
+      slots: {
+        A: { instanceId: "e_a", templateId: "taxResistance", resolved: false },
+        B: { instanceId: "e_b", templateId: "commercialExpansion", resolved: false },
+        C: { instanceId: "e_c", templateId: "warWeariness", resolved: false },
+        D: { instanceId: "e_d", templateId: "jesuitPatronage", resolved: false },
+        E: { instanceId: "e_e", templateId: "leagueOfAugsburg", resolved: false },
+        F: { instanceId: "e_f", templateId: "nineYearsWar", resolved: false },
+      },
+    });
+    const events = Object.values(s1.slots).flatMap((ev) => (ev ? [ev.templateId] : []));
+    expect(events).toContain("nineYearsWar");
+    expect(events).toContain("ryswickPeace");
+  });
+
   it("clears unresolved scripted row after presenceEndYear", () => {
     const cfg = levelContentByLevelId.firstMandate.scriptedCalendarEvents[0]!;
     const cal = getLevelDef("firstMandate").calendarStartYear;
