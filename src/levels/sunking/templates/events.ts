@@ -442,7 +442,6 @@ export const eventTemplates: Record<EventTemplateId, EventTemplate> = {
     id: "localizedSuccessionWar",
     weight: 3,
     harmful: true,
-    crackdownImmune: true,
     titleKey: "event.localizedSuccessionWar.name",
     descriptionKey: "event.localizedSuccessionWar.desc",
     solve: { kind: "funding", amount: 4 },

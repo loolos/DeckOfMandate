@@ -225,7 +225,7 @@ export function buildEventQuickFrameRows(
   if (tmpl.id === "localizedSuccessionWar") {
     const yEnd = eventYearEndChips(tmpl);
     return [
-      { labelKey: "ui.quickFrame.pay", value: `${getResourceIcon("funding")}4` },
+      { labelKey: "ui.quickFrame.pay", value: `${getResourceIcon("funding")}4 | 🛡️` },
       {
         labelKey: "ui.quickFrame.ifSolved",
         value: "~25% ⚖️−1 · ~25% ⚖️0 · ~25% ⚖️+1 · ~25% ⚖️+2",

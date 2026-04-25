@@ -462,6 +462,50 @@ describe("gameReducer", () => {
     expect(after.opponentHand.length).toBe(handBefore + 1);
   });
 
+  it("royal intervention can clear localized succession war", () => {
+    const base = createInitialState(51_005, THIRD_MANDATE_LEVEL_ID);
+    const crackdownId = "tmp_crack_localized";
+    const s0: typeof base = {
+      ...base,
+      cardsById: {
+        ...base.cardsById,
+        [crackdownId]: { instanceId: crackdownId, templateId: "crackdown" },
+      },
+      hand: [crackdownId],
+      resources: { ...base.resources, funding: 1 },
+      slots: {
+        ...base.slots,
+        A: { instanceId: "e_localized_war", templateId: "localizedSuccessionWar", resolved: false },
+      },
+    };
+    const afterPlay = gameReducer(s0, { type: "PLAY_CARD", handIndex: 0 });
+    expect(afterPlay.pendingInteraction?.type).toBe("crackdownPick");
+    const after = gameReducer(afterPlay, { type: "CRACKDOWN_TARGET", slot: "A" });
+    expect(after.slots.A?.resolved).toBe(true);
+  });
+
+  it("diplomatic intervention can clear localized succession war", () => {
+    const base = createInitialState(51_006, THIRD_MANDATE_LEVEL_ID);
+    const interventionId = "tmp_di_localized";
+    const s0: typeof base = {
+      ...base,
+      cardsById: {
+        ...base.cardsById,
+        [interventionId]: { instanceId: interventionId, templateId: "diplomaticIntervention" },
+      },
+      hand: [interventionId],
+      resources: { ...base.resources, funding: 0 },
+      slots: {
+        ...base.slots,
+        A: { instanceId: "e_localized_war", templateId: "localizedSuccessionWar", resolved: false },
+      },
+    };
+    const afterPlay = gameReducer(s0, { type: "PLAY_CARD", handIndex: 0 });
+    expect(afterPlay.pendingInteraction?.type).toBe("crackdownPick");
+    const after = gameReducer(afterPlay, { type: "CRACKDOWN_TARGET", slot: "A" });
+    expect(after.slots.A?.resolved).toBe(true);
+  });
+
   it("league of augsburg requires 3 resolves and persists between years until remaining reaches zero", () => {
     const base = createInitialState(31_416, "secondMandate");
     const s0: typeof base = {
