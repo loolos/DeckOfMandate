@@ -113,6 +113,7 @@ When all slots are empty, event count depends on `treasuryStat + power + legitim
 
 - **Europe Alert (Chapter 2)**:
   - Supplemental pool: `{frontierGarrisons, tradeDisruption, embargoCoalition, mercenaryRaiders, localWar}`.
+  - Resolving `frontierGarrisons` or `embargoCoalition` lowers **Europe Alert progress by 1** while alert is active, whether the player pays **Funding**, uses **Royal Intervention** (`crackdown`), or **Diplomatic Intervention** — all paths apply the same template `onFundSolveEffects` as Funding resolution.
   - Progress-gated yearly injection:
     - progress `1..5`: chance `progress * 20%` to inject **1** supplemental event
     - progress `6..10`: guaranteed **1**, plus chance `(progress-5) * 20%` to inject a **2nd** supplemental event

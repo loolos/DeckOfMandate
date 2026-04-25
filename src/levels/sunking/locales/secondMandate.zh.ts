@@ -67,13 +67,13 @@ export const messagesZhSecondMandate = {
     "田赋重估与间接税加码常同时激怒市民与特权阶层。地方与社群抵制新税。支付 2 经费或干预，否则财政 -1 且合法性 -1。",
   "event.frontierGarrisons.name": "边境驻军消耗",
   "event.frontierGarrisons.desc":
-    "莱茵与低地战线在奥格斯堡同盟战争年代持续吞噬军费。边防驻军持续消耗国库。支付 3 经费，否则财政 -1 且下一回合抽牌受罚。",
+    "莱茵与低地战线在奥格斯堡同盟战争年代持续吞噬军费。边防驻军持续消耗国库。支付 3 经费，或使用王室干预/外交干预处理；成功解决时，若欧洲警觉生效则其进度 -1。若不处理：财政 -1 且下一回合抽牌受罚。",
   "event.tradeDisruption.name": "海贸受阻",
   "event.tradeDisruption.desc":
     "英荷护航战与私掠压缩了大西洋航路的实际收入。航路受扰影响施政节奏。支付 1 经费，否则下一回合抽牌修正 -2。",
   "event.embargoCoalition.name": "禁运协同",
   "event.embargoCoalition.desc":
-    "大同盟海上力量长期以封锁与关税联动施压法国商船。海上限制与关税协同压迫法国贸易。支付 2 经费，否则财政 -1 且下一回合抽牌受罚。",
+    "大同盟海上力量长期以封锁与关税联动施压法国商船。海上限制与关税协同压迫法国贸易。支付 2 经费，或使用王室干预/外交干预处理；成功解决时，若欧洲警觉生效则其进度 -1。若不处理：财政 -1 且下一回合抽牌受罚。",
   "event.mercenaryRaiders.name": "雇佣兵劫掠",
   "event.mercenaryRaiders.desc":
     "大战间隙，自由连与受雇劫掠仍困扰边境与过境走廊。边境雇佣兵袭扰削弱王权控制。支付 2 经费，否则权力 -1 且合法性 -1。",
@@ -120,7 +120,8 @@ export const messagesZhSecondMandate = {
   "card.diplomaticCongress.desc": "权力 +1。下个回合多摸 1 张牌。若存在「欧洲警觉」，其进度 -1。向手牌加入 1 张「外交干预」。",
   "card.diplomaticIntervention.name": "外交干预",
   "card.diplomaticIntervention.background": "通过使节施压与条约操作解决危机，而非直接动用王室强制力。",
-  "card.diplomaticIntervention.desc": "解决有害事件；非王室牌。",
+  "card.diplomaticIntervention.desc":
+    "解决有害事件；与该事件「支付经费解决」的追加效果一致（若模板有，例如部分欧洲警觉压力事件使进度 -1）。非王室牌。",
   "log.eventNineYearsWarAttempt.method.funding": "军费推进",
   "log.eventNineYearsWarAttempt.method.intervention": "外交干预",
   "log.eventNineYearsWarAttempt.title":

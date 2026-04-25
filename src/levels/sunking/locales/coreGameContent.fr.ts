@@ -7,7 +7,8 @@ export const sunkingCoreGameContentFr = {
   "card.crackdown.name": "Intervention royale",
   "card.crackdown.background":
     "Édits, troupes ou action policière — la force appliquée là où rumeur et émeute dépassent déjà la loi.",
-  "card.crackdown.desc": "Résolvez un événement néfaste. Si « Restant » est épuisé : Pouvoir -1.",
+  "card.crackdown.desc":
+    "Résolvez un événement néfaste avec les mêmes effets post-résolution que le paiement en Financement lorsqu'ils sont définis (ex. certains événements liés à l'Alerte Europe réduisent la progression). Si « Restant » est épuisé : Pouvoir -1.",
   "card.fiscalBurden.name": "Fardeau fiscal",
   "card.fiscalBurden.background":
     "Dettes et passifs d'urgence encombrent désormais les comptes et contraignent chaque cycle.",

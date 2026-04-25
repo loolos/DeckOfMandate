@@ -72,13 +72,13 @@ export const messagesEnSecondMandate = {
     "Taille revisions and aides sharpened pushback from towns and privileged orders alike. Communities and elites resist levies. Pay 2 Funding or use Intervention; if unresolved, lose 1 Treasury and 1 Legitimacy.",
   "event.frontierGarrisons.name": "Frontier Garrisons",
   "event.frontierGarrisons.desc":
-    "Rhine and Low Countries garrisons soaked budgets during the league wars of the 1680s–1690s. Border garrisons consume revenue. Pay 3 Funding or lose 1 Treasury and take a draw penalty next year.",
+    "Rhine and Low Countries garrisons soaked budgets during the league wars of the 1680s–1690s. Border garrisons consume revenue. Pay 3 Funding or use Royal Intervention / Diplomatic Intervention; any successful resolve lowers Europe Alert progress by 1 while alert is active. If ignored, lose 1 Treasury and take a draw penalty next year.",
   "event.tradeDisruption.name": "Trade Disruption",
   "event.tradeDisruption.desc":
     "Anglo-Dutch convoy war and privateering squeezed receipts from Atlantic routes. Sea lanes and convoy risk cut into policy bandwidth. Pay 1 Funding or take a -2 draw modifier next year.",
   "event.embargoCoalition.name": "Embargo Coalition",
   "event.embargoCoalition.desc":
-    "Grand Alliance navies tightened maritime cordons as coalition war became routine. Maritime restrictions tighten around French commerce. Pay 2 Funding, or lose 1 Treasury and suffer a draw penalty next year.",
+    "Grand Alliance navies tightened maritime cordons as coalition war became routine. Maritime restrictions tighten around French commerce. Pay 2 Funding or use Royal Intervention / Diplomatic Intervention; any successful resolve lowers Europe Alert progress by 1 while alert is active. If ignored, lose 1 Treasury and suffer a draw penalty next year.",
   "event.mercenaryRaiders.name": "Mercenary Raiders",
   "event.mercenaryRaiders.desc":
     "Between campaigns, free companies and paid raiders still haunted frontier marches. Paid border raiders disrupt local order and crown authority. Pay 2 Funding, or lose 1 Power and 1 Legitimacy.",
@@ -129,7 +129,8 @@ export const messagesEnSecondMandate = {
   "card.diplomaticIntervention.name": "Diplomatic Intervention",
   "card.diplomaticIntervention.background":
     "Apply pressure through envoys and treaty leverage rather than direct royal command.",
-  "card.diplomaticIntervention.desc": "Resolve one harmful event. Not Royal-tagged.",
+  "card.diplomaticIntervention.desc":
+    "Resolve one harmful event with the same post-resolve extras as paying Funding for that event when defined (e.g. some Europe Alert pressure events reduce alert progress by 1). Not Royal-tagged.",
   "log.eventNineYearsWarAttempt.method.funding": "funding operations",
   "log.eventNineYearsWarAttempt.method.intervention": "diplomatic intervention",
   "log.eventNineYearsWarAttempt.title":

@@ -5,7 +5,8 @@ export const sunkingCoreGameContentZh = {
   "card.funding.desc": "本回合 +1 经费（不增加财政能力）。若「剩余」用尽：财政 -1。",
   "card.crackdown.name": "王室干预",
   "card.crackdown.background": "敕令、驻军或警察行动——在流言与骚动已快于法律之处强行落实。",
-  "card.crackdown.desc": "解决一个有害事件。若「剩余」用尽：权力 -1。",
+  "card.crackdown.desc":
+    "解决有害事件；与该事件「支付经费解决」的追加效果一致（若模板有，例如部分欧洲警觉压力事件使进度 -1）。若「剩余」用尽：权力 -1。",
   "card.fiscalBurden.name": "财政负担",
   "card.fiscalBurden.background": "债务与紧急开支挤入账册，持续拖慢每个回合的财政回旋。",
   "card.fiscalBurden.desc": "抽到时经费 -1。可按财政相关费用付经费打出，移出循环（非弃牌）。",

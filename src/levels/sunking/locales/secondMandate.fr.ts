@@ -75,13 +75,13 @@ export const messagesFrSecondMandate: Record<keyof typeof messagesEnSecondMandat
     "Révisions de taille et aides nouvelles crispaient villes et ordres privilégiés. Communautés et élites résistent aux levées. Payez 2 Financement ou Intervention ; si non résolu, perdez 1 Trésor et 1 Légitimité.",
   "event.frontierGarrisons.name": "Garnisons frontalières",
   "event.frontierGarrisons.desc":
-    "Rhin et Pays-Bas : garnisons et sièges absorbèrent les budgets des années 1680-1690. Les garnisons frontalières absorbent les recettes. Payez 3 Financement ou perdez 1 Trésor et subissez une pénalité de pioche l'an prochain.",
+    "Rhin et Pays-Bas : garnisons et sièges absorbèrent les budgets des années 1680-1690. Les garnisons frontalières absorbent les recettes. Payez 3 Financement ou utilisez Intervention royale / Intervention diplomatique ; toute résolution réussie réduit la progression d'Alerte Europe de 1 tant que l'alerte est active. Sinon, perdez 1 Trésor et subissez une pénalité de pioche l'an prochain.",
   "event.tradeDisruption.name": "Perturbation commerciale",
   "event.tradeDisruption.desc":
     "Guerre de convois et corsaires anglo-hollandais pinçaient les recettes atlantiques. Les risques sur routes maritimes et convois réduisent la marge de gouvernance. Payez 1 Financement ou subissez un modificateur de pioche -2 l'an prochain.",
   "event.embargoCoalition.name": "Coalition d'embargo",
   "event.embargoCoalition.desc":
-    "Les marines de la Grande Alliance resserrèrent les cordons maritimes quand la guerre de coalition devint la norme. Les restrictions maritimes se resserrent autour du commerce français. Payez 2 Financement, ou perdez 1 Trésor et subissez une pénalité de pioche l'an prochain.",
+    "Les marines de la Grande Alliance resserrèrent les cordons maritimes quand la guerre de coalition devint la norme. Les restrictions maritimes se resserrent autour du commerce français. Payez 2 Financement ou utilisez Intervention royale / Intervention diplomatique ; toute résolution réussie réduit la progression d'Alerte Europe de 1 tant que l'alerte est active. Sinon, perdez 1 Trésor et subissez une pénalité de pioche l'an prochain.",
   "event.mercenaryRaiders.name": "Raiders mercenaires",
   "event.mercenaryRaiders.desc":
     "Entre deux campagnes, compagnies libres et raids payés hantaient encore les marches. Des pillards frontaliers à gages perturbent l'ordre local et l'autorité de la couronne. Payez 2 Financement, ou perdez 1 Pouvoir et 1 Légitimité.",
@@ -132,7 +132,8 @@ export const messagesFrSecondMandate: Record<keyof typeof messagesEnSecondMandat
   "card.diplomaticIntervention.name": "Intervention diplomatique",
   "card.diplomaticIntervention.background":
     "Exercez une pression via émissaires et leviers de traité plutôt que par commandement royal direct.",
-  "card.diplomaticIntervention.desc": "Résolvez un événement néfaste. Pas de tag Royal.",
+  "card.diplomaticIntervention.desc":
+    "Résolvez un événement néfaste avec les mêmes effets post-résolution que le paiement en Financement lorsqu'ils sont définis (ex. certains événements liés à l'Alerte Europe réduisent la progression). Pas de tag Royal.",
   "log.eventNineYearsWarAttempt.method.funding": "opérations financées",
   "log.eventNineYearsWarAttempt.method.intervention": "intervention diplomatique",
   "log.eventNineYearsWarAttempt.title":

@@ -7,7 +7,8 @@ export const sunkingCoreGameContentEn = {
   "card.crackdown.name": "Royal Intervention",
   "card.crackdown.background":
     "Edicts, troops, or police action—force applied where rumor and riot have already outpaced law.",
-  "card.crackdown.desc": "Resolve one harmful event. If Remaining is exhausted: Power -1.",
+  "card.crackdown.desc":
+    "Resolve one harmful event with the same post-resolve extras as paying Funding for that event when defined (e.g. some Europe Alert pressure events reduce alert progress by 1). If Remaining is exhausted: Power -1.",
   "card.fiscalBurden.name": "Fiscal Burden",
   "card.fiscalBurden.background":
     "Debt obligations and emergency liabilities now crowd the books and constrain every cycle.",
