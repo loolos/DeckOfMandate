@@ -3,8 +3,11 @@ import { gameReducer, type GameAction } from "../../../app/gameReducer";
 import { createInitialState } from "../../../app/initialState";
 import {
   buildLevel2StateFromDraft,
+  buildLevel3StateFromDraft,
   createContinuityLevel2Draft,
+  createContinuityLevel3Draft,
   createStandaloneLevel2Draft,
+  createStandaloneLevel3Draft,
 } from "../../../app/levelTransitions";
 import type { GameState } from "../../../types/game";
 import {
@@ -38,6 +41,16 @@ function expectEquivalent(a: GameState, b: GameState): void {
     return rest;
   };
   expect(stripLog(a)).toEqual(stripLog(b));
+}
+
+function expectReloadable(hex: string, expectedState?: GameState, cycles = 3): void {
+  let currentHex = hex;
+  const expected = expectedState ?? decodeSession(currentHex).finalState;
+  for (let i = 0; i < cycles; i++) {
+    const decoded = decodeSession(currentHex);
+    expectEquivalent(decoded.finalState, expected);
+    currentHex = encodeSession(decoded.session);
+  }
 }
 
 describe("runCode", () => {
@@ -121,6 +134,155 @@ describe("runCode", () => {
       // Indices preserved → since the start state's hand is identical (no preceding actions),
       // decoded keepIds must match the originals exactly.
       expect(new Set(decodedAction.keepIds)).toEqual(new Set(keepIds));
+    }
+  });
+
+  it("can re-encode a decoded session containing CONFIRM_RETENTION (regression)", () => {
+    const seed = 0x5eed;
+    let state = createInitialState(seed, "firstMandate");
+    const recorded: GameAction[] = [];
+    let guard = 0;
+    while (state.phase !== "retention" && state.outcome === "playing" && guard < 12) {
+      state = dispatchAndRecord(state, { type: "END_YEAR" }, recorded);
+      guard++;
+    }
+    expect(state.phase).toBe("retention");
+    const keepIds = state.hand.slice(0, Math.min(1, state.hand.length));
+    state = dispatchAndRecord(state, { type: "CONFIRM_RETENTION", keepIds }, recorded);
+
+    const session: SessionRecord = [
+      { level: "firstMandate", mode: "standalone", seed, removedIndices: [], actions: recorded },
+    ];
+    const firstHex = encodeSession(session);
+    const decodedOnce = decodeSession(firstHex);
+
+    expect(() => encodeSession(decodedOnce.session)).not.toThrow();
+    const decodedTwice = decodeSession(encodeSession(decodedOnce.session));
+    expectEquivalent(decodedTwice.finalState, state);
+  });
+
+  it("reloads varied generated load codes repeatedly", () => {
+    const cases: Array<{ name: string; session: SessionRecord; finalState: GameState }> = [];
+
+    {
+      const seed = 0x1001;
+      const finalState = createInitialState(seed, "firstMandate");
+      cases.push({
+        name: "fresh first mandate",
+        session: [{ level: "firstMandate", mode: "standalone", seed, removedIndices: [], actions: [] }],
+        finalState,
+      });
+    }
+
+    {
+      const seed = 0x1002;
+      let state = createInitialState(seed, "firstMandate");
+      const actions: GameAction[] = [];
+      for (let i = 0; i < 7 && state.outcome === "playing"; i++) {
+        state = dispatchAndRecord(state, { type: "END_YEAR" }, actions);
+        if (state.phase === "retention") {
+          const keepIds = state.hand.slice(0, Math.min(1, state.hand.length));
+          state = dispatchAndRecord(state, { type: "CONFIRM_RETENTION", keepIds }, actions);
+        }
+      }
+      cases.push({
+        name: "mid first mandate with retention",
+        session: [{ level: "firstMandate", mode: "standalone", seed, removedIndices: [], actions }],
+        finalState: state,
+      });
+    }
+
+    {
+      const seed = 0x2001;
+      const baseDraft = createStandaloneLevel2Draft(seed);
+      const removedIndices = [0, 2].filter((idx) => idx < baseDraft.carryoverCards.length);
+      const removedIds = removedIndices.map((idx) => baseDraft.carryoverCards[idx]!.instanceId);
+      let state = buildLevel2StateFromDraft({ ...baseDraft, removedCarryoverIds: removedIds });
+      const actions: GameAction[] = [];
+      for (let i = 0; i < 4 && state.outcome === "playing"; i++) {
+        state = dispatchAndRecord(state, { type: "END_YEAR" }, actions);
+        if (state.phase === "retention") {
+          state = dispatchAndRecord(state, { type: "CONFIRM_RETENTION", keepIds: [] }, actions);
+        }
+      }
+      cases.push({
+        name: "standalone second mandate refit",
+        session: [{ level: "secondMandate", mode: "standalone", seed, removedIndices, actions }],
+        finalState: state,
+      });
+    }
+
+    {
+      const seed = 0x3001;
+      const baseDraft = createStandaloneLevel3Draft(seed);
+      const removedIndices = [1, 3].filter((idx) => idx < baseDraft.carryoverCards.length);
+      const removedIds = removedIndices.map((idx) => baseDraft.carryoverCards[idx]!.instanceId);
+      let state = buildLevel3StateFromDraft({ ...baseDraft, removedCarryoverIds: removedIds });
+      const actions: GameAction[] = [];
+      for (let i = 0; i < 3 && state.outcome === "playing"; i++) {
+        state = dispatchAndRecord(state, { type: "END_YEAR" }, actions);
+        if (state.phase === "retention") {
+          state = dispatchAndRecord(state, { type: "CONFIRM_RETENTION", keepIds: [] }, actions);
+        }
+      }
+      cases.push({
+        name: "standalone third mandate refit",
+        session: [{ level: "thirdMandate", mode: "standalone", seed, removedIndices, actions }],
+        finalState: state,
+      });
+    }
+
+    {
+      const seed1 = 0x4001;
+      let state1 = createInitialState(seed1, "firstMandate");
+      const actions1: GameAction[] = [];
+      for (let i = 0; i < 5 && state1.outcome === "playing"; i++) {
+        state1 = dispatchAndRecord(state1, { type: "END_YEAR" }, actions1);
+        if (state1.phase === "retention") {
+          state1 = dispatchAndRecord(state1, { type: "CONFIRM_RETENTION", keepIds: [] }, actions1);
+        }
+      }
+
+      const seed2 = 0x4002;
+      const baseDraft2 = createContinuityLevel2Draft(state1, seed2);
+      const removedIndices2 = [0].filter((idx) => idx < baseDraft2.carryoverCards.length);
+      const removedIds2 = removedIndices2.map((idx) => baseDraft2.carryoverCards[idx]!.instanceId);
+      let state2 = buildLevel2StateFromDraft({ ...baseDraft2, removedCarryoverIds: removedIds2 });
+      const actions2: GameAction[] = [];
+      for (let i = 0; i < 4 && state2.outcome === "playing"; i++) {
+        state2 = dispatchAndRecord(state2, { type: "END_YEAR" }, actions2);
+        if (state2.phase === "retention") {
+          state2 = dispatchAndRecord(state2, { type: "CONFIRM_RETENTION", keepIds: [] }, actions2);
+        }
+      }
+
+      const seed3 = 0x4003;
+      const baseDraft3 = createContinuityLevel3Draft(state2, seed3);
+      const removedIndices3 = [0].filter((idx) => idx < baseDraft3.carryoverCards.length);
+      const removedIds3 = removedIndices3.map((idx) => baseDraft3.carryoverCards[idx]!.instanceId);
+      let state3 = buildLevel3StateFromDraft({ ...baseDraft3, removedCarryoverIds: removedIds3 });
+      const actions3: GameAction[] = [];
+      state3 = dispatchAndRecord(state3, { type: "END_YEAR" }, actions3);
+      if (state3.phase === "retention") {
+        state3 = dispatchAndRecord(state3, { type: "CONFIRM_RETENTION", keepIds: [] }, actions3);
+      }
+
+      cases.push({
+        name: "first-to-third continuity",
+        session: [
+          { level: "firstMandate", mode: "standalone", seed: seed1, removedIndices: [], actions: actions1 },
+          { level: "secondMandate", mode: "continuity", seed: seed2, removedIndices: removedIndices2, actions: actions2 },
+          { level: "thirdMandate", mode: "continuity", seed: seed3, removedIndices: removedIndices3, actions: actions3 },
+        ],
+        finalState: state3,
+      });
+    }
+
+    expect(cases).toHaveLength(5);
+    for (const c of cases) {
+      const hex = encodeSession(c.session);
+      expect(hex.length, c.name).toBeGreaterThan(0);
+      expectReloadable(hex, c.finalState);
     }
   });
 

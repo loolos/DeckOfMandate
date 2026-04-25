@@ -8,7 +8,7 @@ import {
 } from "../app/levelTransitions";
 import { gameReducer, type GameAction } from "../app/gameReducer";
 import { createInitialState } from "../app/initialState";
-import { getChapter2StandaloneDraft } from "../data/levelBootstrap";
+import { getChapter2StandaloneDraft, getChapter3StandaloneDraft } from "../data/levelBootstrap";
 import { getLevelDef, getRegisteredLevelIds, isLevelId, type LevelId } from "../data/levels";
 import { EVENT_SLOT_ORDER, type SlotId } from "../levels/types/event";
 import type { GameState } from "../types/game";
@@ -377,7 +377,7 @@ function readAction(r: ByteReader, currentHand: readonly string[]): GameAction {
       const keepIds = keepIndices
         .map((idx) => currentHand[idx])
         .filter((id): id is string => typeof id === "string");
-      return { type: "CONFIRM_RETENTION", keepIds };
+      return { type: "CONFIRM_RETENTION", keepIds, __retentionMeta: { handLength, keepIndices } } as RetentionEncodedAction;
     }
     default:
       throw new Error(`runCode: unknown action tag 0x${tag.toString(16)}`);
@@ -489,6 +489,10 @@ function startStateFor(
   const chapter2Draft = getChapter2StandaloneDraft(level, seed);
   if (chapter2Draft) {
     return buildLevel2StateFromDraft(applyRemovedIndices(chapter2Draft, removedIndices));
+  }
+  const chapter3Draft = getChapter3StandaloneDraft(level, seed);
+  if (chapter3Draft) {
+    return buildLevel3StateFromDraft(applyRemovedIndicesToLevel3Draft(chapter3Draft, removedIndices));
   }
   return createInitialState(seed, level);
 }

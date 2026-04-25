@@ -1,4 +1,5 @@
 import type { LevelContent, LevelDef } from "../../../data/levelTypes";
+import { createStandaloneLevel3Draft } from "../chapter3Transition";
 import type { CardTemplateId } from "../../types/card";
 
 /** Eight chapter-3-only templates shuffled into the full library with the rest; opening deal is two cards. */
@@ -148,3 +149,5 @@ export const levelContent: LevelContent = {
   },
   opponentBoardEventTemplateId: "opponentHabsburg",
 };
+
+export const chapter3StandaloneFactory = createStandaloneLevel3Draft;
