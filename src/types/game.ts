@@ -32,6 +32,7 @@ export type LogInfoKey =
   | "eventTag.harmful"
   | "eventTag.opportunity"
   | "eventTag.historical"
+  | "eventTag.antiFrenchAlliance"
   | "eventTag.continued"
   | "eventTag.resolved";
 

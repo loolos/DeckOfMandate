@@ -106,7 +106,12 @@ export type EventTemplate = {
   crisisPersistence?: "continued";
   /** For continued events with a finite duration, unresolved instances auto-expire after this many year-end checks. */
   continuedDurationTurns?: number;
+  /** Lightweight semantic tags for event-level rules/UI (e.g. anti-French coalition pressure). */
+  tags?: readonly EventTag[];
 };
+
+export const EVENT_TAGS = ["antiFrenchAlliance"] as const;
+export type EventTag = (typeof EVENT_TAGS)[number];
 
 export type EventInstance = {
   instanceId: string;

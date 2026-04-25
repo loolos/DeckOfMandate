@@ -2,6 +2,8 @@ import { antiFrenchSentimentEventSolveCostPenalty } from "../../../../logic/anti
 import { getPlayableCardCost } from "../../../../logic/cardCost";
 import type { GameAction } from "../../../../app/gameReducer";
 import type { GameState } from "../../../../types/game";
+import { getLevelDef } from "../../../../data/levels";
+import { currentCalendarYear } from "../../../../logic/scriptedCalendar";
 import { EVENT_SLOT_ORDER, type SlotId } from "../../../types/event";
 
 export type SecondMandateChoiceOptions = {
@@ -24,6 +26,17 @@ function firstUnresolvedSlotByTemplate(state: GameState, templateId: string): Sl
     if (ev.templateId === templateId) return slot;
   }
   return null;
+}
+
+/** Gated chapter-2 win is available on the next `END_YEAR` (calendar + flags + min legitimacy). */
+function secondMandateGatedVictoryReady(state: GameState): boolean {
+  if (state.levelId !== "secondMandate") return false;
+  const vr = getLevelDef("secondMandate").victoryRule;
+  if (vr.kind !== "gated") return false;
+  if (currentCalendarYear(state) < vr.earliestCalendarYear) return false;
+  if (state.europeAlert) return false;
+  if (state.playerStatuses.some((s) => s.templateId === "huguenotContainment")) return false;
+  return state.resources.legitimacy >= vr.minLegitimacy;
 }
 
 export function pickSecondMandateChoiceActions(
@@ -85,7 +98,21 @@ export function cardPlayPrioritySecondMandate(
   const power = state.resources.power;
   const legitimacy = state.resources.legitimacy;
   const hasUrgentStabilizationNeed = unresolvedHarmful || power <= 4 || legitimacy <= 5;
-  const shouldPushTreasury = !hasUrgentStabilizationNeed && treasury < 8;
+  const vr = getLevelDef("secondMandate").victoryRule;
+  /** Slightly raise `development` / `taxRebalance` ceiling only when win is already locked and board is clean. */
+  const treasuryPushCeiling =
+    state.levelId === "secondMandate" &&
+    vr.kind === "gated" &&
+    secondMandateGatedVictoryReady(state) &&
+    !unresolvedHarmful &&
+    !unresolvedRyswickPeace &&
+    !unresolvedRisingGrain &&
+    currentCalendarYear(state) >= vr.earliestCalendarYear + 3 &&
+    legitimacy >= 8 &&
+    power >= 6
+      ? 9
+      : 8;
+  const shouldPushTreasury = !hasUrgentStabilizationNeed && treasury < treasuryPushCeiling;
   switch (tmpl) {
     case "funding":
       if (canFundingUnlockRyswick) return 0;
@@ -103,11 +130,11 @@ export function cardPlayPrioritySecondMandate(
       return state.resources.power < 6 ? 2 : state.resources.power < 8 ? 4 : 24;
     case "taxRebalance":
       if (shouldPushTreasury && treasury < 6) return 2;
-      if (shouldPushTreasury && treasury < 8) return 4;
+      if (shouldPushTreasury && treasury < treasuryPushCeiling) return 4;
       return treasury < 3 ? 5 : treasury < 5 ? 12 : 35;
     case "development":
       if (shouldPushTreasury && treasury < 6) return 1;
-      if (shouldPushTreasury && treasury < 8) return 3;
+      if (shouldPushTreasury && treasury < treasuryPushCeiling) return 3;
       return treasury < 5 ? 3 : treasury < 7 ? 6 : 24;
     case "reform":
       return state.resources.power < 5 ? 2 : state.resources.power < 7 ? 5 : 24;

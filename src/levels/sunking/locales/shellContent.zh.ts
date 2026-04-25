@@ -40,6 +40,7 @@ export const sunkingShellContentZh = {
   "ui.opponentEvent.lastPlayCardBlurb": "{history} 局内效果：{fx}",
   "ui.opponentHabsburg": "对手：哈布斯堡",
   "ui.opponentStrength": "对手费用上限",
+  "ui.eventTag.antiFrenchAlliance": "反法同盟",
   "log.crackdownPickPrompt": "[第 {turn} 年] 选择要用「干预」解决的有害事件（不能选殖民贸易机遇）。",
   "menu.continueChapter2": "进入第二关",
   "menu.continueChapter3": "进入第三关",
@@ -159,5 +160,7 @@ export const sunkingShellContentZh = {
     "[第 {turn} 年] 最后一轮「镇压胡格诺」落地：军警与监察报告称地下聚会、走私与读经网络被掐断，「遏制胡格诺-剩余势力」已撤除，所有「镇压胡格诺」牌从牌库循环中清除。",
   "log.info.huguenotContainmentCleared.history":
     "史实背景：1685 年《枫丹白露敕令》后，胡格诺派失去公开礼拜与法人社团保障，转入地下的聚会、印刷与互助仍在沿海与边境长期存在；王权依赖连串稽查、驻军与罚没以压制再结社。此处收束象征朝廷终于能把「余波」压到可宣布止息的程度——代价是多年监控成本、财政失血与欧洲舆论对法兰西宗教政策的长期反弹。",
+  "log.info.eventTag.antiFrenchAlliance":
+    "[第 {turn} 年] 标签说明「反法同盟」：该事件属于大同盟对法协同行动（封锁、贸易施压、边境袭扰或代理冲突）的一部分。机制上：当「反法情绪」状态生效时，所有带此标签且需经费解决的事件都会按阈值获得额外费用加价（里斯维克和约另有独立加价规则）。",
   "help.short": "财政决定每回合转入的经费；经费用于打牌与事件处理。权力决定抽牌次数。合法性决定回合末可保留手牌数。未处理的有害事件依次结算。"
 } as const;

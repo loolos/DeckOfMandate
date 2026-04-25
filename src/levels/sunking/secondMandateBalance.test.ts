@@ -86,6 +86,7 @@ describe("secondMandate balance data", () => {
       amount: 3,
     });
     expect(getEventTemplate("frontierGarrisons").onFundSolveEffects).toEqual([{ kind: "modEuropeAlertProgress", delta: -1 }]);
+    expect(getEventTemplate("frontierGarrisons").tags).toEqual(["antiFrenchAlliance"]);
     expect(getEventTemplate("militaryPrestige").solve).toEqual({
       kind: "funding",
       amount: 2,
@@ -139,6 +140,10 @@ describe("secondMandate balance data", () => {
       amount: 3,
     });
     expect(getEventTemplate("embargoCoalition").onFundSolveEffects).toEqual([{ kind: "modEuropeAlertProgress", delta: -1 }]);
+    expect(getEventTemplate("tradeDisruption").tags).toEqual(["antiFrenchAlliance"]);
+    expect(getEventTemplate("embargoCoalition").tags).toEqual(["antiFrenchAlliance"]);
+    expect(getEventTemplate("mercenaryRaiders").tags).toEqual(["antiFrenchAlliance"]);
+    expect(getEventTemplate("localWar").tags).toEqual(["antiFrenchAlliance"]);
     expect(getEventTemplate("provincialNoncompliance").penaltiesIfUnresolved).toEqual([
       { kind: "scheduleDrawModifiers", deltas: [-2, -1, -1] },
     ]);

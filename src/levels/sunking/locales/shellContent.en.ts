@@ -40,6 +40,7 @@ export const sunkingShellContentEn = {
   "ui.opponentEvent.lastPlayCardBlurb": "{history} In-game: {fx}",
   "ui.opponentHabsburg": "Habsburg opponent",
   "ui.opponentStrength": "Opponent budget",
+  "ui.eventTag.antiFrenchAlliance": "Anti-French Alliance",
   "log.crackdownPickPrompt": "[Turn {turn}] Choose a harmful event to resolve with Intervention (not Colonial Trade Boom).",
   "menu.continueChapter2": "Continue to Chapter 2",
   "menu.continueChapter3": "Continue to Chapter 3",
@@ -159,5 +160,7 @@ export const sunkingShellContentEn = {
     "[Turn {turn}] Final “Suppress the Huguenots” sweep: gendarmes and intendants report clandestine assemblies and contraband Bible-reading lines broken. “Contain Huguenot Remnants” is lifted and every Suppress the Huguenots card is purged from your library.",
   "log.info.huguenotContainmentCleared.history":
     "Historical note: after the 1685 Edict of Fontainebleau, Protestant public worship was outlawed and many elites fled abroad, yet underground worship, printing, and mutual aid kept resurfacing in ports and borderlands for years. The crown’s long policing campaign targeted not only doctrine but smuggling routes and ties to exile networks; closing that ledger meant France could finally present the crisis of organized Protestantism as contained—at heavy fiscal, social, and reputational cost across Europe.",
+  "log.info.eventTag.antiFrenchAlliance":
+    "[Turn {turn}] Tag note “Anti-French Alliance”: this event belongs to coordinated Grand Alliance pressure on France (blockade, trade pressure, frontier raiding, or proxy conflict). Mechanically: while Anti-French Sentiment is active, all funding-solve events with this tag receive the threshold-based surcharge (Peace of Ryswick keeps its separate surcharge rule).",
   "help.short": "Treasury sets turnly income to Funding. Funding pays for cards and event solves. Power sets draw attempts. Legitimacy sets retention limit. Unresolved harmful events are settled in sequence."
 } as const;

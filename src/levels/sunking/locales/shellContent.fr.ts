@@ -40,6 +40,7 @@ export const sunkingShellContentFr = {
   "ui.opponentEvent.lastPlayCardBlurb": "{history} En jeu : {fx}",
   "ui.opponentHabsburg": "Adversaire : Habsbourg",
   "ui.opponentStrength": "Budget adversaire",
+  "ui.eventTag.antiFrenchAlliance": "Alliance anti-française",
   "log.crackdownPickPrompt": "[Tour {turn}] Choisissez un événement néfaste à résoudre via Intervention (pas Boom du commerce colonial).",
   "menu.continueChapter2": "Continuer au Chapitre 2",
   "menu.continueChapter3": "Continuer au Chapitre 3",
@@ -159,5 +160,7 @@ export const sunkingShellContentFr = {
     "[Tour {turn}] Dernière vague de « Réprimer les huguenots » : gendarmes et intendances signalent des assemblées clandestines et des filières de contrebande religieuse brisées. Le statut « Contenir les restes huguenots » est levé et toutes les cartes « Réprimer les huguenots » sont retirées de votre bibliothèque.",
   "log.info.huguenotContainmentCleared.history":
     "Contexte : après l'édit de Fontainebleau (1685), le culte protestant public fut interdit et une partie des élites partit à l'étranger, mais culte clandestin, imprimerie et entraide se reconstituèrent pendant des années dans les ports et sur les frontières. La police d'État visa autant la religion que les routes de contrebande et les solidarités avec l'exil ; clore ce dossier revenait à présenter la menace huguenote organisée comme enfin contenue — au prix d'un coût fiscal, social et diplomatique durable pour la France.",
+  "log.info.eventTag.antiFrenchAlliance":
+    "[Tour {turn}] Note de tag « Alliance anti-française » : cet événement relève d'une pression coordonnée de la Grande Alliance contre la France (blocus, pression commerciale, raids de frontière ou conflit proxy). Côté mécanique : tant que le Sentiment anti-français est actif, tous les événements de résolution par financement portant ce tag reçoivent la majoration par paliers (la Paix de Ryswick conserve sa règle de surcoût séparée).",
   "help.short": "Le Trésor fixe le revenu en Financement par tour. Le Financement paie les cartes et résolutions d'événements. Le Pouvoir fixe les tentatives de pioche. La Légitimité fixe la limite de conservation. Les événements néfastes non résolus sont réglés en séquence."
 } as const;

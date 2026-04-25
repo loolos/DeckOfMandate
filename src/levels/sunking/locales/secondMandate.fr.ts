@@ -42,7 +42,7 @@ export const messagesFrSecondMandate: Record<keyof typeof messagesEnSecondMandat
   "status.antiFrenchSentiment.detail":
     "Sentiment {x} : nombre actuel de cartes Endiguement anti-français dans toute votre bibliothèque. Tant que ce statut est actif, la Paix de Ryswick coûte aussi +{n} Financement.",
   "status.antiFrenchSentiment.history":
-    "Après les années 1670, l'expansion militaire et fiscale de la France convainc les cours rivales que les trêves ponctuelles ne suffisent plus. Un consensus anti-français plus large se forme : coordination diplomatique, pression commerciale et préparation militaire se combinent pour contenir l'influence bourbonienne. Côté mécanique : quand le total Pouvoir+Trésor devient trop élevé, les solutions payées liées à l'Alerte Europe coûtent davantage, et ce statut ajoute aussi une pression récurrente via le deck jusqu'au retour à un niveau de puissance plus bas.",
+    "Après les années 1670, l'expansion militaire et fiscale de la France convainc les cours rivales que les trêves ponctuelles ne suffisent plus. Un consensus anti-français plus large se forme : coordination diplomatique, pression commerciale et préparation militaire se combinent pour contenir l'influence bourbonienne. Côté mécanique : quand le total Pouvoir+Trésor devient trop élevé, tous les événements résolus par financement portant le tag Alliance anti-française coûtent davantage, et ce statut ajoute aussi une pression récurrente via le deck jusqu'au retour à un niveau de puissance plus bas.",
   "event.nymwegenSettlement.name": "Traités de Nimègue",
   "event.nymwegenSettlement.desc":
     "Les traités de Nimègue (1678–1679) mettent fin à la phase principale de la guerre de Hollande. La France y consolide des gains sur ses frontières, mais la méfiance stratégique ne disparaît pas : les cours voisines continuent d'interpréter l'expansion bourbonienne comme une menace durable, et la diplomatie d'après-guerre se transforme progressivement en logique d'endiguement de l'équilibre européen. Côté mécanique, c'est une crise obligatoire de longue durée : payez (progression d'Alerte Europe + 3) Financement pour sécuriser l'accord (Pouvoir -2, Trésor -1, Légitimité -1). Cela ne met pas fin à Alerte Europe ; si ignoré, perdez 1 Pouvoir chaque année.",
@@ -63,7 +63,7 @@ export const messagesFrSecondMandate: Record<keyof typeof messagesEnSecondMandat
     "Pensions, offices et grands travaux du palais grignotaient une part croissante des recettes ordinaires. Les dépenses de cour montent encore. Payez 3 Financement ou utilisez Intervention ; si non résolu, perdez 2 Trésor.",
   "event.nobleResentment.name": "Ressentiment nobiliaire",
   "event.nobleResentment.desc":
-    "Les grandes familles regrettaient leurs clientèles militaires et les audits fiscaux qui rappelaient les levées de Mazarin. La résistance des élites grandit à la cour et en province. Payez 2 Financement ou Intervention ; sinon, perdez 1 Pouvoir.",
+    "Les grandes familles regrettaient leurs clientèles militaires et les audits fiscaux qui rappelaient les levées de Mazarin. La résistance des élites grandit à la cour et en province. Payez 2 Financement ou Intervention ; sinon, perdez 1 Pouvoir et subissez Perte d'autorité pendant 2 tours.",
   "event.provincialNoncompliance.name": "Non-conformité provinciale",
   "event.provincialNoncompliance.desc":
     "Parlements et états provinciaux testaient encore les intendants contre chartes et immunités. Les officiels locaux ralentissent l'application. Payez 2 Financement ou subissez pioche -2 l'an prochain, puis pioche -1 chacune des deux années suivantes.",
@@ -81,7 +81,7 @@ export const messagesFrSecondMandate: Record<keyof typeof messagesEnSecondMandat
     "Guerre de convois et corsaires anglo-hollandais pinçaient les recettes atlantiques. Les risques sur routes maritimes et convois réduisent la marge de gouvernance. Payez 1 Financement ou subissez un modificateur de pioche -2 l'an prochain.",
   "event.embargoCoalition.name": "Coalition d'embargo",
   "event.embargoCoalition.desc":
-    "Les marines de la Grande Alliance resserrèrent les cordons maritimes quand la guerre de coalition devint la norme. Les restrictions maritimes se resserrent autour du commerce français. Payez 2 Financement ou utilisez Intervention royale / Intervention diplomatique ; toute résolution réussie réduit la progression d'Alerte Europe de 1 tant que l'alerte est active. Sinon, perdez 1 Trésor et subissez une pénalité de pioche l'an prochain.",
+    "Les marines de la Grande Alliance resserrèrent les cordons maritimes quand la guerre de coalition devint la norme. Les restrictions maritimes se resserrent autour du commerce français. Payez plancher(Tresor/8)+1 Financement ou utilisez Intervention royale / Intervention diplomatique ; toute résolution réussie réduit la progression d'Alerte Europe de 1 tant que l'alerte est active. Sinon, perdez 1 Trésor et subissez une pénalité de pioche l'an prochain.",
   "event.mercenaryRaiders.name": "Raiders mercenaires",
   "event.mercenaryRaiders.desc":
     "Entre deux campagnes, compagnies libres et raids payés hantaient encore les marches. Des pillards frontaliers à gages perturbent l'ordre local et l'autorité de la couronne. Payez 2 Financement, ou perdez 1 Pouvoir et 1 Légitimité.",

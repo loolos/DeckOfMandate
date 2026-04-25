@@ -26,6 +26,10 @@ export function isEuropeAlertSupplementalEvent(id: EventTemplateId): boolean {
   return EUROPE_ALERT_SUPPLEMENTAL_EVENT_IDS.includes(id);
 }
 
+export function isAntiFrenchAllianceEvent(id: EventTemplateId): boolean {
+  return getEventTemplate(id).tags?.includes("antiFrenchAlliance") ?? false;
+}
+
 /** Chapter-3 random pool: only roll once succession track has moved off 0. */
 const CH3_SUCCESSION_GATED_ROLL_EVENT_IDS: readonly EventTemplateId[] = [
   "bavarianCourtRealignment",
@@ -69,7 +73,7 @@ export function getEventSolveFundingAmount(state: GameState, id: EventTemplateId
     return Math.max(0, Math.ceil(state.resources.treasuryStat / 4));
   }
   if (tmpl.solve.kind !== "funding" && tmpl.solve.kind !== "fundingOrCrackdown") return null;
-  const antiFrenchPenalty = isEuropeAlertSupplementalEvent(id) ? antiFrenchSentimentEventSolveCostPenalty(state) : 0;
+  const antiFrenchPenalty = isAntiFrenchAllianceEvent(id) ? antiFrenchSentimentEventSolveCostPenalty(state) : 0;
   if (id === "nymwegenSettlement") {
     return nymwegenSettlementFundingCost(state.europeAlertProgress) + antiFrenchPenalty;
   }
@@ -85,6 +89,9 @@ export function getEventSolveFundingAmount(state: GameState, id: EventTemplateId
   }
   if (id === "commercialExpansion") {
     return Math.floor(state.resources.treasuryStat / 5) + 1;
+  }
+  if (id === "embargoCoalition") {
+    return Math.floor(state.resources.treasuryStat / 8) + 1;
   }
   if (id === "sunKingPilgrimage") {
     return Math.floor((state.resources.power + state.resources.legitimacy) / 6) + 1;

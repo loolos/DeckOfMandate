@@ -733,6 +733,60 @@ describe("gameReducer", () => {
     expect(infoLog).toBeTruthy();
   });
 
+  it("diplomatic intervention reduces europe alert progress by 1 when clearing frontier garrisons", () => {
+    const base = createInitialState(123_011, "secondMandate");
+    const diplomaticIntervention = "tmp_di_frontier";
+    const withCardInHand: typeof base = {
+      ...base,
+      cardsById: {
+        ...base.cardsById,
+        [diplomaticIntervention]: {
+          instanceId: diplomaticIntervention,
+          templateId: "diplomaticIntervention",
+        },
+      },
+      hand: [diplomaticIntervention],
+      resources: { ...base.resources, funding: 0 },
+      europeAlert: true,
+      europeAlertProgress: 6,
+      slots: {
+        ...base.slots,
+        A: { instanceId: "e_frontier", templateId: "frontierGarrisons" as const, resolved: false },
+      },
+    };
+    const afterPlay = gameReducer(withCardInHand, { type: "PLAY_CARD", handIndex: 0 });
+    const afterTarget = gameReducer(afterPlay, { type: "CRACKDOWN_TARGET", slot: "A" });
+    expect(afterTarget.europeAlertProgress).toBe(5);
+    expect(afterTarget.slots.A?.resolved).toBe(true);
+  });
+
+  it("diplomatic intervention reduces europe alert progress by 1 when clearing embargo coalition", () => {
+    const base = createInitialState(123_012, "secondMandate");
+    const diplomaticIntervention = "tmp_di_embargo";
+    const withCardInHand: typeof base = {
+      ...base,
+      cardsById: {
+        ...base.cardsById,
+        [diplomaticIntervention]: {
+          instanceId: diplomaticIntervention,
+          templateId: "diplomaticIntervention",
+        },
+      },
+      hand: [diplomaticIntervention],
+      resources: { ...base.resources, funding: 0 },
+      europeAlert: true,
+      europeAlertProgress: 4,
+      slots: {
+        ...base.slots,
+        A: { instanceId: "e_embargo", templateId: "embargoCoalition" as const, resolved: false },
+      },
+    };
+    const afterPlay = gameReducer(withCardInHand, { type: "PLAY_CARD", handIndex: 0 });
+    const afterTarget = gameReducer(afterPlay, { type: "CRACKDOWN_TARGET", slot: "A" });
+    expect(afterTarget.europeAlertProgress).toBe(3);
+    expect(afterTarget.slots.A?.resolved).toBe(true);
+  });
+
   it("playing diplomatic congress adds intervention and +1 next-turn draw", () => {
     const base = createInitialState(202_701, "secondMandate");
     const congressId = "tmp_congress";

@@ -39,7 +39,7 @@ export const messagesEnSecondMandate = {
   "status.antiFrenchSentiment.detail":
     "Sentiment {x}: the current number of Anti-French Containment cards in your full library. While this status is active, Peace of Ryswick gains an extra +{n} Funding cost.",
   "status.antiFrenchSentiment.history":
-    "After the 1670s, France's military and fiscal expansion convinced rival courts that temporary truces were no longer enough. A broader anti-French consensus emerged, with states increasingly coordinating diplomacy, trade pressure, and military readiness to contain Bourbon influence. Mechanically: once Power+Treasury is high enough, Europe-Alert-linked funding solutions become more expensive, and this status also adds recurring containment pressure through deck disruption until that combined strength falls back down.",
+    "After the 1670s, France's military and fiscal expansion convinced rival courts that temporary truces were no longer enough. A broader anti-French consensus emerged, with states increasingly coordinating diplomacy, trade pressure, and military readiness to contain Bourbon influence. Mechanically: once Power+Treasury is high enough, all funding-solve events carrying the Anti-French Alliance tag become more expensive, and this status also adds recurring containment pressure through deck disruption until that combined strength falls back down.",
   "event.nymwegenSettlement.name": "Treaties of Nijmegen",
   "event.nymwegenSettlement.desc":
     "The Treaties of Nijmegen (1678–1679) closed the main phase of the Franco-Dutch War. France confirmed gains in key frontier zones, but the settlement did not restore strategic trust: rival courts kept reading Bourbon expansion as an ongoing threat, and postwar diplomacy continued to harden into balance-of-power containment. Mechanically, this is a mandatory long-running crisis: pay (Europe Alert progress + 3) Funding to secure the settlement (Power -2, Treasury -1, Legitimacy -1). This does not remove Europe Alert; if ignored, lose 1 Power each year.",
@@ -60,7 +60,7 @@ export const messagesEnSecondMandate = {
     "Pensions, offices, and palace works absorbed an ever-larger share of ordinary revenue as the reign lengthened. Court spending rises again. Pay 3 Funding or use Intervention; if unresolved, lose 2 Treasury.",
   "event.nobleResentment.name": "Noble Resentment",
   "event.nobleResentment.desc":
-    "Great families resented lost military clienteles and new fiscal audits that recalled Mazarin's levies. Elite resistance grows at court and in the provinces. Pay 2 Funding or Intervention, or lose 1 Power.",
+    "Great families resented lost military clienteles and new fiscal audits that recalled Mazarin's levies. Elite resistance grows at court and in the provinces. Pay 2 Funding or Intervention, or lose 1 Power and gain Loss of Authority for 2 turns.",
   "event.provincialNoncompliance.name": "Provincial Noncompliance",
   "event.provincialNoncompliance.desc":
     "Parlements and provincial estates still tested intendants against charters and tax immunities. Local officials stall implementation. Pay 2 Funding or suffer draw -2 next year, then draw -1 in each of the next two years.",
@@ -78,7 +78,7 @@ export const messagesEnSecondMandate = {
     "Anglo-Dutch convoy war and privateering squeezed receipts from Atlantic routes. Sea lanes and convoy risk cut into policy bandwidth. Pay 1 Funding or take a -2 draw modifier next year.",
   "event.embargoCoalition.name": "Embargo Coalition",
   "event.embargoCoalition.desc":
-    "Grand Alliance navies tightened maritime cordons as coalition war became routine. Maritime restrictions tighten around French commerce. Pay 2 Funding or use Royal Intervention / Diplomatic Intervention; any successful resolve lowers Europe Alert progress by 1 while alert is active. If ignored, lose 1 Treasury and suffer a draw penalty next year.",
+    "Grand Alliance navies tightened maritime cordons as coalition war became routine. Maritime restrictions tighten around French commerce. Pay floor(Treasury/8)+1 Funding or use Royal Intervention / Diplomatic Intervention; any successful resolve lowers Europe Alert progress by 1 while alert is active. If ignored, lose 1 Treasury and suffer a draw penalty next year.",
   "event.mercenaryRaiders.name": "Mercenary Raiders",
   "event.mercenaryRaiders.desc":
     "Between campaigns, free companies and paid raiders still haunted frontier marches. Paid border raiders disrupt local order and crown authority. Pay 2 Funding, or lose 1 Power and 1 Legitimacy.",

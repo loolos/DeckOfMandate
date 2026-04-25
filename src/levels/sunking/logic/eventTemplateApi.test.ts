@@ -122,6 +122,25 @@ describe("getEventRollWeight", () => {
     ).toBe(3);
   });
 
+  it("scales embargo coalition solve funding to floor(treasury/8) + 1", () => {
+    const base = createInitialState(3_343, "secondMandate");
+    expect(getEventSolveFundingAmount({ ...base, resources: { ...base.resources, treasuryStat: 0 } }, "embargoCoalition")).toBe(
+      1,
+    );
+    expect(getEventSolveFundingAmount({ ...base, resources: { ...base.resources, treasuryStat: 7 } }, "embargoCoalition")).toBe(
+      1,
+    );
+    expect(getEventSolveFundingAmount({ ...base, resources: { ...base.resources, treasuryStat: 8 } }, "embargoCoalition")).toBe(
+      2,
+    );
+    expect(
+      getEventSolveFundingAmount(
+        { ...base, resources: { ...base.resources, treasuryStat: 17 } },
+        "embargoCoalition",
+      ),
+    ).toBe(3);
+  });
+
   it("adds anti-french sentiment solve-cost penalty to europe-alert supplemental pool events only", () => {
     const st = createInitialState(12_347, "secondMandate");
     const atTwenty = { ...st, resources: { ...st.resources, treasuryStat: 10, power: 10 } };
@@ -133,6 +152,7 @@ describe("getEventRollWeight", () => {
     expect(getEventSolveFundingAmount(overImmediatePlusOne, "frontierGarrisons")).toBe(4);
     expect(getEventSolveFundingAmount(overStillPlusOne, "frontierGarrisons")).toBe(4);
     expect(getEventSolveFundingAmount(overPlusTwo, "frontierGarrisons")).toBe(5);
+    expect(getEventSolveFundingAmount(overPlusTwo, "tradeDisruption")).toBe(3);
 
     expect(getEventSolveFundingAmount(overPlusTwo, "budgetStrain")).toBe(2);
   });

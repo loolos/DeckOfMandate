@@ -186,11 +186,13 @@ export function EventPanel({
             | "eventTag.harmful"
             | "eventTag.opportunity"
             | "eventTag.historical"
+            | "eventTag.antiFrenchAlliance"
             | "eventTag.continued"
             | "eventTag.resolved",
         ) =>
           dispatch({ type: "APPEND_LOG_INFO", infoKey });
         const historical = isHistoricalEventTemplateId(tmpl.id);
+        const antiFrenchAlliance = tmpl.tags?.includes("antiFrenchAlliance") ?? false;
 
         return (
           <div
@@ -264,6 +266,18 @@ export function EventPanel({
                           ? t("ui.remainingTurns" as MessageKey, { n: ev.remainingTurns })
                           : t("ui.continuedTurns" as MessageKey, { n: ev.remainingTurns })
                         : t("ui.continued" as MessageKey)}
+                    </button>
+                  ) : null}
+                  {antiFrenchAlliance ? (
+                    <button
+                      type="button"
+                      className={`${styles.badge} ${styles.badgeHarm} ${styles.tagButton}`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        logEventTag("eventTag.antiFrenchAlliance");
+                      }}
+                    >
+                      {t("ui.eventTag.antiFrenchAlliance" as MessageKey)}
                     </button>
                   ) : null}
                   {ev.resolved ? (

@@ -159,7 +159,10 @@ export const eventTemplates: Record<EventTemplateId, EventTemplate> = {
     titleKey: "event.nobleResentment.name",
     descriptionKey: "event.nobleResentment.desc",
     solve: { kind: "fundingOrCrackdown", amount: 2 },
-    penaltiesIfUnresolved: [{ kind: "modResource", resource: "power", delta: -1 }],
+    penaltiesIfUnresolved: [
+      { kind: "modResource", resource: "power", delta: -1 },
+      { kind: "addPlayerStatus", templateId: "powerLeak", turns: 2 },
+    ],
   },
   provincialNoncompliance: {
     id: "provincialNoncompliance",
@@ -198,6 +201,7 @@ export const eventTemplates: Record<EventTemplateId, EventTemplate> = {
     titleKey: "event.frontierGarrisons.name",
     descriptionKey: "event.frontierGarrisons.desc",
     solve: { kind: "funding", amount: 3 },
+    tags: ["antiFrenchAlliance"],
     onFundSolveEffects: [{ kind: "modEuropeAlertProgress", delta: -1 }],
     penaltiesIfUnresolved: [
       { kind: "modResource", resource: "treasuryStat", delta: -1 },
@@ -211,6 +215,7 @@ export const eventTemplates: Record<EventTemplateId, EventTemplate> = {
     titleKey: "event.tradeDisruption.name",
     descriptionKey: "event.tradeDisruption.desc",
     solve: { kind: "funding", amount: 1 },
+    tags: ["antiFrenchAlliance"],
     penaltiesIfUnresolved: [{ kind: "scheduleNextTurnDrawModifier", delta: -2 }],
   },
   embargoCoalition: {
@@ -220,6 +225,7 @@ export const eventTemplates: Record<EventTemplateId, EventTemplate> = {
     titleKey: "event.embargoCoalition.name",
     descriptionKey: "event.embargoCoalition.desc",
     solve: { kind: "funding", amount: 2 },
+    tags: ["antiFrenchAlliance"],
     onFundSolveEffects: [{ kind: "modEuropeAlertProgress", delta: -1 }],
     penaltiesIfUnresolved: [
       { kind: "modResource", resource: "treasuryStat", delta: -1 },
@@ -233,6 +239,7 @@ export const eventTemplates: Record<EventTemplateId, EventTemplate> = {
     titleKey: "event.mercenaryRaiders.name",
     descriptionKey: "event.mercenaryRaiders.desc",
     solve: { kind: "funding", amount: 2 },
+    tags: ["antiFrenchAlliance"],
     penaltiesIfUnresolved: [
       { kind: "modResource", resource: "power", delta: -1 },
       { kind: "modResource", resource: "legitimacy", delta: -1 },
@@ -474,6 +481,7 @@ export const eventTemplates: Record<EventTemplateId, EventTemplate> = {
     titleKey: "event.localWar.name",
     descriptionKey: "event.localWar.desc",
     solve: { kind: "localWarChoice" },
+    tags: ["antiFrenchAlliance"],
     penaltiesIfUnresolved: [],
   },
 };
