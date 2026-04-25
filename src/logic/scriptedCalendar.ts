@@ -67,6 +67,27 @@ function placeScriptedEvent(state: GameState, templateId: EventTemplateId, slot:
   };
 }
 
+const PROTECTED_TEMPLATE_IDS_BY_SCRIPTED_INJECTION: Partial<Record<EventTemplateId, readonly EventTemplateId[]>> = {
+  ryswickPeace: ["nineYearsWar"],
+};
+
+function pickScriptedInjectionSlot(state: GameState, cfg: ScriptedCalendarEventConfig): SlotId {
+  for (const sl of EVENT_SLOT_ORDER) {
+    if (!state.slots[sl]) return sl;
+  }
+  const fallback = cfg.overflowSlot ?? "C";
+  const protectedTemplateIds = PROTECTED_TEMPLATE_IDS_BY_SCRIPTED_INJECTION[cfg.templateId] ?? [];
+  if (protectedTemplateIds.length === 0) return fallback;
+  const fallbackOccupant = state.slots[fallback];
+  if (!fallbackOccupant || !protectedTemplateIds.includes(fallbackOccupant.templateId)) return fallback;
+
+  for (const sl of EVENT_SLOT_ORDER) {
+    const occupant = state.slots[sl];
+    if (!occupant || !protectedTemplateIds.includes(occupant.templateId)) return sl;
+  }
+  return fallback;
+}
+
 /**
  * Expire unresolved scripted rows past their window; inject on the calendar start year if missing.
  * Runs after resolved slots are cleared, before random fill.
@@ -95,17 +116,7 @@ export function applyScriptedCalendarPhase(state: GameState): GameState {
       return e?.templateId === cfg.templateId;
     });
     if (exists) continue;
-
-    let target: SlotId | null = null;
-    for (const sl of EVENT_SLOT_ORDER) {
-      if (!s.slots[sl]) {
-        target = sl;
-        break;
-      }
-    }
-    if (!target) {
-      target = cfg.overflowSlot ?? "C";
-    }
+    const target = pickScriptedInjectionSlot(s, cfg);
     s = placeScriptedEvent(s, cfg.templateId, target);
     s = onScriptedCalendarPlacement(s, cfg, target);
   }
