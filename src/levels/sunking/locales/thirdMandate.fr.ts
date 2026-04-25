@@ -78,36 +78,36 @@ export const messagesFrThirdMandate = {
   "card.habsburgImperialLegitimacyNote.name": "Note de légitimité impériale",
   "card.habsburgImperialLegitimacyNote.background": "Pression juridique",
   "card.habsburgImperialLegitimacyNote.desc":
-    "Coût adverse 1. Piste de succession −1.",
+    "Coût adverse 1. Immédiat : piste de succession −1, puis les Habsbourg piochent immédiatement 1 carte depuis leur deck.",
   "card.habsburgImperialLegitimacyNote.opponentHistory":
-    "Les juristes impériaux contestent la légitimité bourbonienne par notes et mémoires. En jeu : piste −1.",
+    "Les juristes impériaux contestent la légitimité bourbonienne par notes et mémoires, et prolongent la pression légale. En jeu : piste −1, et les Habsbourg piochent immédiatement 1 carte.",
   "card.habsburgLowCountriesAgitation.name": "Agitation dans les Pays-Bas",
   "card.habsburgLowCountriesAgitation.background": "Front du Nord-Ouest",
-  "card.habsburgLowCountriesAgitation.desc": "Coût adverse 2. Piste −1, Pouvoir −1, Légitimité −1.",
+  "card.habsburgLowCountriesAgitation.desc": "Coût adverse 2. Immédiat : piste −1, Pouvoir −1, Légitimité −1.",
   "card.habsburgLowCountriesAgitation.opponentHistory":
     "L’agitation aux Pays-Bas espagnols devient un levier de coalition contre la France. En jeu : piste −1, Pouvoir −1, Légitimité −1.",
   "card.habsburgGrandAllianceLevy.name": "Contribution de la Grande Alliance",
   "card.habsburgGrandAllianceLevy.background": "Caisse de coalition",
   "card.habsburgGrandAllianceLevy.desc":
-    "Coût adverse 2. Piste de succession −2 ; ajoute 1 Fardeau fiscal à votre pioche à une position aléatoire.",
+    "Coût adverse 2. Immédiat : piste de succession −2 ; ajoute 1 Fardeau fiscal à votre pioche à une position aléatoire.",
   "card.habsburgGrandAllianceLevy.opponentHistory":
     "Subsides de coalition, emprunts hollandais et impôts impériaux entretiennent la pression. En jeu : piste de succession −2 et +1 Fardeau fiscal dans votre deck.",
   "card.habsburgImperialCustomsDelay.name": "Retards douaniers impériaux",
   "card.habsburgImperialCustomsDelay.background": "Friction portuaire",
   "card.habsburgImperialCustomsDelay.desc":
-    "Coût adverse 2. Trésor −1 ; ajoute 1 Fardeau fiscal à votre pioche à une position aléatoire ; l’année suivante, tentatives de pioche −1 (minimum 1).",
+    "Coût adverse 2. Immédiat : Trésor −1 et +1 Fardeau fiscal à votre pioche (position aléatoire) ; différé : l’année suivante, tentatives de pioche −1 (minimum 1).",
   "card.habsburgImperialCustomsDelay.opponentHistory":
     "Les retards douaniers étranglent la trésorerie sans bataille décisive. En jeu : Trésor −1, +1 Fardeau fiscal, et tentatives de pioche −1 l’année suivante (min 1).",
   "card.habsburgAngloDutchMaritimeInterdiction.name": "Retenue anglo-hollandaise",
   "card.habsburgAngloDutchMaritimeInterdiction.background": "Saisies en mer et lettres retardées",
   "card.habsburgAngloDutchMaritimeInterdiction.desc":
-    "Coût adverse 1. L’année suivante, le Financement issu du Trésor au début d’année est réduit de 2 (pas en dessous de 0 au total) et les tentatives de pioche −1 (minimum 1).",
+    "Coût adverse 1. Immédiat : Pouvoir −1 ; différé : l’année suivante, le Financement issu du Trésor au début d’année est réduit de 1 (pas en dessous de 0 au total) et les tentatives de pioche −1 (minimum 1).",
   "card.habsburgAngloDutchMaritimeInterdiction.opponentHistory":
-    "Lettres de marque, convois plus serrés et saisies sur la Manche et la mer du Nord retardent lettres de change et caisses : Versailles voit sa liquidité opérationnelle amincie. En jeu : Financement depuis le Trésor l’année suivante −2 (min 0 au total) et tentatives de pioche −1 (min 1).",
+    "Lettres de marque, convois plus serrés et saisies sur la Manche et la mer du Nord retardent lettres de change et caisses : Versailles voit sa liquidité opérationnelle amincie. En jeu : Pouvoir −1, Financement depuis le Trésor l’année suivante −1 (min 0 au total) et tentatives de pioche −1 (min 1).",
   "card.habsburgRhineMagazineEmbargo.name": "Embargo des magasins",
   "card.habsburgRhineMagazineEmbargo.background": "Étranglement logistique",
   "card.habsburgRhineMagazineEmbargo.desc":
-    "Coût adverse 1. L’année suivante, le Financement issu du Trésor au début d’année est réduit de 1 (pas en dessous de 0 au total), et la piste de succession −1.",
+    "Coût adverse 1. Immédiat : piste de succession −1 ; différé : l’année suivante, le Financement issu du Trésor au début d’année est réduit de 1 (pas en dessous de 0 au total).",
   "card.habsburgRhineMagazineEmbargo.opponentHistory":
     "Cercles impériaux et princes riverains ralentissent poudre, fourrage et affrètements de bacs : interdits « provisoires », péages et saisies grippe l’arrière-front rhénan. En jeu : Financement depuis le Trésor l’année suivante −1 (min 0 au total), et piste de succession −1.",
 } as const;

@@ -162,6 +162,33 @@ describe("opponentHabsburg AI", () => {
     expect(next.opponentDiscard).toEqual([noteId]);
   });
 
+  it("Imperial legitimacy note makes Habsburg draw 1 card immediately", () => {
+    const base = createInitialState(102_001, THIRD_MANDATE_LEVEL_ID);
+    const noteId = "opp_note_draw_test";
+    const drawId = "opp_drawn_after_note";
+    const st: GameState = {
+      ...base,
+      opponentHabsburgUnlocked: true,
+      opponentHand: [noteId],
+      opponentDeck: [drawId],
+      opponentDiscard: [],
+      opponentStrength: 2,
+      opponentCostDiscountThisTurn: 0,
+      opponentNextTurnDrawModifier: 0,
+      opponentLastPlayedTemplateIds: [],
+      cardsById: {
+        ...base.cardsById,
+        [noteId]: { instanceId: noteId, templateId: "habsburgImperialLegitimacyNote" },
+        [drawId]: { instanceId: drawId, templateId: "habsburgGrandAllianceLevy" },
+      },
+    };
+    const next = opponentEndYearPlayPhase(st);
+    expect(next.opponentHand).toEqual([drawId]);
+    expect(next.opponentDeck).toEqual([]);
+    expect(next.opponentDiscard).toEqual([noteId]);
+    expect(next.actionLog.some((e) => e.kind === "opponentHabsburgDraw" && e.drawnCardIds.length === 1)).toBe(true);
+  });
+
   it("Imperial legitimacy note does not force random discard when budget forces only the note", () => {
     const base = createInitialState(106, THIRD_MANDATE_LEVEL_ID);
     const noteId = "opp_note_disc";
@@ -251,7 +278,7 @@ describe("opponentHabsburg AI", () => {
     expect(next.opponentHabsburgUnlocked).toBe(true);
   });
 
-  it("Anglo-Dutch deferrals card schedules −2 next-year funding income and −1 draw", () => {
+  it("Anglo-Dutch deferrals card lowers power and schedules −1 next-year funding income and −1 draw", () => {
     const base = createInitialState(107, THIRD_MANDATE_LEVEL_ID);
     const cardId = "opp_maritime_test";
     const st: GameState = {
@@ -271,7 +298,8 @@ describe("opponentHabsburg AI", () => {
       },
     };
     const next = opponentEndYearPlayPhase(st);
-    expect(next.nextTurnFundingIncomeModifier).toBe(-2);
+    expect(next.resources.power).toBe(base.resources.power - 1);
+    expect(next.nextTurnFundingIncomeModifier).toBe(-1);
     expect(next.nextTurnDrawModifier).toBe(-1);
     expect(next.opponentDiscard).toEqual([cardId]);
   });

@@ -34,6 +34,7 @@ import { cardLabelWithIcon, resourceLabelWithIcon } from "../logic/icons";
 import { normalizeGameState } from "../logic/normalizeGameState";
 import { currentCalendarYear } from "../logic/scriptedCalendar";
 import { antiFrenchSentimentEmotionValue } from "../logic/antiFrenchSentiment";
+import { slotIsHandledOrNoFurtherAction } from "../logic/uiHelpers";
 import { loadGame, saveGame } from "../logic/saveLoad";
 import { readTutorialOnLevelEntry, writeTutorialOnLevelEntry } from "../logic/tutorialPref";
 import { buildCardQuickFrameRows } from "../logic/quickOutcomeFrame";
@@ -1343,6 +1344,11 @@ export function Game() {
   const hasEventsPanel =
     EVENT_SLOT_ORDER.some((id) => state.slots[id] != null) ||
     state.pendingInteraction?.type === "crackdownPick";
+  const visibleEventCount = EVENT_SLOT_ORDER.filter((id) => state.slots[id] != null).length;
+  const unresolvedEventCount = EVENT_SLOT_ORDER.filter((id) => {
+    if (state.slots[id] == null) return false;
+    return !slotIsHandledOrNoFurtherAction(state, id);
+  }).length;
   const gridTemplateColumns =
     wideGameGrid && hasEventsPanel ? `${gridSplit * 2}fr 10px ${(1 - gridSplit) * 2}fr` : "1fr";
 
@@ -1435,7 +1441,7 @@ export function Game() {
 
         {hasEventsPanel ? (
           <section className={`${styles.panel} ${styles.eventsPanel}`} id="tutorial-events">
-            <h2>{t("ui.events")}</h2>
+            <h2>{t("ui.eventsWithCounts", { total: visibleEventCount, unresolved: unresolvedEventCount })}</h2>
             <div className={styles.eventsResizable} title={t("ui.eventsResizeHint")}>
               <EventPanel state={state} dispatch={dispatchSafe} scrollContainerRef={eventsScrollRef} />
             </div>
@@ -1444,7 +1450,7 @@ export function Game() {
       </div>
 
       <section className={`${styles.panel} ${styles.handPanel}`} id="tutorial-hand">
-        <h2>{t("ui.hand")}</h2>
+        <h2>{t("ui.handWithCount", { n: state.hand.length })}</h2>
         <Hand state={state} dispatch={dispatchSafe} scrollContainerRef={handScrollRef} />
       </section>
 

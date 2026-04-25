@@ -96,6 +96,12 @@ export function EventPanel({
                   <div className={styles.opponentHabsburgSections}>
                     <div>
                       <h3 className={styles.statusSectionTitle}>{t("ui.opponentEvent.currentHand")}</h3>
+                      <p className={styles.statusDetail}>
+                        {t("ui.opponentEvent.piles", {
+                          deck: state.opponentDeck.length,
+                          discard: state.opponentDiscard.length,
+                        })}
+                      </p>
                       {state.opponentHand.length === 0 ? (
                         <p className={styles.statusDetail}>{t("ui.opponentEvent.handEmpty")}</p>
                       ) : (
@@ -134,18 +140,20 @@ export function EventPanel({
                           <p className={styles.statusDetail}>
                             {t("ui.opponentEvent.lastPlayCombinedFx", { fx: lastAppliedFx })}
                           </p>
-                          {lastIds.map((tid) => {
+                          {lastIds.map((tid, idx) => {
                             const ct = getCardTemplate(tid);
                             const histKey = `card.${tid}.opponentHistory` as MessageKey;
+                            const costPips = opponentBudgetEmojiPips(ct.opponentCost ?? 0);
                             const singleFx = formatEffectChips(opponentTemplatesToAppliedEffects([tid]));
                             return (
-                              <div key={tid} className={styles.opponentLastPlayBlock}>
+                              <div key={`${tid}-${idx}`} className={styles.opponentLastPlayBlock}>
                                 <div className={styles.eventTitle}>
                                   {cardLabelWithIcon(tid, t(ct.titleKey as MessageKey))}
                                 </div>
                                 <p className={styles.statusDetail}>
                                   {t("ui.opponentEvent.lastPlayCardBlurb", {
                                     history: t(histKey),
+                                    cost: costPips,
                                     fx: singleFx,
                                   })}
                                 </p>

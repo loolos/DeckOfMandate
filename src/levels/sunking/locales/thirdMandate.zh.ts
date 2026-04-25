@@ -77,35 +77,35 @@ export const messagesZhThirdMandate = {
   "card.habsburgImperialLegitimacyNote.name": "正朔诏令",
   "card.habsburgImperialLegitimacyNote.background": "法统压力",
   "card.habsburgImperialLegitimacyNote.desc":
-    "对手费用 1。王位争夺进度 −1。",
+    "对手费用 1。即时效果：王位争夺进度 −1；哈布斯堡立即从其牌堆摸 1 张。",
   "card.habsburgImperialLegitimacyNote.opponentHistory":
-    "帝国法学家以诏令质疑波旁继统合法性。局内会让王位争夺进度 −1。",
+    "帝国法学家以诏令质疑波旁继统合法性，并推动对应法理攻势继续发酵。局内会让王位争夺进度 −1，且哈布斯堡立即摸 1 张。",
   "card.habsburgLowCountriesAgitation.name": "低地鼓动",
   "card.habsburgLowCountriesAgitation.background": "西北战线",
-  "card.habsburgLowCountriesAgitation.desc": "对手费用 2。进度 −1，权力 −1，合法性 −1。",
+  "card.habsburgLowCountriesAgitation.desc": "对手费用 2。即时效果：王位争夺进度 −1、权力 −1、合法性 −1。",
   "card.habsburgLowCountriesAgitation.opponentHistory":
     "西属尼德兰的动荡会放大大同盟对法压力。局内会同时压低进度、权力、合法性（各 −1）。",
   "card.habsburgGrandAllianceLevy.name": "同盟征饷",
   "card.habsburgGrandAllianceLevy.background": "同盟军费",
-  "card.habsburgGrandAllianceLevy.desc": "对手费用 2。王位争夺进度 −2；向抽牌堆随机位置加入 1 张财政负担。",
+  "card.habsburgGrandAllianceLevy.desc": "对手费用 2。即时效果：王位争夺进度 −2；向你的抽牌堆随机位置加入 1 张财政负担。",
   "card.habsburgGrandAllianceLevy.opponentHistory":
     "反法同盟的补助与贷款让战争消耗持续。局内会让王位争夺进度 −2，并向牌库加入 1 张财政负担。",
   "card.habsburgImperialCustomsDelay.name": "关税梗阻",
   "card.habsburgImperialCustomsDelay.background": "口岸迟滞",
   "card.habsburgImperialCustomsDelay.desc":
-    "对手费用 2。财政 −1；向抽牌堆随机位置加入 1 张财政负担；下一年抽牌次数 −1（仍至少 1 次）。",
+    "对手费用 2。即时效果：财政 −1，并向你的抽牌堆随机位置加入 1 张财政负担；延后效果：下一年抽牌次数 −1（仍至少 1 次）。",
   "card.habsburgImperialCustomsDelay.opponentHistory":
     "帝国口岸的关税梗阻会直接卡住现金流。局内会财政 −1、加入 1 张财政负担，且下一年抽牌次数 −1（最低 1）。",
   "card.habsburgAngloDutchMaritimeInterdiction.name": "英荷迟押",
   "card.habsburgAngloDutchMaritimeInterdiction.background": "海上缉拿与汇票迟押",
   "card.habsburgAngloDutchMaritimeInterdiction.desc":
-    "对手费用 1。你下一年年初由财政转入的回合经费 −2（合计不低于 0）；抽牌次数 −1（仍至少 1 次）。",
+    "对手费用 1。即时效果：权力 −1；延后效果：下一年年初由财政转入的回合经费 −1（合计不低于 0），且抽牌次数 −1（仍至少 1 次）。",
   "card.habsburgAngloDutchMaritimeInterdiction.opponentHistory":
-    "大同盟侧以私掠证、护航与查扣压缩英吉利—北海航路，汇票与辎重汇款被迟滞，凡尔赛可动用的现金头寸在账面上变薄。局内：下一年国库转回合经费 −2（总收入不低于 0）、抽牌 −1（最低 1）。",
+    "大同盟侧以私掠证、护航与查扣压缩英吉利—北海航路，汇票与辎重汇款被迟滞，凡尔赛可动用的现金头寸在账面上变薄。局内：权力 −1；下一年国库转回合经费 −1（总收入不低于 0）、抽牌 −1（最低 1）。",
   "card.habsburgRhineMagazineEmbargo.name": "需辎重禁运",
   "card.habsburgRhineMagazineEmbargo.background": "河道辎重线",
   "card.habsburgRhineMagazineEmbargo.desc":
-    "对手费用 1。你下一年年初由财政转入的回合经费 −1（合计不低于 0）；王位争夺进度 −1。",
+    "对手费用 1。即时效果：王位争夺进度 −1；延后效果：下一年年初由财政转入的回合经费 −1（合计不低于 0）。",
   "card.habsburgRhineMagazineEmbargo.opponentHistory":
     "帝国与莱茵诸邦以临时禁令、加税与扣押迟滞法军火药、草料与平底船租约，前线辎重与后方贴现同时吃紧。局内：下一年国库转回合经费 −1（总收入不低于 0），并使王位争夺进度 −1。",
 } as const;

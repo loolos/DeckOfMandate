@@ -39,6 +39,8 @@ function opponentEffectDelta(templateId: CardTemplateId): OppDelta {
       return { seq: 0, pow: 0, leg: 0, tre: -1 };
     case "habsburgRhineMagazineEmbargo":
       return { seq: -1, pow: 0, leg: 0, tre: 0 };
+    case "habsburgAngloDutchMaritimeInterdiction":
+      return { seq: 0, pow: -1, leg: 0, tre: 0 };
     default:
       return { seq: 0, pow: 0, leg: 0, tre: 0 };
   }
@@ -61,7 +63,7 @@ export function opponentTemplatesToAppliedEffects(ids: readonly CardTemplateId[]
   }
   const fundingDrawPressureCount = ids.filter((id) => isHabsburgFundingDrawPressureCard(id)).length;
   if (fundingDrawPressureCount > 0) {
-    out.push({ kind: "scheduleNextTurnFundingIncomeModifier", delta: -2 * fundingDrawPressureCount });
+    out.push({ kind: "scheduleNextTurnFundingIncomeModifier", delta: -1 * fundingDrawPressureCount });
     out.push({ kind: "scheduleNextTurnDrawModifier", delta: -fundingDrawPressureCount });
   }
   const rhineEmbargoCount = ids.filter((id) => id === "habsburgRhineMagazineEmbargo").length;
@@ -199,15 +201,18 @@ function applyOpponentCardToState(state: GameState, templateId: CardTemplateId):
   }
   if (isHabsburgFundingDrawPressureCard(templateId)) {
     effects.push(
-      { kind: "scheduleNextTurnFundingIncomeModifier", delta: -2 },
+      { kind: "scheduleNextTurnFundingIncomeModifier", delta: -1 },
       { kind: "scheduleNextTurnDrawModifier", delta: -1 },
     );
   }
   if (templateId === "habsburgRhineMagazineEmbargo") {
     effects.push({ kind: "scheduleNextTurnFundingIncomeModifier", delta: -1 });
   }
-  if (effects.length === 0) return state;
-  return applyEffects(state, effects);
+  const afterEffects = effects.length === 0 ? state : applyEffects(state, effects);
+  if (templateId === "habsburgImperialLegitimacyNote") {
+    return opponentImmediateDeckOnlyDraw(afterEffects, 1);
+  }
+  return afterEffects;
 }
 
 /** Draw up to `count` cards from opponent deck (reshuffle discard if needed). */
@@ -381,6 +386,23 @@ export function opponentImmediateExtraDraw(state: GameState, count: number): Gam
   const drawn = drawnState.opponentHand.slice(beforeDraw);
   if (drawn.length === 0) return drawnState;
   return appendActionLog(drawnState, { kind: "opponentHabsburgDraw", drawnCardIds: drawn });
+}
+
+/** Immediate draw from current deck only (no discard reshuffle). */
+function opponentImmediateDeckOnlyDraw(state: GameState, count: number): GameState {
+  if (count <= 0) return state;
+  if (state.levelId !== THIRD_MANDATE_LEVEL_ID || !state.opponentHabsburgUnlocked || state.warEnded) {
+    return state;
+  }
+  const take = Math.min(count, state.opponentDeck.length);
+  if (take <= 0) return state;
+  const drawn = state.opponentDeck.slice(0, take);
+  const next: GameState = {
+    ...state,
+    opponentDeck: state.opponentDeck.slice(take),
+    opponentHand: [...state.opponentHand, ...drawn],
+  };
+  return appendActionLog(next, { kind: "opponentHabsburgDraw", drawnCardIds: drawn });
 }
 
 export function opponentBeginYearDrawPhase(state: GameState): GameState {

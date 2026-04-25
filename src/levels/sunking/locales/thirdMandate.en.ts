@@ -78,37 +78,37 @@ export const messagesEnThirdMandate = {
   "card.habsburgImperialLegitimacyNote.name": "Imperial legitimacy note",
   "card.habsburgImperialLegitimacyNote.background": "Legalist pressure",
   "card.habsburgImperialLegitimacyNote.desc":
-    "Opponent cost 1. Succession track −1.",
+    "Opponent cost 1. Immediate: succession track −1, then Habsburg immediately draws 1 card from its deck.",
   "card.habsburgImperialLegitimacyNote.opponentHistory":
-    "Chancelleries invoke imperial privilege and old Habsburg ties to Spain. In play: succession track −1.",
+    "Chancelleries invoke imperial privilege and old Habsburg ties to Spain, and keep legal pressure rolling. In play: succession track −1, and Habsburg immediately draws 1 card.",
   "card.habsburgLowCountriesAgitation.name": "Low Countries agitation",
   "card.habsburgLowCountriesAgitation.background": "Northwestern front",
   "card.habsburgLowCountriesAgitation.desc":
-    "Opponent cost 2. Succession track −1, Power −1, Legitimacy −1.",
+    "Opponent cost 2. Immediate: succession track −1, Power −1, and Legitimacy −1.",
   "card.habsburgLowCountriesAgitation.opponentHistory":
     "Unrest in the Spanish Netherlands turns border pressure into a coalition lever. In play: succession track −1, Power −1, and Legitimacy −1.",
   "card.habsburgGrandAllianceLevy.name": "Grand Alliance levy",
   "card.habsburgGrandAllianceLevy.background": "Coalition war chest",
   "card.habsburgGrandAllianceLevy.desc":
-    "Opponent cost 2. Succession track −2; add 1 Fiscal Burden to your deck at a random position.",
+    "Opponent cost 2. Immediate: succession track −2; add 1 Fiscal Burden to your draw pile at a random position.",
   "card.habsburgGrandAllianceLevy.opponentHistory":
     "Coalition subsidies, Dutch loans, and imperial taxation keep pressure constant. In play: succession track −2 and add 1 Fiscal Burden to your deck.",
   "card.habsburgImperialCustomsDelay.name": "Imperial customs delay",
   "card.habsburgImperialCustomsDelay.background": "Harbor friction",
   "card.habsburgImperialCustomsDelay.desc":
-    "Opponent cost 2. Treasury −1; add 1 Fiscal Burden to your deck at a random position; next year draw attempts −1 (still at least 1).",
+    "Opponent cost 2. Immediate: Treasury −1 and add 1 Fiscal Burden to your draw pile at a random position; delayed: next year draw attempts −1 (still at least 1).",
   "card.habsburgImperialCustomsDelay.opponentHistory":
     "Port-side customs delays choke cash flow without a major battle. In play: Treasury −1, add 1 Fiscal Burden, and next year draw attempts −1 (min 1).",
   "card.habsburgAngloDutchMaritimeInterdiction.name": "Anglo-Dutch deferrals",
   "card.habsburgAngloDutchMaritimeInterdiction.background": "Maritime seizures & delayed bills",
   "card.habsburgAngloDutchMaritimeInterdiction.desc":
-    "Opponent cost 1. Next year, your treasury-to-funding income is reduced by 2 (not below 0) and draw attempts −1 (still at least 1).",
+    "Opponent cost 1. Immediate: Power −1; delayed: next year your treasury-to-funding income is reduced by 1 (not below 0), and draw attempts −1 (still at least 1).",
   "card.habsburgAngloDutchMaritimeInterdiction.opponentHistory":
-    "Letters of marque, stricter convoys, and seizures along the Channel and North Sea routes delay bills of exchange and tighten liquidity for Versailles’ war chest. In play: next year’s funding from treasury −2 (min 0 total) and draw attempts −1 (min 1).",
+    "Letters of marque, stricter convoys, and seizures along the Channel and North Sea routes delay bills of exchange and tighten liquidity for Versailles’ war chest. In play: Power −1, next year’s funding from treasury −1 (min 0 total), and draw attempts −1 (min 1).",
   "card.habsburgRhineMagazineEmbargo.name": "Magazine embargo",
   "card.habsburgRhineMagazineEmbargo.background": "Corridor squeeze",
   "card.habsburgRhineMagazineEmbargo.desc":
-    "Opponent cost 1. Next year, your treasury-to-funding income is reduced by 1 (not below 0), and succession track −1.",
+    "Opponent cost 1. Immediate: succession track −1; delayed: next year your treasury-to-funding income is reduced by 1 (not below 0).",
   "card.habsburgRhineMagazineEmbargo.opponentHistory":
     "Imperial and allied circles slow French contracts for powder, fodder, and river barges—extra tolls, seizures, and “temporary” bans on magazines feeding the Rhine front. In play: next year’s funding from treasury −1 (min 0 total), and succession track −1.",
 } as const;
