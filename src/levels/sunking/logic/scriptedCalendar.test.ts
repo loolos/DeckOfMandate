@@ -58,6 +58,7 @@ describe("scriptedCalendar", () => {
       turn,
       phase: "action",
       slots: {
+        ...EMPTY_EVENT_SLOTS,
         A: { instanceId: "e_a", templateId: "taxResistance", resolved: false },
         B: { instanceId: "e_b", templateId: "commercialExpansion", resolved: false },
         C: { instanceId: "e_c", templateId: "warWeariness", resolved: false },
