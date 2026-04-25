@@ -1,6 +1,6 @@
 import { getCardTemplate } from "../data/cards";
 import { getEventSolveFundingAmount, getEventTemplate } from "../data/events";
-import { getChapter2StandaloneDraft } from "../data/levelBootstrap";
+import { getChapter2StandaloneDraft, getChapter3StandaloneDraft } from "../data/levelBootstrap";
 import { getTurnLimitForRun, type LevelId } from "../data/levels";
 import { appendActionLog } from "../logic/actionLog";
 import { enforceLegitimacy } from "../logic/applyEffects";
@@ -31,7 +31,7 @@ import {
 } from "../levels/campaignLogicBundle";
 import { tryCampaignReducerBridge } from "../levels/campaignReducerBridge";
 import { createInitialState } from "./initialState";
-import { buildLevel2StateFromDraft } from "./levelTransitions";
+import { buildLevel2StateFromDraft, buildLevel3StateFromDraft } from "./levelTransitions";
 
 export type GameAction =
   | { type: "NEW_GAME"; seed?: number; levelId?: LevelId }
@@ -247,6 +247,10 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       const chapter2Draft = getChapter2StandaloneDraft(nextLevelId, action.seed);
       if (chapter2Draft) {
         return buildLevel2StateFromDraft(chapter2Draft);
+      }
+      const chapter3Draft = getChapter3StandaloneDraft(nextLevelId, action.seed);
+      if (chapter3Draft) {
+        return buildLevel3StateFromDraft(chapter3Draft);
       }
       return createInitialState(action.seed, nextLevelId);
     }
