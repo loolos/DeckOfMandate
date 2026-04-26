@@ -79,6 +79,13 @@ export const statusTemplates: Record<StatusTemplateId, StatusTemplate> = {
     titleKey: "status.minorRegencyDoubt.name",
     historyKey: "status.minorRegencyDoubt.history",
   },
+  diplomaticCongressDrawBoost: {
+    id: "diplomaticCongressDrawBoost",
+    kind: "drawAttemptsDelta",
+    delta: 1,
+    titleKey: "status.diplomaticCongressDrawBoost.name",
+    historyKey: "status.diplomaticCongressDrawBoost.history",
+  },
   bourbonMarriageRetention: {
     id: "bourbonMarriageRetention",
     kind: "retentionCapacityDelta",

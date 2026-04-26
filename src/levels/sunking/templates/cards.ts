@@ -118,7 +118,7 @@ export const cardTemplates: Record<CardTemplateId, CardTemplate> = {
     descriptionKey: "card.diplomaticCongress.desc",
     effects: [
       { kind: "modResource", resource: "power", delta: 1 },
-      { kind: "scheduleNextTurnDrawModifier", delta: 1 },
+      { kind: "addPlayerStatus", templateId: "diplomaticCongressDrawBoost", turns: 1 },
       { kind: "modEuropeAlertProgress", delta: -1 },
     ],
   },

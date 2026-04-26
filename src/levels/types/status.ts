@@ -22,7 +22,8 @@ export type StatusTemplateId =
   | "antiFrenchSentiment"
   | "legitimacyCrisis"
   | "minorRegencyDoubt"
-  | "bourbonMarriageRetention";
+  | "bourbonMarriageRetention"
+  | "diplomaticCongressDrawBoost";
 
 /** Static definition for a player status template (drives UI keys and effect shape). */
 export type StatusTemplate = {

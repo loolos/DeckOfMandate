@@ -89,6 +89,8 @@ export const sunkingCoreGameContentFr = {
   "status.grainReliefLegitimacyBoost.name": "Confiance dans les secours",
   "status.grainReliefLegitimacyBoost.history":
     "Une action de secours visible restaure brièvement la confiance dans la gouvernance de la couronne.",
+  "status.diplomaticCongressDrawBoost.name": "Élan du congrès",
+  "status.diplomaticCongressDrawBoost.history": "Les réseaux diplomatiques améliorent temporairement la coordination au tour suivant.",
   "status.religiousTolerance.name": "Tolérance religieuse (Permanent)",
   "status.religiousTolerance.history":
     "Après la révocation, la couronne doit arbitrer entre unité confessionnelle et gouvernabilité : pression sur les protestants, contrôle des querelles théologiques catholiques et préservation de la légitimité royale se heurtent en permanence. La tolérance évite la confrontation totale, mais rouvre régulièrement des frictions dans les paroisses, les tribunaux et les provinces.",
