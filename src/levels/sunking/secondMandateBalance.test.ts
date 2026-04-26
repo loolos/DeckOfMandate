@@ -45,7 +45,7 @@ describe("secondMandate balance data", () => {
     const congress = getCardTemplate("diplomaticCongress");
     expect(congress.effects).toEqual([
       { kind: "modResource", resource: "power", delta: 1 },
-      { kind: "scheduleNextTurnDrawModifier", delta: 1 },
+      { kind: "addPlayerStatus", templateId: "diplomaticCongressDrawBoost", turns: 1 },
       { kind: "modEuropeAlertProgress", delta: -1 },
     ]);
 
@@ -240,7 +240,7 @@ describe("secondMandate balance data", () => {
     expect(congressCount).toBe(2);
   });
 
-  it("uses status-driven effects for draw penalty and royal ban", () => {
+  it("uses status-driven effects for draw penalty, draw boost, and royal ban", () => {
     expect(getCardTemplate("taxRebalance").effects).toContainEqual({
       kind: "addPlayerStatus",
       templateId: "drawPenalty",
@@ -254,6 +254,11 @@ describe("secondMandate balance data", () => {
     expect(getCardTemplate("grainRelief").effects).toContainEqual({
       kind: "addPlayerStatus",
       templateId: "grainReliefLegitimacyBoost",
+      turns: 1,
+    });
+    expect(getCardTemplate("diplomaticCongress").effects).toContainEqual({
+      kind: "addPlayerStatus",
+      templateId: "diplomaticCongressDrawBoost",
       turns: 1,
     });
     expect(getEventTemplate("courtScandal").penaltiesIfUnresolved).toEqual([

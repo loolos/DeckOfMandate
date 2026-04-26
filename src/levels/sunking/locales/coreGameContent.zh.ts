@@ -76,6 +76,8 @@ export const sunkingCoreGameContentZh = {
   "status.grainReliefDrawBoost.history": "赈济组织网络可短期提升地方调度效率。",
   "status.grainReliefLegitimacyBoost.name": "赈济信任",
   "status.grainReliefLegitimacyBoost.history": "及时赈济能在短时间修复民众对政权的信任。",
+  "status.diplomaticCongressDrawBoost.name": "会议动员",
+  "status.diplomaticCongressDrawBoost.history": "外交联络网络在下回合短期提升施政调度能力。",
   "status.religiousTolerance.name": "宗教宽容（永久）",
   "status.religiousTolerance.history":
     "17 世纪后半叶法国在撤销《南特敕令》后，国家试图在宗教统一与社会稳定之间寻找新平衡：对新教社群的压制、对天主教内部神学分歧的管控，以及王权合法性的维护彼此纠缠。你选择宽容，能暂缓全面对抗，却会让不同宗派在司法、教区与地方秩序层面反复制造政治摩擦。",
