@@ -12,6 +12,7 @@ import {
 import { addGeneratedCards, applyOnDrawCardEffects } from "./cardRuntime";
 import { applyInflationFromDeckRefill } from "./cardCost";
 import { drawUpToPower } from "./draw";
+import { getHandCapForStatuses } from "./handCapacity";
 import { shuffle } from "./rng";
 
 export function enforceLegitimacy(s: GameState): GameState {
@@ -59,7 +60,14 @@ export function applyEffect(state: GameState, e: Effect): GameState {
       };
     case "drawCards": {
       let s = state;
-      const drawn = drawUpToPower(s.rng, s.hand, s.deck, s.discard, e.count);
+      const drawn = drawUpToPower(
+        s.rng,
+        s.hand,
+        s.deck,
+        s.discard,
+        e.count,
+        getHandCapForStatuses(s.playerStatuses),
+      );
       s = { ...s, rng: drawn.rng, hand: drawn.hand, deck: drawn.deck, discard: drawn.discard };
       s = applyInflationFromDeckRefill(s, drawn.refilledCardIds);
       if (drawn.discardedCardIds.length > 0) {

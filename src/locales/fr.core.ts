@@ -87,6 +87,7 @@ export const messagesFrCore: Record<keyof typeof messagesEnCore, string> = {
   "ui.statusDetail.blockCardTag": "Les cartes avec le tag « {tag} » ne peuvent pas être jouées.",
   "ui.statusDetail.drawAttemptsDelta": "Modificateur de tentatives de pioche par tour : {delta}.",
   "ui.statusDetail.retentionCapacityDelta": "Modificateur de limite de conservation en fin de tour : {delta}.",
+  "ui.statusDetail.handCapDelta": "Modificateur de limite totale de main : {delta}.",
   "ui.statusHuguenotRemaining": "Restes {n}",
   "ui.statusTurnsRemaining": "{n} tour(s) restant(s)",
   "ui.statuses": "Effets en cours",

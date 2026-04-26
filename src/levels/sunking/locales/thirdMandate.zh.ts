@@ -61,7 +61,7 @@ export const messagesZhThirdMandate = {
   "card.bourbonMarriageProclamation.name": "鸾盟昭世",
   "card.bourbonMarriageProclamation.background": "王朝叙事",
   "card.bourbonMarriageProclamation.desc":
-    "背景：以波旁联姻与继承法理为公开叙事，向国内外宣示安茹系对西班牙王座的正当性，压缩哈布斯堡舆论空间。\n\n权力 +1，王位争夺进度 +1；获得「鸾盟礼序」2 回合（年末可保留手牌上限 +1）。",
+    "背景：以波旁联姻与继承法理为公开叙事，向国内外宣示安茹系对西班牙王座的正当性，压缩哈布斯堡舆论空间。\n\n权力 +1，王位争夺进度 +1；获得「鸾盟礼序」2 回合（手牌总上限 +1，可超过默认 12；并提高年末可保留上限）。",
   "card.grandAllianceInfiltrationDiplomacy.name": "暗通列邦",
   "card.grandAllianceInfiltrationDiplomacy.background": "分化同盟",
   "card.grandAllianceInfiltrationDiplomacy.desc":

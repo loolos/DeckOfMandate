@@ -53,6 +53,9 @@ function formatSingleEffectChip(e: Effect): string {
       if (st.kind === "retentionCapacityDelta") {
         return `🖐️${signedInt(st.delta ?? 0)}×${e.turns}⌛`;
       }
+      if (st.kind === "handCapDelta") {
+        return `🃏${signedInt(st.delta ?? 0)}×${e.turns}⌛`;
+      }
       if (st.kind === "blockCardTag") {
         return `🚫👑×${e.turns}⌛`;
       }

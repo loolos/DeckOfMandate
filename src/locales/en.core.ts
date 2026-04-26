@@ -73,6 +73,7 @@ export const messagesEnCore = {
   "ui.statusHuguenotRemaining": "Remnants {n}",
   "ui.statusDetail.drawAttemptsDelta": "Draw attempts modifier each turn: {delta}.",
   "ui.statusDetail.retentionCapacityDelta": "Retention cap modifier at turn end: {delta}.",
+  "ui.statusDetail.handCapDelta": "Hand size cap modifier: {delta}.",
   "ui.statusDetail.beginYearResourceDelta": "At turn start: {resource} {delta}.",
   "ui.statusDetail.blockCardTag": "Cards with the “{tag}” tag cannot be played.",
   "ui.actionLog": "Action log",

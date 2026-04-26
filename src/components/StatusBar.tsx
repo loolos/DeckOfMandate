@@ -43,6 +43,11 @@ function statusDetail(
     if (delta === 0) return "";
     return t("ui.statusDetail.retentionCapacityDelta", { delta: signedValue(delta) });
   }
+  if (status.kind === "handCapDelta") {
+    const delta = status.delta ?? 0;
+    if (delta === 0) return "";
+    return t("ui.statusDetail.handCapDelta", { delta: signedValue(delta) });
+  }
   if (status.kind === "beginYearResourceDelta") {
     const delta = status.delta ?? 0;
     if (delta === 0) return "";

@@ -88,7 +88,7 @@ export const statusTemplates: Record<StatusTemplateId, StatusTemplate> = {
   },
   bourbonMarriageRetention: {
     id: "bourbonMarriageRetention",
-    kind: "retentionCapacityDelta",
+    kind: "handCapDelta",
     delta: 1,
     titleKey: "status.bourbonMarriageRetention.name",
     historyKey: "status.bourbonMarriageRetention.history",
