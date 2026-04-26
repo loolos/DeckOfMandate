@@ -13,6 +13,11 @@ import antiFrenchContainmentArtUrl from "../levels/sunking/assets/antiFrenchCont
 import suppressHuguenotsArtUrl from "../levels/sunking/assets/suppressHuguenots.card1024.webp";
 import religiousTensionCardArtUrl from "../levels/sunking/assets/religiousTensionCard.card1024.webp";
 import jesuitCollegeArtUrl from "../levels/sunking/assets/jesuitCollege.card1024.webp";
+import bourbonMarriageProclamationArtUrl from "../levels/sunking/assets/bourbonMarriageProclamation.card1024.webp";
+import grandAllianceInfiltrationDiplomacyArtUrl from "../levels/sunking/assets/grandAllianceInfiltrationDiplomacy.card1024.webp";
+import italianTheaterTroopRedeployArtUrl from "../levels/sunking/assets/italianTheaterTroopRedeploy.card1024.webp";
+import usurpationEdictArtUrl from "../levels/sunking/assets/usurpationEdict.card1024.webp";
+import jansenistReservationArtUrl from "../levels/sunking/assets/jansenistReservation.card1024.webp";
 
 const cardArtByTemplateId: Partial<Record<CardTemplateId, string>> = {
   funding: fundingArtUrl,
@@ -29,6 +34,11 @@ const cardArtByTemplateId: Partial<Record<CardTemplateId, string>> = {
   suppressHuguenots: suppressHuguenotsArtUrl,
   religiousTensionCard: religiousTensionCardArtUrl,
   jesuitCollege: jesuitCollegeArtUrl,
+  bourbonMarriageProclamation: bourbonMarriageProclamationArtUrl,
+  grandAllianceInfiltrationDiplomacy: grandAllianceInfiltrationDiplomacyArtUrl,
+  italianTheaterTroopRedeploy: italianTheaterTroopRedeployArtUrl,
+  usurpationEdict: usurpationEdictArtUrl,
+  jansenistReservation: jansenistReservationArtUrl,
 };
 
 export function getCardArtUrl(templateId: CardTemplateId): string | null {
