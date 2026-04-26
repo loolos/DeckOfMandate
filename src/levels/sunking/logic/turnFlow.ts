@@ -289,6 +289,9 @@ function pickWeightedEventCount(options: readonly EventCountOption[], roll: numb
 
 export function desiredProceduralEventCountWhenAllEmpty(state: GameState, roll: number): number {
   const lc = getLevelContent(state.levelId);
+  if (state.levelId === "firstMandate" && state.turn === 2) {
+    return 1;
+  }
   if (state.turn === 1 && lc.procedural.firstTurnEmptyBoardCount != null) {
     return lc.procedural.firstTurnEmptyBoardCount;
   }
