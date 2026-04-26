@@ -213,6 +213,7 @@ export function Game() {
     typeof window !== "undefined" ? window.matchMedia(GRID_WIDE_MEDIA).matches : false,
   );
   const [logForceScrollToken, setLogForceScrollToken] = useState(0);
+  const [handResetToken, setHandResetToken] = useState(0);
   const gridRef = useRef<HTMLDivElement>(null);
   const eventsScrollRef = useRef<HTMLDivElement>(null);
   const handScrollRef = useRef<HTMLDivElement>(null);
@@ -230,6 +231,15 @@ export function Game() {
     eventsScrollRef.current?.scrollTo({ left: 0, behavior: "auto" });
     handScrollRef.current?.scrollTo({ left: 0, behavior: "auto" });
   }, [state.turn]);
+
+  const resetHandViewport = useCallback(() => {
+    handScrollRef.current?.scrollTo({ left: 0, behavior: "auto" });
+    if (typeof window !== "undefined") {
+      window.requestAnimationFrame(() => {
+        handScrollRef.current?.scrollTo({ left: 0, behavior: "auto" });
+      });
+    }
+  }, []);
 
   const refreshCodeHex = useCallback(() => {
     setCodeHex(encodeSession(sessionRef.current));
@@ -443,9 +453,13 @@ export function Game() {
     }
     if (a.type === "END_YEAR" || a.type === "CONFIRM_RETENTION") {
       setLogForceScrollToken((prev) => prev + 1);
+      setHandResetToken((prev) => prev + 1);
     }
     pendingStateRef.current = next;
     dispatch(a);
+    if (a.type === "END_YEAR" || a.type === "CONFIRM_RETENTION") {
+      resetHandViewport();
+    }
   };
 
   const restartCurrentLevelRun = useCallback(() => {
@@ -1451,7 +1465,7 @@ export function Game() {
 
       <section className={`${styles.panel} ${styles.handPanel}`} id="tutorial-hand">
         <h2>{t("ui.handWithCount", { n: state.hand.length })}</h2>
-        <Hand state={state} dispatch={dispatchSafe} scrollContainerRef={handScrollRef} />
+        <Hand key={handResetToken} state={state} dispatch={dispatchSafe} scrollContainerRef={handScrollRef} />
       </section>
 
       <ActionLog
