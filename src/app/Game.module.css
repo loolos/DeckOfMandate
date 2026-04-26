@@ -760,6 +760,22 @@
   color: var(--muted);
 }
 
+.cardArtWrap {
+  margin-top: 0.38rem;
+  width: 100%;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--border) 82%, #000);
+  background: color-mix(in srgb, #0f1420 88%, #000);
+}
+
+.cardArt {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+
 .cardPendingCrackdown {
   display: flex;
   flex-direction: column;

@@ -10,6 +10,7 @@
     "compress": "node scripts/compressAssets.mjs",
     "compress:sunking": "node scripts/compressAssets.mjs sunking",
     "img:sunking-bg": "node scripts/compressAssets.mjs sunking",
+    "img:card1024": "node scripts/compressCardArt1024.mjs",
     "test": "node scripts/runVitest.mjs",
     "test:ai:first-mandate:1000": "npx tsx src/levels/sunking/cli/firstMandateReport.ts --seed-start 1 --runs 1000",
     "test:ai:a-strategy-i:1000": "npx tsx src/levels/sunking/cli/secondMandateAndCampaignReport.ts --seed-start 1 --runs 1000",

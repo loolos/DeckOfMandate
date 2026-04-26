@@ -14,6 +14,7 @@ import { getCardUseStateForInstance } from "../logic/cardUsage";
 import type { CardTag } from "../levels/types/tags";
 import type { LogInfoKey } from "../types/game";
 import styles from "../app/Game.module.css";
+import { getCardArtUrl } from "../logic/cardArt";
 
 export function Hand({
   state,
@@ -60,6 +61,7 @@ export function Hand({
         const quickRows = buildCardQuickFrameRows(tmpl, cost);
         const compactSummary = quickRows.map((row) => row.value).join(" · ");
         const showDetails = !isSmallScreen || expandedCardId === id || (crackPick && id === crackPick.cardInstanceId);
+        const cardArtUrl = getCardArtUrl(inst.templateId);
         const explainCardTag = (tag: CardTag) =>
           dispatch({
             type: "APPEND_LOG_INFO",
@@ -67,6 +69,11 @@ export function Hand({
           });
         const tags = getCardTagsForInstance(state, id);
         const cardUse = getCardUseStateForInstance(state, id);
+        const cardArt = showDetails && cardArtUrl ? (
+          <div className={styles.cardArtWrap}>
+            <img className={styles.cardArt} src={cardArtUrl} alt={t(tmpl.titleKey as MessageKey)} loading="lazy" decoding="async" />
+          </div>
+        ) : null;
         const tagChips =
           tags.length > 0 || cardUse ? (
             <div className={styles.badges}>
@@ -109,6 +116,7 @@ export function Hand({
             <>
               <div className={styles.cardTitle}>{title}</div>
               {tagChips}
+              {cardArt}
               <div className={styles.compactSummary}>{compactSummary}</div>
               <div className={styles.compactDetails}>
                 <OutcomeQuickFrame rows={quickRows} />
@@ -135,6 +143,7 @@ export function Hand({
           <>
             <div className={styles.cardTitle}>{title}</div>
             {tagChips}
+            {cardArt}
             <OutcomeQuickFrame rows={quickRows} />
             <div className={styles.cardBg}>{t(tmpl.backgroundKey as MessageKey)}</div>
             <div className={styles.cardDesc}>{t(tmpl.descriptionKey as MessageKey)}</div>
