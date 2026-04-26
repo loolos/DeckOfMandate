@@ -5,6 +5,7 @@ import type { MessageKey } from "../../locales/en";
 export type PlayerStatusKind =
   | "drawAttemptsDelta"
   | "retentionCapacityDelta"
+  | "handCapDelta"
   | "blockCardTag"
   | "beginYearResourceDelta";
 

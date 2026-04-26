@@ -20,6 +20,7 @@ import { applyOnDrawCardEffects } from "./cardRuntime";
 import { applyInflationFromDeckRefill } from "./cardCost";
 import { drawUpToPower } from "../../../logic/draw";
 import { drawAttemptsFromPower } from "../../../logic/drawScaling";
+import { getHandCapForStatuses } from "../../../logic/handCapacity";
 import { applyScriptedCalendarPhase, rollAntiFrenchLeagueDrawAdjustment } from "../../../logic/scriptedCalendar";
 import { rngNext, shuffle } from "../../../logic/rng";
 import { opponentBeginYearDrawPhase } from "../../../logic/opponentHabsburg";
@@ -411,7 +412,7 @@ function maybeAdjustEuropeAlertProgressAtYearStart(state: GameState): GameState 
 export function retentionCapacity(state: GameState): number {
   let bonus = 0;
   for (const p of state.playerStatuses) {
-    if (p.kind === "retentionCapacityDelta") bonus += p.delta ?? 0;
+    if (p.kind === "retentionCapacityDelta" || p.kind === "handCapDelta") bonus += p.delta ?? 0;
   }
   return Math.max(0, state.resources.legitimacy + bonus);
 }
@@ -463,7 +464,14 @@ export function beginYear(state: GameState): GameState {
   }
   attempts = Math.max(1, attempts + coalition.adjustment);
   s = { ...s, nextTurnDrawModifier: 0 };
-  const drawn = drawUpToPower(s.rng, s.hand, s.deck, s.discard, attempts);
+  const drawn = drawUpToPower(
+    s.rng,
+    s.hand,
+    s.deck,
+    s.discard,
+    attempts,
+    getHandCapForStatuses(s.playerStatuses),
+  );
   s = {
     ...s,
     rng: drawn.rng,

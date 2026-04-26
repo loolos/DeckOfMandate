@@ -73,6 +73,7 @@ export const messagesZhCore = {
   "ui.statusHuguenotRemaining": "剩余势力 {n}",
   "ui.statusDetail.drawAttemptsDelta": "每回合抽牌次数修正 {delta}。",
   "ui.statusDetail.retentionCapacityDelta": "回合末可保留手牌上限修正 {delta}。",
+  "ui.statusDetail.handCapDelta": "手牌总上限修正 {delta}。",
   "ui.statusDetail.beginYearResourceDelta": "回合开始时：{resource} {delta}。",
   "ui.statusDetail.blockCardTag": "带有“{tag}”标签的手牌不可打出。",
   "ui.actionLog": "行动记录",

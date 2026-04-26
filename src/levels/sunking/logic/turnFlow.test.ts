@@ -896,6 +896,56 @@ describe("beginYear + playerStatuses", () => {
       expect(overflowEntry.cardTemplateIds).toEqual(["development"]);
     }
   });
+
+  it("bourbon marriage hand-cap status allows drawing above the default 12-card cap", () => {
+    const started = createInitialState(55_782, "thirdMandate");
+    const cardsById: Record<string, CardInstance> = {
+      h0: { instanceId: "h0", templateId: "funding" },
+      h1: { instanceId: "h1", templateId: "funding" },
+      h2: { instanceId: "h2", templateId: "funding" },
+      h3: { instanceId: "h3", templateId: "funding" },
+      h4: { instanceId: "h4", templateId: "funding" },
+      h5: { instanceId: "h5", templateId: "funding" },
+      h6: { instanceId: "h6", templateId: "funding" },
+      h7: { instanceId: "h7", templateId: "funding" },
+      h8: { instanceId: "h8", templateId: "funding" },
+      h9: { instanceId: "h9", templateId: "funding" },
+      h10: { instanceId: "h10", templateId: "funding" },
+      h11: { instanceId: "h11", templateId: "funding" },
+      d0: { instanceId: "d0", templateId: "ceremony" },
+      d1: { instanceId: "d1", templateId: "development" },
+    };
+    const s0: GameState = {
+      ...started,
+      outcome: "playing",
+      phase: "action",
+      resources: { treasuryStat: 0, funding: 0, power: 3, legitimacy: 3 },
+      nextTurnDrawModifier: 0,
+      hand: ["h0", "h1", "h2", "h3", "h4", "h5", "h6", "h7", "h8", "h9", "h10", "h11"],
+      deck: ["d0", "d1"],
+      discard: [],
+      cardsById,
+      playerStatuses: [
+        {
+          instanceId: "st_bourbon",
+          templateId: "bourbonMarriageRetention",
+          kind: "handCapDelta",
+          delta: 1,
+          turnsRemaining: 2,
+        },
+      ],
+      slots: { ...EMPTY_EVENT_SLOTS },
+    };
+    const s1 = beginYear(s0);
+    expect(s1.hand).toHaveLength(13);
+    expect(s1.hand).toContain("d0");
+    expect(s1.discard).toEqual(["d1"]);
+    const overflowEntry = s1.actionLog.find((e) => e.kind === "drawOverflowDiscarded");
+    expect(overflowEntry).toBeTruthy();
+    if (overflowEntry?.kind === "drawOverflowDiscarded") {
+      expect(overflowEntry.cardTemplateIds).toEqual(["development"]);
+    }
+  });
 });
 
 describe("maybeTriggerHuguenotResurgence", () => {

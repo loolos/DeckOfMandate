@@ -412,7 +412,7 @@ describe("gameReducer", () => {
     expect(afterSecondEndYear.playerStatuses.some((s) => s.templateId === "legitimacyCrisis")).toBe(false);
   });
 
-  it("bourbon marriage proclamation grants a two-turn +1 retention cap status", () => {
+  it("bourbon marriage proclamation grants a two-turn +1 hand cap status", () => {
     const base = createInitialState(51_121, THIRD_MANDATE_LEVEL_ID);
     const cardId = "tmp_bourbon_marriage";
     const s0: typeof base = {
@@ -432,7 +432,7 @@ describe("gameReducer", () => {
     expect(afterPlay.resources.power).toBe(3);
     expect(afterPlay.successionTrack).toBe(1);
     const st = afterPlay.playerStatuses.find((p) => p.templateId === "bourbonMarriageRetention");
-    expect(st?.kind).toBe("retentionCapacityDelta");
+    expect(st?.kind).toBe("handCapDelta");
     expect(st?.delta).toBe(1);
     expect(st?.turnsRemaining).toBe(2);
     expect(retentionCapacity(afterPlay)).toBe(5);
@@ -831,7 +831,7 @@ describe("gameReducer", () => {
     expect(afterTarget.slots.A?.resolved).toBe(true);
   });
 
-  it("playing diplomatic congress adds intervention and +1 next-turn draw", () => {
+  it("playing diplomatic congress adds intervention and a one-turn +1 draw status", () => {
     const base = createInitialState(202_701, "secondMandate");
     const congressId = "tmp_congress";
     const withCongress: typeof base = {
@@ -848,7 +848,11 @@ describe("gameReducer", () => {
     const tempInHand = after.hand.find((id) => after.cardsById[id]?.templateId === "diplomaticIntervention");
     expect(tempInHand).toBeTruthy();
     expect(after.discard).toContain(congressId);
-    expect(after.nextTurnDrawModifier).toBe(withCongress.nextTurnDrawModifier + 1);
+    expect(after.nextTurnDrawModifier).toBe(withCongress.nextTurnDrawModifier);
+    const drawBoost = after.playerStatuses.find((s) => s.templateId === "diplomaticCongressDrawBoost");
+    expect(drawBoost?.kind).toBe("drawAttemptsDelta");
+    expect(drawBoost?.delta).toBe(1);
+    expect(drawBoost?.turnsRemaining).toBe(1);
   });
 
   it("extra diplomatic intervention can enter discard during year-end retention", () => {
