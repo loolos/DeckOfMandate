@@ -120,8 +120,8 @@ export function Hand({
               <div className={styles.compactSummary}>{compactSummary}</div>
               <div className={styles.compactDetails}>
                 <OutcomeQuickFrame rows={quickRows} />
-                <div className={styles.cardBg}>{t(tmpl.backgroundKey as MessageKey)}</div>
                 {tagChips}
+                <div className={styles.cardBg}>{t(tmpl.backgroundKey as MessageKey)}</div>
                 <div className={styles.cardDesc}>{t(tmpl.descriptionKey as MessageKey)}</div>
               </div>
             </>
