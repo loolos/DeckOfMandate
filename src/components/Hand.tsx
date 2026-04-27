@@ -58,6 +58,7 @@ export function Hand({
         const blockedByDefiance = hasCardTag(state, id, "defiance");
         const playable = canPlay && affordable && !blockedByStatus && !blockedByDefiance;
         const title = cardLabelWithIcon(inst.templateId, t(tmpl.titleKey as MessageKey));
+        const detailedTitle = `${title}(💰${cost})`;
         const quickRows = buildCardQuickFrameRows(tmpl, cost);
         const compactSummary = quickRows.map((row) => row.value).join(" · ");
         const showDetails = !isSmallScreen || expandedCardId === id || (crackPick && id === crackPick.cardInstanceId);
@@ -114,7 +115,7 @@ export function Hand({
         const body = isSmallScreen ? (
           showDetails ? (
             <>
-              <div className={styles.cardTitle}>{title}</div>
+              <div className={styles.cardTitle}>{detailedTitle}</div>
               {tagChips}
               {cardArt}
               <div className={styles.compactSummary}>{compactSummary}</div>
@@ -141,7 +142,7 @@ export function Hand({
           )
         ) : (
           <>
-            <div className={styles.cardTitle}>{title}</div>
+            <div className={styles.cardTitle}>{detailedTitle}</div>
             {tagChips}
             {cardArt}
             <OutcomeQuickFrame rows={quickRows} />
