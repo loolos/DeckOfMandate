@@ -1434,11 +1434,18 @@
   }
 
   .eventCard {
-    flex: 0 0 min(70vw, 12.5rem);
-    width: min(70vw, 12.5rem);
-    max-width: min(70vw, 12.5rem);
-    min-width: min(70vw, 12.5rem);
+    flex: 0 0 min(66vw, 11.5rem);
+    width: min(66vw, 11.5rem);
+    max-width: min(66vw, 11.5rem);
+    min-width: min(66vw, 11.5rem);
     scroll-snap-align: start;
+  }
+
+  .eventCard.eventCardCollapsed {
+    flex: 0 0 min(54vw, 9.6rem);
+    width: min(54vw, 9.6rem);
+    max-width: min(54vw, 9.6rem);
+    min-width: min(54vw, 9.6rem);
   }
 
   .eventCard .btn {
