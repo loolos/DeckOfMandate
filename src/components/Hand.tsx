@@ -116,12 +116,12 @@ export function Hand({
           showDetails ? (
             <>
               <div className={styles.cardTitle}>{detailedTitle}</div>
-              {tagChips}
               {cardArt}
               <div className={styles.compactSummary}>{compactSummary}</div>
               <div className={styles.compactDetails}>
                 <OutcomeQuickFrame rows={quickRows} />
                 <div className={styles.cardBg}>{t(tmpl.backgroundKey as MessageKey)}</div>
+                {tagChips}
                 <div className={styles.cardDesc}>{t(tmpl.descriptionKey as MessageKey)}</div>
               </div>
             </>
@@ -143,10 +143,10 @@ export function Hand({
         ) : (
           <>
             <div className={styles.cardTitle}>{detailedTitle}</div>
-            {tagChips}
             {cardArt}
             <OutcomeQuickFrame rows={quickRows} />
             <div className={styles.cardBg}>{t(tmpl.backgroundKey as MessageKey)}</div>
+            {tagChips}
             <div className={styles.cardDesc}>{t(tmpl.descriptionKey as MessageKey)}</div>
           </>
         );
