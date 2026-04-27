@@ -27,6 +27,7 @@ import {
   cardPlayOpensCrackdownPicker,
   maybeAppendHuguenotContainmentClearedLog,
   performFundSolve,
+  shouldEnforceCampaignConsumeInvariant,
   stateAfterHarmfulEventCrackdown,
 } from "../levels/campaignLogicBundle";
 import { tryCampaignReducerBridge } from "../levels/campaignReducerBridge";
@@ -271,7 +272,7 @@ function handlePlayCard(state: GameState, action: Extract<GameAction, { type: "P
   }
   if (hasCardTag(paid, id, "consume")) {
     let s: GameState = removeHand(paid, id);
-    if (inst.templateId === "suppressHuguenots") {
+    if (shouldEnforceCampaignConsumeInvariant(inst.templateId)) {
       s = enforceHuguenotContainmentInvariant(s);
     }
     s = appendActionLog(s, {

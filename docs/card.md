@@ -11,7 +11,7 @@
 | `development` | 3 | `inflation` | treasuryStat +1 |
 | `grainRelief` | 3 | `inflation` | add 1-turn draw+ and legitimacy+ statuses; may auto-resolve one `risingGrainPrices` |
 | `taxRebalance` | 2 | `inflation` | treasuryStat +1, add 2-turn draw penalty status |
-| `diplomaticCongress` | 3 | *(none)* | power +1, also generates `diplomaticIntervention` to hand |
+| `diplomaticCongress` | 4 | *(none)* | power +1, also generates `diplomaticIntervention` to hand |
 | `diplomaticIntervention` | 0 | `extra` | harmful-event target selection (like crackdown channel) |
 | `fiscalBurden` | 2 | *(none)* | on draw: funding -1; can be played to purge itself |
 | `antiFrenchContainment` | dynamic | *(none)* | on draw: 50/50 lose 1 power or legitimacy; play cost = `max(1, floor(Europe Alert progress / 2))` (never below 1); can be played to purge itself |

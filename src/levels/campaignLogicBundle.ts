@@ -50,6 +50,7 @@ export { limitedUseCardDepletionPenalty } from "./sunking/logic/limitedUseCardDe
 export { shouldBlockModSuccessionTrackWhenWarEnded } from "./sunking/logic/applyEffectsSuccessionGate";
 export {
   cardPlayOpensCrackdownPicker,
+  shouldEnforceCampaignConsumeInvariant,
   shouldDeferPlayedCardEffectApplication,
 } from "./sunking/logic/playedCardTemplatePolicy";
 export {

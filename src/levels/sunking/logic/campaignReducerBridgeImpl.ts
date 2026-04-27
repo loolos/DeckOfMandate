@@ -13,12 +13,6 @@ import type { SlotId } from "../../types/event";
 import { THIRD_MANDATE_LEVEL_ID } from "./thirdMandateConstants";
 import { canLocalWarAttack, performLocalWarAppease, performLocalWarAttack } from "./localWarSolve";
 
-const SUNKING_LEVEL_IDS = new Set(["firstMandate", "secondMandate", "thirdMandate"]);
-
-function isSunkingLevel(levelId: string): boolean {
-  return SUNKING_LEVEL_IDS.has(levelId);
-}
-
 function addUniqueStatus(
   state: GameState,
   templateId: "religiousTolerance" | "huguenotContainment",
@@ -142,62 +136,110 @@ function performLouisXivLegacyPick(state: GameState, slot: SlotId, directRule: b
   return appendActionLog(s, { kind: "eventLouisXivLegacyChoice", slot, directRule });
 }
 
-/** Sun King campaign reducer slice; return null to defer to the core reducer. */
-export function trySunkingCampaignReducerBridge(state: GameState, action: GameAction): GameState | null {
-  if (action.type === "PICK_NANTES_TOLERANCE" || action.type === "PICK_NANTES_CRACKDOWN") {
-    if (!isSunkingLevel(state.levelId)) return null;
-    if (state.outcome !== "playing" || state.phase !== "action" || state.pendingInteraction) return null;
-    const ev = state.slots[action.slot];
-    if (!ev || ev.resolved || ev.templateId !== "revocationNantes") return null;
-    if (action.type === "PICK_NANTES_TOLERANCE") {
-      return appendInflationActivationLogIfNeeded(state, performPickNantesTolerance(state, action.slot));
-    }
-    return appendInflationActivationLogIfNeeded(state, performPickNantesCrackdown(state, action.slot));
-  }
+function canHandleActionPhasePick(state: GameState): boolean {
+  return state.outcome === "playing" && state.phase === "action" && !state.pendingInteraction;
+}
 
-  if (action.type === "PICK_LOCAL_WAR_ATTACK" || action.type === "PICK_LOCAL_WAR_APPEASE") {
-    if (!isSunkingLevel(state.levelId)) return null;
-    if (state.outcome !== "playing" || state.phase !== "action" || state.pendingInteraction) return null;
-    if (action.type === "PICK_LOCAL_WAR_ATTACK") {
+type BridgeRule = {
+  canHandle: (action: GameAction) => boolean;
+  apply: (state: GameState, action: GameAction) => GameState | null;
+};
+
+const BRIDGE_RULES: readonly BridgeRule[] = [
+  {
+    canHandle: (action) => action.type === "PICK_NANTES_TOLERANCE",
+    apply: (state, action) => {
+      if (action.type !== "PICK_NANTES_TOLERANCE") return null;
+      if (!canHandleActionPhasePick(state)) return null;
+      const ev = state.slots[action.slot];
+      if (!ev || ev.resolved || ev.templateId !== "revocationNantes") return null;
+      return appendInflationActivationLogIfNeeded(state, performPickNantesTolerance(state, action.slot));
+    },
+  },
+  {
+    canHandle: (action) => action.type === "PICK_NANTES_CRACKDOWN",
+    apply: (state, action) => {
+      if (action.type !== "PICK_NANTES_CRACKDOWN") return null;
+      if (!canHandleActionPhasePick(state)) return null;
+      const ev = state.slots[action.slot];
+      if (!ev || ev.resolved || ev.templateId !== "revocationNantes") return null;
+      return appendInflationActivationLogIfNeeded(state, performPickNantesCrackdown(state, action.slot));
+    },
+  },
+  {
+    canHandle: (action) => action.type === "PICK_LOCAL_WAR_ATTACK",
+    apply: (state, action) => {
+      if (action.type !== "PICK_LOCAL_WAR_ATTACK") return null;
+      if (!canHandleActionPhasePick(state)) return null;
       if (!canLocalWarAttack(state, action.slot)) return null;
       return appendInflationActivationLogIfNeeded(state, performLocalWarAttack(state, action.slot));
-    }
-    const evLw = state.slots[action.slot];
-    if (!evLw || evLw.resolved || evLw.templateId !== "localWar") return null;
-    return appendInflationActivationLogIfNeeded(state, performLocalWarAppease(state, action.slot));
-  }
-
-  if (state.levelId !== THIRD_MANDATE_LEVEL_ID) return null;
-  switch (action.type) {
-    case "PICK_SUCCESSION_CRISIS": {
-      if (state.outcome !== "playing" || state.phase !== "action" || state.pendingInteraction) return null;
+    },
+  },
+  {
+    canHandle: (action) => action.type === "PICK_LOCAL_WAR_APPEASE",
+    apply: (state, action) => {
+      if (action.type !== "PICK_LOCAL_WAR_APPEASE") return null;
+      if (!canHandleActionPhasePick(state)) return null;
+      const ev = state.slots[action.slot];
+      if (!ev || ev.resolved || ev.templateId !== "localWar") return null;
+      return appendInflationActivationLogIfNeeded(state, performLocalWarAppease(state, action.slot));
+    },
+  },
+  {
+    canHandle: (action) => action.type === "PICK_SUCCESSION_CRISIS",
+    apply: (state, action) => {
+      if (action.type !== "PICK_SUCCESSION_CRISIS") return null;
+      if (state.levelId !== THIRD_MANDATE_LEVEL_ID) return null;
+      if (!canHandleActionPhasePick(state)) return null;
       return appendInflationActivationLogIfNeeded(
         state,
         performSuccessionCrisisPick(state, action.slot, action.pay),
       );
-    }
-    case "PICK_UTRECHT_TREATY": {
-      if (state.outcome !== "playing" || state.phase !== "action" || state.pendingInteraction) return null;
+    },
+  },
+  {
+    canHandle: (action) => action.type === "PICK_UTRECHT_TREATY",
+    apply: (state, action) => {
+      if (action.type !== "PICK_UTRECHT_TREATY") return null;
+      if (state.levelId !== THIRD_MANDATE_LEVEL_ID) return null;
+      if (!canHandleActionPhasePick(state)) return null;
       return appendInflationActivationLogIfNeeded(
         state,
         performUtrechtTreatyPick(state, action.slot, action.endWar),
       );
-    }
-    case "PICK_DUAL_FRONT_CRISIS": {
-      if (state.outcome !== "playing" || state.phase !== "action" || state.pendingInteraction) return null;
+    },
+  },
+  {
+    canHandle: (action) => action.type === "PICK_DUAL_FRONT_CRISIS",
+    apply: (state, action) => {
+      if (action.type !== "PICK_DUAL_FRONT_CRISIS") return null;
+      if (state.levelId !== THIRD_MANDATE_LEVEL_ID) return null;
+      if (!canHandleActionPhasePick(state)) return null;
       return appendInflationActivationLogIfNeeded(
         state,
         performDualFrontCrisisPick(state, action.slot, action.expandWar),
       );
-    }
-    case "PICK_LOUIS_XIV_LEGACY": {
-      if (state.outcome !== "playing" || state.phase !== "action" || state.pendingInteraction) return null;
+    },
+  },
+  {
+    canHandle: (action) => action.type === "PICK_LOUIS_XIV_LEGACY",
+    apply: (state, action) => {
+      if (action.type !== "PICK_LOUIS_XIV_LEGACY") return null;
+      if (state.levelId !== THIRD_MANDATE_LEVEL_ID) return null;
+      if (!canHandleActionPhasePick(state)) return null;
       return appendInflationActivationLogIfNeeded(
         state,
         performLouisXivLegacyPick(state, action.slot, action.directRule),
       );
-    }
-    default:
-      return null;
+    },
+  },
+];
+
+/** Sun King campaign reducer slice; return null to defer to the core reducer. */
+export function trySunkingCampaignReducerBridge(state: GameState, action: GameAction): GameState | null {
+  for (const rule of BRIDGE_RULES) {
+    if (!rule.canHandle(action)) continue;
+    return rule.apply(state, action);
   }
+  return null;
 }

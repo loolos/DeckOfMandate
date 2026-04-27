@@ -41,9 +41,11 @@
 - **Campaign-specific event/card resolution:** e.g. `logic/fundSolve.ts`, `logic/playCardExtras.ts`, `logic/playedCardTemplatePolicy.ts`, `logic/applyEffectsSuccessionGate.ts`.
 - **Content-heavy tests:** `src/levels/sunking/logic/*.test.ts` (prefer this over `src/logic` for assertions that name real levels or event ids).
 
-### Thin façades (`src/logic` re-exports)
+### Thin façades (`src/logic` + `src/levels/campaign*.ts` re-exports)
 
 Some `src/logic/*.ts` files **only** re-export from `campaignLogicBundle` so the rest of the app keeps stable import paths. That is intentional; see `AGENTS.md`. Do not duplicate implementation there.
+
+Likewise, several `src/levels/campaign*.ts` files are campaign façades (`campaignTurnFlow.ts`, `campaignCardRuntime.ts`, `campaignAiStrategySimulation.ts`, `campaignCardCost.ts`, `campaignCardTags.ts`, `campaignCardUsage.ts`, `campaignQuickOutcomeFrame.ts`, `eventTemplateApi.ts`, `campaignCardArt.ts`). They should remain pure dispatch/re-export surfaces, not where campaign rules are re-implemented.
 
 ---
 
@@ -70,6 +72,10 @@ Work through this checklist in order:
 | `resolveCard` short-circuiting specific templates | `shouldDeferPlayedCardEffectApplication` (or similar) from the bundle. |
 | `src/logic` tests asserting Sun King ids | Move to `src/levels/sunking/logic/*.test.ts`; leave a one-case smoke in `src/logic` if the façade path must stay covered. |
 | Legacy **run code v1** level-bit mapping | No silent fallback to hard-coded level ids; fail decode if the registry does not expose two compatible bootstrap levels. |
+| `src/app/Game.tsx` importing `src/levels/sunking/*` directly | Move to campaign metadata / façade APIs (e.g. campaign shell resolver, backdrop resolver) so app shell does not hard-code one campaign. |
+| `isSunkingLevelId` checks in app UI flow | Prefer generic “campaign capabilities by levelId” lookup instead of campaign-name checks in app components. |
+| `src/levels/load/content.ts` type narrowed to one campaign (`sunkingLocales`) | Keep merge path campaign-agnostic; avoid type coupling that blocks adding a second campaign pack. |
+| i18n fallback copy mentions “level-specific” behavior but loader assumptions differ | Verify `src/locales/*.core.ts` fallback messaging and actual merged campaign locale loading stay consistent. |
 
 ---
 
@@ -81,6 +87,14 @@ npm run build
 ```
 
 Ensure `src/test/setupLevels.ts` still loads every campaign that production loads.
+
+Additional must-check files during decouple review:
+
+- `src/app/Game.tsx` (campaign shell / backdrop / campaign-id checks).
+- `src/levels/sunking/sunkingLevelIds.ts` (campaign id grouping exposed to app).
+- `src/levels/load/content.ts` (cross-campaign content merge and typing).
+- `src/logic/runCode.ts` (legacy level mapping compatibility behavior).
+- `src/levels/campaign*.ts` façades + `src/logic/*.ts` façades (re-export only; no duplicated rules).
 
 ---
 
@@ -97,7 +111,9 @@ Scope hints (optional):
 
 - `--scope=entry` — registration, default level, setupLevels only.  
 - `--scope=reducer` — `gameReducer` + bridges + fund solve.  
-- `--scope=logic-facades` — `src/logic` re-exports vs `campaignLogicBundle`.  
+- `--scope=logic-facades` — `src/logic/*.ts` and `src/levels/campaign*.ts` re-exports vs bundle/pack implementations.  
+- `--scope=ui-shell` — app UI campaign assumptions (`Game.tsx`, campaign backdrop/shell branches, level-id campaign checks).  
+- `--scope=load-i18n` — `levels/load/content.ts` merge path + locale fallback messaging consistency.  
 - `--scope=tests` — test file locations and campaign binding.  
 - `--scope=all` — full checklist above.
 

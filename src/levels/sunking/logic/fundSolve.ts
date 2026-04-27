@@ -6,6 +6,7 @@ import { markSlotResolvedWithLeagueProgress } from "../../../logic/eventSlotOps"
 import { opponentImmediateExtraDraw } from "../../../logic/opponentHabsburg";
 import { rngNext } from "../../../logic/rng";
 import type { GameState } from "../../../types/game";
+import type { EventTemplate } from "../../types/event";
 import { EVENT_SLOT_ORDER, type EventTemplateId, type SlotId } from "../../types/event";
 
 function markSlotResolvedWithNineYearsWarPersistence(
@@ -40,6 +41,17 @@ function removeEventsByTemplate(
   return {
     state: removedCount > 0 ? { ...state, slots } : state,
     removedCount,
+  };
+}
+
+function isFundingSolveKind(kind: EventTemplate["solve"]["kind"]): boolean {
+  return kind === "funding" || kind === "fundingTreasuryQuarterCeil" || kind === "fundingOrCrackdown";
+}
+
+function stateAfterFundingPaid(state: GameState, fundingPaid: number): GameState {
+  return {
+    ...state,
+    resources: { ...state.resources, funding: state.resources.funding - fundingPaid },
   };
 }
 
@@ -91,25 +103,15 @@ export function performFundSolve(preSolveState: GameState, slot: SlotId): GameSt
   const ev = preSolveState.slots[slot];
   if (!ev || ev.resolved) return preSolveState;
   const tmpl = getEventTemplate(ev.templateId);
-  const fundingAmount = getEventSolveFundingAmount(preSolveState, ev.templateId);
-  let s = preSolveState;
-  if (tmpl.solve.kind === "funding" || tmpl.solve.kind === "fundingTreasuryQuarterCeil") {
-    if (fundingAmount === null) return preSolveState;
-    s = {
-      ...s,
-      resources: { ...s.resources, funding: s.resources.funding - fundingAmount },
-    };
-  } else if (tmpl.solve.kind === "fundingOrCrackdown") {
-    if (fundingAmount === null) return preSolveState;
-    s = {
-      ...s,
-      resources: { ...s.resources, funding: s.resources.funding - fundingAmount },
-    };
-  } else {
+  if (!isFundingSolveKind(tmpl.solve.kind)) {
     return preSolveState;
   }
+  const fundingAmount = getEventSolveFundingAmount(preSolveState, ev.templateId);
+  if (fundingAmount === null) return preSolveState;
+  const fundingPaid = fundingAmount;
+  let s = stateAfterFundingPaid(preSolveState, fundingPaid);
   if (ev.templateId === "nineYearsWar") {
-    return attemptNineYearsWarCampaign(s, slot, "funding", fundingAmount ?? 0);
+    return attemptNineYearsWarCampaign(s, slot, "funding", fundingPaid);
   }
   if (ev.templateId === "localizedSuccessionWar") {
     const [rng, roll] = rngNext(s.rng);
@@ -125,7 +127,7 @@ export function performFundSolve(preSolveState: GameState, slot: SlotId): GameSt
     s = appendActionLog(s, {
       kind: "eventLocalizedSuccessionWarResolve",
       slot,
-      fundingPaid: fundingAmount ?? 0,
+      fundingPaid,
       successionDelta,
     });
     return appendInflationActivationLogIfNeeded(preSolveState, s);
@@ -165,12 +167,6 @@ export function performFundSolve(preSolveState: GameState, slot: SlotId): GameSt
   }
   s = markSlotResolvedWithLeagueProgress(s, slot);
   s = enforceLegitimacy(s);
-  const fundingPaid =
-    tmpl.solve.kind === "funding" ||
-    tmpl.solve.kind === "fundingTreasuryQuarterCeil" ||
-    tmpl.solve.kind === "fundingOrCrackdown"
-      ? (fundingAmount ?? 0)
-      : 0;
   s = appendActionLog(s, {
     kind: "eventFundSolved",
     slot,

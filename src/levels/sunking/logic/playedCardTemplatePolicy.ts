@@ -9,3 +9,8 @@ export function shouldDeferPlayedCardEffectApplication(templateId: CardTemplateI
 export function cardPlayOpensCrackdownPicker(templateId: CardTemplateId): boolean {
   return shouldDeferPlayedCardEffectApplication(templateId);
 }
+
+/** Consume cards that should resync campaign-specific status/card invariants after being removed from hand. */
+export function shouldEnforceCampaignConsumeInvariant(templateId: CardTemplateId): boolean {
+  return templateId === "suppressHuguenots";
+}
