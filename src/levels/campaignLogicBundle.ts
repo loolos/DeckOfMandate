@@ -52,7 +52,10 @@ export {
   cardPlayOpensCrackdownPicker,
   shouldDeferPlayedCardEffectApplication,
 } from "./sunking/logic/playedCardTemplatePolicy";
-export { applySunkingPlayCardExtras, maybeAppendHuguenotContainmentClearedLog } from "./sunking/logic/playCardExtras";
+export {
+  applySunkingPlayCardExtras as applyCampaignPlayCardExtras,
+  maybeAppendHuguenotContainmentClearedLog,
+} from "./sunking/logic/playCardExtras";
 export { applyScriptedAttackCampaignFlags } from "./sunking/logic/scriptedAttackFollowup";
 export { stateAfterHarmfulEventCrackdown } from "./sunking/logic/crackdownHarmfulSolve";
 export { applyAntiFrenchContainmentDeckAfterRetentionYear } from "./sunking/logic/eoyRetentionCampaign";

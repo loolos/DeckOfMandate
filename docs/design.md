@@ -69,6 +69,7 @@ Templates are immutable references. Runtime uses **instances** (cards/events/sta
 - Branch persistence into chapter 2 (war branch -> Europe Alert).
 - Europe Alert yearly base drift at begin-year (`k = x - 12 - y*3`) and progress-gated supplemental event injection.
 - Additional chapter-2 win gates.
+- Chapter 3 (`thirdMandate`): `successionWar` victory rule, `successionTrack` (−10..+10) with immediate outcomes, Habsburg opponent deck (`opponentHabsburg.ts`), Utrecht treaty window, Nantes policy carryover cards (`thirdMandateStart.ts`), and chapter-3 refit / standalone synthetic deck (`chapter3Transition.ts`). Europe Alert mechanics are **off** for this level.
 
 ## 8. Persistence
 
@@ -88,6 +89,7 @@ Current automated coverage includes:
 - inflation and card-runtime edge cases
 - turn-flow and reducer behaviors
 - run codes (v2 wire format with UTF-8 level ids; v1 legacy decode still supported)
+- AI strategy Monte Carlo summaries in `src/levels/sunking/sim/aiStrategySimulation.test.ts` (inline snapshots; **will fail** if strategy or content drift changes batch statistics — refresh snapshots deliberately when balancing, not as drive-by edits)
 
 Run with:
 

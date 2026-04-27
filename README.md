@@ -12,6 +12,7 @@ Single-player, turn-based strategy card game about governance under pressure. Th
 - **Modes**:
   - Chapter 1: **The Rising Sun** (`firstMandate`, 1661–1675, 15 turns)
   - Chapter 2: **Long Shadows at Noon** (`secondMandate`, 1676–1700, 25 turns)
+  - Chapter 3: **Waning Sun, Vacant Crown** (`thirdMandate`, Spanish Succession arc, 1701–1720 in-game calendar, 20 turns; `successionWar` victory rule — see [docs/gameplay.md](docs/gameplay.md))
 - **Localization**: English / 中文 / Français.
 
 ## Run locally

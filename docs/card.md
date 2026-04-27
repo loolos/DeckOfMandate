@@ -66,7 +66,7 @@ effectiveCost = baseCost + inflationStack(instance)
 Activation:
 
 - Chapter 2: always active.
-- Chapter 1: activates once `power + treasuryStat + legitimacy >= 12`.
+- Chapters 1 and 3: activate once `power + treasuryStat + legitimacy >= 12` (pressure-threshold inflation).
 
 ## 5. Chapter starter composition
 
@@ -79,6 +79,19 @@ Activation:
 `grainRelief x2`, `taxRebalance x2`, `diplomaticCongress x1` are always added to the chapter-2 pool build.
 
 (Continuity mode also carries chapter-1 instances, subject to remove-only refit and max 3 removals.)
+
+### Chapter 3 (`thirdMandate`)
+
+Core library matches Chapter 2’s sixteen-template `starterDeckTemplateOrder` in `thirdMandate.ts` (`reform`×2, `ceremony`×2, `grainRelief`×2, `taxRebalance`×2, `diplomaticCongress`×2), plus **eight** chapter-3-only copies shuffled into the full deck (two each):
+
+| ID | Cost | Tags | Core effect (high level) |
+| --- | ---: | --- | --- |
+| `bourbonMarriageProclamation` | 3 | `successionContest` | power +1, succession track +1, adds short `bourbonMarriageRetention` status |
+| `grandAllianceInfiltrationDiplomacy` | 3 | `successionContest` | succession track +1, draw 1; also sets one-turn opponent cost discount (see reducer) |
+| `italianTheaterTroopRedeploy` | 3 | `successionContest` | succession track +2, injects `fiscalBurden` into deck |
+| `usurpationEdict` | 3 | `successionContest` | succession track +2, draw 1, adds temporary `legitimacyCrisis` status |
+
+Nantes carryover may inject four `religiousTensionCard` or four `jansenistReservation` instead (`thirdMandateStart.ts`). `limitedUseByTemplateId` on the level bumps several templates (e.g. `funding` / `crackdown` / `development` total **3**, `diplomaticIntervention` **2**); see `src/levels/sunking/chapters/thirdMandate.ts`.
 
 ## 6. Special runtime card interactions
 

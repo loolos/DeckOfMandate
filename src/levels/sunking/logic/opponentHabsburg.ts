@@ -24,6 +24,7 @@ const HABSURG_TIE_ORDER: readonly CardTemplateId[] = [
   "habsburgAngloDutchMaritimeInterdiction",
   "habsburgRhineMagazineEmbargo",
 ];
+const OPPONENT_SUBSET_ENUMERATION_LIMIT = 16;
 
 type OppDelta = { seq: number; pow: number; leg: number; tre: number };
 
@@ -172,7 +173,12 @@ export function chooseOpponentPlay(state: GameState): readonly string[] | null {
   const budget = Math.max(0, n - discount);
   const nearWin = state.successionTrack >= OPPONENT_AI_NEAR_WIN_THRESHOLD;
 
-  const candidates = enumerateNonEmptySubsets(hand).filter((ids) => sumOpponentCost(ids, state.cardsById) <= budget);
+  const candidates =
+    hand.length > OPPONENT_SUBSET_ENUMERATION_LIMIT
+      ? hand
+          .filter((id) => sumOpponentCost([id], state.cardsById) <= budget)
+          .map((id) => [id] as string[])
+      : enumerateNonEmptySubsets(hand).filter((ids) => sumOpponentCost(ids, state.cardsById) <= budget);
   if (candidates.length === 0) return [];
 
   let best = candidates[0]!;

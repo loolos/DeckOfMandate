@@ -108,7 +108,7 @@ export const sunkingCoreGameContentFr = {
     "Après la mort de Louis XIV, l'autorité d'un roi mineur nourrit les doutes de cour et ralentit la chaîne d'exécution chaque année.",
   "status.bourbonMarriageRetention.name": "Sérénité de l'alliance dynastique",
   "status.bourbonMarriageRetention.history":
-    "Le récit public du mariage et du droit successif stabilise assez la paperasserie pour conserver une carte de plus au bilan de fin d'année.",
+    "Le récit public du mariage et du droit successif stabilise la cour : plafond total de main +1 (peut dépasser 12), et ce +1 s’ajoute aussi à la limite de conservation en fin d’année avec la Légitimité.",
   "event.jansenistTension.name": "Controverse janséniste",
   "event.jansenistTension.desc":
     "Depuis Richelieu, le rigorisme port-royaliste et l'autorité épiscopale heurtent Rome et Versailles. Les débats sur la grâce et le salut réactivent les réseaux jansénistes et opposent évêques, magistrats et pouvoir royal. Payez 2 Financement pour inspections ecclésiastiques et apaisement public, sinon perdez 1 Légitimité.",

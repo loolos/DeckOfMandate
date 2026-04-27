@@ -9,7 +9,7 @@ This document reflects current runtime behavior in `src/app/*`, `src/logic/*`, a
 - **Power**: governs draw attempts via threshold scaling, and chapter objectives.
 - **Legitimacy**: political stability, retention capacity baseline, and hard fail resource.
 
-### Starting values (from `src/levels/sunking/chapters/firstMandate.ts` and `secondMandate.ts`)
+### Starting values (from `src/levels/sunking/chapters/firstMandate.ts`, `secondMandate.ts`, and `thirdMandate.ts`)
 
 | Mode | Treasury | Funding | Power | Legitimacy |
 | --- | ---: | ---: | ---: | ---: |
@@ -17,6 +17,8 @@ This document reflects current runtime behavior in `src/app/*`, `src/logic/*`, a
 | Chapter 1 standalone | 2 | 0 | 2 | 2 |
 | Chapter 2 (`secondMandate`, continuity carry-in) | 3 | 0 | 3 | 3 |
 | Chapter 2 standalone | 8 | 0 | 7 | 5 |
+| Chapter 3 (`thirdMandate`, level-def snapshot for menu / docs) | 14 | 0 | 10 | 10 |
+| Chapter 3 continuity | Carries Chapter 2 end state through refit (`chapter3Transition.ts`); not these baseline numbers |
 
 Continuity-mode Chapter 2 in practice carries the Chapter 1 final resources rather than these baseline `3 / 3 / 3` numbers (the baseline only matters when carry-over is missing); see §8 for the `warOfDevolutionAttacked` `legitimacy +1` bump.
 
@@ -30,10 +32,10 @@ funding += max(0, treasuryStat - localWarIncomePenalty)
 
 ## 2. Turn pipeline (beginYear + action + retention)
 
-Each turn is one year in both current chapters.
+Each turn is one calendar year in every Sun King chapter (`firstMandate`, `secondMandate`, `thirdMandate`).
 
 1. **Begin-year status effects**: `beginYearResourceDelta` statuses apply first (e.g. temporary legitimacy boost).
-2. **Europe Alert base drift (Chapter 2 only, if active)**:
+2. **Europe Alert base drift (Chapter 2 only; Chapter 3 has `europeAlertMechanics: false`)**:
    - Let `x = treasuryStat + power + legitimacy`, `y = europeAlertProgress`, `k = x - 12 - y*3`.
    - If `k > 0`, progress increases by 1 with probability `min(100%, k*10%)`.
    - If `k < 0`, progress decreases by 1 with probability `min(100%, (-k)*10%)`.
@@ -50,7 +52,7 @@ Each turn is one year in both current chapters.
    - draw attempts run with hand cap 12
    - overflow draws are discarded and logged
    - if deck empties, refill from discard (shuffle) and continue
-   - on deck refill, inflation stacks may increase for qualifying instances. Activation differs by chapter: **Chapter 2 always** applies inflation; **Chapter 1 only** activates once `treasuryStat + power + legitimacy >= 12`. Until activation in Chapter 1, the `inflation` tag is hidden on `reform` / `ceremony` / `development` and refills do not stack.
+   - on deck refill, inflation stacks may increase for qualifying instances. Activation differs by chapter: **Chapter 2 always** applies inflation; **Chapters 1 and 3** use the same pressure rule: activate once `treasuryStat + power + legitimacy >= 12`. Until activation in those chapters, the `inflation` tag is hidden on `reform` / `ceremony` / `development` and refills do not stack.
 6. **Status tick-down**: most timed statuses decrement after draw; long-lived branch statuses do not auto-tick.
 7. **Event phase**:
    - apply scheduled slot transforms (e.g. `powerVacuum -> majorCrisis`)
@@ -173,6 +175,16 @@ Need all of the following:
 
 If last turn ends without victory => time defeat.
 
+### Chapter 3 victory / defeat (`thirdMandate`, `victoryRule.kind === "successionWar"`)
+
+Chapter 3 does **not** use the resource-target win path. Outcomes are driven by **`successionTrack`** (clamped **−10..+10** in UI and normalization), **`warEnded`**, and the Utrecht settlement flow. There is **no** `defeatTime` from the turn limit: `evaluateTimeDefeat` returns without applying a time defeat for this rule kind.
+
+- **Immediate defeat**: `successionTrack <= -10` ⇒ `defeatSuccession` (enforced when applying track deltas, e.g. via `enforceSuccessionImmediateOutcome` in the effect pipeline). The usual resource defeats (`legitimacy` / `treasuryStat` / `power` ≤ 0) still apply where enforced.
+- **Immediate victory (track cap before war ends)**: while `warEnded` is still false and `successionTrack >= 10` ⇒ `victory` with no `successionOutcomeTier` (track-cap path; see `evaluateVictory` in `src/levels/sunking/logic/turnFlow.ts`).
+- **Calendar-end tiered victory**: on the **last** playable turn, if `-10 < successionTrack < +10` ⇒ `victory` with `successionOutcomeTier` from the interval rule: **bourbon** if track **≥ 5**, **compromise** if **−4..+4**, **habsburg** otherwise (track **≤ −5**).
+
+For scripted windows, opponent deck, and Nantes carryover details, see [`src/levels/sunking/docs/太阳王战役.md`](src/levels/sunking/docs/太阳王战役.md) §第 3 关.
+
 ## 7. Retention and hand rules
 
 - Hard hand cap: **12**.
@@ -193,3 +205,10 @@ Two start modes:
    - Refit is remove-only, max 3 removals.
    - Adds fixed Chapter 2 new cards.
    - If Chapter 1 took the `warOfDevolutionAttacked` branch, Chapter 2 starting `legitimacy` is bumped by `+1`.
+
+## 9. Chapter transition behavior (to Chapter 3)
+
+- **Continuity from Chapter 2 victory**: carries instances through `level3FromPrior` / `chapter3Transition.ts` (remove-only refit, same max **3** removals pattern as Chapter 2; at least one carried card must remain). Injects eight chapter-3-only template copies (two each of `bourbonMarriageProclamation`, `grandAllianceInfiltrationDiplomacy`, `italianTheaterTroopRedeploy`, `usurpationEdict`) plus Nantes policy starter cards per `thirdMandateStart.ts`.
+- **Standalone Chapter 3 from menu**: builds from a synthetic Chapter 2 deck snapshot (`standaloneCarryoverSource` in `thirdMandate.ts` refit config): drops all `funding` / `crackdown` instances, inflates `inflation`-tagged instances toward target cost **4**, and applies template use overrides before the chapter-3 shuffle and two-card opening hand.
+
+Authoritative wiring: `src/levels/sunking/chapter3Transition.ts`, `src/app/levelTransitions.ts`, `src/levels/sunking/sunkingInitialStateHooks.ts`.

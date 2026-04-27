@@ -104,7 +104,7 @@ export const sunkingCoreGameContentEn = {
     "After Louis XIV's death, a child-king court invites factional doubt and slows command relay each year.",
   "status.bourbonMarriageRetention.name": "Dynastic alliance composure",
   "status.bourbonMarriageRetention.history":
-    "A staged marriage-and-succession narrative steadies court paperwork and briefings enough to carry one extra card across the year-end reckoning.",
+    "A staged marriage-and-succession narrative steadies court rhythm: +1 total hand cap (can exceed 12) and the same +1 counts toward how many hand cards you may keep at year-end together with Legitimacy.",
   "event.jansenistTension.name": "Jansenist Controversy",
   "event.jansenistTension.desc":
     "Port-Royal rigor and episcopal authority had clashed with Rome and Versailles since Richelieu's day. Debates over grace and salvation revive Jansenist networks and reopen conflict between bishops, magistrates, and the crown. Pay 2 Funding for clerical inspections and public pacification, or lose 1 Legitimacy.",

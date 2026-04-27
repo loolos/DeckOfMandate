@@ -433,6 +433,12 @@ function average(values: readonly number[]): number {
   return values.reduce((sum, n) => sum + n, 0) / values.length;
 }
 
+function averageNullable(values: readonly (number | null | undefined)[]): number | null {
+  const filtered = values.filter((n): n is number => n != null);
+  if (filtered.length === 0) return null;
+  return average(filtered);
+}
+
 type CarryoverDraftLike = {
   carryoverCards: readonly {
     instanceId: string;
@@ -1056,7 +1062,7 @@ function simulateEndStateWithPolicy(
       return state;
     }
     const forceEndYear =
-      label === "thirdMandateStandalone" && stepsSinceTurnAdvance >= FORCE_END_YEAR_AFTER_SAME_TURN_STEPS;
+      state.levelId === "thirdMandate" && stepsSinceTurnAdvance >= FORCE_END_YEAR_AFTER_SAME_TURN_STEPS;
     const next = runStrategyStep(state, policy, options, forceEndYear ? { forceEndYear: true } : undefined);
     if (next === state) {
       throw new Error(`strategy got stuck at ${label}, seed=${seed}, turn=${state.turn}, phase=${state.phase}`);
@@ -1570,6 +1576,10 @@ export function simulateFirstToThirdCampaignBatch(options?: {
   const chapter2WinResources = chapter2Wins
     .map((r) => r.secondEndResources)
     .filter((v): v is Resources => v !== null);
+  const avgChapter2EndReached = averageNullable(chapter2Runs.map((r) => r.secondEndTurn));
+  const avgChapter2EndWin = averageNullable(chapter2Wins.map((r) => r.secondEndTurn));
+  const avgChapter3EndReached = averageNullable(chapter3Runs.map((r) => r.thirdEndTurn));
+  const avgChapter3EndWin = averageNullable(chapter3Wins.map((r) => r.thirdEndTurn));
   return {
     strategyId: STRATEGY_I_ID,
     runCount,
@@ -1595,10 +1605,8 @@ export function simulateFirstToThirdCampaignBatch(options?: {
     fullCampaignWins: chapter3Wins.length,
     fullCampaignWinRate: round(chapter3Wins.length / runCount, 4),
     averageChapter1EndTurn: round(average(runs.map((r) => r.firstEndTurn)), 3),
-    averageChapter2EndTurnOnReached:
-      chapter2Runs.length > 0 ? round(average(chapter2Runs.map((r) => r.secondEndTurn ?? 0)), 3) : null,
-    averageChapter2EndTurnOnWin:
-      chapter2Wins.length > 0 ? round(average(chapter2Wins.map((r) => r.secondEndTurn ?? 0)), 3) : null,
+    averageChapter2EndTurnOnReached: avgChapter2EndReached !== null ? round(avgChapter2EndReached, 3) : null,
+    averageChapter2EndTurnOnWin: avgChapter2EndWin !== null ? round(avgChapter2EndWin, 3) : null,
     averageChapter2EndingResourcesOnWin:
       chapter2WinResources.length > 0
         ? {
@@ -1608,10 +1616,8 @@ export function simulateFirstToThirdCampaignBatch(options?: {
             legitimacy: round(average(chapter2WinResources.map((r) => r.legitimacy)), 3),
           }
         : null,
-    averageChapter3EndTurnOnReached:
-      chapter3Runs.length > 0 ? round(average(chapter3Runs.map((r) => r.thirdEndTurn ?? 0)), 3) : null,
-    averageChapter3EndTurnOnWin:
-      chapter3Wins.length > 0 ? round(average(chapter3Wins.map((r) => r.thirdEndTurn ?? 0)), 3) : null,
+    averageChapter3EndTurnOnReached: avgChapter3EndReached !== null ? round(avgChapter3EndReached, 3) : null,
+    averageChapter3EndTurnOnWin: avgChapter3EndWin !== null ? round(avgChapter3EndWin, 3) : null,
   };
 }
 

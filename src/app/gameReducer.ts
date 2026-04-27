@@ -22,8 +22,8 @@ import type { GameState } from "../types/game";
 import type { LogInfoKey } from "../types/game";
 import {
   applyAntiFrenchContainmentDeckAfterRetentionYear,
+  applyCampaignPlayCardExtras,
   applyScriptedAttackCampaignFlags,
-  applySunkingPlayCardExtras,
   cardPlayOpensCrackdownPicker,
   maybeAppendHuguenotContainmentClearedLog,
   performFundSolve,
@@ -55,6 +55,14 @@ export type GameAction =
 
 function removeHand(state: GameState, instanceId: string): GameState {
   return { ...state, hand: state.hand.filter((id) => id !== instanceId) };
+}
+
+function isPlayingActionPhase(state: GameState): boolean {
+  return state.outcome === "playing" && state.phase === "action";
+}
+
+function isPlayingActionPhaseWithoutPendingInteraction(state: GameState): boolean {
+  return isPlayingActionPhase(state) && !state.pendingInteraction;
 }
 
 function isTemporaryCardInstance(state: GameState, instanceId: string): boolean {
@@ -236,6 +244,142 @@ function completeYearAfterRetention(state: GameState, keepIds: readonly string[]
   return s;
 }
 
+function handlePlayCard(state: GameState, action: Extract<GameAction, { type: "PLAY_CARD" }>): GameState {
+  if (!isPlayingActionPhaseWithoutPendingInteraction(state)) {
+    return state;
+  }
+  const id = state.hand[action.handIndex];
+  if (!id) return state;
+  const inst = state.cardsById[id];
+  if (!inst) return state;
+  if (!isCardPlayableInActionPhase(state, id)) return state;
+  const tmpl = getCardTemplate(inst.templateId);
+  const cost = getPlayableCardCost(state, id);
+  if (state.resources.funding < cost) return state;
+  const paid = {
+    ...state,
+    resources: { ...state.resources, funding: state.resources.funding - cost },
+  };
+  if (cardPlayOpensCrackdownPicker(inst.templateId)) {
+    return appendActionLog(
+      {
+        ...paid,
+        pendingInteraction: { type: "crackdownPick", cardInstanceId: id, fundingPaid: cost },
+      },
+      { kind: "crackdownPickPrompt" },
+    );
+  }
+  if (hasCardTag(paid, id, "consume")) {
+    let s: GameState = removeHand(paid, id);
+    if (inst.templateId === "suppressHuguenots") {
+      s = enforceHuguenotContainmentInvariant(s);
+    }
+    s = appendActionLog(s, {
+      kind: "cardPlayed",
+      templateId: inst.templateId,
+      fundingCost: cost,
+      effects: tmpl.effects,
+    });
+    s = maybeAppendHuguenotContainmentClearedLog(paid, s, inst.templateId);
+    return s;
+  }
+  let s = applyPlayedCardEffects(paid, inst.templateId);
+  s = applyCampaignPlayCardExtras(s, inst.templateId);
+  s = removeHand(s, id);
+  const consumed = consumeLimitedUseCard(s, id);
+  s = consumed.state;
+  if (!consumed.exhausted) {
+    s = pushDiscard(s, id);
+  }
+  s = enforceLegitimacy(s);
+  s = appendActionLog(s, {
+    kind: "cardPlayed",
+    templateId: inst.templateId,
+    fundingCost: cost,
+    effects: tmpl.effects,
+  });
+  return appendInflationActivationLogIfNeeded(state, s);
+}
+
+function handleSolveEvent(state: GameState, action: Extract<GameAction, { type: "SOLVE_EVENT" }>): GameState {
+  if (!isPlayingActionPhaseWithoutPendingInteraction(state)) {
+    return state;
+  }
+  if (!canFundSolve(state, action.slot)) return state;
+  return appendInflationActivationLogIfNeeded(state, performFundSolve(state, action.slot));
+}
+
+function handleScriptedEventAttack(
+  state: GameState,
+  action: Extract<GameAction, { type: "SCRIPTED_EVENT_ATTACK" }>,
+): GameState {
+  if (!isPlayingActionPhaseWithoutPendingInteraction(state)) {
+    return state;
+  }
+  if (!canScriptedAttack(state, action.slot)) return state;
+  return appendInflationActivationLogIfNeeded(state, performScriptedAttack(state, action.slot));
+}
+
+function handleCrackdownTarget(
+  state: GameState,
+  action: Extract<GameAction, { type: "CRACKDOWN_TARGET" }>,
+): GameState {
+  const p = state.pendingInteraction;
+  if (!p || p.type !== "crackdownPick") return state;
+  if (!isCrackdownTarget(state, action.slot)) return state;
+  const cleared = state.slots[action.slot];
+  if (!cleared) return state;
+  let s = stateAfterHarmfulEventCrackdown(state, action.slot, cleared.templateId, p.fundingPaid);
+  s = removeHand(s, p.cardInstanceId);
+  const consumed = consumeLimitedUseCard(s, p.cardInstanceId);
+  s = consumed.state;
+  if (!consumed.exhausted) {
+    s = pushDiscard(s, p.cardInstanceId);
+  }
+  s = { ...s, pendingInteraction: null };
+  s = enforceLegitimacy(s);
+  s = appendActionLog(s, {
+    kind: "eventCrackdownSolved",
+    slot: action.slot,
+    harmfulEventTemplateId: cleared.templateId,
+    fundingPaid: p.fundingPaid,
+  });
+  return appendInflationActivationLogIfNeeded(state, s);
+}
+
+function handleEndYear(state: GameState): GameState {
+  if (!isPlayingActionPhaseWithoutPendingInteraction(state)) {
+    return state;
+  }
+  if (state.resources.legitimacy <= 0 || state.resources.power <= 0) {
+    return purgeExtraCardsIfLevelEnded({ ...state, phase: "gameOver", outcome: "defeatLegitimacy" });
+  }
+  let s = { ...state, resources: { ...state.resources, funding: 0 } };
+  s = evaluateVictory(s);
+  if (s.outcome === "victory") {
+    return appendInflationActivationLogIfNeeded(state, purgeExtraCardsIfLevelEnded(s));
+  }
+  const cap = retentionCapacity(s);
+  if (s.hand.length <= cap) {
+    return appendInflationActivationLogIfNeeded(state, completeYearAfterRetention(s, s.hand));
+  }
+  return appendInflationActivationLogIfNeeded(state, { ...s, phase: "retention" });
+}
+
+function handleConfirmRetention(
+  state: GameState,
+  action: Extract<GameAction, { type: "CONFIRM_RETENTION" }>,
+): GameState {
+  if (state.outcome !== "playing" || state.phase !== "retention") return state;
+  const keep = new Set(action.keepIds);
+  if (keep.size !== action.keepIds.length) return state;
+  for (const id of action.keepIds) {
+    if (!state.hand.includes(id)) return state;
+  }
+  if (action.keepIds.length > retentionCapacity(state)) return state;
+  return appendInflationActivationLogIfNeeded(state, completeYearAfterRetention(state, action.keepIds));
+}
+
 export function gameReducer(state: GameState, action: GameAction): GameState {
   const bridged = tryCampaignReducerBridge(state, action);
   if (bridged) return bridged;
@@ -256,107 +400,22 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
     }
     case "APPEND_LOG_INFO":
       return appendActionLog(state, { kind: "info", infoKey: action.infoKey });
-    case "PLAY_CARD": {
-      if (state.outcome !== "playing" || state.phase !== "action" || state.pendingInteraction) {
-        return state;
-      }
-      const id = state.hand[action.handIndex];
-      if (!id) return state;
-      const inst = state.cardsById[id];
-      if (!inst) return state;
-      if (!isCardPlayableInActionPhase(state, id)) return state;
-      const tmpl = getCardTemplate(inst.templateId);
-      const cost = getPlayableCardCost(state, id);
-      if (state.resources.funding < cost) return state;
-      const paid = {
-        ...state,
-        resources: { ...state.resources, funding: state.resources.funding - cost },
-      };
-      if (cardPlayOpensCrackdownPicker(inst.templateId)) {
-        return appendActionLog(
-          {
-            ...paid,
-            pendingInteraction: { type: "crackdownPick", cardInstanceId: id, fundingPaid: cost },
-          },
-          { kind: "crackdownPickPrompt" },
-        );
-      }
-      if (hasCardTag(paid, id, "consume")) {
-        let s: GameState = removeHand(paid, id);
-        if (inst.templateId === "suppressHuguenots") {
-          s = enforceHuguenotContainmentInvariant(s);
-        }
-        s = appendActionLog(s, {
-          kind: "cardPlayed",
-          templateId: inst.templateId,
-          fundingCost: cost,
-          effects: tmpl.effects,
-        });
-        s = maybeAppendHuguenotContainmentClearedLog(paid, s, inst.templateId);
-        return s;
-      }
-      let s = applyPlayedCardEffects(paid, inst.templateId);
-      s = applySunkingPlayCardExtras(s, inst.templateId);
-      s = removeHand(s, id);
-      const consumed = consumeLimitedUseCard(s, id);
-      s = consumed.state;
-      if (!consumed.exhausted) {
-        s = pushDiscard(s, id);
-      }
-      s = enforceLegitimacy(s);
-      s = appendActionLog(s, {
-        kind: "cardPlayed",
-        templateId: inst.templateId,
-        fundingCost: cost,
-        effects: tmpl.effects,
-      });
-      return appendInflationActivationLogIfNeeded(state, s);
-    }
-    case "SOLVE_EVENT": {
-      if (state.outcome !== "playing" || state.phase !== "action" || state.pendingInteraction) {
-        return state;
-      }
-      if (!canFundSolve(state, action.slot)) return state;
-      return appendInflationActivationLogIfNeeded(state, performFundSolve(state, action.slot));
-    }
+    case "PLAY_CARD":
+      return handlePlayCard(state, action);
+    case "SOLVE_EVENT":
+      return handleSolveEvent(state, action);
     case "PICK_NANTES_TOLERANCE":
     case "PICK_NANTES_CRACKDOWN": {
-      if (state.outcome !== "playing" || state.phase !== "action" || state.pendingInteraction) return state;
+      if (!isPlayingActionPhaseWithoutPendingInteraction(state)) return state;
       return state;
     }
     case "PICK_LOCAL_WAR_ATTACK":
     case "PICK_LOCAL_WAR_APPEASE":
       return state;
-    case "SCRIPTED_EVENT_ATTACK": {
-      if (state.outcome !== "playing" || state.phase !== "action" || state.pendingInteraction) {
-        return state;
-      }
-      if (!canScriptedAttack(state, action.slot)) return state;
-      return appendInflationActivationLogIfNeeded(state, performScriptedAttack(state, action.slot));
-    }
-    case "CRACKDOWN_TARGET": {
-      const p = state.pendingInteraction;
-      if (!p || p.type !== "crackdownPick") return state;
-      if (!isCrackdownTarget(state, action.slot)) return state;
-      const cleared = state.slots[action.slot];
-      if (!cleared) return state;
-      let s = stateAfterHarmfulEventCrackdown(state, action.slot, cleared.templateId, p.fundingPaid);
-      s = removeHand(s, p.cardInstanceId);
-      const consumed = consumeLimitedUseCard(s, p.cardInstanceId);
-      s = consumed.state;
-      if (!consumed.exhausted) {
-        s = pushDiscard(s, p.cardInstanceId);
-      }
-      s = { ...s, pendingInteraction: null };
-      s = enforceLegitimacy(s);
-      s = appendActionLog(s, {
-        kind: "eventCrackdownSolved",
-        slot: action.slot,
-        harmfulEventTemplateId: cleared.templateId,
-        fundingPaid: p.fundingPaid,
-      });
-      return appendInflationActivationLogIfNeeded(state, s);
-    }
+    case "SCRIPTED_EVENT_ATTACK":
+      return handleScriptedEventAttack(state, action);
+    case "CRACKDOWN_TARGET":
+      return handleCrackdownTarget(state, action);
     case "CRACKDOWN_CANCEL": {
       const p = state.pendingInteraction;
       if (!p || p.type !== "crackdownPick") return state;
@@ -372,42 +431,15 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
         ),
       );
     }
-    case "END_YEAR": {
-      if (state.outcome !== "playing" || state.phase !== "action" || state.pendingInteraction) {
-        return state;
-      }
-      if (
-        state.resources.legitimacy <= 0 ||
-        state.resources.power <= 0
-      ) {
-        return purgeExtraCardsIfLevelEnded({ ...state, phase: "gameOver", outcome: "defeatLegitimacy" });
-      }
-      let s = { ...state, resources: { ...state.resources, funding: 0 } };
-      s = evaluateVictory(s);
-      if (s.outcome === "victory") {
-        return appendInflationActivationLogIfNeeded(state, purgeExtraCardsIfLevelEnded(s));
-      }
-      const cap = retentionCapacity(s);
-      if (s.hand.length <= cap) {
-        return appendInflationActivationLogIfNeeded(state, completeYearAfterRetention(s, s.hand));
-      }
-      return appendInflationActivationLogIfNeeded(state, { ...s, phase: "retention" });
-    }
-    case "CONFIRM_RETENTION": {
-      if (state.outcome !== "playing" || state.phase !== "retention") return state;
-      const keep = new Set(action.keepIds);
-      if (keep.size !== action.keepIds.length) return state;
-      for (const id of action.keepIds) {
-        if (!state.hand.includes(id)) return state;
-      }
-      if (action.keepIds.length > retentionCapacity(state)) return state;
-      return appendInflationActivationLogIfNeeded(state, completeYearAfterRetention(state, action.keepIds));
-    }
+    case "END_YEAR":
+      return handleEndYear(state);
+    case "CONFIRM_RETENTION":
+      return handleConfirmRetention(state, action);
     case "PICK_SUCCESSION_CRISIS":
     case "PICK_UTRECHT_TREATY":
     case "PICK_DUAL_FRONT_CRISIS":
     case "PICK_LOUIS_XIV_LEGACY": {
-      if (state.outcome !== "playing" || state.phase !== "action" || state.pendingInteraction) return state;
+      if (!isPlayingActionPhaseWithoutPendingInteraction(state)) return state;
       return state;
     }
     default: {
