@@ -1468,6 +1468,19 @@ export function Game() {
         <Hand key={handResetToken} state={state} dispatch={dispatchSafe} scrollContainerRef={handScrollRef} />
       </section>
 
+      {state.phase === "action" && state.outcome === "playing" ? (
+        <div style={{ display: "flex", justifyContent: "center", margin: "0.75rem 0" }}>
+          <button
+            type="button"
+            className={`${styles.btn} ${styles.btnPrimary}`}
+            disabled={!canEndYear}
+            onClick={() => dispatchSafe({ type: "END_YEAR" })}
+          >
+            📜 {t("ui.endTurn")}
+          </button>
+        </div>
+      ) : null}
+
       <ActionLog
         entries={state.actionLog}
         showMobileTapGuide={state.outcome === "playing" && state.phase === "action"}
@@ -1484,16 +1497,6 @@ export function Game() {
           </span>
         </div>
         <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
-          {state.phase === "action" && state.outcome === "playing" ? (
-            <button
-              type="button"
-              className={`${styles.btn} ${styles.btnPrimary}`}
-              disabled={!canEndYear}
-              onClick={() => dispatchSafe({ type: "END_YEAR" })}
-            >
-              {t("ui.endTurn")}
-            </button>
-          ) : null}
           <button type="button" className={styles.btn} onClick={() => restartCurrentLevelRun()}>
             {t("ui.newGame")}
           </button>
