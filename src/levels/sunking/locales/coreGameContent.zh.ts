@@ -19,7 +19,8 @@ export const sunkingCoreGameContentZh = {
   "card.reform.background": "路易十四亲政后以行省监理官（intendants）与凡尔赛廷臣网络收束地方权力，册籍与汇报线随之重划。",
   "card.reform.desc": "权力 +1（影响下回合抽牌阶段）。立即抽 1（手牌上限 12）。",
   "card.ceremony.name": "凡尔赛庆典",
-  "card.ceremony.background": "仪仗、誓词与排场——让各派都看清谁仍站在中心。",
+  "card.ceremony.background":
+    "路易十四将凡尔赛礼仪制度化为权力舞台：贵族在觐见、宴会与授勋中竞逐恩宠，地方与派系也因此被持续牵引回王权中心。",
   "card.ceremony.desc": "合法性 +1。",
   "card.development.name": "皇家工厂",
   "card.development.background": "科尔贝尔式的工场、港口与基建——靠王家产业抬升国富。",

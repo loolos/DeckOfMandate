@@ -25,7 +25,7 @@ export const sunkingCoreGameContentEn = {
   "card.reform.desc": "Power +1 (applies next draw phase). Draw 1 now (hand cap 12).",
   "card.ceremony.name": "Versailles Ceremony",
   "card.ceremony.background":
-    "Banners, oaths, and spectacle at court—majesty displayed so every faction remembers who stands at the center.",
+    "Louis XIV turned Versailles ritual into a machinery of rule: audiences, banquets, and honors made nobles compete for royal favor, steadily pulling provincial elites and court factions back toward the crown.",
   "card.ceremony.desc": "Legitimacy +1.",
   "card.development.name": "Royal Manufactories",
   "card.development.background":
