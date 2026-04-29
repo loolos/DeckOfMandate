@@ -1488,7 +1488,7 @@ export function Game() {
       </div>
 
       <section className={`${styles.panel} ${styles.handPanel}`} id="tutorial-hand">
-        <h2>{t("ui.handWithCount", { n: state.hand.length })}</h2>
+        <h2>{t("ui.handWithCount", { n: state.hand.length, funding: state.resources.funding })}</h2>
         <Hand key={handResetToken} state={state} dispatch={dispatchSafe} scrollContainerRef={handScrollRef} />
       </section>
 
