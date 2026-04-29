@@ -154,6 +154,17 @@ function normalizeLoadedSave(state: GameState): GameState {
   return normalizeGameState(state);
 }
 
+function isTypingTarget(target: EventTarget | null): boolean {
+  if (!(target instanceof HTMLElement)) return false;
+  const tagName = target.tagName;
+  return (
+    tagName === "INPUT" ||
+    tagName === "TEXTAREA" ||
+    tagName === "SELECT" ||
+    target.isContentEditable
+  );
+}
+
 /** Fresh run until the player leaves the start menu (avoids showing “resume” as the default entry). */
 function initFreshForStartMenu(): GameState {
   return createInitialState();
@@ -461,6 +472,19 @@ export function Game() {
       resetHandViewport();
     }
   };
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== " " && event.code !== "Space") return;
+      if (isTypingTarget(event.target)) return;
+      if (!canEndYear) return;
+      event.preventDefault();
+      dispatchSafe({ type: "END_YEAR" });
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [canEndYear, dispatchSafe]);
 
   const restartCurrentLevelRun = useCallback(() => {
     const currentLevelDef = getLevelDef(state.levelId);
