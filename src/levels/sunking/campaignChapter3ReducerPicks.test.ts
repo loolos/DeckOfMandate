@@ -68,7 +68,7 @@ describe("Sun King chapter 3 reducer picks (campaign bridge)", () => {
     expect(after.actionLog.some((e) => e.kind === "eventLouisXivLegacyChoice" && e.directRule === false)).toBe(true);
   });
 
-  it("1715 legacy event: young king direct rule grants power, adds three fiscal burdens, and applies permanent minor regency doubt", () => {
+  it("1715 legacy event: young king direct rule grants power, adds three fiscal burdens, and applies minor regency doubt for 10 turns", () => {
     const base = createInitialState(51_131, THIRD_MANDATE_LEVEL_ID);
     const burdenBefore = Object.values(base.cardsById).filter((c) => c.templateId === "fiscalBurden").length;
     const s0: typeof base = {
@@ -87,7 +87,7 @@ describe("Sun King chapter 3 reducer picks (campaign bridge)", () => {
     expect(after.resources.power).toBe(7);
     expect(after.resources.legitimacy).toBe(7);
     expect(burdenAfter).toBe(burdenBefore + 3);
-    expect(status?.turnsRemaining).toBe(99);
+    expect(status?.turnsRemaining).toBe(10);
     expect(after.successionTrack).toBe(-1);
     expect(after.opponentStrength).toBe(3);
     expect(after.slots.A?.resolved).toBe(true);

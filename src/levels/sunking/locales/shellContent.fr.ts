@@ -15,7 +15,7 @@ export const sunkingShellContentFr = {
   "ui.dualFrontCrisis.concede": "Céder provisoirement — piste −3 ; budget adverse +1",
   "ui.dualFrontCrisis.escalate": "Élargir la guerre — piste +1, légitimité −1, +3 Charges fiscales ; budget adverse +1",
   "ui.louisXivLegacy.regencyCustody": "Régence de garde — Pouvoir −1, Légitimité −1, ajouter 1 Fardeau fiscal",
-  "ui.louisXivLegacy.youngKingDirectRule": "Gouvernement direct du jeune roi — Pouvoir +1, +3 Fardeaux fiscaux, gagne Doute de minorité",
+  "ui.louisXivLegacy.youngKingDirectRule": "Gouvernement direct du jeune roi — Pouvoir +1, +3 Fardeaux fiscaux, gagne Doute de minorité (10 tours)",
   "ui.quickFrame.choice.succession.pay": "Payer 3 fonds",
   "ui.quickFrame.choice.succession.decline": "Refuser de payer",
   "ui.quickFrame.choice.nantes.tolerance": "Tolérance religieuse",

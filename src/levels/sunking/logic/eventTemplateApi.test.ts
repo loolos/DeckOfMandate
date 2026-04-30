@@ -103,6 +103,18 @@ describe("getEventRollWeight", () => {
     expect(getEventSolveFundingAmount({ ...base, europeAlertProgress: 9 }, "nineYearsWar")).toBe(5);
   });
 
+  it("scales bavarian court realignment and imperial electors mood to max(2, floor(successionTrack/2))", () => {
+    const base = createInitialState(3_341_1, "thirdMandate");
+    for (const id of ["bavarianCourtRealignment", "imperialElectorsMood"] as const) {
+      expect(getEventSolveFundingAmount({ ...base, successionTrack: 0 }, id)).toBe(2);
+      expect(getEventSolveFundingAmount({ ...base, successionTrack: 3 }, id)).toBe(2);
+      expect(getEventSolveFundingAmount({ ...base, successionTrack: 5 }, id)).toBe(2);
+      expect(getEventSolveFundingAmount({ ...base, successionTrack: 6 }, id)).toBe(3);
+      expect(getEventSolveFundingAmount({ ...base, successionTrack: 10 }, id)).toBe(5);
+      expect(getEventSolveFundingAmount({ ...base, successionTrack: -8 }, id)).toBe(2);
+    }
+  });
+
   it("scales commercial expansion solve funding to floor(treasury/5) + 1", () => {
     const base = createInitialState(3_342, "secondMandate");
     expect(

@@ -120,7 +120,7 @@ function performLouisXivLegacyPick(state: GameState, slot: SlotId, directRule: b
     s = applyEffects(s, [
       { kind: "modResource", resource: "power", delta: 1 },
       { kind: "addCardsToDeck", templateId: "fiscalBurden", count: 3 },
-      { kind: "addPlayerStatus", templateId: "minorRegencyDoubt", turns: 99 },
+      { kind: "addPlayerStatus", templateId: "minorRegencyDoubt", turns: 10 },
     ]);
   } else {
     s = applyEffects(s, [

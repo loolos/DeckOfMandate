@@ -15,7 +15,7 @@ export const sunkingShellContentZh = {
   "ui.dualFrontCrisis.concede": "暂时让步 — 王位争夺进度 −3；对手费用上限 +1",
   "ui.dualFrontCrisis.escalate": "扩大战争 — 王位争夺进度 +1，合法性 −1，向抽牌堆加入 3 张财政负担；对手费用上限 +1",
   "ui.louisXivLegacy.regencyCustody": "摄政监国 — 权力 −1、合法性 −1，加入 1 张财政负担",
-  "ui.louisXivLegacy.youngKingDirectRule": "少主亲政 — 权力 +1，加入 3 张财政负担，并获得「主少国疑」",
+  "ui.louisXivLegacy.youngKingDirectRule": "少主亲政 — 权力 +1，加入 3 张财政负担，并获得「主少国疑」（10 回合）",
   "ui.quickFrame.choice.succession.pay": "支付3经费",
   "ui.quickFrame.choice.succession.decline": "拒绝支付",
   "ui.quickFrame.choice.nantes.tolerance": "宗教宽容",

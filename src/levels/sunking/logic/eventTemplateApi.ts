@@ -96,6 +96,9 @@ export function getEventSolveFundingAmount(state: GameState, id: EventTemplateId
   if (id === "sunKingPilgrimage") {
     return Math.floor((state.resources.power + state.resources.legitimacy) / 6) + 1;
   }
+  if (id === "bavarianCourtRealignment" || id === "imperialElectorsMood") {
+    return Math.max(2, Math.floor(state.successionTrack / 2)) + antiFrenchPenalty;
+  }
   return tmpl.solve.amount + antiFrenchPenalty;
 }
 

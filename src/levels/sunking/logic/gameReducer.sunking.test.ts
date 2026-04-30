@@ -47,7 +47,7 @@ describe("gameReducer (sunking campaign behaviors)", () => {
     expect(after.opponentHand.length).toBe(handBefore + 1);
   });
 
-  it("usurpation edict grants +2 succession, draws one card, and applies a two-turn end-of-year legitimacy drain", () => {
+  it("usurpation edict grants +2 succession, schedules one extra draw next turn, and applies a two-turn end-of-year legitimacy drain", () => {
     const base = createInitialState(51_120, THIRD_MANDATE_LEVEL_ID);
     const usurpationId = "tmp_usurpation";
     const drawId = "tmp_usurpation_draw";
@@ -69,7 +69,9 @@ describe("gameReducer (sunking campaign behaviors)", () => {
     const afterPlay = gameReducer(withCard, { type: "PLAY_CARD", handIndex: 0 });
     expect(afterPlay.resources.funding).toBe(0);
     expect(afterPlay.successionTrack).toBe(2);
-    expect(afterPlay.hand).toContain(drawId);
+    expect(afterPlay.nextTurnDrawModifier).toBe(1);
+    expect(afterPlay.hand).not.toContain(drawId);
+    expect(afterPlay.deck).toContain(drawId);
     const crisis = afterPlay.playerStatuses.find((s) => s.templateId === "legitimacyCrisis");
     expect(crisis?.turnsRemaining).toBe(2);
 

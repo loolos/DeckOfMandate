@@ -15,7 +15,7 @@ export const sunkingShellContentEn = {
   "ui.dualFrontCrisis.concede": "Temporarily concede — succession track −3; opponent budget +1",
   "ui.dualFrontCrisis.escalate": "Expand the war — succession track +1, legitimacy −1, +3 Fiscal Burden, opponent budget +1",
   "ui.louisXivLegacy.regencyCustody": "Regency custody — Power −1, Legitimacy −1, add 1 Fiscal Burden",
-  "ui.louisXivLegacy.youngKingDirectRule": "Young king direct rule — Power +1, add 3 Fiscal Burden, gain Minor Regency Doubt",
+  "ui.louisXivLegacy.youngKingDirectRule": "Young king direct rule — Power +1, add 3 Fiscal Burden, gain Minor Regency Doubt (10 turns)",
   "ui.quickFrame.choice.succession.pay": "Pay 3 Funding",
   "ui.quickFrame.choice.succession.decline": "Decline payment",
   "ui.quickFrame.choice.nantes.tolerance": "Religious Tolerance",
