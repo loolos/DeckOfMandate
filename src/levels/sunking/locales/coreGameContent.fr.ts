@@ -25,7 +25,7 @@ export const sunkingCoreGameContentFr = {
   "card.reform.desc": "Pouvoir +1 (appliqué à la prochaine phase de pioche). Piochez 1 maintenant (main max 12).",
   "card.ceremony.name": "Cérémonie de Versailles",
   "card.ceremony.background":
-    "Bannières, serments et spectacle à la cour — la majesté s'affiche pour rappeler à chaque faction qui est au centre.",
+    "Sous Louis XIV, le cérémonial de Versailles devient un instrument de gouvernement : audiences, fêtes et distinctions obligent les nobles à chercher la faveur royale et ramènent durablement provinces et factions vers le centre monarchique.",
   "card.ceremony.desc": "Légitimité +1.",
   "card.development.name": "Manufactures royales",
   "card.development.background":
