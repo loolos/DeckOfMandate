@@ -13,7 +13,7 @@ export const eventTemplates: Record<EventTemplateId, EventTemplate> = {
   },
   publicUnrest: {
     id: "publicUnrest",
-    weight: 3,
+    weight: 2,
     harmful: true,
     titleKey: "event.publicUnrest.name",
     descriptionKey: "event.publicUnrest.desc",
@@ -22,7 +22,7 @@ export const eventTemplates: Record<EventTemplateId, EventTemplate> = {
   },
   administrativeDelay: {
     id: "administrativeDelay",
-    weight: 2,
+    weight: 3,
     harmful: true,
     titleKey: "event.administrativeDelay.name",
     descriptionKey: "event.administrativeDelay.desc",

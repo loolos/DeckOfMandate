@@ -194,6 +194,12 @@ function renderEntry(e: ActionLogEntry, t: (key: MessageKey, vars?: Record<strin
           <div className={styles.actionLogSub}>
             {t(`log.eventNineYearsWarAttempt.outcome.${e.outcome}` as MessageKey, {
               legitimacy: resourceLabelWithIcon("legitimacy", t("resource.legitimacy")),
+              ...(e.outcome === "majorVictory"
+                ? {
+                    power: resourceLabelWithIcon("power", t("resource.power")),
+                    fundingReward: fundingLabel,
+                  }
+                : {}),
             })}
           </div>
           <div className={styles.actionLogSubMuted}>{t("log.eventNineYearsWarAttempt.history")}</div>

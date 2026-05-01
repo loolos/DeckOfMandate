@@ -131,7 +131,8 @@ export const levelContent: LevelContent = {
     {
       templateId: "nineYearsWar",
       presenceStartYear: 1689,
-      presenceEndYear: 1697,
+      // Align end year with `ryswickPeace` so the war row is not cleared on 1698+ while the treaty is still on the calendar.
+      presenceEndYear: 1700,
       overflowSlot: "E",
     },
     {

@@ -139,7 +139,7 @@ export const messagesFrSecondMandate: Record<keyof typeof messagesEnSecondMandat
   "log.eventNineYearsWarAttempt.title":
     "[Tour {turn}] {event} ({slot}) — {method}, {paid} {funding} engagés ; jet de campagne (table 1/9) : {roll}.",
   "log.eventNineYearsWarAttempt.outcome.majorVictory":
-    "Repère historique : relais et gazettes annoncent des succès des armées du roi en Flandre et sur le Rhin — victoires de campagne et levées de siège se lisent comme une coalition à bout de souffle et des colonnes ennemies en repli ; la cour et Paris célèbrent les maréchaux. Ce sursaut militaire suffit à dompter l'usure morale et à ouvrir une fenêtre pour désamorcer le conflit et clore cet événement.",
+    "Repère historique : relais et gazettes annoncent des succès des armées du roi en Flandre et sur le Rhin — victoires de campagne et levées de siège se lisent comme une coalition à bout de souffle et des colonnes ennemies en repli ; la cour et Paris célèbrent les maréchaux. Ce sursaut militaire suffit à dompter l'usure morale et à ouvrir une fenêtre pour désamorcer le conflit et clore cet événement. Effets : {legitimacy} +2, {power} +1, {fundingReward} +2.",
   "log.eventNineYearsWarAttempt.outcome.stalemate":
     "Repère historique : la profondeur de coalition et la logistique imposent l'enlisement ; aucun basculement immédiat.",
   "log.eventNineYearsWarAttempt.outcome.minorGains":

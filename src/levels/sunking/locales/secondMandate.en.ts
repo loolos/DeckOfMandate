@@ -136,7 +136,7 @@ export const messagesEnSecondMandate = {
   "log.eventNineYearsWarAttempt.title":
     "[Turn {turn}] {event} ({slot}) — {method} committed {paid} {funding}; campaign roll (1/9 table): {roll}.",
   "log.eventNineYearsWarAttempt.outcome.majorVictory":
-    "Historical note: couriers and gazettes carry good news from French arms in Flanders and the Rhineland—set-piece success and relieved sieges are framed as a stalled Grand Alliance and retreating enemy columns; Versailles and Paris rally to the king's marshals. That burst of battlefield prestige buys enough political room to wind down the worst of the war and close this crisis.",
+    "Historical note: couriers and gazettes carry good news from French arms in Flanders and the Rhineland—set-piece success and relieved sieges are framed as a stalled Grand Alliance and retreating enemy columns; Versailles and Paris rally to the king's marshals. That burst of battlefield prestige buys enough political room to wind down the worst of the war and close this crisis. Effects: {legitimacy} +2, {power} +1, {fundingReward} +2.",
   "log.eventNineYearsWarAttempt.outcome.stalemate":
     "Historical note: coalition depth and logistics produce a prolonged stalemate; no immediate strategic shift follows.",
   "log.eventNineYearsWarAttempt.outcome.minorGains":

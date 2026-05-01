@@ -49,6 +49,24 @@ describe("scriptedCalendar", () => {
     expect(s1.actionLog.some((entry) => entry.kind === "eventNineYearsWarBegins")).toBe(true);
   });
 
+  it("does not script-remove nine years war the year after Ryswick appears (1698) while treaty window is open", () => {
+    const cal = getLevelDef("secondMandate").calendarStartYear;
+    const turn1698 = 1698 - cal + 1;
+    const s0 = createInitialState(77_707, "secondMandate");
+    const s1 = applyScriptedCalendarPhase({
+      ...s0,
+      turn: turn1698,
+      phase: "action",
+      slots: {
+        ...EMPTY_EVENT_SLOTS,
+        F: { instanceId: "e_nine", templateId: "nineYearsWar", resolved: false },
+        A: { instanceId: "e_ryswick", templateId: "ryswickPeace", resolved: false },
+      },
+    });
+    expect(s1.slots.F?.templateId).toBe("nineYearsWar");
+    expect(s1.slots.A?.templateId).toBe("ryswickPeace");
+  });
+
   it("injecting ryswick with full board does not overwrite an active nine years war", () => {
     const cal = getLevelDef("secondMandate").calendarStartYear;
     const turn = 1697 - cal + 1;

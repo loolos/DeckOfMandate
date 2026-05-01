@@ -917,7 +917,7 @@ describe("gameReducer", () => {
     expect(after.slots.A?.remainingTurns).toBeUndefined();
   });
 
-  it("nine years war major victory ends war and grants legitimacy +1 and funding +3 reparations", () => {
+  it("nine years war major victory ends war and grants legitimacy +2, power +1, and funding +2", () => {
     const base = createInitialState(202_904_3, "secondMandate");
     const rngState = (() => {
       for (let st = 1; st < 200_000; st++) {
@@ -926,7 +926,7 @@ describe("gameReducer", () => {
           rng: { state: st },
           europeAlert: true,
           europeAlertProgress: 5,
-          resources: { ...base.resources, funding: 9, legitimacy: 5 },
+          resources: { ...base.resources, funding: 9, legitimacy: 5, power: 4 },
           slots: {
             ...base.slots,
             A: { instanceId: "e_nine", templateId: "nineYearsWar" as const, resolved: false },
@@ -944,7 +944,7 @@ describe("gameReducer", () => {
       rng: { state: rngState },
       europeAlert: true,
       europeAlertProgress: 5,
-      resources: { ...base.resources, funding: 9, legitimacy: 5 },
+      resources: { ...base.resources, funding: 9, legitimacy: 5, power: 4 },
       slots: {
         ...base.slots,
         A: { instanceId: "e_nine", templateId: "nineYearsWar" as const, resolved: false },
@@ -954,8 +954,9 @@ describe("gameReducer", () => {
     if (fundingPaid === null) throw new Error("expected nine years war to have a funding solve cost");
     const after = gameReducer(s0, { type: "SOLVE_EVENT", slot: "A" });
     expect(after.slots.A).toBeNull();
-    expect(after.resources.legitimacy).toBe(s0.resources.legitimacy + 1);
-    expect(after.resources.funding).toBe(s0.resources.funding - fundingPaid + 3);
+    expect(after.resources.legitimacy).toBe(s0.resources.legitimacy + 2);
+    expect(after.resources.power).toBe(s0.resources.power + 1);
+    expect(after.resources.funding).toBe(s0.resources.funding - fundingPaid + 2);
     const last = after.actionLog[after.actionLog.length - 1];
     expect(last).toMatchObject({
       kind: "eventNineYearsWarAttempt",
