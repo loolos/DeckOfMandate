@@ -5,7 +5,7 @@ import { getEventSolveFundingAmount, getEventTemplate } from "../data/events";
 import { EMPTY_EVENT_SLOTS, type SlotId } from "../levels/types/event";
 import { createInitialState } from "./initialState";
 import { gameReducer } from "./gameReducer";
-import { createStandaloneLevel2Draft } from "./levelTransitions";
+import { buildLevel2StateFromDraft, createStandaloneLevel2Draft } from "./levelTransitions";
 
 describe("gameReducer", () => {
   it("creates deterministic initial layouts for the same seed", () => {
@@ -167,13 +167,23 @@ describe("gameReducer", () => {
     expect(s0.cardUsesById[crackdownId]).toEqual({ remaining: 4, total: 4 });
   });
 
-  it("second mandate starts royal cards at 1/3 uses", () => {
+  it("second mandate direct start keeps royal cards at 1/3 uses", () => {
     const s0 = createInitialState(1003, "secondMandate");
     const crackdownId = Object.keys(s0.cardsById).find((id) => s0.cardsById[id]?.templateId === "crackdown");
     const fundingId = Object.keys(s0.cardsById).find((id) => s0.cardsById[id]?.templateId === "funding");
     if (!crackdownId || !fundingId) throw new Error("expected royal cards in chapter 2 deck");
     expect(s0.cardUsesById[crackdownId]).toEqual({ remaining: 1, total: 3 });
     expect(s0.cardUsesById[fundingId]).toEqual({ remaining: 1, total: 3 });
+  });
+
+  it("second mandate standalone draft starts royal cards at 3/3 uses", () => {
+    const draft = createStandaloneLevel2Draft(10031);
+    const s0 = buildLevel2StateFromDraft(draft);
+    const crackdownId = Object.keys(s0.cardsById).find((id) => s0.cardsById[id]?.templateId === "crackdown");
+    const fundingId = Object.keys(s0.cardsById).find((id) => s0.cardsById[id]?.templateId === "funding");
+    if (!crackdownId || !fundingId) throw new Error("expected royal cards in chapter 2 standalone deck");
+    expect(s0.cardUsesById[crackdownId]).toEqual({ remaining: 3, total: 3 });
+    expect(s0.cardUsesById[fundingId]).toEqual({ remaining: 3, total: 3 });
   });
 
   it("first mandate starts development at 2/2 uses", () => {

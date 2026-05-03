@@ -160,8 +160,8 @@ export const levelContent: LevelContent = {
       templateOverrides: {
         reform: { inflationDelta: 1 },
         ceremony: { inflationDelta: 1 },
-        funding: { totalUses: 1, remainingUses: 1 },
-        crackdown: { totalUses: 1, remainingUses: 1 },
+        funding: { totalUses: 3, remainingUses: 3 },
+        crackdown: { totalUses: 3, remainingUses: 3 },
       },
     },
   },

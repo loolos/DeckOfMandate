@@ -1,10 +1,12 @@
 /** Card / event / status template copy moved out of `zh.core.ts` — Sun King campaign pack. */
 export const sunkingCoreGameContentZh = {
   "card.funding.name": "王室征收",
-  "card.funding.background": "非常规征收与加急催缴——为宫廷燃眉之急凑出的短期现金。",
+  "card.funding.background":
+    "路易十四后期为维持常备军、要塞体系与战时借贷，朝廷频繁动用非常规征收、预支税额与加急催缴，把未来岁入提前变现。王室征收能迅速补上军政现金缺口，却会透支地方承受力并抬高后续年度的财政脆弱性。",
   "card.funding.desc": "本回合 +1 经费（不增加财政能力）。若「剩余」用尽：财政 -1。",
   "card.crackdown.name": "王室干预",
-  "card.crackdown.background": "敕令、驻军或警察行动——在流言与骚动已快于法律之处强行落实。",
+  "card.crackdown.background":
+    "在旧制度法国，王权常以敕令、督办、驻军与警务手段跨过常规协商程序，直接压制骚动、阻断地方抗命或迫使政令落地。王室干预能在危机时刻快速恢复秩序与执行力，但过度依赖也会消耗王权威信与行政弹性。",
   "card.crackdown.desc":
     "解决有害事件；与该事件「支付经费解决」的追加效果一致（若模板有，例如部分欧洲警觉压力事件使进度 -1）。若「剩余」用尽：权力 -1。",
   "card.fiscalBurden.name": "财政负担",

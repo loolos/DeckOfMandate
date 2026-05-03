@@ -2,11 +2,11 @@
 export const sunkingCoreGameContentFr = {
   "card.funding.name": "Prélèvement royal",
   "card.funding.background":
-    "Levées extraordinaires et collecte accélérée — des liquidités à court terme pour les urgences de la couronne.",
+    "Sous Louis XIV, guerres longues, soldes d'armée et fortifications forçaient la couronne à recourir aux levées extraordinaires, aux avances des fermiers généraux et aux recouvrements accélérés des impôts indirects. Le prélèvement royal procure des liquidités immédiates pour tenir l'appareil d'État, mais il accentue la fatigue fiscale et la méfiance des provinces envers l'extraction monarchique.",
   "card.funding.desc": "Gagnez +1 Financement ce tour (pas Trésor). Si « Restant » est épuisé : Trésor -1.",
   "card.crackdown.name": "Intervention royale",
   "card.crackdown.background":
-    "Édits, troupes ou action policière — la force appliquée là où rumeur et émeute dépassent déjà la loi.",
+    "Dans la France de la fin du XVIIe siècle, l'intervention royale combinait ordonnances du Conseil, envoi de troupes, intendants et police pour rétablir rapidement l'obéissance quand marchés, villes ou provinces s'enflammaient. Elle permet de reprendre la main dans l'urgence, mais son usage répété use la crédibilité politique et augmente les coûts de coercition.",
   "card.crackdown.desc":
     "Résolvez un événement néfaste avec les mêmes effets post-résolution que le paiement en Financement lorsqu'ils sont définis (ex. certains événements liés à l'Alerte Europe réduisent la progression). Si « Restant » est épuisé : Pouvoir -1.",
   "card.fiscalBurden.name": "Fardeau fiscal",

@@ -2,11 +2,11 @@
 export const sunkingCoreGameContentEn = {
   "card.funding.name": "Royal Levy",
   "card.funding.background":
-    "Extraordinary tallies and accelerated collection—short-term cash for the crown’s urgent line items.",
+    "Under Louis XIV, near-continuous warfare and fortress maintenance forced the crown to rely on extraordinary levies, advance tax calls, and harder pressure on tax-farm circuits to keep army pay and supply moving. Royal Levy delivers immediate liquidity, but it also deepens provincial resentment and future collection fatigue once emergency extraction becomes routine.",
   "card.funding.desc": "Gain +1 Funding this turn (not Treasury). If Remaining is exhausted: Treasury -1.",
   "card.crackdown.name": "Royal Intervention",
   "card.crackdown.background":
-    "Edicts, troops, or police action—force applied where rumor and riot have already outpaced law.",
+    "In the late reign, Versailles repeatedly used intendants, garrisons, and police ordinances to impose order when parlements stalled, bread unrest spread, or factional rumor outran regular procedure. Royal Intervention can restore command quickly in a crisis, but repeated coercion erodes political trust and raises longer-term governance costs.",
   "card.crackdown.desc":
     "Resolve one harmful event with the same post-resolve extras as paying Funding for that event when defined (e.g. some Europe Alert pressure events reduce alert progress by 1). If Remaining is exhausted: Power -1.",
   "card.fiscalBurden.name": "Fiscal Burden",
