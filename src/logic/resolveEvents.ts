@@ -1,4 +1,4 @@
-import { getEventTemplate, isContinuedCrisis } from "../data/events";
+import { getEventTemplate, isContinued3Event, isContinuedCrisis } from "../data/events";
 import { getLevelContent } from "../data/levelContent";
 import { EVENT_SLOT_ORDER, type SlotId } from "../levels/types/event";
 import type { GameState } from "../types/game";
@@ -23,6 +23,17 @@ export function resolveEndOfYearPenalties(state: GameState): GameState {
   for (const slot of SLOTS) {
     const ev = s.slots[slot];
     if (!ev) continue;
+    if (isContinued3Event(ev.templateId)) {
+      const nextRemaining = Math.max(0, (ev.remainingTurns ?? getEventTemplate(ev.templateId).continuedDurationTurns ?? 3) - 1);
+      s = {
+        ...s,
+        slots: {
+          ...s.slots,
+          [slot]: nextRemaining > 0 ? { ...ev, remainingTurns: nextRemaining } : null,
+        },
+      };
+      continue;
+    }
     if (ev.templateId === "nineYearsWar") {
       if (!ev.resolved) {
         const effects = [{ kind: "modResource", resource: "legitimacy", delta: -1 }] as const;

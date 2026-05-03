@@ -331,6 +331,33 @@ describe("gameReducer (sunking campaign behaviors)", () => {
     expect(after.antiFrenchLeague!.untilTurn).toBe(expectedUntil);
   });
 
+  it("war of devolution persists into next year when unresolved and decrements remaining turns", () => {
+    const cfg = levelContentByLevelId.firstMandate.scriptedCalendarEvents.find(
+      (x: { templateId: string }) => x.templateId === "warOfDevolution",
+    )!;
+    const turn = cfg.presenceStartYear - getLevelDef("firstMandate").calendarStartYear + 1;
+    const s0 = {
+      ...createInitialState(10_101, "firstMandate"),
+      turn,
+      phase: "action" as const,
+      hand: [],
+      slots: {
+        ...EMPTY_EVENT_SLOTS,
+        A: {
+          instanceId: "e_war_of_devolution",
+          templateId: "warOfDevolution" as const,
+          resolved: false,
+          remainingTurns: 3,
+        },
+      },
+    };
+    const s1 = gameReducer(s0, { type: "END_YEAR" });
+    expect(s1.turn).toBe(turn + 1);
+    expect(s1.slots.A?.templateId).toBe("warOfDevolution");
+    expect(s1.slots.A?.resolved).toBe(false);
+    expect(s1.slots.A?.remainingTurns).toBe(2);
+  });
+
   it("diplomatic intervention starts at 2/2 and is removed on depletion without penalty", () => {
     const base = createInitialState(123_010, "secondMandate");
     expect(createInitialCardUseState("secondMandate", "diplomaticIntervention")).toEqual({ remaining: 2, total: 2 });

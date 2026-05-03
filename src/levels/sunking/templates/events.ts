@@ -79,6 +79,8 @@ export const eventTemplates: Record<EventTemplateId, EventTemplate> = {
     titleKey: "event.warOfDevolution.name",
     descriptionKey: "event.warOfDevolution.desc",
     solve: { kind: "scriptedAttack" },
+    continuedDurationTurns: 3,
+    tags: ["continued3"],
     penaltiesIfUnresolved: [],
   },
   nymwegenSettlement: {

@@ -3,6 +3,7 @@ export {
   getEventRollWeight,
   getEventSolveFundingAmount,
   getEventTemplate,
+  isContinued3Event,
   isCh3SuccessionGatedRollEvent,
   isContinuedCrisis,
   isEuropeAlertSupplementalEvent,

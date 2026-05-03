@@ -203,6 +203,30 @@ describe("resolveEndOfYearPenalties", () => {
     expect(s1.slots.A?.remainingTurns).toBe(3);
   });
 
+  it("war of devolution unresolved persists for up to three year-end ticks", () => {
+    const base = createInitialState(5_104, "firstMandate");
+    const s0 = {
+      ...base,
+      slots: {
+        ...EMPTY_EVENT_SLOTS,
+        A: {
+          instanceId: "e_war_of_devolution",
+          templateId: "warOfDevolution" as const,
+          resolved: false,
+          remainingTurns: 3,
+        },
+      },
+    };
+    const s1 = resolveEndOfYearPenalties(s0);
+    expect(s1.slots.A?.templateId).toBe("warOfDevolution");
+    expect(s1.slots.A?.remainingTurns).toBe(2);
+    const s2 = resolveEndOfYearPenalties(s1);
+    expect(s2.slots.A?.templateId).toBe("warOfDevolution");
+    expect(s2.slots.A?.remainingTurns).toBe(1);
+    const s3 = resolveEndOfYearPenalties(s2);
+    expect(s3.slots.A).toBeNull();
+  });
+
   it("third mandate unresolved utrecht treaty decrements countdown by one each year", () => {
     const base = createInitialState(5_100, "thirdMandate");
     const s0 = {

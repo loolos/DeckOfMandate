@@ -30,6 +30,10 @@ export function isAntiFrenchAllianceEvent(id: EventTemplateId): boolean {
   return getEventTemplate(id).tags?.includes("antiFrenchAlliance") ?? false;
 }
 
+export function isContinued3Event(id: EventTemplateId): boolean {
+  return getEventTemplate(id).tags?.includes("continued3") ?? false;
+}
+
 /** Chapter-3 random pool: only roll once succession track has moved off 0. */
 const CH3_SUCCESSION_GATED_ROLL_EVENT_IDS: readonly EventTemplateId[] = [
   "bavarianCourtRealignment",
