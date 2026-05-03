@@ -13,7 +13,7 @@ export const sunkingCoreGameContentFr = {
   "card.fiscalBurden.background":
     "Dettes et passifs d'urgence encombrent désormais les comptes et contraignent chaque cycle.",
   "card.fiscalBurden.desc":
-    "Quand piochée, perdez 1 Financement. Payez le coût en Financement lié au Trésor pour jouer et retirer du cycle.",
+    "Quand piochée, perdez 1 Financement. Coût de jeu = ⌊Trésor/5⌋ + 1, puis la carte est retirée du cycle (pas de défausse).",
   "card.antiFrenchContainment.name": "Endiguement anti-français",
   "card.antiFrenchContainment.background":
     "Les cours européennes coordonnent tarifs, crédit et contrôle maritime pour restreindre la marge française.",

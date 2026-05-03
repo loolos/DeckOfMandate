@@ -11,7 +11,7 @@ export const sunkingCoreGameContentZh = {
     "解决有害事件；与该事件「支付经费解决」的追加效果一致（若模板有，例如部分欧洲警觉压力事件使进度 -1）。若「剩余」用尽：权力 -1。",
   "card.fiscalBurden.name": "财政负担",
   "card.fiscalBurden.background": "债务与紧急开支挤入账册，持续拖慢每个回合的财政回旋。",
-  "card.fiscalBurden.desc": "抽到时经费 -1。可按财政相关费用付经费打出，移出循环（非弃牌）。",
+  "card.fiscalBurden.desc": "抽到时经费 -1。可支付「⌊财政/5⌋+1」经费打出并移出循环（非弃牌）；财政越高，打出越贵。",
   "card.antiFrenchContainment.name": "反法遏制",
   "card.antiFrenchContainment.background":
     "欧洲宫廷以关税、信用与海上执法协同掣肘法国，任何对抗都要先吞下政治代价。",
