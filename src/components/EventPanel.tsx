@@ -201,6 +201,7 @@ export function EventPanel({
           dispatch({ type: "APPEND_LOG_INFO", infoKey });
         const historical = isHistoricalEventTemplateId(tmpl.id);
         const antiFrenchAlliance = tmpl.tags?.includes("antiFrenchAlliance") ?? false;
+        const continued3 = tmpl.tags?.includes("continued3") ?? false;
 
         return (
           <div
@@ -274,6 +275,17 @@ export function EventPanel({
                           ? t("ui.remainingTurns" as MessageKey, { n: ev.remainingTurns })
                           : t("ui.continuedTurns" as MessageKey, { n: ev.remainingTurns })
                         : t("ui.continued" as MessageKey)}
+                    </button>
+                  ) : continued3 ? (
+                    <button
+                      type="button"
+                      className={`${styles.badge} ${styles.badgeHarm} ${styles.tagButton}`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        logEventTag("eventTag.continued");
+                      }}
+                    >
+                      {t("ui.continuedTurns" as MessageKey, { n: ev.remainingTurns ?? tmpl.continuedDurationTurns ?? 3 })}
                     </button>
                   ) : null}
                   {antiFrenchAlliance ? (
