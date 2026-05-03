@@ -110,7 +110,7 @@ export type EventTemplate = {
   tags?: readonly EventTag[];
 };
 
-export const EVENT_TAGS = ["antiFrenchAlliance"] as const;
+export const EVENT_TAGS = ["antiFrenchAlliance", "continued3"] as const;
 export type EventTag = (typeof EVENT_TAGS)[number];
 
 export type EventInstance = {
