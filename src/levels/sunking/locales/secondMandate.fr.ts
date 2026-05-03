@@ -122,7 +122,7 @@ export const messagesFrSecondMandate: Record<keyof typeof messagesEnSecondMandat
     "Gagnez Coordination des secours et Confiance dans les secours pendant 1 tour (tour suivant : +1 tentative de pioche et Légitimité +1). Si un événement Hausse des prix du grain non résolu existe, résolvez-en un immédiatement.",
   "card.taxRebalance.name": "Rééquilibrage fiscal",
   "card.taxRebalance.background":
-    "Les guerres de Louis XIV imposent réévaluations de la taille et droits indirects plus serrés ; réallouer les charges maintient les recettes mais attise souvent les frictions provinciales.",
+    "Sous Louis XIV, la guerre quasi continue, l'entretien des armées permanentes et les fortifications obligent la monarchie à revoir sans cesse la taille, les aides et les fermes fiscales ; intendants et traitants cherchent à élargir l'assiette et à rendre la levée plus prévisible pour alimenter le Trésor. Le rééquilibrage fiscal soutient la liquidité à court terme et la capacité de guerre, mais il accentue aussi les résistances des villes, des provinces privilégiées et des élites locales, laissant un coût politique durable.",
   "card.taxRebalance.desc": "Trésor +1. Gagnez Fatigue de pioche (pioche -1) pendant 2 tours.",
   "card.diplomaticCongress.name": "Congrès diplomatique",
   "card.diplomaticCongress.background":

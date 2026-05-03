@@ -114,7 +114,7 @@ export const messagesZhSecondMandate = {
     "获得「赈济调度」与「赈济信任」各 1 回合（下回合：抽牌 +1，合法性 +1）。若存在未解决的「粮价上涨」，则立即解决其中一个。",
   "card.taxRebalance.name": "税制重估",
   "card.taxRebalance.background":
-    "路易十四朝连年战争迫使朝廷屡次重估田赋、收紧间接税；重配税负与征收口径以维持国库流动，却常激化地方征收摩擦。",
+    "17 世纪后期法国为维持常备军、边境要塞与战争借贷，不得不反复重估田赋、加压盐税与消费税，并借包税人与督办体系强化征收。税制重估能在短期稳住岁入和军费周转，却也会放大特权豁免与基层负担的不平衡，激化地方拖欠、抗税与执行迟滞。",
   "card.taxRebalance.desc": "财政 +1，并获得「抽牌受限」2 回合（每回合抽牌 -1）。",
   "card.diplomaticCongress.name": "外交会议",
   "card.diplomaticCongress.background": "通过使节与会议换取喘息，减轻短期外部压力。",
