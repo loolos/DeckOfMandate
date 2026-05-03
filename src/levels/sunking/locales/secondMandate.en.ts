@@ -114,7 +114,7 @@ export const messagesEnSecondMandate = {
     "Diplomatic breathing room after Nijmegen did not dissolve strategic mistrust abroad. Earlier restraint buys only limited room. Pay 2 Funding to resolve it; if ignored, lose 1 Power each year.",
   "card.grainRelief.name": "Grain Relief Program",
   "card.grainRelief.background":
-    "Emergency grain purchasing and provincial relief channels cool unrest before shortages become revolt.",
+    "In late 17th-century France, failed harvests could send bread prices soaring and turn urban and rural subsistence unrest into open disorder within days; the crown answered with emergency grain purchases, reserve releases, and parish-municipal relief networks. Grain relief buys short-term social calm and policy breathing room, but shifts heavier fiscal strain into the years ahead.",
   "card.grainRelief.desc":
     "Gain Relief Coordination and Relief Confidence for 1 turn (next turn: +1 draw attempt and Legitimacy +1). If an unresolved Rising Grain Prices event exists, immediately resolve one.",
   "card.taxRebalance.name": "Tax Rebalancing",

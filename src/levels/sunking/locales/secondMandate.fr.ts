@@ -117,7 +117,7 @@ export const messagesFrSecondMandate: Record<keyof typeof messagesEnSecondMandat
     "La respiration diplomatique après Nimègue n'effaçait pas la méfiance stratégique. La retenue passée n'offre qu'une marge limitée. Payez 2 Financement pour résoudre ; si ignoré, perdez 1 Pouvoir chaque année.",
   "card.grainRelief.name": "Programme de secours céréaliers",
   "card.grainRelief.background":
-    "Achat d'urgence de grain et canaux de secours provinciaux refroidissent les troubles avant que les pénuries ne deviennent révolte.",
+    "Dans la France de la fin du XVIIe siècle, une mauvaise récolte suffisait à faire bondir le prix du pain et à transformer vite l'inquiétude de subsistance en désordre urbain et rural ; la couronne répondait par des achats d'urgence, des sorties de réserves et des relais de secours paroissiaux et municipaux. Le secours céréalier apaise à court terme et redonne une marge de manœuvre politique, mais reporte une charge budgétaire plus lourde sur les années suivantes.",
   "card.grainRelief.desc":
     "Gagnez Coordination des secours et Confiance dans les secours pendant 1 tour (tour suivant : +1 tentative de pioche et Légitimité +1). Si un événement Hausse des prix du grain non résolu existe, résolvez-en un immédiatement.",
   "card.taxRebalance.name": "Rééquilibrage fiscal",

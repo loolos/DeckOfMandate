@@ -108,7 +108,8 @@ export const messagesZhSecondMandate = {
   "event.cautiousCrown.desc":
     "奈梅亨和约后的外交喘息并未消解列强对波旁扩张的结构性疑虑。此前克制路线带来有限缓冲。支付 2 经费处理；若不处理，每年权力 -1。",
   "card.grainRelief.name": "赈粟安民",
-  "card.grainRelief.background": "赈济与粮食调拨先压住民怨，再争取改革时间。",
+  "card.grainRelief.background":
+    "17 世纪后期法国一遇歉收，面包价便会迅速点燃城市与乡村骚动；王室通常通过紧急采买、动用粮仓并联动教区与市政赈济网络稳住秩序。赈粟安民能在短期压住民怨、争取政策回旋，但也会把财政压力继续推向后续年度。",
   "card.grainRelief.desc":
     "获得「赈济调度」与「赈济信任」各 1 回合（下回合：抽牌 +1，合法性 +1）。若存在未解决的「粮价上涨」，则立即解决其中一个。",
   "card.taxRebalance.name": "税制重估",
