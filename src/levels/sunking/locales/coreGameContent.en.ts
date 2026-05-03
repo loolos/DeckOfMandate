@@ -13,7 +13,7 @@ export const sunkingCoreGameContentEn = {
   "card.fiscalBurden.background":
     "Debt obligations and emergency liabilities now crowd the books and constrain every cycle.",
   "card.fiscalBurden.desc":
-    "When drawn, lose 1 Funding. Pay the Treasury-scaled Funding cost to play and purge from circulation.",
+    "When drawn, lose 1 Funding. Pay floor(Treasury/5) + 1 Funding to play and purge from circulation.",
   "card.antiFrenchContainment.name": "Anti-French Containment",
   "card.antiFrenchContainment.background":
     "European courts coordinate tariffs, credit pressure, and maritime checks to narrow French options.",

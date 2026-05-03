@@ -32,7 +32,7 @@ export const messagesZhSecondMandate = {
   "status.antiFrenchSentiment.name": "反法情绪",
   "status.antiFrenchSentiment.emotionLabel": "情绪{x}",
   "status.antiFrenchSentiment.detail":
-    "情绪{x}：表示你当前整个牌库中的「反法遏制」数量。该状态存在时，「里斯维克和约」还会额外增加 +{n} 经费。",
+    "情绪{x}：表示你当前整个牌库中的「反法遏制」数量。当权力+财政 > 20 时，欧洲警觉相关且需经费解决的事件费用会立刻 +1，之后每再多满 5 点再 +1（总加成为 ceil((权力+财政-20)/5)）。该状态存在时，「里斯维克和约」还会额外增加 +{n} 经费。",
   "status.antiFrenchSentiment.history":
     "1670 年代后，法国在军事与财政上的持续扩张，使周边宫廷逐渐形成“单独妥协已不足够”的共识。反法协同从临时联盟转向更稳定的围堵逻辑：外交联动、贸易施压与战争准备并行，以限制波旁王朝的外部影响力。机制上：当“权力+财政”过高时，所有带「反法同盟」标签且需经费解决的事件会变贵，并且该状态会持续带来牌库层面的遏制压力；直到这项综合实力回落，压力才会解除。",
   "event.nymwegenSettlement.name": "奈梅亨和约",
