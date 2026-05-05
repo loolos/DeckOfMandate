@@ -671,17 +671,32 @@ function isCriticalOpportunityEventTemplate(templateId: string): boolean {
   );
 }
 
+function isTreasuryPressureEventTemplate(templateId: string): boolean {
+  return (
+    templateId === "versaillesExpenditure" ||
+    templateId === "taxResistance" ||
+    templateId === "frontierGarrisons" ||
+    templateId === "embargoCoalition" ||
+    templateId === "budgetStrain" ||
+    templateId === "huguenotTension"
+  );
+}
+
 function strategyISolvePriority(state: GameState, slot: SlotId, amount: number): number {
   const ev = state.slots[slot];
   if (!ev) return 1_000_000;
   const id = ev.templateId;
   const power = state.resources.power;
+  const treasury = state.resources.treasuryStat;
+  const prioritizeTreasury = (state.levelId === "firstMandate" || state.levelId === "secondMandate") && treasury <= 7;
   if (id === "ryswickPeace") return -30_000 + amount;
-  if (id === "versaillesExpenditure") return -28_000 + amount;
+  if (id === "versaillesExpenditure") {
+    return (prioritizeTreasury ? -30_500 : -28_000) + amount;
+  }
   if (id === "mercenaryRaiders") return -27_800 + amount;
-  if (id === "taxResistance") return -27_500 + amount;
+  if (id === "taxResistance") return (prioritizeTreasury ? -29_800 : -27_500) + amount;
   if (id === "nobleResentment") return -27_250 + amount;
-  if (id === "frontierGarrisons") return -27_000 + amount;
+  if (id === "frontierGarrisons") return (prioritizeTreasury ? -29_500 : -27_000) + amount;
   if (id === "warWeariness") return -26_500 + amount;
   if (id === "risingGrainPrices") return -26_000 + amount;
   if (id === "courtScandal") return -25_500 + amount;
@@ -692,6 +707,7 @@ function strategyISolvePriority(state: GameState, slot: SlotId, amount: number):
     return -24_000 + amount;
   }
   if (id === "leagueOfAugsburg" || id === "nineYearsWar") return -23_000 + amount;
+  if (prioritizeTreasury && isTreasuryPressureEventTemplate(id)) return -24_500 + amount;
   if (getEventTemplate(id).harmful) return -22_000 + amount;
   if (isCriticalOpportunityEventTemplate(id)) return -14_000 + amount;
   return -8_000 + amount;

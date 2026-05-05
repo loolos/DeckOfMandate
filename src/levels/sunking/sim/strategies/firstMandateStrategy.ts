@@ -18,12 +18,15 @@ export function cardPlayPriorityFirstMandate(state: GameState, cardInstanceId: s
   const turnsLeft = Math.max(0, 15 - state.turn + 1);
   const nearDeadline = turnsLeft <= 4;
   const severeDeficit = treasuryMissing + powerMissing + legitimacyMissing >= 4;
+  const treasuryCriticalDeficit = treasuryMissing >= 3 || state.resources.treasuryStat <= 4;
   const treasuryDominantDeficit =
     treasuryMissing >= 2 && treasuryMissing >= powerMissing && treasuryMissing >= legitimacyMissing;
+  const canFocusTreasury = !harmfulUnresolvedExists && (treasuryDominantDeficit || treasuryCriticalDeficit);
 
   switch (tmpl) {
     case "funding":
       if (harmfulUnresolvedExists) return 0;
+      if (treasuryCriticalDeficit) return 0;
       if (treasuryDominantDeficit) return 1;
       if (nearDeadline && severeDeficit) return 1;
       return 4;
@@ -31,20 +34,20 @@ export function cardPlayPriorityFirstMandate(state: GameState, cardInstanceId: s
     case "diplomaticIntervention":
       return harmfulUnresolvedExists ? 1 : 70;
     case "development":
-      if (treasuryDominantDeficit && !harmfulUnresolvedExists) return 0;
+      if (canFocusTreasury) return 0;
       if (treasuryMissing >= 2) return 1;
       if (nearDeadline && treasuryMissing > 0) return 1;
       return treasuryMissing > 0 ? 2 : 20;
     case "reform":
-      if (treasuryDominantDeficit && !harmfulUnresolvedExists) {
-        return powerMissing > 0 ? 3 : 24;
+      if (canFocusTreasury) {
+        return powerMissing > 0 ? 4 : 26;
       }
       if (powerMissing >= 2) return 1;
       if (nearDeadline && powerMissing > 0) return 1;
       return powerMissing > 0 ? 2 : 22;
     case "ceremony":
-      if (treasuryDominantDeficit && !harmfulUnresolvedExists) {
-        return legitimacyMissing > 0 ? 3 : 24;
+      if (canFocusTreasury) {
+        return legitimacyMissing > 0 ? 4 : 26;
       }
       if (legitimacyMissing >= 2) return 1;
       if (nearDeadline && legitimacyMissing > 0) return 1;
