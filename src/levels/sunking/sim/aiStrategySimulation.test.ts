@@ -79,14 +79,14 @@ describe("aiStrategySimulation", () => {
     const report = simulateSecondMandateStandaloneBatch({ seedStart: 1, runCount: 200 });
     expect(report).toMatchInlineSnapshot(`
       {
-        "averageEndTurn": 23.645,
-        "averageEndTurnOnLoss": 24.365,
-        "averageEndTurnOnWin": 22.671,
+        "averageEndTurn": 23.66,
+        "averageEndTurnOnLoss": 24.374,
+        "averageEndTurnOnWin": 22.694,
         "averageEndingResources": {
           "funding": 0,
-          "legitimacy": 11.99,
-          "power": 9.02,
-          "treasuryStat": 9.25,
+          "legitimacy": 12.025,
+          "power": 9.005,
+          "treasuryStat": 9.305,
         },
         "levelId": "secondMandate",
         "losses": 115,

@@ -106,25 +106,39 @@ export function cardPlayPrioritySecondMandate(
   const noRyswickEmergency = !unresolvedRyswickPeace;
   const canPushTreasuryEarly = lowTreasuryForPhase && noRyswickEmergency;
   const vr = getLevelDef("secondMandate").victoryRule;
-  /** Slightly raise `development` / `taxRebalance` ceiling only when win is already locked and board is clean. */
-  const treasuryPushCeiling =
+  const treasurySprintTo15 =
     state.levelId === "secondMandate" &&
     vr.kind === "gated" &&
     secondMandateGatedVictoryReady(state) &&
     !unresolvedHarmful &&
     !unresolvedRyswickPeace &&
     !unresolvedRisingGrain &&
-    currentCalendarYear(state) >= vr.earliestCalendarYear + 3 &&
+    currentCalendarYear(state) <= vr.earliestCalendarYear + 3 &&
     legitimacy >= 8 &&
-    power >= 6
-      ? 9
-      : 8;
+    power >= 6 &&
+    treasury < 15;
+  /** Slightly raise `development` / `taxRebalance` ceiling only when win is already locked and board is clean. */
+  const treasuryPushCeiling =
+    treasurySprintTo15
+      ? 15
+      : state.levelId === "secondMandate" &&
+          vr.kind === "gated" &&
+          secondMandateGatedVictoryReady(state) &&
+          !unresolvedHarmful &&
+          !unresolvedRyswickPeace &&
+          !unresolvedRisingGrain &&
+          currentCalendarYear(state) >= vr.earliestCalendarYear + 3 &&
+          legitimacy >= 8 &&
+          power >= 6
+        ? 9
+        : 8;
   const shouldPushTreasury =
     treasury < treasuryPushCeiling && (!hasUrgentStabilizationNeed || canPushTreasuryEarly);
   switch (tmpl) {
     case "funding":
       if (canFundingUnlockRyswick) return 0;
       if (canFundingUnlockHarmfulSolve) return 1;
+      if (treasurySprintTo15) return 3;
       if (unresolvedRyswickPeace) return 8;
       if (unresolvedHarmful) return 10;
       return 16;
@@ -135,10 +149,12 @@ export function cardPlayPrioritySecondMandate(
       if (state.resources.legitimacy <= 4) return 1;
       return unresolvedRisingGrain ? 2 : state.resources.legitimacy <= 6 ? 4 : 22;
     case "diplomaticCongress":
+      if (treasurySprintTo15) return 12;
       if (treasuryEmergency && !unresolvedHarmful) return 8;
       if (continuityPrepWindow && power < 8) return 2;
       return state.resources.power < 6 ? 2 : state.resources.power < 8 ? 4 : 24;
     case "taxRebalance":
+      if (treasurySprintTo15) return 1;
       if (treasuryEmergency) return 1;
       if (continuityPrepWindow && treasury < 8) return 2;
       if (canPushTreasuryEarly && treasury <= 4) return 2;
@@ -146,6 +162,7 @@ export function cardPlayPrioritySecondMandate(
       if (shouldPushTreasury && treasury < treasuryPushCeiling) return 4;
       return treasury < 3 ? 5 : treasury < 5 ? 12 : 35;
     case "development":
+      if (treasurySprintTo15) return 0;
       if (treasuryEmergency) return 0;
       if (continuityPrepWindow && treasury < 8) return 1;
       if (canPushTreasuryEarly && treasury <= 4) return 1;
@@ -153,10 +170,12 @@ export function cardPlayPrioritySecondMandate(
       if (shouldPushTreasury && treasury < treasuryPushCeiling) return 3;
       return treasury < 5 ? 3 : treasury < 7 ? 6 : 24;
     case "reform":
+      if (treasurySprintTo15) return 14;
       if (treasuryEmergency && !unresolvedHarmful) return 9;
       if (continuityPrepWindow && power < 7) return 1;
       return state.resources.power < 5 ? 2 : state.resources.power < 7 ? 5 : 24;
     case "ceremony":
+      if (treasurySprintTo15) return 16;
       if (continuityPrepWindow && legitimacy >= 10 && (power < 7 || treasury < 8)) return 30;
       if (legitimacy <= 4) return 1;
       return legitimacy < 6 ? 3 : legitimacy < 9 ? 7 : 26;
