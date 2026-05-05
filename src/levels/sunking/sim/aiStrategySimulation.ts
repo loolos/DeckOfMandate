@@ -13,8 +13,9 @@ import { getEventSolveFundingAmount, getEventTemplate } from "../../../data/even
 import type { CardTemplateId } from "../../types/card";
 import { EVENT_SLOT_ORDER, type SlotId } from "../../types/event";
 import type { GameOutcome, GameState, Resources } from "../../../types/game";
+import { isCardPlayableInActionPhase } from "../../../logic/cardPlayability";
 import { getPlayableCardCost } from "../../../logic/cardCost";
-import { findScriptedCalendarConfig } from "../../../logic/scriptedCalendar";
+import { currentCalendarYear, findScriptedCalendarConfig } from "../../../logic/scriptedCalendar";
 import { retentionCapacity } from "../../../logic/turnFlow";
 import { CONTINUITY_REFIT_MAX_CARD_REMOVALS } from "../../../types/continuity";
 import { cardPlayPriorityFirstMandate } from "./strategies/firstMandateStrategy";
@@ -670,17 +671,32 @@ function isCriticalOpportunityEventTemplate(templateId: string): boolean {
   );
 }
 
+function isTreasuryPressureEventTemplate(templateId: string): boolean {
+  return (
+    templateId === "versaillesExpenditure" ||
+    templateId === "taxResistance" ||
+    templateId === "frontierGarrisons" ||
+    templateId === "embargoCoalition" ||
+    templateId === "budgetStrain" ||
+    templateId === "huguenotTension"
+  );
+}
+
 function strategyISolvePriority(state: GameState, slot: SlotId, amount: number): number {
   const ev = state.slots[slot];
   if (!ev) return 1_000_000;
   const id = ev.templateId;
   const power = state.resources.power;
+  const treasury = state.resources.treasuryStat;
+  const prioritizeTreasury = (state.levelId === "firstMandate" || state.levelId === "secondMandate") && treasury <= 7;
   if (id === "ryswickPeace") return -30_000 + amount;
-  if (id === "versaillesExpenditure") return -28_000 + amount;
+  if (id === "versaillesExpenditure") {
+    return (prioritizeTreasury ? -30_500 : -28_000) + amount;
+  }
   if (id === "mercenaryRaiders") return -27_800 + amount;
-  if (id === "taxResistance") return -27_500 + amount;
+  if (id === "taxResistance") return (prioritizeTreasury ? -29_800 : -27_500) + amount;
   if (id === "nobleResentment") return -27_250 + amount;
-  if (id === "frontierGarrisons") return -27_000 + amount;
+  if (id === "frontierGarrisons") return (prioritizeTreasury ? -29_500 : -27_000) + amount;
   if (id === "warWeariness") return -26_500 + amount;
   if (id === "risingGrainPrices") return -26_000 + amount;
   if (id === "courtScandal") return -25_500 + amount;
@@ -691,6 +707,7 @@ function strategyISolvePriority(state: GameState, slot: SlotId, amount: number):
     return -24_000 + amount;
   }
   if (id === "leagueOfAugsburg" || id === "nineYearsWar") return -23_000 + amount;
+  if (prioritizeTreasury && isTreasuryPressureEventTemplate(id)) return -24_500 + amount;
   if (getEventTemplate(id).harmful) return -22_000 + amount;
   if (isCriticalOpportunityEventTemplate(id)) return -14_000 + amount;
   return -8_000 + amount;
@@ -754,6 +771,64 @@ function pickFundSolveActionsStrategyI(state: GameState): GameAction[] {
   return candidates.map((x) => ({ type: "SOLVE_EVENT", slot: x.slot }));
 }
 
+function firstPlayableHandIndexByTemplates(
+  state: GameState,
+  templates: readonly CardTemplateId[],
+): { handIndex: number; cost: number; template: CardTemplateId } | null {
+  for (const template of templates) {
+    for (let i = 0; i < state.hand.length; i++) {
+      const id = state.hand[i];
+      if (!id) continue;
+      const inst = state.cardsById[id];
+      if (!inst || inst.templateId !== template) continue;
+      if (!isCardPlayableInActionPhase(state, id)) continue;
+      const cost = getPlayableCardCost(state, id);
+      if (state.resources.funding < cost) continue;
+      return { handIndex: i, cost, template };
+    }
+  }
+  return null;
+}
+
+function pickSecondMandateEconomyPreSolveActions(state: GameState): GameAction[] {
+  if (state.levelId !== "secondMandate") return [];
+  if (hasUnresolvedHarmfulEvents(state)) return [];
+  if (firstUnresolvedSlotByTemplate(state, "ryswickPeace")) return [];
+  if (currentCalendarYear(state) >= 1693) return [];
+  const targets: CardTemplateId[] = [];
+  if (state.resources.treasuryStat <= 6) {
+    targets.push("development", "taxRebalance");
+  }
+  if (state.resources.power <= 5) {
+    targets.push("reform", "diplomaticCongress");
+  }
+  if (state.resources.legitimacy <= 7) {
+    targets.push("ceremony", "grainRelief");
+  }
+  if (targets.length === 0) return [];
+  const picked = firstPlayableHandIndexByTemplates(state, targets);
+  if (!picked) return [];
+  if (state.resources.funding - picked.cost < 2) {
+    return [];
+  }
+  return [{ type: "PLAY_CARD", handIndex: picked.handIndex }];
+}
+
+function pickThirdMandateMomentumPreSolveActions(state: GameState): GameAction[] {
+  if (state.levelId !== "thirdMandate") return [];
+  if (!state.opponentHabsburgUnlocked || state.warEnded) return [];
+  if (firstUnresolvedSlotByTemplate(state, "utrechtTreaty")) return [];
+  if (!hasUnresolvedHarmfulEvents(state)) return [];
+  if (state.successionTrack > -6) return [];
+  const picked = firstPlayableHandIndexByTemplates(state, [
+    "bourbonMarriageProclamation",
+    "grandAllianceInfiltrationDiplomacy",
+    "usurpationEdict",
+  ]);
+  if (!picked) return [];
+  return [{ type: "PLAY_CARD", handIndex: picked.handIndex }];
+}
+
 function pickScriptedAttackActionsLegacy(state: GameState): GameAction[] {
   const actions: GameAction[] = [];
   for (const slot of EVENT_SLOT_ORDER) {
@@ -795,9 +870,34 @@ function cardPlayPriorityStrategyI(state: GameState, cardInstanceId: string): nu
   const ryswickSolveAmount = unresolvedRyswickPeace ? getEventSolveFundingAmount(state, "ryswickPeace") : null;
   const canFundingUnlockRyswick =
     ryswickSolveAmount !== null && currentFunding < ryswickSolveAmount && currentFunding + 1 >= ryswickSolveAmount;
+  const nearDeadline = state.levelId === "secondMandate" && currentCalendarYear(state) >= 1693;
 
-  if (tmpl === "fiscalBurden") return 10_000;
-  if (tmpl === "religiousTensionCard" || tmpl === "jansenistReservation") return 10_000;
+  if (tmpl === "fiscalBurden") {
+    const selfCost = getPlayableCardCost(state, cardInstanceId);
+    if (
+      state.levelId === "thirdMandate" &&
+      state.opponentHabsburgUnlocked &&
+      state.successionTrack <= -2 &&
+      !unresolvedHarmful &&
+      state.resources.funding - selfCost >= 2
+    ) {
+      return 18;
+    }
+    return 10_000;
+  }
+  if (tmpl === "religiousTensionCard" || tmpl === "jansenistReservation") {
+    const selfCost = getPlayableCardCost(state, cardInstanceId);
+    if (
+      state.levelId === "thirdMandate" &&
+      state.opponentHabsburgUnlocked &&
+      state.successionTrack <= -2 &&
+      !unresolvedHarmful &&
+      state.resources.funding - selfCost >= 2
+    ) {
+      return 17;
+    }
+    return 10_000;
+  }
   if (state.levelId === "secondMandate") {
     return cardPlayPrioritySecondMandate(state, cardInstanceId, {
       unresolvedHarmful,
@@ -806,6 +906,7 @@ function cardPlayPriorityStrategyI(state: GameState, cardInstanceId: string): nu
       hasContainmentStatus,
       canFundingUnlockHarmfulSolve,
       canFundingUnlockRyswick,
+      nearDeadline,
     });
   }
   if (state.levelId === "thirdMandate") {
@@ -842,12 +943,6 @@ function pickCardPlayActions(state: GameState, policy: StrategyPolicyId): GameAc
         // Preserve the final crackdown charge to avoid depletion-driven power collapse.
         continue;
       }
-    }
-    if (template === "fiscalBurden") {
-      continue;
-    }
-    if (template === "religiousTensionCard" || template === "jansenistReservation") {
-      continue;
     }
     if (template === "suppressHuguenots" && !hasContainmentStatus) {
       continue;
@@ -922,6 +1017,10 @@ function pickRetentionIdsForStrategyI(state: GameState): readonly string[] {
  * Returns [] in all other cases.
  */
 function pickEssentialPreSolveActionsStrategyI(state: GameState): GameAction[] {
+  const thirdMomentum = pickThirdMandateMomentumPreSolveActions(state);
+  if (thirdMomentum.length > 0) return thirdMomentum;
+  const economy = pickSecondMandateEconomyPreSolveActions(state);
+  if (economy.length > 0) return economy;
   const hasContainment = state.playerStatuses.some((s) => s.templateId === "huguenotContainment");
   if (!hasContainment) return [];
   let suppressHandIndex = -1;
