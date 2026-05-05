@@ -98,6 +98,9 @@ export function cardPlayPrioritySecondMandate(
   const power = state.resources.power;
   const legitimacy = state.resources.legitimacy;
   const hasUrgentStabilizationNeed = unresolvedHarmful || power <= 4 || legitimacy <= 5;
+  const lowTreasuryForPhase = treasury <= 6;
+  const noRyswickEmergency = !unresolvedRyswickPeace;
+  const canPushTreasuryEarly = lowTreasuryForPhase && noRyswickEmergency;
   const vr = getLevelDef("secondMandate").victoryRule;
   /** Slightly raise `development` / `taxRebalance` ceiling only when win is already locked and board is clean. */
   const treasuryPushCeiling =
@@ -112,7 +115,8 @@ export function cardPlayPrioritySecondMandate(
     power >= 6
       ? 9
       : 8;
-  const shouldPushTreasury = !hasUrgentStabilizationNeed && treasury < treasuryPushCeiling;
+  const shouldPushTreasury =
+    treasury < treasuryPushCeiling && (!hasUrgentStabilizationNeed || canPushTreasuryEarly);
   switch (tmpl) {
     case "funding":
       if (canFundingUnlockRyswick) return 0;
@@ -129,10 +133,12 @@ export function cardPlayPrioritySecondMandate(
     case "diplomaticCongress":
       return state.resources.power < 6 ? 2 : state.resources.power < 8 ? 4 : 24;
     case "taxRebalance":
+      if (canPushTreasuryEarly && treasury <= 4) return 2;
       if (shouldPushTreasury && treasury < 6) return 2;
       if (shouldPushTreasury && treasury < treasuryPushCeiling) return 4;
       return treasury < 3 ? 5 : treasury < 5 ? 12 : 35;
     case "development":
+      if (canPushTreasuryEarly && treasury <= 4) return 1;
       if (shouldPushTreasury && treasury < 6) return 1;
       if (shouldPushTreasury && treasury < treasuryPushCeiling) return 3;
       return treasury < 5 ? 3 : treasury < 7 ? 6 : 24;
