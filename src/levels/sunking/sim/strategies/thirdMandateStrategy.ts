@@ -70,18 +70,24 @@ export function cardPlayPriorityThirdMandate(
   const tr = state.successionTrack;
   const burdens = countFiscalBurdenInstances(state);
   const { unresolvedHarmful, unresolvedRisingGrain, hasContainmentStatus, canFundingUnlockHarmfulSolve } = context;
+  const nearDefeatTrack = tr <= -6;
+  const highPressure = unresolvedHarmful || nearDefeatTrack;
   switch (tmpl) {
     case "bourbonMarriageProclamation":
+      if (nearDefeatTrack) return 0;
       return tr < 6 ? 2 : 20;
     case "grandAllianceInfiltrationDiplomacy":
+      if (nearDefeatTrack) return 1;
       return tr < 5 ? 3 : 18;
     case "italianTheaterTroopRedeploy":
+      if (nearDefeatTrack && burdens < 14) return 3;
       return tr < 5 && burdens < 12 ? 5 : 22;
     case "usurpationEdict":
+      if (nearDefeatTrack && state.resources.legitimacy >= 4) return 4;
       return tr <= 2 && state.resources.legitimacy >= 6 ? 6 : 38;
     case "funding":
       if (canFundingUnlockHarmfulSolve) return 1;
-      if (unresolvedHarmful) return 10;
+      if (highPressure) return 8;
       return 16;
     case "crackdown":
     case "diplomaticIntervention":
@@ -89,6 +95,7 @@ export function cardPlayPriorityThirdMandate(
     case "grainRelief":
       return unresolvedRisingGrain ? 2 : state.resources.legitimacy <= 6 ? 4 : 22;
     case "diplomaticCongress":
+      if (nearDefeatTrack) return state.resources.power < 7 ? 2 : 6;
       return state.resources.power < 6 ? 2 : state.resources.power < 8 ? 4 : 24;
     case "taxRebalance":
       return state.resources.treasuryStat < 3 ? 5 : state.resources.treasuryStat < 5 ? 12 : 35;

@@ -780,11 +780,11 @@ function pickSecondMandateEconomyPreSolveActions(state: GameState): GameAction[]
   if (firstUnresolvedSlotByTemplate(state, "ryswickPeace")) return [];
   if (currentCalendarYear(state) >= 1693) return [];
   const targets: CardTemplateId[] = [];
-  if (state.resources.power <= 6) {
-    targets.push("reform", "diplomaticCongress");
-  }
   if (state.resources.treasuryStat <= 6) {
     targets.push("development", "taxRebalance");
+  }
+  if (state.resources.power <= 5) {
+    targets.push("reform", "diplomaticCongress");
   }
   if (state.resources.legitimacy <= 7) {
     targets.push("ceremony", "grainRelief");
@@ -800,20 +800,16 @@ function pickSecondMandateEconomyPreSolveActions(state: GameState): GameAction[]
 
 function pickThirdMandateMomentumPreSolveActions(state: GameState): GameAction[] {
   if (state.levelId !== "thirdMandate") return [];
-  if (!state.opponentHabsburgUnlocked) return [];
+  if (!state.opponentHabsburgUnlocked || state.warEnded) return [];
   if (firstUnresolvedSlotByTemplate(state, "utrechtTreaty")) return [];
-  const unresolvedHarmful = hasUnresolvedHarmfulEvents(state);
-  if (!unresolvedHarmful) return [];
-  const track = state.successionTrack;
-  if (track > -5) return [];
-  const targets: CardTemplateId[] = [
+  if (!hasUnresolvedHarmfulEvents(state)) return [];
+  if (state.successionTrack > -6) return [];
+  const picked = firstPlayableHandIndexByTemplates(state, [
     "bourbonMarriageProclamation",
     "grandAllianceInfiltrationDiplomacy",
     "usurpationEdict",
-  ];
-  const picked = firstPlayableHandIndexByTemplates(state, targets);
+  ]);
   if (!picked) return [];
-  if (state.resources.funding - picked.cost < 0) return [];
   return [{ type: "PLAY_CARD", handIndex: picked.handIndex }];
 }
 
