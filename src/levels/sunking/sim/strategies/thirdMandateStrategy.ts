@@ -70,7 +70,6 @@ export function cardPlayPriorityThirdMandate(
   const tr = state.successionTrack;
   const burdens = countFiscalBurdenInstances(state);
   const { unresolvedHarmful, unresolvedRisingGrain, hasContainmentStatus, canFundingUnlockHarmfulSolve } = context;
-
   switch (tmpl) {
     case "bourbonMarriageProclamation":
       return tr < 6 ? 2 : 20;
