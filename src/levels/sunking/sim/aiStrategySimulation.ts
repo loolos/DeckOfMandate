@@ -10,6 +10,7 @@ import {
 import { gameReducer, type GameAction } from "../../../app/gameReducer";
 import { getCardTemplate } from "../../../data/cards";
 import { getEventSolveFundingAmount, getEventTemplate } from "../../../data/events";
+import { getLevelDef } from "../../../data/levels";
 import type { CardTemplateId } from "../../types/card";
 import { EVENT_SLOT_ORDER, type SlotId } from "../../types/event";
 import type { GameOutcome, GameState, Resources } from "../../../types/game";
@@ -307,6 +308,7 @@ export type CampaignRunResult = {
   firstEndTurn: number;
   secondOutcome: GameOutcome | null;
   secondEndTurn: number | null;
+  secondEndResources?: Resources;
 };
 
 export type CampaignBatchReport = {
@@ -689,10 +691,12 @@ function strategyISolvePriority(state: GameState, slot: SlotId, amount: number):
   const power = state.resources.power;
   const treasury = state.resources.treasuryStat;
   const prioritizeTreasury = (state.levelId === "firstMandate" || state.levelId === "secondMandate") && treasury <= 7;
+  const ch2TreasurySprint = state.levelId === "secondMandate" && treasury >= 10 && power >= 8 && state.resources.legitimacy >= 8;
   if (id === "ryswickPeace") return -30_000 + amount;
   if (id === "versaillesExpenditure") {
     return (prioritizeTreasury ? -30_500 : -28_000) + amount;
   }
+  if (ch2TreasurySprint && id === "commercialExpansion") return -29_700 + amount;
   if (id === "mercenaryRaiders") return -27_800 + amount;
   if (id === "taxResistance") return (prioritizeTreasury ? -29_800 : -27_500) + amount;
   if (id === "nobleResentment") return -27_250 + amount;
@@ -790,12 +794,35 @@ function firstPlayableHandIndexByTemplates(
   return null;
 }
 
+function secondMandateGatedVictoryReadyForSim(state: GameState): boolean {
+  if (state.levelId !== "secondMandate") return false;
+  const vr = getLevelDef("secondMandate").victoryRule;
+  if (vr.kind !== "gated") return false;
+  if (currentCalendarYear(state) < vr.earliestCalendarYear) return false;
+  if (state.europeAlert) return false;
+  if (state.playerStatuses.some((s) => s.templateId === "huguenotContainment")) return false;
+  return state.resources.legitimacy >= vr.minLegitimacy;
+}
+
 function pickSecondMandateEconomyPreSolveActions(state: GameState): GameAction[] {
   if (state.levelId !== "secondMandate") return [];
   if (hasUnresolvedHarmfulEvents(state)) return [];
-  if (firstUnresolvedSlotByTemplate(state, "ryswickPeace")) return [];
-  if (currentCalendarYear(state) >= 1693) return [];
+  const year = currentCalendarYear(state);
+  const vr = getLevelDef("secondMandate").victoryRule;
+  const unresolvedRyswick = !!firstUnresolvedSlotByTemplate(state, "ryswickPeace");
+  const canTreasurySprintTo15 =
+    vr.kind === "gated" &&
+    secondMandateGatedVictoryReadyForSim(state) &&
+    year <= vr.earliestCalendarYear + 3 &&
+    !unresolvedRyswick &&
+    state.resources.treasuryStat < 15 &&
+    state.resources.power >= 6 &&
+    state.resources.legitimacy >= 8;
+  if (year >= 1693 && !canTreasurySprintTo15) return [];
   const targets: CardTemplateId[] = [];
+  if (canTreasurySprintTo15) {
+    targets.push("development", "taxRebalance");
+  }
   if (state.resources.treasuryStat <= 6) {
     targets.push("development", "taxRebalance");
   }
@@ -1255,6 +1282,7 @@ export function simulateFirstToSecondCampaignRun(
     firstEndTurn: firstEndState.turn,
     secondOutcome: secondEndState.outcome,
     secondEndTurn: secondEndState.turn,
+    secondEndResources: { ...secondEndState.resources },
   };
 }
 
