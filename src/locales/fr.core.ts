@@ -72,6 +72,7 @@ export const messagesFrCore: Record<keyof typeof messagesEnCore, string> = {
   "ui.hand": "Main",
   "ui.handWithCount": "Main ({n}) 💰({funding})",
   "ui.language": "Langue",
+  "ui.smallScreenMode": "Mode miniature (verrouiller l'affichage petit écran)",
   "ui.levelLocaleFallback": "Ce niveau n’est pas entièrement traduit pour la langue d’interface actuelle. Les textes propres au niveau peuvent s’afficher en anglais.",
   "ui.mobileLogTapHint": "Petit écran : touchez les événements, statuts et cartes en main pour afficher les détails ; double-cliquez une carte en main (compacte ou étendue) pour la jouer.",
   "ui.newGame": "Nouvelle partie",

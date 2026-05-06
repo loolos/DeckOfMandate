@@ -82,6 +82,7 @@ export const messagesZhCore = {
   "ui.targets": "关卡目标 — {limit} 回合内：财政 {tT}，权力 {tP}，合法性 {tL}",
   "ui.levelLocaleFallback": "该关卡尚未完全提供当前界面语言版本；关卡专属文案可能回退显示为英语。",
   "ui.language": "语言",
+  "ui.smallScreenMode": "略缩模式（锁定小屏布局）",
   "ui.lang.en": "English",
   "ui.lang.zh": "中文",
   "ui.lang.fr": "Français",

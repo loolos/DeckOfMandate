@@ -35,6 +35,7 @@ import { normalizeGameState } from "../logic/normalizeGameState";
 import { currentCalendarYear } from "../logic/scriptedCalendar";
 import { antiFrenchSentimentEmotionValue } from "../logic/antiFrenchSentiment";
 import { slotIsHandledOrNoFurtherAction } from "../logic/uiHelpers";
+import { useSmallScreen } from "../logic/useSmallScreen";
 import { loadGame, saveGame } from "../logic/saveLoad";
 import { readTutorialOnLevelEntry, writeTutorialOnLevelEntry } from "../logic/tutorialPref";
 import { buildCardQuickFrameRows } from "../logic/quickOutcomeFrame";
@@ -98,7 +99,6 @@ const SUNKING_CAMPAIGN_BACKDROP_STYLE: CSSProperties = {
 
 const GRID_SPLIT_STORAGE_KEY = "deckOfMandate_ui_gridSplit";
 const GRID_WIDE_MEDIA = "(min-width: 900px)";
-const SMALL_REFIT_MEDIA = "(max-width: 800px) and (hover: none), (max-width: 800px) and (pointer: coarse)";
 /** Cold-open splash: show backdrop only, then reveal the main menu panel. */
 const ENTRY_MAIN_MENU_DELAY_MS = 2000;
 /** Level intro: show backdrop for 1s, then fade intro panel in for 2s. */
@@ -217,9 +217,7 @@ export function Game() {
   const [level3DraftInitial, setLevel3DraftInitial] = useState<Level3StartDraft | null>(null);
   const [level3RefitNeedsIntroOnConfirm, setLevel3RefitNeedsIntroOnConfirm] = useState(true);
   const [expandedRefitCardId, setExpandedRefitCardId] = useState<string | null>(null);
-  const [isSmallRefitViewport, setIsSmallRefitViewport] = useState(() =>
-    typeof window !== "undefined" ? window.matchMedia(SMALL_REFIT_MEDIA).matches : false,
-  );
+  const isSmallRefitViewport = useSmallScreen();
   const [gridSplit, setGridSplit] = useState(readInitialGridSplit);
   const [wideGameGrid, setWideGameGrid] = useState(() =>
     typeof window !== "undefined" ? window.matchMedia(GRID_WIDE_MEDIA).matches : false,
@@ -349,17 +347,6 @@ export function Game() {
     if (level2Draft || level3Draft) return;
     setExpandedRefitCardId(null);
   }, [level2Draft, level3Draft]);
-
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    const media = window.matchMedia(SMALL_REFIT_MEDIA);
-    const onChange = (event: MediaQueryListEvent) => {
-      setIsSmallRefitViewport(event.matches);
-    };
-    setIsSmallRefitViewport(media.matches);
-    media.addEventListener("change", onChange);
-    return () => media.removeEventListener("change", onChange);
-  }, []);
 
   useEffect(() => {
     if (typeof window === "undefined") return;

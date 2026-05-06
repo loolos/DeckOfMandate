@@ -950,14 +950,37 @@
 
 .langToggle {
   display: flex;
+  flex-direction: column;
+  align-items: flex-end;
   gap: 0.35rem;
-  align-items: center;
 }
 
-.langToggle span {
+.langToggleRow {
+  display: flex;
+  gap: 0.35rem;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.langToggleLabel {
   font-size: 0.85rem;
   color: var(--muted);
   margin-right: 0.25rem;
+}
+
+.smallScreenModeToggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.78rem;
+  color: var(--muted);
+  user-select: none;
+  cursor: pointer;
+}
+
+.smallScreenModeToggle input {
+  margin: 0;
 }
 
 .retainList {

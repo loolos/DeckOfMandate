@@ -28,6 +28,7 @@ export const messagesEnCore = {
   "ui.quickFrame.yearEnd": "Year-end if still open",
   "ui.hand": "Hand",
   "ui.handWithCount": "Hand ({n}) 💰({funding})",
+  "ui.smallScreenMode": "Thumbnail mode (lock small-screen layout)",
   "ui.events": "Events",
   "ui.eventsWithCounts": "Events ({unresolved}/{total})",
   "ui.eventsResizeHint": "Drag the bottom-right corner to resize the events area.",
