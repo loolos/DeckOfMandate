@@ -738,6 +738,41 @@ describe("beginYear + playerStatuses", () => {
     ).toBe(true);
   });
 
+  it("third mandate adds great-power encirclement when Habsburg row exists and core-resource sum > 50", () => {
+    const started = createInitialState(902_020, "thirdMandate");
+    const s0: GameState = {
+      ...started,
+      resources: { ...started.resources, treasuryStat: 20, power: 16, legitimacy: 15 },
+      opponentStrength: 3,
+      opponentHabsburgUnlocked: true,
+      opponentDeck: [],
+      opponentHand: [],
+      opponentDiscard: [],
+      slots: {
+        ...EMPTY_EVENT_SLOTS,
+        D: { instanceId: "evt_opp_habsburg", templateId: "opponentHabsburg", resolved: true },
+      },
+      proceduralEventSequence: [],
+    };
+    const s1 = beginYear(s0);
+    expect(s1.playerStatuses.some((st) => st.templateId === "greatPowerEncirclement")).toBe(true);
+    expect(s1.opponentStrength).toBe(4);
+  });
+
+  it("third mandate does not add great-power encirclement when Habsburg row is absent", () => {
+    const started = createInitialState(902_021, "thirdMandate");
+    const s0: GameState = {
+      ...started,
+      resources: { ...started.resources, treasuryStat: 20, power: 16, legitimacy: 15 },
+      opponentStrength: 3,
+      slots: { ...EMPTY_EVENT_SLOTS },
+      proceduralEventSequence: [],
+    };
+    const s1 = beginYear(s0);
+    expect(s1.playerStatuses.some((st) => st.templateId === "greatPowerEncirclement")).toBe(false);
+    expect(s1.opponentStrength).toBe(3);
+  });
+
   it("removes anti-french sentiment when treasury+power <= 20 and appends end-history log", () => {
     const started = createInitialState(902_014, "secondMandate");
     const s0: GameState = {
@@ -827,7 +862,7 @@ describe("beginYear + playerStatuses", () => {
     }
   });
 
-  it("religious tolerance and containment statuses do not auto-expire at beginYear", () => {
+  it("religious tolerance / containment / great-power encirclement statuses do not auto-expire at beginYear", () => {
     const started = createInitialState(444_002, "secondMandate");
     const s0: GameState = {
       ...started,
@@ -848,11 +883,19 @@ describe("beginYear + playerStatuses", () => {
           delta: 0,
           turnsRemaining: 3,
         },
+        {
+          instanceId: "st_gp",
+          templateId: "greatPowerEncirclement",
+          kind: "drawAttemptsDelta",
+          delta: 0,
+          turnsRemaining: 99,
+        },
       ],
     };
     const s1 = beginYear(s0);
     expect(s1.playerStatuses.find((s) => s.templateId === "religiousTolerance")?.turnsRemaining).toBe(99);
     expect(s1.playerStatuses.find((s) => s.templateId === "huguenotContainment")?.turnsRemaining).toBe(3);
+    expect(s1.playerStatuses.find((s) => s.templateId === "greatPowerEncirclement")?.turnsRemaining).toBe(99);
   });
 
   it("when draw attempts exceed hand cap, remaining undrawn cards are discarded and logged", () => {

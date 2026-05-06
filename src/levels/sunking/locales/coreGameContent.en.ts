@@ -96,6 +96,9 @@ export const sunkingCoreGameContentEn = {
   "status.huguenotContainment.hint": "While active, Chapter 2 victory is blocked.",
   "status.huguenotContainment.hintGeneral":
     "Tracks crackdown suppression stacks; clearing suppress cards from play removes stacks over time.",
+  "status.greatPowerEncirclement.name": "Grand Alliance Encirclement (Permanent)",
+  "status.greatPowerEncirclement.history":
+    "During the War of the Spanish Succession, Bourbon dynastic expansion from Versailles was increasingly viewed as a continental balance-of-power threat. Britain, the Dutch Republic, Savoy, and Portugal therefore coordinated money, fleets, and field support for the Habsburg camp, turning a dynastic dispute into a broader coalition war. Until the Utrecht settlement closes the conflict, that external backing keeps lifting Habsburg war capacity.",
   "status.legitimacyCrisis.name": "Legitimacy Crisis",
   "status.legitimacyCrisis.history":
     "Bypassing succession norms accelerates your claim now, but keeps corroding royal credibility over the next turns.",

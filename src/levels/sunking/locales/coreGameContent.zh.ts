@@ -88,6 +88,9 @@ export const sunkingCoreGameContentZh = {
   "status.huguenotContainment.history": "强力镇压依赖连续清剿行动与高压维稳成本。",
   "status.huguenotContainment.hint": "该状态存在时，第二关无法胜利。",
   "status.huguenotContainment.hintGeneral": "表示镇压带来的压制层数；通过消去场上的「镇压胡格诺」牌可逐步清除层数。",
+  "status.greatPowerEncirclement.name": "列强合围（永久）",
+  "status.greatPowerEncirclement.history":
+    "在西班牙王位继承战争中，凡尔赛的扩张势头与波旁王朝的继承布局，被欧洲多国视为权力失衡信号。英国、荷兰、萨伏依与葡萄牙因此向哈布斯堡持续输送财政、海军与陆军协同支持，把局部战场推向更广泛的围堵格局。只要乌德勒支和约尚未终结战争，这股外援就会持续抬高哈布斯堡阵营的作战能力。",
   "status.legitimacyCrisis.name": "合法性危机",
   "status.legitimacyCrisis.history": "僭越法统程序虽能加速夺位叙事，却会在后续回合持续侵蚀政权信誉。",
   "status.minorRegencyDoubt.name": "主少国疑",

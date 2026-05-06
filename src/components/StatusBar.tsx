@@ -147,6 +147,7 @@ export function StatusBar({
       const turnsText =
         row.templateId === "religiousTolerance"
           || row.templateId === "antiFrenchSentiment"
+          || row.templateId === "greatPowerEncirclement"
           ? t("ui.statusPermanent")
           : row.templateId === "huguenotContainment"
             ? t("ui.statusHuguenotRemaining", { n: row.turnsRemaining })

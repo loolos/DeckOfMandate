@@ -6,6 +6,7 @@ import {
   initOpponentHabsburgPool,
   opponentBeginYearDrawPhase,
   opponentEndYearPlayPhase,
+  stateAfterUtrechtTreatyEndsWar,
   utrechtTreatySituationTier,
 } from "../../../logic/opponentHabsburg";
 import { THIRD_MANDATE_LEVEL_ID } from "../../../logic/thirdMandateConstants";
@@ -338,5 +339,38 @@ describe("utrechtTreatySituationTier", () => {
     expect(utrechtTreatySituationTier(4)).toBe("compromise");
     expect(utrechtTreatySituationTier(-4)).toBe("compromise");
     expect(utrechtTreatySituationTier(-5)).toBe("habsburg");
+  });
+});
+
+describe("stateAfterUtrechtTreatyEndsWar", () => {
+  it("clears great-power encirclement status when war ends", () => {
+    const base = createInitialState(8_081, THIRD_MANDATE_LEVEL_ID);
+    const before: GameState = {
+      ...base,
+      slots: {
+        ...base.slots,
+        E: { instanceId: "evt_utrecht", templateId: "utrechtTreaty", resolved: false },
+        D: { instanceId: "evt_habsburg", templateId: "opponentHabsburg", resolved: true },
+      },
+      playerStatuses: [
+        ...base.playerStatuses,
+        {
+          instanceId: "st_gp",
+          templateId: "greatPowerEncirclement",
+          kind: "drawAttemptsDelta",
+          delta: 0,
+          turnsRemaining: 99,
+        },
+      ],
+      opponentHabsburgUnlocked: true,
+      warEnded: false,
+      utrechtTreatyCountdown: 3,
+    };
+    const after = stateAfterUtrechtTreatyEndsWar(before, "E");
+    expect(after.warEnded).toBe(true);
+    expect(after.playerStatuses.some((s) => s.templateId === "greatPowerEncirclement")).toBe(false);
+    expect(after.opponentHabsburgUnlocked).toBe(false);
+    expect(after.slots.D).toBeNull();
+    expect(after.slots.E).toBeNull();
   });
 });

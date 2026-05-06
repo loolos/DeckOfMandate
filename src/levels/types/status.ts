@@ -21,6 +21,7 @@ export type StatusTemplateId =
   | "religiousTolerance"
   | "huguenotContainment"
   | "antiFrenchSentiment"
+  | "greatPowerEncirclement"
   | "legitimacyCrisis"
   | "minorRegencyDoubt"
   | "bourbonMarriageRetention"

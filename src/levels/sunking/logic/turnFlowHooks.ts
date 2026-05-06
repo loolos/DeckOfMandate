@@ -12,6 +12,7 @@ import {
 import { antiFrenchSentimentActive } from "./antiFrenchSentiment";
 import { applyEffects } from "../../../logic/applyEffects";
 import { rngNext } from "../../../logic/rng";
+import { THIRD_MANDATE_LEVEL_ID } from "./thirdMandateConstants";
 
 const HUGUENOT_RESURGENCE_INTERVAL = 2;
 const EUROPE_ALERT_SUPPLEMENTAL_POOL = [
@@ -27,6 +28,7 @@ const RELIGIOUS_TENSION_EVENTS: readonly EventInstance["templateId"][] = [
   "arminianTension",
   "huguenotTension",
 ];
+const GREAT_POWER_ENCIRCLEMENT_TRIGGER_SUM = 50;
 
 export function maybeAdjustEuropeAlertProgressAtYearStartHook(state: GameState): GameState {
   if (!state.europeAlert || !getLevelDef(state.levelId).features.europeAlertMechanics) return state;
@@ -164,4 +166,39 @@ export function syncAntiFrenchSentimentStatusHook(state: GameState): GameState {
     return appendActionLog(s, { kind: "info", infoKey: "antiFrenchSentimentEnded" });
   }
   return state;
+}
+
+function hasHabsburgOpponentRow(state: GameState): boolean {
+  return EVENT_SLOT_ORDER.some((slot) => state.slots[slot]?.templateId === "opponentHabsburg");
+}
+
+function sumCoreResources(state: GameState): number {
+  return state.resources.treasuryStat + state.resources.power + state.resources.legitimacy;
+}
+
+/**
+ * Chapter 3 only: once core resources exceed 50 while the Habsburg rival row is present,
+ * grant a permanent "greatPowerEncirclement" status and +1 opponent strength until Utrecht ends the war.
+ */
+export function syncGreatPowerEncirclementStatusHook(state: GameState): GameState {
+  if (state.levelId !== THIRD_MANDATE_LEVEL_ID) return state;
+  const hasStatus = state.playerStatuses.some((s) => s.templateId === "greatPowerEncirclement");
+  const opponentRowPresent = hasHabsburgOpponentRow(state);
+  if (hasStatus && !opponentRowPresent) {
+    return {
+      ...state,
+      playerStatuses: state.playerStatuses.filter((s) => s.templateId !== "greatPowerEncirclement"),
+    };
+  }
+  if (
+    hasStatus
+    || !opponentRowPresent
+    || sumCoreResources(state) <= GREAT_POWER_ENCIRCLEMENT_TRIGGER_SUM
+  ) {
+    return state;
+  }
+  return applyEffects(state, [
+    { kind: "addPlayerStatus", templateId: "greatPowerEncirclement", turns: 99 },
+    { kind: "modOpponentStrength", delta: 1 },
+  ]);
 }

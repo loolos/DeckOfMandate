@@ -100,6 +100,9 @@ export const sunkingCoreGameContentFr = {
   "status.huguenotContainment.hint": "Tant que ce statut est actif, la victoire du Chapitre 2 est bloquée.",
   "status.huguenotContainment.hintGeneral":
     "Indique la charge de répression ; retirer les cartes « réprimer les huguenots » en jeu réduit les piles avec le temps.",
+  "status.greatPowerEncirclement.name": "Encerclement de la Grande Alliance (Permanent)",
+  "status.greatPowerEncirclement.history":
+    "Pendant la guerre de Succession d'Espagne, l'expansion versaillaise et l'avantage dynastique bourbonien sont perçus comme une menace à l'équilibre européen. L'Angleterre, les Provinces-Unies, la Savoie et le Portugal coordonnent alors crédit, flotte et troupes au profit du camp habsbourgeois. Tant que le règlement d'Utrecht n'a pas clos le conflit, cet appui extérieur maintient une pression militaire renforcée contre la France.",
   "status.legitimacyCrisis.name": "Crise de légitimité",
   "status.legitimacyCrisis.history":
     "Forcer la succession hors protocole accélère la course au trône, mais érode ensuite durablement la crédibilité royale.",
