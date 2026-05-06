@@ -254,12 +254,12 @@ export function opponentDrawFromDeck(state: GameState, count: number): GameState
 
 export function completeSuccessionCrisisAndRevealOpponent(state: GameState, slot: SlotId): GameState {
   if (state.opponentHabsburgUnlocked) {
-    const delta = 3 - state.opponentStrength;
-    const s = delta !== 0 ? applyEffects(state, [{ kind: "modOpponentStrength", delta }]) : state;
+    const s = applyEffects(state, [{ kind: "modOpponentStrength", delta: 1 }]);
     const slots: GameState["slots"] = { ...s.slots, [slot]: null };
     return { ...s, slots };
   }
-  let s = initOpponentHabsburgPool(state);
+  let s = initOpponentHabsburgPool(state, { initialOpponentStrength: 2 });
+  s = applyEffects(s, [{ kind: "modOpponentStrength", delta: 1 }]);
   const instance: EventInstance = {
     instanceId: `evt_${s.nextIds.event}`,
     templateId: "opponentHabsburg",
