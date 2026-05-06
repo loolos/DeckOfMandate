@@ -693,6 +693,10 @@
   gap: 0.4rem;
 }
 
+.compactActions {
+  display: flex;
+}
+
 .btn {
   border-radius: 8px;
   border: 1px solid var(--border);
@@ -716,6 +720,13 @@
 .btnDanger {
   border-color: #6b2f2f;
   background: #3a1f1f;
+}
+
+.btnCompact {
+  min-height: 1.95rem;
+  padding: 0.22rem 0.45rem;
+  font-size: 0.72rem;
+  border-radius: 6px;
 }
 
 .hand {

@@ -2,6 +2,7 @@
 export const sunkingShellContentZh = {
   "app.subtitle": "旭日",
   "ui.solve": "处理（{cost} 经费）",
+  "ui.solveCompact": "处理 {cost}",
   "ui.solveCrackdown": "以干预解决",
   "ui.solveFundingOrCrackdown": "支付 {cost} 或使用干预",
   "ui.scriptedAttack": "进攻（{cost}）",

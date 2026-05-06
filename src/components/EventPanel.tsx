@@ -188,6 +188,12 @@ export function EventPanel({
         const compactSummaryWithHandledMark = `${compactSummary}${handledMark}`;
         const descWithHandledMark = `${desc}${handledMark}`;
         const showDetails = !isSmallScreen || expandedSlot === slot || crack;
+        const showCompactSolveButton =
+          isSmallScreen &&
+          !showDetails &&
+          !ev.resolved &&
+          amount !== null &&
+          (solveKind === "funding" || solveKind === "fundingTreasuryQuarterCeil" || solveKind === "fundingOrCrackdown");
         const toggleCard = () => setExpandedSlot((prev) => (prev === slot ? null : slot));
         const logEventTag = (
           infoKey:
@@ -224,6 +230,18 @@ export function EventPanel({
           >
             <div className={styles.eventTitle}>{title}</div>
             {isSmallScreen ? <div className={styles.compactSummary}>{compactSummaryWithHandledMark}</div> : null}
+            {showCompactSolveButton ? (
+              <div className={styles.compactActions} onClick={(e) => e.stopPropagation()}>
+                <button
+                  type="button"
+                  className={`${styles.btn} ${styles.btnCompact}`}
+                  disabled={!affordable || !canClickFund}
+                  onClick={() => dispatch({ type: "SOLVE_EVENT", slot })}
+                >
+                  {t("ui.solveCompact", { cost: `${getResourceIcon("funding")} ${amount}` })}
+                </button>
+              </div>
+            ) : null}
             {!isSmallScreen || showDetails ? (
               <>
                 <div className={styles.badges}>
