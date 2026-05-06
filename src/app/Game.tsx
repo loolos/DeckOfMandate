@@ -35,6 +35,7 @@ import { normalizeGameState } from "../logic/normalizeGameState";
 import { currentCalendarYear } from "../logic/scriptedCalendar";
 import { antiFrenchSentimentEmotionValue } from "../logic/antiFrenchSentiment";
 import { slotIsHandledOrNoFurtherAction } from "../logic/uiHelpers";
+import { useSmallScreen } from "../logic/useSmallScreen";
 import { loadGame, saveGame } from "../logic/saveLoad";
 import { readTutorialOnLevelEntry, writeTutorialOnLevelEntry } from "../logic/tutorialPref";
 import { buildCardQuickFrameRows } from "../logic/quickOutcomeFrame";
@@ -216,9 +217,7 @@ export function Game() {
   const [level3DraftInitial, setLevel3DraftInitial] = useState<Level3StartDraft | null>(null);
   const [level3RefitNeedsIntroOnConfirm, setLevel3RefitNeedsIntroOnConfirm] = useState(true);
   const [expandedRefitCardId, setExpandedRefitCardId] = useState<string | null>(null);
-  const [isSmallRefitViewport, setIsSmallRefitViewport] = useState(() =>
-    typeof window !== "undefined" ? window.matchMedia("(max-width: 800px)").matches : false,
-  );
+  const isSmallRefitViewport = useSmallScreen();
   const [gridSplit, setGridSplit] = useState(readInitialGridSplit);
   const [wideGameGrid, setWideGameGrid] = useState(() =>
     typeof window !== "undefined" ? window.matchMedia(GRID_WIDE_MEDIA).matches : false,
@@ -348,17 +347,6 @@ export function Game() {
     if (level2Draft || level3Draft) return;
     setExpandedRefitCardId(null);
   }, [level2Draft, level3Draft]);
-
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    const media = window.matchMedia("(max-width: 800px)");
-    const onChange = (event: MediaQueryListEvent) => {
-      setIsSmallRefitViewport(event.matches);
-    };
-    setIsSmallRefitViewport(media.matches);
-    media.addEventListener("change", onChange);
-    return () => media.removeEventListener("change", onChange);
-  }, []);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -1489,7 +1477,9 @@ export function Game() {
 
       <section className={`${styles.panel} ${styles.handPanel}`} id="tutorial-hand">
         <h2>{t("ui.handWithCount", { n: state.hand.length, funding: state.resources.funding })}</h2>
-        <Hand key={handResetToken} state={state} dispatch={dispatchSafe} scrollContainerRef={handScrollRef} />
+        <div className={styles.handResizable} title={t("ui.handResizeHint")}>
+          <Hand key={handResetToken} state={state} dispatch={dispatchSafe} scrollContainerRef={handScrollRef} />
+        </div>
       </section>
 
       {state.phase === "action" && state.outcome === "playing" ? (

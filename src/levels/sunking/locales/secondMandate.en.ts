@@ -123,12 +123,12 @@ export const messagesEnSecondMandate = {
   "card.taxRebalance.desc": "Treasury +1. Gain Draw Penalty (draw -1) for 2 turns.",
   "card.diplomaticCongress.name": "Diplomatic Congress",
   "card.diplomaticCongress.background":
-    "Envoys, conferences, and guarantees buy breathing room while rivals test your frontiers.",
+    "After Nijmegen, Europe entered a tense peace in which ambassadors, not armies, carried the first blows. French envoys worked through congress halls, resident missions, and side channels to slow coalition coordination before it hardened into war planning. Guarantees, protocol disputes, and sequencing talks over garrisons or trade could each buy a season of strategic breathing room. A diplomatic congress was never pure peace; it was a controlled contest over time, alignment, and who set the agenda.",
   "card.diplomaticCongress.desc":
     "Power +1. Draw +1 next turn. If Europe Alert is active, reduce its progress by 1. Add 1 Diplomatic Intervention to your hand.",
   "card.diplomaticIntervention.name": "Diplomatic Intervention",
   "card.diplomaticIntervention.background":
-    "Apply pressure through envoys and treaty leverage rather than direct royal command.",
+    "Seventeenth-century intervention often meant pressure by memorandum, subsidy promises, legal argument, and court access rather than direct battlefield escalation. Versailles could lean on mediators, exploit treaty language, and isolate one crisis node before it fused with wider coalition demands. Such moves did not end rivalry, but they frequently redirected it into slower and more negotiable channels. Diplomatic intervention therefore traded immediate force for political timing, selective de-escalation, and reputational leverage.",
   "card.diplomaticIntervention.desc":
     "Resolve one harmful event with the same post-resolve extras as paying Funding for that event when defined (e.g. some Europe Alert pressure events reduce alert progress by 1). Not Royal-tagged.",
   "log.eventNineYearsWarAttempt.method.funding": "funding operations",

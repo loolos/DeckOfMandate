@@ -175,10 +175,28 @@
   padding-bottom: 0.35rem;
 }
 
+.handResizable {
+  resize: vertical;
+  overflow: auto;
+  min-height: 10rem;
+  max-height: min(72vh, 720px);
+  padding-bottom: 0.35rem;
+}
+
+.handResizable .hand {
+  min-height: 100%;
+  align-content: start;
+}
+
 @media (min-width: 1200px) {
   .eventsResizable {
     min-height: 12rem;
     max-height: min(76vh, 720px);
+  }
+
+  .handResizable {
+    min-height: 11rem;
+    max-height: min(78vh, 780px);
   }
 }
 
@@ -932,14 +950,37 @@
 
 .langToggle {
   display: flex;
+  flex-direction: column;
+  align-items: flex-end;
   gap: 0.35rem;
-  align-items: center;
 }
 
-.langToggle span {
+.langToggleRow {
+  display: flex;
+  gap: 0.35rem;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.langToggleLabel {
   font-size: 0.85rem;
   color: var(--muted);
   margin-right: 0.25rem;
+}
+
+.smallScreenModeToggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.78rem;
+  color: var(--muted);
+  user-select: none;
+  cursor: pointer;
+}
+
+.smallScreenModeToggle input {
+  margin: 0;
 }
 
 .retainList {
@@ -1253,7 +1294,7 @@
   white-space: pre-wrap;
 }
 
-@media (max-width: 760px) {
+@media (max-width: 760px) and (hover: none), (max-width: 760px) and (pointer: coarse) {
   .root {
     padding: max(0.5rem, env(safe-area-inset-top, 0px)) max(0.6rem, env(safe-area-inset-right, 0px))
       max(0.75rem, env(safe-area-inset-bottom, 0px)) max(0.6rem, env(safe-area-inset-left, 0px));
@@ -1412,6 +1453,14 @@
   }
 
   .eventsResizable {
+    resize: none;
+    overflow: visible;
+    min-height: 0;
+    max-height: none;
+    padding-bottom: 0;
+  }
+
+  .handResizable {
     resize: none;
     overflow: visible;
     min-height: 0;
