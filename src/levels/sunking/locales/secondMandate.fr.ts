@@ -126,12 +126,12 @@ export const messagesFrSecondMandate: Record<keyof typeof messagesEnSecondMandat
   "card.taxRebalance.desc": "Trésor +1. Gagnez Fatigue de pioche (pioche -1) pendant 2 tours.",
   "card.diplomaticCongress.name": "Congrès diplomatique",
   "card.diplomaticCongress.background":
-    "Émissaires, conférences et garanties achètent du répit pendant que vos rivaux testent vos frontières.",
+    "Après Nimègue, les rivalités ne disparaissent pas : elles se déplacent vers les chancelleries, les cours alliées et les clauses de garantie. Versailles multiplie mémoires, audiences et canaux d'ambassade pour fragmenter les priorités de ses adversaires. Un congrès n'apporte pas une paix durable, mais il peut geler une coalition assez longtemps pour reprendre l'initiative politique. Ce répit diplomatique reste fragile, car chaque concession publique est surveillée par les puissances maritimes et impériales.",
   "card.diplomaticCongress.desc":
     "Pouvoir +1. Piochez +1 au prochain tour. Si l'Alerte Europe est active, réduisez sa progression de 1. Ajoutez 1 Intervention diplomatique à votre main.",
   "card.diplomaticIntervention.name": "Intervention diplomatique",
   "card.diplomaticIntervention.background":
-    "Exercez une pression via émissaires et leviers de traité plutôt que par commandement royal direct.",
+    "L'intervention diplomatique transforme une crise ouverte en négociation contrainte plutôt qu'en démonstration militaire immédiate. Ministres, envoyés et intermédiaires financiers utilisent menaces de traité, arbitrages et promesses conditionnelles pour isoler le foyer de tension. Sous Louis XIV, ce type d'action permet souvent de gagner du temps, de limiter l'escalade et d'éviter d'ouvrir un front coûteux de plus. Son efficacité dépend toutefois de la crédibilité française : sans réserve de force ni trésorerie, la pression verbale se dissipe rapidement.",
   "card.diplomaticIntervention.desc":
     "Résolvez un événement néfaste avec les mêmes effets post-résolution que le paiement en Financement lorsqu'ils sont définis (ex. certains événements liés à l'Alerte Europe réduisent la progression). Pas de tag Royal.",
   "log.eventNineYearsWarAttempt.method.funding": "opérations financées",

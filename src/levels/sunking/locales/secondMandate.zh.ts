@@ -117,10 +117,12 @@ export const messagesZhSecondMandate = {
     "17 世纪后期法国为维持常备军、边境要塞与战争借贷，不得不反复重估田赋、加压盐税与消费税，并借包税人与督办体系强化征收。税制重估能在短期稳住岁入和军费周转，却也会放大特权豁免与基层负担的不平衡，激化地方拖欠、抗税与执行迟滞。",
   "card.taxRebalance.desc": "财政 +1，并获得「抽牌受限」2 回合（每回合抽牌 -1）。",
   "card.diplomaticCongress.name": "外交会议",
-  "card.diplomaticCongress.background": "通过使节与会议换取喘息，减轻短期外部压力。",
+  "card.diplomaticCongress.background":
+    "17 世纪后期的欧洲并非只有战场决胜，战后会议、使团往返与担保条款同样决定下一轮冲突的节奏。法国常借停战谈判、边界执行委员会与中立宫廷斡旋，把一线军事压力转化为可管理的时间窗口。问题在于，这类会议往往只能暂时推迟敌对联盟的协同，而无法消除其对波旁扩张的长期疑虑。所谓“外交会议”，本质上是在战与和之间购买喘息，以争取财政、军备与国内秩序的再平衡。",
   "card.diplomaticCongress.desc": "权力 +1。下个回合多摸 1 张牌。若存在「欧洲警觉」，其进度 -1。向手牌加入 1 张「外交干预」。",
   "card.diplomaticIntervention.name": "外交干预",
-  "card.diplomaticIntervention.background": "通过使节施压与条约操作解决危机，而非直接动用王室强制力。",
+  "card.diplomaticIntervention.background":
+    "在路易十四后期，许多危机并不一定靠增兵解决，而是通过使节照会、第三方担保与条约条款解释被“技术性拆弹”。法国驻外网络会利用补贴、礼仪次序与法理论证，迫使对手在公开场合接受较温和的处置路径。这样的干预可以在不扩大前线消耗的前提下化解当下危险，但也会消耗信誉、筹码与未来谈判空间。它不是王权威压的直接投射，而是把宫廷话语与国际规则当作可操作的政策工具。",
   "card.diplomaticIntervention.desc":
     "解决有害事件；与该事件「支付经费解决」的追加效果一致（若模板有，例如部分欧洲警觉压力事件使进度 -1）。非王室牌。",
   "log.eventNineYearsWarAttempt.method.funding": "军费推进",
