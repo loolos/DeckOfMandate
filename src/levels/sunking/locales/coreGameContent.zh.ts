@@ -88,6 +88,9 @@ export const sunkingCoreGameContentZh = {
   "status.huguenotContainment.history": "强力镇压依赖连续清剿行动与高压维稳成本。",
   "status.huguenotContainment.hint": "该状态存在时，第二关无法胜利。",
   "status.huguenotContainment.hintGeneral": "表示镇压带来的压制层数；通过消去场上的「镇压胡格诺」牌可逐步清除层数。",
+  "status.greatPowerEncirclement.name": "列强合围（永久）",
+  "status.greatPowerEncirclement.history":
+    "当法国国力与王位继承优势过强时，英国、荷兰、萨伏依与葡萄牙会加码援助哈布斯堡，使其对手实力上限在战争结束前持续提升。",
   "status.legitimacyCrisis.name": "合法性危机",
   "status.legitimacyCrisis.history": "僭越法统程序虽能加速夺位叙事，却会在后续回合持续侵蚀政权信誉。",
   "status.minorRegencyDoubt.name": "主少国疑",

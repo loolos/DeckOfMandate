@@ -96,6 +96,9 @@ export const sunkingCoreGameContentEn = {
   "status.huguenotContainment.hint": "While active, Chapter 2 victory is blocked.",
   "status.huguenotContainment.hintGeneral":
     "Tracks crackdown suppression stacks; clearing suppress cards from play removes stacks over time.",
+  "status.greatPowerEncirclement.name": "Grand Alliance Encirclement (Permanent)",
+  "status.greatPowerEncirclement.history":
+    "When Bourbon influence appears too overwhelming, Britain, the Dutch Republic, Savoy, and Portugal tighten military-financial support to the Habsburg front, permanently raising its war capacity until the Utrecht settlement closes the conflict.",
   "status.legitimacyCrisis.name": "Legitimacy Crisis",
   "status.legitimacyCrisis.history":
     "Bypassing succession norms accelerates your claim now, but keeps corroding royal credibility over the next turns.",

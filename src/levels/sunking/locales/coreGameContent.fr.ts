@@ -100,6 +100,9 @@ export const sunkingCoreGameContentFr = {
   "status.huguenotContainment.hint": "Tant que ce statut est actif, la victoire du Chapitre 2 est bloquée.",
   "status.huguenotContainment.hintGeneral":
     "Indique la charge de répression ; retirer les cartes « réprimer les huguenots » en jeu réduit les piles avec le temps.",
+  "status.greatPowerEncirclement.name": "Encerclement de la Grande Alliance (Permanent)",
+  "status.greatPowerEncirclement.history":
+    "Quand la puissance française paraît excessive, l'Angleterre, les Provinces-Unies, la Savoie et le Portugal renforcent durablement leur appui au front habsbourgeois, ce qui augmente sa capacité de guerre jusqu'au règlement d'Utrecht.",
   "status.legitimacyCrisis.name": "Crise de légitimité",
   "status.legitimacyCrisis.history":
     "Forcer la succession hors protocole accélère la course au trône, mais érode ensuite durablement la crédibilité royale.",

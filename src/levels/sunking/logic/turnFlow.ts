@@ -31,6 +31,7 @@ import {
   maybeAdjustEuropeAlertProgressAtYearStartHook,
   maybeTriggerHuguenotResurgenceHook,
   syncAntiFrenchSentimentStatusHook,
+  syncGreatPowerEncirclementStatusHook,
 } from "../../campaignLogicBundle";
 
 const PROCEDURAL_SEQUENCE_LOW_WATERMARK = 3;
@@ -313,6 +314,10 @@ function syncAntiFrenchSentimentStatus(state: GameState): GameState {
   return syncAntiFrenchSentimentStatusHook(state);
 }
 
+function syncGreatPowerEncirclementStatus(state: GameState): GameState {
+  return syncGreatPowerEncirclementStatusHook(state);
+}
+
 function fillEmptySlots(state: GameState): GameState {
   let st = state;
   if (allSlotsEmpty(st)) {
@@ -351,6 +356,7 @@ function runEventPhase(state: GameState): GameState {
   s = forceStandaloneChapter2Opening(s);
   s = fillEmptySlots(s);
   s = syncAntiFrenchSentimentStatus(s);
+  s = syncGreatPowerEncirclementStatus(s);
   s = maybeAddEuropeAlertSupplementalEvent(s);
   s = maybeAddReligiousTensionEvent(s);
   s = maybeTriggerHuguenotResurgence(s);
@@ -420,7 +426,13 @@ export function retentionCapacity(state: GameState): number {
 function tickPlayerStatusesAfterDraw(statuses: readonly PlayerStatusInstance[]): PlayerStatusInstance[] {
   return statuses
     .map((p) => {
-      if (p.templateId === "religiousTolerance" || p.templateId === "huguenotContainment") return p;
+      if (
+        p.templateId === "religiousTolerance"
+        || p.templateId === "huguenotContainment"
+        || p.templateId === "greatPowerEncirclement"
+      ) {
+        return p;
+      }
       return { ...p, turnsRemaining: p.turnsRemaining - 1 };
     })
     .filter((p) => p.turnsRemaining > 0);

@@ -66,5 +66,6 @@ export {
   maybeAddReligiousTensionEventHook,
   maybeAdjustEuropeAlertProgressAtYearStartHook,
   maybeTriggerHuguenotResurgenceHook,
+  syncGreatPowerEncirclementStatusHook,
   syncAntiFrenchSentimentStatusHook,
 } from "./sunking/logic/turnFlowHooks";
