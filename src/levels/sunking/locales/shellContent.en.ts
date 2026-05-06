@@ -2,6 +2,7 @@
 export const sunkingShellContentEn = {
   "app.subtitle": "The Rising Sun",
   "ui.solve": "Solve ({cost})",
+  "ui.solveCompact": "Solve {cost}",
   "ui.solveCrackdown": "Resolve (Intervention)",
   "ui.solveFundingOrCrackdown": "Pay {cost} or Intervention",
   "ui.scriptedAttack": "Attack ({cost})",
