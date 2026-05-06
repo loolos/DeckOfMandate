@@ -98,7 +98,7 @@ export const sunkingCoreGameContentEn = {
     "Tracks crackdown suppression stacks; clearing suppress cards from play removes stacks over time.",
   "status.greatPowerEncirclement.name": "Grand Alliance Encirclement (Permanent)",
   "status.greatPowerEncirclement.history":
-    "When Bourbon influence appears too overwhelming, Britain, the Dutch Republic, Savoy, and Portugal tighten military-financial support to the Habsburg front, permanently raising its war capacity until the Utrecht settlement closes the conflict.",
+    "During the War of the Spanish Succession, Bourbon dynastic expansion from Versailles was increasingly viewed as a continental balance-of-power threat. Britain, the Dutch Republic, Savoy, and Portugal therefore coordinated money, fleets, and field support for the Habsburg camp, turning a dynastic dispute into a broader coalition war. Until the Utrecht settlement closes the conflict, that external backing keeps lifting Habsburg war capacity.",
   "status.legitimacyCrisis.name": "Legitimacy Crisis",
   "status.legitimacyCrisis.history":
     "Bypassing succession norms accelerates your claim now, but keeps corroding royal credibility over the next turns.",
