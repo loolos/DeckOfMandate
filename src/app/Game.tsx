@@ -98,6 +98,7 @@ const SUNKING_CAMPAIGN_BACKDROP_STYLE: CSSProperties = {
 
 const GRID_SPLIT_STORAGE_KEY = "deckOfMandate_ui_gridSplit";
 const GRID_WIDE_MEDIA = "(min-width: 900px)";
+const SMALL_REFIT_MEDIA = "(max-width: 800px) and (hover: none), (max-width: 800px) and (pointer: coarse)";
 /** Cold-open splash: show backdrop only, then reveal the main menu panel. */
 const ENTRY_MAIN_MENU_DELAY_MS = 2000;
 /** Level intro: show backdrop for 1s, then fade intro panel in for 2s. */
@@ -217,7 +218,7 @@ export function Game() {
   const [level3RefitNeedsIntroOnConfirm, setLevel3RefitNeedsIntroOnConfirm] = useState(true);
   const [expandedRefitCardId, setExpandedRefitCardId] = useState<string | null>(null);
   const [isSmallRefitViewport, setIsSmallRefitViewport] = useState(() =>
-    typeof window !== "undefined" ? window.matchMedia("(max-width: 800px)").matches : false,
+    typeof window !== "undefined" ? window.matchMedia(SMALL_REFIT_MEDIA).matches : false,
   );
   const [gridSplit, setGridSplit] = useState(readInitialGridSplit);
   const [wideGameGrid, setWideGameGrid] = useState(() =>
@@ -351,7 +352,7 @@ export function Game() {
 
   useEffect(() => {
     if (typeof window === "undefined") return;
-    const media = window.matchMedia("(max-width: 800px)");
+    const media = window.matchMedia(SMALL_REFIT_MEDIA);
     const onChange = (event: MediaQueryListEvent) => {
       setIsSmallRefitViewport(event.matches);
     };
@@ -1489,7 +1490,9 @@ export function Game() {
 
       <section className={`${styles.panel} ${styles.handPanel}`} id="tutorial-hand">
         <h2>{t("ui.handWithCount", { n: state.hand.length, funding: state.resources.funding })}</h2>
-        <Hand key={handResetToken} state={state} dispatch={dispatchSafe} scrollContainerRef={handScrollRef} />
+        <div className={styles.handResizable} title={t("ui.handResizeHint")}>
+          <Hand key={handResetToken} state={state} dispatch={dispatchSafe} scrollContainerRef={handScrollRef} />
+        </div>
       </section>
 
       {state.phase === "action" && state.outcome === "playing" ? (

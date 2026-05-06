@@ -1,6 +1,10 @@
 import { useEffect, useState } from "react";
 
-const MOBILE_MEDIA_QUERY = "(max-width: 760px)";
+/**
+ * Small-screen compact cards are intended for touch devices only.
+ * Desktop browser zoom should change visual scale, not force mobile card thumbnails.
+ */
+const MOBILE_MEDIA_QUERY = "(max-width: 760px) and (hover: none), (max-width: 760px) and (pointer: coarse)";
 
 export function useSmallScreen(): boolean {
   const [isSmallScreen, setIsSmallScreen] = useState(() => {

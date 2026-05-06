@@ -66,6 +66,7 @@ export const messagesFrCore: Record<keyof typeof messagesEnCore, string> = {
   "ui.events": "Événements",
   "ui.eventsWithCounts": "Événements ({unresolved}/{total})",
   "ui.eventsResizeHint": "Glissez le coin inférieur droit pour redimensionner la zone d'événements.",
+  "ui.handResizeHint": "Glissez le coin inférieur droit pour redimensionner la hauteur de la zone de main.",
   "ui.columnResizeHint": "Faites glisser horizontalement pour élargir la colonne des ressources ou celle des événements. La largeur est mémorisée sur cet appareil.",
   "ui.actionLogResizeHint": "Glissez le coin inférieur droit pour redimensionner la hauteur du journal d'actions.",
   "ui.hand": "Main",
