@@ -83,7 +83,7 @@ export const sunkingShellContentEn = {
   "outcome.successionTier.bourbon": "Settlement: Bourbon advantage on the succession line.",
   "outcome.successionTier.compromise": "Settlement: a compromise equilibrium between claims.",
   "outcome.successionTier.habsburg": "Settlement: Habsburg-leaning advantage in the final accounting.",
-  "outcome.utrechtVictoryEpilogue.bourbon": "After the Utrecht settlement, open war gives way to parchment: Europe accepts a Bourbon Spain under strict guardrails, and France trades away worst-case union fears for a defensible dynastic win.",
+  "outcome.utrechtVictoryEpilogue.bourbon": "After the Utrecht settlement, open war gives way to parchment: Bourbon power does not stop at guardrails but formally unifies the French and Spanish crowns under one dynastic order. Europe confronts a far stronger double-crown monarchy—while mounting war costs, tax strain, and class tension begin laying the fuse for a future revolutionary age.",
   "outcome.utrechtVictoryEpilogue.compromise": "The treaties close the fighting season without a clean knockout: claims are partitioned and face is saved on all sides—France secures breathing room, not a blank cheque, in the Spanish inheritance.",
   "outcome.utrechtVictoryEpilogue.habsburg": "The peace mirrors coalition pressure: Philip may keep Madrid, but France accepts tighter straps—imperial and maritime checks that will long outlast the last cannonade of the succession war.",
   "outcome.successionCalendar1720Extra.bourbon": "The calendar stops at 1720 while the Utrecht-era map still reads kindly to Bourbon arithmetic: time turned truces into precedent, and Versailles can argue—without shouting—that the inheritance war ended in a ledger France can defend.",
