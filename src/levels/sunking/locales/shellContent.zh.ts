@@ -83,7 +83,7 @@ export const sunkingShellContentZh = {
   "outcome.successionTier.bourbon": "结局：波旁系在最终账面上占优。",
   "outcome.successionTier.compromise": "结局：双方主张形成妥协均势。",
   "outcome.successionTier.habsburg": "结局：哈布斯堡系在最终账面上占优。",
-  "outcome.utrechtVictoryEpilogue.bourbon": "《乌得勒支和约》系列安排落地后，公开交战让位于条文：在这条架空结局里，波旁并未接受“法西不得合并”的最终边界，而是把法兰西与西班牙两顶王冠并入同一王朝统序。欧洲由此迎来一个空前强大的双冠波旁体系；但强盛背后，长期军费、税负失衡与阶层裂痕也同步累积，革命时代的火种因此被提前点燃。",
+  "outcome.utrechtVictoryEpilogue.bourbon": "《乌得勒支和约》系列安排落地后，公开交战让位于条文：波旁并未接受“法西不得合并”的最终边界，而是把法兰西与西班牙两顶王冠并入同一王朝统序。欧洲由此迎来一个空前强大的双冠波旁体系；但强盛背后，长期军费、税负失衡与阶层裂痕也同步累积，革命时代的火种因此被提前点燃。",
   "outcome.utrechtVictoryEpilogue.compromise": "和约并未给出单方完胜：遗产被条约重新切块，各方在承认与颜面之间折衷——法国保住西班牙继承的底线空间，却也背负长期均势约束。",
   "outcome.utrechtVictoryEpilogue.habsburg": "纸面和平折射大同盟压力：波旁虽保西班牙王位，却须在帝国法统与海上秩序前吞下更多让步；继承战的账单将以战略绳套的形式延续。",
   "outcome.successionCalendar1720Extra.bourbon": "历法停在 1720 年，而乌得勒支诸和所固定的版图仍向波旁一侧倾斜：停战与让步已被时间磨成先例，凡尔赛不必高声辩白，也能主张这场继业之争最终落在一张可辩护的资产负债表上。",
