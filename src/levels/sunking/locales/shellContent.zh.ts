@@ -86,7 +86,7 @@ export const sunkingShellContentZh = {
   "outcome.utrechtVictoryEpilogue.bourbon": "《乌得勒支和约》系列安排落地后，公开交战让位于条文：波旁并未接受“法西不得合并”的最终边界，而是把法兰西与西班牙两顶王冠并入同一王朝统序。欧洲由此迎来一个空前强大的双冠波旁体系；但强盛背后，长期军费、税负失衡与阶层裂痕也同步累积，革命时代的火种因此被提前点燃。",
   "outcome.utrechtVictoryEpilogue.compromise": "和约并未给出单方完胜：遗产被条约重新切块，各方在承认与颜面之间折衷——法国保住西班牙继承的底线空间，却也背负长期均势约束。",
   "outcome.utrechtVictoryEpilogue.habsburg": "纸面和平折射大同盟压力：波旁虽保西班牙王位，却须在帝国法统与海上秩序前吞下更多让步；继承战的账单将以战略绳套的形式延续。",
-  "outcome.successionCalendar1720Extra.bourbon": "历法停在 1720 年，而乌得勒支诸和所固定的版图仍向波旁一侧倾斜：停战与让步已被时间磨成先例，凡尔赛不必高声辩白，也能主张这场继业之争最终落在一张可辩护的资产负债表上。",
+  "outcome.successionCalendar1720Extra.bourbon": "到 1720 年，乌得勒支、拉斯塔特与巴登等和约已经固定战后安排：费利佩五世保住西班牙王位，法西正式合并被条文排除，但西班牙王冠仍留在波旁支系手中。对法国而言，这一结果在承认让步的同时，也保留了可向国内解释的继承战成果。",
   "outcome.successionCalendar1720Extra.compromise": "最后一年的钟声并不为任何一方加冕：条约年代留下的是各方都能签字的拼缝版图，你的宫廷学会在妥协的夹缝里执政——在这里，存续本身就是一种纪律，而非凯旋演说。",
   "outcome.successionCalendar1720Extra.habsburg": "当年历翻过终点，乌得勒支纸面上更苛刻的条款仍在收紧缰绳：大同盟的墨水框定了大炮未能写尽的边界，对法西合并与帝国秩序的长期钳制，便是写进你这篇终章的额外价码。",
   "log.effect.opponentHandDiscardNow": "哈布斯堡对手立即从手牌弃置 {count} 张",
