@@ -25,7 +25,8 @@ export type StatusTemplateId =
   | "legitimacyCrisis"
   | "minorRegencyDoubt"
   | "bourbonMarriageRetention"
-  | "diplomaticCongressDrawBoost";
+  | "diplomaticCongressDrawBoost"
+  | "grandAllianceInfiltration";
 
 /** Static definition for a player status template (drives UI keys and effect shape). */
 export type StatusTemplate = {

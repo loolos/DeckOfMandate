@@ -25,6 +25,7 @@ const HABSURG_TIE_ORDER: readonly CardTemplateId[] = [
   "habsburgRhineMagazineEmbargo",
 ];
 const OPPONENT_SUBSET_ENUMERATION_LIMIT = 16;
+const GRAND_ALLIANCE_INFILTRATION_STATUS_ID = "grandAllianceInfiltration";
 
 type OppDelta = { seq: number; pow: number; leg: number; tre: number };
 
@@ -118,6 +119,10 @@ function sumOpponentCost(ids: readonly string[], cardsById: GameState["cardsById
   return s;
 }
 
+function opponentPhaseDiscountFromStatuses(state: GameState): number {
+  return state.playerStatuses.filter((s) => s.templateId === GRAND_ALLIANCE_INFILTRATION_STATUS_ID).length;
+}
+
 function enumerateNonEmptySubsets<T>(items: readonly T[]): T[][] {
   const n = items.length;
   const out: T[][] = [];
@@ -169,7 +174,7 @@ export function chooseOpponentPlay(state: GameState): readonly string[] | null {
   if (hand.length === 0) return [];
 
   const n = state.opponentStrength;
-  const discount = Math.max(0, Math.floor(state.opponentCostDiscountThisTurn));
+  const discount = Math.max(0, opponentPhaseDiscountFromStatuses(state));
   const budget = Math.max(0, n - discount);
   const nearWin = state.successionTrack >= OPPONENT_AI_NEAR_WIN_THRESHOLD;
 
@@ -443,7 +448,7 @@ export function opponentEndYearPlayPhase(state: GameState): GameState {
   if (picked.length === 0) {
     return { ...pre, opponentLastPlayedTemplateIds: [] };
   }
-  const discount = Math.max(0, Math.floor(pre.opponentCostDiscountThisTurn));
+  const discount = Math.max(0, opponentPhaseDiscountFromStatuses(pre));
   const costSum = sumOpponentCost(picked, pre.cardsById);
   const budget = Math.max(0, pre.opponentStrength - discount);
   if (costSum > budget) return pre;
