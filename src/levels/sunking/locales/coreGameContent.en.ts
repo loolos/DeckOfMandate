@@ -87,6 +87,9 @@ export const sunkingCoreGameContentEn = {
     "Visible relief action briefly restores trust in crown-led governance.",
   "status.diplomaticCongressDrawBoost.name": "Congress Momentum",
   "status.diplomaticCongressDrawBoost.history": "Diplomatic networking increases next-year coordination bandwidth.",
+  "status.grandAllianceInfiltration.name": "Grand Alliance infiltration",
+  "status.grandAllianceInfiltration.history":
+    "Back-channel diplomacy fragments coalition coordination and reduces opponent phase budget this year.",
   "status.religiousTolerance.name": "Religious Tolerance (Permanent)",
   "status.religiousTolerance.history":
     "After the revocation era, the crown balances confessional unity against governability: pressure on Protestants, policing of Catholic theological disputes, and royal legitimacy all pull in different directions. Choosing tolerance avoids total confrontation but keeps reopening friction in courts, parishes, and provincial administration.",

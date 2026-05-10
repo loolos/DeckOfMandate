@@ -1,4 +1,5 @@
 import { appendActionLog } from "../../../logic/actionLog";
+import { applyEffects } from "../../../logic/applyEffects";
 import { addCardsToHand } from "../../../logic/cardRuntime";
 import { markSlotResolved } from "../../../logic/eventSlotOps";
 import type { GameState } from "../../../types/game";
@@ -22,7 +23,7 @@ function resolveFirstUnresolvedEventByTemplate(
 export function applySunkingPlayCardExtras(state: GameState, templateId: CardTemplateId): GameState {
   let s = state;
   if (templateId === "grandAllianceInfiltrationDiplomacy") {
-    s = { ...s, opponentCostDiscountThisTurn: 1 };
+    s = applyEffects(s, [{ kind: "addPlayerStatus", templateId: "grandAllianceInfiltration", turns: 1 }]);
   }
   if (templateId === "grainRelief") {
     s = resolveFirstUnresolvedEventByTemplate(s, "risingGrainPrices");
