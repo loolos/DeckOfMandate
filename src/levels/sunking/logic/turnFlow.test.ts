@@ -759,6 +759,59 @@ describe("beginYear + playerStatuses", () => {
     expect(s1.opponentStrength).toBe(4);
   });
 
+  it("third mandate immediately applies both encirclement strength bumps when core-resource sum > 75", () => {
+    const started = createInitialState(902_022, "thirdMandate");
+    const s0: GameState = {
+      ...started,
+      resources: { ...started.resources, treasuryStat: 30, power: 24, legitimacy: 22 },
+      opponentStrength: 3,
+      opponentHabsburgUnlocked: true,
+      opponentDeck: [],
+      opponentHand: [],
+      opponentDiscard: [],
+      slots: {
+        ...EMPTY_EVENT_SLOTS,
+        D: { instanceId: "evt_opp_habsburg", templateId: "opponentHabsburg", resolved: true },
+      },
+      proceduralEventSequence: [],
+    };
+    const s1 = beginYear(s0);
+    expect(s1.playerStatuses.some((st) => st.templateId === "greatPowerEncirclement")).toBe(true);
+    expect(s1.opponentStrength).toBe(5);
+    expect(s1.greatPowerEncirclementHighPressureApplied).toBe(true);
+  });
+
+  it("third mandate applies the >75 encirclement strength bump once after the status already exists", () => {
+    const started = createInitialState(902_023, "thirdMandate");
+    const encirclementStatus = {
+      instanceId: "st_gp",
+      templateId: "greatPowerEncirclement" as const,
+      kind: "drawAttemptsDelta" as const,
+      delta: 0,
+      turnsRemaining: 99,
+    };
+    const s0: GameState = {
+      ...started,
+      resources: { ...started.resources, treasuryStat: 30, power: 24, legitimacy: 22 },
+      opponentStrength: 4,
+      opponentHabsburgUnlocked: true,
+      opponentDeck: [],
+      opponentHand: [],
+      opponentDiscard: [],
+      slots: {
+        ...EMPTY_EVENT_SLOTS,
+        D: { instanceId: "evt_opp_habsburg", templateId: "opponentHabsburg", resolved: true },
+      },
+      playerStatuses: [encirclementStatus],
+      proceduralEventSequence: [],
+    };
+    const s1 = beginYear(s0);
+    expect(s1.opponentStrength).toBe(5);
+    expect(s1.greatPowerEncirclementHighPressureApplied).toBe(true);
+    const s2 = beginYear({ ...s1, phase: "action" });
+    expect(s2.opponentStrength).toBe(5);
+  });
+
   it("third mandate does not add great-power encirclement when Habsburg row is absent", () => {
     const started = createInitialState(902_021, "thirdMandate");
     const s0: GameState = {

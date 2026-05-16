@@ -101,7 +101,7 @@ export const sunkingCoreGameContentEn = {
     "Tracks crackdown suppression stacks; clearing suppress cards from play removes stacks over time.",
   "status.greatPowerEncirclement.name": "Grand Alliance Encirclement (Permanent)",
   "status.greatPowerEncirclement.history":
-    "During the War of the Spanish Succession, Bourbon dynastic expansion from Versailles was increasingly viewed as a continental balance-of-power threat. Britain, the Dutch Republic, Savoy, and Portugal therefore coordinated money, fleets, and field support for the Habsburg camp, turning a dynastic dispute into a broader coalition war. Until the Utrecht settlement closes the conflict, that external backing keeps lifting Habsburg war capacity.",
+    "During the War of the Spanish Succession, Bourbon dynastic expansion from Versailles was increasingly viewed as a continental balance-of-power threat. Britain, the Dutch Republic, Savoy, and Portugal therefore coordinated money, fleets, and field support for the Habsburg camp, turning a dynastic dispute into a broader coalition war. Mechanic: in Chapter 3, if the Habsburg opponent row is present and Treasury + Power + Legitimacy exceeds 50, gain this status and Habsburg opponent budget +1; if that total exceeds 75, this status adds one more Habsburg opponent budget +1 once per war. Until the Utrecht settlement closes the conflict, that external backing keeps lifting Habsburg war capacity.",
   "status.legitimacyCrisis.name": "Legitimacy Crisis",
   "status.legitimacyCrisis.history":
     "Bypassing succession norms accelerates your claim now, but keeps corroding royal credibility over the next turns.",

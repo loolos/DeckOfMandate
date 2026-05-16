@@ -11,6 +11,7 @@ const _SUN_KING_GAME_STATE_KEYS = [
   "huguenotResurgenceCounter",
   "successionTrack",
   "opponentStrength",
+  "greatPowerEncirclementHighPressureApplied",
   "opponentHabsburgUnlocked",
   "warEnded",
   "utrechtTreatyCountdown",
