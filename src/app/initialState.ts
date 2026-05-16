@@ -122,6 +122,7 @@ export function createInitialState(
     actionLog: [],
     successionTrack: 0,
     opponentStrength: 3,
+    greatPowerEncirclementHighPressureApplied: false,
     opponentHabsburgUnlocked: false,
     warEnded: false,
     utrechtTreatyCountdown: null,

@@ -29,6 +29,7 @@ const RELIGIOUS_TENSION_EVENTS: readonly EventInstance["templateId"][] = [
   "huguenotTension",
 ];
 const GREAT_POWER_ENCIRCLEMENT_TRIGGER_SUM = 50;
+const GREAT_POWER_ENCIRCLEMENT_HIGH_PRESSURE_SUM = 75;
 
 export function maybeAdjustEuropeAlertProgressAtYearStartHook(state: GameState): GameState {
   if (!state.europeAlert || !getLevelDef(state.levelId).features.europeAlertMechanics) return state;
@@ -179,6 +180,7 @@ function sumCoreResources(state: GameState): number {
 /**
  * Chapter 3 only: once core resources exceed 50 while the Habsburg rival row is present,
  * grant a permanent "greatPowerEncirclement" status and +1 opponent strength until Utrecht ends the war.
+ * If that pressure later crosses 75, the same status applies one additional opponent-strength bump.
  */
 export function syncGreatPowerEncirclementStatusHook(state: GameState): GameState {
   if (state.levelId !== THIRD_MANDATE_LEVEL_ID) return state;
@@ -188,17 +190,26 @@ export function syncGreatPowerEncirclementStatusHook(state: GameState): GameStat
     return {
       ...state,
       playerStatuses: state.playerStatuses.filter((s) => s.templateId !== "greatPowerEncirclement"),
+      greatPowerEncirclementHighPressureApplied: false,
     };
+  }
+  const resourceSum = sumCoreResources(state);
+  const highPressureActive = resourceSum > GREAT_POWER_ENCIRCLEMENT_HIGH_PRESSURE_SUM;
+  if (hasStatus && highPressureActive && !state.greatPowerEncirclementHighPressureApplied) {
+    const s = applyEffects(state, [{ kind: "modOpponentStrength", delta: 1 }]);
+    return { ...s, greatPowerEncirclementHighPressureApplied: true };
   }
   if (
     hasStatus
     || !opponentRowPresent
-    || sumCoreResources(state) <= GREAT_POWER_ENCIRCLEMENT_TRIGGER_SUM
+    || resourceSum <= GREAT_POWER_ENCIRCLEMENT_TRIGGER_SUM
   ) {
     return state;
   }
-  return applyEffects(state, [
+  const strengthDelta = highPressureActive ? 2 : 1;
+  const s = applyEffects(state, [
     { kind: "addPlayerStatus", templateId: "greatPowerEncirclement", turns: 99 },
-    { kind: "modOpponentStrength", delta: 1 },
+    { kind: "modOpponentStrength", delta: strengthDelta },
   ]);
+  return { ...s, greatPowerEncirclementHighPressureApplied: highPressureActive };
 }

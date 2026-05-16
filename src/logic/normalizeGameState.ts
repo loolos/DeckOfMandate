@@ -124,6 +124,9 @@ export function normalizeGameState(state: GameState): GameState {
   if (typeof s.opponentStrength !== "number" || !Number.isFinite(s.opponentStrength)) {
     s = { ...s, opponentStrength: 3 };
   }
+  if (typeof s.greatPowerEncirclementHighPressureApplied !== "boolean") {
+    s = { ...s, greatPowerEncirclementHighPressureApplied: false };
+  }
   if (typeof s.opponentHabsburgUnlocked !== "boolean") {
     s = { ...s, opponentHabsburgUnlocked: false };
   }

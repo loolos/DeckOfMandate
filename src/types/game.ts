@@ -389,6 +389,8 @@ export type GameState = {
   successionTrack: number;
   /** Chapter 3: max opponent-cost budget per opponent phase (fixed at 3 in this version). */
   opponentStrength: number;
+  /** Chapter 3: true once Great Power Encirclement has applied its high-resource bonus. */
+  greatPowerEncirclementHighPressureApplied: boolean;
   /** Chapter 3: after `successionCrisis` resolves; enables opponent draw/play. */
   opponentHabsburgUnlocked: boolean;
   /**
