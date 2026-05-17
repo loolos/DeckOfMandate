@@ -42,6 +42,14 @@ export const levelDef: LevelDef = {
       habsburg: "level.successionWar.ending.victoryByTier.habsburg",
     },
     victoryWarDevolutionExtraKey: "level.successionWar.ending.victoryWarDevolutionExtra",
+    continuityWarOfDevolutionBodyKeys: {
+      attacked: "level.successionWar.ending.continuity.warOfDevolution.attacked",
+      restrained: "level.successionWar.ending.continuity.warOfDevolution.restrained",
+    },
+    continuityNantesPolicyBodyKeys: {
+      crackdown: "level.successionWar.ending.continuity.nantes.crackdown",
+      tolerance: "level.successionWar.ending.continuity.nantes.tolerance",
+    },
     defeatBodyKey: "level.successionWar.ending.defeat",
     victorySuccessionTrackCapBodyKey: "level.successionWar.ending.victorySuccessionTrackCap",
     defeatSuccessionTrackFloorBodyKey: "level.successionWar.ending.defeatSuccessionTrackFloor",

@@ -76,6 +76,7 @@ import {
   type RunRecord,
   type SessionRecord,
 } from "../logic/runCode";
+import { continuityEndingBodyKeys } from "./endingCopy";
 const LEVEL2_REFIT_NEW_CARDS = getLevel2RefitNewCardsTemplateOrder();
 const LEVEL3_REFIT_NEW_CARDS = getLevel3RefitNewCardsTemplateOrder();
 const CHAPTER3_REFIT_NEW_CARDS_LABEL_KEY: MessageKey = getLevel3RefitNewCardsLabelKey() as MessageKey;
@@ -1594,6 +1595,7 @@ export function Game() {
                 const ending = levelEndingKeys(getLevelDef(state.levelId));
                 if (!ending) return null;
                 if (state.outcome === "victory") {
+                  const continuityKeys = continuityEndingBodyKeys(ending, state);
                   const successionLevel = level.victoryRule.kind === "successionWar";
                   const successionTrackCapVictory =
                     successionLevel &&
@@ -1624,9 +1626,11 @@ export function Game() {
                           )}
                         </p>
                       ) : null}
-                      {state.warOfDevolutionAttacked ? (
-                        <p>{t(ending.victoryWarDevolutionExtraKey as MessageKey)}</p>
-                      ) : null}
+                      {continuityKeys.length > 0
+                        ? continuityKeys.map((key) => <p key={key}>{t(key as MessageKey)}</p>)
+                        : state.warOfDevolutionAttacked
+                          ? <p>{t(ending.victoryWarDevolutionExtraKey as MessageKey)}</p>
+                          : null}
                     </div>
                   );
                 }
@@ -1644,6 +1648,9 @@ export function Game() {
                 return (
                   <div className={styles.gameOverBody}>
                     <p>{t(defeatMainKey as MessageKey)}</p>
+                    {continuityEndingBodyKeys(ending, state).map((key) => (
+                      <p key={key}>{t(key as MessageKey)}</p>
+                    ))}
                   </div>
                 );
               })()}
