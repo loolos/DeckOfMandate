@@ -1,7 +1,7 @@
 import type { CardTemplateId } from "../levels/types/card";
 import type { EventTemplateId, SlotId } from "../levels/types/event";
 import type { LevelRefitConfig } from "../levels/types/refit";
-import type { Resources } from "../types/game";
+import type { NantesPolicyCarryover, Resources } from "../types/game";
 import type { LogInfoKey } from "../types/game";
 
 /** Must match {@link import("../locales").LocaleId}. */
@@ -13,6 +13,13 @@ export type LevelEndingCopyKeys = {
   /** Chapter 3: victory body copy by Utrecht settlement tier (`bourbon` | `compromise` | `habsburg`). */
   victoryBodyByTierKeys?: Partial<Record<import("../types/game").SuccessionIntervalTier, string>>;
   victoryWarDevolutionExtraKey: string;
+  /** Chapter 3 continuity: first-mandate War of Devolution branch epilogue copy. */
+  continuityWarOfDevolutionBodyKeys?: {
+    attacked: string;
+    restrained: string;
+  };
+  /** Chapter 3 continuity: second-mandate Edict of Nantes branch epilogue copy. */
+  continuityNantesPolicyBodyKeys?: Partial<Record<NantesPolicyCarryover, string>>;
   defeatBodyKey: string;
   /** Chapter 2: defeat-at-time-limit copy when huguenot containment still remains. */
   defeatTimeWithHuguenotContainmentBodyKey?: string;
