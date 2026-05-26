@@ -50,6 +50,10 @@ export const levelDef: LevelDef = {
       crackdown: "level.successionWar.ending.continuity.nantes.crackdown",
       tolerance: "level.successionWar.ending.continuity.nantes.tolerance",
     },
+    chapter3LouisXivLegacyBodyKeys: {
+      regencyCustody: "level.successionWar.ending.chapter3LouisXivLegacy.regencyCustody",
+      youngKingDirectRule: "level.successionWar.ending.chapter3LouisXivLegacy.youngKingDirectRule",
+    },
     defeatBodyKey: "level.successionWar.ending.defeat",
     victorySuccessionTrackCapBodyKey: "level.successionWar.ending.victorySuccessionTrackCap",
     defeatSuccessionTrackFloorBodyKey: "level.successionWar.ending.defeatSuccessionTrackFloor",
