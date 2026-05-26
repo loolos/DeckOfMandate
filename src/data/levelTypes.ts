@@ -20,6 +20,11 @@ export type LevelEndingCopyKeys = {
   };
   /** Chapter 3 continuity: second-mandate Edict of Nantes branch epilogue copy. */
   continuityNantesPolicyBodyKeys?: Partial<Record<NantesPolicyCarryover, string>>;
+  /** Chapter 3: Louis XIV legacy branch epilogue copy from the 1715 event choice. */
+  chapter3LouisXivLegacyBodyKeys?: {
+    regencyCustody: string;
+    youngKingDirectRule: string;
+  };
   defeatBodyKey: string;
   /** Chapter 2: defeat-at-time-limit copy when huguenot containment still remains. */
   defeatTimeWithHuguenotContainmentBodyKey?: string;

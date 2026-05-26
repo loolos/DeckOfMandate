@@ -465,6 +465,8 @@ export const eventTemplates: Record<EventTemplateId, EventTemplate> = {
     id: "louisXivLegacy1715",
     weight: 0,
     harmful: true,
+    /** Must be resolved via its dedicated branch choice; crackdown/intervention cannot clear it. */
+    crackdownImmune: true,
     titleKey: "event.louisXivLegacy1715.name",
     descriptionKey: "event.louisXivLegacy1715.desc",
     solve: { kind: "louisXivLegacyChoice" },

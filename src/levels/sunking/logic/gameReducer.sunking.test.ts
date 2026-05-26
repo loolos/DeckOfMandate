@@ -185,6 +185,28 @@ describe("gameReducer (sunking campaign behaviors)", () => {
     expect(after.slots.A?.resolved).toBe(true);
   });
 
+  it("intervention cannot clear legacy of Louis XIV", () => {
+    const base = createInitialState(51_007, THIRD_MANDATE_LEVEL_ID);
+    const crackdownId = "tmp_crack_legacy";
+    const s0: typeof base = {
+      ...base,
+      cardsById: {
+        ...base.cardsById,
+        [crackdownId]: { instanceId: crackdownId, templateId: "crackdown" },
+      },
+      hand: [crackdownId],
+      resources: { ...base.resources, funding: 1 },
+      slots: {
+        ...base.slots,
+        A: { instanceId: "e_legacy_intervention", templateId: "louisXivLegacy1715", resolved: false },
+      },
+    };
+    const afterPlay = gameReducer(s0, { type: "PLAY_CARD", handIndex: 0 });
+    expect(afterPlay.pendingInteraction?.type).toBe("crackdownPick");
+    const afterTarget = gameReducer(afterPlay, { type: "CRACKDOWN_TARGET", slot: "A" });
+    expect(afterTarget).toEqual(afterPlay);
+  });
+
   it("local war attack pays floor(europe-alert-progress/2) cost and resolves the event", () => {
     const base = createInitialState(8_001, "secondMandate");
     const s0 = {
