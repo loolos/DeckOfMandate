@@ -2,7 +2,7 @@
  * English copy for level `thirdMandate` (War of the Spanish Succession).
  */
 export const messagesEnThirdMandate = {
-  "level.successionWar.name": "Waning Sun, Vacant Crown",
+  "level.successionWar.name": "Sun King: Waning Sun, Vacant Crown",
   "level.successionWar.introTitle": "1701 — Waning light: testaments, thrones, crowns in strife",
   "level.successionWar.introBody":
     "When the Spanish Habsburg line failed with Charles II, half of Europe was suddenly negotiable. Madrid’s vast composite monarchy—Castile and Aragon, Naples and Milan, much of the Low Countries, and overseas silver—sat at the centre of every balance-of-power calculation. At the centre of the Bourbon claim stood Philip, duke of Anjou—Louis XIV’s grandson (son of the Grand Dauphin Louis)—who would reign in Spain as Philip V if he took the throne. Versailles argued from that grandfather–grandson tie, long Bourbon marriage alliances, and the late king’s will; Vienna and the emperor’s court argued for Habsburg continuity and for limits to Bourbon encirclement. London and The Hague, fearing French primacy in both Channel and Mediterranean, tilted toward coalitions that could restrain Versailles without surrendering their own commercial empires.\n\nWhat followed was less a single war than a shifting lattice of fronts: fortresses and bargainers in the Spanish Netherlands, Piedmont and the Alpine passes, Rhine principalities squeezed between imperial and French armies, and the naval math of trade and colonies. Treaties would later try to fix the map; this chapter is the long strain of French kingship stretched between tribute, tax, and the envy of other crowns.",
