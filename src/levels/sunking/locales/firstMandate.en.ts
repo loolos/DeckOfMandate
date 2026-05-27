@@ -3,7 +3,7 @@
  * Keys mirror `levels.ts` / scripted content for this scenario.
  */
 export const messagesEnFirstMandate = {
-  "level.risingSun.name": "The Rising Sun",
+  "level.risingSun.name": "Sun King: The Rising Sun",
   "level.risingSun.introTitle": "France, 1661 — The Sun King rises",
   "level.risingSun.introBody":
     "Wind the clock back centuries: Capetian kings slowly assembled France, yet authority was repeatedly renegotiated among crown lands, nobles, and chartered towns. The Hundred Years' War devastated the countryside while reinforcing the claim that only a stronger crown could hold the realm together. Italian wars and then the Wars of Religion left deep fiscal and political fractures that the Bourbons inherited rather than solved.\n\nIn 1661, after Mazarin's death, the twenty-three-year-old Louis XIV declared personal rule and refused to appoint a new first minister. France was emerging from the Fronde and prolonged war finance: royal authority looked stronger in principle, but provincial privilege, debt burdens, and tax resistance still constrained what Paris could actually enforce. The kingdom's population and revenue base were vast, yet state capacity remained uneven and expensive outside the center.\n\nSo chapter one begins in a \"rising but not yet secure\" moment: consolidate the royal center, fund court-state machinery, and keep domestic order under strain. Abroad, frontier disputes around the Spanish Netherlands and border settlements will soon become the War of Devolution and sharpen coordinated resistance to Bourbon expansion. Your task is not to enjoy finished hegemony, but to build it before it cracks.",
