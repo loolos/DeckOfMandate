@@ -201,7 +201,7 @@ export function buildEventQuickFrameRows(
       { labelKey: "ui.quickFrame.pay", value: "—" },
       {
         labelKey: "ui.quickFrame.ifSolved",
-        value: `${tt("ui.quickFrame.choice.succession.pay", "支付3经费分支")}：⚖️+1 │ ${tt("ui.quickFrame.choice.succession.decline", "拒绝支付分支")}：⚖️−1`,
+        value: `👊+1 · ${tt("ui.quickFrame.choice.succession.pay", "支付3经费分支")}：⚖️+1 │ ${tt("ui.quickFrame.choice.succession.decline", "拒绝支付分支")}：⚖️−1`,
       },
       {
         labelKey: "ui.quickFrame.yearEnd",
@@ -246,7 +246,7 @@ export function buildEventQuickFrameRows(
       { labelKey: "ui.quickFrame.pay", value: "—" },
       {
         labelKey: "ui.quickFrame.ifSolved",
-        value: `${tt("ui.quickFrame.choice.dualFront.concede", "暂时让步")}：⚖️−3 · 👊+1 │ ${tt("ui.quickFrame.choice.dualFront.escalate", "扩大战争")}：⚖️+1 · 👑−1 · ⛓️+3 · 👊+1`,
+        value: `👊+1 · ${tt("ui.quickFrame.choice.dualFront.concede", "暂时让步")}：⚖️−3 │ ${tt("ui.quickFrame.choice.dualFront.escalate", "扩大战争")}：⚖️+1 · 👑−1 · ⛓️+3`,
       },
       {
         labelKey: "ui.quickFrame.yearEnd",
