@@ -377,11 +377,12 @@ export type GameState = {
   /**
    * Deterministic procedural event queue (A–C random events only).
    * Built as concatenated shuffled blocks where each template appears `weight` times.
+   * Cleared and rebuilt when the active level's rollable event ids change.
    */
   proceduralEventSequence: EventTemplateId[];
   /**
-   * Shuffled `rollableEventIds` for the current level, fixed the first time a block is
-   * built; cleared on level change. Weights still repeat copies; deck order is per level start.
+   * Shuffled `rollableEventIds` for the current level. Re-shuffled when content changes
+   * so newly added event templates enter the same procedural ordering as existing ones.
    */
   proceduralEventPoolOrder: EventTemplateId[];
   actionLog: readonly ActionLogEntry[];

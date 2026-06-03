@@ -1,9 +1,10 @@
 import { describe, expect, it } from "vitest";
 import { createInitialState } from "../../../app/initialState";
+import { getLevelContent } from "../../../data/levelContent";
 import { getTurnLimitForRun } from "../../../data/levels";
 import { buildLevel2StateFromDraft, createStandaloneLevel2Draft } from "../../../app/levelTransitions";
 import type { CardInstance } from "../../types/card";
-import { EMPTY_EVENT_SLOTS } from "../../types/event";
+import { EMPTY_EVENT_SLOTS, type EventTemplateId } from "../../types/event";
 import type { GameState } from "../../../types/game";
 import {
   beginYear,
@@ -544,6 +545,42 @@ describe("beginYear + playerStatuses", () => {
     expect(s1.slots.B?.templateId).toBeDefined();
     expect(s1.slots.C?.templateId).toBeDefined();
     expect(s1.slots.B?.templateId).not.toBe(s1.slots.C?.templateId);
+  });
+
+  it("reshuffles a legacy third-mandate procedural pool when new chapter events are missing", () => {
+    const started = createInitialState(9_102, "thirdMandate");
+    const newChapterEvents: readonly EventTemplateId[] = [
+      "bavarianCourtRealignment",
+      "portugueseTariffNegotiation",
+      "imperialElectorsMood",
+      "localizedSuccessionWar",
+    ];
+    const currentPool = getLevelContent("thirdMandate").rollableEventIds;
+    const legacyPoolOrder = currentPool.filter((id) => !newChapterEvents.includes(id));
+    const legacySequence = legacyPoolOrder.slice(0, 3);
+    const s0: GameState = {
+      ...started,
+      turn: 5,
+      phase: "action",
+      outcome: "playing",
+      rng: { state: 123_456_789 },
+      successionTrack: 1,
+      warEnded: false,
+      slots: { ...EMPTY_EVENT_SLOTS },
+      proceduralEventPoolOrder: [...legacyPoolOrder],
+      proceduralEventSequence: [...legacySequence],
+    };
+
+    const s1 = beginYear(s0);
+
+    expect([...s1.proceduralEventPoolOrder].sort()).toEqual([...currentPool].sort());
+    const boardTemplateIds = Object.values(s1.slots)
+      .map((ev) => ev?.templateId)
+      .filter((id): id is EventTemplateId => Boolean(id));
+    const reachableTemplateIds = new Set([...s1.proceduralEventSequence, ...boardTemplateIds]);
+    for (const templateId of newChapterEvents) {
+      expect(reachableTemplateIds.has(templateId)).toBe(true);
+    }
   });
 
   it("adds a europe-alert supplemental event when progress-gated roll succeeds", () => {

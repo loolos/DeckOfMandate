@@ -12,6 +12,7 @@ import {
   EVENT_SLOT_ORDER,
   PROCEDURAL_EVENT_SLOT_ORDER,
   type EventInstance,
+  type EventTemplateId,
   type SlotId,
 } from "../../types/event";
 import type { GameState } from "../../../types/game";
@@ -35,6 +36,7 @@ import {
 } from "../../campaignLogicBundle";
 
 const PROCEDURAL_SEQUENCE_LOW_WATERMARK = 3;
+
 type EventCountOption = {
   count: number;
   weight: number;
@@ -86,9 +88,33 @@ const EMPTY_BOARD_EVENT_COUNT_RULES: readonly EventCountRule[] = [
   },
 ] as const;
 
-function buildProceduralSequenceBlock(state: GameState): [GameState, EventInstance["templateId"][]] {
+function proceduralPoolOrderMatchesContent(
+  currentOrder: readonly EventTemplateId[],
+  contentPool: readonly EventTemplateId[],
+): boolean {
+  if (currentOrder.length !== contentPool.length) return false;
+  const contentSet = new Set(contentPool);
+  if (contentSet.size !== contentPool.length) return false;
+  return currentOrder.every((id) => contentSet.has(id));
+}
+
+function syncProceduralPoolOrderWithContent(state: GameState): GameState {
   const contentPool = getLevelContent(state.levelId).rollableEventIds;
-  let s = state;
+  if (proceduralPoolOrderMatchesContent(state.proceduralEventPoolOrder, contentPool)) {
+    return state;
+  }
+  const [rng, shuffledPoolOrder] = shuffle(state.rng, [...contentPool]);
+  return {
+    ...state,
+    rng,
+    proceduralEventPoolOrder: shuffledPoolOrder,
+    proceduralEventSequence: [],
+  };
+}
+
+function buildProceduralSequenceBlock(state: GameState): [GameState, EventInstance["templateId"][]] {
+  let s = syncProceduralPoolOrderWithContent(state);
+  const contentPool = getLevelContent(s.levelId).rollableEventIds;
   if (s.proceduralEventPoolOrder.length === 0) {
     const [r, shuffled] = shuffle(s.rng, [...contentPool]);
     s = { ...s, rng: r, proceduralEventPoolOrder: shuffled };
