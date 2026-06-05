@@ -867,7 +867,7 @@
   box-shadow:
     0 0 0 3px color-mix(in srgb, #facc15 48%, transparent),
     0 0 24px color-mix(in srgb, #facc15 42%, transparent);
-  animation: actionLogFlashPulse 1600ms ease-out;
+  animation: actionLogFlashPulse 2200ms ease-out;
 }
 
 @keyframes actionLogFlashPulse {
