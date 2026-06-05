@@ -834,25 +834,28 @@
 
 .actionLogFlash .actionLogResizable,
 .actionLogFlash > .actionLogScroll {
-  animation: actionLogFlashPulse 850ms ease-out;
+  animation: actionLogFlashPulse 1250ms ease-out;
 }
 
 @keyframes actionLogFlashPulse {
   0% {
+    background: color-mix(in srgb, var(--accent) 22%, var(--panel));
     border-color: color-mix(in srgb, var(--accent) 92%, white);
     box-shadow:
-      0 0 0 2px color-mix(in srgb, var(--accent) 58%, transparent),
-      0 0 22px color-mix(in srgb, var(--accent) 48%, transparent);
+      0 0 0 3px color-mix(in srgb, var(--accent) 68%, transparent),
+      0 0 28px color-mix(in srgb, var(--accent) 58%, transparent);
   }
 
   45% {
+    background: color-mix(in srgb, var(--accent) 12%, var(--panel));
     border-color: color-mix(in srgb, var(--accent) 68%, var(--border));
     box-shadow:
-      0 0 0 1px color-mix(in srgb, var(--accent) 36%, transparent),
-      0 0 14px color-mix(in srgb, var(--accent) 30%, transparent);
+      0 0 0 2px color-mix(in srgb, var(--accent) 42%, transparent),
+      0 0 18px color-mix(in srgb, var(--accent) 34%, transparent);
   }
 
   100% {
+    background: color-mix(in srgb, var(--panel) 88%, #000);
     border-color: var(--border);
     box-shadow: none;
   }
@@ -862,6 +865,7 @@
   .actionLogFlash .actionLogResizable,
   .actionLogFlash > .actionLogScroll {
     animation: none;
+    background: color-mix(in srgb, var(--accent) 14%, var(--panel));
     border-color: color-mix(in srgb, var(--accent) 72%, var(--border));
     box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 28%, transparent);
   }
