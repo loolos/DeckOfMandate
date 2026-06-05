@@ -1,4 +1,4 @@
-import { useCallback, useLayoutEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { getCardTemplate } from "../data/cards";
 import { getEventTemplate } from "../data/events";
 import { cardLabelWithIcon, eventLabelWithIcon, resourceLabelWithIcon } from "../logic/icons";
@@ -523,17 +523,23 @@ export function ActionLog({
   entries,
   showMobileTapGuide,
   forceScrollToken,
+  flashToken,
 }: {
   entries: readonly ActionLogEntry[];
   /** Action phase only — small-screen card/event tap hint lives in the log once. */
   showMobileTapGuide?: boolean;
   /** External trigger that should forcibly scroll the log tail (e.g. after end-of-turn clicks). */
   forceScrollToken?: number;
+  /** External trigger that briefly highlights the log panel when tags append explanatory entries. */
+  flashToken?: number;
 }) {
   const { t } = useI18n();
   const isSmallScreen = useSmallScreen();
   const wrapRef = useRef<HTMLDivElement>(null);
+  const flashRafRef = useRef<number | null>(null);
+  const flashTimerRef = useRef<number | null>(null);
   const [followTail, setFollowTail] = useState(true);
+  const [flashActive, setFlashActive] = useState(false);
   const lastEntryId = entries.length > 0 ? entries[entries.length - 1]!.id : "";
 
   const onScroll = useCallback(() => {
@@ -555,6 +561,34 @@ export function ActionLog({
     el.scrollTop = el.scrollHeight;
     setFollowTail(true);
   }, [forceScrollToken]);
+
+  useEffect(() => {
+    if (!flashToken) return;
+    if (flashRafRef.current !== null) {
+      window.cancelAnimationFrame(flashRafRef.current);
+      flashRafRef.current = null;
+    }
+    if (flashTimerRef.current !== null) {
+      window.clearTimeout(flashTimerRef.current);
+      flashTimerRef.current = null;
+    }
+    setFlashActive(false);
+    flashRafRef.current = window.requestAnimationFrame(() => {
+      flashRafRef.current = null;
+      setFlashActive(true);
+      flashTimerRef.current = window.setTimeout(() => {
+        setFlashActive(false);
+        flashTimerRef.current = null;
+      }, 850);
+    });
+  }, [flashToken]);
+
+  useEffect(() => {
+    return () => {
+      if (flashRafRef.current !== null) window.cancelAnimationFrame(flashRafRef.current);
+      if (flashTimerRef.current !== null) window.clearTimeout(flashTimerRef.current);
+    };
+  }, []);
 
   const logScroll = (
     <div
@@ -587,7 +621,7 @@ export function ActionLog({
 
   return (
     <section
-      className={`${styles.panel} ${styles.actionLogSection}`}
+      className={`${styles.panel} ${styles.actionLogSection} ${flashActive ? styles.actionLogFlash : ""}`}
       id="tutorial-action-log"
       aria-label={t("ui.actionLog")}
     >

@@ -832,6 +832,41 @@
   margin-top: 1rem;
 }
 
+.actionLogFlash .actionLogResizable,
+.actionLogFlash > .actionLogScroll {
+  animation: actionLogFlashPulse 850ms ease-out;
+}
+
+@keyframes actionLogFlashPulse {
+  0% {
+    border-color: color-mix(in srgb, var(--accent) 92%, white);
+    box-shadow:
+      0 0 0 2px color-mix(in srgb, var(--accent) 58%, transparent),
+      0 0 22px color-mix(in srgb, var(--accent) 48%, transparent);
+  }
+
+  45% {
+    border-color: color-mix(in srgb, var(--accent) 68%, var(--border));
+    box-shadow:
+      0 0 0 1px color-mix(in srgb, var(--accent) 36%, transparent),
+      0 0 14px color-mix(in srgb, var(--accent) 30%, transparent);
+  }
+
+  100% {
+    border-color: var(--border);
+    box-shadow: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .actionLogFlash .actionLogResizable,
+  .actionLogFlash > .actionLogScroll {
+    animation: none;
+    border-color: color-mix(in srgb, var(--accent) 72%, var(--border));
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 28%, transparent);
+  }
+}
+
 .actionLogHeading {
   margin: 0 0 0.5rem;
   font-size: 1rem;

@@ -167,6 +167,15 @@ function isTypingTarget(target: EventTarget | null): boolean {
   );
 }
 
+function isTagExplanationAction(action: GameAction): boolean {
+  if (action.type !== "APPEND_LOG_INFO") return false;
+  return (
+    action.infoKey.startsWith("cardTag.") ||
+    action.infoKey.startsWith("eventTag.") ||
+    action.infoKey === "cardUse.remainingUses"
+  );
+}
+
 /** Fresh run until the player leaves the start menu (avoids showing “resume” as the default entry). */
 function initFreshForStartMenu(): GameState {
   return createInitialState();
@@ -224,6 +233,7 @@ export function Game() {
     typeof window !== "undefined" ? window.matchMedia(GRID_WIDE_MEDIA).matches : false,
   );
   const [logForceScrollToken, setLogForceScrollToken] = useState(0);
+  const [logFlashToken, setLogFlashToken] = useState(0);
   const [handResetToken, setHandResetToken] = useState(0);
   const gridRef = useRef<HTMLDivElement>(null);
   const eventsScrollRef = useRef<HTMLDivElement>(null);
@@ -454,6 +464,9 @@ export function Game() {
     if (a.type === "END_YEAR" || a.type === "CONFIRM_RETENTION") {
       setLogForceScrollToken((prev) => prev + 1);
       setHandResetToken((prev) => prev + 1);
+    }
+    if (isTagExplanationAction(a)) {
+      setLogFlashToken((prev) => prev + 1);
     }
     pendingStateRef.current = next;
     dispatch(a);
@@ -1500,6 +1513,7 @@ export function Game() {
         entries={state.actionLog}
         showMobileTapGuide={state.outcome === "playing" && state.phase === "action"}
         forceScrollToken={logForceScrollToken}
+        flashToken={logFlashToken}
       />
 
       <div className={styles.footerRow}>
