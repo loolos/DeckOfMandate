@@ -579,7 +579,7 @@ export function ActionLog({
       flashTimerRef.current = window.setTimeout(() => {
         setFlashActive(false);
         flashTimerRef.current = null;
-      }, 1250);
+      }, 1600);
     });
   }, [flashToken]);
 
