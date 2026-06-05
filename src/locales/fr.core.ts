@@ -32,7 +32,7 @@ export const messagesFrCore: Record<keyof typeof messagesEnCore, string> = {
   "tutorial.step.events":
     "Les événements sont crises et opportunités sur le plateau. Les événements nuisibles demandent une solution (souvent du Financement ou une carte spéciale) ; les opportunités peuvent donner des avantages si vous y investissez. Les nuisibles non résolus peuvent vous pénaliser en fin de tour.",
   "tutorial.step.hand":
-    "Votre main est votre jeu d'options politiques — chaque carte modifie les ressources ou le plateau. Jouez-les pour résoudre les événements ou renforcer l'État, puis terminez le tour quand vous êtes prêt.",
+    "Votre main est votre jeu d'options politiques — chaque carte modifie les ressources ou le plateau. Sélectionnez une carte pour la jouer, ou double-cliquez sur une carte pour la jouer directement ; appuyez sur Espace pour terminer le tour quand vous êtes prêt.",
   "tutorial.step.actionLog":
     "Le journal d'actions enregistre chaque étape importante dans l'ordre — cartes jouées, événements résolus, pénalités et grands résultats narratifs. Servez-vous-en pour vérifier rapidement ce qui vient de changer.",
   "phase.action": "Phase d'action — jouez des cartes, résolvez les événements, puis terminez le tour.",
