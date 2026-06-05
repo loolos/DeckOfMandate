@@ -676,9 +676,16 @@
   display: inline-flex;
   align-items: center;
   min-height: 1.35rem;
-  background: color-mix(in srgb, var(--panel) 72%, transparent);
+  background: color-mix(in srgb, #facc15 12%, var(--panel));
+  border-color: color-mix(in srgb, #facc15 34%, var(--border));
+  color: color-mix(in srgb, #fef3c7 78%, var(--text));
   cursor: pointer;
+  font-weight: 600;
   touch-action: manipulation;
+}
+
+.card .badges {
+  margin: 0.35rem 0;
 }
 
 .tagButton:hover,
