@@ -673,8 +673,16 @@
 }
 
 .tagButton {
+  display: inline-flex;
+  align-items: center;
+  min-height: 1.35rem;
   background: transparent;
   cursor: pointer;
+  touch-action: manipulation;
+}
+
+.card .badges {
+  margin: 0.35rem 0;
 }
 
 .badgeHarm {
@@ -830,6 +838,58 @@
 
 .actionLogSection {
   margin-top: 1rem;
+}
+
+.actionLogFlash {
+  border-color: color-mix(in srgb, #facc15 64%, var(--border));
+  box-shadow: 0 0 0 2px color-mix(in srgb, #facc15 28%, transparent);
+}
+
+.actionLogFlash .actionLogHeading {
+  color: color-mix(in srgb, #fef3c7 88%, var(--text));
+}
+
+.actionLogFlash .actionLogResizable,
+.actionLogFlash > .actionLogScroll {
+  background: color-mix(in srgb, #facc15 18%, var(--panel));
+  border-color: color-mix(in srgb, #facc15 86%, var(--border));
+  box-shadow:
+    0 0 0 3px color-mix(in srgb, #facc15 48%, transparent),
+    0 0 24px color-mix(in srgb, #facc15 42%, transparent);
+  animation: actionLogFlashPulse 2200ms ease-out;
+}
+
+@keyframes actionLogFlashPulse {
+  0% {
+    border-color: color-mix(in srgb, #fef3c7 92%, #facc15);
+    box-shadow:
+      0 0 0 4px color-mix(in srgb, #facc15 70%, transparent),
+      0 0 34px color-mix(in srgb, #facc15 62%, transparent);
+  }
+
+  45% {
+    border-color: color-mix(in srgb, #facc15 86%, var(--border));
+    box-shadow:
+      0 0 0 3px color-mix(in srgb, #facc15 48%, transparent),
+      0 0 24px color-mix(in srgb, #facc15 42%, transparent);
+  }
+
+  100% {
+    border-color: color-mix(in srgb, #facc15 86%, var(--border));
+    box-shadow:
+      0 0 0 3px color-mix(in srgb, #facc15 48%, transparent),
+      0 0 24px color-mix(in srgb, #facc15 42%, transparent);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .actionLogFlash .actionLogResizable,
+  .actionLogFlash > .actionLogScroll {
+    animation: none;
+    background: color-mix(in srgb, #facc15 18%, var(--panel));
+    border-color: color-mix(in srgb, #facc15 86%, var(--border));
+    box-shadow: 0 0 0 3px color-mix(in srgb, #facc15 48%, transparent);
+  }
 }
 
 .actionLogHeading {

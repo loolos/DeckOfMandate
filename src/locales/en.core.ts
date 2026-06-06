@@ -4,7 +4,7 @@ export const messagesEnCore = {
   "menu.introContinue": "Enter game",
   "banner.turn": "Turn {turn} / {limit}",
   "phase.action": "Action phase — play cards, solve events, then end the turn.",
-  "phase.retention": "End of turn — choose cards to retain (up to Legitimacy).",
+  "phase.retention": "End of turn — keep up to your Legitimacy-based cap; discard any number of cards.",
   "phase.gameOver": "Run ended.",
   "resource.treasuryStat": "Treasury",
   "resource.treasuryStat.hint": "Sets how much Funding you gain each turn.",
@@ -39,7 +39,7 @@ export const messagesEnCore = {
   "ui.playThisCard": "Play this card",
   "ui.cancel": "Cancel",
   "ui.confirmRetention": "Confirm retention",
-  "ui.retentionLegalitySummary": "Selection: keep {keep}, discard {discard} (cap {cap}).",
+  "ui.retentionLegalitySummary": "Selection: keep {keep}/{cap} (Legitimacy-based cap), discard {discard}; you may discard any number.",
   "ui.retentionLegalityOverflow": "{over} over the cap — keep fewer cards.",
   "ui.newGame": "New run",
   "menu.title": "Main menu",
@@ -65,7 +65,7 @@ export const messagesEnCore = {
   "tutorial.step.events":
     "Events are the crises and opportunities on the board. Harmful ones need a solution (often Funding or a special card); opportunities may grant benefits if you invest. Unresolved harmful events can penalize you when you end the turn.",
   "tutorial.step.hand":
-    "Your hand is your deck of policy options — each card is a tool to shift resources or the board. Play them to solve events or strengthen the state, then end the turn when you are ready.",
+    "Your hand is your deck of policy options — each card is a tool to shift resources or the board. Select a card to play it, or double-click a card to play it directly. Press Space to end the turn when you are ready.",
   "tutorial.step.actionLog":
     "The action log records each important step in order — card plays, event resolutions, penalties, and major story outcomes. Use it to quickly review what just changed.",
   "ui.statuses": "Ongoing effects",

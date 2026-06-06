@@ -32,12 +32,12 @@ export const messagesFrCore: Record<keyof typeof messagesEnCore, string> = {
   "tutorial.step.events":
     "Les événements sont crises et opportunités sur le plateau. Les événements nuisibles demandent une solution (souvent du Financement ou une carte spéciale) ; les opportunités peuvent donner des avantages si vous y investissez. Les nuisibles non résolus peuvent vous pénaliser en fin de tour.",
   "tutorial.step.hand":
-    "Votre main est votre jeu d'options politiques — chaque carte modifie les ressources ou le plateau. Jouez-les pour résoudre les événements ou renforcer l'État, puis terminez le tour quand vous êtes prêt.",
+    "Votre main est votre jeu d'options politiques — chaque carte modifie les ressources ou le plateau. Sélectionnez une carte pour la jouer, ou double-cliquez sur une carte pour la jouer directement ; appuyez sur Espace pour terminer le tour quand vous êtes prêt.",
   "tutorial.step.actionLog":
     "Le journal d'actions enregistre chaque étape importante dans l'ordre — cartes jouées, événements résolus, pénalités et grands résultats narratifs. Servez-vous-en pour vérifier rapidement ce qui vient de changer.",
   "phase.action": "Phase d'action — jouez des cartes, résolvez les événements, puis terminez le tour.",
   "phase.gameOver": "Partie terminée.",
-  "phase.retention": "Fin du tour — choisissez les cartes à conserver (jusqu'à la Légitimité).",
+  "phase.retention": "Fin du tour — conservez jusqu'à la limite liée à la Légitimité ; défaussez autant de cartes que vous voulez.",
   "resource.funding": "Financement",
   "resource.funding.hint": "Paie les cartes et les événements.",
   "resource.legitimacy": "Légitimité",
@@ -58,7 +58,7 @@ export const messagesFrCore: Record<keyof typeof messagesEnCore, string> = {
   "ui.actionLog.empty": "Aucun effet enregistré dans cette partie.",
   "ui.cancel": "Annuler",
   "ui.confirmRetention": "Confirmer la conservation",
-  "ui.retentionLegalitySummary": "Sélection : conserver {keep}, défausser {discard} (limite {cap}).",
+  "ui.retentionLegalitySummary": "Sélection : conserver {keep}/{cap} (limite liée à la Légitimité), défausser {discard} ; vous pouvez défausser autant de cartes que vous voulez.",
   "ui.retentionLegalityOverflow": "{over} au-dessus de la limite — conservez moins de cartes.",
   "ui.deck": "Pioche",
   "ui.discard": "Défausse",

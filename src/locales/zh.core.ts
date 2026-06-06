@@ -4,7 +4,7 @@ export const messagesZhCore = {
   "menu.introContinue": "进入游戏",
   "banner.turn": "第 {turn} / {limit} 年",
   "phase.action": "行动阶段：打出卡牌、处理事件，然后结束本回合。",
-  "phase.retention": "回合末：选择要保留的手牌（至多等于合法性）。",
+  "phase.retention": "回合末：可保留至多等于合法性相关上限的手牌，也可以弃掉任意张牌。",
   "phase.gameOver": "本局结束。",
   "resource.treasuryStat": "财政（能力）",
   "resource.treasuryStat.hint": "决定每回合可获得的经费。",
@@ -38,7 +38,7 @@ export const messagesZhCore = {
   "ui.playThisCard": "打出这张牌",
   "ui.cancel": "取消",
   "ui.confirmRetention": "确认保留",
-  "ui.retentionLegalitySummary": "当前选择：保留 {keep} 张，弃置 {discard} 张（上限 {cap}）。",
+  "ui.retentionLegalitySummary": "当前选择：保留 {keep}/{cap} 张（合法性相关上限），弃置 {discard} 张；可弃掉任意张牌。",
   "ui.retentionLegalityOverflow": "超出上限 {over} 张，请减少保留。",
   "ui.newGame": "新开一局",
   "menu.title": "主菜单",
@@ -64,7 +64,7 @@ export const messagesZhCore = {
   "tutorial.step.events":
     "事件是棋盘上的危机与机遇。有害事件通常需要投入经费或特定卡牌来解决；机遇类事件在投资后可能带来收益。若有害事件未在结束回合前解决，可能会受到惩罚。",
   "tutorial.step.hand":
-    "手牌是你的政策选择：每张牌都能调整资源或盘面。打出它们以处理事件或强化国家，准备好后结束本回合即可。",
+    "手牌是你的政策选择：每张牌都能调整资源或盘面。选择一张牌来出牌，或双击手牌直接出牌；准备好后也可以按空格键结束回合。",
   "tutorial.step.actionLog":
     "行动日志会按时间顺序记录关键变化：包括出牌、事件解决、年末惩罚和重要叙事结果。拿不准刚刚发生了什么时，先看这里。",
   "ui.statuses": "持续状态",
