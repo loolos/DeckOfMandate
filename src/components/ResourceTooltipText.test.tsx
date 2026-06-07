@@ -57,12 +57,23 @@ function renderText(locale: LocaleId, text: string): string {
 }
 
 describe("ResourceTooltipText", () => {
-  it("renders resource emoji hover text in the selected Chinese locale", () => {
-    const html = renderText("zh", "💰5 · ⚡+1 · 👑-1");
+  it("renders resource emoji hover text in all supported locales", () => {
+    const htmlEn = renderText("en", "💰5 · ⚡+1 · 👑-1 · 🏛️+1");
+    const htmlFr = renderText("fr", "💰5 · ⚡+1 · 👑-1 · 🏛️+1");
+    const htmlZh = renderText("zh", "💰5 · ⚡+1 · 👑-1 · 🏛️+1");
 
-    expect(html).toContain('title="用于打牌与事件处理"');
-    expect(html).toContain('title="目前抽 3 张；到 7 时多 1 张，降到 3 时少 1 张。"');
-    expect(html).toContain('title="决定回合末可保留手牌上限；归零即败。"');
+    expect(htmlEn).toContain('title="Pays cards &amp; events."');
+    expect(htmlEn).toContain('title="Now drawing 3; gain +1 at 7, lose −1 at 3."');
+    expect(htmlEn).toContain('title="Sets your end-of-turn hand retention cap; 0 ends the run."');
+    expect(htmlEn).toContain('title="Sets how much Funding you gain each turn."');
+    expect(htmlFr).toContain('title="Paie les cartes et les événements."');
+    expect(htmlFr).toContain('title="Pioche actuelle : 3 ; +1 à 7, −1 à 3."');
+    expect(htmlFr).toContain('title="Détermine la limite de conservation en fin de tour ; 0 met fin à la partie."');
+    expect(htmlFr).toContain('title="Détermine le Financement gagné à chaque tour."');
+    expect(htmlZh).toContain('title="用于打牌与事件处理"');
+    expect(htmlZh).toContain('title="目前抽 3 张；到 7 时多 1 张，降到 3 时少 1 张。"');
+    expect(htmlZh).toContain('title="决定回合末可保留手牌上限；归零即败。"');
+    expect(htmlZh).toContain('title="决定每回合可获得的经费。"');
   });
 
   it("does not label the royal-tag crown as legitimacy", () => {

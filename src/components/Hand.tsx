@@ -3,7 +3,7 @@ import { getCardTemplate } from "../data/cards";
 import type { GameAction } from "../app/gameReducer";
 import { OutcomeQuickFrame } from "./OutcomeQuickFrame";
 import { buildCardQuickFrameRows } from "../logic/quickOutcomeFrame";
-import { getCardTypeEmoji } from "../logic/icons";
+import { cardLabelWithIcon, getCardTypeEmoji } from "../logic/icons";
 import { useSmallScreen } from "../logic/useSmallScreen";
 import type { GameState } from "../types/game";
 import type { MessageKey } from "../locales";
@@ -58,24 +58,7 @@ export function Hand({
         const blockedByStatus = blockedRoyal && hasCardTag(state, id, "royal");
         const blockedByDefiance = hasCardTag(state, id, "defiance");
         const playable = canPlay && affordable && !blockedByStatus && !blockedByDefiance;
-        const cardName = t(tmpl.titleKey as MessageKey);
-        const cardEmojiHint = `${cardName} — ${t(tmpl.descriptionKey as MessageKey)}`;
-        const cardTypeIcon = (
-          <span
-            className={styles.cardTypeTooltipIcon}
-            title={cardEmojiHint}
-            aria-label={cardEmojiHint}
-            data-tooltip={cardEmojiHint}
-            tabIndex={0}
-          >
-            {getCardTypeEmoji(inst.templateId)}
-          </span>
-        );
-        const title = (
-          <>
-            {cardTypeIcon} {cardName}
-          </>
-        );
+        const title = cardLabelWithIcon(inst.templateId, t(tmpl.titleKey as MessageKey));
         const detailedTitle = (
           <>
             {title}(<ResourceTooltipIcon resource="funding" resources={state.resources} />
@@ -146,19 +129,17 @@ export function Hand({
               <div className={styles.compactDetails}>
                 <OutcomeQuickFrame rows={quickRows} resources={state.resources} />
                 {tagChips}
-                <div className={styles.cardBg}>{t(tmpl.backgroundKey as MessageKey)}</div>
-                <div className={styles.cardDesc}>{t(tmpl.descriptionKey as MessageKey)}</div>
+                <div className={styles.cardBg}>
+                  <ResourceTooltipText text={t(tmpl.backgroundKey as MessageKey)} resources={state.resources} />
+                </div>
+                <div className={styles.cardDesc}>
+                  <ResourceTooltipText text={t(tmpl.descriptionKey as MessageKey)} resources={state.resources} />
+                </div>
               </div>
             </>
           ) : (
             <div className={styles.cardMobileStrip}>
-              <span
-                className={`${styles.cardMobileTypeEmoji} ${styles.cardTypeTooltipIcon}`}
-                title={cardEmojiHint}
-                aria-label={cardEmojiHint}
-                data-tooltip={cardEmojiHint}
-                tabIndex={0}
-              >
+              <span className={styles.cardMobileTypeEmoji} aria-hidden>
                 {getCardTypeEmoji(inst.templateId)}
               </span>
               <div className={styles.cardMobileStripTitle}>{title}</div>
@@ -176,9 +157,13 @@ export function Hand({
             <div className={styles.cardTitle}>{detailedTitle}</div>
             {cardArt}
             <OutcomeQuickFrame rows={quickRows} resources={state.resources} />
-            <div className={styles.cardBg}>{t(tmpl.backgroundKey as MessageKey)}</div>
+            <div className={styles.cardBg}>
+              <ResourceTooltipText text={t(tmpl.backgroundKey as MessageKey)} resources={state.resources} />
+            </div>
             {tagChips}
-            <div className={styles.cardDesc}>{t(tmpl.descriptionKey as MessageKey)}</div>
+            <div className={styles.cardDesc}>
+              <ResourceTooltipText text={t(tmpl.descriptionKey as MessageKey)} resources={state.resources} />
+            </div>
           </>
         );
 
