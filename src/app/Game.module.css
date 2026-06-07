@@ -388,6 +388,10 @@
   color: var(--muted);
 }
 
+.resourceIcon {
+  cursor: help;
+}
+
 .statValue {
   font-size: 1.1rem;
   font-weight: 600;
