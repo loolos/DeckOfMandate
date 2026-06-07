@@ -3,7 +3,7 @@ import { getCardTemplate } from "../data/cards";
 import type { GameAction } from "../app/gameReducer";
 import { OutcomeQuickFrame } from "./OutcomeQuickFrame";
 import { buildCardQuickFrameRows } from "../logic/quickOutcomeFrame";
-import { cardLabelWithIcon, getCardTypeEmoji } from "../logic/icons";
+import { getCardTypeEmoji } from "../logic/icons";
 import { useSmallScreen } from "../logic/useSmallScreen";
 import type { GameState } from "../types/game";
 import type { MessageKey } from "../locales";
@@ -58,7 +58,18 @@ export function Hand({
         const blockedByStatus = blockedRoyal && hasCardTag(state, id, "royal");
         const blockedByDefiance = hasCardTag(state, id, "defiance");
         const playable = canPlay && affordable && !blockedByStatus && !blockedByDefiance;
-        const title = cardLabelWithIcon(inst.templateId, t(tmpl.titleKey as MessageKey));
+        const cardName = t(tmpl.titleKey as MessageKey);
+        const cardEmojiHint = `${cardName} — ${t(tmpl.descriptionKey as MessageKey)}`;
+        const cardTypeIcon = (
+          <span className={styles.cardTypeTooltipIcon} title={cardEmojiHint} aria-label={cardEmojiHint}>
+            {getCardTypeEmoji(inst.templateId)}
+          </span>
+        );
+        const title = (
+          <>
+            {cardTypeIcon} {cardName}
+          </>
+        );
         const detailedTitle = (
           <>
             {title}(<ResourceTooltipIcon resource="funding" resources={state.resources} />
@@ -135,7 +146,7 @@ export function Hand({
             </>
           ) : (
             <div className={styles.cardMobileStrip}>
-              <span className={styles.cardMobileTypeEmoji} aria-hidden>
+              <span className={`${styles.cardMobileTypeEmoji} ${styles.cardTypeTooltipIcon}`} title={cardEmojiHint} aria-label={cardEmojiHint}>
                 {getCardTypeEmoji(inst.templateId)}
               </span>
               <div className={styles.cardMobileStripTitle}>{title}</div>
