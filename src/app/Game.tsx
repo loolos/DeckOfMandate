@@ -18,6 +18,7 @@ import { LanguageToggle } from "../components/LanguageToggle";
 import { LevelTutorialOverlay } from "../components/LevelTutorialOverlay";
 import { OutcomeQuickFrame } from "../components/OutcomeQuickFrame";
 import { ResourceBar } from "../components/ResourceBar";
+import { ResourceTooltipText } from "../components/ResourceTooltipText";
 import { RunCodePanel } from "../components/RunCodePanel";
 import { StatusBar } from "../components/StatusBar";
 import { getCardTemplate } from "../data/cards";
@@ -859,11 +860,13 @@ export function Game() {
       >
         <div className={styles.retainCardInfo}>
           <span className={styles.retainCardTitle}>{title}</span>
-          <span className={styles.retainCardSummary}>{compactSummary}</span>
+          <span className={styles.retainCardSummary}>
+            <ResourceTooltipText text={compactSummary} resources={state.resources} />
+          </span>
           {tagChips}
           {expanded ? (
             <div className={styles.retainCardDetails}>
-              <OutcomeQuickFrame rows={quickRows} />
+              <OutcomeQuickFrame rows={quickRows} resources={state.resources} />
               <div className={styles.cardBg}>{t(tmpl.backgroundKey as MessageKey)}</div>
               <div className={styles.cardDesc}>{t(tmpl.descriptionKey as MessageKey)}</div>
             </div>
@@ -923,11 +926,13 @@ export function Game() {
       >
         <div className={styles.retainCardInfo}>
           <span className={styles.retainCardTitle}>{title}</span>
-          <span className={styles.retainCardSummary}>{compactSummary}</span>
+          <span className={styles.retainCardSummary}>
+            <ResourceTooltipText text={compactSummary} resources={state.resources} />
+          </span>
           {tagChips}
           {expanded ? (
             <div className={styles.retainCardDetails}>
-              <OutcomeQuickFrame rows={quickRows} />
+              <OutcomeQuickFrame rows={quickRows} resources={state.resources} />
               <div className={styles.cardBg}>{t(tmpl.backgroundKey as MessageKey)}</div>
               <div className={styles.cardDesc}>{t(tmpl.descriptionKey as MessageKey)}</div>
             </div>
@@ -988,11 +993,13 @@ export function Game() {
       >
         <div className={styles.retainCardInfo}>
           <span className={styles.retainCardTitle}>{title}</span>
-          <span className={styles.retainCardSummary}>{compactSummary}</span>
+          <span className={styles.retainCardSummary}>
+            <ResourceTooltipText text={compactSummary} resources={state.resources} />
+          </span>
           {tagChips}
           {expanded ? (
             <div className={styles.retainCardDetails}>
-              <OutcomeQuickFrame rows={quickRows} />
+              <OutcomeQuickFrame rows={quickRows} resources={state.resources} />
               <div className={styles.cardBg}>{t(tmpl.backgroundKey as MessageKey)}</div>
               <div className={styles.cardDesc}>{t(tmpl.descriptionKey as MessageKey)}</div>
             </div>
@@ -1051,11 +1058,13 @@ export function Game() {
       >
         <div className={styles.retainCardInfo}>
           <span className={styles.retainCardTitle}>{title}</span>
-          <span className={styles.retainCardSummary}>{compactSummary}</span>
+          <span className={styles.retainCardSummary}>
+            <ResourceTooltipText text={compactSummary} resources={state.resources} />
+          </span>
           {tagChips}
           {expanded ? (
             <div className={styles.retainCardDetails}>
-              <OutcomeQuickFrame rows={quickRows} />
+              <OutcomeQuickFrame rows={quickRows} resources={state.resources} />
               <div className={styles.cardBg}>{t(tmpl.backgroundKey as MessageKey)}</div>
               <div className={styles.cardDesc}>{t(tmpl.descriptionKey as MessageKey)}</div>
             </div>

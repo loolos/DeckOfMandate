@@ -4,6 +4,7 @@ import { getResourceIcon } from "../logic/icons";
 import { drawAttemptsFromPower } from "../logic/drawScaling";
 import { useSmallScreen } from "../logic/useSmallScreen";
 import { useI18n, type MessageKey } from "../locales";
+import { ResourceTooltipIcon } from "./ResourceTooltipText";
 import styles from "../app/Game.module.css";
 
 const FUNDING_ROW = {
@@ -28,13 +29,6 @@ const LABEL_FOR_KEY: Record<keyof Resources, MessageKey> = {
   legitimacy: "resource.legitimacy",
 };
 
-const HINT_FOR_KEY: Record<keyof Resources, MessageKey> = {
-  funding: "resource.funding.hint",
-  treasuryStat: "resource.treasuryStat.hint",
-  power: "resource.power.hint",
-  legitimacy: "resource.legitimacy.hint",
-};
-
 function powerThresholdForDraw(draws: number): number {
   if (draws <= 1) return 1;
   return 1 + ((draws - 1) * draws) / 2;
@@ -51,14 +45,11 @@ export function ResourceBar({ resources }: { resources: Resources }) {
     dropPower === null
       ? t("resource.power.hint.min", { current: powerDraws, next: nextPower })
       : t("resource.power.hint", { current: powerDraws, next: nextPower, prev: dropPower });
-  const hintForResource = (key: keyof Resources) => (key === "power" ? powerHint : t(HINT_FOR_KEY[key]));
+  const hintForResource = (key: keyof Resources) => (key === "power" ? powerHint : t(`${LABEL_FOR_KEY[key]}.hint` as MessageKey));
   const resourceLabel = (key: keyof Resources, labelKey: MessageKey) => {
-    const hint = hintForResource(key);
     return (
       <>
-        <span className={styles.resourceIcon} title={hint} aria-label={hint}>
-          {getResourceIcon(key)}
-        </span>{" "}
+        <ResourceTooltipIcon resource={key} resources={resources} />{" "}
         {t(labelKey)}
       </>
     );

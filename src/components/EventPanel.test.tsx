@@ -29,5 +29,6 @@ describe("EventPanel", () => {
     );
 
     expect(html).toContain("Continued 3");
+    expect(html).toContain('title="Pays cards &amp; events."');
   });
 });

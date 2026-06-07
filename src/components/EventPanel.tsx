@@ -26,6 +26,7 @@ import type { GameState } from "../types/game";
 import { EVENT_SLOT_ORDER } from "../levels/types/event";
 import type { MessageKey } from "../locales";
 import { useI18n } from "../locales";
+import { ResourceTooltipText } from "./ResourceTooltipText";
 import styles from "../app/Game.module.css";
 import { isHistoricalEventTemplateId } from "../logic/eventTags";
 
@@ -44,6 +45,7 @@ export function EventPanel({
   const visibleSlots = EVENT_SLOT_ORDER.filter((slot) => state.slots[slot] != null);
   const pending = state.pendingInteraction?.type === "crackdownPick";
   const opponentBoardTemplateId = getLevelContent(state.levelId).opponentBoardEventTemplateId;
+  const resourceText = (text: string) => <ResourceTooltipText text={text} resources={state.resources} />;
 
   if (visibleSlots.length === 0) return null;
 
@@ -118,7 +120,7 @@ export function EventPanel({
                                   {opponentBudgetEmojiPips(ct.opponentCost ?? 0)}
                                 </span>
                                 {" · "}
-                                {formatEffectChips(opponentTemplatesToAppliedEffects([inst.templateId]))}
+                                {resourceText(formatEffectChips(opponentTemplatesToAppliedEffects([inst.templateId])))}
                               </li>
                             );
                           })}
@@ -138,7 +140,7 @@ export function EventPanel({
                             })}
                           </p>
                           <p className={styles.statusDetail}>
-                            {t("ui.opponentEvent.lastPlayCombinedFx", { fx: lastAppliedFx })}
+                            {resourceText(t("ui.opponentEvent.lastPlayCombinedFx", { fx: lastAppliedFx }))}
                           </p>
                           {lastIds.map((tid, idx) => {
                             const ct = getCardTemplate(tid);
@@ -151,11 +153,13 @@ export function EventPanel({
                                   {cardLabelWithIcon(tid, t(ct.titleKey as MessageKey))}
                                 </div>
                                 <p className={styles.statusDetail}>
-                                  {t("ui.opponentEvent.lastPlayCardBlurb", {
-                                    history: t(histKey),
-                                    cost: costPips,
-                                    fx: singleFx,
-                                  })}
+                                  {resourceText(
+                                    t("ui.opponentEvent.lastPlayCardBlurb", {
+                                      history: t(histKey),
+                                      cost: costPips,
+                                      fx: singleFx,
+                                    }),
+                                  )}
                                 </p>
                               </div>
                             );
@@ -229,7 +233,7 @@ export function EventPanel({
             }
           >
             <div className={styles.eventTitle}>{title}</div>
-            {isSmallScreen ? <div className={styles.compactSummary}>{compactSummaryWithHandledMark}</div> : null}
+            {isSmallScreen ? <div className={styles.compactSummary}>{resourceText(compactSummaryWithHandledMark)}</div> : null}
             {showCompactSolveButton ? (
               <div className={styles.compactActions} onClick={(e) => e.stopPropagation()}>
                 <button
@@ -238,7 +242,7 @@ export function EventPanel({
                   disabled={!affordable || !canClickFund}
                   onClick={() => dispatch({ type: "SOLVE_EVENT", slot })}
                 >
-                  {t("ui.solveCompact", { cost: `${getResourceIcon("funding")} ${amount}` })}
+                  {resourceText(t("ui.solveCompact", { cost: `${getResourceIcon("funding")} ${amount}` }))}
                 </button>
               </div>
             ) : null}
@@ -331,7 +335,7 @@ export function EventPanel({
                     </button>
                   ) : null}
                 </div>
-                <OutcomeQuickFrame rows={quickRows} />
+                <OutcomeQuickFrame rows={quickRows} resources={state.resources} />
                 <div className={styles.actions} onClick={(e) => e.stopPropagation()}>
                   {!ev.resolved && solveKind === "scriptedAttack" && amount !== null ? (
                     <button
@@ -340,7 +344,7 @@ export function EventPanel({
                       disabled={!scriptedAffordable || !canClickScripted}
                       onClick={() => dispatch({ type: "SCRIPTED_EVENT_ATTACK", slot })}
                     >
-                      {t("ui.scriptedAttack", { cost: `${getResourceIcon("funding")} ${amount}` })}
+                      {resourceText(t("ui.scriptedAttack", { cost: `${getResourceIcon("funding")} ${amount}` }))}
                     </button>
                   ) : null}
                   {!ev.resolved && solveKind === "funding" && amount !== null ? (
@@ -350,7 +354,7 @@ export function EventPanel({
                       disabled={!affordable || !canClickFund}
                       onClick={() => dispatch({ type: "SOLVE_EVENT", slot })}
                     >
-                      {t("ui.solve", { cost: `${getResourceIcon("funding")} ${amount}` })}
+                      {resourceText(t("ui.solve", { cost: `${getResourceIcon("funding")} ${amount}` }))}
                     </button>
                   ) : null}
                   {!ev.resolved && solveKind === "fundingTreasuryQuarterCeil" && amount !== null ? (
@@ -360,7 +364,7 @@ export function EventPanel({
                       disabled={!affordable || !canClickFund}
                       onClick={() => dispatch({ type: "SOLVE_EVENT", slot })}
                     >
-                      {t("ui.solve", { cost: `${getResourceIcon("funding")} ${amount}` })}
+                      {resourceText(t("ui.solve", { cost: `${getResourceIcon("funding")} ${amount}` }))}
                     </button>
                   ) : null}
                   {!ev.resolved && solveKind === "successionCrisisChoice" ? (
@@ -440,7 +444,7 @@ export function EventPanel({
                       disabled={!affordable || !canClickFund}
                       onClick={() => dispatch({ type: "SOLVE_EVENT", slot })}
                     >
-                      {t("ui.solveFundingOrCrackdown", { cost: `${getResourceIcon("funding")} ${amount}` })}
+                      {resourceText(t("ui.solveFundingOrCrackdown", { cost: `${getResourceIcon("funding")} ${amount}` }))}
                     </button>
                   ) : null}
                   {!ev.resolved && solveKind === "nantesPolicyChoice" ? (
@@ -471,9 +475,11 @@ export function EventPanel({
                         disabled={Boolean(state.pendingInteraction) || amount == null || state.resources.funding < amount}
                         onClick={() => dispatch({ type: "PICK_LOCAL_WAR_ATTACK", slot })}
                       >
-                        {t("ui.localWarAttack", {
-                          cost: `${getResourceIcon("funding")} ${amount ?? state.europeAlertProgress}`,
-                        })}
+                        {resourceText(
+                          t("ui.localWarAttack", {
+                            cost: `${getResourceIcon("funding")} ${amount ?? state.europeAlertProgress}`,
+                          }),
+                        )}
                       </button>
                       <button
                         type="button"
