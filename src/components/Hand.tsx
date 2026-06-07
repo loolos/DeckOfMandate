@@ -61,7 +61,13 @@ export function Hand({
         const cardName = t(tmpl.titleKey as MessageKey);
         const cardEmojiHint = `${cardName} — ${t(tmpl.descriptionKey as MessageKey)}`;
         const cardTypeIcon = (
-          <span className={styles.cardTypeTooltipIcon} title={cardEmojiHint} aria-label={cardEmojiHint}>
+          <span
+            className={styles.cardTypeTooltipIcon}
+            title={cardEmojiHint}
+            aria-label={cardEmojiHint}
+            data-tooltip={cardEmojiHint}
+            tabIndex={0}
+          >
             {getCardTypeEmoji(inst.templateId)}
           </span>
         );
@@ -146,7 +152,13 @@ export function Hand({
             </>
           ) : (
             <div className={styles.cardMobileStrip}>
-              <span className={`${styles.cardMobileTypeEmoji} ${styles.cardTypeTooltipIcon}`} title={cardEmojiHint} aria-label={cardEmojiHint}>
+              <span
+                className={`${styles.cardMobileTypeEmoji} ${styles.cardTypeTooltipIcon}`}
+                title={cardEmojiHint}
+                aria-label={cardEmojiHint}
+                data-tooltip={cardEmojiHint}
+                tabIndex={0}
+              >
                 {getCardTypeEmoji(inst.templateId)}
               </span>
               <div className={styles.cardMobileStripTitle}>{title}</div>

@@ -84,8 +84,15 @@ describe("Hand", () => {
   });
 
   it("adds localized hover text to card emoji in all supported languages", () => {
-    expect(renderFundingCardHand("en")).toContain('title="Royal Levy — Gain +1 Funding this turn');
-    expect(renderFundingCardHand("fr")).toContain('title="Prélèvement royal — Gagnez +1 Financement ce tour');
-    expect(renderFundingCardHand("zh")).toContain('title="王室征收 — 本回合 +1 经费');
+    const htmlEn = renderFundingCardHand("en");
+    const htmlFr = renderFundingCardHand("fr");
+    const htmlZh = renderFundingCardHand("zh");
+
+    expect(htmlEn).toContain('title="Royal Levy — Gain +1 Funding this turn');
+    expect(htmlEn).toContain('data-tooltip="Royal Levy — Gain +1 Funding this turn');
+    expect(htmlFr).toContain('title="Prélèvement royal — Gagnez +1 Financement ce tour');
+    expect(htmlFr).toContain('data-tooltip="Prélèvement royal — Gagnez +1 Financement ce tour');
+    expect(htmlZh).toContain('title="王室征收 — 本回合 +1 经费');
+    expect(htmlZh).toContain('data-tooltip="王室征收 — 本回合 +1 经费');
   });
 });
