@@ -47,12 +47,12 @@ function withStoredLocale<T>(locale: LocaleId, run: () => T): T {
     if (previousWindow) {
       Object.defineProperty(global, "window", previousWindow);
     } else {
-      delete global.window;
+      delete (global as { window?: unknown }).window;
     }
     if (previousLocalStorage) {
       Object.defineProperty(global, "localStorage", previousLocalStorage);
     } else {
-      delete global.localStorage;
+      delete (global as { localStorage?: unknown }).localStorage;
     }
   }
 }
