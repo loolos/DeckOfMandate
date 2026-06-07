@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import type { Resources } from "../types/game";
-import { getResourceIcon, resourceLabelWithIcon } from "../logic/icons";
+import { getResourceIcon } from "../logic/icons";
 import { drawAttemptsFromPower } from "../logic/drawScaling";
 import { useSmallScreen } from "../logic/useSmallScreen";
 import { useI18n, type MessageKey } from "../locales";
+import { ResourceTooltipIcon } from "./ResourceTooltipText";
 import styles from "../app/Game.module.css";
 
 const FUNDING_ROW = {
@@ -44,6 +45,15 @@ export function ResourceBar({ resources }: { resources: Resources }) {
     dropPower === null
       ? t("resource.power.hint.min", { current: powerDraws, next: nextPower })
       : t("resource.power.hint", { current: powerDraws, next: nextPower, prev: dropPower });
+  const hintForResource = (key: keyof Resources) => (key === "power" ? powerHint : t(`${LABEL_FOR_KEY[key]}.hint` as MessageKey));
+  const resourceLabel = (key: keyof Resources, labelKey: MessageKey) => {
+    return (
+      <>
+        <ResourceTooltipIcon resource={key} resources={resources} />{" "}
+        {t(labelKey)}
+      </>
+    );
+  };
 
   useEffect(() => {
     if (!isSmallScreen) setMobileExpanded(false);
@@ -59,7 +69,7 @@ export function ResourceBar({ resources }: { resources: Resources }) {
     >
       <div className={styles.fundingHighlight}>
         <div className={styles.fundingHighlightLabel}>
-          {resourceLabelWithIcon(FUNDING_ROW.key, t(FUNDING_ROW.labelKey))}
+          {resourceLabel(FUNDING_ROW.key, FUNDING_ROW.labelKey)}
         </div>
         <div className={styles.fundingHighlightValue}>{resources.funding}</div>
         <div className={styles.fundingHighlightHint}>{t(FUNDING_ROW.hintKey)}</div>
@@ -67,7 +77,7 @@ export function ResourceBar({ resources }: { resources: Resources }) {
       <div className={styles.resourceSecondary}>
         {OTHER_RESOURCE_ROWS.map((it) => (
           <div key={it.key} className={styles.stat}>
-            <div className={styles.statLabel}>{resourceLabelWithIcon(it.key, t(it.labelKey))}</div>
+            <div className={styles.statLabel}>{resourceLabel(it.key, it.labelKey)}</div>
             <div className={styles.statValue}>{resources[it.key]}</div>
             <div className={styles.statHint}>{it.key === "power" ? powerHint : t(it.hintKey)}</div>
           </div>
@@ -93,18 +103,18 @@ export function ResourceBar({ resources }: { resources: Resources }) {
           aria-label={`${compactAria}. ${t("ui.resourceMobileExpand")}`}
         >
           <div className={styles.resourceMobileCompactRow}>
-            {MOBILE_COMPACT_ORDER.map((key) => (
-              <span
-                key={key}
-                className={styles.resourceMobileChip}
-                title={`${resourceLabelWithIcon(key, t(LABEL_FOR_KEY[key]))}: ${resources[key]}`}
-              >
-                <span className={styles.resourceMobileChipIcon} aria-hidden>
-                  {getResourceIcon(key)}
+            {MOBILE_COMPACT_ORDER.map((key) => {
+              const label = t(LABEL_FOR_KEY[key]);
+              const hint = hintForResource(key);
+              return (
+                <span key={key} className={styles.resourceMobileChip} title={`${label} — ${hint} (${resources[key]})`}>
+                  <span className={styles.resourceMobileChipIcon} aria-hidden>
+                    {getResourceIcon(key)}
+                  </span>
+                  <span className={styles.resourceMobileChipVal}>{resources[key]}</span>
                 </span>
-                <span className={styles.resourceMobileChipVal}>{resources[key]}</span>
-              </span>
-            ))}
+              );
+            })}
           </div>
           <div className={styles.resourceMobileCompactHint}>{t("ui.resourceMobileExpand")}</div>
         </button>

@@ -13,6 +13,7 @@ import { getCardTagsForInstance, hasCardTag } from "../logic/cardTags";
 import { getCardUseStateForInstance } from "../logic/cardUsage";
 import type { CardTag } from "../levels/types/tags";
 import type { LogInfoKey } from "../types/game";
+import { ResourceTooltipIcon, ResourceTooltipText } from "./ResourceTooltipText";
 import styles from "../app/Game.module.css";
 import { getCardArtUrl } from "../logic/cardArt";
 
@@ -58,7 +59,12 @@ export function Hand({
         const blockedByDefiance = hasCardTag(state, id, "defiance");
         const playable = canPlay && affordable && !blockedByStatus && !blockedByDefiance;
         const title = cardLabelWithIcon(inst.templateId, t(tmpl.titleKey as MessageKey));
-        const detailedTitle = `${title}(💰${cost})`;
+        const detailedTitle = (
+          <>
+            {title}(<ResourceTooltipIcon resource="funding" resources={state.resources} />
+            {cost})
+          </>
+        );
         const quickRows = buildCardQuickFrameRows(tmpl, cost);
         const compactSummary = quickRows.map((row) => row.value).join(" · ");
         const showDetails = !isSmallScreen || expandedCardId === id || (crackPick && id === crackPick.cardInstanceId);
@@ -117,12 +123,18 @@ export function Hand({
             <>
               <div className={styles.cardTitle}>{detailedTitle}</div>
               {cardArt}
-              <div className={styles.compactSummary}>{compactSummary}</div>
+              <div className={styles.compactSummary}>
+                <ResourceTooltipText text={compactSummary} resources={state.resources} />
+              </div>
               <div className={styles.compactDetails}>
-                <OutcomeQuickFrame rows={quickRows} />
+                <OutcomeQuickFrame rows={quickRows} resources={state.resources} />
                 {tagChips}
-                <div className={styles.cardBg}>{t(tmpl.backgroundKey as MessageKey)}</div>
-                <div className={styles.cardDesc}>{t(tmpl.descriptionKey as MessageKey)}</div>
+                <div className={styles.cardBg}>
+                  <ResourceTooltipText text={t(tmpl.backgroundKey as MessageKey)} resources={state.resources} />
+                </div>
+                <div className={styles.cardDesc}>
+                  <ResourceTooltipText text={t(tmpl.descriptionKey as MessageKey)} resources={state.resources} />
+                </div>
               </div>
             </>
           ) : (
@@ -134,7 +146,7 @@ export function Hand({
               <div className={styles.cardMobileChipCol}>
                 {quickRows.map((row, i) => (
                   <span key={i} className={styles.cardMobileChipLine}>
-                    {row.value}
+                    <ResourceTooltipText text={row.value} resources={state.resources} />
                   </span>
                 ))}
               </div>
@@ -144,10 +156,14 @@ export function Hand({
           <>
             <div className={styles.cardTitle}>{detailedTitle}</div>
             {cardArt}
-            <OutcomeQuickFrame rows={quickRows} />
-            <div className={styles.cardBg}>{t(tmpl.backgroundKey as MessageKey)}</div>
+            <OutcomeQuickFrame rows={quickRows} resources={state.resources} />
+            <div className={styles.cardBg}>
+              <ResourceTooltipText text={t(tmpl.backgroundKey as MessageKey)} resources={state.resources} />
+            </div>
             {tagChips}
-            <div className={styles.cardDesc}>{t(tmpl.descriptionKey as MessageKey)}</div>
+            <div className={styles.cardDesc}>
+              <ResourceTooltipText text={t(tmpl.descriptionKey as MessageKey)} resources={state.resources} />
+            </div>
           </>
         );
 
