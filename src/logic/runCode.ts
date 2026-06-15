@@ -135,7 +135,7 @@ class ByteWriter {
     let n = v;
     while (n >= 0x80) {
       this.buf.push((n & 0x7f) | 0x80);
-      n = Math.floor(n / 0x80);
+      n = n >>> 7;
     }
     this.buf.push(n & 0x7f);
   }
@@ -206,7 +206,7 @@ function writeAction(w: ByteWriter, a: GameAction): void {
   switch (a.type) {
     case "PLAY_CARD":
       w.pushU8(ACTION_TAG.PLAY_CARD);
-      w.pushU8(a.handIndex & 0xff);
+      w.pushU8(a.handIndex);
       return;
     case "END_YEAR":
       w.pushU8(ACTION_TAG.END_YEAR);
@@ -269,7 +269,7 @@ function writeAction(w: ByteWriter, a: GameAction): void {
       // The encoder caller passes an `extraContext`; we store the bitmask plus the hand size.
       const meta = (a as RetentionEncodedAction).__retentionMeta;
       if (!meta) throw new Error("runCode: CONFIRM_RETENTION requires __retentionMeta on encode");
-      w.pushU8(meta.handLength & 0xff);
+      w.pushU8(meta.handLength);
       const byteCount = Math.ceil(meta.handLength / 8);
       const bitmask = new Uint8Array(byteCount);
       for (const idx of meta.keepIndices) {
@@ -390,9 +390,11 @@ function writeRunRecord(w: ByteWriter, run: RunRecord): void {
   writeUtf8LevelId(w, run.level);
   w.pushU32LE(run.seed >>> 0);
   if (writesRefitRemovals(run.level, run.mode)) {
-    w.pushU8(run.removedIndices.length & 0xff);
+    if (run.removedIndices.length > 255)
+      throw new Error(`runCode: too many removedIndices (${run.removedIndices.length})`);
+    w.pushU8(run.removedIndices.length);
     for (const idx of run.removedIndices) {
-      w.pushU8(idx & 0xff);
+      w.pushU8(idx);
     }
   }
   w.pushVarUint(run.actions.length);
@@ -417,7 +419,7 @@ function readRunRecordV2(r: ByteReader, prevRunFinalState: GameState | null): {
     for (let i = 0; i < count; i++) removedIndices.push(r.readU8());
   }
   if (mode === "continuity" && !writesRefitRemovals(level, mode)) {
-    throw new Error("runCode: continuity mode is only valid for chapter-2-style levels");
+    throw new Error("runCode: continuity mode is only valid for chapter-2 or chapter-3 style levels");
   }
   if (mode === "continuity" && !prevRunFinalState) {
     throw new Error("runCode: continuity run requires a previous run");
@@ -512,7 +514,8 @@ export function encodeSession(session: SessionRecord): string {
   const w = new ByteWriter();
   w.pushU8(RUN_CODE_MAGIC[0]);
   w.pushU8(RUN_CODE_MAGIC[1]);
-  w.pushU8(session.length & 0xff);
+  if (session.length > 255) throw new Error(`runCode: too many runs in session (${session.length})`);
+  w.pushU8(session.length);
   for (const run of session) {
     writeRunRecord(w, run);
   }

@@ -19,7 +19,8 @@ export function createInitialState(
 ): GameState {
   const level = getLevelDef(levelId);
   const hooks = getLevelInitialStateHooks(levelId);
-  const runSeed = ((seed ?? Math.floor(Math.random() * 0x7fffffff)) >>> 0) || 0x9e3779b9;
+  const rawSeed = (seed ?? Math.floor(Math.random() * 0x7fffffff + 1)) >>> 0;
+  const runSeed = rawSeed === 0 ? 0x9e3779b9 : rawSeed;
   let rng = createRngFromSeed(runSeed);
   const baseResources = { ...level.startingResources, ...options?.startingResourcesOverride };
   const defaultEuropeAlert = level.features.europeAlertMechanics;

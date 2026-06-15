@@ -2,7 +2,7 @@ import type { LevelContent, LevelDef } from "../../../data/levelTypes";
 import { createStandaloneLevel3Draft } from "../chapter3Transition";
 import type { CardTemplateId } from "../../types/card";
 
-/** Eight chapter-3-only templates shuffled into the full library with the rest; opening deal is two cards. */
+/** Eight chapter-3-only cards (2 copies each of 4 templates) added to the deck pool during the chapter-3 refit. */
 const CHAPTER3_REFIT_STARTING_HAND_ORDER: readonly CardTemplateId[] = [
   "bourbonMarriageProclamation",
   "bourbonMarriageProclamation",
