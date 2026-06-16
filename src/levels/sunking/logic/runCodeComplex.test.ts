@@ -19,7 +19,6 @@ import {
   createStandaloneLevel2Draft,
   createStandaloneLevel3Draft,
 } from "../../../app/levelTransitions";
-import { getEventTemplate } from "../../../data/events";
 import { getPlayableCardCost } from "../../../logic/cardCost";
 import { isCardPlayableInActionPhase } from "../../../logic/cardPlayability";
 import { retentionCapacity } from "../../../logic/turnFlow";
@@ -29,11 +28,10 @@ import {
   encodeSession,
   replaySession,
   shouldRecordAction,
-  type RunRecord,
   type SessionRecord,
 } from "../../../logic/runCode";
 import { slotAllowsCrackdownTarget, slotAllowsFundSolve } from "../../../logic/uiHelpers";
-import { EVENT_SLOT_ORDER, type SlotId } from "../../types/event";
+import { EVENT_SLOT_ORDER } from "../../types/event";
 import type { GameState } from "../../../types/game";
 
 // ---------------------------------------------------------------------------
