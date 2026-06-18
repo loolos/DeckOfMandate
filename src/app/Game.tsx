@@ -285,7 +285,7 @@ export function Game() {
   );
 
   const appendContinuityChapterSession = useCallback(
-    (targetLevelId: LevelId, seed: number, removedIndices: number[]) => {
+    (targetLevelId: LevelId, seed: number, removedIndices: number[], calendarStartYear: number) => {
       sessionRef.current = [
         ...sessionRef.current,
         {
@@ -294,6 +294,7 @@ export function Game() {
           seed: seed >>> 0,
           removedIndices,
           actions: [],
+          calendarStartYear,
         },
       ];
       refreshCodeHex();
@@ -701,7 +702,7 @@ export function Game() {
       if (removedSet.has(card.instanceId)) removedIndices.push(idx);
     });
     if (level2Draft.mode === "continuity") {
-      appendContinuityChapterSession(nextState.levelId, nextState.runSeed, removedIndices);
+      appendContinuityChapterSession(nextState.levelId, nextState.runSeed, removedIndices, nextState.calendarStartYear);
     } else {
       startStandaloneSession(nextState.levelId, nextState.runSeed, removedIndices);
     }
@@ -750,7 +751,7 @@ export function Game() {
       if (removedSet.has(card.instanceId)) removedIndices.push(idx);
     });
     if (level3Draft.mode === "continuity") {
-      appendContinuityChapterSession(nextState.levelId, nextState.runSeed, removedIndices);
+      appendContinuityChapterSession(nextState.levelId, nextState.runSeed, removedIndices, nextState.calendarStartYear);
     } else {
       startStandaloneSession(nextState.levelId, nextState.runSeed, removedIndices);
     }

@@ -13,8 +13,11 @@ import { getLevelDef, getRegisteredLevelIds, isLevelId, type LevelId } from "../
 import { EVENT_SLOT_ORDER, type SlotId } from "../levels/types/event";
 import type { GameState } from "../types/game";
 
-/** Magic header bytes identifying a DeckOfMandate run code (binary format). */
-export const RUN_CODE_MAGIC = [0xdc, 0x02] as const;
+/** Magic header bytes identifying a DeckOfMandate run code (binary format, current v3). */
+export const RUN_CODE_MAGIC = [0xdc, 0x03] as const;
+
+/** v2 header: same as v1 but with UTF-8 level id; continuity calendarStartYear not stored. */
+const RUN_CODE_MAGIC_V2 = [0xdc, 0x02] as const;
 
 /** Legacy v1 header (level id encoded as single bit); still accepted by {@link decodeSession}. */
 const RUN_CODE_MAGIC_V1 = [0xdc, 0x01] as const;
@@ -61,6 +64,13 @@ export type RunRecord = {
   /** Deck-refit removals for chapter-2-style starts; empty when not used. */
   removedIndices: number[];
   actions: GameAction[];
+  /**
+   * Continuity-mode only: the calendarStartYear used when building this run's initial state.
+   * Stored explicitly so replay does not need to re-derive it from the previous run's final state
+   * (which could diverge if the prior run's actions are incomplete or game logic changed).
+   * Absent in v1/v2 codes; present in v3+.
+   */
+  calendarStartYear?: number;
 };
 
 export type SessionRecord = RunRecord[];
@@ -126,6 +136,10 @@ class ByteWriter {
     if (v < 0 || v > 0xff || !Number.isInteger(v)) throw new Error(`runCode: bad u8 ${v}`);
     this.buf.push(v);
   }
+  pushU16LE(v: number): void {
+    if (v < 0 || v > 0xffff || !Number.isInteger(v)) throw new Error(`runCode: bad u16 ${v}`);
+    this.buf.push(v & 0xff, (v >>> 8) & 0xff);
+  }
   pushU32LE(v: number): void {
     const u = v >>> 0;
     this.buf.push(u & 0xff, (u >>> 8) & 0xff, (u >>> 16) & 0xff, (u >>> 24) & 0xff);
@@ -156,6 +170,11 @@ class ByteReader {
   readU8(): number {
     if (this.pos >= this.bytes.length) throw new Error("runCode: unexpected end of stream");
     return this.bytes[this.pos++]!;
+  }
+  readU16LE(): number {
+    const a = this.readU8();
+    const b = this.readU8();
+    return (a | (b << 8)) & 0xffff;
   }
   readU32LE(): number {
     const a = this.readU8();
@@ -397,6 +416,12 @@ function writeRunRecord(w: ByteWriter, run: RunRecord): void {
       w.pushU8(idx);
     }
   }
+  // v3: continuity runs store calendarStartYear so replay is self-contained.
+  if (run.mode === "continuity") {
+    const csy = run.calendarStartYear;
+    if (csy === undefined) throw new Error("runCode: continuity RunRecord missing calendarStartYear");
+    w.pushU16LE(csy);
+  }
   w.pushVarUint(run.actions.length);
   for (const a of run.actions) {
     writeAction(w, a);
@@ -425,7 +450,7 @@ function readRunRecordV2(r: ByteReader, prevRunFinalState: GameState | null): {
     throw new Error("runCode: continuity run requires a previous run");
   }
 
-  let state = startStateFor(level, mode, seed, removedIndices, prevRunFinalState);
+  let state = startStateFor(level, mode, seed, removedIndices, prevRunFinalState, undefined);
   const actionCount = r.readVarUint();
   const actions: GameAction[] = [];
   for (let i = 0; i < actionCount; i++) {
@@ -434,6 +459,42 @@ function readRunRecordV2(r: ByteReader, prevRunFinalState: GameState | null): {
     state = gameReducer(state, action);
   }
   const record: RunRecord = { level, mode, seed, removedIndices, actions };
+  return { record, finalState: state };
+}
+
+function readRunRecordV3(r: ByteReader, prevRunFinalState: GameState | null): {
+  record: RunRecord;
+  finalState: GameState;
+} {
+  const mode: "standalone" | "continuity" = r.readU8() !== 0 ? "continuity" : "standalone";
+  const level = readUtf8LevelId(r);
+  if (!isLevelId(level)) {
+    throw new Error(`runCode: unknown level id ${level}`);
+  }
+  const seed = r.readU32LE();
+  let removedIndices: number[] = [];
+  if (writesRefitRemovals(level, mode)) {
+    const count = r.readU8();
+    for (let i = 0; i < count; i++) removedIndices.push(r.readU8());
+  }
+  if (mode === "continuity" && !writesRefitRemovals(level, mode)) {
+    throw new Error("runCode: continuity mode is only valid for chapter-2 or chapter-3 style levels");
+  }
+  if (mode === "continuity" && !prevRunFinalState) {
+    throw new Error("runCode: continuity run requires a previous run");
+  }
+  // v3: continuity runs include explicit calendarStartYear.
+  const calendarStartYear = mode === "continuity" ? r.readU16LE() : undefined;
+
+  let state = startStateFor(level, mode, seed, removedIndices, prevRunFinalState, calendarStartYear);
+  const actionCount = r.readVarUint();
+  const actions: GameAction[] = [];
+  for (let i = 0; i < actionCount; i++) {
+    const action = readAction(r, state.hand);
+    actions.push(action);
+    state = gameReducer(state, action);
+  }
+  const record: RunRecord = { level, mode, seed, removedIndices, actions, calendarStartYear };
   return { record, finalState: state };
 }
 
@@ -458,7 +519,7 @@ function readRunRecordV1(r: ByteReader, prevRunFinalState: GameState | null): {
     for (let i = 0; i < count; i++) removedIndices.push(r.readU8());
   }
 
-  let state = startStateFor(level, mode, seed, removedIndices, prevRunFinalState);
+  let state = startStateFor(level, mode, seed, removedIndices, prevRunFinalState, undefined);
   const actionCount = r.readVarUint();
   const actions: GameAction[] = [];
   for (let i = 0; i < actionCount; i++) {
@@ -476,16 +537,21 @@ function startStateFor(
   seed: number,
   removedIndices: readonly number[],
   prevFinalState: GameState | null,
+  calendarStartYear: number | undefined,
 ): GameState {
   if (mode === "continuity") {
     if (!prevFinalState) throw new Error("runCode: continuity needs prev state");
     if (getLevelDef(level).bootstrap === "chapter3Standalone") {
       const baseDraft = createContinuityLevel3Draft(prevFinalState, seed);
-      const draft = applyRemovedIndicesToLevel3Draft(baseDraft, removedIndices);
+      const draftWithYear =
+        calendarStartYear !== undefined ? { ...baseDraft, calendarStartYear } : baseDraft;
+      const draft = applyRemovedIndicesToLevel3Draft(draftWithYear, removedIndices);
       return buildLevel3StateFromDraft(draft);
     }
     const baseDraft = createContinuityLevel2Draft(prevFinalState, seed);
-    const draft: Level2StartDraft = applyRemovedIndices(baseDraft, removedIndices);
+    const draftWithYear =
+      calendarStartYear !== undefined ? { ...baseDraft, calendarStartYear } : baseDraft;
+    const draft: Level2StartDraft = applyRemovedIndices(draftWithYear, removedIndices);
     return buildLevel2StateFromDraft(draft);
   }
   const chapter2Draft = getChapter2StandaloneDraft(level, seed);
@@ -532,9 +598,10 @@ export function decodeSession(hex: string): DecodeResult {
   const r = new ByteReader(bytes);
   const m0 = r.readU8();
   const m1 = r.readU8();
-  const v2 = m0 === RUN_CODE_MAGIC[0] && m1 === RUN_CODE_MAGIC[1];
+  const v3 = m0 === RUN_CODE_MAGIC[0] && m1 === RUN_CODE_MAGIC[1];
+  const v2 = m0 === RUN_CODE_MAGIC_V2[0] && m1 === RUN_CODE_MAGIC_V2[1];
   const v1 = m0 === RUN_CODE_MAGIC_V1[0] && m1 === RUN_CODE_MAGIC_V1[1];
-  if (!v1 && !v2) {
+  if (!v1 && !v2 && !v3) {
     throw new Error("runCode: bad magic / version");
   }
   const runCount = r.readU8();
@@ -544,9 +611,11 @@ export function decodeSession(hex: string): DecodeResult {
   const session: RunRecord[] = [];
   let prevFinal: GameState | null = null;
   for (let i = 0; i < runCount; i++) {
-    const decoded: { record: RunRecord; finalState: GameState } = v2
-      ? readRunRecordV2(r, prevFinal)
-      : readRunRecordV1(r, prevFinal);
+    const decoded: { record: RunRecord; finalState: GameState } = v3
+      ? readRunRecordV3(r, prevFinal)
+      : v2
+        ? readRunRecordV2(r, prevFinal)
+        : readRunRecordV1(r, prevFinal);
     session.push(decoded.record);
     prevFinal = decoded.finalState;
   }
@@ -562,7 +631,7 @@ export function replaySession(session: SessionRecord): GameState {
   let prevFinal: GameState | null = null;
   for (const run of session) {
     const removed = writesRefitRemovals(run.level, run.mode) ? run.removedIndices : [];
-    let state = startStateFor(run.level, run.mode, run.seed, removed, prevFinal);
+    let state = startStateFor(run.level, run.mode, run.seed, removed, prevFinal, run.calendarStartYear);
     for (const action of run.actions) {
       state = gameReducer(state, action);
     }

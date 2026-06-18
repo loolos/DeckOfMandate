@@ -271,8 +271,8 @@ describe("runCode", () => {
         name: "first-to-third continuity",
         session: [
           { level: "firstMandate", mode: "standalone", seed: seed1, removedIndices: [], actions: actions1 },
-          { level: "secondMandate", mode: "continuity", seed: seed2, removedIndices: removedIndices2, actions: actions2 },
-          { level: "thirdMandate", mode: "continuity", seed: seed3, removedIndices: removedIndices3, actions: actions3 },
+          { level: "secondMandate", mode: "continuity", seed: seed2, removedIndices: removedIndices2, actions: actions2, calendarStartYear: state2.calendarStartYear },
+          { level: "thirdMandate", mode: "continuity", seed: seed3, removedIndices: removedIndices3, actions: actions3, calendarStartYear: state3.calendarStartYear },
         ],
         finalState: state3,
       });
@@ -336,6 +336,7 @@ describe("runCode", () => {
         seed: seed2,
         removedIndices,
         actions: recorded2,
+        calendarStartYear: state2.calendarStartYear,
       },
     ];
     expectEquivalent(replaySession(session), state2);
