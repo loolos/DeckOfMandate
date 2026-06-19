@@ -353,6 +353,7 @@ describe("runCode complex scenarios", () => {
         removedIndices: removedIndices2,
         actions: actions2,
         calendarStartYear: state2.calendarStartYear,
+        continuitySnapshot: { resources: draft2.resources, warOfDevolutionAttacked: draft2.warOfDevolutionAttacked, nantesPolicyCarryover: null, carryoverCards: draft2.carryoverCards },
       },
     ];
 
@@ -400,8 +401,8 @@ describe("runCode complex scenarios", () => {
 
     const session: SessionRecord = [
       { level: "firstMandate", mode: "standalone", seed: seed1, removedIndices: [], actions: actions1 },
-      { level: "secondMandate", mode: "continuity", seed: seed2, removedIndices: ri2, actions: actions2, calendarStartYear: state2.calendarStartYear },
-      { level: "thirdMandate", mode: "continuity", seed: seed3, removedIndices: ri3, actions: actions3, calendarStartYear: state3.calendarStartYear },
+      { level: "secondMandate", mode: "continuity", seed: seed2, removedIndices: ri2, actions: actions2, calendarStartYear: state2.calendarStartYear, continuitySnapshot: { resources: draft2.resources, warOfDevolutionAttacked: draft2.warOfDevolutionAttacked, nantesPolicyCarryover: null, carryoverCards: draft2.carryoverCards } },
+      { level: "thirdMandate", mode: "continuity", seed: seed3, removedIndices: ri3, actions: actions3, calendarStartYear: state3.calendarStartYear, continuitySnapshot: { resources: draft3.resources, warOfDevolutionAttacked: draft3.warOfDevolutionAttacked, nantesPolicyCarryover: draft3.nantesPolicyCarryover, carryoverCards: draft3.carryoverCards } },
     ];
 
     assertRoundTrip(session, state3, "3-chapter full continuity");

@@ -285,7 +285,7 @@ export function Game() {
   );
 
   const appendContinuityChapterSession = useCallback(
-    (targetLevelId: LevelId, seed: number, removedIndices: number[], calendarStartYear: number) => {
+    (targetLevelId: LevelId, seed: number, removedIndices: number[], calendarStartYear: number, continuitySnapshot: import("../logic/runCode").ContinuitySnapshot) => {
       sessionRef.current = [
         ...sessionRef.current,
         {
@@ -295,6 +295,7 @@ export function Game() {
           removedIndices,
           actions: [],
           calendarStartYear,
+          continuitySnapshot,
         },
       ];
       refreshCodeHex();
@@ -700,7 +701,13 @@ export function Game() {
       if (removedSet.has(card.instanceId)) removedIndices.push(idx);
     });
     if (level2Draft.mode === "continuity") {
-      appendContinuityChapterSession(nextState.levelId, nextState.runSeed, removedIndices, nextState.calendarStartYear);
+      const snapshot: import("../logic/runCode").ContinuitySnapshot = {
+        resources: level2Draft.resources,
+        warOfDevolutionAttacked: level2Draft.warOfDevolutionAttacked,
+        nantesPolicyCarryover: null,
+        carryoverCards: level2Draft.carryoverCards,
+      };
+      appendContinuityChapterSession(nextState.levelId, nextState.runSeed, removedIndices, nextState.calendarStartYear, snapshot);
     } else {
       startStandaloneSession(nextState.levelId, nextState.runSeed, removedIndices);
     }
@@ -749,7 +756,13 @@ export function Game() {
       if (removedSet.has(card.instanceId)) removedIndices.push(idx);
     });
     if (level3Draft.mode === "continuity") {
-      appendContinuityChapterSession(nextState.levelId, nextState.runSeed, removedIndices, nextState.calendarStartYear);
+      const snapshot: import("../logic/runCode").ContinuitySnapshot = {
+        resources: level3Draft.resources,
+        warOfDevolutionAttacked: level3Draft.warOfDevolutionAttacked,
+        nantesPolicyCarryover: level3Draft.nantesPolicyCarryover,
+        carryoverCards: level3Draft.carryoverCards,
+      };
+      appendContinuityChapterSession(nextState.levelId, nextState.runSeed, removedIndices, nextState.calendarStartYear, snapshot);
     } else {
       startStandaloneSession(nextState.levelId, nextState.runSeed, removedIndices);
     }
