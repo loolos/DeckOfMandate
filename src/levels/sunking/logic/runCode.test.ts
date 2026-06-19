@@ -271,8 +271,8 @@ describe("runCode", () => {
         name: "first-to-third continuity",
         session: [
           { level: "firstMandate", mode: "standalone", seed: seed1, removedIndices: [], actions: actions1 },
-          { level: "secondMandate", mode: "continuity", seed: seed2, removedIndices: removedIndices2, actions: actions2, calendarStartYear: state2.calendarStartYear },
-          { level: "thirdMandate", mode: "continuity", seed: seed3, removedIndices: removedIndices3, actions: actions3, calendarStartYear: state3.calendarStartYear },
+          { level: "secondMandate", mode: "continuity", seed: seed2, removedIndices: removedIndices2, actions: actions2, calendarStartYear: state2.calendarStartYear, continuitySnapshot: { resources: baseDraft2.resources, warOfDevolutionAttacked: baseDraft2.warOfDevolutionAttacked, nantesPolicyCarryover: null, carryoverCards: baseDraft2.carryoverCards } },
+          { level: "thirdMandate", mode: "continuity", seed: seed3, removedIndices: removedIndices3, actions: actions3, calendarStartYear: state3.calendarStartYear, continuitySnapshot: { resources: baseDraft3.resources, warOfDevolutionAttacked: baseDraft3.warOfDevolutionAttacked, nantesPolicyCarryover: baseDraft3.nantesPolicyCarryover, carryoverCards: baseDraft3.carryoverCards } },
         ],
         finalState: state3,
       });
@@ -337,6 +337,7 @@ describe("runCode", () => {
         removedIndices,
         actions: recorded2,
         calendarStartYear: state2.calendarStartYear,
+        continuitySnapshot: { resources: baseDraft.resources, warOfDevolutionAttacked: baseDraft.warOfDevolutionAttacked, nantesPolicyCarryover: null, carryoverCards: baseDraft.carryoverCards },
       },
     ];
     expectEquivalent(replaySession(session), state2);

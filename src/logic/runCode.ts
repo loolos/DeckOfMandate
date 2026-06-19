@@ -6,15 +6,20 @@ import {
   createContinuityLevel3Draft,
   type Level2StartDraft,
 } from "../app/levelTransitions";
+import type { Level2ContinuityDraft, Level3ContinuityDraft } from "../types/continuity";
 import { gameReducer, type GameAction } from "../app/gameReducer";
 import { createInitialState } from "../app/initialState";
 import { getChapter2StandaloneDraft, getChapter3StandaloneDraft } from "../data/levelBootstrap";
 import { getLevelDef, getRegisteredLevelIds, isLevelId, type LevelId } from "../data/levels";
 import { EVENT_SLOT_ORDER, type SlotId } from "../levels/types/event";
-import type { GameState } from "../types/game";
+import type { Level2CarryoverCard } from "../types/continuity";
+import type { GameState, NantesPolicyCarryover, Resources } from "../types/game";
 
-/** Magic header bytes identifying a DeckOfMandate run code (binary format, current v3). */
-export const RUN_CODE_MAGIC = [0xdc, 0x03] as const;
+/** Magic header bytes identifying a DeckOfMandate run code (binary format, current v4). */
+export const RUN_CODE_MAGIC = [0xdc, 0x04] as const;
+
+/** v3 header: adds calendarStartYear for continuity runs. */
+const RUN_CODE_MAGIC_V3 = [0xdc, 0x03] as const;
 
 /** v2 header: same as v1 but with UTF-8 level id; continuity calendarStartYear not stored. */
 const RUN_CODE_MAGIC_V2 = [0xdc, 0x02] as const;
@@ -71,6 +76,21 @@ export type RunRecord = {
    * Absent in v1/v2 codes; present in v3+.
    */
   calendarStartYear?: number;
+  /**
+   * Continuity-mode only (v4+): full snapshot of the starting state so Ch2/Ch3 replay is
+   * independent of Ch1 replay accuracy. Includes resources, warOfDevolutionAttacked,
+   * nantesPolicyCarryover (Ch3 only), and the ordered carryover card list.
+   * Absent in v1/v2/v3 codes; present in v4+.
+   */
+  continuitySnapshot?: ContinuitySnapshot;
+};
+
+export type ContinuitySnapshot = {
+  resources: Resources;
+  warOfDevolutionAttacked: boolean;
+  /** null for Ch2; set for Ch3 */
+  nantesPolicyCarryover: NantesPolicyCarryover | null;
+  carryoverCards: readonly Level2CarryoverCard[];
 };
 
 export type SessionRecord = RunRecord[];
@@ -416,11 +436,31 @@ function writeRunRecord(w: ByteWriter, run: RunRecord): void {
       w.pushU8(idx);
     }
   }
-  // v3: continuity runs store calendarStartYear so replay is self-contained.
+  // v3+: continuity runs store calendarStartYear so replay is self-contained.
   if (run.mode === "continuity") {
     const csy = run.calendarStartYear;
     if (csy === undefined) throw new Error("runCode: continuity RunRecord missing calendarStartYear");
     w.pushU16LE(csy);
+    // v4: also store full ContinuitySnapshot so Ch2/Ch3 replay never depends on Ch1 accuracy.
+    const snap = run.continuitySnapshot;
+    if (snap === undefined) throw new Error("runCode: continuity RunRecord missing continuitySnapshot");
+    w.pushU8(snap.resources.funding & 0xff);
+    w.pushU8(snap.resources.treasuryStat & 0xff);
+    w.pushU8(snap.resources.power & 0xff);
+    w.pushU8(snap.resources.legitimacy & 0xff);
+    const npc = snap.nantesPolicyCarryover;
+    const flags =
+      (snap.warOfDevolutionAttacked ? 0x01 : 0x00) |
+      (npc === "tolerance" ? 0x02 : npc === "crackdown" ? 0x04 : 0x00);
+    w.pushU8(flags);
+    w.pushU8(snap.carryoverCards.length & 0xff);
+    for (const card of snap.carryoverCards) {
+      writeUtf8LevelId(w, card.instanceId);
+      writeUtf8LevelId(w, card.templateId);
+      w.pushVarUint(card.inflationDelta);
+      w.pushU8(card.remainingUses === null ? 0xff : Math.min(0xfe, Math.max(0, card.remainingUses)));
+      w.pushU8(card.totalUses === null ? 0xff : Math.min(0xfe, Math.max(0, card.totalUses)));
+    }
   }
   w.pushVarUint(run.actions.length);
   for (const a of run.actions) {
@@ -498,6 +538,76 @@ function readRunRecordV3(r: ByteReader, prevRunFinalState: GameState | null): {
   return { record, finalState: state };
 }
 
+function readRunRecordV4(r: ByteReader): {
+  record: RunRecord;
+  finalState: GameState;
+} {
+  const mode: "standalone" | "continuity" = r.readU8() !== 0 ? "continuity" : "standalone";
+  const level = readUtf8LevelId(r);
+  if (!isLevelId(level)) {
+    throw new Error(`runCode: unknown level id ${level}`);
+  }
+  const seed = r.readU32LE();
+  let removedIndices: number[] = [];
+  if (writesRefitRemovals(level, mode)) {
+    const count = r.readU8();
+    for (let i = 0; i < count; i++) removedIndices.push(r.readU8());
+  }
+
+  let continuitySnapshot: ContinuitySnapshot | undefined;
+  let calendarStartYear: number | undefined;
+  if (mode === "continuity") {
+    if (!writesRefitRemovals(level, mode)) {
+      throw new Error("runCode: continuity mode is only valid for chapter-2 or chapter-3 style levels");
+    }
+    calendarStartYear = r.readU16LE();
+    const funding = r.readU8();
+    const treasuryStat = r.readU8();
+    const power = r.readU8();
+    const legitimacy = r.readU8();
+    const flags = r.readU8();
+    const warOfDevolutionAttacked = (flags & 0x01) !== 0;
+    const npcBits = flags & 0x06;
+    const nantesPolicyCarryover: NantesPolicyCarryover | null =
+      npcBits === 0x02 ? "tolerance" : npcBits === 0x04 ? "crackdown" : null;
+    const cardCount = r.readU8();
+    const carryoverCards: Level2CarryoverCard[] = [];
+    for (let i = 0; i < cardCount; i++) {
+      const instanceId = readUtf8LevelId(r);
+      const templateId = readUtf8LevelId(r) as import("../levels/types/card").CardTemplateId;
+      const inflationDelta = r.readVarUint();
+      const ruByte = r.readU8();
+      const tuByte = r.readU8();
+      const remainingUses = ruByte === 0xff ? null : ruByte;
+      const totalUses = tuByte === 0xff ? null : tuByte;
+      carryoverCards.push({
+        instanceId,
+        templateId,
+        inflationDelta,
+        remainingUses,
+        totalUses,
+      });
+    }
+    continuitySnapshot = {
+      resources: { funding, treasuryStat, power, legitimacy },
+      warOfDevolutionAttacked,
+      nantesPolicyCarryover,
+      carryoverCards,
+    };
+  }
+
+  let state = startStateFor(level, mode, seed, removedIndices, null, calendarStartYear, continuitySnapshot);
+  const actionCount = r.readVarUint();
+  const actions: GameAction[] = [];
+  for (let i = 0; i < actionCount; i++) {
+    const action = readAction(r, state.hand);
+    actions.push(action);
+    state = gameReducer(state, action);
+  }
+  const record: RunRecord = { level, mode, seed, removedIndices, actions, calendarStartYear, continuitySnapshot };
+  return { record, finalState: state };
+}
+
 function readRunRecordV1(r: ByteReader, prevRunFinalState: GameState | null): {
   record: RunRecord;
   finalState: GameState;
@@ -538,9 +648,40 @@ function startStateFor(
   removedIndices: readonly number[],
   prevFinalState: GameState | null,
   calendarStartYear: number | undefined,
+  continuitySnapshot?: ContinuitySnapshot,
 ): GameState {
   if (mode === "continuity") {
-    if (!prevFinalState) throw new Error("runCode: continuity needs prev state");
+    if (continuitySnapshot) {
+      // v4: build draft directly from snapshot, no need for prevFinalState.
+      const snap = continuitySnapshot;
+      if (getLevelDef(level).bootstrap === "chapter3Standalone") {
+        const baseDraft: Level3ContinuityDraft = {
+          mode: "continuity",
+          seed,
+          calendarStartYear: calendarStartYear ?? 0,
+          resources: snap.resources,
+          warOfDevolutionAttacked: snap.warOfDevolutionAttacked,
+          nantesPolicyCarryover: snap.nantesPolicyCarryover,
+          carryoverCards: snap.carryoverCards,
+          removedCarryoverIds: [],
+        };
+        const draft = applyRemovedIndicesToLevel3Draft(baseDraft, removedIndices);
+        return buildLevel3StateFromDraft(draft);
+      }
+      const baseDraft: Level2ContinuityDraft = {
+        mode: "continuity",
+        seed,
+        calendarStartYear: calendarStartYear ?? 0,
+        resources: snap.resources,
+        warOfDevolutionAttacked: snap.warOfDevolutionAttacked,
+        europeAlert: true,
+        carryoverCards: snap.carryoverCards,
+        removedCarryoverIds: [],
+      };
+      const draft: Level2StartDraft = applyRemovedIndices(baseDraft, removedIndices);
+      return buildLevel2StateFromDraft(draft);
+    }
+    if (!prevFinalState) throw new Error("runCode: continuity needs prev state or snapshot");
     if (getLevelDef(level).bootstrap === "chapter3Standalone") {
       const baseDraft = createContinuityLevel3Draft(prevFinalState, seed);
       const draftWithYear =
@@ -598,10 +739,11 @@ export function decodeSession(hex: string): DecodeResult {
   const r = new ByteReader(bytes);
   const m0 = r.readU8();
   const m1 = r.readU8();
-  const v3 = m0 === RUN_CODE_MAGIC[0] && m1 === RUN_CODE_MAGIC[1];
+  const v4 = m0 === RUN_CODE_MAGIC[0] && m1 === RUN_CODE_MAGIC[1];
+  const v3 = m0 === RUN_CODE_MAGIC_V3[0] && m1 === RUN_CODE_MAGIC_V3[1];
   const v2 = m0 === RUN_CODE_MAGIC_V2[0] && m1 === RUN_CODE_MAGIC_V2[1];
   const v1 = m0 === RUN_CODE_MAGIC_V1[0] && m1 === RUN_CODE_MAGIC_V1[1];
-  if (!v1 && !v2 && !v3) {
+  if (!v1 && !v2 && !v3 && !v4) {
     throw new Error("runCode: bad magic / version");
   }
   const runCount = r.readU8();
@@ -611,11 +753,13 @@ export function decodeSession(hex: string): DecodeResult {
   const session: RunRecord[] = [];
   let prevFinal: GameState | null = null;
   for (let i = 0; i < runCount; i++) {
-    const decoded: { record: RunRecord; finalState: GameState } = v3
-      ? readRunRecordV3(r, prevFinal)
-      : v2
-        ? readRunRecordV2(r, prevFinal)
-        : readRunRecordV1(r, prevFinal);
+    const decoded: { record: RunRecord; finalState: GameState } = v4
+      ? readRunRecordV4(r)
+      : v3
+        ? readRunRecordV3(r, prevFinal)
+        : v2
+          ? readRunRecordV2(r, prevFinal)
+          : readRunRecordV1(r, prevFinal);
     session.push(decoded.record);
     prevFinal = decoded.finalState;
   }
@@ -631,7 +775,7 @@ export function replaySession(session: SessionRecord): GameState {
   let prevFinal: GameState | null = null;
   for (const run of session) {
     const removed = writesRefitRemovals(run.level, run.mode) ? run.removedIndices : [];
-    let state = startStateFor(run.level, run.mode, run.seed, removed, prevFinal, run.calendarStartYear);
+    let state = startStateFor(run.level, run.mode, run.seed, removed, prevFinal, run.calendarStartYear, run.continuitySnapshot);
     for (const action of run.actions) {
       state = gameReducer(state, action);
     }
