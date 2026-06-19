@@ -499,9 +499,8 @@ export function Game() {
       setLevelIntroOpen(true);
       return;
     }
-    const next = gameReducer(state, { type: "NEW_GAME" });
-    dispatch({ type: "NEW_GAME" });
-    startStandaloneSession(next.levelId, next.runSeed);
+    dispatchSafe({ type: "NEW_GAME" });
+    startStandaloneSession(pendingStateRef.current.levelId, pendingStateRef.current.runSeed);
   }, [state, startStandaloneSession]);
 
   const loadFromCode = useCallback(
@@ -618,9 +617,8 @@ export function Game() {
       return;
     }
     setPendingLevelTutorial(tutorialOnEntryMenu);
-    const next = gameReducer(state, { type: "NEW_GAME", seed, levelId });
     dispatchSafe({ type: "NEW_GAME", seed, levelId });
-    startStandaloneSession(next.levelId, next.runSeed);
+    startStandaloneSession(pendingStateRef.current.levelId, pendingStateRef.current.runSeed);
     setStartMenuOpen(false);
     setLevelIntroOpen(false);
     setPendingNewRun(null);
