@@ -37,81 +37,128 @@ export const messagesEnSecondMandate = {
   "status.antiFrenchSentiment.name": "Anti-French Sentiment",
   "status.antiFrenchSentiment.emotionLabel": "Sentiment {x}",
   "status.antiFrenchSentiment.detail":
-    "Sentiment {x}: the current number of Anti-French Containment cards in your full library. While this status is active, Peace of Ryswick gains an extra +{n} Funding cost.",
+    "Sentiment {x}: the current number of Anti-French Containment cards in your full library. While Power+Treasury exceeds 20, funding-solve events tied to Europe Alert immediately cost +1, and another +1 for every additional 5 points. While this status is active, Peace of Ryswick also gains an extra +{n} Funding cost.",
   "status.antiFrenchSentiment.history":
-    "After the 1670s, France's military and fiscal expansion convinced rival courts that temporary truces were no longer enough. A broader anti-French consensus emerged, with states increasingly coordinating diplomacy, trade pressure, and military readiness to contain Bourbon influence. Mechanically: once Power+Treasury is high enough, all funding-solve events carrying the Anti-French Alliance tag become more expensive, and this status also adds recurring containment pressure through deck disruption until that combined strength falls back down.",
+    "After the 1670s, France's military and fiscal expansion convinced rival courts that temporary truces were no longer enough. A broader anti-French consensus emerged, with states increasingly coordinating diplomacy, trade pressure, and military readiness to contain Bourbon influence.",
   "event.nymwegenSettlement.name": "Treaties of Nijmegen",
+  "event.nymwegenSettlement.history":
+    "The Treaties of Nijmegen (1678–1679) closed the main phase of the Franco-Dutch War. France confirmed gains in key frontier zones, but the settlement did not restore strategic trust: rival courts kept reading Bourbon expansion as an ongoing threat, and postwar diplomacy continued to harden into balance-of-power containment.",
   "event.nymwegenSettlement.desc":
-    "The Treaties of Nijmegen (1678–1679) closed the main phase of the Franco-Dutch War. France confirmed gains in key frontier zones, but the settlement did not restore strategic trust: rival courts kept reading Bourbon expansion as an ongoing threat, and postwar diplomacy continued to harden into balance-of-power containment. Mechanically, this is a mandatory long-running crisis: pay (Europe Alert progress + 3) Funding to secure the settlement (Power -2, Treasury -1, Legitimacy -1). This does not remove Europe Alert; if ignored, lose 1 Power each year.",
+    "A mandatory long-running crisis: pay (Europe Alert progress + 3) Funding to secure the settlement (Power -2, Treasury -1, Legitimacy -1). This does not remove Europe Alert; if ignored, lose 1 Power each year.",
   "event.revocationNantes.name": "Policy on the Edict of Nantes",
+  "event.revocationNantes.history":
+    "In 1598, Henry IV issued the Edict of Nantes after decades of civil war between Catholics and Protestants. It was not a program of equality, but a political settlement: Catholicism stayed the state religion, while Huguenots kept limited worship rights, legal protections, and a few fortified places for security. By the later seventeenth century, however, the monarchy increasingly linked religious conformity to administrative obedience and dynastic authority. Fiscal strain, frontier war, and confessional policing reinforced each other, and Protestant communities were recast by many officials as a standing internal risk. The 1685 revocation ended that compromise. Large numbers of Huguenots fled to England, the Dutch Republic, Brandenburg, Switzerland, and beyond, carrying capital, technical skills, and commercial networks with them; those who remained often shifted to clandestine worship and underground mutual-aid circles, which kept the conflict alive inside the kingdom.",
   "event.revocationNantes.desc":
-    "In 1598, Henry IV issued the Edict of Nantes after decades of civil war between Catholics and Protestants. It was not a program of equality, but a political settlement: Catholicism stayed the state religion, while Huguenots kept limited worship rights, legal protections, and a few fortified places for security. By the later seventeenth century, however, the monarchy increasingly linked religious conformity to administrative obedience and dynastic authority. Fiscal strain, frontier war, and confessional policing reinforced each other, and Protestant communities were recast by many officials as a standing internal risk. The 1685 revocation ended that compromise. Large numbers of Huguenots fled to England, the Dutch Republic, Brandenburg, Switzerland, and beyond, carrying capital, technical skills, and commercial networks with them; those who remained often shifted to clandestine worship and underground mutual-aid circles, which kept the conflict alive inside the kingdom. Mechanically, this is a Continued event with an unresolved draw penalty: the tolerance route softens immediate confrontation but can reintroduce recurring confessional crises, while the crackdown route grants stronger control tools but forces you to absorb periodic resurgence and longer governance drag.",
+    "A Continued event with an unresolved draw penalty. The tolerance route softens immediate confrontation but can reintroduce recurring confessional crises; the crackdown route grants stronger control tools but forces you to absorb periodic resurgence and longer governance drag.",
   "event.leagueOfAugsburg.name": "League of Augsburg Forms",
+  "event.leagueOfAugsburg.history":
+    "After the 1680s, French expansion along the Rhine and into the Low Countries fed sustained alarm among the neighboring courts. Versailles was not a passive spectator: royal policy leaned on the Chambers of Reunion to fold strategic Rhineland towns (including Strasbourg) into France through juridical fait accompli, backed by garrisons, recalled embassies, pensions, and thinly veiled pressure on Imperial electors and free cities—trying to widen cracks in the Empire's constitution before neighbors could synchronize a response. Confessional hardening after the Edict of Nantes was revoked let Dutch and north-German Protestants read territorial nibbling and religious intimidation as one combined threat. In 1686, princes of the Holy Roman Empire, the Habsburgs, and German states aligned at Augsburg, and over the following years England, the Dutch Republic, and Spain progressively joined the anti-French coordination: the League was a collective answer to that French activism, and it forced Versailles to treat \"breaking the ring\" as a standing bill paid in subsidies, secret diplomacy, and frontier posturing. For Louis XIV this was no longer a passing diplomatic friction: the European balance was hardening into an institutionalized alliance constraint on France.",
   "event.leagueOfAugsburg.desc":
-    "After the 1680s, French expansion along the Rhine and into the Low Countries fed sustained alarm among the neighboring courts. Versailles was not a passive spectator: royal policy leaned on the Chambers of Reunion to fold strategic Rhineland towns (including Strasbourg) into France through juridical fait accompli, backed by garrisons, recalled embassies, pensions, and thinly veiled pressure on Imperial electors and free cities—trying to widen cracks in the Empire's constitution before neighbors could synchronize a response. Confessional hardening after the Edict of Nantes was revoked let Dutch and north-German Protestants read territorial nibbling and religious intimidation as one combined threat. In 1686, princes of the Holy Roman Empire, the Habsburgs, and German states aligned at Augsburg, and over the following years England, the Dutch Republic, and Spain progressively joined the anti-French coordination: the League was a collective answer to that French activism, and it forced Versailles to treat \"breaking the ring\" as a standing bill paid in subsidies, secret diplomacy, and frontier posturing. For Louis XIV this was no longer a passing diplomatic friction: the European balance was hardening into an institutionalized alliance constraint on France. Mechanically, this is a continuous diplomatic pressure tagged Remaining 3 — it must be resolved 3 times in total before it is fully removed. On any turn it is not resolved, you lose 1 Power and 1 Treasury at end of turn (the Remaining counter is not consumed). Each time you pay 2 Funding it counts as one resolve (Intervention cannot substitute): this turn avoids the unresolved penalty, but the event remains next turn until Remaining reaches 0.",
+    "A continuous diplomatic pressure tagged Remaining 3 — it must be resolved 3 times in total before it is fully removed. On any turn it is not resolved, you lose 1 Power and 1 Treasury at end of turn (the Remaining counter is not consumed). Each time you pay 2 Funding it counts as one resolve (Intervention cannot substitute): this turn avoids the unresolved penalty, but the event remains next turn until Remaining reaches 0.",
   "event.nineYearsWar.name": "The Nine Years' War",
+  "event.nineYearsWar.history":
+    "From 1688, the Nine Years' War grew out of the League of Augsburg system into a continent-wide struggle over the European balance of power. Fighting stretched from the Rhineland and the Low Countries to maritime routes and colonial fronts, turning fiscal endurance into the core test of state capacity.",
   "event.nineYearsWar.desc":
-    "From 1688, the Nine Years' War grew out of the League of Augsburg system into a continent-wide struggle over the European balance of power. Fighting stretched from the Rhineland and the Low Countries to maritime routes and colonial fronts, turning fiscal endurance into the core test of state capacity. In game terms, this is a Continued crisis: each turn you must pay a Funding cost tied to Europe Alert (with a fixed surcharge; Intervention cannot be used) to campaign, while delay risks legitimacy setbacks and ongoing fiscal drag.",
+    "A Continued crisis: each turn you must pay a Funding cost tied to Europe Alert (with a fixed surcharge; Intervention cannot be used) to campaign, while delay risks legitimacy setbacks and ongoing fiscal drag.",
   "event.ryswickPeace.name": "Peace of Ryswick",
+  "event.ryswickPeace.history":
+    "The 1697 Peace of Ryswick broadly settled the Nine Years' War: France returned several occupied territories and recognized William III as King of England, in exchange for European acceptance of its Alsatian gains; the exhausted powers won a window to rebuild order and repair their finances.",
   "event.ryswickPeace.desc":
-    "Peace terms can restore order. Invest (Europe Alert progress + 2) Funding to gain Legitimacy +1 and clear Europe Alert. If the Nine Years' War is still active, this solve cost gains an additional +4. While Anti-French Sentiment is active, this cost also gains +2x (x = current Anti-French Containment cards in your full library). Resolving this event also ends the Nine Years' War completely. This event is Continued: if unresolved, Legitimacy -1 each turn.",
+    "Invest (Europe Alert progress + 2) Funding to gain Legitimacy +1 and clear Europe Alert. If the Nine Years' War is still active, this solve cost gains an additional +4. While Anti-French Sentiment is active, this cost also gains +2x (x = current Anti-French Containment cards in your full library). Resolving this event also ends the Nine Years' War completely. This event is Continued: if unresolved, Legitimacy -1 each turn.",
   "event.versaillesExpenditure.name": "Versailles Expenditure",
+  "event.versaillesExpenditure.history":
+    "Pensions, offices, and palace works absorbed an ever-larger share of ordinary revenue as the reign lengthened.",
   "event.versaillesExpenditure.desc":
-    "Pensions, offices, and palace works absorbed an ever-larger share of ordinary revenue as the reign lengthened. Court spending rises again. Pay 3 Funding or use Intervention; if unresolved, lose 2 Treasury.",
+    "Court spending rises again: pay 3 Funding or use Intervention; if unresolved, lose 2 Treasury.",
   "event.nobleResentment.name": "Noble Resentment",
+  "event.nobleResentment.history":
+    "Great families resented lost military clienteles and new fiscal audits that recalled Mazarin's levies.",
   "event.nobleResentment.desc":
-    "Great families resented lost military clienteles and new fiscal audits that recalled Mazarin's levies. Elite resistance grows at court and in the provinces. Pay 2 Funding or Intervention, or lose 1 Power and gain Loss of Authority for 2 turns.",
+    "Elite resistance grows at court and in the provinces: pay 2 Funding or Intervention, or lose 1 Power and gain Loss of Authority for 2 turns.",
   "event.provincialNoncompliance.name": "Provincial Noncompliance",
+  "event.provincialNoncompliance.history":
+    "Parlements and provincial estates still tested intendants against charters and tax immunities, slowing central policy on the ground.",
   "event.provincialNoncompliance.desc":
-    "Parlements and provincial estates still tested intendants against charters and tax immunities. Local officials stall implementation. Pay 2 Funding or suffer draw -2 next year, then draw -1 in each of the next two years.",
+    "Local officials stall implementation: pay 2 Funding or suffer draw -2 next year, then draw -1 in each of the next two years.",
   "event.risingGrainPrices.name": "Rising Grain Prices",
+  "event.risingGrainPrices.history":
+    "Bad harvests and royal grain politics could turn bread riots into political crises within days.",
   "event.risingGrainPrices.desc":
-    "Bad harvests and royal grain politics could turn bread riots into political crises within days. Food pressure drives unrest. Pay 3 Funding or use Intervention; if unresolved, lose 2 Legitimacy.",
+    "Food pressure drives unrest: pay 3 Funding or use Intervention; if unresolved, lose 2 Legitimacy.",
   "event.taxResistance.name": "Tax Resistance",
+  "event.taxResistance.history":
+    "Taille revisions and aides sharpened pushback from towns and privileged orders alike, spreading tax revolt from villages to urban guilds.",
   "event.taxResistance.desc":
-    "Taille revisions and aides sharpened pushback from towns and privileged orders alike. Communities and elites resist levies. Pay 2 Funding or use Intervention; if unresolved, lose 1 Treasury and 1 Legitimacy.",
+    "Communities and elites resist levies: pay 2 Funding or use Intervention; if unresolved, lose 1 Treasury and 1 Legitimacy.",
   "event.frontierGarrisons.name": "Frontier Garrisons",
+  "event.frontierGarrisons.history":
+    "Rhine and Low Countries garrisons soaked budgets during the league wars of the 1680s–1690s, making fortresses a standing drain on the treasury.",
   "event.frontierGarrisons.desc":
-    "Rhine and Low Countries garrisons soaked budgets during the league wars of the 1680s–1690s. Border garrisons consume revenue. Pay 3 Funding or use Royal Intervention / Diplomatic Intervention; any successful resolve lowers Europe Alert progress by 1 while alert is active. If ignored, lose 1 Treasury and take a draw penalty next year.",
+    "Border garrisons consume revenue: pay 3 Funding or use Royal Intervention / Diplomatic Intervention; any successful resolve lowers Europe Alert progress by 1 while alert is active. If ignored, lose 1 Treasury and take a draw penalty next year.",
   "event.tradeDisruption.name": "Trade Disruption",
+  "event.tradeDisruption.history":
+    "Anglo-Dutch convoy war and privateering squeezed receipts from Atlantic routes and raised risk for every merchant sailing.",
   "event.tradeDisruption.desc":
-    "Anglo-Dutch convoy war and privateering squeezed receipts from Atlantic routes. Sea lanes and convoy risk cut into policy bandwidth. Pay 1 Funding or take a -2 draw modifier next year.",
+    "Sea lanes and convoy risk cut into policy bandwidth: pay 1 Funding or take a -2 draw modifier next year.",
   "event.embargoCoalition.name": "Embargo Coalition",
+  "event.embargoCoalition.history":
+    "Grand Alliance navies tightened maritime cordons as coalition war became routine, turning blockade and tariff coordination into standard containment tools.",
   "event.embargoCoalition.desc":
-    "Grand Alliance navies tightened maritime cordons as coalition war became routine. Maritime restrictions tighten around French commerce. Pay floor(Treasury/8)+1 Funding or use Royal Intervention / Diplomatic Intervention; any successful resolve lowers Europe Alert progress by 1 while alert is active. If ignored, lose 1 Treasury and suffer a draw penalty next year.",
+    "Maritime restrictions tighten around French commerce: pay floor(Treasury/8)+1 Funding or use Royal Intervention / Diplomatic Intervention; any successful resolve lowers Europe Alert progress by 1 while alert is active. If ignored, lose 1 Treasury and suffer a draw penalty next year.",
   "event.mercenaryRaiders.name": "Mercenary Raiders",
+  "event.mercenaryRaiders.history":
+    "Between campaigns, free companies and paid raiders still haunted frontier marches, testing royal control over the borderlands.",
   "event.mercenaryRaiders.desc":
-    "Between campaigns, free companies and paid raiders still haunted frontier marches. Paid border raiders disrupt local order and crown authority. Pay 2 Funding, or lose 1 Power and 1 Legitimacy.",
+    "Paid border raiders disrupt local order and crown authority: pay 2 Funding, or lose 1 Power and 1 Legitimacy.",
   "event.localWar.name": "Local War",
+  "event.localWar.history":
+    "Between major treaties France still fought limited flare-ups on the Rhine, in northern Italy, and around the Low Countries: sieges, raids, and supply-line contests that drained finances, dragged at military-administrative rhythm, and served rival powers as probes of French resolve.",
   "event.localWar.desc":
-    "Between major treaties France still fought limited flare-ups on the Rhine and in Italy. Europe Alert fuels a regional conflict. You may also resolve this event with Intervention. If not using Intervention, choose Attack (pay a Funding cost tied to Europe Alert, then apply Anti-French Sentiment surcharge if active; equal 1/3 outcomes: Local Victory [Power +1, Legitimacy +1], Stalemate [no change], Minor Loss [Power -1]) or Appease (no Funding cost, Legitimacy -1). This is a Continued event: if left unresolved, next turn's Funding income is reduced by 2 (not below 0).",
+    "You may resolve this event with Intervention. If not using Intervention, choose Attack (pay a Funding cost tied to Europe Alert, then apply Anti-French Sentiment surcharge if active; equal 1/3 outcomes: Local Victory [Power +1, Legitimacy +1], Stalemate [no change], Minor Loss [Power -1]) or Appease (no Funding cost, Legitimacy -1). This is a Continued event: if left unresolved, next turn's Funding income is reduced by 2 (not below 0).",
   "event.courtScandal.name": "Court Scandal",
+  "event.courtScandal.history":
+    "Bedroom politics and ministerial feuds at Versailles routinely spilled into broadsheet rumor, shaking the prestige of the court.",
   "event.courtScandal.desc":
-    "Bedroom politics and ministerial feuds at Versailles routinely spilled into broadsheet rumor. Factional intrigue weakens authority. Pay 3 Funding to contain it; if unresolved, Legitimacy -1 and all Royal-tag cards are blocked next turn.",
+    "Factional intrigue weakens authority: pay 3 Funding to contain it; if unresolved, Legitimacy -1 and all Royal-tag cards are blocked next turn.",
   "event.militaryPrestige.name": "Military Prestige",
+  "event.militaryPrestige.history":
+    "Sieges like Namur were staged as proof of Bourbon arms and divine kingship; battlefield glory was the most direct source of authority.",
   "event.militaryPrestige.desc":
-    "Sieges like Namur were staged as proof of Bourbon arms and divine kingship. A chance to convert battlefield image into authority. Invest 2 Funding for Legitimacy +1.",
+    "A chance to convert battlefield image into authority: invest 2 Funding for Legitimacy +1.",
   "event.commercialExpansion.name": "Commercial Expansion",
+  "event.commercialExpansion.history":
+    "In late 17th-century France, Colbertist policy still backed manufactures, shipping, and chartered companies, but wartime strain and tariff friction kept expansion costly.",
   "event.commercialExpansion.desc":
-    "In late 17th-century France, Colbertist policy still backed manufactures, shipping, and chartered companies, but wartime strain and tariff friction kept expansion costly. Merchants request support for growth. Invest a Funding cost tied to Treasury for Treasury +1.",
+    "Merchants request support for growth: invest a Funding cost tied to Treasury for Treasury +1.",
   "event.sunKingPilgrimage.name": "Sun King's Pilgrimage",
+  "event.sunKingPilgrimage.history":
+    "In the later reign, Louis XIV used royal progresses, religious festivals, and shrine ritual to display the legitimacy of a \"Most Christian King\": bishops, town councils, and old nobles publicly renewed loyalty along the route, and frontier or newly annexed provinces were folded back into the Versailles narrative. Such political ceremony traveled with relief distributions, policing, court hospitality, and symbolic works—buying obedience and prestige in the short run while settling extra expenses into long-term debt.",
   "event.sunKingPilgrimage.desc":
-    "A carefully staged royal pilgrimage through major shrines and provincial capitals can turn court ritual into public loyalty. Invest a Funding cost tied to (Power + Legitimacy) for Legitimacy +2, Power +1, and add 1 Fiscal Burden to your draw pile.",
+    "Invest a Funding cost tied to (Power + Legitimacy) for Legitimacy +2, Power +1, and add 1 Fiscal Burden to your draw pile.",
   "event.talentedAdministrator.name": "Talented Administrator",
-  "event.talentedAdministrator.desc":
-    "Colbert's successors promoted secretaries and intendants who could bypass venal deadwood. A capable official can be elevated. Invest 2 Funding for Power +1.",
+  "event.talentedAdministrator.history":
+    "Colbert's successors promoted secretaries and intendants who could bypass venal deadwood.",
+  "event.talentedAdministrator.desc": "A capable official can be elevated: invest 2 Funding for Power +1.",
   "event.warWeariness.name": "War Weariness",
+  "event.warWeariness.history":
+    "By the Nine Years' War even victory parades could not mask fiscal strain at home.",
   "event.warWeariness.desc":
-    "By the Nine Years' War even victory parades could not mask fiscal strain at home. Long conflict exhausts support. Pay 3 Funding or Intervention, or lose 1 Legitimacy and gain Loss of Authority for 2 turns.",
+    "Long conflict exhausts support: pay 3 Funding or Intervention, or lose 1 Legitimacy and gain Loss of Authority for 2 turns.",
   "event.jesuitPatronage.name": "Jesuit Patronage",
+  "event.jesuitPatronage.history":
+    "Since 1675, Jesuit confessors like Père de La Chaise have bound the Society to the Crown; elite collèges train royal-aligned elites and counter Jansenism, but stir Gallican and Jansenist unease.",
   "event.jesuitPatronage.desc":
-    "Since 1675, Jesuit confessors like Père de La Chaise have bound the Society to the Crown; elite collèges train royal-aligned elites and counter Jansenism, but stir Gallican and Jansenist unease. Pay 2 Funding: add to your draw pile 2 Jesuit Collège cards (cost 2, Remaining 1/1, Legitimacy +1; on play, resolve one unresolved Jansenist Controversy) and 1 Religious Tension card. No penalty if ignored.",
+    "Pay 2 Funding: add to your draw pile 2 Jesuit Collège cards (cost 2, Remaining 1/1, Legitimacy +1; on play, resolve one unresolved Jansenist Controversy) and 1 Religious Conflict card. No penalty if ignored.",
   "event.expansionRemembered.name": "Expansion Remembered",
+  "event.expansionRemembered.history":
+    "Rival chancelleries still priced in French gains from the Devolution and Dutch wars; earlier expansion still casts a long shadow.",
   "event.expansionRemembered.desc":
-    "Rival chancelleries still priced in French gains from the Devolution and Dutch wars. Earlier expansion still casts a long shadow. Pay 2 Funding to contain it and add 2 Fiscal Burden cards to your deck; if unresolved, 3 Fiscal Burden cards are added.",
+    "Pay 2 Funding to contain it and add 2 Fiscal Burden cards to your deck; if unresolved, 3 Fiscal Burden cards are added.",
   "event.cautiousCrown.name": "Cautious Crown",
+  "event.cautiousCrown.history":
+    "Diplomatic breathing room after Nijmegen did not dissolve strategic mistrust abroad.",
   "event.cautiousCrown.desc":
-    "Diplomatic breathing room after Nijmegen did not dissolve strategic mistrust abroad. Earlier restraint buys only limited room. Pay 2 Funding to resolve it; if ignored, lose 1 Power each year.",
+    "Earlier restraint buys only limited room: pay 2 Funding to resolve it; if ignored, lose 1 Power each year.",
   "card.grainRelief.name": "Grain Relief Program",
   "card.grainRelief.background":
     "In late 17th-century France, failed harvests could send bread prices soaring and turn urban and rural subsistence unrest into open disorder within days; the crown answered with emergency grain purchases, reserve releases, and parish-municipal relief networks. Grain relief buys short-term social calm and policy breathing room, but shifts heavier fiscal strain into the years ahead.",
@@ -120,7 +167,7 @@ export const messagesEnSecondMandate = {
   "card.taxRebalance.name": "Tax Rebalancing",
   "card.taxRebalance.background":
     "By the late reign of Louis XIV, war finance, standing armies, and fortress maintenance forced repeated taille reassessments and tighter collection of indirect taxes through tax farmers and provincial administrators. Tax rebalancing can keep cash moving through the royal system in the short run, but it also hardens local resistance from privileged orders, urban corporations, and rural communities that bear the heavier burden.",
-  "card.taxRebalance.desc": "Treasury +1. Gain Draw Penalty (draw -1) for 2 turns.",
+  "card.taxRebalance.desc": "Treasury +1. Gain Draw Fatigue (draw -1) for 2 turns.",
   "card.diplomaticCongress.name": "Diplomatic Congress",
   "card.diplomaticCongress.background":
     "After Nijmegen, Europe entered a tense peace in which ambassadors, not armies, carried the first blows. French envoys worked through congress halls, resident missions, and side channels to slow coalition coordination before it hardened into war planning. Guarantees, protocol disputes, and sequencing talks over garrisons or trade could each buy a season of strategic breathing room. A diplomatic congress was never pure peace; it was a controlled contest over time, alignment, and who set the agenda.",

@@ -542,6 +542,14 @@
   flex: 1;
 }
 
+/* Historical-background flavor line shown above the mechanics text on event cards. */
+.eventHistory {
+  font-size: 0.8rem;
+  line-height: 1.4;
+  color: color-mix(in srgb, var(--muted) 92%, var(--text));
+  font-style: italic;
+}
+
 .compactSummary {
   margin-top: 0.05rem;
   font-size: 0.76rem;

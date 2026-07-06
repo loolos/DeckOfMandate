@@ -152,8 +152,15 @@ export function StatusBar({
           : row.templateId === "huguenotContainment"
             ? t("ui.statusHuguenotRemaining", { n: row.turnsRemaining })
             : t("ui.statusTurnsRemaining", { n: row.turnsRemaining });
-      const history = tmpl.historyKey ? t(tmpl.historyKey) : "";
+      const history = t(tmpl.historyKey);
       const effectDetail = statusDetail(row, t);
+      // Authored mechanics copy (`descKey`) covers statuses whose numeric delta is 0 and the
+      // real effect lives in engine hooks; the two special-cased statuses below keep their
+      // parameterized detail rendering instead.
+      const mechanics =
+        row.templateId === "huguenotContainment" || row.templateId === "antiFrenchSentiment"
+          ? effectDetail
+          : t(tmpl.descKey) || effectDetail;
       const antiFrenchEmotionLabel =
         row.templateId === "antiFrenchSentiment"
           ? t("status.antiFrenchSentiment.emotionLabel", { x: antiFrenchSentimentEmotion ?? 0 })
@@ -171,7 +178,7 @@ export function StatusBar({
             ? `${effectDetail} ${history} ${t(containmentHintKey)}`.trim()
             : row.templateId === "antiFrenchSentiment"
               ? `${t("status.antiFrenchSentiment.detail", { x: antiFrenchSentimentEmotion ?? 0, n: (antiFrenchSentimentEmotion ?? 0) * 2 })} ${history}`.trim()
-            : `${effectDetail} ${history}`.trim(),
+            : `${mechanics} ${history}`.trim(),
       });
     }
     return next;
