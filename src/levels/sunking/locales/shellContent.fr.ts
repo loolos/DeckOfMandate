@@ -1,6 +1,14 @@
 /** Texte shell partagé campagne Roi-Soleil (extrait de fr.core.ts). Clés sans override FR explicite reprennent l’anglais (comme l’ancien spread). Fusionné via sunkingLocales. */
 export const sunkingShellContentFr = {
   "app.subtitle": "Le Soleil levant",
+  "resource.treasuryStat.history":
+    "Les recettes de la France d'Ancien Régime reposaient sur la taille, les gabelles et les fermes fiscales ; la finance colbertiste tentait d'élargir l'assiette par manufactures royales et commerce à privilège. Le Trésor reflète la santé de cette machine à recettes.",
+  "resource.funding.history":
+    "Le Financement est l'argent que la couronne peut réellement dépenser chaque année : les recettes n'atteignent la cour qu'après le passage des fermiers, intendants et bureaux de compte.",
+  "resource.power.history":
+    "Le Pouvoir mesure la portée des ordres royaux dans la chaîne militaro-administrative : des édits de Versailles aux intendants et garnisons, plus il est concentré, plus la cour peut mener d'affaires de front.",
+  "resource.legitimacy.history":
+    "La Légitimité est le degré d'acceptation du règne à l'époque du droit divin : cérémonial, caution de l'Église et récits de victoire la rechargent ; quand peuple et élites cessent d'y croire, le régime vacille.",
   "ui.solve": "Résoudre ({cost})",
   "ui.solveCompact": "Résoudre {cost}",
   "ui.solveCrackdown": "Résoudre (Intervention)",
@@ -150,6 +158,24 @@ export const sunkingShellContentFr = {
   "log.info.cardTag.successionContest": "[Tour {turn}] Note de tag « Conflit successoral » : cette carte relève de la guerre de Succession d'Espagne. Le tag n'ajoute aucun effet de jeu direct et sert de repère historique sur la rivalité bourbonno-habsbourgeoise autour de la légitimité dynastique, de la diplomatie et du financement de la guerre.",
   "log.info.cardTag.opponent": "[Turn {turn}] Tag note “Opponent”: this card is used only by the Habsburg opponent phase, not from your hand.",
   "log.info.cardUse.remainingUses": "[Tour {turn}] Note de tag « Restant » : cette carte a X/Y utilisations restantes ; chaque activation en consomme 1 et elle quitte le cycle à 0.",
+  "log.info.cardTag.royal.history":
+    "Contexte : sous l'Ancien Régime, le roi conservait des instruments extraordinaires — édits, justice retenue et troupes de la maison — qui contournaient la négociation ordinaire ; ultime réserve de contrainte de la couronne, et la plus coûteuse pour son crédit.",
+  "log.info.cardTag.temp.history":
+    "Contexte : la gestion de crise de la cour reposait souvent sur commissions, envoyés et faveurs ponctuelles, dissous sitôt l'urgence passée.",
+  "log.info.cardTag.extra.history":
+    "Contexte : offices et missions improvisés dans les années de crise étaient généralement supprimés avec la situation, sans entrer dans l'établissement permanent.",
+  "log.info.cardTag.inflation.history":
+    "Contexte : plus la machine royale grossissait, plus rituels, gages et intérêts coûtaient à entretenir — l'administration française du XVIIe siècle renchérissait à chaque pas de centralisation.",
+  "log.info.cardTag.defiance.history":
+    "Contexte : la « réserve de conscience » janséniste permettait à clercs et magistrats d'invoquer la conscience pour refuser les ordres royaux, une résistance que la couronne ne pouvait simplement écraser.",
+  "log.info.cardTag.consume.history":
+    "Contexte : bien des outils politiques étaient à usage unique — chartes, grâces ou levées spéciales dont le capital politique s'épuisait à l'emploi.",
+  "log.info.cardTag.successionContest.history":
+    "Contexte : pendant la guerre de Succession d'Espagne (1701–1714), Bourbons et Habsbourg s'affrontèrent longuement sur la légitimité, la diplomatie et le financement des théâtres de guerre.",
+  "log.info.cardTag.opponent.history":
+    "Contexte : la pression du camp habsbourgeois venait de l'action coordonnée de la cour de Vienne, de la diète d'Empire et des alliés de la Grande Alliance.",
+  "log.info.cardUse.remainingUses.history":
+    "Contexte : les mesures extraordinaires avaient un quota politique limité — chaque usage entamait le crédit de la cour et la tolérance des provinces.",
   "log.info.cardUse.depleted.crackdownPenalty": "[Tour {turn}] Intervention royale : usages épuisés, carte retirée du cycle ; la capacité de contrainte de la cour recule (Pouvoir -1).",
   "log.info.cardUse.depleted.fundingPenalty": "[Tour {turn}] Prélèvement royal : usages épuisés, carte retirée du cycle ; les canaux d'extraction d'urgence s'épuisent (Trésor -1).",
   "log.info.cardUse.depleted.diplomaticIntervention": "[Tour {turn}] Intervention diplomatique atteint 0/2 et est retirée du cycle (sans pénalité).",

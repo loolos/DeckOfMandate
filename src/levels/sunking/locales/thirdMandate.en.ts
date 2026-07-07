@@ -36,14 +36,20 @@ export const messagesEnThirdMandate = {
     "At the floor of the track, initiative is fully gone: Charles VI of the House of Habsburg is carried onto the Spanish throne, and Viennese legal framing fuses with Grand Alliance security logic into the accepted postwar script. Versailles can still object, but it no longer writes who inherits the crown.\n\nFrance is then forced into a two-front squeeze—northern pressure along the Low Countries and Rhine, southern constraint through Italy and Iberia. This defeat is more than territorial loss; it is the loss of authorship over Europe’s political settlement.",
 
   "event.successionCrisis.name": "Succession Crisis",
+  "event.successionCrisis.history":
+    "When Charles II died without issue, the Spanish Habsburg line ended and Europe had to retie a composite monarchy—Castilian-Aragonese cores, Italian satellites, the Low Countries, American silver—into a successor regime. The Bourbon court claimed the Spanish inheritance for Philip of Anjou through decades of marriage alliances and the late king’s will, offering European courts assurances against immediate union with France. The Habsburg party in Vienna and the empire argued from dynasty, partition precedents, and women’s claims in older branches: a Bourbon king in Madrid looked like French primacy over half of Italy, the western Mediterranean, and America, and they mobilized coalition guarantees and Protestant allies as well as Catholic rhetoric. Both sides drafted jurists and genealogists to prove rightful succession; the paper war framed the coalition war to come.",
   "event.successionCrisis.desc":
-    "When Charles II died without issue, the Spanish Habsburg line ended and Europe had to retie a composite monarchy—Castilian-Aragonese cores, Italian satellites, the Low Countries, American silver—into a successor regime. The Bourbon court claimed the Spanish inheritance for Philip of Anjou through decades of marriage alliances and the late king’s will, offering European courts assurances against immediate union with France. The Habsburg party in Vienna and the empire argued from dynasty, partition precedents, and women’s claims in older branches: a Bourbon king in Madrid looked like French primacy over half of Italy, the western Mediterranean, and America, and they mobilized coalition guarantees and Protestant allies as well as Catholic rhetoric. Both sides drafted jurists and genealogists to prove rightful succession; the paper war framed the coalition war to come.\n\nAfter this event is handled, the Habsburg opponent appears (or intensifies if already present) and opponent budget increases by +1. Pay 3 Funding to assert a stronger Bourbon claim (+1 on the succession track), or refuse and start at −1. If ignored until year-end, counts as refusal (−1), the Habsburg opponent still appears, and opponent budget increases by +1.",
+    "After this event is handled, the Habsburg opponent appears (or intensifies if already present) and opponent budget increases by +1. Pay 3 Funding to assert a stronger Bourbon claim (+1 on the succession track), or refuse and start at −1. If ignored until year-end, counts as refusal (−1), the Habsburg opponent still appears, and opponent budget increases by +1.",
   "event.opponentHabsburg.name": "Opponent: House of Habsburg",
+  "event.opponentHabsburg.history":
+    "At the core of this rival camp stands the Austrian House of Habsburg in Vienna: holders of the Imperial crown, with Joseph I as King of the Romans carrying the dynasty’s claim that they too are rightful heirs to the Spanish throne. An old Central European dynasty, the Habsburgs rose in Austria and then, through marriage after marriage, gathered crowns in Spain, the Netherlands, and Italy; when Charles II died without issue, the Vienna branch demanded that the family inheritance return to Habsburg hands rather than pass whole to the Bourbons.",
   "event.opponentHabsburg.desc":
-    "Vienna, Madrid’s jurists, and Catholic allies weave a counter-claim to Bourbon pretensions: dynastic law, imperial prestige, and the fear of a French ring around Habsburg lands. This row tracks the diplomatic-military pressure their camp brings to bear each year, represented as a hand of hostile moves.",
+    "This row tracks the diplomatic-military pressure the Habsburg camp brings to bear each year, represented as a hand of hostile moves.",
   "event.utrechtTreaty.name": "Utrecht negotiations",
+  "event.utrechtTreaty.history":
+    "From 1713, the Grand Alliance powers negotiated with France and Bourbon Spain at Utrecht, Rastatt, Baden, and The Hague to close the War of the Spanish Succession. The settlement kept Philip V in Madrid while ruling out a formal union of the French and Spanish crowns; exchanges of territories, trade rights, and colonial clauses rewrote the map into something the courts could defend.",
   "event.utrechtTreaty.desc":
-    "Context: from 1713, the Grand Alliance powers negotiated with France and Bourbon Spain at Utrecht, Rastatt, Baden, and The Hague to close the War of the Spanish Succession. The settlement kept Philip V in Madrid while ruling out a formal union of the French and Spanish crowns; exchanges of territories, trade rights, and colonial clauses rewrote the map into something the courts could defend.\n\nUse the button below to end the war of succession now (treaty closure). When hostilities end, your current succession track fixes the epilogue tier; the Habsburg opponent phase still runs until resolved. If you delay signing, each year-end consumes one round of the negotiation window (6 when this first appears; {n} round(s) remain). At 0, the war ends automatically with the same outcome as signing now.",
+    "Use the button below to end the war of succession now (treaty closure). When hostilities end, your current succession track fixes the epilogue tier; the Habsburg opponent phase still runs until resolved. If you delay signing, each year-end consumes one round of the negotiation window (6 when this first appears; {n} round(s) remain). At 0, the war ends automatically with the same outcome as signing now.",
   "log.utrechtPeaceSettlement.title":
     "Turn {turn}: {event} — hostilities end by treaty; succession contest closed. The track freezes and no longer moves from events or cards.",
   "log.utrechtPeaceSettlement.body.bourbon":
@@ -53,72 +59,93 @@ export const messagesEnThirdMandate = {
   "log.utrechtPeaceSettlement.body.habsburg":
     "At signing the pressure gauge sits low (track ≤ −5): succession is rewritten in favor of Charles VI of the House of Habsburg, and the treaties prioritize Vienna and Grand Alliance security over any French claim. France is squeezed on two fronts—pressed from the north through the Low Countries and Rhine line, and constrained from the south through Italy and the Iberian theater; under that geometry, territorial, commercial, and military clauses tighten into a broader containment framework.",
   "event.bavarianCourtRealignment.name": "Bavarian defection probe",
+  "event.bavarianCourtRealignment.history":
+    "In the War of the Spanish Succession, Elector Maximilian II Emanuel of Bavaria backed Louis XIV and Philip V; as prince-bishop elector of Cologne and a voice in the Imperial electoral college, he carved political room for the Bourbon-Spanish claim while the Grand Alliance and Vienna mixed subsidies, Imperial bans, and post-battle bargaining (especially after Blenheim) to pull Munich toward the coalition. Along the Rhine-south-German corridor, court signals and council minutes over garrisons and supply could flip meaning for the wider fight over the Spanish inheritance.",
   "event.bavarianCourtRealignment.desc":
-    "Context: in the War of the Spanish Succession, Elector Maximilian II Emanuel of Bavaria backed Louis XIV and Philip V; as prince-bishop elector of Cologne and a voice in the Imperial electoral college, he carved political room for the Bourbon-Spanish claim while the Grand Alliance and Vienna mixed subsidies, Imperial bans, and post-battle bargaining (especially after Blenheim) to pull Munich toward the coalition. Along the Rhine-south-German corridor, court signals and council minutes over garrisons and supply could flip meaning for the wider fight over the Spanish inheritance.\n\nPay **max(2, floor(succession track / 2))** Funding (rounded down; matches `getEventSolveFundingAmount`): succession track +1; if the Habsburg opponent is active and the war has not ended, they immediately draw 1 card from their deck into hand. If ignored: succession track −1.",
+    "Pay max(2, half the succession track, rounded down) Funding: succession track +1; if the Habsburg opponent is active and the war has not ended, they immediately draw 1 card from their deck into hand. If ignored: succession track −1.",
   "event.portugueseTariffNegotiation.name": "Portuguese tariff negotiation",
+  "event.portugueseTariffNegotiation.history":
+    "During the War of the Spanish Succession, Portugal realigned with the maritime coalition; the 1703 Methuen Treaty traded favorable wine duties in Portugal for English cloth access, folding Lisbon’s revenue politics into the Grand Alliance’s wider war economy and imperial supply lines against France.",
   "event.portugueseTariffNegotiation.desc":
-    "Context: during the War of the Spanish Succession, Portugal realigned with the maritime coalition; the 1703 Methuen Treaty traded favorable wine duties in Portugal for English cloth access, folding Lisbon’s revenue politics into the Grand Alliance’s wider war economy and imperial supply lines against France.\n\nPay **ceil(Treasury / 4)** Funding (rounded up; `fundingTreasuryQuarterCeil` in data): then **Treasury +1** and **succession track +1**. If ignored: no penalty.",
+    "Pay a Funding cost of a quarter of Treasury (rounded up): then Treasury +1 and succession track +1. If ignored: no penalty.",
   "event.imperialElectorsMood.name": "Imperial electors’ mood",
+  "event.imperialElectorsMood.history":
+    "As the War of the Spanish Succession widened, the Holy Roman Empire’s prince-electors and Reichstag politics were central, not marginal. The three Rhenish ecclesiastical electors and their secular peers had to balance French armies on their roads and imperial fiscal demands against subsidies and guarantees from Vienna, Berlin, and Dresden. After Joseph I’s accession as King of the Romans, diets, mandates, and the tone of electoral debate shaped how far imperial law could publicly contest Bourbon Philip in Madrid—and how much diplomatic room France retained. Versailles worked within imperial forms to soften electors’ hostility while shielding its Spanish claimant; any swing in their mood squeezes both the succession narrative abroad and your legitimacy at home.",
   "event.imperialElectorsMood.desc":
-    "Context: as the War of the Spanish Succession widened, the Holy Roman Empire’s prince-electors and Reichstag politics were central, not marginal. The three Rhenish ecclesiastical electors and their secular peers had to balance French armies on their roads and imperial fiscal demands against subsidies and guarantees from Vienna, Berlin, and Dresden. After Joseph I’s accession as King of the Romans, diets, mandates, and the tone of electoral debate shaped how far imperial law could publicly contest Bourbon Philip in Madrid—and how much diplomatic room France retained. Versailles worked within imperial forms to soften electors’ hostility while shielding its Spanish claimant; any swing in their mood squeezes both the succession narrative abroad and your legitimacy at home.\n\nPay **max(2, floor(succession track / 2))** Funding (rounded down; matches `getEventSolveFundingAmount`) or use Intervention: if the Habsburg opponent is active and the war has not ended, they immediately draw 1 card from their deck into hand. If ignored: succession track −1 and Legitimacy −1.",
+    "Pay max(2, half the succession track, rounded down) Funding or use Intervention: if the Habsburg opponent is active and the war has not ended, they immediately draw 1 card from their deck into hand. If ignored: succession track −1 and Legitimacy −1.",
   "event.localizedSuccessionWar.name": "Localized war of succession",
+  "event.localizedSuccessionWar.history":
+    "The Spanish succession was not one decisive clash but many overlapping campaigns—Flanders and the Rhine, Italy and Spain’s peripheries—where both coalitions traded sieges, raids, and winter quarters year after year, wearing each other down in battle after battle.",
   "event.localizedSuccessionWar.desc":
-    "Context: the Spanish succession was not one decisive clash but many overlapping campaigns—Flanders and the Rhine, Italy and Spain’s peripheries—where both coalitions traded sieges, raids, and winter quarters year after year. Paying for another round of commitment does not pick the outcome: courts and armies simply absorb the dice of a local flare-up.\n\nPay 4 Funding: roll the succession track by −1, 0, +1, or +2, each with 25% chance; or clear it directly with Royal Intervention / Diplomatic Intervention. If ignored until year-end: succession track −1.",
+    "Pay 4 Funding: roll the succession track by −1, 0, +1, or +2, each with 25% chance; or clear it directly with Royal Intervention / Diplomatic Intervention. If ignored until year-end: succession track −1.",
   "event.dualFrontCrisis.name": "Pressed on two fronts",
+  "event.dualFrontCrisis.history":
+    "Around 1708, French arms suffered sharp reverses in both the Spanish Netherlands and the Italian theater—coalition pressure on Flanders and Piedmont made simultaneous offensives costly, and logistics between theatres stretched Versailles’ war machine. Diplomats and generals debated whether to ease pressure on one front to shore up the other, or to double down and accept a harsher fiscal and legitimacy bill at home.",
   "event.dualFrontCrisis.desc":
-    "Context (1708): French arms suffered sharp reverses in both the Spanish Netherlands and the Italian theater—coalition pressure on Flanders and Piedmont made simultaneous offensives costly, and logistics between theatres stretched Versailles’ war machine. Diplomats and generals debated whether to ease pressure on one front to shore up the other, or to double down and accept a harsher fiscal and legitimacy bill at home.\n\nEither path increases the Habsburg camp’s effective pressure (+1 opponent budget). **Temporarily concede:** succession track −3. **Expand the war:** succession track +1, Legitimacy −1, add 3 Fiscal Burden cards to your draw pile at random positions. If ignored until year-end: succession track −3 and opponent budget +1.",
+    "Either path increases the Habsburg camp’s effective pressure (+1 opponent budget). Temporarily concede: succession track −3. Expand the war: succession track +1, Legitimacy −1, add 3 Fiscal Burden cards to your draw pile at random positions. If ignored until year-end: succession track −3 and opponent budget +1.",
   "event.louisXivLegacy1715.name": "Legacy of Louis XIV",
+  "event.louisXivLegacy1715.history":
+    "In 1715 Louis XIV is dead, and the longest, brightest, and heaviest performance of Bourbon kingship closes with the Sun King's final sunset. The court does not inherit peace; it inherits momentum and debt. Versailles still has institutions, ritual command, and administrative reach, but all three now run on exhausted credit, fragile elite trust, and a child-king framework that invites factional testing. In this transition year, everyone watches who truly speaks for the crown: regents, ministers, provincial power brokers, and military households all recalibrate at once. You are not choosing whether pressure exists—you are choosing how to carry it, and how much new fiscal burden you are willing to lock into the next years.",
   "event.louisXivLegacy1715.desc":
-    "Context (1715): Louis XIV is dead, and the longest, brightest, and heaviest performance of Bourbon kingship closes with the Sun King's final sunset. The court does not inherit peace; it inherits momentum and debt. Versailles still has institutions, ritual command, and administrative reach, but all three now run on exhausted credit, fragile elite trust, and a child-king framework that invites factional testing. In this transition year, everyone watches who truly speaks for the crown: regents, ministers, provincial power brokers, and military households all recalibrate at once. You are not choosing whether pressure exists—you are choosing how to carry it, and how much new fiscal burden you are willing to lock into the next years.\n\n**Regency custody:** Power −1, Legitimacy −1, add 1 Fiscal Burden to your draw pile. **Young king direct rule:** Power +1, add 3 Fiscal Burden, and gain Minor Regency Doubt for 10 turns. If left unresolved at year-end, it resolves as Regency custody.",
+    "Regency custody: Power −1, Legitimacy −1, add 1 Fiscal Burden to your draw pile. Young king direct rule: Power +1, add 3 Fiscal Burden, and gain Minor Regency Doubt for 10 turns. If left unresolved at year-end, it resolves as Regency custody.",
 
   "card.bourbonMarriageProclamation.name": "Bourbon marriage proclamation",
-  "card.bourbonMarriageProclamation.background": "Dynastic narrative",
+  "card.bourbonMarriageProclamation.background":
+    "Bourbon marriage ties and succession law are staged as public narrative—asserting Anjou’s right to Madrid abroad and at home while squeezing Habsburg room in the court of opinion.",
   "card.bourbonMarriageProclamation.desc":
-    "Context: Bourbon marriage ties and succession law are staged as public narrative—asserting Anjou’s right to Madrid abroad and at home while squeezing Habsburg room in the court of opinion.\n\nPower +1. Succession track +1. Gain **Dynastic alliance composure** for 2 turns (`handCapDelta` **+1**): **total hand cap +1** (can exceed the default 12), and the same bonus **counts toward year-end retention** together with Legitimacy via `retentionCapacity`.",
+    "Power +1. Succession track +1. Gain Dynastic alliance composure for 2 turns: total hand cap +1 (can exceed the default 12), and the same +1 counts toward year-end retention together with Legitimacy.",
   "card.grandAllianceInfiltrationDiplomacy.name": "Grand Alliance infiltration diplomacy",
-  "card.grandAllianceInfiltrationDiplomacy.background": "Divide the coalition",
+  "card.grandAllianceInfiltrationDiplomacy.background":
+    "During the War of the Spanish Succession, London, The Hague, and Vienna shared an anti-French frame but split over maritime trade priorities, Rhine and Italian theater commitments, and postwar partition. Versailles worked neutral courts, offshore trading credit, and resident intelligence networks to widen those seams into a real contest of who pays first, marches first, and concedes first: the maritime powers watched shipping and tariff clauses, the imperial princes watched Rhine and Italian buffers, and Savoy and Portugal weighed subsidies against security pledges. Infiltration diplomacy exploits that misalignment to briefly blunt the coalition’s ability to press the Madrid succession in unison.",
   "card.grandAllianceInfiltrationDiplomacy.desc":
-    "Context: neutral courts, trading posts, and intelligence channels raise the coordination tax on anti-French leagues so the Grand Alliance cannot always funnel full diplomatic pressure onto the Spanish succession.\n\nSuccession track +1. Draw 1. This turn, opponent phase costs −1 (min 0).",
+    "Succession track +1. Draw 1. This turn, opponent phase costs −1 (min 0).",
   "card.italianTheaterTroopRedeploy.name": "Italian theater troop redeploy",
-  "card.italianTheaterTroopRedeploy.background": "Alpine front",
-  "card.italianTheaterTroopRedeploy.desc":
-    "Context: maneuver and battle around Savoy, Milan, and Naples turn field gains into hard support for Bourbon claims—but the treasury keeps paying for the Alpine–Po corridor.\n\nSuccession track +2. Add 1 Fiscal Burden to your deck.",
+  "card.italianTheaterTroopRedeploy.background":
+    "Maneuver and battle around Savoy, Milan, and Naples turn field gains into hard support for Bourbon claims—but the treasury keeps paying for the Alpine–Po corridor.",
+  "card.italianTheaterTroopRedeploy.desc": "Succession track +2. Add 1 Fiscal Burden to your deck.",
   "card.usurpationEdict.name": "Usurpation edict",
-  "card.usurpationEdict.background": "Protocol broken",
+  "card.usurpationEdict.background":
+    "Forcing recognition through extra-legal succession language can seize narrative momentum in the short run, but it burns dynastic credibility at home and abroad.",
   "card.usurpationEdict.desc":
-    "Context: forcing recognition through extra-legal succession language can seize narrative momentum in the short run, but it burns dynastic credibility at home and abroad.\n\nSuccession track +2. Next turn’s draw phase: draw 1 extra card. Gain Legitimacy Crisis for 2 turns (end of each turn: Legitimacy -1).",
+    "Succession track +2. Next turn’s draw phase: draw 1 extra card. Gain Legitimacy Crisis for 2 turns (end of each turn: Legitimacy -1).",
   "card.habsburgImperialLegitimacyNote.name": "Imperial legitimacy note",
-  "card.habsburgImperialLegitimacyNote.background": "Legalist pressure",
+  "card.habsburgImperialLegitimacyNote.background":
+    "Vienna’s imperial jurists invoke imperial privilege and the old Habsburg ties to the Spanish crown, issuing notes that question Bourbon succession and keep the legal offensive rolling through Europe’s courts.",
   "card.habsburgImperialLegitimacyNote.desc":
     "Opponent cost 1. Immediate: succession track −1, then Habsburg immediately draws 1 card from its deck.",
   "card.habsburgImperialLegitimacyNote.opponentHistory":
     "Chancelleries invoke imperial privilege and old Habsburg ties to Spain, and keep legal pressure rolling. In play: succession track −1, and Habsburg immediately draws 1 card.",
   "card.habsburgLowCountriesAgitation.name": "Low Countries agitation",
-  "card.habsburgLowCountriesAgitation.background": "Northwestern front",
+  "card.habsburgLowCountriesAgitation.background":
+    "Garrisons, guilds, and towns of the Spanish Netherlands stir repeatedly under Grand Alliance prompting, turning border unrest into a coalition lever against France.",
   "card.habsburgLowCountriesAgitation.desc":
     "Opponent cost 2. Immediate: succession track −1, Power −1, and Legitimacy −1.",
   "card.habsburgLowCountriesAgitation.opponentHistory":
     "Unrest in the Spanish Netherlands turns border pressure into a coalition lever. In play: succession track −1, Power −1, and Legitimacy −1.",
   "card.habsburgGrandAllianceLevy.name": "Grand Alliance levy",
-  "card.habsburgGrandAllianceLevy.background": "Coalition war chest",
+  "card.habsburgGrandAllianceLevy.background":
+    "Coalition subsidies, Dutch loans, and imperial taxation keep the alliance war machine running, pressing the bill of attrition onto Versailles year after year.",
   "card.habsburgGrandAllianceLevy.desc":
     "Opponent cost 2. Immediate: succession track −2; add 1 Fiscal Burden to your draw pile at a random position.",
   "card.habsburgGrandAllianceLevy.opponentHistory":
     "Coalition subsidies, Dutch loans, and imperial taxation keep pressure constant. In play: succession track −2 and add 1 Fiscal Burden to your deck.",
   "card.habsburgImperialCustomsDelay.name": "Imperial customs delay",
-  "card.habsburgImperialCustomsDelay.background": "Harbor friction",
+  "card.habsburgImperialCustomsDelay.background":
+    "Imperial ports and Rhine toll stations use inspections, seizures, and temporary tariff posts to slow French commerce, choking royal cash flow without a major battle.",
   "card.habsburgImperialCustomsDelay.desc":
     "Opponent cost 2. Immediate: Treasury −1 and add 1 Fiscal Burden to your draw pile at a random position; delayed: next year draw attempts −1 (still at least 1).",
   "card.habsburgImperialCustomsDelay.opponentHistory":
     "Port-side customs delays choke cash flow without a major battle. In play: Treasury −1, add 1 Fiscal Burden, and next year draw attempts −1 (min 1).",
   "card.habsburgAngloDutchMaritimeInterdiction.name": "Anglo-Dutch deferrals",
-  "card.habsburgAngloDutchMaritimeInterdiction.background": "Maritime seizures & delayed bills",
+  "card.habsburgAngloDutchMaritimeInterdiction.background":
+    "Letters of marque, stricter convoys, and seizures along the Channel and North Sea routes delay bills of exchange and remittances, thinning the cash position available to Versailles’ war chest.",
   "card.habsburgAngloDutchMaritimeInterdiction.desc":
     "Opponent cost 1. Immediate: Power −1; delayed: next year your treasury-to-funding income is reduced by 1 (not below 0), and draw attempts −1 (still at least 1).",
   "card.habsburgAngloDutchMaritimeInterdiction.opponentHistory":
     "Letters of marque, stricter convoys, and seizures along the Channel and North Sea routes delay bills of exchange and tighten liquidity for Versailles’ war chest. In play: Power −1, next year’s funding from treasury −1 (min 0 total), and draw attempts −1 (min 1).",
   "card.habsburgRhineMagazineEmbargo.name": "Magazine embargo",
-  "card.habsburgRhineMagazineEmbargo.background": "Corridor squeeze",
+  "card.habsburgRhineMagazineEmbargo.background":
+    "Imperial and allied circles slow French contracts for powder, fodder, and river barges—extra tolls, seizures, and “temporary” bans on magazines feeding the Rhine front squeeze both frontline supply and rear-area credit.",
   "card.habsburgRhineMagazineEmbargo.desc":
     "Opponent cost 1. Immediate: succession track −1; delayed: next year your treasury-to-funding income is reduced by 1 (not below 0).",
   "card.habsburgRhineMagazineEmbargo.opponentHistory":

@@ -72,14 +72,21 @@ export function ResourceBar({ resources }: { resources: Resources }) {
           {resourceLabel(FUNDING_ROW.key, FUNDING_ROW.labelKey)}
         </div>
         <div className={styles.fundingHighlightValue}>{resources.funding}</div>
-        <div className={styles.fundingHighlightHint}>{t(FUNDING_ROW.hintKey)}</div>
+        <div
+          className={styles.fundingHighlightHint}
+          title={t(`${FUNDING_ROW.labelKey}.history` as MessageKey)}
+        >
+          {t(FUNDING_ROW.hintKey)}
+        </div>
       </div>
       <div className={styles.resourceSecondary}>
         {OTHER_RESOURCE_ROWS.map((it) => (
           <div key={it.key} className={styles.stat}>
             <div className={styles.statLabel}>{resourceLabel(it.key, it.labelKey)}</div>
             <div className={styles.statValue}>{resources[it.key]}</div>
-            <div className={styles.statHint}>{it.key === "power" ? powerHint : t(it.hintKey)}</div>
+            <div className={styles.statHint} title={t(`${it.labelKey}.history` as MessageKey)}>
+              {it.key === "power" ? powerHint : t(it.hintKey)}
+            </div>
           </div>
         ))}
       </div>

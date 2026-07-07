@@ -56,6 +56,7 @@ export function EventPanel({
         const tmpl = getEventTemplate(ev.templateId);
         if (opponentBoardTemplateId && ev.templateId === opponentBoardTemplateId) {
           const title = eventLabelWithIcon(tmpl.id, t(tmpl.titleKey as MessageKey));
+          const history = t(tmpl.historyKey as MessageKey);
           const intro = t(tmpl.descriptionKey as MessageKey);
           const showDetails = !isSmallScreen || expandedSlot === slot;
           const toggleCard = () => setExpandedSlot((prev) => (prev === slot ? null : slot));
@@ -94,6 +95,7 @@ export function EventPanel({
               ) : null}
               {!isSmallScreen || showDetails ? (
                 <>
+                  <div className={styles.eventHistory}>{history}</div>
                   <div className={styles.eventBody}>{intro}</div>
                   <div className={styles.opponentHabsburgSections}>
                     <div>
@@ -174,6 +176,7 @@ export function EventPanel({
           );
         }
         const title = eventLabelWithIcon(tmpl.id, t(tmpl.titleKey as MessageKey));
+        const history = t(tmpl.historyKey as MessageKey);
         const desc =
           tmpl.id === "utrechtTreaty"
             ? t(tmpl.descriptionKey as MessageKey, { n: state.utrechtTreatyCountdown ?? 6 })
@@ -504,6 +507,7 @@ export function EventPanel({
                     </button>
                   ) : null}
                 </div>
+                <div className={styles.eventHistory}>{history}</div>
                 <div className={styles.eventBody}>{descWithHandledMark}</div>
               </>
             ) : null}

@@ -5,6 +5,7 @@ import { cardLabelWithIcon, eventLabelWithIcon, resourceLabelWithIcon } from "..
 import { formatEffectLogLine } from "../logic/formatEffectLog";
 import type { MessageKey } from "../locales";
 import { useI18n } from "../locales";
+import { messagesEn } from "../locales/en";
 import { useSmallScreen } from "../logic/useSmallScreen";
 import type { ActionLogEntry } from "../types/game";
 import type { CardTemplateId } from "../levels/types/card";
@@ -449,19 +450,16 @@ function renderEntry(e: ActionLogEntry, t: (key: MessageKey, vars?: Record<strin
       );
     }
     case "info": {
-      if (e.infoKey === "huguenotContainmentCleared") {
-        return (
-          <>
-            <div className={styles.actionLogHead}>
-              {t("log.info.huguenotContainmentCleared" as MessageKey, { turn: e.turn })}
-            </div>
-            <div className={styles.actionLogSubMuted}>
-              {t("log.info.huguenotContainmentCleared.history" as MessageKey)}
-            </div>
-          </>
-        );
-      }
-      return <div className={styles.actionLogHead}>{t(`log.info.${e.infoKey}` as MessageKey, { turn: e.turn })}</div>;
+      // Info entries with a `.history` companion key (tag notes, containment epilogue, …)
+      // render historical background as a muted second line under the mechanics note.
+      const historyKey = `log.info.${e.infoKey}.history`;
+      const hasHistory = Object.prototype.hasOwnProperty.call(messagesEn, historyKey);
+      return (
+        <>
+          <div className={styles.actionLogHead}>{t(`log.info.${e.infoKey}` as MessageKey, { turn: e.turn })}</div>
+          {hasHistory ? <div className={styles.actionLogSubMuted}>{t(historyKey as MessageKey)}</div> : null}
+        </>
+      );
     }
     case "opponentHabsburgPlay": {
       const cardLine = e.playedTemplateIds

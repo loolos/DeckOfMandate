@@ -36,14 +36,20 @@ export const messagesFrThirdMandate = {
     "Au plancher de la piste, l’initiative disparaît complètement : Charles VI de la maison de Habsbourg est porté sur le trône d’Espagne, et la lecture juridique viennoise se fond avec la logique sécuritaire de la Grande Alliance pour former le récit accepté de l’après-guerre. Versailles peut encore protester, mais n’écrit plus l’héritier légitime de la couronne.\n\nLa France se retrouve alors prise en étau sur deux fronts : pression au nord sur l’axe Pays-Bas-Rhin, contrainte au sud par l’Italie et l’Ibérie. Cette défaite n’est pas seulement territoriale ; c’est aussi la perte du pouvoir d’écrire l’ordre politique européen.",
 
   "event.successionCrisis.name": "Crise de succession",
+  "event.successionCrisis.history":
+    "À la mort de Charles II sans héritier, la ligne des Habsbourg espagnols s’éteint : l’Europe doit rattacher ce grand composite — cœurs castillan et aragonais, satellites italiens, Pays-Bas méridionaux, argent américain — à un successeur crédible. Versailles revendique l’héritage pour Philippe d’Anjou en invoquant des alliances de longue date et le testament du défunt, tout en promettant aux cours voisines de ne pas fusionner immédiatement les deux monarchies. Vienne et la branche autrichienne des Habsbourg plaident droits féminins, partages anciens et crainte d’une mainmise française sur la Méditerranée occidentale et les routes coloniales ; elles charrient alliances impériales et coalitions maritimes. Chaque camp aligne juristes et généalogistes pour prouver son titre, et la guerre de papier préfigure la guerre de cabinets et de campagnes.",
   "event.successionCrisis.desc":
-    "À la mort de Charles II sans héritier, la ligne des Habsbourg espagnols s’éteint : l’Europe doit rattacher ce grand composite — cœurs castillan et aragonais, satellites italiens, Pays-Bas méridionaux, argent américain — à un successeur crédible. Versailles revendique l’héritage pour Philippe d’Anjou en invoquant des alliances de longue date et le testament du défunt, tout en promettant aux cours voisines de ne pas fusionner immédiatement les deux monarchies. Vienne et la branche autrichienne des Habsbourg plaident droits féminins, partages anciens et crainte d’une mainmise française sur la Méditerranée occidentale et les routes coloniales ; elles charrient alliances impériales et coalitions maritimes. Chaque camp aligne juristes et généalogistes pour prouver son titre, et la guerre de papier préfigure la guerre de cabinets et de campagnes.\n\nUne fois cet événement traité, l’adversaire Habsbourg apparaît (ou intensifie sa pression s’il est déjà présent) et le budget adverse augmente de +1. Payez 3 Fonds pour affirmer une prétention Bourbon plus forte (+1 sur la piste), ou refusez et commencez à −1. Si ignoré jusqu’en fin d’année, compte comme refus (−1), l’adversaire Habsbourg apparaît quand même et le budget adverse augmente de +1.",
+    "Une fois cet événement traité, l’adversaire Habsbourg apparaît (ou intensifie sa pression s’il est déjà présent) et le budget adverse augmente de +1. Payez 3 Fonds pour affirmer une prétention Bourbon plus forte (+1 sur la piste), ou refusez et commencez à −1. Si ignoré jusqu’en fin d’année, compte comme refus (−1), l’adversaire Habsbourg apparaît quand même et le budget adverse augmente de +1.",
   "event.opponentHabsburg.name": "Adversaire : camp des Habsbourg",
+  "event.opponentHabsburg.history":
+    "Au cœur de ce camp rival se tient la maison d’Autriche à Vienne : détentrice de la couronne impériale, avec Joseph Ier, roi des Romains, pour porter la prétention dynastique — eux aussi se disent héritiers légitimes du trône d’Espagne. Vieille dynastie d’Europe centrale, les Habsbourg ont grandi en Autriche puis, mariage après mariage, rassemblé des couronnes en Espagne, aux Pays-Bas et en Italie ; à la mort de Charles II sans descendance, la branche viennoise exige que « l’héritage familial revienne aux Habsbourg » plutôt que de passer entier aux Bourbons.",
   "event.opponentHabsburg.desc":
-    "De Vienne aux juristes de Madrid, catholiques convaincus et pragmatiques du Saint-Empire tissent une contre-légitimité aux prétentions bourbonnes—textes, prestige impérial et peur d’un encadrement français. Cette ligne représente chaque année la pression diplomatique et militaire de ce camp ; la main adverse symbolise les moyens de pression encore disponibles.",
+    "Cette ligne représente chaque année la pression diplomatique et militaire de ce camp ; la main adverse symbolise les moyens de pression encore disponibles.",
   "event.utrechtTreaty.name": "Négociations d’Utrecht",
+  "event.utrechtTreaty.history":
+    "À partir de 1713, la Grande Alliance négocie avec la France et l’Espagne bourbonienne à Utrecht, Rastatt, Baden et La Haye pour clore la guerre de Succession d’Espagne. Les traités maintiennent Philippe V à Madrid tout en excluant une union dynastique franco-espagnole ; échanges territoriaux, droits commerciaux et clauses coloniales redessinent une carte que les cours peuvent défendre.",
   "event.utrechtTreaty.desc":
-    "Contexte : à partir de 1713, la Grande Alliance négocie avec la France et l’Espagne bourbonienne à Utrecht, Rastatt, Baden et La Haye pour clore la guerre de Succession d’Espagne. Les traités maintiennent Philippe V à Madrid tout en excluant une union dynastique franco-espagnole ; échanges territoriaux, droits commerciaux et clauses coloniales redessinent une carte que les cours peuvent défendre.\n\nLe bouton ci-dessous met fin immédiatement à la guerre de succession (clôture par traités). À la signature, la piste de succession actuelle fige l’épilogue ; la ligne adverse continue jusqu’à résolution. Si vous ne signez pas tout de suite, chaque fin d’année consomme un tour de la fenêtre de négociation (6 au premier affichage ; il en reste {n}). À 0, la guerre prend fin automatiquement comme si vous signiez maintenant.",
+    "Le bouton ci-dessous met fin immédiatement à la guerre de succession (clôture par traités). À la signature, la piste de succession actuelle fige l’épilogue ; la ligne adverse continue jusqu’à résolution. Si vous ne signez pas tout de suite, chaque fin d’année consomme un tour de la fenêtre de négociation (6 au premier affichage ; il en reste {n}). À 0, la guerre prend fin automatiquement comme si vous signiez maintenant.",
   "log.utrechtPeaceSettlement.title":
     "Tour {turn} : {event} — fin des hostilités par traités ; la crise de succession est close. La piste est gelée et ne bouge plus via événements ni cartes.",
   "log.utrechtPeaceSettlement.body.bourbon":
@@ -53,71 +59,92 @@ export const messagesFrThirdMandate = {
   "log.utrechtPeaceSettlement.body.habsburg":
     "À la signature, la pression est au plus bas (piste ≤ −5) : la succession est réécrite au profit de Charles VI de la maison de Habsbourg, et les traités privilégient la sécurité de Vienne et de la Grande Alliance plutôt qu’une lecture favorable à la France. La France se retrouve prise en étau sur deux fronts — au nord par l’axe Pays-Bas-Rhin, au sud par l’Italie et le théâtre ibérique ; dans cette configuration, les clauses territoriales, commerciales et militaires se durcissent en un dispositif de contention plus large.",
   "event.bavarianCourtRealignment.name": "Sondage de basculement bavarois",
+  "event.bavarianCourtRealignment.history":
+    "Pendant la guerre de Succession d’Espagne, l’électeur Maximilien II Emmanuel de Bavière s’allie à Louis XIV et à Philippe V ; prince-évêque électeur de Cologne et acteur du collège des princes-électeurs, il ménage un espace politique aux prétentions bourbonno-espagnoles, tandis que la Grande Alliance et Vienne combinent subsides, sanctions impériales et marchandages d’après-bataille (surtout après Blenheim) pour tenter de ramener Munich vers la coalition. Le long de l’axe Rhin–sud de l’Empire, un hochement de tête à la cour ou en conseil de guerre peut faire pencher la balance sur l’héritage espagnol.",
   "event.bavarianCourtRealignment.desc":
-    "Contexte : pendant la guerre de Succession d’Espagne, l’électeur Maximilien II Emmanuel de Bavière s’allie à Louis XIV et à Philippe V ; prince-évêque électeur de Cologne et acteur du collège des princes-électeurs, il ménage un espace politique aux prétentions bourbonno-espagnoles, tandis que la Grande Alliance et Vienne combinent subsides, sanctions impériales et marchandages d’après-bataille (surtout après Blenheim) pour tenter de ramener Munich vers la coalition. Le long de l’axe Rhin–sud de l’Empire, un hochement de tête à la cour ou en conseil de guerre peut faire pencher la balance sur l’héritage espagnol.\n\nPayez **max(2, ⌊piste / 2⌋)** Fonds (partie entière inférieure ; aligné sur `getEventSolveFundingAmount`) : piste +1 ; si la ligne habsbourgeoise est active et que la guerre n’est pas finie, l’adversaire pioche immédiatement 1 carte depuis son deck. Si ignoré : piste −1.",
+    "Payez max(2, ⌊piste / 2⌋) Fonds (partie entière inférieure) : piste +1 ; si la ligne habsbourgeoise est active et que la guerre n’est pas finie, l’adversaire pioche immédiatement 1 carte depuis son deck. Si ignoré : piste −1.",
   "event.portugueseTariffNegotiation.name": "Négociation tarifaire portugaise",
+  "event.portugueseTariffNegotiation.history":
+    "Pendant la guerre de Succession d’Espagne, le Portugal se réaligne sur la ligue maritime ; les traités de Methuen (1703) échangent des droits favorables sur les vins contre l’accès des lainages anglais, intégrant la politique douanière lisboète à l’économie de guerre de la Grande Alliance.",
   "event.portugueseTariffNegotiation.desc":
-    "Contexte : pendant la guerre de Succession d’Espagne, le Portugal se réaligne sur la ligue maritime ; les traités de Methuen (1703) échangent des droits favorables sur les vins contre l’accès des lainages anglais, intégrant la politique douanière lisboète à l’économie de guerre de la Grande Alliance.\n\nPayez **⌈Trésor / 4⌉** Fonds (arrondi supérieur ; gabarit `fundingTreasuryQuarterCeil`) : puis **Trésor +1** et **piste +1**. Si ignoré : aucune pénalité.",
+    "Payez ⌈Trésor / 4⌉ Fonds (arrondi supérieur) : puis Trésor +1 et piste +1. Si ignoré : aucune pénalité.",
   "event.imperialElectorsMood.name": "Humeur des princes-électeurs",
+  "event.imperialElectorsMood.history":
+    "À mesure que la guerre de Succession d’Espagne s’élargit, le collège des princes-électeurs et la politique du Reichstag comptent au centre du jeu, non en marge. Les trois électeurs ecclésiastiques rhénans et leurs pairs laïcs doivent jongler entre passages de troupes, charges impériales et promesses financières venues de Vienne, Berlin ou Dresde. Après l’élection de Joseph Ier comme roi des Romains, les diètes, mandats et tonalité des débats électoraux fixent jusqu’où le droit impérial peut contester publiquement Philippe Bourbon à Madrid — et quelle marge diplomatique reste à Versailles. La France cherche, dans les formes de l’Empire, à adoucir l’hostilité des électeurs tout en protégeant son prétendant espagnol ; le moindre basculement de leur humeur serre à la fois le récit de succession et votre légitimité intérieure.",
   "event.imperialElectorsMood.desc":
-    "Contexte : à mesure que la guerre de Succession d’Espagne s’élargit, le collège des princes-électeurs et la politique du Reichstag comptent au centre du jeu, non en marge. Les trois électeurs ecclésiastiques rhénans et leurs pairs laïcs doivent jongler entre passages de troupes, charges impériales et promesses financières venues de Vienne, Berlin ou Dresde. Après l’élection de Joseph Ier comme roi des Romains, les diètes, mandats et tonalité des débats électoraux fixent jusqu’où le droit impérial peut contester publiquement Philippe Bourbon à Madrid — et quelle marge diplomatique reste à Versailles. La France cherche, dans les formes de l’Empire, à adoucir l’hostilité des électeurs tout en protégeant son prétendant espagnol ; le moindre basculement de leur humeur serre à la fois le récit de succession et votre légitimité intérieure.\n\nPayez **max(2, ⌊piste / 2⌋)** Fonds (partie entière inférieure ; aligné sur `getEventSolveFundingAmount`) ou Intervention : si la ligne habsbourgeoise est active et que la guerre n’est pas finie, l’adversaire pioche immédiatement 1 carte depuis son deck. Si ignoré : piste −1 et Légitimité −1.",
+    "Payez max(2, ⌊piste / 2⌋) Fonds (partie entière inférieure) ou Intervention : si la ligne habsbourgeoise est active et que la guerre n’est pas finie, l’adversaire pioche immédiatement 1 carte depuis son deck. Si ignoré : piste −1 et Légitimité −1.",
   "event.localizedSuccessionWar.name": "Combats localisés de succession",
+  "event.localizedSuccessionWar.history":
+    "La succession espagnole ne se joue pas en une bataille décisive, mais en campagnes qui se superposent — Flandre et Rhin, Italie et confins ibériques — où sièges, incursions et quartiers d’hiver se répètent d’année en année, usant les deux coalitions.",
   "event.localizedSuccessionWar.desc":
-    "Contexte : la succession espagnole ne se joue pas en une bataille décisive, mais en campagnes qui se superposent — Flandre et Rhin, Italie et confins ibériques — où sièges, incursions et quartiers d’hiver se répètent d’année en année. Payer un nouveau cycle d’engagement ne choisit pas l’issue : cours et armées subissent le sort d’un embrasement local.\n\nPayez 4 Fonds : la piste de succession varie de −1, 0, +1 ou +2, chaque issue à 25 % ; ou levez directement l’événement via Intervention royale / Intervention diplomatique. Si ignoré en fin d’année : piste −1.",
+    "Payez 4 Fonds : la piste de succession varie de −1, 0, +1 ou +2, chaque issue à 25 % ; ou levez directement l’événement via Intervention royale / Intervention diplomatique. Si ignoré en fin d’année : piste −1.",
   "event.dualFrontCrisis.name": "Pris entre deux feux",
+  "event.dualFrontCrisis.history":
+    "Vers 1708 : revers français sensibles à la fois dans les Pays-Bas espagnols et en théâtre italien — la Grande Alliance serre les rangs en Flandre et au Piémont, et les lignes de ravitaillement tendent à rompre quand l’effort doit se partager entre deux fronts. À Versailles, on hésite entre relâcher la pression sur un front pour consolider l’autre, ou monter en charge au prix d’un surcoût fiscal et politique.",
   "event.dualFrontCrisis.desc":
-    "Contexte (1708) : revers français sensibles à la fois dans les Pays-Bas espagnols et en théâtre italien — la Grande Alliance serre les rangs en Flandre et au Piémont, et les lignes de ravitaillement tendent à rompre quand l’effort doit se partager entre deux fronts. À Versailles, on hésite entre relâcher la pression sur un front pour consolider l’autre, ou monter en charge au prix d’un surcoût fiscal et politique.\n\nQuel que soit le choix, la pression effective du camp habsbourgeois augmente (budget adverse +1). **Céder provisoirement :** piste −3. **Élargir la guerre :** piste +1, légitimité −1, +3 Charges fiscales mélangées au deck. Si ignoré en fin d’année : piste −3 et budget adverse +1.",
+    "Quel que soit le choix, la pression effective du camp habsbourgeois augmente (budget adverse +1). Céder provisoirement : piste −3. Élargir la guerre : piste +1, légitimité −1, +3 Fardeaux fiscaux mélangés au deck. Si ignoré en fin d’année : piste −3 et budget adverse +1.",
   "event.louisXivLegacy1715.name": "L’héritage de Louis XIV",
+  "event.louisXivLegacy1715.history":
+    "En 1715, Louis XIV meurt, et la plus longue mise en scène de la monarchie absolue s’achève dans la fatigue des comptes et des cérémonies ; le couchant du Roi-Soleil ne met pas fin à la pression, il en change la forme. Versailles conserve des rouages administratifs puissants, mais usés par des décennies de guerre et de dépense de cour ; autour d’un roi mineur, ministres, régents, officiers et grands corps testent la vraie chaîne d’autorité. L’État peut encore gouverner, mais chaque décision est prise sous dette politique et financière. Cette année charnière vous force à choisir non pas entre stabilité et coût, mais entre deux manières de payer le prix de la transition.",
   "event.louisXivLegacy1715.desc":
-    "Contexte (1715) : Louis XIV meurt, et la plus longue mise en scène de la monarchie absolue s’achève dans la fatigue des comptes et des cérémonies ; le couchant du Roi-Soleil ne met pas fin à la pression, il en change la forme. Versailles conserve des rouages administratifs puissants, mais usés par des décennies de guerre et de dépense de cour ; autour d’un roi mineur, ministres, régents, officiers et grands corps testent la vraie chaîne d’autorité. L’État peut encore gouverner, mais chaque décision est prise sous dette politique et financière. Cette année charnière vous force à choisir non pas entre stabilité et coût, mais entre deux manières de payer le prix de la transition.\n\n**Régence de garde :** Pouvoir −1, Légitimité −1, ajoutez 1 Fardeau fiscal à votre pioche. **Gouvernement direct du jeune roi :** Pouvoir +1, ajoutez 3 Fardeaux fiscaux, et gagnez le statut Doute de minorité pendant 10 tours. Si non résolu en fin d’année, l’événement est traité comme Régence de garde.",
+    "Régence de garde : Pouvoir −1, Légitimité −1, ajoutez 1 Fardeau fiscal à votre pioche. Gouvernement direct du jeune roi : Pouvoir +1, ajoutez 3 Fardeaux fiscaux, et gagnez le statut Doute de minorité pendant 10 tours. Si non résolu en fin d’année, l’événement est traité comme Régence de garde.",
 
   "card.bourbonMarriageProclamation.name": "Proclamation du mariage bourbon",
-  "card.bourbonMarriageProclamation.background": "Narratif dynastique",
+  "card.bourbonMarriageProclamation.background":
+    "Alliances bourbonniennes et droit successoral servent de récit public pour affirmer la légitimité de la branche d’Anjou sur le trône espagnol et réduire l’espace de manœuvre habsbourgeois.",
   "card.bourbonMarriageProclamation.desc":
-    "Contexte : alliances bourbonniennes et droit successoral servent de récit public pour affirmer la légitimité de la branche d’Anjou sur le trône espagnol et réduire l’espace de manœuvre habsbourgeois.\n\nPouvoir +1. Piste de succession +1. Gagnez **Sérénité de l’alliance dynastique** pendant 2 tours (`handCapDelta` **+1**) : **plafond total de main +1** (peut dépasser 12 par défaut), et le même bonus **entre dans la limite de conservation** avec la Légitimité via `retentionCapacity`.",
+    "Pouvoir +1. Piste de succession +1. Gagnez Sérénité de l’alliance dynastique pendant 2 tours : plafond total de main +1 (peut dépasser 12 par défaut), et le même bonus entre dans la limite de conservation de fin d’année avec la Légitimité.",
   "card.grandAllianceInfiltrationDiplomacy.name": "Diplomatie d’infiltration de la Grande Alliance",
-  "card.grandAllianceInfiltrationDiplomacy.background": "Diviser la coalition",
+  "card.grandAllianceInfiltrationDiplomacy.background":
+    "Pendant la guerre de Succession d’Espagne, Londres, La Haye et Vienne partagent un cadre anti-français mais divergent sur les priorités maritimes, les engagements rhénans et italiens et le partage d’après-guerre. Versailles travaille cours neutres, crédits de comptoirs et réseaux de renseignement pour élargir ces coutures en un vrai débat de « qui paie, qui marche, qui cède en premier » : les puissances maritimes surveillent clauses de navigation et de tarifs, les princes d’Empire regardent les tampons rhénans et italiens, la Savoie et le Portugal pèsent subsides contre garanties. Cette diplomatie d’infiltration exploite le désalignement pour émousser brièvement la capacité de la coalition à presser d’une seule voix la succession de Madrid.",
   "card.grandAllianceInfiltrationDiplomacy.desc":
-    "Contexte : cours neutres, comptoirs et réseaux d’information alourdissent la coordination des ligues anti-françaises, si bien que la Grande Alliance ne transpose pas systématiquement toute sa pression sur la succession espagnole.\n\nPiste de succession +1. Pioche 1. Ce tour, coût adverse −1 (min 0).",
+    "Piste de succession +1. Pioche 1. Ce tour, coût adverse −1 (min 0).",
   "card.italianTheaterTroopRedeploy.name": "Redéploiement théâtre italien",
-  "card.italianTheaterTroopRedeploy.background": "Front alpin",
-  "card.italianTheaterTroopRedeploy.desc":
-    "Contexte : manœuvres et combats en Piémont, à Milan et à Naples transforment les gains de campagne en appui concret aux prétentions bourbonnes—mais le trésor saigne pour l’axe alpin et le Pô.\n\nPiste de succession +2. Ajoute 1 Fardeau fiscal au deck.",
+  "card.italianTheaterTroopRedeploy.background":
+    "Manœuvres et combats en Piémont, à Milan et à Naples transforment les gains de campagne en appui concret aux prétentions bourbonnes — mais le trésor saigne pour l’axe alpin et le Pô.",
+  "card.italianTheaterTroopRedeploy.desc": "Piste de succession +2. Ajoute 1 Fardeau fiscal au deck.",
   "card.usurpationEdict.name": "Édit d’usurpation",
-  "card.usurpationEdict.background": "Rituel brisé",
+  "card.usurpationEdict.background":
+    "Imposer une reconnaissance par un langage de succession hors protocole peut faire gagner du terrain narratif à court terme, mais entame le crédit dynastique à l’intérieur comme à l’extérieur.",
   "card.usurpationEdict.desc":
-    "Contexte : imposer une reconnaissance par un langage de succession hors protocole peut faire gagner du terrain narratif à court terme, mais entame le crédit dynastique à l’intérieur comme à l’extérieur.\n\nPiste de succession +2. Au tour suivant, phase de pioche : +1 carte. Gagne Crise de légitimité pendant 2 tours (fin de chaque tour : Légitimité -1).",
+    "Piste de succession +2. Au tour suivant, phase de pioche : +1 carte. Gagne Crise de légitimité pendant 2 tours (fin de chaque tour : Légitimité -1).",
   "card.habsburgImperialLegitimacyNote.name": "Note de légitimité impériale",
-  "card.habsburgImperialLegitimacyNote.background": "Pression juridique",
+  "card.habsburgImperialLegitimacyNote.background":
+    "Les juristes impériaux de Vienne invoquent privilèges d’Empire et anciens liens habsbourgeois avec la couronne d’Espagne : leurs notes contestent la succession bourbonienne et entretiennent l’offensive juridique dans les cours d’Europe.",
   "card.habsburgImperialLegitimacyNote.desc":
     "Coût adverse 1. Immédiat : piste de succession −1, puis les Habsbourg piochent immédiatement 1 carte depuis leur deck.",
   "card.habsburgImperialLegitimacyNote.opponentHistory":
     "Les juristes impériaux contestent la légitimité bourbonienne par notes et mémoires, et prolongent la pression légale. En jeu : piste −1, et les Habsbourg piochent immédiatement 1 carte.",
   "card.habsburgLowCountriesAgitation.name": "Agitation dans les Pays-Bas",
-  "card.habsburgLowCountriesAgitation.background": "Front du Nord-Ouest",
+  "card.habsburgLowCountriesAgitation.background":
+    "Garnisons, corporations et villes des Pays-Bas espagnols s’agitent à répétition sous l’impulsion de la Grande Alliance, transformant le trouble frontalier en levier politique contre la France.",
   "card.habsburgLowCountriesAgitation.desc": "Coût adverse 2. Immédiat : piste −1, Pouvoir −1, Légitimité −1.",
   "card.habsburgLowCountriesAgitation.opponentHistory":
     "L’agitation aux Pays-Bas espagnols devient un levier de coalition contre la France. En jeu : piste −1, Pouvoir −1, Légitimité −1.",
   "card.habsburgGrandAllianceLevy.name": "Contribution de la Grande Alliance",
-  "card.habsburgGrandAllianceLevy.background": "Caisse de coalition",
+  "card.habsburgGrandAllianceLevy.background":
+    "Subsides de coalition, emprunts hollandais et impôts impériaux entretiennent la machine de guerre alliée et reportent, année après année, la facture d’usure sur Versailles.",
   "card.habsburgGrandAllianceLevy.desc":
     "Coût adverse 2. Immédiat : piste de succession −2 ; ajoute 1 Fardeau fiscal à votre pioche à une position aléatoire.",
   "card.habsburgGrandAllianceLevy.opponentHistory":
     "Subsides de coalition, emprunts hollandais et impôts impériaux entretiennent la pression. En jeu : piste de succession −2 et +1 Fardeau fiscal dans votre deck.",
   "card.habsburgImperialCustomsDelay.name": "Retards douaniers impériaux",
-  "card.habsburgImperialCustomsDelay.background": "Friction portuaire",
+  "card.habsburgImperialCustomsDelay.background":
+    "Ports impériaux et péages rhénans usent d’inspections, de saisies et de bureaux de taxe provisoires pour ralentir le commerce français, étranglant la trésorerie royale sans bataille décisive.",
   "card.habsburgImperialCustomsDelay.desc":
     "Coût adverse 2. Immédiat : Trésor −1 et +1 Fardeau fiscal à votre pioche (position aléatoire) ; différé : l’année suivante, tentatives de pioche −1 (minimum 1).",
   "card.habsburgImperialCustomsDelay.opponentHistory":
     "Les retards douaniers étranglent la trésorerie sans bataille décisive. En jeu : Trésor −1, +1 Fardeau fiscal, et tentatives de pioche −1 l’année suivante (min 1).",
   "card.habsburgAngloDutchMaritimeInterdiction.name": "Retenue anglo-hollandaise",
-  "card.habsburgAngloDutchMaritimeInterdiction.background": "Saisies en mer et lettres retardées",
+  "card.habsburgAngloDutchMaritimeInterdiction.background":
+    "Lettres de marque, convois plus serrés et saisies sur la Manche et la mer du Nord retardent lettres de change et caisses militaires : la liquidité disponible pour le trésor de guerre de Versailles s’amincit.",
   "card.habsburgAngloDutchMaritimeInterdiction.desc":
     "Coût adverse 1. Immédiat : Pouvoir −1 ; différé : l’année suivante, le Financement issu du Trésor au début d’année est réduit de 1 (pas en dessous de 0 au total) et les tentatives de pioche −1 (minimum 1).",
   "card.habsburgAngloDutchMaritimeInterdiction.opponentHistory":
     "Lettres de marque, convois plus serrés et saisies sur la Manche et la mer du Nord retardent lettres de change et caisses : Versailles voit sa liquidité opérationnelle amincie. En jeu : Pouvoir −1, Financement depuis le Trésor l’année suivante −1 (min 0 au total) et tentatives de pioche −1 (min 1).",
   "card.habsburgRhineMagazineEmbargo.name": "Embargo des magasins",
-  "card.habsburgRhineMagazineEmbargo.background": "Étranglement logistique",
+  "card.habsburgRhineMagazineEmbargo.background":
+    "Cercles impériaux et princes riverains ralentissent poudre, fourrage et affrètements de bacs : interdits « provisoires », péages et saisies grippent à la fois le ravitaillement du front rhénan et le crédit de l’arrière.",
   "card.habsburgRhineMagazineEmbargo.desc":
     "Coût adverse 1. Immédiat : piste de succession −1 ; différé : l’année suivante, le Financement issu du Trésor au début d’année est réduit de 1 (pas en dessous de 0 au total).",
   "card.habsburgRhineMagazineEmbargo.opponentHistory":

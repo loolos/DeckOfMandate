@@ -1,6 +1,14 @@
 /** 太阳王战役共享壳层文案（原 zh.core.ts 片段）。经 sunkingLocales 合并注入。 */
 export const sunkingShellContentZh = {
   "app.subtitle": "旭日",
+  "resource.treasuryStat.history":
+    "旧制度法国的岁入依赖田赋、盐税与包税体系；科尔贝尔式理财试图以王家产业与特许贸易扩大税基。财政能力反映这套岁入机器的健康程度。",
+  "resource.funding.history":
+    "经费对应王室每年真正可支配的现金流：岁入经包税人、督办与账房层层折损之后，才化为宫廷能立即动用的银钱。",
+  "resource.power.history":
+    "权力代表王命在军政链条中的贯彻力：从凡尔赛的敕令到行省监理官与驻军，权力越集中，宫廷一年内能同时推动的政务越多。",
+  "resource.legitimacy.history":
+    "合法性是“君权神授”时代统治被接受的程度：礼仪、教会背书与胜利叙事都在为它充值；一旦民众与精英不再信服，政权便难以为继。",
   "ui.solve": "处理（{cost} 经费）",
   "ui.solveCompact": "处理 {cost}",
   "ui.solveCrackdown": "以干预解决",
@@ -150,6 +158,22 @@ export const sunkingShellContentZh = {
   "log.info.cardTag.successionContest": "[第 {turn} 年] 标签说明「继承争夺」：该牌属于西班牙王位继承战争的博弈语境。此标签本身不产生额外机制效果，仅用于呈现波旁与哈布斯堡围绕法统、外交与战区财政拉锯的历史背景。",
   "log.info.cardTag.opponent": "[第 {turn} 年] 标签说明「对手」：该牌仅用于哈布斯堡对手阶段，不能从玩家手牌打出。",
   "log.info.cardUse.remainingUses": "[第 {turn} 年] 标签说明「剩余」：该卡可用次数为 X/Y；每次打出会消耗 1 次，用尽后将从牌库循环中移除。",
+  "log.info.cardTag.royal.history":
+    "史实背景：旧制度下国王保有一批越过常规协商的“非常手段”——敕令、亲裁与直属军警，它们是王权最后的强制力，也最消耗威信。",
+  "log.info.cardTag.temp.history": "史实背景：宫廷应急常靠一次性的特批、特使与临时委任，事毕即撤，不进入常设制度。",
+  "log.info.cardTag.extra.history": "史实背景：危机年代临时增设的差事与机构往往随局势结束而裁撤，不会留在常规官制里。",
+  "log.info.cardTag.inflation.history":
+    "史实背景：王权机器越扩张，供养它的礼仪、官俸与利息越昂贵——17 世纪法国的行政成本随集权同步攀升。",
+  "log.info.cardTag.defiance.history":
+    "史实背景：詹森派的“良心保留”让教士与法官得以援引良心拒绝执行王命，是王权难以直接碾平的抵制形式。",
+  "log.info.cardTag.consume.history":
+    "史实背景：许多政策工具天然是一次性的——特许、赦免或专项征收，用过之后政治资本随之耗尽。",
+  "log.info.cardTag.successionContest.history":
+    "史实背景：西班牙王位继承战争（1701–1714）中，波旁与哈布斯堡围绕法统、外交与战区财政展开长期拉锯。",
+  "log.info.cardTag.opponent.history":
+    "史实背景：哈布斯堡阵营的施压手段来自维也纳宫廷、帝国议会与大同盟盟邦的协同运作。",
+  "log.info.cardUse.remainingUses.history":
+    "史实背景：非常规手段的政治额度有限——每动用一次，宫廷信用与地方容忍度就消耗一分。",
   "log.info.cardUse.depleted.crackdownPenalty": "[第 {turn} 年]「王室干预」次数耗尽，已从牌库循环中移除；王室强制力受损，权力 -1。",
   "log.info.cardUse.depleted.fundingPenalty": "[第 {turn} 年]「王室征收」次数耗尽，已从牌库循环中移除；非常规筹资渠道枯竭，财政 -1。",
   "log.info.cardUse.depleted.diplomaticIntervention": "[第 {turn} 年]「外交干预」次数耗尽（0/2），已从牌库循环中移除（无额外惩罚）。",

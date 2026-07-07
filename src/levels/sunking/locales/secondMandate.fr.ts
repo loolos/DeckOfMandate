@@ -40,81 +40,129 @@ export const messagesFrSecondMandate: Record<keyof typeof messagesEnSecondMandat
   "status.antiFrenchSentiment.name": "Sentiment anti-français",
   "status.antiFrenchSentiment.emotionLabel": "Sentiment {x}",
   "status.antiFrenchSentiment.detail":
-    "Sentiment {x} : nombre actuel de cartes Endiguement anti-français dans toute votre bibliothèque. Tant que ce statut est actif, la Paix de Ryswick coûte aussi +{n} Financement.",
+    "Sentiment {x} : nombre actuel de cartes Endiguement anti-français dans toute votre bibliothèque. Quand Pouvoir+Trésor dépasse 20, les événements liés à l'Alerte Europe résolus par financement coûtent immédiatement +1, puis encore +1 par tranche de 5 points supplémentaires. Tant que ce statut est actif, la Paix de Ryswick coûte aussi +{n} Financement.",
   "status.antiFrenchSentiment.history":
-    "Après les années 1670, l'expansion militaire et fiscale de la France convainc les cours rivales que les trêves ponctuelles ne suffisent plus. Un consensus anti-français plus large se forme : coordination diplomatique, pression commerciale et préparation militaire se combinent pour contenir l'influence bourbonienne. Côté mécanique : quand le total Pouvoir+Trésor devient trop élevé, tous les événements résolus par financement portant le tag Alliance anti-française coûtent davantage, et ce statut ajoute aussi une pression récurrente via le deck jusqu'au retour à un niveau de puissance plus bas.",
+    "Après les années 1670, l'expansion militaire et fiscale de la France convainc les cours rivales que les trêves ponctuelles ne suffisent plus. Un consensus anti-français plus large se forme : coordination diplomatique, pression commerciale et préparation militaire se combinent pour contenir l'influence bourbonienne.",
   "event.nymwegenSettlement.name": "Traités de Nimègue",
+  "event.nymwegenSettlement.history":
+    "Les traités de Nimègue (1678–1679) mettent fin à la phase principale de la guerre de Hollande. La France y consolide des gains sur ses frontières, mais la méfiance stratégique ne disparaît pas : les cours voisines continuent d'interpréter l'expansion bourbonienne comme une menace durable, et la diplomatie d'après-guerre se transforme progressivement en logique d'endiguement de l'équilibre européen.",
   "event.nymwegenSettlement.desc":
-    "Les traités de Nimègue (1678–1679) mettent fin à la phase principale de la guerre de Hollande. La France y consolide des gains sur ses frontières, mais la méfiance stratégique ne disparaît pas : les cours voisines continuent d'interpréter l'expansion bourbonienne comme une menace durable, et la diplomatie d'après-guerre se transforme progressivement en logique d'endiguement de l'équilibre européen. Côté mécanique, c'est une crise obligatoire de longue durée : payez (progression d'Alerte Europe + 3) Financement pour sécuriser l'accord (Pouvoir -2, Trésor -1, Légitimité -1). Cela ne met pas fin à Alerte Europe ; si ignoré, perdez 1 Pouvoir chaque année.",
+    "Crise obligatoire de longue durée : payez (progression d'Alerte Europe + 3) Financement pour sécuriser l'accord (Pouvoir -2, Trésor -1, Légitimité -1). Cela ne met pas fin à Alerte Europe ; si ignoré, perdez 1 Pouvoir chaque année.",
   "event.revocationNantes.name": "Politique sur l'édit de Nantes",
+  "event.revocationNantes.history":
+    "En 1598, Henri IV promulgua l'édit de Nantes après des décennies de guerres de Religion. Ce texte n'instaurait pas l'égalité confessionnelle : il organisait plutôt un compromis politique, en maintenant le catholicisme comme religion d'État tout en accordant aux huguenots des droits de culte limités, certaines protections juridiques et quelques places de sûreté. Dans la seconde moitié du XVIIe siècle, la monarchie associa de plus en plus l'unité religieuse à l'obéissance administrative et à l'autorité dynastique. Pression fiscale, guerres de frontière et contrôle confessionnel se renforcèrent mutuellement, et les communautés protestantes furent de plus en plus perçues comme un risque intérieur durable. La révocation de 1685 rompit ce compromis : de nombreux huguenots partirent vers l'Angleterre, les Provinces-Unies, le Brandebourg ou la Suisse, emportant capitaux, savoir-faire et réseaux commerciaux ; ceux qui restèrent durent souvent passer à la clandestinité, entre assemblées secrètes et entraide souterraine.",
   "event.revocationNantes.desc":
-    "En 1598, Henri IV promulgua l'édit de Nantes après des décennies de guerres de Religion. Ce texte n'instaurait pas l'égalité confessionnelle : il organisait plutôt un compromis politique, en maintenant le catholicisme comme religion d'État tout en accordant aux huguenots des droits de culte limités, certaines protections juridiques et quelques places de sûreté. Dans la seconde moitié du XVIIe siècle, la monarchie associa de plus en plus l'unité religieuse à l'obéissance administrative et à l'autorité dynastique. Pression fiscale, guerres de frontière et contrôle confessionnel se renforcèrent mutuellement, et les communautés protestantes furent de plus en plus perçues comme un risque intérieur durable. La révocation de 1685 rompit ce compromis : de nombreux huguenots partirent vers l'Angleterre, les Provinces-Unies, le Brandebourg ou la Suisse, emportant capitaux, savoir-faire et réseaux commerciaux ; ceux qui restèrent durent souvent passer à la clandestinité, entre assemblées secrètes et entraide souterraine. Côté mécanique, c'est un événement Continu avec pénalité de pioche s'il n'est pas traité : la voie de tolérance réduit le choc immédiat mais peut réintroduire des crises confessionnelles récurrentes, tandis que la voie de répression offre un contrôle plus dur au prix de résurgences périodiques et d'une usure de gouvernance plus longue.",
+    "Événement Continu avec pénalité de pioche s'il n'est pas traité. La voie de tolérance réduit le choc immédiat mais peut réintroduire des crises confessionnelles récurrentes ; la voie de répression offre un contrôle plus dur au prix de résurgences périodiques et d'une usure de gouvernance plus longue.",
   "event.leagueOfAugsburg.name": "Formation de la Ligue d'Augsbourg",
+  "event.leagueOfAugsburg.history":
+    "Après les années 1680, l'expansion française sur le Rhin et dans les Pays-Bas entretient une inquiétude durable chez ses voisins. Versailles n'est pas spectateur passif : la monarchie s'appuie sur les chambres des Réunions pour intégrer par voie juridique des places rhénanes stratégiques (dont Strasbourg), soutient la pression par garnisons, rappels d'ambassadeurs, pensions et intimidations ciblées sur les électeurs et villes libres de l'Empire, afin d'imposer des faits accomplis avant qu'une riposte concertée ne se cristallise. Le durcissement confessionnel après la révocation de l'édit de Nantes pousse Provinces-Unies et princes protestants du nord de l'Allemagne à lier « grignotage territorial » et menace religieuse. En 1686, princes du Saint-Empire, Habsbourg et États allemands se regroupent à Augsbourg, puis l'Angleterre, les Provinces-Unies et l'Espagne s'alignent : la Ligue est une réponse collective à cette diplomatie offensive, et elle oblige Versailles à payer au long cours subsides, intrigues et postures frontalières pour tenter de briser l'encerclement. Pour Louis XIV, ce n'est plus une friction diplomatique ponctuelle : l'équilibre européen se transforme en contrainte d'alliance institutionnalisée.",
   "event.leagueOfAugsburg.desc":
-    "Après les années 1680, l'expansion française sur le Rhin et dans les Pays-Bas entretient une inquiétude durable chez ses voisins. Versailles n'est pas spectateur passif : la monarchie s'appuie sur les chambres des Réunions pour intégrer par voie juridique des places rhénanes stratégiques (dont Strasbourg), soutient la pression par garnisons, rappels d'ambassadeurs, pensions et intimidations ciblées sur les électeurs et villes libres de l'Empire, afin d'imposer des faits accomplis avant qu'une riposte concertée ne se cristallise. Le durcissement confessionnel après la révocation de l'édit de Nantes pousse Provinces-Unies et princes protestants du nord de l'Allemagne à lier « grignotage territorial » et menace religieuse. En 1686, princes du Saint-Empire, Habsbourg et États allemands se regroupent à Augsbourg, puis l'Angleterre, les Provinces-Unies et l'Espagne s'alignent : la Ligue est une réponse collective à cette diplomatie offensive, et elle oblige Versailles à payer au long cours subsides, intrigues et postures frontalières pour tenter de briser l'encerclement. Pour Louis XIV, ce n'est plus une friction diplomatique ponctuelle : l'équilibre européen se transforme en contrainte d'alliance institutionnalisée. Côté mécanique : pression diplomatique continue marquée Restant 3, à résoudre 3 fois en cumulé pour la retirer définitivement. Si elle n'est pas traitée pendant le tour, vous perdez 1 Pouvoir et 1 Trésor en fin de tour (sans consommer le compteur Restant). Chaque paiement de 2 Financement compte comme une résolution (l'Intervention ne remplace pas ce coût) : ce tour évite la pénalité, mais l'événement reste jusqu'à ce que Restant atteigne 0.",
+    "Pression diplomatique continue marquée Restant 3, à résoudre 3 fois en cumulé pour la retirer définitivement. Si elle n'est pas traitée pendant le tour, vous perdez 1 Pouvoir et 1 Trésor en fin de tour (sans consommer le compteur Restant). Chaque paiement de 2 Financement compte comme une résolution (l'Intervention ne remplace pas ce coût) : ce tour évite la pénalité, mais l'événement reste jusqu'à ce que Restant atteigne 0.",
   "event.nineYearsWar.name": "Guerre de Neuf Ans",
+  "event.nineYearsWar.history":
+    "À partir de 1688, la Guerre de Neuf Ans prolonge la logique de la Ligue d'Augsbourg en un affrontement continental sur l'équilibre européen. Les combats s'étendent du Rhin et des Pays-Bas aux routes maritimes et aux espaces coloniaux, faisant de l'endurance financière la véritable mesure de la puissance d'État.",
   "event.nineYearsWar.desc":
-    "À partir de 1688, la Guerre de Neuf Ans prolonge la logique de la Ligue d'Augsbourg en un affrontement continental sur l'équilibre européen. Les combats s'étendent du Rhin et des Pays-Bas aux routes maritimes et aux espaces coloniaux, faisant de l'endurance financière la véritable mesure de la puissance d'État. En jeu, c'est une crise Continue : chaque tour vous devez payer un coût en Financement lié à l'Alerte Europe (avec une majoration fixe ; l'Intervention ne s'applique pas) pour lancer une campagne, tandis que l'inaction expose à des pertes de légitimité et à une pression budgétaire durable.",
+    "Crise Continue : chaque tour vous devez payer un coût en Financement lié à l'Alerte Europe (avec une majoration fixe ; l'Intervention ne s'applique pas) pour lancer une campagne ; l'inaction expose à des pertes de légitimité et à une pression budgétaire durable.",
   "event.ryswickPeace.name": "Paix de Ryswick",
+  "event.ryswickPeace.history":
+    "La paix de Ryswick (1697) règle globalement la guerre de Neuf Ans : la France restitue plusieurs territoires occupés et reconnaît Guillaume III comme roi d'Angleterre, en échange de l'acceptation européenne de ses acquis alsaciens ; les puissances épuisées gagnent une fenêtre pour reconstruire l'ordre et réparer leurs finances.",
   "event.ryswickPeace.desc":
-    "Les termes de paix peuvent restaurer l'ordre. Investissez (progression Alerte Europe + 2) Financement pour gagner Légitimité +1 et lever l'Alerte Europe. Si la Guerre de Neuf Ans n'est pas encore terminée, ce coût gagne +4 supplémentaire. Tant que le Sentiment anti-français est actif, ce coût gagne aussi +2x (x = nombre actuel de cartes Endiguement anti-français dans toute votre bibliothèque). Résoudre cet événement met aussi fin définitivement à la Guerre de Neuf Ans. Cet événement est Continu : s'il n'est pas résolu, Légitimité -1 chaque tour.",
+    "Investissez (progression Alerte Europe + 2) Financement pour gagner Légitimité +1 et lever l'Alerte Europe. Si la Guerre de Neuf Ans n'est pas encore terminée, ce coût gagne +4 supplémentaire. Tant que le Sentiment anti-français est actif, ce coût gagne aussi +2x (x = nombre actuel de cartes Endiguement anti-français dans toute votre bibliothèque). Résoudre cet événement met aussi fin définitivement à la Guerre de Neuf Ans. Cet événement est Continu : s'il n'est pas résolu, Légitimité -1 chaque tour.",
   "event.versaillesExpenditure.name": "Dépenses de Versailles",
+  "event.versaillesExpenditure.history":
+    "Pensions, offices et grands travaux du palais grignotaient une part croissante des recettes ordinaires.",
   "event.versaillesExpenditure.desc":
-    "Pensions, offices et grands travaux du palais grignotaient une part croissante des recettes ordinaires. Les dépenses de cour montent encore. Payez 3 Financement ou utilisez Intervention ; si non résolu, perdez 2 Trésor.",
+    "Les dépenses de cour montent encore : payez 3 Financement ou utilisez Intervention ; si non résolu, perdez 2 Trésor.",
   "event.nobleResentment.name": "Ressentiment nobiliaire",
+  "event.nobleResentment.history":
+    "Les grandes familles regrettaient leurs clientèles militaires et les audits fiscaux qui rappelaient les levées de Mazarin.",
   "event.nobleResentment.desc":
-    "Les grandes familles regrettaient leurs clientèles militaires et les audits fiscaux qui rappelaient les levées de Mazarin. La résistance des élites grandit à la cour et en province. Payez 2 Financement ou Intervention ; sinon, perdez 1 Pouvoir et subissez Perte d'autorité pendant 2 tours.",
+    "La résistance des élites grandit à la cour et en province : payez 2 Financement ou Intervention ; sinon, perdez 1 Pouvoir et subissez Perte d'autorité pendant 2 tours.",
   "event.provincialNoncompliance.name": "Non-conformité provinciale",
+  "event.provincialNoncompliance.history":
+    "Parlements et états provinciaux testaient encore les intendants contre chartes et immunités, ralentissant la politique centrale sur le terrain.",
   "event.provincialNoncompliance.desc":
-    "Parlements et états provinciaux testaient encore les intendants contre chartes et immunités. Les officiels locaux ralentissent l'application. Payez 2 Financement ou subissez pioche -2 l'an prochain, puis pioche -1 chacune des deux années suivantes.",
+    "Les officiels locaux ralentissent l'application : payez 2 Financement ou subissez pioche -2 l'an prochain, puis pioche -1 chacune des deux années suivantes.",
   "event.risingGrainPrices.name": "Hausse des prix du grain",
+  "event.risingGrainPrices.history":
+    "Mauvaises récoltes et politique du grain pouvaient transformer émeutes de subsistance en crise politique en quelques jours.",
   "event.risingGrainPrices.desc":
-    "Mauvaises récoltes et politique du grain pouvaient transformer émeutes de subsistance en crise politique en quelques jours. La pression alimentaire provoque des troubles. Payez 3 Financement ou Intervention ; si non résolu, perdez 2 Légitimité.",
+    "La pression alimentaire provoque des troubles : payez 3 Financement ou Intervention ; si non résolu, perdez 2 Légitimité.",
   "event.taxResistance.name": "Résistance fiscale",
+  "event.taxResistance.history":
+    "Révisions de taille et aides nouvelles crispaient villes et ordres privilégiés, étendant la révolte fiscale des villages aux corporations urbaines.",
   "event.taxResistance.desc":
-    "Révisions de taille et aides nouvelles crispaient villes et ordres privilégiés. Communautés et élites résistent aux levées. Payez 2 Financement ou Intervention ; si non résolu, perdez 1 Trésor et 1 Légitimité.",
+    "Communautés et élites résistent aux levées : payez 2 Financement ou Intervention ; si non résolu, perdez 1 Trésor et 1 Légitimité.",
   "event.frontierGarrisons.name": "Garnisons frontalières",
+  "event.frontierGarrisons.history":
+    "Rhin et Pays-Bas : garnisons et sièges absorbèrent les budgets des années 1680-1690, faisant des places fortes une saignée durable du Trésor.",
   "event.frontierGarrisons.desc":
-    "Rhin et Pays-Bas : garnisons et sièges absorbèrent les budgets des années 1680-1690. Les garnisons frontalières absorbent les recettes. Payez 3 Financement ou utilisez Intervention royale / Intervention diplomatique ; toute résolution réussie réduit la progression d'Alerte Europe de 1 tant que l'alerte est active. Sinon, perdez 1 Trésor et subissez une pénalité de pioche l'an prochain.",
+    "Les garnisons frontalières absorbent les recettes : payez 3 Financement ou utilisez Intervention royale / Intervention diplomatique ; toute résolution réussie réduit la progression d'Alerte Europe de 1 tant que l'alerte est active. Sinon, perdez 1 Trésor et subissez une pénalité de pioche l'an prochain.",
   "event.tradeDisruption.name": "Perturbation commerciale",
+  "event.tradeDisruption.history":
+    "Guerre de convois et corsaires anglo-hollandais pinçaient les recettes atlantiques et augmentaient le risque de chaque traversée marchande.",
   "event.tradeDisruption.desc":
-    "Guerre de convois et corsaires anglo-hollandais pinçaient les recettes atlantiques. Les risques sur routes maritimes et convois réduisent la marge de gouvernance. Payez 1 Financement ou subissez un modificateur de pioche -2 l'an prochain.",
+    "Les risques sur routes maritimes et convois réduisent la marge de gouvernance : payez 1 Financement ou subissez un modificateur de pioche -2 l'an prochain.",
   "event.embargoCoalition.name": "Coalition d'embargo",
+  "event.embargoCoalition.history":
+    "Les marines de la Grande Alliance resserrèrent les cordons maritimes quand la guerre de coalition devint la norme, faisant du blocus et des tarifs coordonnés des outils d'endiguement ordinaires.",
   "event.embargoCoalition.desc":
-    "Les marines de la Grande Alliance resserrèrent les cordons maritimes quand la guerre de coalition devint la norme. Les restrictions maritimes se resserrent autour du commerce français. Payez plancher(Tresor/8)+1 Financement ou utilisez Intervention royale / Intervention diplomatique ; toute résolution réussie réduit la progression d'Alerte Europe de 1 tant que l'alerte est active. Sinon, perdez 1 Trésor et subissez une pénalité de pioche l'an prochain.",
+    "Les restrictions maritimes se resserrent autour du commerce français : payez ⌊Trésor/8⌋+1 Financement ou utilisez Intervention royale / Intervention diplomatique ; toute résolution réussie réduit la progression d'Alerte Europe de 1 tant que l'alerte est active. Sinon, perdez 1 Trésor et subissez une pénalité de pioche l'an prochain.",
   "event.mercenaryRaiders.name": "Raiders mercenaires",
+  "event.mercenaryRaiders.history":
+    "Entre deux campagnes, compagnies libres et raids payés hantaient encore les marches, mettant à l'épreuve le contrôle royal des frontières.",
   "event.mercenaryRaiders.desc":
-    "Entre deux campagnes, compagnies libres et raids payés hantaient encore les marches. Des pillards frontaliers à gages perturbent l'ordre local et l'autorité de la couronne. Payez 2 Financement, ou perdez 1 Pouvoir et 1 Légitimité.",
+    "Des pillards frontaliers à gages perturbent l'ordre local et l'autorité de la couronne : payez 2 Financement, ou perdez 1 Pouvoir et 1 Légitimité.",
   "event.localWar.name": "Guerre locale",
+  "event.localWar.history":
+    "Entre grands traités, la France enchaînait encore escarmouches rhénanes, crises italiennes et tensions autour des Pays-Bas : sièges, raids et luttes de ravitaillement qui épuisaient les finances, ralentissaient la machine militaire et servaient aux rivaux de test de la détermination française.",
   "event.localWar.desc":
-    "Entre grands traités, la France enchaînait encore escarmouches rhénanes et crises italiennes. L'Alerte Europe alimente un conflit régional. Vous pouvez aussi résoudre cet événement avec Intervention. Si vous n'utilisez pas Intervention, choisissez Attaquer (payez un coût en Financement lié à l'Alerte Europe, puis appliquez le surcoût Sentiment anti-français si actif ; trois issues équiprobables : Victoire locale [Pouvoir +1, Légitimité +1], Enlisement [aucun effet], Pertes limitées [Pouvoir -1]) ou Apaiser (sans coût, mais Légitimité -1). C'est un événement Continu : s'il reste non résolu, le revenu de Financement du prochain tour est réduit de 2 (minimum 0).",
+    "Vous pouvez résoudre cet événement avec Intervention. Sinon, choisissez Attaquer (payez un coût en Financement lié à l'Alerte Europe, puis appliquez le surcoût Sentiment anti-français si actif ; trois issues équiprobables : Victoire locale [Pouvoir +1, Légitimité +1], Enlisement [aucun effet], Pertes limitées [Pouvoir -1]) ou Apaiser (sans coût, mais Légitimité -1). Événement Continu : s'il reste non résolu, le revenu de Financement du prochain tour est réduit de 2 (minimum 0).",
   "event.courtScandal.name": "Scandale de cour",
+  "event.courtScandal.history":
+    "Cabinet du lit et rivalités ministérielles à Versailles alimentaient feuilles volantes et rumeurs publiques, ébranlant le prestige de la cour.",
   "event.courtScandal.desc":
-    "Cabinet du lit et rivalités ministérielles à Versailles alimentaient feuilles volantes et rumeurs publiques. Les intrigues de faction affaiblissent l'autorité. Payez 3 Financement pour contenir ; sinon, Légitimité -1 et toutes les cartes taguées Royal sont bloquées au prochain tour.",
+    "Les intrigues de faction affaiblissent l'autorité : payez 3 Financement pour contenir ; sinon, Légitimité -1 et toutes les cartes taguées Royal sont bloquées au prochain tour.",
   "event.militaryPrestige.name": "Prestige militaire",
+  "event.militaryPrestige.history":
+    "Des sièges comme Namur étaient exhibés comme preuve des armes bourboniennes et du droit divin ; la gloire militaire restait la source la plus directe d'autorité.",
   "event.militaryPrestige.desc":
-    "Des sièges comme Namur étaient exhibés comme preuve des armes bourboniennes et du droit divin. Une occasion de convertir l'image du champ de bataille en autorité. Investissez 2 Financement pour Légitimité +1.",
+    "Une occasion de convertir l'image du champ de bataille en autorité : investissez 2 Financement pour Légitimité +1.",
   "event.commercialExpansion.name": "Expansion commerciale",
+  "event.commercialExpansion.history":
+    "Dans la France de la fin du XVIIe siècle, l'héritage colbertiste continue de soutenir manufactures, marine marchande et compagnies à privilège, mais les guerres et les frictions tarifaires rendent l'essor commercial coûteux.",
   "event.commercialExpansion.desc":
-    "Dans la France de la fin du XVIIe siècle, l'héritage colbertiste continue de soutenir manufactures, marine marchande et compagnies à privilège, mais les guerres et les frictions tarifaires rendent l'essor commercial coûteux. Les marchands demandent un soutien à la croissance. Investissez un coût en Financement lié au Trésor pour Trésor +1.",
-  "event.sunKingPilgrimage.name": "Pelerinage du Roi-Soleil",
+    "Les marchands demandent un soutien à la croissance : investissez un coût en Financement lié au Trésor pour Trésor +1.",
+  "event.sunKingPilgrimage.name": "Pèlerinage du Roi-Soleil",
+  "event.sunKingPilgrimage.history":
+    "Dans la seconde partie du règne, Louis XIV use de progrès royaux, de fêtes religieuses et de rituels de sanctuaire pour afficher la légitimité du « Roi Très Chrétien » : évêques, conseils de ville et vieille noblesse renouvellent publiquement leur fidélité sur le parcours, et les provinces frontalières ou nouvellement annexées sont réintégrées au récit versaillais. Ces cérémonies politiques s'accompagnent de secours, de police, d'hospitalité de cour et de travaux symboliques — achetant obéissance et prestige à court terme tout en sédimentant les dépenses en dette de long terme.",
   "event.sunKingPilgrimage.desc":
-    "Une pelerinage royal soigneusement mis en scene a travers sanctuaires et villes clefs peut convertir le ceremonial en adhesion politique. Investissez un cout en Financement lie a (Pouvoir + Legitimite) pour Légitimité +2, Pouvoir +1, et ajoutez 1 Fardeau fiscal a votre pioche.",
+    "Investissez un coût en Financement lié à (Pouvoir + Légitimité) pour Légitimité +2, Pouvoir +1, et ajoutez 1 Fardeau fiscal à votre pioche.",
   "event.talentedAdministrator.name": "Administrateur talentueux",
+  "event.talentedAdministrator.history":
+    "Les successeurs de Colbert promouvaient secrétaires et intendants capables de contourner la routine vénale.",
   "event.talentedAdministrator.desc":
-    "Les successeurs de Colbert promouvaient secrétaires et intendants capables de contourner la routine vénale. Un officier capable peut être promu. Investissez 2 Financement pour Pouvoir +1.",
+    "Un officier capable peut être promu : investissez 2 Financement pour Pouvoir +1.",
   "event.warWeariness.name": "Lassitude de guerre",
+  "event.warWeariness.history":
+    "Pendant la guerre de Neuf Ans, même les victoires ne masquaient plus la tension fiscale au pays.",
   "event.warWeariness.desc":
-    "Pendant la guerre de Neuf Ans, même les victoires ne masquaient plus la tension fiscale au pays. Le conflit prolongé épuise le soutien. Payez 3 Financement ou Intervention, sinon perdez 1 Légitimité et gagnez Perte d'autorité pour 2 tours.",
+    "Le conflit prolongé épuise le soutien : payez 3 Financement ou Intervention, sinon perdez 1 Légitimité et gagnez Perte d'autorité pour 2 tours.",
   "event.jesuitPatronage.name": "Patronage jésuite",
+  "event.jesuitPatronage.history":
+    "Depuis 1675, des confesseurs jésuites comme le père de La Chaise rapprochent la Compagnie de la Couronne ; les collèges d'élite forment des cadres alignés et contrecarrent souvent le jansénisme, mais attisent les tensions religieuses.",
   "event.jesuitPatronage.desc":
-    "Depuis 1675, des confesseurs jésuites comme le père de La Chaise rapprochent la Compagnie de la Couronne ; les collèges d'élite forment des cadres alignés et contrecarrent souvent le jansénisme, mais attisent les tensions religieuses. Payez 2 Financement : ajoutez à votre pioche 2 cartes Collège jésuite (coût 2, Restant 1/1, Légitimité +1 ; à l'activation, résolvez une Controverse janséniste non résolue) et 1 carte Tension religieuse. Aucune pénalité si ignoré.",
+    "Payez 2 Financement : ajoutez à votre pioche 2 cartes Collège jésuite (coût 2, Restant 1/1, Légitimité +1 ; à l'activation, résolvez une Controverse janséniste non résolue) et 1 carte Conflit religieux. Aucune pénalité si ignoré.",
   "event.expansionRemembered.name": "Expansion encore présente",
+  "event.expansionRemembered.history":
+    "Les chancelleries rivales chiffraient encore les gains français des guerres de Dévolution et de Hollande ; l'expansion passée projette toujours une ombre longue.",
   "event.expansionRemembered.desc":
-    "Les chancelleries rivales chiffraient encore les gains français des guerres de Dévolution et de Hollande. L'expansion passée projette toujours une ombre longue. Payez 2 Financement pour la contenir et ajouter 2 cartes Fardeau fiscal à votre deck ; si non résolu, 3 cartes Fardeau fiscal sont ajoutées.",
+    "Payez 2 Financement pour la contenir et ajouter 2 cartes Fardeau fiscal à votre deck ; si non résolu, 3 cartes Fardeau fiscal sont ajoutées.",
   "event.cautiousCrown.name": "Couronne prudente",
+  "event.cautiousCrown.history":
+    "La respiration diplomatique après Nimègue n'effaçait pas la méfiance stratégique des puissances.",
   "event.cautiousCrown.desc":
-    "La respiration diplomatique après Nimègue n'effaçait pas la méfiance stratégique. La retenue passée n'offre qu'une marge limitée. Payez 2 Financement pour résoudre ; si ignoré, perdez 1 Pouvoir chaque année.",
+    "La retenue passée n'offre qu'une marge limitée : payez 2 Financement pour résoudre ; si ignoré, perdez 1 Pouvoir chaque année.",
   "card.grainRelief.name": "Programme de secours céréaliers",
   "card.grainRelief.background":
     "Dans la France de la fin du XVIIe siècle, une mauvaise récolte suffisait à faire bondir le prix du pain et à transformer vite l'inquiétude de subsistance en désordre urbain et rural ; la couronne répondait par des achats d'urgence, des sorties de réserves et des relais de secours paroissiaux et municipaux. Le secours céréalier apaise à court terme et redonne une marge de manœuvre politique, mais reporte une charge budgétaire plus lourde sur les années suivantes.",

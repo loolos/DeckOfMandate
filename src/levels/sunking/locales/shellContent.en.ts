@@ -1,6 +1,14 @@
 /** Sun King shared shell copy (was in locales/en.core.ts). Merged via sunkingLocales. */
 export const sunkingShellContentEn = {
   "app.subtitle": "The Rising Sun",
+  "resource.treasuryStat.history":
+    "Old-regime French revenue ran on the taille, salt taxes, and the tax-farm system; Colbertist finance tried to widen the base through royal manufactures and chartered trade. Treasury reflects the health of that revenue machine.",
+  "resource.funding.history":
+    "Funding is the cash the crown can actually spend each year: revenue reaches the court only after tax farmers, intendants, and counting-houses have taken their toll.",
+  "resource.power.history":
+    "Power stands for how far royal commands carry through the military-administrative chain: from Versailles decrees to intendants and garrisons, the more concentrated it is, the more business the court can push at once.",
+  "resource.legitimacy.history":
+    "Legitimacy is how far rule is accepted in the age of divine-right kingship: ceremony, church endorsement, and victory narratives all recharge it; once people and elites stop believing, the regime cannot stand.",
   "ui.solve": "Solve ({cost})",
   "ui.solveCompact": "Solve {cost}",
   "ui.solveCrackdown": "Resolve (Intervention)",
@@ -150,6 +158,24 @@ export const sunkingShellContentEn = {
   "log.info.cardTag.successionContest": "[Turn {turn}] Tag note “Succession Contest”: this card belongs to the War of the Spanish Succession struggle. The tag has no direct gameplay effect and serves as historical context for Bourbon-Habsburg competition over dynastic legitimacy, diplomacy, and theater-wide war finance.",
   "log.info.cardTag.opponent": "[Turn {turn}] Tag note “Opponent”: this card is used only by the Habsburg opponent phase, not from your hand.",
   "log.info.cardUse.remainingUses": "[Turn {turn}] Tag note “Remaining”: this card currently has X/Y uses left; each play spends one, and it leaves circulation at 0.",
+  "log.info.cardTag.royal.history":
+    "Historical note: under the old regime the king kept a set of extraordinary instruments—decrees, direct adjudication, and household troops—that bypassed regular negotiation; they were the crown's final coercive reserve, and the costliest to its credibility.",
+  "log.info.cardTag.temp.history":
+    "Historical note: court crisis-management often ran on one-off commissions, envoys, and ad-hoc grants, wound up as soon as the emergency passed.",
+  "log.info.cardTag.extra.history":
+    "Historical note: offices and errands improvised in crisis years were usually dissolved with the situation, never entering the permanent establishment.",
+  "log.info.cardTag.inflation.history":
+    "Historical note: the larger the royal machine grew, the more its ritual, salaries, and interest cost to sustain—17th-century French administration grew more expensive with every step of centralization.",
+  "log.info.cardTag.defiance.history":
+    "Historical note: the Jansenist “reservation of conscience” let clergy and magistrates invoke conscience to refuse royal commands, a form of resistance the crown could not simply crush.",
+  "log.info.cardTag.consume.history":
+    "Historical note: many policy tools were one-shot by nature—charters, pardons, or special levies whose political capital was spent in the using.",
+  "log.info.cardTag.successionContest.history":
+    "Historical note: in the War of the Spanish Succession (1701–1714), Bourbon and Habsburg fought a long tug-of-war over legitimacy, diplomacy, and theater-wide war finance.",
+  "log.info.cardTag.opponent.history":
+    "Historical note: the Habsburg camp's pressure came from the coordinated action of the Vienna court, the Imperial diet, and Grand Alliance partners.",
+  "log.info.cardUse.remainingUses.history":
+    "Historical note: extraordinary measures carried a limited political quota—each use spent court credit and provincial tolerance.",
   "log.info.cardUse.depleted.crackdownPenalty": "[Turn {turn}] Royal Intervention was fully depleted and removed from circulation; court coercive leverage slips (Power -1).",
   "log.info.cardUse.depleted.fundingPenalty": "[Turn {turn}] Royal Levy was fully depleted and removed from circulation; emergency extraction channels dry up (Treasury -1).",
   "log.info.cardUse.depleted.diplomaticIntervention": "[Turn {turn}] Diplomatic Intervention reached 0/2 and was removed from circulation.",

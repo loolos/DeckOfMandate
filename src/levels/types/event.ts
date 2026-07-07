@@ -88,6 +88,12 @@ export type EventTemplate = {
   weight: number;
   harmful: boolean;
   titleKey: string;
+  /**
+   * Historical-background copy key (`event.<id>.history`). Rendered as flavor above the
+   * mechanics text; every event must provide it (enforced by `contentCompleteness.test.ts`).
+   */
+  historyKey: string;
+  /** Mechanics-only rules text (`event.<id>.desc`): costs, penalties, and outcomes. */
   descriptionKey: string;
   solve: EventSolve;
   /** Applied when player resolves this event through the funding path. */

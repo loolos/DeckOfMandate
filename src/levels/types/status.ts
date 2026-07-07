@@ -36,7 +36,14 @@ export type StatusTemplate = {
   resource?: "treasuryStat" | "power" | "legitimacy";
   blockedTag?: "royal";
   titleKey: MessageKey;
-  historyKey?: MessageKey;
+  /** Historical-background copy; required for every status (enforced by `contentCompleteness.test.ts`). */
+  historyKey: MessageKey;
+  /**
+   * Mechanics-only copy (`status.<id>.desc` or an existing detail/hint key). Shown in the
+   * status bar; must state the concrete gameplay effect even when the template's numeric
+   * delta is 0 and the real effect lives in engine hooks.
+   */
+  descKey: MessageKey;
 };
 
 export type PlayerStatusInstance = {

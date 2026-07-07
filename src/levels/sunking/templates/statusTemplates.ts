@@ -7,6 +7,7 @@ export const statusTemplates: Record<StatusTemplateId, StatusTemplate> = {
     delta: -1,
     titleKey: "status.powerLeak.name",
     historyKey: "status.powerLeak.history",
+    descKey: "status.powerLeak.desc",
   },
   drawPenalty: {
     id: "drawPenalty",
@@ -14,6 +15,7 @@ export const statusTemplates: Record<StatusTemplateId, StatusTemplate> = {
     delta: -1,
     titleKey: "status.drawPenalty.name",
     historyKey: "status.drawPenalty.history",
+    descKey: "status.drawPenalty.desc",
   },
   retentionBoost: {
     id: "retentionBoost",
@@ -21,6 +23,7 @@ export const statusTemplates: Record<StatusTemplateId, StatusTemplate> = {
     delta: 1,
     titleKey: "status.retentionBoost.name",
     historyKey: "status.retentionBoost.history",
+    descKey: "status.retentionBoost.desc",
   },
   royalBan: {
     id: "royalBan",
@@ -28,6 +31,7 @@ export const statusTemplates: Record<StatusTemplateId, StatusTemplate> = {
     blockedTag: "royal",
     titleKey: "status.royalBan.name",
     historyKey: "status.royalBan.history",
+    descKey: "status.royalBan.desc",
   },
   grainReliefDrawBoost: {
     id: "grainReliefDrawBoost",
@@ -35,6 +39,7 @@ export const statusTemplates: Record<StatusTemplateId, StatusTemplate> = {
     delta: 1,
     titleKey: "status.grainReliefDrawBoost.name",
     historyKey: "status.grainReliefDrawBoost.history",
+    descKey: "status.grainReliefDrawBoost.desc",
   },
   grainReliefLegitimacyBoost: {
     id: "grainReliefLegitimacyBoost",
@@ -43,6 +48,7 @@ export const statusTemplates: Record<StatusTemplateId, StatusTemplate> = {
     delta: 1,
     titleKey: "status.grainReliefLegitimacyBoost.name",
     historyKey: "status.grainReliefLegitimacyBoost.history",
+    descKey: "status.grainReliefLegitimacyBoost.desc",
   },
   religiousTolerance: {
     id: "religiousTolerance",
@@ -50,6 +56,7 @@ export const statusTemplates: Record<StatusTemplateId, StatusTemplate> = {
     delta: 0,
     titleKey: "status.religiousTolerance.name",
     historyKey: "status.religiousTolerance.history",
+    descKey: "status.religiousTolerance.desc",
   },
   huguenotContainment: {
     id: "huguenotContainment",
@@ -57,6 +64,7 @@ export const statusTemplates: Record<StatusTemplateId, StatusTemplate> = {
     delta: 0,
     titleKey: "status.huguenotContainment.name",
     historyKey: "status.huguenotContainment.history",
+    descKey: "status.huguenotContainment.hintGeneral",
   },
   antiFrenchSentiment: {
     id: "antiFrenchSentiment",
@@ -64,6 +72,7 @@ export const statusTemplates: Record<StatusTemplateId, StatusTemplate> = {
     delta: 0,
     titleKey: "status.antiFrenchSentiment.name",
     historyKey: "status.antiFrenchSentiment.history",
+    descKey: "status.antiFrenchSentiment.detail",
   },
   greatPowerEncirclement: {
     id: "greatPowerEncirclement",
@@ -71,6 +80,7 @@ export const statusTemplates: Record<StatusTemplateId, StatusTemplate> = {
     delta: 0,
     titleKey: "status.greatPowerEncirclement.name",
     historyKey: "status.greatPowerEncirclement.history",
+    descKey: "status.greatPowerEncirclement.desc",
   },
   legitimacyCrisis: {
     id: "legitimacyCrisis",
@@ -78,6 +88,7 @@ export const statusTemplates: Record<StatusTemplateId, StatusTemplate> = {
     delta: 0,
     titleKey: "status.legitimacyCrisis.name",
     historyKey: "status.legitimacyCrisis.history",
+    descKey: "status.legitimacyCrisis.desc",
   },
   minorRegencyDoubt: {
     id: "minorRegencyDoubt",
@@ -85,6 +96,7 @@ export const statusTemplates: Record<StatusTemplateId, StatusTemplate> = {
     delta: -1,
     titleKey: "status.minorRegencyDoubt.name",
     historyKey: "status.minorRegencyDoubt.history",
+    descKey: "status.minorRegencyDoubt.desc",
   },
   diplomaticCongressDrawBoost: {
     id: "diplomaticCongressDrawBoost",
@@ -92,6 +104,7 @@ export const statusTemplates: Record<StatusTemplateId, StatusTemplate> = {
     delta: 1,
     titleKey: "status.diplomaticCongressDrawBoost.name",
     historyKey: "status.diplomaticCongressDrawBoost.history",
+    descKey: "status.diplomaticCongressDrawBoost.desc",
   },
   grandAllianceInfiltration: {
     id: "grandAllianceInfiltration",
@@ -99,6 +112,7 @@ export const statusTemplates: Record<StatusTemplateId, StatusTemplate> = {
     delta: 0,
     titleKey: "status.grandAllianceInfiltration.name",
     historyKey: "status.grandAllianceInfiltration.history",
+    descKey: "status.grandAllianceInfiltration.desc",
   },
   bourbonMarriageRetention: {
     id: "bourbonMarriageRetention",
@@ -106,5 +120,6 @@ export const statusTemplates: Record<StatusTemplateId, StatusTemplate> = {
     delta: 1,
     titleKey: "status.bourbonMarriageRetention.name",
     historyKey: "status.bourbonMarriageRetention.history",
+    descKey: "status.bourbonMarriageRetention.desc",
   },
 };
