@@ -17,6 +17,8 @@ import type { GameOutcome, GameState, Resources } from "../../../types/game";
 import { isCardPlayableInActionPhase } from "../../../logic/cardPlayability";
 import { getPlayableCardCost } from "../../../logic/cardCost";
 import { currentCalendarYear, findScriptedCalendarConfig } from "../../../logic/scriptedCalendar";
+import { drawAttemptsFromPower } from "../../../logic/drawScaling";
+import { getHandCapForStatuses } from "../../../logic/handCapacity";
 import { retentionCapacity } from "../../../logic/turnFlow";
 import { CONTINUITY_REFIT_MAX_CARD_REMOVALS } from "../../../types/continuity";
 import { cardPlayPriorityFirstMandate } from "./strategies/firstMandateStrategy";
@@ -533,6 +535,70 @@ function withAutoInflationRefit<T extends CarryoverDraftLike>(draft: T): T {
   return { ...draft, removedCarryoverIds };
 }
 
+/**
+ * Chapter-3 refit: unlike the generic inflation refit, always spend all
+ * removal slots. Chapter 3 is a deck-cycling race — the eight new
+ * succession-contest cards must come around as often as possible — so every
+ * removed low-value carryover card directly raises track-defense throughput.
+ */
+function chapter3RemovalScore(
+  card: {
+    templateId: CardTemplateId;
+    inflationDelta: number;
+    remainingUses: number | null;
+  },
+  entryLegitimacy: number,
+): number {
+  // Depleted limited-use cards are pure dead weight.
+  if (card.remainingUses !== null && card.remainingUses <= 0) return 1_000;
+  // With a thin legitimacy buffer the legitimacy cards are the survival kit —
+  // never trade them away for deck speed.
+  const legitimacyFragile = entryLegitimacy <= 9;
+  const base = (() => {
+    switch (card.templateId) {
+      case "jesuitCollege":
+        return legitimacyFragile ? 0 : 30;
+      case "ceremony":
+        return legitimacyFragile ? 0 : 25;
+      case "grainRelief":
+        return legitimacyFragile ? 0 : 18;
+      case "taxRebalance":
+        return 15; // draw-penalty side effect slows cycling
+      case "suppressHuguenots":
+        return 40;
+      case "diplomaticCongress":
+        return 4;
+      case "reform":
+        return 3;
+      case "development":
+        return 2;
+      default:
+        return 0;
+    }
+  })();
+  return base + card.inflationDelta * 3;
+}
+
+function withChapter3DeckThinningRefit<T extends CarryoverDraftLike & { resources: Resources }>(
+  draft: T,
+): T {
+  if (draft.carryoverCards.length <= 1) return draft;
+  const maxRemovals = Math.min(
+    CONTINUITY_REFIT_MAX_CARD_REMOVALS,
+    draft.carryoverCards.length - 1,
+  );
+  if (maxRemovals <= 0) return draft;
+  const entryLegitimacy = draft.resources.legitimacy;
+  const ranked = [...draft.carryoverCards].sort((a, b) => {
+    const sa = chapter3RemovalScore(a, entryLegitimacy);
+    const sb = chapter3RemovalScore(b, entryLegitimacy);
+    if (sa !== sb) return sb - sa;
+    return a.instanceId.localeCompare(b.instanceId);
+  });
+  const removedCarryoverIds = ranked.slice(0, maxRemovals).map((card) => card.instanceId);
+  return { ...draft, removedCarryoverIds };
+}
+
 function unresolvedSlots(state: GameState): SlotId[] {
   return EVENT_SLOT_ORDER.filter((slot) => {
     const ev = state.slots[slot];
@@ -602,19 +668,23 @@ function pickFundSolveActionsLegacy(state: GameState): GameAction[] {
     const ev = state.slots[slot];
     return !!ev && !ev.resolved && getEventTemplate(ev.templateId).harmful;
   });
-  const candidates: Array<{ slot: SlotId; harmful: boolean; amount: number }> = [];
+  const candidates: Array<{ slot: SlotId; harmful: boolean; amount: number; opportunity: boolean }> = [];
   for (const slot of EVENT_SLOT_ORDER) {
     const ev = state.slots[slot];
     if (!ev || ev.resolved) continue;
     const tmpl = getEventTemplate(ev.templateId);
     if (tmpl.solve.kind !== "funding" && tmpl.solve.kind !== "fundingOrCrackdown") continue;
-    if (hasUnresolvedHarmful && !tmpl.harmful) continue;
+    // Trade Opportunity converts 1 funding into +1 permanent treasury income —
+    // the best compounding buy in chapter 1; never let it expire unsolved.
+    const opportunity = ev.templateId === "tradeOpportunity";
+    if (hasUnresolvedHarmful && !tmpl.harmful && !opportunity) continue;
     const amount = getEventSolveFundingAmount(state, ev.templateId);
     if (amount === null) continue;
     if (state.resources.funding < amount) continue;
-    candidates.push({ slot, harmful: tmpl.harmful, amount });
+    candidates.push({ slot, harmful: tmpl.harmful, amount, opportunity });
   }
   candidates.sort((a, b) => {
+    if (a.opportunity !== b.opportunity) return a.opportunity ? -1 : 1;
     if (a.harmful !== b.harmful) return a.harmful ? -1 : 1;
     if (a.amount !== b.amount) return a.amount - b.amount;
     return a.slot.localeCompare(b.slot);
@@ -684,12 +754,43 @@ function isTreasuryPressureEventTemplate(templateId: string): boolean {
   );
 }
 
+/**
+ * Chapter-3 events whose solves are worth funding even while harmful events
+ * sit unresolved. The track-swing solves (Bavarian realignment: +1 on solve,
+ * −1 if left; Portuguese tariffs: +1 track +1 treasury) are the cheapest
+ * succession pushes in the chapter — 2 funding for a 1–2 point swing beats a
+ * 3-cost succession card.
+ */
+function isThirdMandateValueSolveTemplate(templateId: string): boolean {
+  return (
+    templateId === "bavarianCourtRealignment" ||
+    templateId === "portugueseTariffNegotiation" ||
+    templateId === "commercialExpansion" ||
+    templateId === "sunKingPilgrimage"
+  );
+}
+
+
 function strategyISolvePriority(state: GameState, slot: SlotId, amount: number): number {
   const ev = state.slots[slot];
   if (!ev) return 1_000_000;
   const id = ev.templateId;
   const power = state.resources.power;
   const treasury = state.resources.treasuryStat;
+  if (state.levelId === "thirdMandate") {
+    if (id === "bavarianCourtRealignment") return -29_000 + amount;
+    if (id === "portugueseTariffNegotiation") return -28_600 + amount;
+    if (id === "localizedSuccessionWar") return -27_600 + amount;
+    if (id === "imperialElectorsMood") return -27_400 + amount;
+    if (id === "commercialExpansion" && treasury < 14) return -26_800 + amount;
+    if (id === "sunKingPilgrimage" && state.resources.legitimacy <= 5) {
+      // +2 legitimacy is the strongest recovery in the chapter when near the floor.
+      return -27_800 + amount;
+    }
+    if (id === "sunKingPilgrimage" && (power <= 8 || state.resources.legitimacy <= 8)) {
+      return -24_800 + amount;
+    }
+  }
   const prioritizeTreasury = (state.levelId === "firstMandate" || state.levelId === "secondMandate") && treasury <= 7;
   const ch2TreasurySprint = state.levelId === "secondMandate" && treasury >= 10 && power >= 8 && state.resources.legitimacy >= 8;
   if (id === "ryswickPeace") return -30_000 + amount;
@@ -731,19 +832,52 @@ function strategyISolvePriority(state: GameState, slot: SlotId, amount: number):
 const HUGUENOT_SUPPRESS_FUNDING_RESERVE = 3;
 const HUGUENOT_SUPPRESS_RESERVE_OVERRIDE_PRIORITY = -25_000;
 
+/**
+ * Chapter-3 wartime funding reserve: while the Habsburg rival is active the
+ * bot keeps enough funding to play one succession-contest card from hand, so
+ * ordinary solves cannot starve the track defense. Critical solves (very
+ * negative priority) still bypass the reserve, mirroring the huguenot rule.
+ */
+const SUCCESSION_RESERVE_OVERRIDE_PRIORITY = -27_000;
+
+function successionFundingReserve(state: GameState): number {
+  if (state.levelId !== "thirdMandate") return 0;
+  if (!state.opponentHabsburgUnlocked || state.warEnded) return 0;
+  // Reserve only while the track actually needs pushing; with a comfortable
+  // lead the funding is better spent on solves and legitimacy upkeep.
+  if (state.successionTrack >= 6) return 0;
+  if (state.resources.legitimacy <= 3) return 0;
+  const costs: number[] = [];
+  for (const id of state.hand) {
+    const inst = state.cardsById[id];
+    if (!inst) continue;
+    if (!getCardTemplate(inst.templateId).tags.includes("successionContest")) continue;
+    if (!isCardPlayableInActionPhase(state, id)) continue;
+    costs.push(getPlayableCardCost(state, id));
+  }
+  if (costs.length === 0) return 0;
+  costs.sort((a, b) => a - b);
+  // With a healthy income, hold back enough for two track pushes per year.
+  const holdCount = state.resources.treasuryStat >= 7 ? Math.min(2, costs.length) : 1;
+  return costs.slice(0, holdCount).reduce((sum, c) => sum + c, 0);
+}
+
 function pickFundSolveActionsStrategyI(state: GameState): GameAction[] {
   const hasUnresolvedHarmful = hasUnresolvedHarmfulEvents(state);
   const hasJansenistOnBoard = !!firstUnresolvedSlotByTemplate(state, "jansenistTension");
   const hasContainment = state.playerStatuses.some((s) => s.templateId === "huguenotContainment");
   const hasSuppressInHand = state.hand.some((id) => state.cardsById[id]?.templateId === "suppressHuguenots");
   const reserveBuffer = hasContainment && hasSuppressInHand ? HUGUENOT_SUPPRESS_FUNDING_RESERVE : 0;
+  const successionReserve = successionFundingReserve(state);
   const candidates: Array<{ slot: SlotId; amount: number; priority: number }> = [];
   for (const slot of EVENT_SLOT_ORDER) {
     const ev = state.slots[slot];
     if (!ev || ev.resolved) continue;
     const tmpl = getEventTemplate(ev.templateId);
     if (tmpl.solve.kind !== "funding" && tmpl.solve.kind !== "fundingOrCrackdown") continue;
-    const keepEvenUnderPressure = isCriticalOpportunityEventTemplate(ev.templateId);
+    const keepEvenUnderPressure =
+      isCriticalOpportunityEventTemplate(ev.templateId) ||
+      (state.levelId === "thirdMandate" && isThirdMandateValueSolveTemplate(ev.templateId));
     if (hasUnresolvedHarmful && !tmpl.harmful && !keepEvenUnderPressure) continue;
     // Jesuit Patronage dilutes the deck (2 collèges + 1 religious-tension card); only worth
     // solving when its Jansenist auto-resolve synergy can actually be triggered.
@@ -758,6 +892,14 @@ function pickFundSolveActionsStrategyI(state: GameState): GameAction[] {
       reserveBuffer > 0 &&
       priority > HUGUENOT_SUPPRESS_RESERVE_OVERRIDE_PRIORITY &&
       state.resources.funding - amount < reserveBuffer
+    ) {
+      continue;
+    }
+    // Chapter-3 wartime reserve: keep one succession-contest play affordable.
+    if (
+      successionReserve > 0 &&
+      priority > SUCCESSION_RESERVE_OVERRIDE_PRIORITY &&
+      state.resources.funding - amount < successionReserve
     ) {
       continue;
     }
@@ -823,7 +965,7 @@ function pickSecondMandateEconomyPreSolveActions(state: GameState): GameAction[]
   if (canTreasurySprintTo15) {
     targets.push("development", "taxRebalance");
   }
-  if (state.resources.treasuryStat <= 6) {
+  if (state.resources.treasuryStat <= 8) {
     targets.push("development", "taxRebalance");
   }
   if (state.resources.power <= 5) {
@@ -841,18 +983,49 @@ function pickSecondMandateEconomyPreSolveActions(state: GameState): GameAction[]
   return [{ type: "PLAY_CARD", handIndex: picked.handIndex }];
 }
 
+/**
+ * Succession-contest cards played *before* solves drain funding. While the
+ * Habsburg rival is active, the succession track slides ~1–2 per year from
+ * opponent plays alone, so the bot must reliably convert funding into track
+ * pushes every year — waiting until the track is nearly lost (the old −6
+ * trigger) loses carryover runs that enter chapter 3 with a weak economy.
+ */
+function thirdMandateSuccessionPlayOrder(state: GameState): CardTemplateId[] {
+  const order: CardTemplateId[] = [];
+  // Infiltration first when the rival has budget to burn: it cuts this year's
+  // opponent budget by 1 on top of +1 track and a replacement draw.
+  if (state.opponentStrength >= 3) order.push("grandAllianceInfiltrationDiplomacy");
+  if (state.successionTrack <= 0) order.push("italianTheaterTroopRedeploy");
+  order.push("bourbonMarriageProclamation", "grandAllianceInfiltrationDiplomacy");
+  // Usurpation's legitimacyCrisis status bleeds 1 legitimacy per year for two
+  // years; only safe with a solid buffer and never while one is already active.
+  const hasLegitimacyCrisis = state.playerStatuses.some((st) => st.templateId === "legitimacyCrisis");
+  const usurpationLegitimacyFloor = state.successionTrack <= -6 ? 5 : 6;
+  if (state.resources.legitimacy >= usurpationLegitimacyFloor && !hasLegitimacyCrisis) {
+    order.push("usurpationEdict");
+  }
+  order.push("italianTheaterTroopRedeploy");
+  return order;
+}
+
 function pickThirdMandateMomentumPreSolveActions(state: GameState): GameAction[] {
   if (state.levelId !== "thirdMandate") return [];
   if (!state.opponentHabsburgUnlocked || state.warEnded) return [];
   if (firstUnresolvedSlotByTemplate(state, "utrechtTreaty")) return [];
-  if (!hasUnresolvedHarmfulEvents(state)) return [];
-  if (state.successionTrack > -6) return [];
-  const picked = firstPlayableHandIndexByTemplates(state, [
-    "bourbonMarriageProclamation",
-    "grandAllianceInfiltrationDiplomacy",
-    "usurpationEdict",
-  ]);
+  if (state.successionTrack >= 9) return [];
+  // Legitimacy near the floor kills faster than the track: recover it first.
+  if (state.resources.legitimacy <= 3) return [];
+  const picked = firstPlayableHandIndexByTemplates(state, thirdMandateSuccessionPlayOrder(state));
   if (!picked) return [];
+  const danger = state.successionTrack <= 0;
+  if (!danger) {
+    // Track not in immediate danger: only pre-empt solves when the cheapest
+    // harmful solve still fits into the remaining funding afterwards.
+    const minHarmfulSolve = minFundingSolveAmount(state, (_templateId, harmful) => harmful);
+    if (minHarmfulSolve !== null && state.resources.funding - picked.cost < minHarmfulSolve) {
+      return [];
+    }
+  }
   return [{ type: "PLAY_CARD", handIndex: picked.handIndex }];
 }
 
@@ -899,30 +1072,25 @@ function cardPlayPriorityStrategyI(state: GameState, cardInstanceId: string): nu
     ryswickSolveAmount !== null && currentFunding < ryswickSolveAmount && currentFunding + 1 >= ryswickSolveAmount;
   const nearDeadline = state.levelId === "secondMandate" && currentCalendarYear(state) >= 1693;
 
-  if (tmpl === "fiscalBurden") {
+  if (
+    tmpl === "fiscalBurden" ||
+    tmpl === "religiousTensionCard" ||
+    tmpl === "jansenistReservation" ||
+    tmpl === "antiFrenchContainment"
+  ) {
     const selfCost = getPlayableCardCost(state, cardInstanceId);
-    if (
-      state.levelId === "thirdMandate" &&
-      state.opponentHabsburgUnlocked &&
-      state.successionTrack <= -2 &&
-      !unresolvedHarmful &&
-      state.resources.funding - selfCost >= 2
-    ) {
-      return 18;
+    // Consume-on-play dead cards: burning one permanently thins the deck AND
+    // frees a hand slot. Hand slots matter because year-start draws stop at
+    // the hand cap — a hand clogged with junk starves the run of new cards.
+    const handCapNow = getHandCapForStatuses(state.playerStatuses);
+    const drawStarved = state.hand.length >= handCapNow - 2;
+    if (drawStarved && state.resources.funding >= selfCost) return 6;
+    if (state.resources.funding - selfCost >= 3) {
+      return tmpl === "fiscalBurden" ? 11 : 12;
     }
-    return 10_000;
-  }
-  if (tmpl === "religiousTensionCard" || tmpl === "jansenistReservation") {
-    const selfCost = getPlayableCardCost(state, cardInstanceId);
-    if (
-      state.levelId === "thirdMandate" &&
-      state.opponentHabsburgUnlocked &&
-      state.successionTrack <= -2 &&
-      !unresolvedHarmful &&
-      state.resources.funding - selfCost >= 2
-    ) {
-      return 17;
-    }
+    // Leftover funding is wiped at END_YEAR; spend it on thinning when the
+    // hand is even moderately crowded.
+    if (state.hand.length >= handCapNow - 4 && state.resources.funding >= selfCost) return 13;
     return 10_000;
   }
   if (state.levelId === "secondMandate") {
@@ -966,7 +1134,7 @@ function pickCardPlayActions(state: GameState, policy: StrategyPolicyId): GameAc
     }
     if (policy === "a-strategy-i" && template === "crackdown") {
       const remaining = remainingCardUses(state, id);
-      if (remaining === 1 && state.resources.power <= 3) {
+      if (remaining === 1 && state.resources.power <= 5) {
         // Preserve the final crackdown charge to avoid depletion-driven power collapse.
         continue;
       }
@@ -993,14 +1161,23 @@ function pickCardPlayActions(state: GameState, policy: StrategyPolicyId): GameAc
 export function pickRetentionIdsForSimplePolicy(state: GameState): readonly string[] {
   const capacity = retentionCapacity(state);
   if (capacity <= 0 || state.hand.length === 0) return [];
+  const win = getLevelDef(state.levelId).winTargets;
+  const keepWeight = (templateId: CardTemplateId): number => {
+    // A stat-builder for a still-missing win target beats generic utility:
+    // it is the card we must play soon, and re-drawing it is not guaranteed.
+    if (templateId === "development" && state.resources.treasuryStat < win.treasuryStat) return 2;
+    if (templateId === "reform" && state.resources.power < win.power) return 2;
+    if (templateId === "ceremony" && state.resources.legitimacy < win.legitimacy) return 2;
+    return RETENTION_PRIORITY_TEMPLATES.includes(templateId) ? 1 : 0;
+  };
   const ranked = [...state.hand].sort((a, b) => {
     const ia = state.cardsById[a];
     const ib = state.cardsById[b];
     if (!ia || !ib) return a.localeCompare(b);
     const ta = ia.templateId;
     const tb = ib.templateId;
-    const pa = RETENTION_PRIORITY_TEMPLATES.includes(ta) ? 1 : 0;
-    const pb = RETENTION_PRIORITY_TEMPLATES.includes(tb) ? 1 : 0;
+    const pa = keepWeight(ta);
+    const pb = keepWeight(tb);
     if (pa !== pb) return pb - pa;
     const ca = getCardTemplate(ta).cost;
     const cb = getCardTemplate(tb).cost;
@@ -1010,24 +1187,58 @@ export function pickRetentionIdsForSimplePolicy(state: GameState): readonly stri
   return ranked.slice(0, capacity);
 }
 
+/** Dead-weight templates never worth a retention slot (burnable consumables). */
+const RETENTION_JUNK_TEMPLATES: ReadonlySet<CardTemplateId> = new Set<CardTemplateId>([
+  "fiscalBurden",
+  "religiousTensionCard",
+  "jansenistReservation",
+  "antiFrenchContainment",
+]);
+
+function retentionKeepWeight(templateId: CardTemplateId): number {
+  // Succession-contest cards are the chapter-3 win condition; always keep.
+  if (getCardTemplate(templateId).tags.includes("successionContest")) return 2;
+  return RETENTION_PRIORITY_TEMPLATES_STRATEGY_I.includes(templateId) ? 1 : 0;
+}
+
+/**
+ * Retention that respects the hand cap: the previous policy kept everything
+ * (capacity = legitimacy, usually above the 12-card hand cap), so hands filled
+ * with dead cards and the year-start draw was blocked entirely — succession
+ * cards then never surfaced from the deck. Keep only useful cards and always
+ * leave room for a full year-start draw.
+ */
 function pickRetentionIdsForStrategyI(state: GameState): readonly string[] {
   const capacity = retentionCapacity(state);
   if (capacity <= 0 || state.hand.length === 0) return [];
-  const ranked = [...state.hand].sort((a, b) => {
+  const hasContainment = state.playerStatuses.some((st) => st.templateId === "huguenotContainment");
+  const keepable = state.hand.filter((id) => {
+    const inst = state.cardsById[id];
+    if (!inst) return false;
+    const t = inst.templateId;
+    if (RETENTION_JUNK_TEMPLATES.has(t)) return false;
+    if (t === "suppressHuguenots" && !hasContainment) return false;
+    const uses = state.cardUsesById[id];
+    if (uses && uses.remaining <= 0) return false;
+    return true;
+  });
+  const ranked = keepable.sort((a, b) => {
     const ia = state.cardsById[a];
     const ib = state.cardsById[b];
     if (!ia || !ib) return a.localeCompare(b);
     const ta = ia.templateId;
     const tb = ib.templateId;
-    const pa = RETENTION_PRIORITY_TEMPLATES_STRATEGY_I.includes(ta) ? 1 : 0;
-    const pb = RETENTION_PRIORITY_TEMPLATES_STRATEGY_I.includes(tb) ? 1 : 0;
+    const pa = retentionKeepWeight(ta);
+    const pb = retentionKeepWeight(tb);
     if (pa !== pb) return pb - pa;
     const ca = getCardTemplate(ta).cost;
     const cb = getCardTemplate(tb).cost;
     if (ca !== cb) return ca - cb;
     return a.localeCompare(b);
   });
-  return ranked.slice(0, capacity);
+  const drawRoom = Math.max(3, drawAttemptsFromPower(state.resources.power));
+  const keepCap = Math.max(0, Math.min(capacity, getHandCapForStatuses(state.playerStatuses) - drawRoom));
+  return ranked.slice(0, keepCap);
 }
 
 /**
@@ -1043,7 +1254,52 @@ function pickRetentionIdsForStrategyI(state: GameState): readonly string[] {
  *      funding so the suppress can be played in a later iteration.
  * Returns [] in all other cases.
  */
+const BURNABLE_JUNK_TEMPLATES: readonly CardTemplateId[] = [
+  "fiscalBurden",
+  "religiousTensionCard",
+  "jansenistReservation",
+  "antiFrenchContainment",
+];
+
+/**
+ * Draw-deadlock breaker: when the hand sits at the hand cap, year-start draws
+ * are fully blocked and the run can freeze (junk in hand, no new cards, all
+ * funding eaten by solves every year). Burning a consume-on-play junk card
+ * before solves reopens the draw flow — worth more than one mid-tier solve.
+ */
+function pickHandUnclogPreSolveActions(state: GameState): GameAction[] {
+  const handCapNow = getHandCapForStatuses(state.playerStatuses);
+  if (state.hand.length < handCapNow - 1) return [];
+  const picked = firstPlayableHandIndexByTemplates(state, BURNABLE_JUNK_TEMPLATES);
+  if (!picked) return [];
+  return [{ type: "PLAY_CARD", handIndex: picked.handIndex }];
+}
+
+/**
+ * Chapter-3 funding triage: a crackdown play clears a harmful event for 1
+ * funding where the funding solve costs 3–6. When income cannot cover both
+ * the harmful solves and a succession-contest play, spend the crackdown
+ * charge first and save the funding for the track.
+ */
+function pickThirdMandateCrackdownPreSolveActions(state: GameState): GameAction[] {
+  if (state.levelId !== "thirdMandate" && state.levelId !== "secondMandate") return [];
+  if (state.levelId === "thirdMandate" && (!state.opponentHabsburgUnlocked || state.warEnded)) return [];
+  if (!hasUnresolvedHarmfulEvents(state)) return [];
+  if (pickCrackdownTarget(state) === null) return [];
+  const minHarmfulSolve = minFundingSolveAmount(state, (_templateId, harmful) => harmful);
+  if (minHarmfulSolve === null) return [];
+  const reserve = successionFundingReserve(state);
+  if (state.resources.funding >= minHarmfulSolve + reserve) return [];
+  const picked = firstPlayableHandIndexByTemplates(state, ["crackdown", "diplomaticIntervention"]);
+  if (!picked) return [];
+  return [{ type: "PLAY_CARD", handIndex: picked.handIndex }];
+}
+
 function pickEssentialPreSolveActionsStrategyI(state: GameState): GameAction[] {
+  const unclog = pickHandUnclogPreSolveActions(state);
+  if (unclog.length > 0) return unclog;
+  const crackdownTriage = pickThirdMandateCrackdownPreSolveActions(state);
+  if (crackdownTriage.length > 0) return crackdownTriage;
   const thirdMomentum = pickThirdMandateMomentumPreSolveActions(state);
   if (thirdMomentum.length > 0) return thirdMomentum;
   const economy = pickSecondMandateEconomyPreSolveActions(state);
@@ -1334,7 +1590,7 @@ function simulateFirstToThirdCampaignPhaseStates(
     };
   }
   const seed3 = campaignThirdStageSeed(seed2);
-  const draft3 = withAutoInflationRefit(createContinuityLevel3Draft(secondEndState, seed3));
+  const draft3 = withChapter3DeckThinningRefit(createContinuityLevel3Draft(secondEndState, seed3));
   const thirdStartState = buildLevel3StateFromDraft(draft3);
   const thirdEndState = simulateEndStateWithPolicy(
     thirdStartState,
@@ -1395,7 +1651,7 @@ export function simulateSecondToThirdCampaignRun(
     };
   }
   const seed3 = campaignThirdStageSeed(seed);
-  const draft3 = withAutoInflationRefit(createContinuityLevel3Draft(secondEndState, seed3));
+  const draft3 = withChapter3DeckThinningRefit(createContinuityLevel3Draft(secondEndState, seed3));
   const thirdStartState = buildLevel3StateFromDraft(draft3);
   const thirdEndState = simulateEndStateWithPolicy(
     thirdStartState,

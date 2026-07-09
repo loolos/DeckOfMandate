@@ -117,7 +117,12 @@ export function cardPlayPrioritySecondMandate(
     legitimacy >= 8 &&
     power >= 6 &&
     treasury < 15;
-  /** Slightly raise `development` / `taxRebalance` ceiling only when win is already locked and board is clean. */
+  /**
+   * Treasury at chapter-2 exit is chapter-3's yearly funding income, and the
+   * succession war needs ~10+ income to fund both solves and track pushes.
+   * Push the ceiling well above the old value of 8 whenever the board allows;
+   * sprint to 15 when victory is already locked.
+   */
   const treasuryPushCeiling =
     treasurySprintTo15
       ? 15
@@ -130,8 +135,8 @@ export function cardPlayPrioritySecondMandate(
           currentCalendarYear(state) >= vr.earliestCalendarYear + 3 &&
           legitimacy >= 8 &&
           power >= 6
-        ? 9
-        : 8;
+        ? 13
+        : 11;
   const shouldPushTreasury =
     treasury < treasuryPushCeiling && (!hasUrgentStabilizationNeed || canPushTreasuryEarly);
   switch (tmpl) {
@@ -151,12 +156,15 @@ export function cardPlayPrioritySecondMandate(
     case "diplomaticCongress":
       if (treasurySprintTo15) return 12;
       if (treasuryEmergency && !unresolvedHarmful) return 8;
-      if (continuityPrepWindow && power < 8) return 2;
+      if (continuityPrepWindow && power < 9) return 2;
+      // While the Europe Alert runs, congress also ticks alert progress down —
+      // the alert's supplemental harmful events are the main power drain.
+      if (state.europeAlert && power < 8) return 2;
       return state.resources.power < 6 ? 2 : state.resources.power < 8 ? 4 : 24;
     case "taxRebalance":
       if (treasurySprintTo15) return 1;
       if (treasuryEmergency) return 1;
-      if (continuityPrepWindow && treasury < 8) return 2;
+      if (continuityPrepWindow && treasury < 12 && legitimacy >= 7) return 2;
       if (canPushTreasuryEarly && treasury <= 4) return 2;
       if (shouldPushTreasury && treasury < 6) return 2;
       if (shouldPushTreasury && treasury < treasuryPushCeiling) return 4;
@@ -164,7 +172,7 @@ export function cardPlayPrioritySecondMandate(
     case "development":
       if (treasurySprintTo15) return 0;
       if (treasuryEmergency) return 0;
-      if (continuityPrepWindow && treasury < 8) return 1;
+      if (continuityPrepWindow && treasury < 12 && legitimacy >= 7) return 1;
       if (canPushTreasuryEarly && treasury <= 4) return 1;
       if (shouldPushTreasury && treasury < 6) return 1;
       if (shouldPushTreasury && treasury < treasuryPushCeiling) return 3;
@@ -172,7 +180,7 @@ export function cardPlayPrioritySecondMandate(
     case "reform":
       if (treasurySprintTo15) return 14;
       if (treasuryEmergency && !unresolvedHarmful) return 9;
-      if (continuityPrepWindow && power < 7) return 1;
+      if (continuityPrepWindow && power < 9) return 1;
       return state.resources.power < 5 ? 2 : state.resources.power < 7 ? 5 : 24;
     case "ceremony":
       if (treasurySprintTo15) return 16;
