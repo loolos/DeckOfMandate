@@ -16,12 +16,20 @@ export function cardPlayPriorityFirstMandate(state: GameState, cardInstanceId: s
   const powerMissing = Math.max(0, win.power - state.resources.power);
   const legitimacyMissing = Math.max(0, win.legitimacy - state.resources.legitimacy);
   const turnsLeft = Math.max(0, 15 - state.turn + 1);
-  const nearDeadline = turnsLeft <= 4;
+  const nearDeadline = turnsLeft <= 6;
   const severeDeficit = treasuryMissing + powerMissing + legitimacyMissing >= 4;
   const treasuryCriticalDeficit = treasuryMissing >= 3 || state.resources.treasuryStat <= 4;
   const treasuryDominantDeficit =
     treasuryMissing >= 2 && treasuryMissing >= powerMissing && treasuryMissing >= legitimacyMissing;
   const canFocusTreasury = !harmfulUnresolvedExists && (treasuryDominantDeficit || treasuryCriticalDeficit);
+  /**
+   * Victory fires automatically at END_YEAR once all targets are met, and the
+   * end state carries into chapter 2 (treasury = yearly income there). When
+   * only the final legitimacy point is missing and there is schedule slack,
+   * hold the finishing ceremony and overshoot treasury first.
+   */
+  const onlyLegitimacyMissing = legitimacyMissing === 1 && treasuryMissing === 0 && powerMissing === 0;
+  const farmBeforeFinish = onlyLegitimacyMissing && turnsLeft > 3 && state.resources.treasuryStat < 8;
 
   switch (tmpl) {
     case "funding":
@@ -34,23 +42,25 @@ export function cardPlayPriorityFirstMandate(state: GameState, cardInstanceId: s
     case "diplomaticIntervention":
       return harmfulUnresolvedExists ? 1 : 70;
     case "development":
+      if (farmBeforeFinish) return 1;
+      if (nearDeadline && treasuryMissing > 0) return 0;
       if (canFocusTreasury) return 0;
       if (treasuryMissing >= 2) return 1;
-      if (nearDeadline && treasuryMissing > 0) return 1;
       return treasuryMissing > 0 ? 2 : 20;
     case "reform":
+      if (nearDeadline && powerMissing > 0) return 0;
       if (canFocusTreasury) {
         return powerMissing > 0 ? 4 : 26;
       }
       if (powerMissing >= 2) return 1;
-      if (nearDeadline && powerMissing > 0) return 1;
       return powerMissing > 0 ? 2 : 22;
     case "ceremony":
+      if (farmBeforeFinish) return 80;
+      if (nearDeadline && legitimacyMissing > 0) return 0;
       if (canFocusTreasury) {
         return legitimacyMissing > 0 ? 4 : 26;
       }
       if (legitimacyMissing >= 2) return 1;
-      if (nearDeadline && legitimacyMissing > 0) return 1;
       return legitimacyMissing > 0 ? 2 : 22;
     default:
       return 30;

@@ -38,7 +38,9 @@ export function pickThirdMandateChoiceActions(state: GameState): GameAction[] {
 
   const dualSlot = firstUnresolvedSlotByTemplate(state, "dualFrontCrisis");
   if (dualSlot) {
-    const expandWar = legitimacy >= 2;
+    // Expanding costs 1 legitimacy immediately; with a thin buffer that risks
+    // the legitimacy defeat more than −3 track risks the succession defeat.
+    const expandWar = legitimacy >= 4;
     return [{ type: "PICK_DUAL_FRONT_CRISIS", slot: dualSlot, expandWar }];
   }
 
@@ -82,9 +84,14 @@ export function cardPlayPriorityThirdMandate(
     case "italianTheaterTroopRedeploy":
       if (nearDefeatTrack && burdens < 14) return 3;
       return tr < 5 && burdens < 12 ? 5 : 22;
-    case "usurpationEdict":
+    case "usurpationEdict": {
+      // legitimacyCrisis bleeds 1 legitimacy per year for two years; require a
+      // buffer and never stack a second edict while one crisis is running.
+      const hasLegitimacyCrisis = state.playerStatuses.some((st) => st.templateId === "legitimacyCrisis");
+      if (hasLegitimacyCrisis) return 38;
       if (nearDefeatTrack && state.resources.legitimacy >= 4) return 4;
-      return tr <= 2 && state.resources.legitimacy >= 6 ? 6 : 38;
+      return tr <= 2 && state.resources.legitimacy >= 5 ? 6 : 38;
+    }
     case "funding":
       if (canFundingUnlockHarmfulSolve) return 1;
       if (highPressure) return 8;
@@ -93,21 +100,38 @@ export function cardPlayPriorityThirdMandate(
     case "diplomaticIntervention":
       return unresolvedHarmful ? (state.resources.power <= 2 ? 7 : 2) : 70;
     case "grainRelief":
-      return unresolvedRisingGrain ? 2 : state.resources.legitimacy <= 6 ? 4 : 22;
+      if (state.resources.legitimacy <= 5) return 1;
+      return unresolvedRisingGrain ? 2 : state.resources.legitimacy <= 7 ? 4 : 22;
     case "diplomaticCongress":
       if (nearDefeatTrack) return state.resources.power < 7 ? 2 : 6;
       return state.resources.power < 6 ? 2 : state.resources.power < 8 ? 4 : 24;
     case "taxRebalance":
+      // Draw-penalty side effect slows deck cycling; only for real treasury emergencies.
       return state.resources.treasuryStat < 3 ? 5 : state.resources.treasuryStat < 5 ? 12 : 35;
-    case "development":
-      return state.resources.treasuryStat < 5 ? 3 : state.resources.treasuryStat < 7 ? 6 : 24;
-    case "reform":
-      return state.resources.power < 5 ? 2 : state.resources.power < 7 ? 5 : 24;
+    case "development": {
+      // Treasury is next year's funding income: during the war, income pays for
+      // both event solves and succession-contest plays, so build it up early.
+      const atWar = state.opponentHabsburgUnlocked && !state.warEnded;
+      if (state.resources.treasuryStat < 7) return 3;
+      if (atWar && state.resources.treasuryStat < 13) return 8;
+      return 24;
+    }
+    case "reform": {
+      // Power feeds draw attempts (breakpoints at 7 and 11); more draws cycle
+      // succession cards back faster. Reform also replaces itself with a draw.
+      const atWar = state.opponentHabsburgUnlocked && !state.warEnded;
+      if (state.resources.power < 5) return 2;
+      if (state.resources.power < 7) return 5;
+      if (atWar && state.resources.power < 11) return 9;
+      return 24;
+    }
     case "ceremony":
-      return state.resources.legitimacy < 6 ? 3 : state.resources.legitimacy < 9 ? 7 : 26;
+      if (state.resources.legitimacy <= 6) return 1;
+      return state.resources.legitimacy < 9 ? 4 : 26;
     case "suppressHuguenots":
       return hasContainmentStatus ? 7 : 90;
     case "jesuitCollege": {
+      if (state.resources.legitimacy <= 4) return 1;
       const jansenistSlot = firstUnresolvedSlotByTemplate(state, "jansenistTension");
       if (jansenistSlot) return 2;
       return state.resources.legitimacy < 9 ? 5 : 12;
