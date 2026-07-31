@@ -3,7 +3,7 @@ import { getPlayableCardCost } from "../../../../logic/cardCost";
 import type { GameAction } from "../../../../app/gameReducer";
 import type { GameState } from "../../../../types/game";
 import { getLevelDef } from "../../../../data/levels";
-import { currentCalendarYear } from "../../../../logic/scriptedCalendar";
+import { currentCalendarYear } from "../../logic/scriptedCalendar";
 import { EVENT_SLOT_ORDER, type SlotId } from "../../../types/event";
 
 export type SecondMandateChoiceOptions = {

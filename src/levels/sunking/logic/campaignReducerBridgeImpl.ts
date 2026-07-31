@@ -1,6 +1,6 @@
 import type { GameAction } from "../../../app/gameReducer";
 import { appendActionLog } from "../../../logic/actionLog";
-import { applyEffects, enforceLegitimacy } from "../../../logic/applyEffects";
+import { applyEffects, enforceLegitimacy } from "./applyEffects";
 import { appendInflationActivationLogIfNeeded } from "../../../logic/cardCost";
 import { enforceHuguenotContainmentInvariant } from "../../../logic/cardRuntime";
 import { markSlotResolved, markSlotResolvedWithLeagueProgress } from "../../../logic/eventSlotOps";

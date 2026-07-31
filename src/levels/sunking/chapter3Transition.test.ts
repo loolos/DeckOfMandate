@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { createInitialState } from "../../app/initialState";
 import { completeSuccessionCrisisAndRevealOpponent } from "../../logic/opponentHabsburg";
-import { currentCalendarYear } from "../../logic/scriptedCalendar";
+import { currentCalendarYear } from "./logic/scriptedCalendar";
 import { EVENT_SLOT_ORDER } from "../types/event";
 import { buildLevel3StateFromDraft, createContinuityLevel3Draft } from "./chapter3Transition";
 

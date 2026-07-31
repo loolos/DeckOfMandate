@@ -5,7 +5,7 @@ import {
 } from "../../../data/events";
 import { getLevelContent } from "../../../data/levelContent";
 import { getLevelDef, getTurnLimitForRun } from "../../../data/levels";
-import { currentCalendarYear } from "../../../logic/scriptedCalendar";
+import { currentCalendarYear } from "./scriptedCalendar";
 import type { CardTemplateId } from "../../types/card";
 import { appendActionLog } from "./actionLog";
 import {
@@ -20,12 +20,12 @@ import type { PlayerStatusInstance } from "../../types/status";
 import { applyOnDrawCardEffects } from "./cardRuntime";
 import { applyInflationFromDeckRefill } from "./cardCost";
 import { drawUpToPower } from "../../../logic/draw";
-import { drawAttemptsFromPower } from "../../../logic/drawScaling";
+import { drawAttemptsFromPower } from "./drawScaling";
 import { getHandCapForStatuses } from "../../../logic/handCapacity";
-import { applyScriptedCalendarPhase, rollAntiFrenchLeagueDrawAdjustment } from "../../../logic/scriptedCalendar";
+import { applyScriptedCalendarPhase, rollAntiFrenchLeagueDrawAdjustment } from "./scriptedCalendar";
 import { rngNext, shuffle } from "../../../logic/rng";
 import { opponentBeginYearDrawPhase } from "../../../logic/opponentHabsburg";
-import { enforceLegitimacy } from "../../../logic/applyEffects";
+import { enforceLegitimacy } from "./applyEffects";
 import {
   maybeAddEuropeAlertSupplementalEventHook,
   maybeAddReligiousTensionEventHook,

@@ -69,3 +69,4 @@ export {
   syncGreatPowerEncirclementStatusHook,
   syncAntiFrenchSentimentStatusHook,
 } from "./sunking/logic/turnFlowHooks";
+export { campaignSaveStateShapeValid } from "./sunking/logic/saveShape";

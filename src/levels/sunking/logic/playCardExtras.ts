@@ -1,5 +1,5 @@
 import { appendActionLog } from "../../../logic/actionLog";
-import { applyEffects } from "../../../logic/applyEffects";
+import { applyEffects } from "./applyEffects";
 import { addCardsToHand } from "../../../logic/cardRuntime";
 import { markSlotResolved } from "../../../logic/eventSlotOps";
 import type { GameState } from "../../../types/game";

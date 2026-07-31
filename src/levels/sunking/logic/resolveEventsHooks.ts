@@ -2,7 +2,7 @@ import { getEventTemplate } from "../../../data/events";
 import type { SlotId } from "../../types/event";
 import type { GameState } from "../../../types/game";
 import { appendActionLog } from "./actionLog";
-import { applyEffects, enforceLegitimacy } from "../../../logic/applyEffects";
+import { applyEffects, enforceLegitimacy } from "./applyEffects";
 import {
   completeSuccessionCrisisAndRevealOpponent,
   stateAfterUtrechtTreatyEndsWar,

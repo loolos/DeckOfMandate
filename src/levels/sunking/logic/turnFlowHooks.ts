@@ -10,7 +10,7 @@ import {
   rollEuropeAlertSupplementalEventCount,
 } from "./europeAlert";
 import { antiFrenchSentimentActive } from "./antiFrenchSentiment";
-import { applyEffects } from "../../../logic/applyEffects";
+import { applyEffects } from "./applyEffects";
 import { rngNext } from "../../../logic/rng";
 import { THIRD_MANDATE_LEVEL_ID } from "./thirdMandateConstants";
 

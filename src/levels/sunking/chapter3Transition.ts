@@ -6,7 +6,7 @@ import { createInitialCardUseState } from "../../logic/cardUsage";
 import { THIRD_MANDATE_LEVEL_ID } from "../../logic/thirdMandateConstants";
 import { registerNantesStarterCardsForThirdMandate, resolveThirdMandateNantesPolicy } from "../../logic/thirdMandateStart";
 import { createRngFromSeed, shuffle } from "../../logic/rng";
-import { calendarYearForTurn } from "../../logic/scriptedCalendar";
+import { calendarYearForTurn } from "./logic/scriptedCalendar";
 import { unlockHabsburgOpponentForContinuityChapterStart } from "../../logic/opponentHabsburg";
 import { beginYear } from "../../logic/turnFlow";
 import type { CardInstance, CardTemplateId } from "../types/card";

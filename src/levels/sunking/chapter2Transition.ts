@@ -3,7 +3,7 @@ import { getLevelContent, getLevelDef } from "../../data/levelRegistry";
 import { appendActionLog } from "./logic/actionLog";
 import { createInitialCardUseState } from "../../logic/cardUsage";
 import { computeEuropeAlertPowerLoss } from "../../logic/europeAlert";
-import { calendarYearForTurn } from "../../logic/scriptedCalendar";
+import { calendarYearForTurn } from "./logic/scriptedCalendar";
 import { createRngFromSeed, shuffle } from "../../logic/rng";
 import { beginYear } from "../../logic/turnFlow";
 import type { CardInstance, CardTemplateId } from "../types/card";

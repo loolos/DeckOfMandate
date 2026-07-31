@@ -8,7 +8,7 @@ import {
   applyScriptedCalendarPhase,
   currentCalendarYear,
   rollAntiFrenchLeagueDrawAdjustment,
-} from "../../../logic/scriptedCalendar";
+} from "./scriptedCalendar";
 
 function stateAtTurn(turn: number): GameState {
   const s0 = createInitialState(42);
