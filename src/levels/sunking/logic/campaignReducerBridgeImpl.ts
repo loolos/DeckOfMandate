@@ -12,6 +12,12 @@ import type { GameState } from "../../../types/game";
 import type { SlotId } from "../../types/event";
 import { THIRD_MANDATE_LEVEL_ID } from "./thirdMandateConstants";
 import { canLocalWarAttack, performLocalWarAppease, performLocalWarAttack } from "./localWarSolve";
+import {
+  handleCrackdownCancelAction,
+  handleCrackdownTargetAction,
+  handleScriptedEventAttackAction,
+  handleSolveEventAction,
+} from "./eventSolveActions";
 
 function addUniqueStatus(
   state: GameState,
@@ -232,6 +238,23 @@ const BRIDGE_RULES: readonly BridgeRule[] = [
         performLouisXivLegacyPick(state, action.slot, action.directRule),
       );
     },
+  },
+  {
+    canHandle: (action) => action.type === "SOLVE_EVENT",
+    apply: (state, action) => (action.type === "SOLVE_EVENT" ? handleSolveEventAction(state, action.slot) : null),
+  },
+  {
+    canHandle: (action) => action.type === "SCRIPTED_EVENT_ATTACK",
+    apply: (state, action) =>
+      action.type === "SCRIPTED_EVENT_ATTACK" ? handleScriptedEventAttackAction(state, action.slot) : null,
+  },
+  {
+    canHandle: (action) => action.type === "CRACKDOWN_TARGET",
+    apply: (state, action) => (action.type === "CRACKDOWN_TARGET" ? handleCrackdownTargetAction(state, action.slot) : null),
+  },
+  {
+    canHandle: (action) => action.type === "CRACKDOWN_CANCEL",
+    apply: (state, action) => (action.type === "CRACKDOWN_CANCEL" ? handleCrackdownCancelAction(state) : null),
   },
 ];
 

@@ -1,10 +1,11 @@
 import { appendActionLog } from "../../../logic/actionLog";
 import { applyEffects } from "./applyEffects";
-import { addCardsToHand } from "../../../logic/cardRuntime";
+import { addCardsToHand, enforceHuguenotContainmentInvariant } from "./cardRuntime";
 import { markSlotResolved } from "../../../logic/eventSlotOps";
 import type { GameState } from "../../../types/game";
 import type { CardTemplateId } from "../../types/card";
 import { EVENT_SLOT_ORDER, type EventTemplateId, type SlotId } from "../../types/event";
+import { cardPlayOpensCrackdownPicker, shouldEnforceCampaignConsumeInvariant } from "./playedCardTemplatePolicy";
 
 function resolveFirstUnresolvedEventByTemplate(
   state: GameState,
@@ -35,6 +36,33 @@ export function applySunkingPlayCardExtras(state: GameState, templateId: CardTem
     s = resolveFirstUnresolvedEventByTemplate(s, "jansenistTension");
   }
   return s;
+}
+
+/**
+ * If this template opens a modal interaction when played (Crackdown target pick), return the
+ * state carrying that pending interaction; return null when the play resolves normally.
+ * `paidState` already has the funding cost deducted.
+ */
+export function maybeBeginSunkingCardPlayInteraction(
+  paidState: GameState,
+  templateId: CardTemplateId,
+  cardInstanceId: string,
+  fundingPaid: number,
+): GameState | null {
+  if (!cardPlayOpensCrackdownPicker(templateId)) return null;
+  return appendActionLog(
+    {
+      ...paidState,
+      pendingInteraction: { type: "crackdownPick", cardInstanceId, fundingPaid },
+    },
+    { kind: "crackdownPickPrompt" },
+  );
+}
+
+/** Campaign invariant applied after a consume-tag play removes the card from hand. */
+export function applySunkingConsumeInvariant(state: GameState, templateId: CardTemplateId): GameState {
+  if (!shouldEnforceCampaignConsumeInvariant(templateId)) return state;
+  return enforceHuguenotContainmentInvariant(state);
 }
 
 /** After a consume play removes the last suppress card while containment was active, append the cleared log. */

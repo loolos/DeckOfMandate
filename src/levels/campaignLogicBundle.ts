@@ -55,8 +55,11 @@ export {
 } from "./sunking/logic/playedCardTemplatePolicy";
 export {
   applySunkingPlayCardExtras as applyCampaignPlayCardExtras,
+  applySunkingConsumeInvariant as applyCampaignConsumeInvariant,
+  maybeBeginSunkingCardPlayInteraction as maybeBeginCampaignCardPlayInteraction,
   maybeAppendHuguenotContainmentClearedLog,
 } from "./sunking/logic/playCardExtras";
+export { applyEndYearResourceResetHook as applyCampaignEndYearResourceReset } from "./sunking/logic/turnFlowHooks";
 export { applyScriptedAttackCampaignFlags } from "./sunking/logic/scriptedAttackFollowup";
 export { stateAfterHarmfulEventCrackdown } from "./sunking/logic/crackdownHarmfulSolve";
 export { applyAntiFrenchContainmentDeckAfterRetentionYear } from "./sunking/logic/eoyRetentionCampaign";
