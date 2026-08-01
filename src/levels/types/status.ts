@@ -1,3 +1,4 @@
+import type { ResourceStat } from "./effect";
 import type { CardTag } from "./tags";
 import type { MessageKey } from "../../locales/en";
 
@@ -9,32 +10,19 @@ export type PlayerStatusKind =
   | "blockCardTag"
   | "beginYearResourceDelta";
 
-export type BeginYearStatusResource = "treasuryStat" | "power" | "legitimacy";
+export type BeginYearStatusResource = ResourceStat;
 
-export type StatusTemplateId =
-  | "powerLeak"
-  | "drawPenalty"
-  | "retentionBoost"
-  | "royalBan"
-  | "grainReliefDrawBoost"
-  | "grainReliefLegitimacyBoost"
-  | "religiousTolerance"
-  | "huguenotContainment"
-  | "antiFrenchSentiment"
-  | "greatPowerEncirclement"
-  | "legitimacyCrisis"
-  | "minorRegencyDoubt"
-  | "bourbonMarriageRetention"
-  | "diplomaticCongressDrawBoost"
-  | "grandAllianceInfiltration";
+/** Registry of status template ids; campaign packs merge their ids in via `declare module`. */
+export interface StatusTemplateIdRegistry {}
+export type StatusTemplateId = keyof StatusTemplateIdRegistry & string;
 
 /** Static definition for a player status template (drives UI keys and effect shape). */
 export type StatusTemplate = {
   id: StatusTemplateId;
   kind: PlayerStatusKind;
   delta?: number;
-  resource?: "treasuryStat" | "power" | "legitimacy";
-  blockedTag?: "royal";
+  resource?: BeginYearStatusResource;
+  blockedTag?: CardTag;
   titleKey: MessageKey;
   /** Historical-background copy; required for every status (enforced by `contentCompleteness.test.ts`). */
   historyKey: MessageKey;

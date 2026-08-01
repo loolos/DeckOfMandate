@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { messagesEn } from "./en";
 import { messagesZh } from "./zh";
 import { messagesFr } from "./fr";
-import { CARD_TAGS } from "../levels/types/tags";
+import { CARD_TAGS } from "../levels/sunking/templates/tags";
 
 const bundles = {
   en: messagesEn,

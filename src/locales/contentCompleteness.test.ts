@@ -5,7 +5,7 @@ import { messagesZh } from "./zh";
 import { cardTemplates } from "../data/cards";
 import { eventTemplates } from "../data/events";
 import { statusTemplates } from "../data/statusTemplates";
-import { CARD_TAGS } from "../levels/types/tags";
+import { CARD_TAGS } from "../levels/sunking/templates/tags";
 
 /**
  * Content-completeness guard: every player-facing content entry (card, event, status,
