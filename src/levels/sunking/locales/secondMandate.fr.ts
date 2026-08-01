@@ -117,7 +117,7 @@ export const messagesFrSecondMandate: Record<keyof typeof messagesEnSecondMandat
   "event.localWar.history":
     "Entre grands traités, la France enchaînait encore escarmouches rhénanes, crises italiennes et tensions autour des Pays-Bas : sièges, raids et luttes de ravitaillement qui épuisaient les finances, ralentissaient la machine militaire et servaient aux rivaux de test de la détermination française.",
   "event.localWar.desc":
-    "Vous pouvez résoudre cet événement avec Intervention. Sinon, choisissez Attaquer (payez un coût en Financement lié à l'Alerte Europe, puis appliquez le surcoût Sentiment anti-français si actif ; trois issues équiprobables : Victoire locale [Pouvoir +1, Légitimité +1], Enlisement [aucun effet], Pertes limitées [Pouvoir -1]) ou Apaiser (sans coût, mais Légitimité -1). Événement Continu : s'il reste non résolu, le revenu de Financement du prochain tour est réduit de 2 (minimum 0).",
+    "Vous pouvez résoudre cet événement avec Intervention. Sinon, choisissez Attaquer (payez un coût en Financement lié à l'Alerte Europe, puis appliquez le surcoût Sentiment anti-français si actif ; trois issues équiprobables : Victoire locale [Pouvoir +1, Légitimité +1], Enlisement [aucun effet], Pertes limitées [Pouvoir -1]) ou Apaiser (sans coût, mais Légitimité -1). Événement Continu : s'il reste non résolu, il cumule deux statuts Transferts entravés pendant 1 tour, réduisant de 2 le revenu de Financement du prochain tour (minimum 0).",
   "event.courtScandal.name": "Scandale de cour",
   "event.courtScandal.history":
     "Cabinet du lit et rivalités ministérielles à Versailles alimentaient feuilles volantes et rumeurs publiques, ébranlant le prestige de la cour.",

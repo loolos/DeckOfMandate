@@ -125,6 +125,12 @@ export const sunkingCoreGameContentEn = {
     "During the War of the Spanish Succession, Bourbon dynastic expansion from Versailles was increasingly viewed as a continental balance-of-power threat. Britain, the Dutch Republic, Savoy, and Portugal therefore coordinated money, fleets, and field support for the Habsburg camp, turning a dynastic dispute into a broader coalition war. Until the Utrecht settlement closes the conflict, that external backing keeps lifting Habsburg war capacity.",
   "status.greatPowerEncirclement.desc":
     "Chapter 3: if the Habsburg opponent row is present and Treasury + Power + Legitimacy exceeds 50, gain this status and Habsburg opponent budget +1; if that total exceeds 75, it adds one more opponent budget +1 (once per war). It does not clear while the war lasts.",
+  "status.supplyLineSqueeze.name": "Supply Line Squeeze",
+  "status.supplyLineSqueeze.history": "Blockades, embargoes and requisition in the field cut the chain that turns tax rolls into cash at hand.",
+  "status.supplyLineSqueeze.desc": "While active, Funding income at turn start -1 (stacks; income floors at 0).",
+  "status.usurpationMobilization.name": "Edict Mobilization",
+  "status.usurpationMobilization.history": "An extra-legal succession edict forces court and provinces to declare themselves at once, producing a brief burst of paperwork and appointments.",
+  "status.usurpationMobilization.desc": "While active, draw attempts at turn start +1.",
   "status.legitimacyCrisis.name": "Legitimacy Crisis",
   "status.legitimacyCrisis.history":
     "Bypassing succession norms accelerates your claim now, but keeps corroding royal credibility over the next turns.",

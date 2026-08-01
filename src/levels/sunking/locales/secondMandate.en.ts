@@ -114,7 +114,7 @@ export const messagesEnSecondMandate = {
   "event.localWar.history":
     "Between major treaties France still fought limited flare-ups on the Rhine, in northern Italy, and around the Low Countries: sieges, raids, and supply-line contests that drained finances, dragged at military-administrative rhythm, and served rival powers as probes of French resolve.",
   "event.localWar.desc":
-    "You may resolve this event with Intervention. If not using Intervention, choose Attack (pay a Funding cost tied to Europe Alert, then apply Anti-French Sentiment surcharge if active; equal 1/3 outcomes: Local Victory [Power +1, Legitimacy +1], Stalemate [no change], Minor Loss [Power -1]) or Appease (no Funding cost, Legitimacy -1). This is a Continued event: if left unresolved, next turn's Funding income is reduced by 2 (not below 0).",
+    "You may resolve this event with Intervention. If not using Intervention, choose Attack (pay a Funding cost tied to Europe Alert, then apply Anti-French Sentiment surcharge if active; equal 1/3 outcomes: Local Victory [Power +1, Legitimacy +1], Stalemate [no change], Minor Loss [Power -1]) or Appease (no Funding cost, Legitimacy -1). This is a Continued event: if left unresolved, it stacks two Supply Line Squeeze statuses for 1 turn, cutting next turn's Funding income by 2 (not below 0).",
   "event.courtScandal.name": "Court Scandal",
   "event.courtScandal.history":
     "Bedroom politics and ministerial feuds at Versailles routinely spilled into broadsheet rumor, shaking the prestige of the court.",

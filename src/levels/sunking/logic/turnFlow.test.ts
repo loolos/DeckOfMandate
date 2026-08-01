@@ -6,6 +6,7 @@ import { buildLevel2StateFromDraft, createStandaloneLevel2Draft } from "../chapt
 import type { CardInstance } from "../../types/card";
 import { EMPTY_EVENT_SLOTS, type EventTemplateId } from "../../types/event";
 import type { GameState } from "../../../types/game";
+import { resolveEndOfYearPenalties } from "./resolveEvents";
 import {
   beginYear,
   desiredProceduralEventCountWhenAllEmpty,
@@ -111,7 +112,6 @@ describe("beginYear + playerStatuses", () => {
       outcome: "playing",
       phase: "action",
       resources: { treasuryStat: 0, funding: 0, power: 3, legitimacy: 2 },
-      nextTurnDrawModifier: 0,
       hand: [],
       deck: ["c0", "c1", "c2", "c3"],
       discard: [],
@@ -149,7 +149,6 @@ describe("beginYear + playerStatuses", () => {
       outcome: "playing",
       phase: "action",
       resources: { treasuryStat: 0, funding: 0, power: 1, legitimacy: 2 },
-      nextTurnDrawModifier: 0,
       hand: [],
       deck: ["c0"],
       discard: [],
@@ -182,7 +181,6 @@ describe("beginYear + playerStatuses", () => {
       outcome: "playing",
       phase: "action",
       resources: { treasuryStat: 0, funding: 0, power: 2, legitimacy: 2 },
-      nextTurnDrawModifier: 0,
       hand: [],
       deck: ["c0", "c1", "c2", "c3"],
       discard: [],
@@ -224,7 +222,6 @@ describe("beginYear + playerStatuses", () => {
       outcome: "playing",
       phase: "action",
       resources: { treasuryStat: 0, funding: 0, power: 4, legitimacy: 2 },
-      nextTurnDrawModifier: 0,
       hand: [],
       deck: ["c0", "c1", "c2", "c3"],
       discard: [],
@@ -269,7 +266,6 @@ describe("beginYear + playerStatuses", () => {
       outcome: "playing",
       phase: "action",
       resources: { treasuryStat: 1, funding: 0, power: 1, legitimacy: 2 },
-      nextTurnDrawModifier: 0,
       hand: [],
       deck: ["b0"],
       discard: [],
@@ -296,7 +292,6 @@ describe("beginYear + playerStatuses", () => {
       phase: "action",
       rng: { state: 1 },
       resources: { treasuryStat: 1, funding: 0, power: 2, legitimacy: 2 },
-      nextTurnDrawModifier: 0,
       hand: [],
       deck: ["a0"],
       discard: [],
@@ -334,7 +329,6 @@ describe("beginYear + playerStatuses", () => {
       // rng.state=1 => antiFrenchContainment branches to legitimacy loss (u >= 0.5)
       rng: { state: 1 },
       resources: { treasuryStat: 1, funding: 0, power: 2, legitimacy: 1 },
-      nextTurnDrawModifier: 0,
       hand: [],
       deck: ["a0"],
       discard: [],
@@ -363,7 +357,6 @@ describe("beginYear + playerStatuses", () => {
       outcome: "playing",
       phase: "action",
       resources: { treasuryStat: 0, funding: 0, power: 1, legitimacy: 2 },
-      nextTurnDrawModifier: 0,
       hand: [],
       deck: [],
       discard: ["c0"],
@@ -386,7 +379,6 @@ describe("beginYear + playerStatuses", () => {
       outcome: "playing",
       phase: "action",
       resources: { treasuryStat: 0, funding: 0, power: 1, legitimacy: 2 },
-      nextTurnDrawModifier: 0,
       hand: [],
       deck: [],
       discard: ["c0"],
@@ -409,7 +401,6 @@ describe("beginYear + playerStatuses", () => {
       outcome: "playing",
       phase: "action",
       resources: { treasuryStat: 5, funding: 0, power: 5, legitimacy: 4 },
-      nextTurnDrawModifier: 0,
       hand: [],
       deck: [],
       discard: ["c0"],
@@ -432,7 +423,6 @@ describe("beginYear + playerStatuses", () => {
       outcome: "playing",
       phase: "action",
       resources: { treasuryStat: 0, funding: 0, power: 2, legitimacy: 2 },
-      nextTurnDrawModifier: 0,
       hand: [],
       deck: ["c0"],
       discard: [],
@@ -700,7 +690,7 @@ describe("beginYear + playerStatuses", () => {
     expect(injectedCount).toBe(2);
   });
 
-  it("reduces begin-year funding income by 2 (min 0) while local war is unresolved", () => {
+  it("reduces begin-year funding income by 2 (min 0) after an unresolved local war year end", () => {
     const started = createInitialState(902_019, "secondMandate");
     const s0: GameState = {
       ...started,
@@ -710,7 +700,11 @@ describe("beginYear + playerStatuses", () => {
         A: { instanceId: "evt_local_war", templateId: "localWar", resolved: false },
       },
     };
-    const s1 = beginYear(s0);
+    // The cut travels as two `supplyLineSqueeze` stacks granted at year end, not as a
+    // board lookup during beginYear, so it is visible in the status bar.
+    const afterStrike = resolveEndOfYearPenalties(s0);
+    expect(afterStrike.playerStatuses.filter((p) => p.templateId === "supplyLineSqueeze")).toHaveLength(2);
+    const s1 = beginYear({ ...afterStrike, turn: afterStrike.turn + 1 });
     expect(s1.resources.funding).toBe(0);
   });
 
@@ -1011,7 +1005,6 @@ describe("beginYear + playerStatuses", () => {
       outcome: "playing",
       phase: "action",
       resources: { treasuryStat: 0, funding: 0, power: 3, legitimacy: 3 },
-      nextTurnDrawModifier: 0,
       hand: ["h0", "h1", "h2", "h3", "h4", "h5", "h6", "h7", "h8", "h9", "h10"],
       deck: ["d0", "d1", "d2"],
       discard: [],
@@ -1053,7 +1046,6 @@ describe("beginYear + playerStatuses", () => {
       outcome: "playing",
       phase: "action",
       resources: { treasuryStat: 0, funding: 0, power: 3, legitimacy: 3 },
-      nextTurnDrawModifier: 0,
       hand: ["h0", "h1", "h2", "h3", "h4", "h5", "h6", "h7", "h8", "h9", "h10", "h11"],
       deck: ["d0", "d1"],
       discard: [],
@@ -1103,7 +1095,6 @@ describe("beginYear + playerStatuses", () => {
       outcome: "playing",
       phase: "action",
       resources: { treasuryStat: 0, funding: 0, power: 3, legitimacy: 3 },
-      nextTurnDrawModifier: 0,
       hand: ["h0", "h1", "h2", "h3", "h4", "h5", "h6", "h7", "h8", "h9", "h10", "h11"],
       deck: ["d0", "d1"],
       discard: [],

@@ -60,7 +60,6 @@ export function buildSunkingInitialStateFields(
     europeAlertProgress,
     nymwegenSettlementAchieved: false,
     huguenotResurgenceCounter: 0,
-    nextTurnFundingIncomeModifier: 0,
     cardInflationById: {},
     pendingMajorCrisis: { ...EMPTY_PENDING_MAJOR_CRISIS },
     successionTrack: 0,

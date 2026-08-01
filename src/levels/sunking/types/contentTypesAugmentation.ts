@@ -31,7 +31,6 @@ declare module "../../types/effect" {
     modEuropeAlertProgress: { kind: "modEuropeAlertProgress"; delta: number };
     modSuccessionTrack: { kind: "modSuccessionTrack"; delta: number };
     /** Applied at next `beginYear` when computing treasury→funding income (then reset with draw modifier). */
-    scheduleNextTurnFundingIncomeModifier: { kind: "scheduleNextTurnFundingIncomeModifier"; delta: number };
     /** Chapter 3 opponent phase only: adjusts opponent's next `beginYear` draw count (base 2). */
     opponentNextTurnDrawModifier: { kind: "opponentNextTurnDrawModifier"; delta: number };
     /** Chapter 3: immediately discard `count` random cards from the Habsburg opponent's hand (played-card phase). */
@@ -96,6 +95,8 @@ declare module "../../types/status" {
     bourbonMarriageRetention: true;
     diplomaticCongressDrawBoost: true;
     grandAllianceInfiltration: true;
+    supplyLineSqueeze: true;
+    usurpationMobilization: true;
   }
 }
 

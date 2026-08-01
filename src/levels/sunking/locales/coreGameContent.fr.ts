@@ -131,6 +131,12 @@ export const sunkingCoreGameContentFr = {
     "Pendant la guerre de Succession d'Espagne, l'expansion versaillaise et l'avantage dynastique bourbonien sont perçus comme une menace à l'équilibre européen. L'Angleterre, les Provinces-Unies, la Savoie et le Portugal coordonnent alors crédit, flotte et troupes au profit du camp habsbourgeois. Tant que le règlement d'Utrecht n'a pas clos le conflit, cet appui extérieur maintient une pression militaire renforcée contre la France.",
   "status.greatPowerEncirclement.desc":
     "Chapitre 3 : si la ligne adverse habsbourgeoise est présente et que Trésor + Pouvoir + Légitimité dépasse 50, gagnez ce statut et le budget adverse habsbourgeois augmente de +1 ; si ce total dépasse 75, ce statut ajoute encore +1 (une fois par guerre). Il ne se dissipe pas tant que la guerre dure.",
+  "status.supplyLineSqueeze.name": "Transferts entravés",
+  "status.supplyLineSqueeze.history": "Blocus, embargos et réquisitions sur le terrain coupent la chaîne qui transforme les rôles fiscaux en numéraire disponible.",
+  "status.supplyLineSqueeze.desc": "Tant qu'actif, revenu de Financement au début du tour -1 (cumulable ; revenu plancher 0).",
+  "status.usurpationMobilization.name": "Mobilisation par édit",
+  "status.usurpationMobilization.history": "Un édit de succession extra-légal force la cour et les provinces à se prononcer d'un coup, provoquant une brève flambée de correspondance et de nominations.",
+  "status.usurpationMobilization.desc": "Tant qu'actif, tentatives de pioche au début du tour +1.",
   "status.legitimacyCrisis.name": "Crise de légitimité",
   "status.legitimacyCrisis.history":
     "Forcer la succession hors protocole accélère la course au trône, mais érode ensuite durablement la crédibilité royale.",

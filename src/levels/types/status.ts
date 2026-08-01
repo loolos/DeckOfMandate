@@ -14,7 +14,8 @@ export type PlayerStatusKind =
   | "retentionCapacityDelta"
   | "handCapDelta"
   | "blockCardTag"
-  | "beginYearResourceDelta";
+  | "beginYearResourceDelta"
+  | "beginYearFundingIncomeDelta";
 
 export type BeginYearStatusResource = ResourceStat;
 

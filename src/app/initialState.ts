@@ -80,8 +80,6 @@ export function createInitialState(
     pendingInteraction: null,
     nextIds: { event: 0, status: 0, log: 0 },
     resources,
-    nextTurnDrawModifier: 0,
-    scheduledDrawModifiers: [],
     deck: deckInstanceIds,
     discard: [],
     hand: initialHandIds,

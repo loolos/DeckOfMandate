@@ -117,6 +117,12 @@ export const sunkingCoreGameContentZh = {
     "在西班牙王位继承战争中，凡尔赛的扩张势头与波旁王朝的继承布局，被欧洲多国视为权力失衡信号。英国、荷兰、萨伏依与葡萄牙因此向哈布斯堡持续输送财政、海军与陆军协同支持，把局部战场推向更广泛的围堵格局。只要乌德勒支和约尚未终结战争，这股外援就会持续抬高哈布斯堡阵营的作战能力。",
   "status.greatPowerEncirclement.desc":
     "第三关中，哈布斯堡对手行存在且财政、权力、合法性合计超过 50 时获得此状态，并使对手实力 +1；若合计超过 75，再额外使对手实力 +1（每场战争一次）。战争结束前不会解除。",
+  "status.supplyLineSqueeze.name": "转输受阻",
+  "status.supplyLineSqueeze.history": "封锁、禁运与战场就地征发会切断税银与军需的转输链条，使国库能兑现的现钱缩水。",
+  "status.supplyLineSqueeze.desc": "生效期间回合开始时经费收入 -1（可叠加多层；收入最低为 0）。",
+  "status.usurpationMobilization.name": "诏书动员",
+  "status.usurpationMobilization.history": "非常规继位诏书一经颁下，宫廷与外廷会被迫加速表态，短期内文书与人事调度异常密集。",
+  "status.usurpationMobilization.desc": "生效期间回合开始时抽牌尝试 +1。",
   "status.legitimacyCrisis.name": "合法性危机",
   "status.legitimacyCrisis.history": "僭越法统程序虽能加速夺位叙事，却会在后续回合持续侵蚀政权信誉。",
   "status.legitimacyCrisis.desc": "生效期间每回合结束时合法性 -1。",

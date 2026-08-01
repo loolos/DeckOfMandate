@@ -540,6 +540,10 @@ export const eventTemplates: Record<EventTemplateId, EventTemplate> = {
     descriptionKey: "event.localWar.desc",
     solve: { kind: "localWarChoice" },
     tags: ["antiFrenchAlliance"],
-    penaltiesIfUnresolved: [],
+    /** Two stacks = next year's funding income -2 (floored at 0), re-granted every year it sits. */
+    penaltiesIfUnresolved: [
+      { kind: "addPlayerStatus", templateId: "supplyLineSqueeze", turns: 1 },
+      { kind: "addPlayerStatus", templateId: "supplyLineSqueeze", turns: 1 },
+    ],
   },
 };

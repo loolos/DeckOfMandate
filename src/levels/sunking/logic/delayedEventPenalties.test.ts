@@ -1,8 +1,9 @@
 /**
- * End-to-end coverage for unresolved-event penalties that only bite on the *following*
- * year. Template-shape assertions live in `secondMandateBalance.test.ts`; these tests run
- * the real year pipeline (`resolveEndOfYearPenalties` -> `beginYear`) so a penalty that is
- * scheduled but never consumed — the `courtScandal` / `royalBan` bug — fails here.
+ * End-to-end coverage for delayed effects — event penalties, card effects and opponent
+ * cards that only bite on the *following* year. Template-shape assertions live in
+ * `secondMandateBalance.test.ts`; these tests run the real year pipeline
+ * (`resolveEndOfYearPenalties` -> `beginYear`) so a delayed effect that is granted but
+ * never consumed — the `courtScandal` / `royalBan` bug — fails here.
  */
 import { describe, expect, it } from "vitest";
 import { createInitialState } from "../../../app/initialState";
@@ -132,5 +133,51 @@ describe("delayed unresolved-event penalties", () => {
     expect(afterStrike.pendingMajorCrisis.A).toBe(true);
     const next = beginYear({ ...afterStrike, turn: afterStrike.turn + 1, hand: [] });
     expect(next.slots.A?.templateId).toBe("majorCrisis");
+  });
+});
+
+describe("delayed card and opponent effects", () => {
+  const control = quietYear(baseState()).hand.length;
+
+  it("usurpationMobilization from usurpationEdict adds a draw next year", () => {
+    const start = baseState();
+    const withStatus: GameState = {
+      ...start,
+      playerStatuses: [
+        {
+          instanceId: "st_mobilization",
+          templateId: "usurpationMobilization",
+          kind: "drawAttemptsDelta",
+          delta: 1,
+          turnsRemaining: 1,
+        },
+      ],
+    };
+    const next = quietYear(withStatus);
+    expect(next.hand.length).toBe(control + 1);
+    // One turn only.
+    expect(next.playerStatuses.some((p) => p.templateId === "usurpationMobilization")).toBe(false);
+  });
+
+  it("supplyLineSqueeze stacks cut next year's funding income, flooring at 0", () => {
+    const start: GameState = { ...baseState(), resources: { ...baseState().resources, funding: 0, treasuryStat: 3 } };
+    const squeeze = (instanceId: string) =>
+      ({
+        instanceId,
+        templateId: "supplyLineSqueeze" as const,
+        kind: "beginYearFundingIncomeDelta" as const,
+        delta: -1,
+        turnsRemaining: 1,
+      });
+
+    expect(quietYear(start).resources.funding).toBe(3);
+    expect(quietYear({ ...start, playerStatuses: [squeeze("st_a"), squeeze("st_b")] }).resources.funding).toBe(1);
+    // Income never goes negative and never eats funding the player already holds.
+    const heavy = {
+      ...start,
+      resources: { ...start.resources, funding: 2, treasuryStat: 1 },
+      playerStatuses: [squeeze("st_a"), squeeze("st_b"), squeeze("st_c")],
+    };
+    expect(quietYear(heavy).resources.funding).toBe(2);
   });
 });

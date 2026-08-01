@@ -11,6 +11,11 @@ import {
 } from "../../../logic/opponentHabsburg";
 import { THIRD_MANDATE_LEVEL_ID } from "../../../logic/thirdMandateConstants";
 
+/** Count of stacks of a status template currently on the player. */
+function statusStacks(state: GameState, templateId: string): number {
+  return state.playerStatuses.filter((p) => p.templateId === templateId).length;
+}
+
 describe("opponentHabsburg AI", () => {
   it("returns null when opponent not unlocked", () => {
     const st = createInitialState(1, THIRD_MANDATE_LEVEL_ID);
@@ -122,7 +127,6 @@ describe("opponentHabsburg AI", () => {
       opponentStrength: 2,
       opponentCostDiscountThisTurn: 0,
       opponentLastPlayedTemplateIds: [],
-      nextTurnDrawModifier: 0,
       cardsById: {
         ...base.cardsById,
         [customsId]: { instanceId: customsId, templateId: "habsburgImperialCustomsDelay" },
@@ -133,7 +137,7 @@ describe("opponentHabsburg AI", () => {
     const burdenAfter = Object.values(next.cardsById).filter((c) => c.templateId === "fiscalBurden").length;
     expect(burdenAfter).toBe(burdenBefore + 1);
     expect(next.deck.some((id) => next.cardsById[id]?.templateId === "fiscalBurden")).toBe(true);
-    expect(next.nextTurnDrawModifier).toBe(-1);
+    expect(statusStacks(next, "powerLeak")).toBe(1);
     expect(next.opponentHand).toEqual([]);
     expect(next.opponentDiscard).toEqual([customsId]);
   });
@@ -291,8 +295,6 @@ describe("opponentHabsburg AI", () => {
       opponentStrength: 2,
       opponentCostDiscountThisTurn: 0,
       opponentLastPlayedTemplateIds: [],
-      nextTurnDrawModifier: 0,
-      nextTurnFundingIncomeModifier: 0,
       cardsById: {
         ...base.cardsById,
         [cardId]: { instanceId: cardId, templateId: "habsburgAngloDutchMaritimeInterdiction" },
@@ -300,8 +302,8 @@ describe("opponentHabsburg AI", () => {
     };
     const next = opponentEndYearPlayPhase(st);
     expect(next.resources.power).toBe(base.resources.power - 1);
-    expect(next.nextTurnFundingIncomeModifier).toBe(-1);
-    expect(next.nextTurnDrawModifier).toBe(-1);
+    expect(statusStacks(next, "supplyLineSqueeze")).toBe(1);
+    expect(statusStacks(next, "powerLeak")).toBe(1);
     expect(next.opponentDiscard).toEqual([cardId]);
   });
 
@@ -317,8 +319,6 @@ describe("opponentHabsburg AI", () => {
       opponentStrength: 2,
       opponentCostDiscountThisTurn: 0,
       opponentLastPlayedTemplateIds: [],
-      nextTurnDrawModifier: 0,
-      nextTurnFundingIncomeModifier: 0,
       cardsById: {
         ...base.cardsById,
         [cardId]: { instanceId: cardId, templateId: "habsburgRhineMagazineEmbargo" },
@@ -326,8 +326,8 @@ describe("opponentHabsburg AI", () => {
     };
     const next = opponentEndYearPlayPhase(st);
     expect(next.successionTrack).toBe(base.successionTrack - 1);
-    expect(next.nextTurnFundingIncomeModifier).toBe(-1);
-    expect(next.nextTurnDrawModifier).toBe(0);
+    expect(statusStacks(next, "supplyLineSqueeze")).toBe(1);
+    expect(statusStacks(next, "powerLeak")).toBe(0);
     expect(next.opponentDiscard).toEqual([cardId]);
   });
 });

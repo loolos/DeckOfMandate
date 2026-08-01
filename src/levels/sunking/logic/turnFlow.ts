@@ -413,6 +413,14 @@ function sumDrawAttemptsStatusDelta(statuses: readonly PlayerStatusInstance[]): 
   return sum;
 }
 
+function sumFundingIncomeStatusDelta(statuses: readonly PlayerStatusInstance[]): number {
+  let sum = 0;
+  for (const p of statuses) {
+    if (p.kind === "beginYearFundingIncomeDelta") sum += p.delta ?? 0;
+  }
+  return sum;
+}
+
 function applyBeginYearResourceStatusEffects(state: GameState): GameState {
   let s = state;
   for (const p of s.playerStatuses) {
@@ -429,13 +437,6 @@ function applyBeginYearResourceStatusEffects(state: GameState): GameState {
     };
   }
   return s;
-}
-
-function hasUnresolvedLocalWar(state: GameState): boolean {
-  return EVENT_SLOT_ORDER.some((slot) => {
-    const event = state.slots[slot];
-    return event?.templateId === "localWar" && !event.resolved;
-  });
 }
 
 function maybeAdjustEuropeAlertProgressAtYearStart(state: GameState): GameState {
@@ -465,21 +466,17 @@ export function beginYear(state: GameState): GameState {
   s = enforceLegitimacy(s);
   if (s.outcome !== "playing") return s;
   s = maybeAdjustEuropeAlertProgressAtYearStart(s);
-  const localWarIncomePenalty = hasUnresolvedLocalWar(s) ? 2 : 0;
-  const fundingIncome = Math.max(0, s.resources.treasuryStat - localWarIncomePenalty + s.nextTurnFundingIncomeModifier);
+  const fundingIncome = Math.max(0, s.resources.treasuryStat + sumFundingIncomeStatusDelta(s.playerStatuses));
   s = {
     ...s,
     resources: {
       ...s.resources,
       funding: s.resources.funding + fundingIncome,
     },
-    nextTurnFundingIncomeModifier: 0,
   };
-  const scheduledDrawModifier = s.scheduledDrawModifiers[0] ?? 0;
-  s = { ...s, scheduledDrawModifiers: s.scheduledDrawModifiers.slice(1) };
   const statusDrawDelta = sumDrawAttemptsStatusDelta(s.playerStatuses);
   const baseAttempts = drawAttemptsFromPower(s.resources.power);
-  let attempts = Math.max(1, baseAttempts + s.nextTurnDrawModifier + scheduledDrawModifier + statusDrawDelta);
+  let attempts = Math.max(1, baseAttempts + statusDrawDelta);
   const coalition = rollAntiFrenchLeagueDrawAdjustment(s.antiFrenchLeague, s.turn, s.rng);
   s = { ...s, rng: coalition.rng };
   if (coalition.adjustment < 0 && s.antiFrenchLeague && s.turn <= s.antiFrenchLeague.untilTurn) {
@@ -487,7 +484,6 @@ export function beginYear(state: GameState): GameState {
     s = appendActionLog(s, { kind: "antiFrenchLeagueDraw", probabilityPct });
   }
   attempts = Math.max(1, attempts + coalition.adjustment);
-  s = { ...s, nextTurnDrawModifier: 0 };
   const drawn = drawUpToPower(
     s.rng,
     s.hand,

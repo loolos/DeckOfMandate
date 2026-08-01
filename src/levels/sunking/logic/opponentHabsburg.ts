@@ -61,17 +61,14 @@ export function opponentTemplatesToAppliedEffects(ids: readonly CardTemplateId[]
   if (fiscalBurdenAdds > 0) {
     out.push({ kind: "addCardsToDeck", templateId: "fiscalBurden", count: fiscalBurdenAdds });
   }
-  if (customsCount > 0) {
-    out.push({ kind: "scheduleNextTurnDrawModifier", delta: -customsCount });
-  }
   const fundingDrawPressureCount = ids.filter((id) => isHabsburgFundingDrawPressureCard(id)).length;
-  if (fundingDrawPressureCount > 0) {
-    out.push({ kind: "scheduleNextTurnFundingIncomeModifier", delta: -1 * fundingDrawPressureCount });
-    out.push({ kind: "scheduleNextTurnDrawModifier", delta: -fundingDrawPressureCount });
-  }
   const rhineEmbargoCount = ids.filter((id) => id === "habsburgRhineMagazineEmbargo").length;
-  if (rhineEmbargoCount > 0) {
-    out.push({ kind: "scheduleNextTurnFundingIncomeModifier", delta: -rhineEmbargoCount });
+  /** One stack per card: next year's draw -1 / funding income -1 each, shown in the status bar. */
+  for (let i = 0; i < customsCount + fundingDrawPressureCount; i++) {
+    out.push({ kind: "addPlayerStatus", templateId: "powerLeak", turns: 1 });
+  }
+  for (let i = 0; i < fundingDrawPressureCount + rhineEmbargoCount; i++) {
+    out.push({ kind: "addPlayerStatus", templateId: "supplyLineSqueeze", turns: 1 });
   }
   if (d.pow !== 0) out.push({ kind: "modResource", resource: "power", delta: d.pow });
   if (d.leg !== 0) out.push({ kind: "modResource", resource: "legitimacy", delta: d.leg });
@@ -208,17 +205,17 @@ function applyOpponentCardToState(state: GameState, templateId: CardTemplateId):
   if (templateId === "habsburgImperialCustomsDelay") {
     effects.push(
       { kind: "addCardsToDeck", templateId: "fiscalBurden", count: 1 },
-      { kind: "scheduleNextTurnDrawModifier", delta: -1 },
+      { kind: "addPlayerStatus", templateId: "powerLeak", turns: 1 },
     );
   }
   if (isHabsburgFundingDrawPressureCard(templateId)) {
     effects.push(
-      { kind: "scheduleNextTurnFundingIncomeModifier", delta: -1 },
-      { kind: "scheduleNextTurnDrawModifier", delta: -1 },
+      { kind: "addPlayerStatus", templateId: "supplyLineSqueeze", turns: 1 },
+      { kind: "addPlayerStatus", templateId: "powerLeak", turns: 1 },
     );
   }
   if (templateId === "habsburgRhineMagazineEmbargo") {
-    effects.push({ kind: "scheduleNextTurnFundingIncomeModifier", delta: -1 });
+    effects.push({ kind: "addPlayerStatus", templateId: "supplyLineSqueeze", turns: 1 });
   }
   const afterEffects = effects.length === 0 ? state : applyEffects(state, effects);
   if (templateId === "habsburgImperialLegitimacyNote") {
