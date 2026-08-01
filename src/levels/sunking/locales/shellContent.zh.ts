@@ -211,6 +211,5 @@ export const sunkingShellContentZh = {
   "ui.targets": "关卡目标 — {limit} 回合内：财政 {tT}，权力 {tP}，合法性 {tL}",
   "log.cardPlayed.title": "[第 {turn} 年] {card} — 支付 {cost} {funding}。",
   "log.effect.gainFunding": "{funding} +{amount}",
-  "log.effect.scheduleNextTurnFundingIncomeModifier": "下一年国库转回合经费收入修正 {delta}",
   "log.effect.opponentNextTurnDrawModifier": "对手下一年摸牌修正 {delta}"
 } as const;

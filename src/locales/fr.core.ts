@@ -68,6 +68,7 @@ export const messagesFrCore: Record<keyof typeof messagesEnCore, string> = {
   "ui.resourceMobileExpand": "Touchez pour afficher les libellés complets et les aides.",
   "ui.resources": "Ressources",
   "ui.statusDetail.beginYearResourceDelta": "Au début du tour : {resource} {delta}.",
+  "ui.statusDetail.beginYearFundingIncomeDelta": "Modificateur de revenu de Financement au début du tour : {delta} (revenu plancher 0).",
   "ui.statusDetail.blockCardTag": "Les cartes avec le tag « {tag} » ne peuvent pas être jouées.",
   "ui.statusDetail.drawAttemptsDelta": "Modificateur de tentatives de pioche par tour : {delta}.",
   "ui.statusDetail.retentionCapacityDelta": "Modificateur de limite de conservation en fin de tour : {delta}.",

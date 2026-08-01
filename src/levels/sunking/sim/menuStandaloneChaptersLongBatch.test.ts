@@ -16,19 +16,19 @@ const SMOKE_RUNS = 150;
 /** Recorded outcome of seeds 1..150; see `expectSmokeBaseline`. */
 const SMOKE_BASELINE = {
   firstMandate: { wins: 75, averageEndTurn: 13.307 },
-  secondMandateStandalone: { wins: 77, averageEndTurn: 23.64 },
+  secondMandateStandalone: { wins: 77, averageEndTurn: 23.647 },
   thirdMandateStandalone: {
-    wins: 121,
-    averageEndTurn: 16.94,
+    wins: 122,
+    averageEndTurn: 17.007,
     outcomeBreakdown: {
       victorySuccessionTrackCap10: 17,
       victoryUtrechtBourbon: 1,
-      victoryUtrechtCompromise: 68,
+      victoryUtrechtCompromise: 69,
       victoryUtrechtHabsburg: 35,
       victoryCalendarNoUtrecht: 0,
       defeatSuccession: 0,
       defeatLegitimacyPower: 0,
-      defeatLegitimacyLegitimacy: 29,
+      defeatLegitimacyLegitimacy: 28,
       defeatLegitimacyBoth: 0,
       other: 0,
     },

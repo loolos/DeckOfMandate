@@ -25,18 +25,12 @@ function formatSingleEffectChip(e: Effect): string {
       return `${getResourceIcon("funding")}+${e.amount}`;
     case "drawCards":
       return `🃏+${e.count}`;
-    case "scheduleNextTurnDrawModifier":
-      return `📜${signedInt(e.delta)}`;
-    case "scheduleNextTurnFundingIncomeModifier":
-      return `💰⌛${signedInt(e.delta)}`;
     case "opponentNextTurnDrawModifier":
       return `👊🃏${signedInt(e.delta)}`;
     case "opponentHandDiscardNow":
       return `👊🃏−${e.count}`;
     case "modOpponentStrength":
       return `👊${signedInt(e.delta)}`;
-    case "scheduleDrawModifiers":
-      return `📜${e.deltas.map((d) => signedInt(d)).join("/")}`;
     case "addCardsToDeck":
       return `🧩+${e.count}`;
     case "addPlayerStatus": {
@@ -45,6 +39,9 @@ function formatSingleEffectChip(e: Effect): string {
         const d = st.delta ?? 0;
         if (d !== 0) return `📜${signedInt(d)}×${e.turns}⌛`;
         return `⏳×${e.turns}⌛`;
+      }
+      if (st.kind === "beginYearFundingIncomeDelta") {
+        return `${getResourceIcon("funding")}⌛${signedInt(st.delta ?? 0)}×${e.turns}⌛`;
       }
       if (st.kind === "beginYearResourceDelta") {
         const resource = st.resource ?? "legitimacy";

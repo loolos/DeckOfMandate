@@ -64,7 +64,7 @@ export const sunkingCoreGameContentFr = {
   "event.administrativeDelay.history":
     "Parlements, états provinciaux et fermiers testaient souvent les édits contre leurs privilèges : les ordres royaux se déformaient et ralentissaient en sortant de Paris.",
   "event.administrativeDelay.desc":
-    "Les officiels provinciaux ralentissent l'application des nouveaux ordres : payez 1 Financement ou piochez une carte de moins au prochain tour (min 1).",
+    "Les officiels provinciaux ralentissent l'application des nouveaux ordres : payez 1 Financement ou subissez Perte d'autorité pendant 1 tour (tentatives de pioche -1 au prochain tour, min 1).",
   "event.tradeOpportunity.name": "Boom du commerce colonial",
   "event.tradeOpportunity.history":
     "Routes atlantiques et coloniales : sucre, tabac et capitaux affluaient vers Bordeaux ou La Rochelle, et les marchands sollicitaient chartes et escortes de la couronne.",
@@ -78,7 +78,7 @@ export const sunkingCoreGameContentFr = {
   "event.majorCrisis.history":
     "Le souvenir de la Fronde rendait toute cassure visible du commandement royal explosive, incitant nobles et cours souveraines à tester de nouveau les limites de la couronne.",
   "event.majorCrisis.desc":
-    "Intervention uniquement. Tag Continu : si non résolu, il reste au tour suivant et répète Légitimité -1 plus pénalité de pioche chaque année jusqu'à résolution.",
+    "Intervention uniquement. Tag Continu : si non résolu, il reste au tour suivant et répète Légitimité -1 plus Perte d'autorité pendant 1 tour (tentatives de pioche -1) chaque année jusqu'à résolution.",
   "event.politicalGridlock.name": "Résistance nobiliaire",
   "event.politicalGridlock.history":
     "Les grands se coalisaient vite contre une centralisation fiscale qui rappelait les levées de Mazarin.",
@@ -131,6 +131,12 @@ export const sunkingCoreGameContentFr = {
     "Pendant la guerre de Succession d'Espagne, l'expansion versaillaise et l'avantage dynastique bourbonien sont perçus comme une menace à l'équilibre européen. L'Angleterre, les Provinces-Unies, la Savoie et le Portugal coordonnent alors crédit, flotte et troupes au profit du camp habsbourgeois. Tant que le règlement d'Utrecht n'a pas clos le conflit, cet appui extérieur maintient une pression militaire renforcée contre la France.",
   "status.greatPowerEncirclement.desc":
     "Chapitre 3 : si la ligne adverse habsbourgeoise est présente et que Trésor + Pouvoir + Légitimité dépasse 50, gagnez ce statut et le budget adverse habsbourgeois augmente de +1 ; si ce total dépasse 75, ce statut ajoute encore +1 (une fois par guerre). Il ne se dissipe pas tant que la guerre dure.",
+  "status.supplyLineSqueeze.name": "Transferts entravés",
+  "status.supplyLineSqueeze.history": "Blocus, embargos et réquisitions sur le terrain coupent la chaîne qui transforme les rôles fiscaux en numéraire disponible.",
+  "status.supplyLineSqueeze.desc": "Tant qu'actif, revenu de Financement au début du tour -1 (cumulable ; revenu plancher 0).",
+  "status.usurpationMobilization.name": "Mobilisation par édit",
+  "status.usurpationMobilization.history": "Un édit de succession extra-légal force la cour et les provinces à se prononcer d'un coup, provoquant une brève flambée de correspondance et de nominations.",
+  "status.usurpationMobilization.desc": "Tant qu'actif, tentatives de pioche au début du tour +1.",
   "status.legitimacyCrisis.name": "Crise de légitimité",
   "status.legitimacyCrisis.history":
     "Forcer la succession hors protocole accélère la course au trône, mais érode ensuite durablement la crédibilité royale.",

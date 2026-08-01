@@ -101,13 +101,6 @@ export type GameState = {
   pendingInteraction: PendingInteraction | null;
   nextIds: { event: number; status: number; log: number };
   resources: Resources;
-  /**
-   * Consumed at the start of the Draw phase; sums delays / crises that affect draw count only.
-   * Draw attempts = max(1, base + this), then reset to 0.
-   */
-  nextTurnDrawModifier: number;
-  /** Queue of per-year draw modifiers; index 0 applies this year then is shifted. */
-  scheduledDrawModifiers: number[];
   deck: string[];
   discard: string[];
   hand: string[];

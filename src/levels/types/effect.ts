@@ -14,8 +14,11 @@ export interface CampaignEffectRegistry {}
 export type Effect =
   | { kind: "modResource"; resource: ResourceStat; delta: number }
   | { kind: "drawCards"; count: number }
-  | { kind: "scheduleNextTurnDrawModifier"; delta: number }
-  | { kind: "scheduleDrawModifiers"; deltas: number[] }
+  /**
+   * The only way to express a delayed effect: statuses are visible in the status bar and
+   * tick on a single documented schedule (`levels/sunking/logic/playerStatusTick.ts`).
+   * Hidden "next turn" counters are deliberately not part of the effect vocabulary.
+   */
   | { kind: "addPlayerStatus"; templateId: StatusTemplateId; turns: number }
   | { kind: "addCardsToDeck"; templateId: CardTemplateId; count: number; placement?: CardPlacement }
   | CampaignEffectRegistry[keyof CampaignEffectRegistry];

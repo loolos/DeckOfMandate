@@ -114,6 +114,22 @@ export const statusTemplates: Record<StatusTemplateId, StatusTemplate> = {
     historyKey: "status.grandAllianceInfiltration.history",
     descKey: "status.grandAllianceInfiltration.desc",
   },
+  supplyLineSqueeze: {
+    id: "supplyLineSqueeze",
+    kind: "beginYearFundingIncomeDelta",
+    delta: -1,
+    titleKey: "status.supplyLineSqueeze.name",
+    historyKey: "status.supplyLineSqueeze.history",
+    descKey: "status.supplyLineSqueeze.desc",
+  },
+  usurpationMobilization: {
+    id: "usurpationMobilization",
+    kind: "drawAttemptsDelta",
+    delta: 1,
+    titleKey: "status.usurpationMobilization.name",
+    historyKey: "status.usurpationMobilization.history",
+    descKey: "status.usurpationMobilization.desc",
+  },
   bourbonMarriageRetention: {
     id: "bourbonMarriageRetention",
     kind: "handCapDelta",

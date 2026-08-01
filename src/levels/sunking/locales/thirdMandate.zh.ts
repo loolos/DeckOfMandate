@@ -106,7 +106,7 @@ export const messagesZhThirdMandate = {
   "card.usurpationEdict.background":
     "以非常规继位措辞强推宫廷与外廷承认，短期能抢占王位争夺叙事高地，却会透支王朝法统信用。",
   "card.usurpationEdict.desc":
-    "王位争夺进度 +2；下回合抽牌阶段多抽 1 张；获得「合法性危机」2 回合（每回合结束合法性 -1）。",
+    "王位争夺进度 +2；获得「诏书动员」1 回合（下回合抽牌阶段多抽 1 张）与「合法性危机」2 回合（每回合结束合法性 -1）。",
   "card.habsburgImperialLegitimacyNote.name": "正朔诏令",
   "card.habsburgImperialLegitimacyNote.background":
     "维也纳的帝国法学家援引帝国特权与哈布斯堡同西班牙王室的旧谱系，以诏令质疑波旁继统的合法性，让法理攻势在各国宫廷持续发酵。",
@@ -130,21 +130,21 @@ export const messagesZhThirdMandate = {
   "card.habsburgImperialCustomsDelay.background":
     "帝国口岸与莱茵关卡以查验、扣押与临时税卡迟滞法国商流，不经会战便掐住王室的现金流。",
   "card.habsburgImperialCustomsDelay.desc":
-    "对手费用 2。即时效果：财政 −1，并向你的抽牌堆随机位置加入 1 张财政负担；延后效果：下一年抽牌次数 −1（仍至少 1 次）。",
+    "对手费用 2。即时效果：财政 −1，并向你的抽牌堆随机位置加入 1 张财政负担；延后效果：给你加 1 层「权力流失」1 回合（下一年抽牌次数 −1，仍至少 1 次）。",
   "card.habsburgImperialCustomsDelay.opponentHistory":
     "帝国口岸的关税梗阻会直接卡住现金流。局内会财政 −1、加入 1 张财政负担，且下一年抽牌次数 −1（最低 1）。",
   "card.habsburgAngloDutchMaritimeInterdiction.name": "英荷迟押",
   "card.habsburgAngloDutchMaritimeInterdiction.background":
     "大同盟一侧以私掠证、护航管制与海上查扣压缩英吉利—北海航路，汇票与辎重汇款被层层迟滞，凡尔赛可动用的现金头寸在账面上变薄。",
   "card.habsburgAngloDutchMaritimeInterdiction.desc":
-    "对手费用 1。即时效果：权力 −1；延后效果：下一年年初由财政转入的回合经费 −1（合计不低于 0），且抽牌次数 −1（仍至少 1 次）。",
+    "对手费用 1。即时效果：权力 −1；延后效果：给你加 1 层「转输受阻」1 回合（下一年年初由财政转入的回合经费 −1，合计不低于 0）与 1 层「权力流失」1 回合（抽牌次数 −1，仍至少 1 次）。",
   "card.habsburgAngloDutchMaritimeInterdiction.opponentHistory":
     "大同盟侧以私掠证、护航与查扣压缩英吉利—北海航路，汇票与辎重汇款被迟滞，凡尔赛可动用的现金头寸在账面上变薄。局内：权力 −1；下一年国库转回合经费 −1（总收入不低于 0）、抽牌 −1（最低 1）。",
   "card.habsburgRhineMagazineEmbargo.name": "需辎重禁运",
   "card.habsburgRhineMagazineEmbargo.background":
     "帝国与莱茵诸邦以临时禁令、加税与扣押迟滞法军火药、草料与平底船租约，前线辎重与后方贴现同时吃紧。",
   "card.habsburgRhineMagazineEmbargo.desc":
-    "对手费用 1。即时效果：王位争夺进度 −1；延后效果：下一年年初由财政转入的回合经费 −1（合计不低于 0）。",
+    "对手费用 1。即时效果：王位争夺进度 −1；延后效果：给你加 1 层「转输受阻」1 回合（下一年年初由财政转入的回合经费 −1，合计不低于 0）。",
   "card.habsburgRhineMagazineEmbargo.opponentHistory":
     "帝国与莱茵诸邦以临时禁令、加税与扣押迟滞法军火药、草料与平底船租约，前线辎重与后方贴现同时吃紧。局内：下一年国库转回合经费 −1（总收入不低于 0），并使王位争夺进度 −1。",
 } as const;

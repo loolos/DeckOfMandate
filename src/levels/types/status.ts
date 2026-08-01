@@ -2,13 +2,20 @@ import type { ResourceStat } from "./effect";
 import type { CardTag } from "./tags";
 import type { MessageKey } from "../../locales/en";
 
-/** Runtime row shown in the status bar; ticks down at end of each year's beginYear (after draw). */
+/**
+ * Runtime row shown in the status bar. Start-of-year kinds tick down inside `beginYear`
+ * once the draw has consumed them; action-phase kinds (`blockCardTag`,
+ * `retentionCapacityDelta`) tick at the end of the year instead, so a status granted by an
+ * unresolved event penalty still covers the whole of the following year. See
+ * `logic/playerStatusTick.ts`.
+ */
 export type PlayerStatusKind =
   | "drawAttemptsDelta"
   | "retentionCapacityDelta"
   | "handCapDelta"
   | "blockCardTag"
-  | "beginYearResourceDelta";
+  | "beginYearResourceDelta"
+  | "beginYearFundingIncomeDelta";
 
 export type BeginYearStatusResource = ResourceStat;
 

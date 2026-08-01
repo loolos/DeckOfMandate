@@ -81,16 +81,6 @@ export function applyEffect(state: GameState, e: Effect): GameState {
       }
       return s;
     }
-    case "scheduleNextTurnDrawModifier":
-      return {
-        ...state,
-        nextTurnDrawModifier: state.nextTurnDrawModifier + e.delta,
-      };
-    case "scheduleNextTurnFundingIncomeModifier":
-      return {
-        ...state,
-        nextTurnFundingIncomeModifier: state.nextTurnFundingIncomeModifier + e.delta,
-      };
     case "opponentNextTurnDrawModifier":
       return {
         ...state,
@@ -116,11 +106,6 @@ export function applyEffect(state: GameState, e: Effect): GameState {
       return {
         ...state,
         opponentStrength: Math.max(1, state.opponentStrength + e.delta),
-      };
-    case "scheduleDrawModifiers":
-      return {
-        ...state,
-        scheduledDrawModifiers: [...state.scheduledDrawModifiers, ...e.deltas],
       };
     case "addPlayerStatus": {
       const tmpl = getStatusTemplate(e.templateId);

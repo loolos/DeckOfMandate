@@ -524,7 +524,6 @@ describe("gameReducer", () => {
     const tempInHand = after.hand.find((id) => after.cardsById[id]?.templateId === "diplomaticIntervention");
     expect(tempInHand).toBeTruthy();
     expect(after.discard).toContain(congressId);
-    expect(after.nextTurnDrawModifier).toBe(withCongress.nextTurnDrawModifier);
     const drawBoost = after.playerStatuses.find((s) => s.templateId === "diplomaticCongressDrawBoost");
     expect(drawBoost?.kind).toBe("drawAttemptsDelta");
     expect(drawBoost?.delta).toBe(1);

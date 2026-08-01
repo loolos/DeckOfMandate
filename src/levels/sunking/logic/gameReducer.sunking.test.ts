@@ -69,7 +69,10 @@ describe("gameReducer (sunking campaign behaviors)", () => {
     const afterPlay = gameReducer(withCard, { type: "PLAY_CARD", handIndex: 0 });
     expect(afterPlay.resources.funding).toBe(0);
     expect(afterPlay.successionTrack).toBe(2);
-    expect(afterPlay.nextTurnDrawModifier).toBe(1);
+    const mobilization = afterPlay.playerStatuses.find((s) => s.templateId === "usurpationMobilization");
+    expect(mobilization?.kind).toBe("drawAttemptsDelta");
+    expect(mobilization?.delta).toBe(1);
+    expect(mobilization?.turnsRemaining).toBe(1);
     expect(afterPlay.hand).not.toContain(drawId);
     expect(afterPlay.deck).toContain(drawId);
     const crisis = afterPlay.playerStatuses.find((s) => s.templateId === "legitimacyCrisis");

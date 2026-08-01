@@ -204,7 +204,7 @@ export const cardTemplates: Record<CardTemplateId, CardTemplate> = {
     descriptionKey: "card.usurpationEdict.desc",
     effects: [
       { kind: "modSuccessionTrack", delta: 2 },
-      { kind: "scheduleNextTurnDrawModifier", delta: 1 },
+      { kind: "addPlayerStatus", templateId: "usurpationMobilization", turns: 1 },
       { kind: "addPlayerStatus", templateId: "legitimacyCrisis", turns: 2 },
     ],
   },

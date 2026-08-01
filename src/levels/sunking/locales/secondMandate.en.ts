@@ -49,7 +49,7 @@ export const messagesEnSecondMandate = {
   "event.revocationNantes.history":
     "In 1598, Henry IV issued the Edict of Nantes after decades of civil war between Catholics and Protestants. It was not a program of equality, but a political settlement: Catholicism stayed the state religion, while Huguenots kept limited worship rights, legal protections, and a few fortified places for security. By the later seventeenth century, however, the monarchy increasingly linked religious conformity to administrative obedience and dynastic authority. Fiscal strain, frontier war, and confessional policing reinforced each other, and Protestant communities were recast by many officials as a standing internal risk. The 1685 revocation ended that compromise. Large numbers of Huguenots fled to England, the Dutch Republic, Brandenburg, Switzerland, and beyond, carrying capital, technical skills, and commercial networks with them; those who remained often shifted to clandestine worship and underground mutual-aid circles, which kept the conflict alive inside the kingdom.",
   "event.revocationNantes.desc":
-    "A Continued event with an unresolved draw penalty. The tolerance route softens immediate confrontation but can reintroduce recurring confessional crises; the crackdown route grants stronger control tools but forces you to absorb periodic resurgence and longer governance drag.",
+    "A Continued event that stacks two Loss of Authority statuses for 1 turn (draw -2 next year) while unresolved. The tolerance route softens immediate confrontation but can reintroduce recurring confessional crises; the crackdown route grants stronger control tools but forces you to absorb periodic resurgence and longer governance drag.",
   "event.leagueOfAugsburg.name": "League of Augsburg Forms",
   "event.leagueOfAugsburg.history":
     "After the 1680s, French expansion along the Rhine and into the Low Countries fed sustained alarm among the neighboring courts. Versailles was not a passive spectator: royal policy leaned on the Chambers of Reunion to fold strategic Rhineland towns (including Strasbourg) into France through juridical fait accompli, backed by garrisons, recalled embassies, pensions, and thinly veiled pressure on Imperial electors and free cities—trying to widen cracks in the Empire's constitution before neighbors could synchronize a response. Confessional hardening after the Edict of Nantes was revoked let Dutch and north-German Protestants read territorial nibbling and religious intimidation as one combined threat. In 1686, princes of the Holy Roman Empire, the Habsburgs, and German states aligned at Augsburg, and over the following years England, the Dutch Republic, and Spain progressively joined the anti-French coordination: the League was a collective answer to that French activism, and it forced Versailles to treat \"breaking the ring\" as a standing bill paid in subsidies, secret diplomacy, and frontier posturing. For Louis XIV this was no longer a passing diplomatic friction: the European balance was hardening into an institutionalized alliance constraint on France.",
@@ -79,7 +79,7 @@ export const messagesEnSecondMandate = {
   "event.provincialNoncompliance.history":
     "Parlements and provincial estates still tested intendants against charters and tax immunities, slowing central policy on the ground.",
   "event.provincialNoncompliance.desc":
-    "Local officials stall implementation: pay 2 Funding or suffer draw -2 next year, then draw -1 in each of the next two years.",
+    "Local officials stall implementation: pay 2 Funding or gain Loss of Authority for 3 turns plus another for 1 turn: draw -2 next year, then draw -1 in each of the next two years.",
   "event.risingGrainPrices.name": "Rising Grain Prices",
   "event.risingGrainPrices.history":
     "Bad harvests and royal grain politics could turn bread riots into political crises within days.",
@@ -94,17 +94,17 @@ export const messagesEnSecondMandate = {
   "event.frontierGarrisons.history":
     "Rhine and Low Countries garrisons soaked budgets during the league wars of the 1680s–1690s, making fortresses a standing drain on the treasury.",
   "event.frontierGarrisons.desc":
-    "Border garrisons consume revenue: pay 3 Funding or use Royal Intervention / Diplomatic Intervention; any successful resolve lowers Europe Alert progress by 1 while alert is active. If ignored, lose 1 Treasury and take a draw penalty next year.",
+    "Border garrisons consume revenue: pay 3 Funding or use Royal Intervention / Diplomatic Intervention; any successful resolve lowers Europe Alert progress by 1 while alert is active. If ignored, lose 1 Treasury and gain Loss of Authority for 1 turn (draw -1 next year).",
   "event.tradeDisruption.name": "Trade Disruption",
   "event.tradeDisruption.history":
     "Anglo-Dutch convoy war and privateering squeezed receipts from Atlantic routes and raised risk for every merchant sailing.",
   "event.tradeDisruption.desc":
-    "Sea lanes and convoy risk cut into policy bandwidth: pay 1 Funding or take a -2 draw modifier next year.",
+    "Sea lanes and convoy risk cut into policy bandwidth: pay 1 Funding or stack two Loss of Authority statuses for 1 turn (draw -2 next year).",
   "event.embargoCoalition.name": "Embargo Coalition",
   "event.embargoCoalition.history":
     "Grand Alliance navies tightened maritime cordons as coalition war became routine, turning blockade and tariff coordination into standard containment tools.",
   "event.embargoCoalition.desc":
-    "Maritime restrictions tighten around French commerce: pay floor(Treasury/8)+1 Funding or use Royal Intervention / Diplomatic Intervention; any successful resolve lowers Europe Alert progress by 1 while alert is active. If ignored, lose 1 Treasury and suffer a draw penalty next year.",
+    "Maritime restrictions tighten around French commerce: pay floor(Treasury/8)+1 Funding or use Royal Intervention / Diplomatic Intervention; any successful resolve lowers Europe Alert progress by 1 while alert is active. If ignored, lose 1 Treasury and gain Loss of Authority for 1 turn (draw -1 next year).",
   "event.mercenaryRaiders.name": "Mercenary Raiders",
   "event.mercenaryRaiders.history":
     "Between campaigns, free companies and paid raiders still haunted frontier marches, testing royal control over the borderlands.",
@@ -114,12 +114,12 @@ export const messagesEnSecondMandate = {
   "event.localWar.history":
     "Between major treaties France still fought limited flare-ups on the Rhine, in northern Italy, and around the Low Countries: sieges, raids, and supply-line contests that drained finances, dragged at military-administrative rhythm, and served rival powers as probes of French resolve.",
   "event.localWar.desc":
-    "You may resolve this event with Intervention. If not using Intervention, choose Attack (pay a Funding cost tied to Europe Alert, then apply Anti-French Sentiment surcharge if active; equal 1/3 outcomes: Local Victory [Power +1, Legitimacy +1], Stalemate [no change], Minor Loss [Power -1]) or Appease (no Funding cost, Legitimacy -1). This is a Continued event: if left unresolved, next turn's Funding income is reduced by 2 (not below 0).",
+    "You may resolve this event with Intervention. If not using Intervention, choose Attack (pay a Funding cost tied to Europe Alert, then apply Anti-French Sentiment surcharge if active; equal 1/3 outcomes: Local Victory [Power +1, Legitimacy +1], Stalemate [no change], Minor Loss [Power -1]) or Appease (no Funding cost, Legitimacy -1). This is a Continued event: if left unresolved, it stacks two Supply Line Squeeze statuses for 1 turn, cutting next turn's Funding income by 2 (not below 0).",
   "event.courtScandal.name": "Court Scandal",
   "event.courtScandal.history":
     "Bedroom politics and ministerial feuds at Versailles routinely spilled into broadsheet rumor, shaking the prestige of the court.",
   "event.courtScandal.desc":
-    "Factional intrigue weakens authority: pay 3 Funding to contain it; if unresolved, Legitimacy -1 and all Royal-tag cards are blocked next turn.",
+    "Factional intrigue weakens authority: pay 3 Funding to contain it; if unresolved, Legitimacy -1 and gain Royal Access Frozen for 1 turn (Royal-tag cards cannot be played next turn).",
   "event.militaryPrestige.name": "Military Prestige",
   "event.militaryPrestige.history":
     "Sieges like Namur were staged as proof of Bourbon arms and divine kingship; battlefield glory was the most direct source of authority.",

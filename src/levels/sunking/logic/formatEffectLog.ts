@@ -31,16 +31,6 @@ export function formatEffectLogLine(
       });
     case "drawCards":
       return t("log.effect.drawCards", { count: effect.count });
-    case "scheduleNextTurnDrawModifier": {
-      const d = effect.delta;
-      const signed = d >= 0 ? `+${d}` : String(d);
-      return t("log.effect.scheduleNextTurnDrawModifier", { delta: signed });
-    }
-    case "scheduleNextTurnFundingIncomeModifier": {
-      const d = effect.delta;
-      const signed = d >= 0 ? `+${d}` : String(d);
-      return t("log.effect.scheduleNextTurnFundingIncomeModifier", { delta: signed });
-    }
     case "opponentNextTurnDrawModifier": {
       const d = effect.delta;
       const signed = d >= 0 ? `+${d}` : String(d);
@@ -53,10 +43,6 @@ export function formatEffectLogLine(
       const signed = d >= 0 ? `+${d}` : String(d);
       return t("log.effect.modOpponentStrength", { delta: signed });
     }
-    case "scheduleDrawModifiers":
-      return t("log.effect.scheduleDrawModifiers", {
-        deltas: effect.deltas.map((d) => (d >= 0 ? `+${d}` : String(d))).join(", "),
-      });
     case "addPlayerStatus": {
       const tmpl = getStatusTemplate(effect.templateId);
       return t("log.effect.addPlayerStatus", {

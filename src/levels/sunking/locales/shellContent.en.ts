@@ -213,6 +213,5 @@ export const sunkingShellContentEn = {
   "ui.targets": "Level goals — within {limit} turns: Treasury {tT}, Power {tP}, Legitimacy {tL}",
   "log.cardPlayed.title": "[Turn {turn}] {card} — paid {cost} {funding}.",
   "log.effect.gainFunding": "{funding} +{amount}",
-  "log.effect.scheduleNextTurnFundingIncomeModifier": "Next-year treasury funding income modifier {delta}",
   "log.effect.opponentNextTurnDrawModifier": "Opponent next-year draw modifier {delta}"
 } as const;

@@ -4,6 +4,7 @@ import { EVENT_SLOT_ORDER, type SlotId } from "../../types/event";
 import type { GameState } from "../../../types/game";
 import { appendActionLog } from "./actionLog";
 import { applyEffects, enforceLegitimacy } from "./applyEffects";
+import { tickEndOfYearStatuses } from "./playerStatusTick";
 import {
   handleThirdMandateSuccessionCrisisAtEoy,
   handleThirdMandateUtrechtAtEoy,
@@ -13,7 +14,12 @@ const SLOTS: readonly SlotId[] = EVENT_SLOT_ORDER;
 
 /** After Action phase: harmful unresolved penalties in {@link EVENT_SLOT_ORDER} order. */
 export function resolveEndOfYearPenalties(state: GameState): GameState {
-  let s = state;
+  /**
+   * Expire action-phase statuses first: the year they were granted for is over, and the
+   * penalties below grant next year's batch. Ticking after the penalties would immediately
+   * eat a turn off the statuses this very call creates.
+   */
+  let s = tickEndOfYearStatuses(state);
   if (s.playerStatuses.some((st) => st.templateId === "legitimacyCrisis")) {
     s = applyEffects(s, [{ kind: "modResource", resource: "legitimacy", delta: -1 }]);
     s = enforceLegitimacy(s);

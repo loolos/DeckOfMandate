@@ -286,11 +286,6 @@ declare module "../../../types/game" {
      * and increments containment stacks by 1. Reset to 0 when the trigger fires or when the choice is made.
      */
     huguenotResurgenceCounter: number;
-    /**
-     * Consumed at the next `beginYear` when adding treasury-based funding income (additive with treasury
-     * stat and local-war penalty), then reset to 0 with `nextTurnDrawModifier`.
-     */
-    nextTurnFundingIncomeModifier: number;
     /** Inflation stacks per card instance (active in Chapter 2, and in Chapter 1 after pressure threshold). */
     cardInflationById: Record<string, number>;
     /** If true, that slot must become Major Crisis at the next Event phase (before empty rolls). */
