@@ -109,7 +109,7 @@
   padding: 0.75rem 0.9rem;
 }
 
-/** Sun King in-run shell: frosted panels over campaign backdrop (see `.playShellSunking`). */
+/** Sun King in-run shell: frosted panels over campaign backdrop (see `.playShellThemed`). */
 .playShell {
   width: 100%;
   min-height: 100vh;
@@ -117,30 +117,30 @@
   box-sizing: border-box;
 }
 
-.playShellSunking .panel {
+.playShellThemed .panel {
   background: color-mix(in srgb, var(--panel) 72%, transparent);
   border-color: color-mix(in srgb, var(--border) 85%, transparent);
   -webkit-backdrop-filter: saturate(1.08) blur(12px);
   backdrop-filter: saturate(1.08) blur(12px);
 }
 
-.playShellSunking .stat {
+.playShellThemed .stat {
   background: color-mix(in srgb, var(--panel) 70%, transparent);
   border-color: color-mix(in srgb, var(--border) 88%, transparent);
   -webkit-backdrop-filter: saturate(1.08) blur(10px);
   backdrop-filter: saturate(1.08) blur(10px);
 }
 
-.playShellSunking .resourceMobileCompact,
-.playShellSunking .resourceMobileCollapseBar {
+.playShellThemed .resourceMobileCompact,
+.playShellThemed .resourceMobileCollapseBar {
   background: color-mix(in srgb, var(--panel) 72%, transparent);
   border-color: color-mix(in srgb, var(--border) 85%, transparent);
   -webkit-backdrop-filter: saturate(1.08) blur(10px);
   backdrop-filter: saturate(1.08) blur(10px);
 }
 
-.playShellSunking .actionLogResizable,
-.playShellSunking .actionLogScroll {
+.playShellThemed .actionLogResizable,
+.playShellThemed .actionLogScroll {
   background: color-mix(in srgb, var(--panel) 68%, transparent);
   border-color: color-mix(in srgb, var(--border) 85%, transparent);
   -webkit-backdrop-filter: saturate(1.08) blur(10px);

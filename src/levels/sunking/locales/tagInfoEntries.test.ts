@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { messagesEn } from "./en";
-import { messagesZh } from "./zh";
-import { messagesFr } from "./fr";
-import { CARD_TAGS } from "../levels/sunking/templates/tags";
+import { messagesEn } from "../../../locales/en";
+import { messagesZh } from "../../../locales/zh";
+import { messagesFr } from "../../../locales/fr";
+import { CARD_TAGS } from "../templates/tags";
 
 const bundles = {
   en: messagesEn,

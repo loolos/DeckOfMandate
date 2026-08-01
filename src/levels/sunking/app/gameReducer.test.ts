@@ -1,11 +1,11 @@
 import { describe, expect, it } from "vitest";
 import { getLevelDef } from "../../../data/levels";
 import { getCardTemplate } from "../../../data/cards";
-import { getEventSolveFundingAmount, getEventTemplate } from "../../../data/events";
+import { getEventSolveFundingAmount, getEventTemplate } from "../logic/eventTemplateApi";
 import { EMPTY_EVENT_SLOTS, type SlotId } from "../../types/event";
 import { createInitialState } from "../../../app/initialState";
 import { gameReducer } from "../../../app/gameReducer";
-import { buildLevel2StateFromDraft, createStandaloneLevel2Draft } from "../../../app/levelTransitions";
+import { buildLevel2StateFromDraft, createStandaloneLevel2Draft } from "../chapterTransitions";
 
 describe("gameReducer", () => {
   it("creates deterministic initial layouts for the same seed", () => {

@@ -8,7 +8,7 @@ import {
   createContinuityLevel3Draft,
   createStandaloneLevel2Draft,
   createStandaloneLevel3Draft,
-} from "../../../app/levelTransitions";
+} from "../chapterTransitions";
 import type { GameState } from "../../../types/game";
 import {
   annotateConfirmRetention,

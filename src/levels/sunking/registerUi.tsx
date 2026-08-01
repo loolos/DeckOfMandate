@@ -6,14 +6,23 @@
  */
 import {
   registerCampaignLevelThemeResolver,
+  registerCampaignPreRunScreen,
+  registerCampaignRunContinuationResolver,
   registerCampaignLogEntryRenderer,
   registerCampaignOutcomeCopyBuilder,
   registerCampaignStatusRowsBuilder,
+  registerCampaignRetentionCapLabelBuilder,
   registerCampaignTargetsLineBuilder,
   registerCampaignUiComponents,
 } from "../campaignUiRegistry";
 import { resolveSunkingLevelTheme } from "./ui/levelTheme";
-import { buildSunkingOutcomeCopy, buildSunkingTargetsLine } from "./ui/outcomeCopy";
+import {
+  buildSunkingOutcomeCopy,
+  buildSunkingRetentionCapLabel,
+  buildSunkingTargetsLine,
+} from "./ui/outcomeCopy";
+import { ChapterRefitScreen } from "./ui/ChapterRefitScreen";
+import { resolveSunkingRunContinuation } from "./ui/runContinuation";
 import { renderSunkingLogEntry } from "./ui/actionLogEntries";
 import { buildSunkingStatusRows } from "./ui/statusRows";
 import { ResourceBar } from "./ui/SunkingResourceBar";
@@ -27,6 +36,9 @@ export function registerSunkingUi(): void {
   registerCampaignLevelThemeResolver(resolveSunkingLevelTheme);
   registerCampaignOutcomeCopyBuilder(buildSunkingOutcomeCopy);
   registerCampaignTargetsLineBuilder(buildSunkingTargetsLine);
+  registerCampaignRetentionCapLabelBuilder(buildSunkingRetentionCapLabel);
+  registerCampaignPreRunScreen(ChapterRefitScreen);
+  registerCampaignRunContinuationResolver(resolveSunkingRunContinuation);
   registerCampaignUiComponents({
     ResourceBar,
     ResourceTooltipText,

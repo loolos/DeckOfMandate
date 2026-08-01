@@ -73,6 +73,9 @@ export {
   syncAntiFrenchSentimentStatusHook,
 } from "./sunking/logic/turnFlowHooks";
 export { campaignSaveStateShapeValid } from "./sunking/logic/saveShape";
+export { purgeSunkingCardSideTables as purgeCampaignCardSideTables } from "./sunking/logic/cardRuntime";
+export { enforceLegitimacy as enforceCampaignResourceFloors } from "./sunking/logic/applyEffects";
+export { appendInflationActivationLogIfNeeded as appendCampaignCostEscalationLog } from "./sunking/logic/cardCost";
 export {
   buildSunkingInitialStateFields as buildCampaignInitialStateFields,
   finalizeSunkingInitialStateFields as finalizeCampaignInitialStateFields,

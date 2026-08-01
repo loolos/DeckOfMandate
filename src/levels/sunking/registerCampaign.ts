@@ -1,12 +1,15 @@
-import {
-  registerChapter2StandaloneFactory,
-  registerChapter3StandaloneFactory,
-} from "../../data/levelBootstrap";
+import { registerLevelBootstrapStateBuilder } from "../../data/levelBootstrap";
 import type { LevelContent, LevelDef } from "../../data/levelTypes";
 import { registerLevel, setDefaultLevelId } from "../../data/levelRegistry";
 import type { Level2StartDraft, Level3StartDraft } from "./types/continuity";
 import { registerCampaignReducerBridge } from "../campaignReducerBridge";
 import { trySunkingCampaignReducerBridge } from "./logic/campaignReducerBridgeImpl";
+import { buildLevel2StateFromDraft } from "./chapter2Transition";
+import {
+  registerChapter2StandaloneDraftFactory,
+  registerChapter3StandaloneDraftFactory,
+} from "./chapterBootstrapDrafts";
+import { buildLevel3StateFromDraft } from "./chapter3Transition";
 import { registerSunkingInitialStateHooks } from "./sunkingInitialStateHooks";
 
 type ChapterModule = {
@@ -29,10 +32,14 @@ export function registerSunking(): void {
     registerLevel(mod.levelDef, mod.levelContent);
     if (mod.registerAsDefaultLevel) defaultLevelId = mod.levelDef.id;
     if (mod.levelDef.bootstrap === "chapter2Standalone" && mod.chapter2StandaloneFactory) {
-      registerChapter2StandaloneFactory(mod.levelDef.id, mod.chapter2StandaloneFactory);
+      const factory = mod.chapter2StandaloneFactory;
+      registerChapter2StandaloneDraftFactory(mod.levelDef.id, factory);
+      registerLevelBootstrapStateBuilder(mod.levelDef.id, (seed?: number) => buildLevel2StateFromDraft(factory(seed)));
     }
     if (mod.levelDef.bootstrap === "chapter3Standalone" && mod.chapter3StandaloneFactory) {
-      registerChapter3StandaloneFactory(mod.levelDef.id, mod.chapter3StandaloneFactory);
+      const factory = mod.chapter3StandaloneFactory;
+      registerChapter3StandaloneDraftFactory(mod.levelDef.id, factory);
+      registerLevelBootstrapStateBuilder(mod.levelDef.id, (seed?: number) => buildLevel3StateFromDraft(factory(seed)));
     }
   }
   if (defaultLevelId) setDefaultLevelId(defaultLevelId);

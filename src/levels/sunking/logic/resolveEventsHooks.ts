@@ -1,4 +1,4 @@
-import { getEventTemplate } from "../../../data/events";
+import { getEventTemplate } from "./eventTemplateApi";
 import type { SlotId } from "../../types/event";
 import type { GameState } from "../../../types/game";
 import { appendActionLog } from "./actionLog";

@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
-import { levelContentByLevelId } from "../../../data/levelContent";
+import { levelContentByLevelId } from "../testLevelContent";
 import { getLevelDef, getTurnLimitForRun } from "../../../data/levels";
-import { getEventTemplate } from "../../../data/events";
+import { getEventTemplate } from "./eventTemplateApi";
 import { EMPTY_EVENT_SLOTS } from "../../types/event";
 import { createInitialState } from "../../../app/initialState";
 import { gameReducer } from "../../../app/gameReducer";

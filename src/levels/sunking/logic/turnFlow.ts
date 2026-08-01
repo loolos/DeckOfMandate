@@ -2,7 +2,7 @@ import {
   getEventRollWeight,
   getEventTemplate,
   shouldDiscardCh3SuccessionGatedProceduralHead,
-} from "../../../data/events";
+} from "./eventTemplateApi";
 import { getLevelContent } from "../../../data/levelContent";
 import { getLevelDef, getTurnLimitForRun } from "../../../data/levels";
 import { currentCalendarYear } from "./scriptedCalendar";

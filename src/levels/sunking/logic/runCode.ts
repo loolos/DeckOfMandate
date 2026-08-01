@@ -5,11 +5,11 @@ import {
   createContinuityLevel2Draft,
   createContinuityLevel3Draft,
   type Level2StartDraft,
-} from "../../../app/levelTransitions";
+} from "../chapterTransitions";
 import type { Level2ContinuityDraft, Level3ContinuityDraft } from "../types/continuity";
 import { gameReducer, type GameAction } from "../../../app/gameReducer";
 import { createInitialState } from "../../../app/initialState";
-import { getChapter2StandaloneDraft, getChapter3StandaloneDraft } from "../../../data/levelBootstrap";
+import { getChapter2StandaloneDraft, getChapter3StandaloneDraft } from "../chapterBootstrapDrafts";
 import { getLevelDef, getRegisteredLevelIds, isLevelId, type LevelId } from "../../../data/levels";
 import { EVENT_SLOT_ORDER, type SlotId } from "../../types/event";
 import type { Level2CarryoverCard } from "../types/continuity";

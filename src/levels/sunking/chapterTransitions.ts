@@ -1,12 +1,9 @@
 /**
- * App-facing chapter transition API (chapters 2–3). Implementation lives under
- * `src/levels/campaignChapterTransitions.ts` → sunking chapter modules.
+ * Pack-facing chapter transition API (chapters 2–3): a single import surface over
+ * `chapter2Transition.ts` / `chapter3Transition.ts` for the rest of the Sun King pack.
  */
-import type { GameState } from "../types/game";
-import {
-  buildLevel3StateFromDraft,
-  createContinuityLevel3Draft,
-} from "../levels/campaignChapterTransitions";
+import type { GameState } from "../../types/game";
+import { buildLevel3StateFromDraft, createContinuityLevel3Draft } from "./chapter3Transition";
 
 export type {
   Level2CarryoverCard,
@@ -15,10 +12,11 @@ export type {
   Level2StartDraft,
   Level2StartMode,
   Level2Validation,
-} from "../types/continuity";
-export { CONTINUITY_REFIT_MAX_CARD_REMOVALS as LEVEL2_CONTINUITY_MAX_REMOVALS } from "../types/continuity";
+} from "./types/continuity";
+export { CONTINUITY_REFIT_MAX_CARD_REMOVALS as LEVEL2_CONTINUITY_MAX_REMOVALS } from "./types/continuity";
 export {
   buildLevel2StateFromDraft,
+  createDeckRefitCarryoverSnapshot,
   createContinuityLevel2Draft,
   createStandaloneLevel2Draft,
   getLevel2RefitNewCardsLabelKey,
@@ -28,9 +26,9 @@ export {
   toggleContinuityCardRemoval,
   validateLevel2ContinuityRefit,
   validateLevel2Draft,
-} from "../levels/campaignChapterTransitions";
+} from "./chapter2Transition";
 
-export type { Level3ContinuityDraft, Level3StandaloneDraft, Level3StartDraft } from "../types/continuity";
+export type { Level3ContinuityDraft, Level3StandaloneDraft, Level3StartDraft } from "./types/continuity";
 export {
   applyRemovedIndicesToLevel3Draft,
   buildLevel3StateFromDraft,
@@ -41,7 +39,7 @@ export {
   LEVEL3_CONTINUITY_MAX_REMOVALS,
   SUNKING_CH3_ID,
   validateLevel3Draft,
-} from "../levels/campaignChapterTransitions";
+} from "./chapter3Transition";
 
 /** Continue from chapter 2 victory: inherit deck snapshot, resources, calendar anchor; six new chapter-3 cards shuffle into the full library. */
 export function buildLevel3StateFromChapter2(ch2End: GameState, seed?: number): GameState {

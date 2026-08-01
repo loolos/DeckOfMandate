@@ -2,7 +2,7 @@
 import { getCardTemplate } from "../data/cards";
 import { appendActionLog } from "../logic/actionLog";
 import { hasCardTag } from "../logic/cardTags";
-import { limitedUseCardDepletionPenalty } from "../levels/campaignLogicBundle";
+import { limitedUseCardDepletionPenalty, purgeCampaignCardSideTables } from "../levels/campaignLogicBundle";
 import type { GameState } from "../types/game";
 
 export function removeHand(state: GameState, instanceId: string): GameState {
@@ -31,17 +31,14 @@ export function purgeExtraCardsIfLevelEnded(state: GameState): GameState {
   const nextCardsById = Object.fromEntries(
     Object.entries(state.cardsById).filter(([id]) => !isExtraCardId(id)),
   );
-  const nextCardInflationById = Object.fromEntries(
-    Object.entries(state.cardInflationById).filter(([id]) => !isExtraCardId(id)),
-  );
-  return {
+  const purged: GameState = {
     ...state,
     hand: state.hand.filter((id) => !isExtraCardId(id)),
     deck: state.deck.filter((id) => !isExtraCardId(id)),
     discard: state.discard.filter((id) => !isExtraCardId(id)),
     cardsById: nextCardsById,
-    cardInflationById: nextCardInflationById,
   };
+  return purgeCampaignCardSideTables(purged, isExtraCardId);
 }
 
 export function pushDiscard(state: GameState, instanceId: string): GameState {

@@ -1,4 +1,4 @@
-import { getEventSolveFundingAmount, getEventTemplate } from "../../../data/events";
+import { getEventSolveFundingAmount, getEventTemplate } from "./eventTemplateApi";
 import { appendActionLog } from "../../../logic/actionLog";
 import { applyEffects, enforceLegitimacy } from "./applyEffects";
 import { appendInflationActivationLogIfNeeded } from "../../../logic/cardCost";

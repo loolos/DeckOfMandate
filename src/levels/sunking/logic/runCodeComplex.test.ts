@@ -18,7 +18,7 @@ import {
   createContinuityLevel3Draft,
   createStandaloneLevel2Draft,
   createStandaloneLevel3Draft,
-} from "../../../app/levelTransitions";
+} from "../chapterTransitions";
 import { getPlayableCardCost } from "../../../logic/cardCost";
 import { isCardPlayableInActionPhase } from "./cardPlayability";
 import { retentionCapacity } from "../../../logic/turnFlow";

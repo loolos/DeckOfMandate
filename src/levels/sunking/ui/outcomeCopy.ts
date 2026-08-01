@@ -8,6 +8,7 @@ import type { MessageKey } from "../../../locales";
 import type { GameState } from "../../../types/game";
 import type { CampaignOutcomeCopy, UiTranslator } from "../../campaignUiRegistry";
 import { continuityEndingBodyKeys } from "../logic/endingCopy";
+import { resourceLabelWithIcon } from "../logic/icons";
 
 function outcomeHeadline(state: GameState, t: UiTranslator): string {
   if (state.outcome === "victory") return t("outcome.victory");
@@ -67,6 +68,11 @@ export function buildSunkingOutcomeCopy(state: GameState, t: UiTranslator): Camp
     paragraphs.push(t(key as MessageKey));
   }
   return { headline, paragraphs };
+}
+
+/** Sun King: the retention cap comes from Legitimacy, so label it with that resource. */
+export function buildSunkingRetentionCapLabel(_state: GameState, cap: number, t: UiTranslator): string {
+  return `${resourceLabelWithIcon("legitimacy", t("resource.legitimacy"))}: ${cap}`;
 }
 
 export function buildSunkingTargetsLine(state: GameState, turnLimit: number, t: UiTranslator): string {

@@ -6,10 +6,10 @@ import {
   createContinuityLevel2Draft,
   createStandaloneLevel2Draft,
   createStandaloneLevel3Draft,
-} from "../../../app/levelTransitions";
+} from "../chapterTransitions";
 import { gameReducer, type GameAction } from "../../../app/gameReducer";
 import { getCardTemplate } from "../../../data/cards";
-import { getEventSolveFundingAmount, getEventTemplate } from "../../../data/events";
+import { getEventSolveFundingAmount, getEventTemplate } from "../logic/eventTemplateApi";
 import { getLevelDef } from "../../../data/levels";
 import type { CardTemplateId } from "../../types/card";
 import { EVENT_SLOT_ORDER, type SlotId } from "../../types/event";

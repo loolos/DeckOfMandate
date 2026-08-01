@@ -1,4 +1,4 @@
-import { getEventTemplate } from "../../../data/events";
+import { getEventTemplate } from "./eventTemplateApi";
 import { applyEffects } from "./applyEffects";
 import { markSlotResolvedWithLeagueProgress } from "../../../logic/eventSlotOps";
 import { opponentImmediateExtraDraw } from "../../../logic/opponentHabsburg";

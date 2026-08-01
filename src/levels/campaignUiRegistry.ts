@@ -5,6 +5,7 @@
  */
 import type { ComponentType, CSSProperties, ReactNode, Ref } from "react";
 import type { GameAction } from "../app/gameReducer";
+import type { ContinuitySnapshot } from "../logic/runCode";
 import type { ActionLogEntry, GameState, Resources } from "../types/game";
 import type { MessageKey } from "../locales";
 
@@ -69,6 +70,58 @@ export type CampaignUiComponents = {
 };
 
 /**
+ * Pre-run screens: levels whose `bootstrap` is not `"initial"` hand control to the campaign
+ * before the run starts (chapter refit, draft picks, …), and a finished run may offer a
+ * campaign continuation from the game-over modal. The shell only routes; the screen is the
+ * campaign's own component and owns its editing state.
+ */
+export type CampaignPreRunRequest =
+  /** Starting this level directly from the menu; the campaign builds the opening state. */
+  | { kind: "standaloneStart"; levelId: string; seed: number | undefined }
+  /** Continuing from a finished run (post-victory CTA). */
+  | { kind: "continueFromRun"; state: GameState };
+
+export type CampaignPreRunConfirm = {
+  /** Fully built opening state for the new run. */
+  state: GameState;
+  /** Indices removed from the campaign's carryover list; recorded in the run code. */
+  removedIndices: readonly number[];
+  /** Set when this run continues an earlier chapter; null for a standalone start. */
+  continuitySnapshot: ContinuitySnapshot | null;
+};
+
+export type CampaignPreRunScreenProps = {
+  request: CampaignPreRunRequest;
+  onConfirm: (result: CampaignPreRunConfirm) => void;
+  onCancel: () => void;
+};
+
+let preRunScreen: ComponentType<CampaignPreRunScreenProps> | null = null;
+
+export function registerCampaignPreRunScreen(component: ComponentType<CampaignPreRunScreenProps> | null): void {
+  preRunScreen = component;
+}
+
+export function getCampaignPreRunScreen(): ComponentType<CampaignPreRunScreenProps> | null {
+  return preRunScreen;
+}
+
+/** Post-run continuation offer (e.g. "carry this deck into the next chapter"). */
+export type CampaignRunContinuation = { continueLabelKey: string };
+
+let runContinuationResolver: ((state: GameState) => CampaignRunContinuation | null) | null = null;
+
+export function registerCampaignRunContinuationResolver(
+  fn: ((state: GameState) => CampaignRunContinuation | null) | null,
+): void {
+  runContinuationResolver = fn;
+}
+
+export function getCampaignRunContinuation(state: GameState): CampaignRunContinuation | null {
+  return runContinuationResolver?.(state) ?? null;
+}
+
+/**
  * End-of-run narrative for the game-over modal, fully composed by the campaign:
  * a headline plus already-translated body paragraphs.
  */
@@ -87,6 +140,19 @@ export function registerCampaignOutcomeCopyBuilder(fn: CampaignOutcomeCopyBuilde
 
 export function buildCampaignOutcomeCopy(state: GameState, t: UiTranslator): CampaignOutcomeCopy | null {
   return outcomeCopyBuilder ? outcomeCopyBuilder(state, t) : null;
+}
+
+/** Label above the end-of-turn retention picker explaining what sets the keep cap. */
+export type CampaignRetentionCapLabelBuilder = (state: GameState, cap: number, t: UiTranslator) => string;
+
+let retentionCapLabelBuilder: CampaignRetentionCapLabelBuilder | null = null;
+
+export function registerCampaignRetentionCapLabelBuilder(fn: CampaignRetentionCapLabelBuilder | null): void {
+  retentionCapLabelBuilder = fn;
+}
+
+export function buildCampaignRetentionCapLabel(state: GameState, cap: number, t: UiTranslator): string {
+  return retentionCapLabelBuilder ? retentionCapLabelBuilder(state, cap, t) : String(cap);
 }
 
 /** In-run goals line shown above the board; the campaign owns what "goals" means. */

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { createInitialState } from "../../../app/initialState";
-import { levelContentByLevelId } from "../../../data/levelContent";
+import { levelContentByLevelId } from "../testLevelContent";
 import { getLevelDef } from "../../../data/levels";
 import { EMPTY_EVENT_SLOTS } from "../../types/event";
 import type { GameState } from "../../../types/game";

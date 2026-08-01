@@ -1,11 +1,10 @@
 import { getCardTemplate } from "../data/cards";
-import { getChapter2StandaloneDraft, getChapter3StandaloneDraft } from "../data/levelBootstrap";
+import { buildCampaignBootstrapState } from "../data/levelBootstrap";
 import type { LevelId } from "../data/levels";
 import { appendActionLog } from "../logic/actionLog";
-import { enforceLegitimacy } from "../logic/applyEffects";
 import { isCardPlayableInActionPhase } from "../logic/cardPlayability";
 import { hasCardTag } from "../logic/cardTags";
-import { appendInflationActivationLogIfNeeded, getPlayableCardCost } from "../logic/cardCost";
+import { getPlayableCardCost } from "../logic/cardCost";
 import { normalizeGameState } from "../logic/normalizeGameState";
 import { applyPlayedCardEffects } from "../logic/resolveCard";
 import { resolveEndOfYearPenalties } from "../logic/resolveEvents";
@@ -13,17 +12,18 @@ import { beginYear, evaluateTimeDefeat, evaluateVictory, retentionCapacity } fro
 import type { GameState } from "../types/game";
 import type { LogInfoKey } from "../types/game";
 import {
+  appendCampaignCostEscalationLog,
   applyCampaignPostRetentionDeckEffects,
   applyCampaignConsumeInvariant,
   applyCampaignEndYearResourceReset,
   applyCampaignPlayCardExtras,
   maybeAppendCampaignConsumePlayLog,
   maybeBeginCampaignCardPlayInteraction,
+  enforceCampaignResourceFloors,
   runCampaignEndYearPhase,
 } from "../levels/campaignLogicBundle";
 import { tryCampaignReducerBridge } from "../levels/campaignReducerBridge";
 import { createInitialState } from "./initialState";
-import { buildLevel2StateFromDraft, buildLevel3StateFromDraft } from "./levelTransitions";
 import {
   consumeLimitedUseCard,
   isPlayingActionPhaseWithoutPendingInteraction,
@@ -111,34 +111,34 @@ function handlePlayCard(state: GameState, action: Extract<GameAction, { type: "P
   if (!consumed.exhausted) {
     s = pushDiscard(s, id);
   }
-  s = enforceLegitimacy(s);
+  s = enforceCampaignResourceFloors(s);
   s = appendActionLog(s, {
     kind: "cardPlayed",
     templateId: inst.templateId,
     fundingCost: cost,
     effects: tmpl.effects,
   });
-  return appendInflationActivationLogIfNeeded(state, s);
+  return appendCampaignCostEscalationLog(state, s);
 }
 
 function handleEndYear(state: GameState): GameState {
   if (!isPlayingActionPhaseWithoutPendingInteraction(state)) {
     return state;
   }
-  let s = enforceLegitimacy(state);
+  let s = enforceCampaignResourceFloors(state);
   if (s.outcome !== "playing") {
     return purgeExtraCardsIfLevelEnded(s);
   }
   s = applyCampaignEndYearResourceReset(s);
   s = evaluateVictory(s);
   if (s.outcome === "victory") {
-    return appendInflationActivationLogIfNeeded(state, purgeExtraCardsIfLevelEnded(s));
+    return appendCampaignCostEscalationLog(state, purgeExtraCardsIfLevelEnded(s));
   }
   const cap = retentionCapacity(s);
   if (s.hand.length <= cap) {
-    return appendInflationActivationLogIfNeeded(state, completeYearAfterRetention(s, s.hand));
+    return appendCampaignCostEscalationLog(state, completeYearAfterRetention(s, s.hand));
   }
-  return appendInflationActivationLogIfNeeded(state, { ...s, phase: "retention" });
+  return appendCampaignCostEscalationLog(state, { ...s, phase: "retention" });
 }
 
 function handleConfirmRetention(
@@ -152,7 +152,7 @@ function handleConfirmRetention(
     if (!state.hand.includes(id)) return state;
   }
   if (action.keepIds.length > retentionCapacity(state)) return state;
-  return appendInflationActivationLogIfNeeded(state, completeYearAfterRetention(state, action.keepIds));
+  return appendCampaignCostEscalationLog(state, completeYearAfterRetention(state, action.keepIds));
 }
 
 export function gameReducer(state: GameState, action: GameAction): GameState {
@@ -163,15 +163,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       return normalizeGameState(action.state);
     case "NEW_GAME": {
       const nextLevelId = action.levelId ?? state.levelId;
-      const chapter2Draft = getChapter2StandaloneDraft(nextLevelId, action.seed);
-      if (chapter2Draft) {
-        return buildLevel2StateFromDraft(chapter2Draft);
-      }
-      const chapter3Draft = getChapter3StandaloneDraft(nextLevelId, action.seed);
-      if (chapter3Draft) {
-        return buildLevel3StateFromDraft(chapter3Draft);
-      }
-      return createInitialState(action.seed, nextLevelId);
+      return buildCampaignBootstrapState(nextLevelId, action.seed) ?? createInitialState(action.seed, nextLevelId);
     }
     case "APPEND_LOG_INFO":
       return appendActionLog(state, { kind: "info", infoKey: action.infoKey });

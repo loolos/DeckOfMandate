@@ -10,7 +10,7 @@ import {
   toggleContinuityCardRemoval,
   validateLevel2ContinuityRefit,
   validateLevel2Draft,
-} from "../../../app/levelTransitions";
+} from "../chapterTransitions";
 
 describe("levelTransitions / chapter2", () => {
   const level2NewCards = getLevel2RefitNewCardsTemplateOrder();

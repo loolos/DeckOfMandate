@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { createInitialState } from "../../../app/initialState";
 import { getLevelContent } from "../../../data/levelContent";
 import { getTurnLimitForRun } from "../../../data/levels";
-import { buildLevel2StateFromDraft, createStandaloneLevel2Draft } from "../../../app/levelTransitions";
+import { buildLevel2StateFromDraft, createStandaloneLevel2Draft } from "../chapterTransitions";
 import type { CardInstance } from "../../types/card";
 import { EMPTY_EVENT_SLOTS, type EventTemplateId } from "../../types/event";
 import type { GameState } from "../../../types/game";
