@@ -1,5 +1,5 @@
-import { getEventTemplate } from "../../../data/events";
-import { applyEffects } from "../../../logic/applyEffects";
+import { getEventTemplate } from "./eventTemplateApi";
+import { applyEffects } from "./applyEffects";
 import { markSlotResolvedWithLeagueProgress } from "../../../logic/eventSlotOps";
 import { opponentImmediateExtraDraw } from "../../../logic/opponentHabsburg";
 import type { GameState } from "../../../types/game";

@@ -7,9 +7,9 @@ import {
   createStandaloneLevel3Draft,
   SUNKING_CH3_ID,
   validateLevel3Draft,
-} from "../campaignChapterTransitions";
+} from "./chapterTransitions";
 import { createInitialState } from "../../app/initialState";
-import { buildLevel3StateFromChapter2 } from "../../app/levelTransitions";
+import { buildLevel3StateFromChapter2 } from "./chapterTransitions";
 
 describe("Sun King initialState hooks (chapter 3)", () => {
   it("standalone chapter 3 draft uses a full chapter-2-sized carryover pool for refit", () => {

@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { createInitialState } from "../../../app/initialState";
 import { hasCardTag } from "../../../logic/cardTags";
-import { isCardPlayableInActionPhase } from "../../../logic/cardPlayability";
+import { isCardPlayableInActionPhase } from "./cardPlayability";
 import type { GameState } from "../../../types/game";
 
 describe("cardPlayability / defiance (Jansenist neighbor)", () => {

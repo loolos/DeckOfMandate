@@ -1,11 +1,11 @@
 import { describe, expect, it } from "vitest";
 import { renderToStaticMarkup } from "react-dom/server";
-import { I18nProvider } from "../locales";
-import { createInitialState } from "../app/initialState";
-import { EMPTY_EVENT_SLOTS } from "../levels/types/event";
-import { EventPanel } from "./EventPanel";
+import { I18nProvider } from "../../../locales";
+import { createInitialState } from "../../../app/initialState";
+import { EMPTY_EVENT_SLOTS } from "../../types/event";
+import { EventPanel } from "./SunkingEventPanel";
 
-import "../test/setupLevels";
+import "../../../test/setupLevels";
 
 describe("EventPanel", () => {
   it("renders a continued-turns badge for continued3-tagged war of devolution", () => {

@@ -2,9 +2,10 @@ import { getCardTemplate } from "../../../data/cards";
 import type { CardTemplateId } from "../../types/card";
 import type { Effect } from "../../types/effect";
 import { EVENT_SLOT_ORDER, type EventInstance, type SlotId } from "../../types/event";
-import type { GameState, SuccessionIntervalTier } from "../../../types/game";
+import type { GameState } from "../../../types/game";
+import type { SuccessionIntervalTier } from "../types/campaignState";
 import { appendActionLog } from "./actionLog";
-import { applyEffects, enforceLegitimacy, enforceSuccessionImmediateOutcome } from "../../../logic/applyEffects";
+import { applyEffects, enforceLegitimacy, enforceSuccessionImmediateOutcome } from "./applyEffects";
 import { OPPONENT_AI_NEAR_WIN_THRESHOLD, THIRD_MANDATE_LEVEL_ID } from "./thirdMandateConstants";
 import { shuffle } from "../../../logic/rng";
 

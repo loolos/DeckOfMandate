@@ -1,32 +1,12 @@
 import type { Effect } from "./effect";
 import type { CardTag } from "./tags";
 
-export type CardTemplateId =
-  | "funding"
-  | "crackdown"
-  | "diplomaticIntervention"
-  | "fiscalBurden"
-  | "antiFrenchContainment"
-  | "reform"
-  | "ceremony"
-  | "development"
-  | "grainRelief"
-  | "taxRebalance"
-  | "diplomaticCongress"
-  | "suppressHuguenots"
-  | "religiousTensionCard"
-  | "jansenistReservation"
-  | "jesuitCollege"
-  | "bourbonMarriageProclamation"
-  | "grandAllianceInfiltrationDiplomacy"
-  | "italianTheaterTroopRedeploy"
-  | "usurpationEdict"
-  | "habsburgGrandAllianceLevy"
-  | "habsburgImperialCustomsDelay"
-  | "habsburgImperialLegitimacyNote"
-  | "habsburgLowCountriesAgitation"
-  | "habsburgAngloDutchMaritimeInterdiction"
-  | "habsburgRhineMagazineEmbargo";
+/** Registry of card template ids; campaign packs merge their ids in via `declare module`. */
+export interface CardTemplateIdRegistry {}
+export type CardTemplateId = keyof CardTemplateIdRegistry & string;
+
+/** Campaign packs merge extra card-template metadata fields into this interface. */
+export interface CampaignCardTemplateFields {}
 
 export type CardTemplate = {
   id: CardTemplateId;
@@ -37,14 +17,9 @@ export type CardTemplate = {
   /** Brief thematic line shown on hand cards. */
   backgroundKey: string;
   descriptionKey: string;
-  /** Crackdown uses UI + reducer branch instead of a generic effect list. */
+  /** Some cards use UI + reducer branches instead of a generic effect list. */
   effects: Effect[];
-  /**
-   * Habsburg opponent pool only: budget cost for the opponent phase each year.
-   * When set, the card is not meant for the player hand (engine keeps it in opponent zones).
-   */
-  opponentCost?: number;
-};
+} & CampaignCardTemplateFields;
 
 export type CardInstance = {
   instanceId: string;

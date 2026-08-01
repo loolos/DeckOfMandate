@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { getLevelDef } from "../data/levels";
-import { createInitialState } from "./initialState";
+import { getLevelDef } from "../../../data/levels";
+import { createInitialState } from "../../../app/initialState";
 
 describe("createInitialState", () => {
   it("uses level def calendar and stable resources; beginYear adds treasury-based funding income", () => {

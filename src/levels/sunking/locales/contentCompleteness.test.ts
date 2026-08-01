@@ -1,11 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { messagesEn } from "./en";
-import { messagesFr } from "./fr";
-import { messagesZh } from "./zh";
-import { cardTemplates } from "../data/cards";
-import { eventTemplates } from "../data/events";
-import { statusTemplates } from "../data/statusTemplates";
-import { CARD_TAGS } from "../levels/types/tags";
+import { messagesEn } from "../../../locales/en";
+import { messagesFr } from "../../../locales/fr";
+import { messagesZh } from "../../../locales/zh";
+import { cardTemplates } from "../../../data/cards";
+import { eventTemplates } from "../logic/eventTemplateApi";
+import { statusTemplates } from "../../../data/statusTemplates";
+import { CARD_TAGS } from "../templates/tags";
 
 /**
  * Content-completeness guard: every player-facing content entry (card, event, status,

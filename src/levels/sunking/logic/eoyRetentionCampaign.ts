@@ -1,4 +1,4 @@
-import { applyEffects } from "../../../logic/applyEffects";
+import { applyEffects } from "./applyEffects";
 import type { GameState } from "../../../types/game";
 
 /** Injects anti-french containment into the deck when sentiment is active (Sun King chapter 2+). */

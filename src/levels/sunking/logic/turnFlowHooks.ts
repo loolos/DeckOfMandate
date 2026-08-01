@@ -10,7 +10,7 @@ import {
   rollEuropeAlertSupplementalEventCount,
 } from "./europeAlert";
 import { antiFrenchSentimentActive } from "./antiFrenchSentiment";
-import { applyEffects } from "../../../logic/applyEffects";
+import { applyEffects } from "./applyEffects";
 import { rngNext } from "../../../logic/rng";
 import { THIRD_MANDATE_LEVEL_ID } from "./thirdMandateConstants";
 
@@ -30,6 +30,11 @@ const RELIGIOUS_TENSION_EVENTS: readonly EventInstance["templateId"][] = [
 ];
 const GREAT_POWER_ENCIRCLEMENT_TRIGGER_SUM = 50;
 const GREAT_POWER_ENCIRCLEMENT_HIGH_PRESSURE_SUM = 75;
+
+/** Sun King: unspent funding is lost at year end before victory evaluation. */
+export function applyEndYearResourceResetHook(state: GameState): GameState {
+  return { ...state, resources: { ...state.resources, funding: 0 } };
+}
 
 export function maybeAdjustEuropeAlertProgressAtYearStartHook(state: GameState): GameState {
   if (!state.europeAlert || !getLevelDef(state.levelId).features.europeAlertMechanics) return state;

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { getLevelDef } from "../data/levels";
-import { createInitialState } from "./initialState";
+import { getLevelDef } from "../../../data/levels";
+import { createInitialState } from "../../../app/initialState";
 import {
   LEVEL2_CONTINUITY_MAX_REMOVALS,
   buildLevel2StateFromDraft,
@@ -10,7 +10,7 @@ import {
   toggleContinuityCardRemoval,
   validateLevel2ContinuityRefit,
   validateLevel2Draft,
-} from "./levelTransitions";
+} from "../chapterTransitions";
 
 describe("levelTransitions / chapter2", () => {
   const level2NewCards = getLevel2RefitNewCardsTemplateOrder();

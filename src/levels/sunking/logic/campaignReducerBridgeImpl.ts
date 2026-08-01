@@ -1,6 +1,6 @@
 import type { GameAction } from "../../../app/gameReducer";
 import { appendActionLog } from "../../../logic/actionLog";
-import { applyEffects, enforceLegitimacy } from "../../../logic/applyEffects";
+import { applyEffects, enforceLegitimacy } from "./applyEffects";
 import { appendInflationActivationLogIfNeeded } from "../../../logic/cardCost";
 import { enforceHuguenotContainmentInvariant } from "../../../logic/cardRuntime";
 import { markSlotResolved, markSlotResolvedWithLeagueProgress } from "../../../logic/eventSlotOps";
@@ -12,6 +12,12 @@ import type { GameState } from "../../../types/game";
 import type { SlotId } from "../../types/event";
 import { THIRD_MANDATE_LEVEL_ID } from "./thirdMandateConstants";
 import { canLocalWarAttack, performLocalWarAppease, performLocalWarAttack } from "./localWarSolve";
+import {
+  handleCrackdownCancelAction,
+  handleCrackdownTargetAction,
+  handleScriptedEventAttackAction,
+  handleSolveEventAction,
+} from "./eventSolveActions";
 
 function addUniqueStatus(
   state: GameState,
@@ -232,6 +238,23 @@ const BRIDGE_RULES: readonly BridgeRule[] = [
         performLouisXivLegacyPick(state, action.slot, action.directRule),
       );
     },
+  },
+  {
+    canHandle: (action) => action.type === "SOLVE_EVENT",
+    apply: (state, action) => (action.type === "SOLVE_EVENT" ? handleSolveEventAction(state, action.slot) : null),
+  },
+  {
+    canHandle: (action) => action.type === "SCRIPTED_EVENT_ATTACK",
+    apply: (state, action) =>
+      action.type === "SCRIPTED_EVENT_ATTACK" ? handleScriptedEventAttackAction(state, action.slot) : null,
+  },
+  {
+    canHandle: (action) => action.type === "CRACKDOWN_TARGET",
+    apply: (state, action) => (action.type === "CRACKDOWN_TARGET" ? handleCrackdownTargetAction(state, action.slot) : null),
+  },
+  {
+    canHandle: (action) => action.type === "CRACKDOWN_CANCEL",
+    apply: (state, action) => (action.type === "CRACKDOWN_CANCEL" ? handleCrackdownCancelAction(state) : null),
   },
 ];
 

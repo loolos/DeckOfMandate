@@ -1,4 +1,4 @@
-import type { ScriptedCalendarEventConfig } from "../../../data/levelContent";
+import type { ScriptedCalendarEventConfig } from "../types/levelConfig";
 import type { GameState } from "../../../types/game";
 import type { SlotId } from "../../types/event";
 import { appendActionLog } from "./actionLog";

@@ -255,3 +255,17 @@ export function applyOnDrawCardEffects(state: GameState, drawnCardId: string): G
   }
   return state;
 }
+
+/**
+ * Drops Sun King per-instance side tables for cards that are being removed from the run
+ * (e.g. campaign-only "extra" cards purged when a level ends).
+ */
+export function purgeSunkingCardSideTables(
+  state: GameState,
+  isRemovedCardId: (id: string) => boolean,
+): GameState {
+  const cardInflationById = Object.fromEntries(
+    Object.entries(state.cardInflationById).filter(([id]) => !isRemovedCardId(id)),
+  );
+  return { ...state, cardInflationById };
+}

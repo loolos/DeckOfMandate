@@ -1,71 +1,12 @@
 import type { Effect } from "./effect";
 
-export type EventTemplateId =
-  | "budgetStrain"
-  | "publicUnrest"
-  | "administrativeDelay"
-  | "tradeOpportunity"
-  | "politicalGridlock"
-  | "powerVacuum"
-  | "majorCrisis"
-  | "warOfDevolution"
-  | "nymwegenSettlement"
-  | "revocationNantes"
-  | "leagueOfAugsburg"
-  | "nineYearsWar"
-  | "ryswickPeace"
-  | "versaillesExpenditure"
-  | "nobleResentment"
-  | "provincialNoncompliance"
-  | "risingGrainPrices"
-  | "taxResistance"
-  | "frontierGarrisons"
-  | "tradeDisruption"
-  | "embargoCoalition"
-  | "mercenaryRaiders"
-  | "courtScandal"
-  | "militaryPrestige"
-  | "commercialExpansion"
-  | "sunKingPilgrimage"
-  | "talentedAdministrator"
-  | "warWeariness"
-  | "expansionRemembered"
-  | "cautiousCrown"
-  | "jansenistTension"
-  | "arminianTension"
-  | "huguenotTension"
-  | "localWar"
-  | "jesuitPatronage"
-  | "successionCrisis"
-  | "opponentHabsburg"
-  | "utrechtTreaty"
-  | "bavarianCourtRealignment"
-  | "portugueseTariffNegotiation"
-  | "imperialElectorsMood"
-  | "localizedSuccessionWar"
-  | "dualFrontCrisis"
-  | "louisXivLegacy1715";
+/** Registry of event template ids; campaign packs merge their ids in via `declare module`. */
+export interface EventTemplateIdRegistry {}
+export type EventTemplateId = keyof EventTemplateIdRegistry & string;
 
-export type EventSolve =
-  | { kind: "funding"; amount: number }
-  | { kind: "fundingOrCrackdown"; amount: number }
-  | { kind: "nantesPolicyChoice" }
-  | { kind: "crackdownOnly" }
-  | { kind: "localWarChoice" }
-  /** Balance numbers come from level `scriptedCalendarEvents` (matched by template id). */
-  | { kind: "scriptedAttack" }
-  /** Chapter 3: pay 3 funding for track +1, or decline for -1 (resolved via dedicated actions). */
-  | { kind: "successionCrisisChoice" }
-  /** Chapter 3: scripted Utrecht negotiation — no funding solve. */
-  | { kind: "utrechtTreatyChoice" }
-  /** Chapter 3: permanent opponent row — not solved with funding. */
-  | { kind: "opponentDisplay" }
-  /** Chapter 3: funding scales with ceil(treasuryStat/4) at solve time. */
-  | { kind: "fundingTreasuryQuarterCeil" }
-  /** Chapter 3: 1708 dual-front crisis — concede or escalate (dedicated actions). */
-  | { kind: "dualFrontCrisisChoice" }
-  /** Chapter 3: 1715 legacy event — regency custody vs direct young-king rule. */
-  | { kind: "louisXivLegacyChoice" };
+/** Campaign packs merge their event solve shapes (keyed by `kind`) into this registry. */
+export interface CampaignEventSolveRegistry {}
+export type EventSolve = CampaignEventSolveRegistry[keyof CampaignEventSolveRegistry];
 
 /** Fixed event columns (max 10); procedural random rolls only fill {@link PROCEDURAL_EVENT_SLOT_ORDER}. */
 export const EVENT_SLOT_ORDER = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"] as const;
@@ -83,6 +24,9 @@ export const EMPTY_PENDING_MAJOR_CRISIS: Record<SlotId, boolean> = Object.fromEn
   EVENT_SLOT_ORDER.map((id) => [id, false]),
 ) as Record<SlotId, boolean>;
 
+/** Campaign packs merge extra event-template metadata fields into this interface. */
+export interface CampaignEventTemplateFields {}
+
 export type EventTemplate = {
   id: EventTemplateId;
   weight: number;
@@ -96,14 +40,8 @@ export type EventTemplate = {
   /** Mechanics-only rules text (`event.<id>.desc`): costs, penalties, and outcomes. */
   descriptionKey: string;
   solve: EventSolve;
-  /** Applied when player resolves this event through the funding path. */
-  onFundSolveEffects?: readonly Effect[];
   /** Applied in {@link EVENT_SLOT_ORDER} at event resolution if still active and harmful. */
   penaltiesIfUnresolved: Effect[];
-  /**
-   * When true, Crackdown / diplomatic intervention cannot clear this event (funding or scripted choices only).
-   */
-  crackdownImmune?: boolean;
   /**
    * If set to "continued", a harmful unresolved crisis stays on the slot after end-of-year
    * handling (penalties and/or engine scheduling). Otherwise the slot is cleared after that
@@ -114,15 +52,16 @@ export type EventTemplate = {
   continuedDurationTurns?: number;
   /** Lightweight semantic tags for event-level rules/UI (e.g. anti-French coalition pressure). */
   tags?: readonly EventTag[];
-};
+} & CampaignEventTemplateFields;
 
-export const EVENT_TAGS = ["antiFrenchAlliance", "continued3"] as const;
-export type EventTag = (typeof EVENT_TAGS)[number];
+/** Registry of event tags; campaign packs merge their tags in via `declare module`. */
+export interface EventTagRegistry {}
+export type EventTag = keyof EventTagRegistry & string;
 
 export type EventInstance = {
   instanceId: string;
   templateId: EventTemplateId;
-  /** True after funding solve or Crackdown (card or event option) this turn. */
+  /** True after this turn's solve action (funding, targeted card, or scripted choice). */
   resolved: boolean;
   /** Remaining cycles/counters for finite events (e.g., League of Augsburg remaining solves). */
   remainingTurns?: number;

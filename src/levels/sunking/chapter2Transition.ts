@@ -3,7 +3,7 @@ import { getLevelContent, getLevelDef } from "../../data/levelRegistry";
 import { appendActionLog } from "./logic/actionLog";
 import { createInitialCardUseState } from "../../logic/cardUsage";
 import { computeEuropeAlertPowerLoss } from "../../logic/europeAlert";
-import { calendarYearForTurn } from "../../logic/scriptedCalendar";
+import { calendarYearForTurn } from "./logic/scriptedCalendar";
 import { createRngFromSeed, shuffle } from "../../logic/rng";
 import { beginYear } from "../../logic/turnFlow";
 import type { CardInstance, CardTemplateId } from "../types/card";
@@ -18,7 +18,7 @@ import {
   type Level2StartDraft,
   type Level2StartMode,
   type Level2Validation,
-} from "../../types/continuity";
+} from "./types/continuity";
 
 export const SUNKING_CH1_ID = "firstMandate";
 export const SUNKING_CH2_ID = "secondMandate";

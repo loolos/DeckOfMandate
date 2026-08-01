@@ -2,10 +2,10 @@ import {
   getEventRollWeight,
   getEventTemplate,
   shouldDiscardCh3SuccessionGatedProceduralHead,
-} from "../../../data/events";
+} from "./eventTemplateApi";
 import { getLevelContent } from "../../../data/levelContent";
 import { getLevelDef, getTurnLimitForRun } from "../../../data/levels";
-import { currentCalendarYear } from "../../../logic/scriptedCalendar";
+import { currentCalendarYear } from "./scriptedCalendar";
 import type { CardTemplateId } from "../../types/card";
 import { appendActionLog } from "./actionLog";
 import {
@@ -20,12 +20,12 @@ import type { PlayerStatusInstance } from "../../types/status";
 import { applyOnDrawCardEffects } from "./cardRuntime";
 import { applyInflationFromDeckRefill } from "./cardCost";
 import { drawUpToPower } from "../../../logic/draw";
-import { drawAttemptsFromPower } from "../../../logic/drawScaling";
+import { drawAttemptsFromPower } from "./drawScaling";
 import { getHandCapForStatuses } from "../../../logic/handCapacity";
-import { applyScriptedCalendarPhase, rollAntiFrenchLeagueDrawAdjustment } from "../../../logic/scriptedCalendar";
+import { applyScriptedCalendarPhase, rollAntiFrenchLeagueDrawAdjustment } from "./scriptedCalendar";
 import { rngNext, shuffle } from "../../../logic/rng";
 import { opponentBeginYearDrawPhase } from "../../../logic/opponentHabsburg";
-import { enforceLegitimacy } from "../../../logic/applyEffects";
+import { enforceLegitimacy } from "./applyEffects";
 import {
   maybeAddEuropeAlertSupplementalEventHook,
   maybeAddReligiousTensionEventHook,
@@ -548,7 +548,7 @@ export function beginYear(state: GameState): GameState {
 }
 
 /** Calendar-end tier (chapter 3, track in (−10,10)): bourbon ≥+5, compromise −4..+4, habsburg ≤−5. */
-function successionIntervalTier(track: number): import("../../../types/game").SuccessionIntervalTier {
+function successionIntervalTier(track: number): import("../types/campaignState").SuccessionIntervalTier {
   if (track >= 5) return "bourbon";
   if (track >= -4) return "compromise";
   return "habsburg";

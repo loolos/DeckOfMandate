@@ -1,5 +1,5 @@
 import type { CardInstance } from "../../types/card";
-import type { NantesPolicyCarryover } from "../../../types/game";
+import type { NantesPolicyCarryover } from "../types/campaignState";
 
 /** Standalone / menu start: when unspecified, chapter 3 defaults to the crackdown branch. */
 export function resolveThirdMandateNantesPolicy(

@@ -18,9 +18,9 @@ import {
   createContinuityLevel3Draft,
   createStandaloneLevel2Draft,
   createStandaloneLevel3Draft,
-} from "../../../app/levelTransitions";
+} from "../chapterTransitions";
 import { getPlayableCardCost } from "../../../logic/cardCost";
-import { isCardPlayableInActionPhase } from "../../../logic/cardPlayability";
+import { isCardPlayableInActionPhase } from "./cardPlayability";
 import { retentionCapacity } from "../../../logic/turnFlow";
 import {
   annotateConfirmRetention,
@@ -29,8 +29,8 @@ import {
   replaySession,
   shouldRecordAction,
   type SessionRecord,
-} from "../../../logic/runCode";
-import { slotAllowsCrackdownTarget, slotAllowsFundSolve } from "../../../logic/uiHelpers";
+} from "./runCode";
+import { slotAllowsCrackdownTarget, slotAllowsFundSolve } from "./uiHelpers";
 import { EVENT_SLOT_ORDER } from "../../types/event";
 import type { GameState } from "../../../types/game";
 

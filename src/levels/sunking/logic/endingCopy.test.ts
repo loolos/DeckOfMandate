@@ -1,9 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { getLevelDef } from "../data/levels";
+import { getLevelDef } from "../../../data/levels";
 import { continuityEndingBodyKeys } from "./endingCopy";
-import type { GameState } from "../types/game";
+import type { GameState } from "../../../types/game";
 
-import "../test/setupLevels";
+import "../../../test/setupLevels";
 
 describe("continuityEndingBodyKeys", () => {
   const ending = getLevelDef("thirdMandate").ending;

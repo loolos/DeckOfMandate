@@ -6,7 +6,7 @@
 import { describe, it, expect } from "vitest";
 import { gameReducer } from "../../../app/gameReducer";
 import { createInitialState } from "../../../app/initialState";
-import { annotateConfirmRetention, decodeSession, encodeSession, shouldRecordAction } from "../../../logic/runCode";
+import { annotateConfirmRetention, decodeSession, encodeSession, shouldRecordAction } from "./runCode";
 import { retentionCapacity } from "../../../logic/turnFlow";
 import type { GameAction } from "../../../app/gameReducer";
 import type { GameState } from "../../../types/game";

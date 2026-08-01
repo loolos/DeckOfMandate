@@ -1,12 +1,7 @@
-export const CARD_TAGS = [
-  "royal",
-  "temp",
-  "extra",
-  "inflation",
-  "defiance",
-  "consume",
-  "opponent",
-  "successionContest",
-] as const;
+/**
+ * Registry of card tags. The framework defines none; campaign packs merge their tags in via
+ * `declare module` (the runtime tag list ships with the campaign's templates).
+ */
+export interface CardTagRegistry {}
 
-export type CardTag = (typeof CARD_TAGS)[number];
+export type CardTag = keyof CardTagRegistry & string;

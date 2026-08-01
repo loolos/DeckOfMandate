@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { renderToStaticMarkup } from "react-dom/server";
-import { I18nProvider, type LocaleId } from "../locales";
-import type { Resources } from "../types/game";
-import { ResourceBar } from "./ResourceBar";
+import { I18nProvider, type LocaleId } from "../../../locales";
+import type { Resources } from "../../../types/game";
+import { ResourceBar } from "./SunkingResourceBar";
 
 const RESOURCES: Resources = {
   funding: 5,

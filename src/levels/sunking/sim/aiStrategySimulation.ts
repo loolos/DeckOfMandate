@@ -6,21 +6,21 @@ import {
   createContinuityLevel2Draft,
   createStandaloneLevel2Draft,
   createStandaloneLevel3Draft,
-} from "../../../app/levelTransitions";
+} from "../chapterTransitions";
 import { gameReducer, type GameAction } from "../../../app/gameReducer";
 import { getCardTemplate } from "../../../data/cards";
-import { getEventSolveFundingAmount, getEventTemplate } from "../../../data/events";
+import { getEventSolveFundingAmount, getEventTemplate } from "../logic/eventTemplateApi";
 import { getLevelDef } from "../../../data/levels";
 import type { CardTemplateId } from "../../types/card";
 import { EVENT_SLOT_ORDER, type SlotId } from "../../types/event";
 import type { GameOutcome, GameState, Resources } from "../../../types/game";
-import { isCardPlayableInActionPhase } from "../../../logic/cardPlayability";
+import { isCardPlayableInActionPhase } from "../logic/cardPlayability";
 import { getPlayableCardCost } from "../../../logic/cardCost";
-import { currentCalendarYear, findScriptedCalendarConfig } from "../../../logic/scriptedCalendar";
-import { drawAttemptsFromPower } from "../../../logic/drawScaling";
+import { currentCalendarYear, findScriptedCalendarConfig } from "../logic/scriptedCalendar";
+import { drawAttemptsFromPower } from "../logic/drawScaling";
 import { getHandCapForStatuses } from "../../../logic/handCapacity";
 import { retentionCapacity } from "../../../logic/turnFlow";
-import { CONTINUITY_REFIT_MAX_CARD_REMOVALS } from "../../../types/continuity";
+import { CONTINUITY_REFIT_MAX_CARD_REMOVALS } from "../types/continuity";
 import { cardPlayPriorityFirstMandate } from "./strategies/firstMandateStrategy";
 import {
   cardPlayPrioritySecondMandate,

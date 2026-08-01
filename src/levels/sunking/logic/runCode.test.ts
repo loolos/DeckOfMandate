@@ -8,7 +8,7 @@ import {
   createContinuityLevel3Draft,
   createStandaloneLevel2Draft,
   createStandaloneLevel3Draft,
-} from "../../../app/levelTransitions";
+} from "../chapterTransitions";
 import type { GameState } from "../../../types/game";
 import {
   annotateConfirmRetention,
@@ -18,7 +18,7 @@ import {
   shouldRecordAction,
   type RunRecord,
   type SessionRecord,
-} from "../../../logic/runCode";
+} from "./runCode";
 
 /** Apply an action while annotating CONFIRM_RETENTION with the encoder hint. */
 function dispatchAndRecord(

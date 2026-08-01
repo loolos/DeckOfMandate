@@ -1,5 +1,5 @@
 import { getLevelDef } from "../../../../data/levels";
-import { getEventTemplate } from "../../../../data/events";
+import { getEventTemplate } from "../../logic/eventTemplateApi";
 import { EVENT_SLOT_ORDER } from "../../../types/event";
 import type { GameState } from "../../../../types/game";
 

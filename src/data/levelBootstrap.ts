@@ -1,22 +1,18 @@
-import type { Level2StartDraft, Level3StartDraft } from "../types/continuity";
+import type { GameState } from "../types/game";
 
-const chapter2StandaloneFactories: Record<string, (seed?: number) => Level2StartDraft> = {};
-const chapter3StandaloneFactories: Record<string, (seed?: number) => Level3StartDraft> = {};
+/**
+ * Opening-state builders for levels whose `bootstrap` is not `"initial"`.
+ * The campaign registers one per level id; the engine calls it when a run starts for
+ * that level (menu start and run-code replay alike) instead of `createInitialState`.
+ */
+const bootstrapStateBuilders: Record<string, (seed?: number) => GameState> = {};
 
-export function registerChapter2StandaloneFactory(levelId: string, fn: (seed?: number) => Level2StartDraft): void {
-  chapter2StandaloneFactories[levelId] = fn;
+export function registerLevelBootstrapStateBuilder(levelId: string, fn: (seed?: number) => GameState): void {
+  bootstrapStateBuilders[levelId] = fn;
 }
 
-export function getChapter2StandaloneDraft(levelId: string, seed?: number): Level2StartDraft | undefined {
-  const fn = chapter2StandaloneFactories[levelId];
-  return fn?.(seed);
-}
-
-export function registerChapter3StandaloneFactory(levelId: string, fn: (seed?: number) => Level3StartDraft): void {
-  chapter3StandaloneFactories[levelId] = fn;
-}
-
-export function getChapter3StandaloneDraft(levelId: string, seed?: number): Level3StartDraft | undefined {
-  const fn = chapter3StandaloneFactories[levelId];
-  return fn?.(seed);
+/** Built opening state for a campaign-bootstrapped level, or null when the level has none. */
+export function buildCampaignBootstrapState(levelId: string, seed?: number): GameState | null {
+  const fn = bootstrapStateBuilders[levelId];
+  return fn ? fn(seed) : null;
 }

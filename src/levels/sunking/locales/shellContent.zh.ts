@@ -188,5 +188,29 @@ export const sunkingShellContentZh = {
     "史实背景：1685 年《枫丹白露敕令》后，胡格诺派失去公开礼拜与法人社团保障，转入地下的聚会、印刷与互助仍在沿海与边境长期存在；王权依赖连串稽查、驻军与罚没以压制再结社。此处收束象征朝廷终于能把「余波」压到可宣布止息的程度——代价是多年监控成本、财政失血与欧洲舆论对法兰西宗教政策的长期反弹。",
   "log.info.eventTag.antiFrenchAlliance":
     "[第 {turn} 年] 标签说明「反法同盟」：该事件属于大同盟对法协同行动（封锁、贸易施压、边境袭扰或代理冲突）的一部分。机制上：当「反法情绪」状态生效时，所有带此标签且需经费解决的事件都会按阈值获得额外费用加价（里斯维克和约另有独立加价规则）。",
-  "help.short": "财政决定每回合转入的经费；经费用于打牌与事件处理。权力决定抽牌次数。合法性决定回合末可保留手牌数。未处理的有害事件依次结算。"
+  "help.short": "财政决定每回合转入的经费；经费用于打牌与事件处理。权力决定抽牌次数。合法性决定回合末可保留手牌数。未处理的有害事件依次结算。",
+  "phase.retention": "回合末：可保留至多等于合法性相关上限的手牌，也可以弃掉任意张牌。",
+  "resource.treasuryStat": "财政（能力）",
+  "resource.treasuryStat.hint": "决定每回合可获得的经费。",
+  "resource.funding": "剩余经费",
+  "resource.funding.hint": "用于打牌与事件处理",
+  "resource.power": "权力",
+  "resource.power.hint": "目前抽 {current} 张；到 {next} 时多 1 张，降到 {prev} 时少 1 张。",
+  "resource.power.hint.min": "目前抽 {current} 张；到 {next} 时多 1 张。",
+  "resource.legitimacy": "合法性",
+  "resource.legitimacy.hint": "决定回合末可保留手牌上限；归零即败。",
+  "ui.handWithCount": "手牌（{n}）💰（{funding}）",
+  "ui.retentionLegalitySummary": "当前选择：保留 {keep}/{cap} 张（合法性相关上限），弃置 {discard} 张；可弃掉任意张牌。",
+  "tutorial.step.targets":
+    "这些是关卡目标：在回合上限内达到所列的财政、权力与合法性。顶栏显示当前年份与剩余回合计数。",
+  "tutorial.step.resources":
+    "资源驱动整个流程：财政增加每回合的经费；经费用于打出卡牌与解决事件；权力决定每回合抽牌次数；合法性限制年末可保留的手牌张数——若合法性归零则本局失败。",
+  "tutorial.step.events":
+    "事件是棋盘上的危机与机遇。有害事件通常需要投入经费或特定卡牌来解决；机遇类事件在投资后可能带来收益。若有害事件未在结束回合前解决，可能会受到惩罚。",
+  "ui.statusHuguenotRemaining": "剩余势力 {n}",
+  "ui.targets": "关卡目标 — {limit} 回合内：财政 {tT}，权力 {tP}，合法性 {tL}",
+  "log.cardPlayed.title": "[第 {turn} 年] {card} — 支付 {cost} {funding}。",
+  "log.effect.gainFunding": "{funding} +{amount}",
+  "log.effect.scheduleNextTurnFundingIncomeModifier": "下一年国库转回合经费收入修正 {delta}",
+  "log.effect.opponentNextTurnDrawModifier": "对手下一年摸牌修正 {delta}"
 } as const;

@@ -1,5 +1,5 @@
 import { appendActionLog } from "../../../logic/actionLog";
-import { applyEffects, enforceLegitimacy } from "../../../logic/applyEffects";
+import { applyEffects, enforceLegitimacy } from "./applyEffects";
 import { markSlotResolved } from "../../../logic/eventSlotOps";
 import { rngNext } from "../../../logic/rng";
 import type { GameState } from "../../../types/game";

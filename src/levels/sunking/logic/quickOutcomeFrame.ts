@@ -1,6 +1,6 @@
 import type { LevelId } from "../../../data/levels";
 import { getStatusTemplate } from "../../../data/statusTemplates";
-import { findScriptedCalendarConfig } from "../../../logic/scriptedCalendar";
+import { findScriptedCalendarConfig } from "./scriptedCalendar";
 import { getResourceIcon } from "../../../logic/icons";
 import type { MessageKey } from "../../../locales";
 import type { CardTemplate } from "../../types/card";

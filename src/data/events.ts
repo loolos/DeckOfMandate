@@ -1,11 +1,2 @@
-export {
-  eventTemplates,
-  getEventRollWeight,
-  getEventSolveFundingAmount,
-  getEventTemplate,
-  isContinued3Event,
-  isCh3SuccessionGatedRollEvent,
-  isContinuedCrisis,
-  isEuropeAlertSupplementalEvent,
-  shouldDiscardCh3SuccessionGatedProceduralHead,
-} from "../levels/eventTemplateApi";
+/** Framework-level access to the registered event templates; campaign predicates live with the pack. */
+export { eventTemplates, getEventTemplate } from "../levels/eventTemplateApi";

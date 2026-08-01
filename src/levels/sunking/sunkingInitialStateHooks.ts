@@ -1,4 +1,3 @@
-import { getCardTemplate } from "../../data/cards";
 import { getLevelContent } from "../../data/levelContent";
 import {
   registerLevelInitialStateHooks,
@@ -6,10 +5,9 @@ import {
   type OpeningShuffleResult,
 } from "../../data/levelInitialStateRegistry";
 import { insertCardsIntoDeckAtRandomPositions } from "../../logic/cardRuntime";
-import { registerNantesStarterCardsForThirdMandate, resolveThirdMandateNantesPolicy } from "../../logic/thirdMandateStart";
+import { registerNantesStarterCardsForThirdMandate } from "../../logic/thirdMandateStart";
 import { shuffle } from "../../logic/rng";
 import type { CardInstance } from "../types/card";
-import { SUNKING_CH2_ID } from "./chapter2Transition";
 import { THIRD_MANDATE_LEVEL_ID } from "./logic/thirdMandateConstants";
 
 function thirdMandateRefitConfig() {
@@ -26,10 +24,6 @@ function thirdMandateRefitNewCards() {
   return newCards;
 }
 
-function thirdMandateStandaloneInflationTargetCost(): number | null {
-  return thirdMandateRefitConfig().standaloneCarryoverSource?.inflationTargetCostByTag?.inflation ?? null;
-}
-
 function thirdMandateShuffleOpening(ctx: OpeningShuffleContext): OpeningShuffleResult {
   const ch3RefitOrder = thirdMandateRefitNewCards();
   const cardsById: Record<string, CardInstance> = { ...ctx.cardsById };
@@ -40,7 +34,10 @@ function thirdMandateShuffleOpening(ctx: OpeningShuffleContext): OpeningShuffleR
     cardsById[instanceId] = { instanceId, templateId };
     ch3Ids.push(instanceId);
   }
-  const nantesIds = registerNantesStarterCardsForThirdMandate(cardsById, ctx.nantesPolicyCarryover!);
+  const nantesIds = registerNantesStarterCardsForThirdMandate(
+    cardsById,
+    ctx.campaignFields.nantesPolicyCarryover!,
+  );
   const coreIds = ctx.deckOrder.map((c) => c.instanceId);
   const fullPool = [...coreIds, ...ch3Ids];
   const [rng2, shuffledIds] = shuffle(ctx.rng, fullPool);
@@ -55,28 +52,9 @@ function thirdMandateShuffleOpening(ctx: OpeningShuffleContext): OpeningShuffleR
   };
 }
 
-function thirdMandateOpeningInflation(cardsById: Record<string, CardInstance>): Record<string, number> {
-  const cardInflationById: Record<string, number> = {};
-  const targetCost = thirdMandateStandaloneInflationTargetCost();
-  if (targetCost == null) return cardInflationById;
-  for (const id of Object.keys(cardsById)) {
-    const t = cardsById[id]?.templateId;
-    if (t && getCardTemplate(t).tags.includes("inflation")) {
-      cardInflationById[id] = Math.max(0, targetCost - getCardTemplate(t).cost);
-    }
-  }
-  return cardInflationById;
-}
-
 export function registerSunkingInitialStateHooks(): void {
-  registerLevelInitialStateHooks(SUNKING_CH2_ID, {
-    defaultWarOfDevolutionAttackedWhenUnset: () => true,
-  });
-
   registerLevelInitialStateHooks(THIRD_MANDATE_LEVEL_ID, {
-    resolveNantesPolicyCarryover: (raw) => resolveThirdMandateNantesPolicy(raw ?? null),
     adjustDefaultStarterDeckOrder: (order) => order.filter((id) => id !== "funding" && id !== "crackdown"),
     shuffleOpeningDeckAndHand: thirdMandateShuffleOpening,
-    seedOpeningCardInflationById: thirdMandateOpeningInflation,
   });
 }

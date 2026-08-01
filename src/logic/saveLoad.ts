@@ -1,4 +1,5 @@
 import type { GameState } from "../types/game";
+import { campaignSaveStateShapeValid } from "../levels/campaignLogicBundle";
 
 const SAVE_KEY = "deck-of-mandate.save.v1";
 
@@ -24,11 +25,7 @@ function isValidGameState(v: unknown): v is GameState {
     Array.isArray(s.discard) &&
     s.resources !== null &&
     typeof s.resources === "object" &&
-    typeof s.successionTrack === "number" &&
-    "utrechtTreatyCountdown" in s &&
-    "utrechtSettlementTier" in s &&
-    "successionOutcomeTier" in s &&
-    "greatPowerEncirclementHighPressureApplied" in s
+    campaignSaveStateShapeValid(s)
   );
 }
 
