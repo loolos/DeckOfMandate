@@ -4,7 +4,7 @@ import {
 } from "../../data/levelBootstrap";
 import type { LevelContent, LevelDef } from "../../data/levelTypes";
 import { registerLevel, setDefaultLevelId } from "../../data/levelRegistry";
-import type { Level2StartDraft, Level3StartDraft } from "../../types/continuity";
+import type { Level2StartDraft, Level3StartDraft } from "./types/continuity";
 import { registerCampaignReducerBridge } from "../campaignReducerBridge";
 import { trySunkingCampaignReducerBridge } from "./logic/campaignReducerBridgeImpl";
 import { registerSunkingInitialStateHooks } from "./sunkingInitialStateHooks";

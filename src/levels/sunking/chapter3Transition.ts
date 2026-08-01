@@ -19,7 +19,7 @@ import {
   type Level3ContinuityDraft,
   type Level3StandaloneDraft,
   type Level3StartDraft,
-} from "../../types/continuity";
+} from "./types/continuity";
 import {
   createDeckRefitCarryoverSnapshot,
   SUNKING_CH2_ID,

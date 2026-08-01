@@ -1,7 +1,8 @@
 import type { CardTemplateId } from "../../types/card";
 import type { Effect } from "../../types/effect";
 import type { EventTemplateId, SlotId } from "../../types/event";
-import type { ActionLogEntry, GameState, LogInfoKey, SuccessionIntervalTier } from "../../../types/game";
+import type { ActionLogEntry, GameState, LogInfoKey } from "../../../types/game";
+import type { SuccessionIntervalTier } from "../types/campaignState";
 
 export const MAX_ACTION_LOG = 150;
 

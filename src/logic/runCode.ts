@@ -13,7 +13,8 @@ import { getChapter2StandaloneDraft, getChapter3StandaloneDraft } from "../data/
 import { getLevelDef, getRegisteredLevelIds, isLevelId, type LevelId } from "../data/levels";
 import { EVENT_SLOT_ORDER, type SlotId } from "../levels/types/event";
 import type { Level2CarryoverCard } from "../types/continuity";
-import type { GameState, NantesPolicyCarryover, Resources } from "../types/game";
+import type { GameState, Resources } from "../types/game";
+import type { NantesPolicyCarryover } from "../levels/campaignStateTypes";
 
 /** Magic header bytes identifying a DeckOfMandate run code (binary format, current v4). */
 export const RUN_CODE_MAGIC = [0xdc, 0x04] as const;

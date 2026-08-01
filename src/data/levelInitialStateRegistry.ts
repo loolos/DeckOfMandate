@@ -1,7 +1,8 @@
 import type { CardInstance, CardTemplateId } from "../levels/types/card";
 import type { InitialStateOptions } from "./initialStateTypes";
 import type { LevelId } from "./levels";
-import type { NantesPolicyCarryover, RngSerialized } from "../types/game";
+import type { RngSerialized } from "../types/game";
+import type { NantesPolicyCarryover } from "../levels/campaignStateTypes";
 
 export type OpeningShuffleContext = {
   rng: RngSerialized;

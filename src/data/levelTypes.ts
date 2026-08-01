@@ -1,7 +1,8 @@
 import type { CardTemplateId } from "../levels/types/card";
 import type { EventTemplateId, SlotId } from "../levels/types/event";
 import type { LevelRefitConfig } from "../levels/types/refit";
-import type { NantesPolicyCarryover, Resources } from "../types/game";
+import type { Resources } from "../types/game";
+import type { NantesPolicyCarryover } from "../levels/campaignStateTypes";
 import type { LogInfoKey } from "../types/game";
 
 /** Must match {@link import("../locales").LocaleId}. */
@@ -11,7 +12,7 @@ export type LevelLocaleId = "en" | "zh" | "fr";
 export type LevelEndingCopyKeys = {
   victoryBodyKey: string;
   /** Chapter 3: victory body copy by Utrecht settlement tier (`bourbon` | `compromise` | `habsburg`). */
-  victoryBodyByTierKeys?: Partial<Record<import("../types/game").SuccessionIntervalTier, string>>;
+  victoryBodyByTierKeys?: Partial<Record<import("../levels/campaignStateTypes").SuccessionIntervalTier, string>>;
   victoryWarDevolutionExtraKey: string;
   /** Chapter 3 continuity: first-mandate War of Devolution branch epilogue copy. */
   continuityWarOfDevolutionBodyKeys?: {

@@ -548,7 +548,7 @@ export function beginYear(state: GameState): GameState {
 }
 
 /** Calendar-end tier (chapter 3, track in (−10,10)): bourbon ≥+5, compromise −4..+4, habsburg ≤−5. */
-function successionIntervalTier(track: number): import("../../../types/game").SuccessionIntervalTier {
+function successionIntervalTier(track: number): import("../types/campaignState").SuccessionIntervalTier {
   if (track >= 5) return "bourbon";
   if (track >= -4) return "compromise";
   return "habsburg";

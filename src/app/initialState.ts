@@ -8,7 +8,8 @@ import { createRngFromSeed, shuffle } from "../logic/rng";
 import { beginYear } from "../logic/turnFlow";
 import type { CardInstance, CardTemplateId } from "../levels/types/card";
 import { EMPTY_EVENT_SLOTS, EMPTY_PENDING_MAJOR_CRISIS } from "../levels/types/event";
-import type { GameState, NantesPolicyCarryover } from "../types/game";
+import type { GameState } from "../types/game";
+import type { NantesPolicyCarryover } from "../levels/campaignStateTypes";
 
 export type { InitialStateOptions } from "../data/initialStateTypes";
 

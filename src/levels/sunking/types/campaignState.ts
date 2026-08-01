@@ -1,8 +1,22 @@
-import type { GameState } from "./game";
+import type { GameState } from "../../../types/game";
+
+/** Set when chapter 3 ends on the calendar without hitting ±10 on the succession track. */
+export type SuccessionIntervalTier = "habsburg" | "compromise" | "bourbon";
+
+/** After a scripted military choice; each year’s draw may roll drawPenaltyProbability for drawPenaltyDelta (clamped with power). */
+export type AntiFrenchLeagueState = {
+  untilTurn: number;
+  drawPenaltyProbability: number;
+  drawPenaltyDelta: number;
+};
+
+/** Set when the player resolves `revocationNantes` in chapter 2; drives chapter-3 standalone/carryover setup. */
+export type NantesPolicyCarryover = "tolerance" | "crackdown";
 
 /**
  * Subset of `GameState` fields that encode Sun King chapter carryover, scripted row, or
- * chapter-3 succession / Habsburg rules. A future multi-campaign build may merge these per pack.
+ * chapter-3 succession / Habsburg rules. These fields are declared by this campaign via
+ * `./gameStateAugmentation.ts`; the framework `GameState` core knows nothing about them.
  */
 const _SUN_KING_GAME_STATE_KEYS = [
   "nantesPolicyCarryover",

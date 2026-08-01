@@ -2,7 +2,8 @@ import { getLevelContent, type ScriptedCalendarEventConfig } from "../../../data
 import { getLevelDef } from "../../../data/levels";
 import { getEventTemplate } from "./eventTemplateApi";
 import { EVENT_SLOT_ORDER, type EventInstance, type EventTemplateId, type SlotId } from "../../types/event";
-import type { AntiFrenchLeagueState, GameState } from "../../../types/game";
+import type { GameState } from "../../../types/game";
+import type { AntiFrenchLeagueState } from "../types/campaignState";
 import { onScriptedCalendarPlacement } from "./scriptedCalendarHooks";
 import { rngNext } from "../../../logic/rng";
 

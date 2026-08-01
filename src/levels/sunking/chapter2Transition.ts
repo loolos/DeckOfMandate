@@ -18,7 +18,7 @@ import {
   type Level2StartDraft,
   type Level2StartMode,
   type Level2Validation,
-} from "../../types/continuity";
+} from "./types/continuity";
 
 export const SUNKING_CH1_ID = "firstMandate";
 export const SUNKING_CH2_ID = "secondMandate";

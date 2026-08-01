@@ -20,7 +20,7 @@ import { currentCalendarYear, findScriptedCalendarConfig } from "../logic/script
 import { drawAttemptsFromPower } from "../logic/drawScaling";
 import { getHandCapForStatuses } from "../../../logic/handCapacity";
 import { retentionCapacity } from "../../../logic/turnFlow";
-import { CONTINUITY_REFIT_MAX_CARD_REMOVALS } from "../../../types/continuity";
+import { CONTINUITY_REFIT_MAX_CARD_REMOVALS } from "../types/continuity";
 import { cardPlayPriorityFirstMandate } from "./strategies/firstMandateStrategy";
 import {
   cardPlayPrioritySecondMandate,

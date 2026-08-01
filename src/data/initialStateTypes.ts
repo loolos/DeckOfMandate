@@ -1,5 +1,6 @@
 import type { CardTemplateId } from "../levels/types/card";
-import type { NantesPolicyCarryover, Resources } from "../types/game";
+import type { Resources } from "../types/game";
+import type { NantesPolicyCarryover } from "../levels/campaignStateTypes";
 
 export type InitialStateOptions = {
   starterDeckTemplateOrder?: readonly CardTemplateId[];
