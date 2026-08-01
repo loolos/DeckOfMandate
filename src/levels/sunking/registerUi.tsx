@@ -5,10 +5,12 @@
  * pulls this in after content registration completes.
  */
 import {
+  registerCampaignLevelThemeResolver,
   registerCampaignLogEntryRenderer,
   registerCampaignStatusRowsBuilder,
   registerCampaignUiComponents,
 } from "../campaignUiRegistry";
+import { resolveSunkingLevelTheme } from "./ui/levelTheme";
 import { renderSunkingLogEntry } from "./ui/actionLogEntries";
 import { buildSunkingStatusRows } from "./ui/statusRows";
 import { ResourceBar } from "./ui/SunkingResourceBar";
@@ -19,6 +21,7 @@ import { Hand } from "./ui/SunkingHand";
 export function registerSunkingUi(): void {
   registerCampaignLogEntryRenderer(renderSunkingLogEntry);
   registerCampaignStatusRowsBuilder(buildSunkingStatusRows);
+  registerCampaignLevelThemeResolver(resolveSunkingLevelTheme);
   registerCampaignUiComponents({
     ResourceBar,
     ResourceTooltipText,

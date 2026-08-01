@@ -190,5 +190,29 @@ export const sunkingShellContentFr = {
     "Contexte : après l'édit de Fontainebleau (1685), le culte protestant public fut interdit et une partie des élites partit à l'étranger, mais culte clandestin, imprimerie et entraide se reconstituèrent pendant des années dans les ports et sur les frontières. La police d'État visa autant la religion que les routes de contrebande et les solidarités avec l'exil ; clore ce dossier revenait à présenter la menace huguenote organisée comme enfin contenue — au prix d'un coût fiscal, social et diplomatique durable pour la France.",
   "log.info.eventTag.antiFrenchAlliance":
     "[Tour {turn}] Note de tag « Alliance anti-française » : cet événement relève d'une pression coordonnée de la Grande Alliance contre la France (blocus, pression commerciale, raids de frontière ou conflit proxy). Côté mécanique : tant que le Sentiment anti-français est actif, tous les événements de résolution par financement portant ce tag reçoivent la majoration par paliers (la Paix de Ryswick conserve sa règle de surcoût séparée).",
-  "help.short": "Le Trésor fixe le revenu en Financement par tour. Le Financement paie les cartes et résolutions d'événements. Le Pouvoir fixe les tentatives de pioche. La Légitimité fixe la limite de conservation. Les événements néfastes non résolus sont réglés en séquence."
+  "help.short": "Le Trésor fixe le revenu en Financement par tour. Le Financement paie les cartes et résolutions d'événements. Le Pouvoir fixe les tentatives de pioche. La Légitimité fixe la limite de conservation. Les événements néfastes non résolus sont réglés en séquence.",
+  "tutorial.step.targets":
+    "Voici les objectifs du niveau : atteignez les valeurs indiquées pour Trésor, Pouvoir et Légitimité avant la limite de tours. La bannière affiche l'année en cours et le nombre de tours restants.",
+  "tutorial.step.resources":
+    "Les ressources régulent tout : le Trésor augmente votre Financement annuel ; le Financement sert à jouer des cartes et à résoudre des événements ; le Pouvoir détermine combien de cartes vous piochez chaque tour ; la Légitimité limite combien de cartes vous pouvez conserver en fin d'année — et la partie s'arrête si la Légitimité tombe à zéro.",
+  "tutorial.step.events":
+    "Les événements sont crises et opportunités sur le plateau. Les événements nuisibles demandent une solution (souvent du Financement ou une carte spéciale) ; les opportunités peuvent donner des avantages si vous y investissez. Les nuisibles non résolus peuvent vous pénaliser en fin de tour.",
+  "phase.retention": "Fin du tour — conservez jusqu'à la limite liée à la Légitimité ; défaussez autant de cartes que vous voulez.",
+  "resource.funding": "Financement",
+  "resource.funding.hint": "Paie les cartes et les événements.",
+  "resource.legitimacy": "Légitimité",
+  "resource.legitimacy.hint": "Détermine la limite de conservation en fin de tour ; 0 met fin à la partie.",
+  "resource.power": "Pouvoir",
+  "resource.power.hint": "Pioche actuelle : {current} ; +1 à {next}, −1 à {prev}.",
+  "resource.power.hint.min": "Pioche actuelle : {current} ; +1 à {next}.",
+  "resource.treasuryStat": "Trésor",
+  "resource.treasuryStat.hint": "Détermine le Financement gagné à chaque tour.",
+  "ui.retentionLegalitySummary": "Sélection : conserver {keep}/{cap} (limite liée à la Légitimité), défausser {discard} ; vous pouvez défausser autant de cartes que vous voulez.",
+  "ui.handWithCount": "Main ({n}) 💰({funding})",
+  "ui.statusHuguenotRemaining": "Restes {n}",
+  "ui.targets": "Objectifs du niveau — en {limit} tours : Trésor {tT}, Pouvoir {tP}, Légitimité {tL}",
+  "log.cardPlayed.title": "[Turn {turn}] {card} — paid {cost} {funding}.",
+  "log.effect.gainFunding": "{funding} +{amount}",
+  "log.effect.scheduleNextTurnFundingIncomeModifier": "Next-year treasury funding income modifier {delta}",
+  "log.effect.opponentNextTurnDrawModifier": "Opponent next-year draw modifier {delta}"
 } as const;

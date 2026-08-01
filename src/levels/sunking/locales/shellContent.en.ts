@@ -190,5 +190,29 @@ export const sunkingShellContentEn = {
     "Historical note: after the 1685 Edict of Fontainebleau, Protestant public worship was outlawed and many elites fled abroad, yet underground worship, printing, and mutual aid kept resurfacing in ports and borderlands for years. The crown’s long policing campaign targeted not only doctrine but smuggling routes and ties to exile networks; closing that ledger meant France could finally present the crisis of organized Protestantism as contained—at heavy fiscal, social, and reputational cost across Europe.",
   "log.info.eventTag.antiFrenchAlliance":
     "[Turn {turn}] Tag note “Anti-French Alliance”: this event belongs to coordinated Grand Alliance pressure on France (blockade, trade pressure, frontier raiding, or proxy conflict). Mechanically: while Anti-French Sentiment is active, all funding-solve events with this tag receive the threshold-based surcharge (Peace of Ryswick keeps its separate surcharge rule).",
-  "help.short": "Treasury sets turnly income to Funding. Funding pays for cards and event solves. Power sets draw attempts. Legitimacy sets retention limit. Unresolved harmful events are settled in sequence."
+  "help.short": "Treasury sets turnly income to Funding. Funding pays for cards and event solves. Power sets draw attempts. Legitimacy sets retention limit. Unresolved harmful events are settled in sequence.",
+  "phase.retention": "End of turn — keep up to your Legitimacy-based cap; discard any number of cards.",
+  "resource.treasuryStat": "Treasury",
+  "resource.treasuryStat.hint": "Sets how much Funding you gain each turn.",
+  "resource.funding": "Funding",
+  "resource.funding.hint": "Pays cards & events.",
+  "resource.power": "Power",
+  "resource.power.hint": "Now drawing {current}; gain +1 at {next}, lose −1 at {prev}.",
+  "resource.power.hint.min": "Now drawing {current}; gain +1 at {next}.",
+  "resource.legitimacy": "Legitimacy",
+  "resource.legitimacy.hint": "Sets your end-of-turn hand retention cap; 0 ends the run.",
+  "ui.handWithCount": "Hand ({n}) 💰({funding})",
+  "ui.retentionLegalitySummary": "Selection: keep {keep}/{cap} (Legitimacy-based cap), discard {discard}; you may discard any number.",
+  "tutorial.step.targets":
+    "These are your level goals: reach the listed Treasury, Power, and Legitimacy before the turn limit. The banner shows the current year and how many turns you have left.",
+  "tutorial.step.resources":
+    "Resources drive everything: Treasury adds to your yearly Funding; Funding pays to play cards and solve events; Power sets how many cards you draw each turn; Legitimacy caps how many cards you may keep at year-end — and the run ends if Legitimacy hits zero.",
+  "tutorial.step.events":
+    "Events are the crises and opportunities on the board. Harmful ones need a solution (often Funding or a special card); opportunities may grant benefits if you invest. Unresolved harmful events can penalize you when you end the turn.",
+  "ui.statusHuguenotRemaining": "Remnants {n}",
+  "ui.targets": "Level goals — within {limit} turns: Treasury {tT}, Power {tP}, Legitimacy {tL}",
+  "log.cardPlayed.title": "[Turn {turn}] {card} — paid {cost} {funding}.",
+  "log.effect.gainFunding": "{funding} +{amount}",
+  "log.effect.scheduleNextTurnFundingIncomeModifier": "Next-year treasury funding income modifier {delta}",
+  "log.effect.opponentNextTurnDrawModifier": "Opponent next-year draw modifier {delta}"
 } as const;

@@ -9,8 +9,6 @@ import {
   type PointerEvent,
 } from "react";
 import startMenuBackdropUrl from "../img/maintheme.webp";
-import sunkingCampaignBackdropUrl from "../levels/sunking/assets/sunkingCampaignBackdrop.webp";
-import { isSunkingLevelId } from "../levels/sunking/sunkingLevelIds";
 import { ActionLog } from "../components/ActionLog";
 import { EventPanel } from "../components/EventPanel";
 import { Hand } from "../components/Hand";
@@ -34,7 +32,7 @@ import {
 import { cardLabelWithIcon, resourceLabelWithIcon } from "../logic/icons";
 import { normalizeGameState } from "../logic/normalizeGameState";
 import { currentCalendarYear } from "../logic/scriptedCalendar";
-import { buildCampaignStatusRows } from "../levels/campaignUiRegistry";
+import { buildCampaignStatusRows, getCampaignLevelTheme } from "../levels/campaignUiRegistry";
 import { slotIsHandledOrNoFurtherAction } from "../logic/uiHelpers";
 import { useSmallScreen } from "../logic/useSmallScreen";
 import { loadGame, saveGame } from "../logic/saveLoad";
@@ -60,6 +58,8 @@ import {
   getLevel2RefitNewCardsTemplateOrder,
   getLevel3RefitNewCardsLabelKey,
   getLevel3RefitNewCardsTemplateOrder,
+  SUNKING_CH2_ID,
+  SUNKING_CH3_ID,
   toggleContinuityCardRemoval,
   validateLevel2Draft,
   validateLevel3Draft,
@@ -91,13 +91,6 @@ const START_MENU_BACKDROP_STYLE: CSSProperties = {
   backgroundRepeat: "no-repeat",
 };
 
-/** Sun King: intro / refit / in-run shell — `src/levels/sunking/assets/sunkingCampaignBackdrop.webp` */
-const SUNKING_CAMPAIGN_BACKDROP_STYLE: CSSProperties = {
-  backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.45)), url(${sunkingCampaignBackdropUrl})`,
-  backgroundSize: "cover",
-  backgroundPosition: "center",
-  backgroundRepeat: "no-repeat",
-};
 
 const GRID_SPLIT_STORAGE_KEY = "deckOfMandate_ui_gridSplit";
 const GRID_WIDE_MEDIA = "(min-width: 900px)";
@@ -789,19 +782,20 @@ export function Game() {
       ? getLevelDef(pendingIntroLevelId)
       : null;
 
-  const introSunkingBackdrop = introLevelDef ? isSunkingLevelId(introLevelDef.id) : false;
+  const introTheme = getCampaignLevelTheme(introLevelDef?.id);
+  const introGlass = introTheme?.glass ?? false;
 
   const levelIntro = introLevelDef ? (
     <div
       className={styles.levelIntroScreen}
-      style={introSunkingBackdrop ? SUNKING_CAMPAIGN_BACKDROP_STYLE : undefined}
+      style={introTheme?.backdropStyle}
       role="dialog"
       aria-modal="true"
       aria-labelledby="level-intro-title"
     >
       {levelIntroContentVisible ? (
         <div
-          className={[styles.modal, introSunkingBackdrop && styles.modalGlass, styles.levelIntroMainFade]
+          className={[styles.modal, introGlass && styles.modalGlass, styles.levelIntroMainFade]
             .filter(Boolean)
             .join(" ")}
         >
@@ -1088,7 +1082,7 @@ export function Game() {
   const level3RefitScreen = level3Draft ? (
     <div
       className={styles.startMenuScreen}
-      style={SUNKING_CAMPAIGN_BACKDROP_STYLE}
+      style={getCampaignLevelTheme(SUNKING_CH3_ID)?.backdropStyle}
       role="dialog"
       aria-modal="true"
       aria-labelledby="level3-refit-title"
@@ -1182,7 +1176,7 @@ export function Game() {
   const level2RefitScreen = level2Draft ? (
     <div
       className={styles.startMenuScreen}
-      style={SUNKING_CAMPAIGN_BACKDROP_STYLE}
+      style={getCampaignLevelTheme(SUNKING_CH2_ID)?.backdropStyle}
       role="dialog"
       aria-modal="true"
       aria-labelledby="level2-refit-title"
@@ -1412,12 +1406,13 @@ export function Game() {
   const gridTemplateColumns =
     wideGameGrid && hasEventsPanel ? `${gridSplit * 2}fr 10px ${(1 - gridSplit) * 2}fr` : "1fr";
 
-  const sunkingPlayShell = isSunkingLevelId(state.levelId);
+  const playTheme = getCampaignLevelTheme(state.levelId);
+  const glassPlayShell = playTheme?.glass ?? false;
 
   return (
     <div
-      className={[styles.playShell, sunkingPlayShell && styles.playShellSunking].filter(Boolean).join(" ")}
-      style={sunkingPlayShell ? SUNKING_CAMPAIGN_BACKDROP_STYLE : undefined}
+      className={[styles.playShell, glassPlayShell && styles.playShellSunking].filter(Boolean).join(" ")}
+      style={playTheme?.backdropStyle}
     >
     <div className={styles.root}>
       {showLevelTutorial ? (
@@ -1542,11 +1537,11 @@ export function Game() {
             : t("phase.gameOver")}
       </p>
 
-      <RunCodePanel variant={sunkingPlayShell ? "inGameGlass" : "inGame"} code={codeHex} onLoad={loadFromCode} />
+      <RunCodePanel variant={glassPlayShell ? "inGameGlass" : "inGame"} code={codeHex} onLoad={loadFromCode} />
 
       {state.phase === "retention" && state.outcome === "playing" ? (
         <div className={styles.overlay} role="dialog" aria-modal="true">
-          <div className={[styles.modal, sunkingPlayShell && styles.modalGlass].filter(Boolean).join(" ")}>
+          <div className={[styles.modal, glassPlayShell && styles.modalGlass].filter(Boolean).join(" ")}>
             <h3>{t("phase.retention")}</h3>
             <p className={styles.help}>
               {resourceLabelWithIcon("legitimacy", t("resource.legitimacy"))}:{" "}
@@ -1596,7 +1591,7 @@ export function Game() {
 
       {state.outcome !== "playing" ? (
         <div className={styles.overlay} role="dialog" aria-modal="true">
-          <div className={[styles.modal, sunkingPlayShell && styles.modalGlass].filter(Boolean).join(" ")}>
+          <div className={[styles.modal, glassPlayShell && styles.modalGlass].filter(Boolean).join(" ")}>
             <div className={styles.gameOver}>
               <h2>
                 {state.outcome === "victory"

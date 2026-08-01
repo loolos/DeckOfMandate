@@ -25,28 +25,12 @@ export const messagesFrCore: Record<keyof typeof messagesEnCore, string> = {
   "tutorial.back": "Retour",
   "tutorial.next": "Suivant",
   "tutorial.done": "Terminé",
-  "tutorial.step.targets":
-    "Voici les objectifs du niveau : atteignez les valeurs indiquées pour Trésor, Pouvoir et Légitimité avant la limite de tours. La bannière affiche l'année en cours et le nombre de tours restants.",
-  "tutorial.step.resources":
-    "Les ressources régulent tout : le Trésor augmente votre Financement annuel ; le Financement sert à jouer des cartes et à résoudre des événements ; le Pouvoir détermine combien de cartes vous piochez chaque tour ; la Légitimité limite combien de cartes vous pouvez conserver en fin d'année — et la partie s'arrête si la Légitimité tombe à zéro.",
-  "tutorial.step.events":
-    "Les événements sont crises et opportunités sur le plateau. Les événements nuisibles demandent une solution (souvent du Financement ou une carte spéciale) ; les opportunités peuvent donner des avantages si vous y investissez. Les nuisibles non résolus peuvent vous pénaliser en fin de tour.",
   "tutorial.step.hand":
     "Votre main est votre jeu d'options politiques — chaque carte modifie les ressources ou le plateau. Sélectionnez une carte pour la jouer, ou double-cliquez sur une carte pour la jouer directement ; appuyez sur Espace pour terminer le tour quand vous êtes prêt.",
   "tutorial.step.actionLog":
     "Le journal d'actions enregistre chaque étape importante dans l'ordre — cartes jouées, événements résolus, pénalités et grands résultats narratifs. Servez-vous-en pour vérifier rapidement ce qui vient de changer.",
   "phase.action": "Phase d'action — jouez des cartes, résolvez les événements, puis terminez le tour.",
   "phase.gameOver": "Partie terminée.",
-  "phase.retention": "Fin du tour — conservez jusqu'à la limite liée à la Légitimité ; défaussez autant de cartes que vous voulez.",
-  "resource.funding": "Financement",
-  "resource.funding.hint": "Paie les cartes et les événements.",
-  "resource.legitimacy": "Légitimité",
-  "resource.legitimacy.hint": "Détermine la limite de conservation en fin de tour ; 0 met fin à la partie.",
-  "resource.power": "Pouvoir",
-  "resource.power.hint": "Pioche actuelle : {current} ; +1 à {next}, −1 à {prev}.",
-  "resource.power.hint.min": "Pioche actuelle : {current} ; +1 à {next}.",
-  "resource.treasuryStat": "Trésor",
-  "resource.treasuryStat.hint": "Détermine le Financement gagné à chaque tour.",
   "runCode.charCount": "{count} car.",
   "runCode.copied": "Copié",
   "runCode.copy": "Copier",
@@ -58,7 +42,6 @@ export const messagesFrCore: Record<keyof typeof messagesEnCore, string> = {
   "ui.actionLog.empty": "Aucun effet enregistré dans cette partie.",
   "ui.cancel": "Annuler",
   "ui.confirmRetention": "Confirmer la conservation",
-  "ui.retentionLegalitySummary": "Sélection : conserver {keep}/{cap} (limite liée à la Légitimité), défausser {discard} ; vous pouvez défausser autant de cartes que vous voulez.",
   "ui.retentionLegalityOverflow": "{over} au-dessus de la limite — conservez moins de cartes.",
   "ui.deck": "Pioche",
   "ui.discard": "Défausse",
@@ -70,7 +53,6 @@ export const messagesFrCore: Record<keyof typeof messagesEnCore, string> = {
   "ui.columnResizeHint": "Faites glisser horizontalement pour élargir la colonne des ressources ou celle des événements. La largeur est mémorisée sur cet appareil.",
   "ui.actionLogResizeHint": "Glissez le coin inférieur droit pour redimensionner la hauteur du journal d'actions.",
   "ui.hand": "Main",
-  "ui.handWithCount": "Main ({n}) 💰({funding})",
   "ui.language": "Langue",
   "ui.smallScreenMode": "Mode miniature (verrouiller l'affichage petit écran)",
   "ui.levelLocaleFallback": "Ce niveau n’est pas entièrement traduit pour la langue d’interface actuelle. Les textes propres au niveau peuvent s’afficher en anglais.",
@@ -90,9 +72,7 @@ export const messagesFrCore: Record<keyof typeof messagesEnCore, string> = {
   "ui.statusDetail.drawAttemptsDelta": "Modificateur de tentatives de pioche par tour : {delta}.",
   "ui.statusDetail.retentionCapacityDelta": "Modificateur de limite de conservation en fin de tour : {delta}.",
   "ui.statusDetail.handCapDelta": "Modificateur de limite totale de main : {delta}.",
-  "ui.statusHuguenotRemaining": "Restes {n}",
   "ui.statusTurnsRemaining": "{n} tour(s) restant(s)",
   "ui.statuses": "Effets en cours",
-  "ui.statuses.empty": "Aucun effet en cours.",
-  "ui.targets": "Objectifs du niveau — en {limit} tours : Trésor {tT}, Pouvoir {tP}, Légitimité {tL}",
+  "ui.statuses.empty": "Aucun effet en cours."
 };

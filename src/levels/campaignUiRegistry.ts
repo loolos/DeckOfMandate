@@ -3,7 +3,7 @@
  * `registerCampaign.ts` (module load, before first render); framework components consult
  * the registry and render nothing campaign-specific on their own.
  */
-import type { ComponentType, ReactNode, Ref } from "react";
+import type { ComponentType, CSSProperties, ReactNode, Ref } from "react";
 import type { GameAction } from "../app/gameReducer";
 import type { ActionLogEntry, GameState, Resources } from "../types/game";
 import type { MessageKey } from "../locales";
@@ -67,6 +67,26 @@ export type CampaignUiComponents = {
     scrollContainerRef?: Ref<HTMLDivElement>;
   }>;
 };
+
+/**
+ * Per-level shell theming owned by the campaign: backdrop art plus whether the shell and its
+ * modals use the translucent "glass" treatment. Levels with no registered theme render plain.
+ */
+export type CampaignLevelTheme = {
+  backdropStyle?: CSSProperties;
+  glass?: boolean;
+};
+
+let levelThemeResolver: ((levelId: string) => CampaignLevelTheme | null) | null = null;
+
+export function registerCampaignLevelThemeResolver(fn: ((levelId: string) => CampaignLevelTheme | null) | null): void {
+  levelThemeResolver = fn;
+}
+
+export function getCampaignLevelTheme(levelId: string | undefined): CampaignLevelTheme | null {
+  if (!levelId) return null;
+  return levelThemeResolver?.(levelId) ?? null;
+}
 
 const uiComponents: Partial<CampaignUiComponents> = {};
 
