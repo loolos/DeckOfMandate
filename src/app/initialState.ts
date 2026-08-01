@@ -3,13 +3,15 @@ import { getLevelInitialStateHooks } from "../data/levelInitialStateRegistry";
 import { getLevelContent } from "../data/levelContent";
 import { getDefaultLevelId, getLevelDef } from "../data/levels";
 import { buildDefaultCardUsesById } from "../logic/cardUsage";
-import { computeEuropeAlertPowerLoss } from "../logic/europeAlert";
 import { createRngFromSeed, shuffle } from "../logic/rng";
 import { beginYear } from "../logic/turnFlow";
+import {
+  buildCampaignInitialStateFields,
+  finalizeCampaignInitialStateFields,
+} from "../levels/campaignLogicBundle";
 import type { CardInstance, CardTemplateId } from "../levels/types/card";
-import { EMPTY_EVENT_SLOTS, EMPTY_PENDING_MAJOR_CRISIS } from "../levels/types/event";
+import { EMPTY_EVENT_SLOTS } from "../levels/types/event";
 import type { GameState } from "../types/game";
-import type { NantesPolicyCarryover } from "../levels/campaignStateTypes";
 
 export type { InitialStateOptions } from "../data/initialStateTypes";
 
@@ -23,27 +25,9 @@ export function createInitialState(
   const rawSeed = (seed ?? Math.floor(Math.random() * 0x7fffffff + 1)) >>> 0;
   const runSeed = rawSeed === 0 ? 0x9e3779b9 : rawSeed;
   let rng = createRngFromSeed(runSeed);
-  const baseResources = { ...level.startingResources, ...options?.startingResourcesOverride };
-  const defaultEuropeAlert = level.features.europeAlertMechanics;
-  const europeAlert = options?.europeAlert ?? defaultEuropeAlert;
-  const warOfDevolutionAttacked =
-    options?.warOfDevolutionAttacked ?? hooks?.defaultWarOfDevolutionAttackedWhenUnset?.() ?? false;
-  const europeAlertPowerLoss =
-    options?.europeAlertPowerLoss ?? (europeAlert ? computeEuropeAlertPowerLoss(baseResources.power) : 0);
-  const europeAlertProgress =
-    options?.europeAlertProgress !== undefined
-      ? options.europeAlertProgress
-      : !europeAlert
-        ? 0
-        : defaultEuropeAlert
-          ? warOfDevolutionAttacked
-            ? 3
-            : 1
-          : 3;
-  const resources = baseResources;
+  const resources = { ...level.startingResources, ...options?.startingResourcesOverride };
 
-  const nantesPolicyCarryover: NantesPolicyCarryover | null =
-    hooks?.resolveNantesPolicyCarryover?.(options?.nantesPolicyCarryover ?? null) ?? null;
+  let campaignFields = buildCampaignInitialStateFields(levelId, resources, options);
 
   let starterDeckTemplateOrder =
     options?.starterDeckTemplateOrder ?? getLevelContent(levelId).starterDeckTemplateOrder;
@@ -69,7 +53,7 @@ export function createInitialState(
       levelId,
       deckOrder,
       cardsById,
-      nantesPolicyCarryover,
+      campaignFields,
       options,
     });
     rng = opened.rng;
@@ -83,10 +67,7 @@ export function createInitialState(
   }
 
   const cardUsesById = buildDefaultCardUsesById(levelId, cardsById);
-
-  const cardInflationById: Record<string, number> = {
-    ...(hooks?.seedOpeningCardInflationById?.(cardsById) ?? {}),
-  };
+  campaignFields = finalizeCampaignInitialStateFields(campaignFields, levelId, cardsById);
 
   const base: GameState = {
     levelId,
@@ -100,42 +81,18 @@ export function createInitialState(
     nextIds: { event: 0, status: 0, log: 0 },
     resources,
     nextTurnDrawModifier: 0,
-    nextTurnFundingIncomeModifier: 0,
     scheduledDrawModifiers: [],
     deck: deckInstanceIds,
     discard: [],
     hand: initialHandIds,
     cardsById,
     cardUsesById,
-    cardInflationById,
     slots: { ...EMPTY_EVENT_SLOTS },
-    pendingMajorCrisis: { ...EMPTY_PENDING_MAJOR_CRISIS },
-    nantesPolicyCarryover,
     playerStatuses: [],
-    antiFrenchLeague: null,
-    warOfDevolutionAttacked,
-    europeAlert,
-    europeAlertPowerLoss,
-    europeAlertProgress,
-    nymwegenSettlementAchieved: false,
-    huguenotResurgenceCounter: 0,
     proceduralEventSequence: [],
     proceduralEventPoolOrder: [],
     actionLog: [],
-    successionTrack: 0,
-    opponentStrength: 3,
-    greatPowerEncirclementHighPressureApplied: false,
-    opponentHabsburgUnlocked: false,
-    warEnded: false,
-    utrechtTreatyCountdown: null,
-    opponentDeck: [],
-    opponentHand: [],
-    opponentDiscard: [],
-    opponentCostDiscountThisTurn: 0,
-    opponentNextTurnDrawModifier: 0,
-    opponentLastPlayedTemplateIds: [],
-    successionOutcomeTier: null,
-    utrechtSettlementTier: null,
+    ...campaignFields,
   };
 
   return beginYear(base);

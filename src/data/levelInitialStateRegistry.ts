@@ -1,15 +1,15 @@
 import type { CardInstance, CardTemplateId } from "../levels/types/card";
 import type { InitialStateOptions } from "./initialStateTypes";
 import type { LevelId } from "./levels";
-import type { RngSerialized } from "../types/game";
-import type { NantesPolicyCarryover } from "../levels/campaignStateTypes";
+import type { CampaignGameStateFields, RngSerialized } from "../types/game";
 
 export type OpeningShuffleContext = {
   rng: RngSerialized;
   levelId: LevelId;
   deckOrder: readonly { instanceId: string; templateId: CardTemplateId }[];
   cardsById: Record<string, CardInstance>;
-  nantesPolicyCarryover: NantesPolicyCarryover | null;
+  /** This run's campaign state slice (already built); chapter carryover markers live here. */
+  campaignFields: CampaignGameStateFields;
   options: InitialStateOptions | undefined;
 };
 
@@ -21,18 +21,10 @@ export type OpeningShuffleResult = {
 };
 
 export type LevelInitialStateHooks = {
-  /** When `options.warOfDevolutionAttacked` is omitted, use this default (otherwise `false`). */
-  defaultWarOfDevolutionAttackedWhenUnset?: () => boolean;
-  /** Chapter 3 Nantes branch resolution; omit for levels that do not use `nantesPolicyCarryover`. */
-  resolveNantesPolicyCarryover?: (
-    raw: NantesPolicyCarryover | null | undefined,
-  ) => NantesPolicyCarryover | null;
   /** When there is no `starterDeckTemplateOrder` override, transform the level content order. */
   adjustDefaultStarterDeckOrder?: (order: readonly CardTemplateId[]) => readonly CardTemplateId[];
   /** Replace default shuffle when present. */
   shuffleOpeningDeckAndHand?: (ctx: OpeningShuffleContext) => OpeningShuffleResult;
-  /** After `cardsById` is finalized for the opening library. */
-  seedOpeningCardInflationById?: (cardsById: Record<string, CardInstance>) => Record<string, number>;
 };
 
 const hooksByLevelId: Partial<Record<string, LevelInitialStateHooks>> = {};

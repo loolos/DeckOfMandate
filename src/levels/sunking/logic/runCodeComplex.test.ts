@@ -29,7 +29,7 @@ import {
   replaySession,
   shouldRecordAction,
   type SessionRecord,
-} from "../../../logic/runCode";
+} from "./runCode";
 import { slotAllowsCrackdownTarget, slotAllowsFundSolve } from "./uiHelpers";
 import { EVENT_SLOT_ORDER } from "../../types/event";
 import type { GameState } from "../../../types/game";

@@ -18,7 +18,7 @@ import {
   shouldRecordAction,
   type RunRecord,
   type SessionRecord,
-} from "../../../logic/runCode";
+} from "./runCode";
 
 /** Apply an action while annotating CONFIRM_RETENTION with the encoder hint. */
 function dispatchAndRecord(

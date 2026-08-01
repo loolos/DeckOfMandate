@@ -73,3 +73,7 @@ export {
   syncAntiFrenchSentimentStatusHook,
 } from "./sunking/logic/turnFlowHooks";
 export { campaignSaveStateShapeValid } from "./sunking/logic/saveShape";
+export {
+  buildSunkingInitialStateFields as buildCampaignInitialStateFields,
+  finalizeSunkingInitialStateFields as finalizeCampaignInitialStateFields,
+} from "./sunking/logic/initialStateFields";
