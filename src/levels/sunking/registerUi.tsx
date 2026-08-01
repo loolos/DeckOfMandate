@@ -7,10 +7,13 @@
 import {
   registerCampaignLevelThemeResolver,
   registerCampaignLogEntryRenderer,
+  registerCampaignOutcomeCopyBuilder,
   registerCampaignStatusRowsBuilder,
+  registerCampaignTargetsLineBuilder,
   registerCampaignUiComponents,
 } from "../campaignUiRegistry";
 import { resolveSunkingLevelTheme } from "./ui/levelTheme";
+import { buildSunkingOutcomeCopy, buildSunkingTargetsLine } from "./ui/outcomeCopy";
 import { renderSunkingLogEntry } from "./ui/actionLogEntries";
 import { buildSunkingStatusRows } from "./ui/statusRows";
 import { ResourceBar } from "./ui/SunkingResourceBar";
@@ -22,6 +25,8 @@ export function registerSunkingUi(): void {
   registerCampaignLogEntryRenderer(renderSunkingLogEntry);
   registerCampaignStatusRowsBuilder(buildSunkingStatusRows);
   registerCampaignLevelThemeResolver(resolveSunkingLevelTheme);
+  registerCampaignOutcomeCopyBuilder(buildSunkingOutcomeCopy);
+  registerCampaignTargetsLineBuilder(buildSunkingTargetsLine);
   registerCampaignUiComponents({
     ResourceBar,
     ResourceTooltipText,

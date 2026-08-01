@@ -26,13 +26,17 @@ import {
   getRegisteredLevelIds,
   getTurnLimitForRun,
   isLevelId,
-  type LevelEndingCopyKeys,
   type LevelId,
 } from "../data/levels";
 import { cardLabelWithIcon, resourceLabelWithIcon } from "../logic/icons";
 import { normalizeGameState } from "../logic/normalizeGameState";
 import { currentCalendarYear } from "../logic/scriptedCalendar";
-import { buildCampaignStatusRows, getCampaignLevelTheme } from "../levels/campaignUiRegistry";
+import {
+  buildCampaignOutcomeCopy,
+  buildCampaignStatusRows,
+  buildCampaignTargetsLine,
+  getCampaignLevelTheme,
+} from "../levels/campaignUiRegistry";
 import { slotIsHandledOrNoFurtherAction } from "../logic/uiHelpers";
 import { useSmallScreen } from "../logic/useSmallScreen";
 import { loadGame, saveGame } from "../logic/saveLoad";
@@ -77,7 +81,6 @@ import {
   type RunRecord,
   type SessionRecord,
 } from "../logic/runCode";
-import { continuityEndingBodyKeys } from "./endingCopy";
 const LEVEL2_REFIT_NEW_CARDS = getLevel2RefitNewCardsTemplateOrder();
 const LEVEL3_REFIT_NEW_CARDS = getLevel3RefitNewCardsTemplateOrder();
 const CHAPTER3_REFIT_NEW_CARDS_LABEL_KEY: MessageKey = getLevel3RefitNewCardsLabelKey() as MessageKey;
@@ -123,10 +126,6 @@ function levelDefHasIntro(def: ReturnType<typeof getLevelDef>): def is ReturnTyp
   introBodyKey: MessageKey;
 } {
   return "introTitleKey" in def && "introBodyKey" in def;
-}
-
-function levelEndingKeys(def: ReturnType<typeof getLevelDef>): LevelEndingCopyKeys | undefined {
-  return "ending" in def ? def.ending : undefined;
 }
 
 function displayRefitTags(_mode: Level2StartDraft["mode"], tags: readonly CardTag[]): readonly CardTag[] {
@@ -328,6 +327,10 @@ export function Game() {
 
   const level = useMemo(() => getLevelDef(state.levelId), [state.levelId]);
   const statusRows = useMemo(() => buildCampaignStatusRows(state, t), [state, t]);
+  const outcomeCopy = useMemo(
+    () => (state.outcome === "playing" ? null : buildCampaignOutcomeCopy(state, t)),
+    [state, t],
+  );
   const runTurnLimit = useMemo(
     () => getTurnLimitForRun(state.levelId, state.calendarStartYear),
     [state.levelId, state.calendarStartYear],
@@ -1433,19 +1436,7 @@ export function Game() {
             </span>
           </div>
           <div className={styles.targets} id="tutorial-targets">
-            {level.targetsUiKey
-              ? t(level.targetsUiKey as MessageKey, {
-                  limit: runTurnLimit,
-                  tT: level.winTargets.treasuryStat,
-                  tP: level.winTargets.power,
-                  tL: level.winTargets.legitimacy,
-                })
-              : t("ui.targets", {
-                  limit: runTurnLimit,
-                  tT: level.winTargets.treasuryStat,
-                  tP: level.winTargets.power,
-                  tL: level.winTargets.legitimacy,
-                })}
+            {buildCampaignTargetsLine(state, runTurnLimit, t)}
           </div>
           {level.timeStepHintKey ? (
             <p className={styles.timeStepHint}>{t(level.timeStepHintKey as MessageKey)}</p>
@@ -1593,78 +1584,14 @@ export function Game() {
         <div className={styles.overlay} role="dialog" aria-modal="true">
           <div className={[styles.modal, glassPlayShell && styles.modalGlass].filter(Boolean).join(" ")}>
             <div className={styles.gameOver}>
-              <h2>
-                {state.outcome === "victory"
-                  ? t("outcome.victory")
-                  : state.outcome === "defeatLegitimacy"
-                    ? t("outcome.defeatLegitimacy")
-                    : state.outcome === "defeatSuccession"
-                      ? t("outcome.defeatSuccession")
-                      : t("outcome.defeatTime")}
-              </h2>
-              {(() => {
-                const ending = levelEndingKeys(getLevelDef(state.levelId));
-                if (!ending) return null;
-                if (state.outcome === "victory") {
-                  const continuityKeys = continuityEndingBodyKeys(ending, state);
-                  const successionLevel = level.victoryRule.kind === "successionWar";
-                  const successionTrackCapVictory =
-                    successionLevel &&
-                    state.successionTrack >= 10 &&
-                    ending.victorySuccessionTrackCapBodyKey != null;
-                  const settlementTier = state.utrechtSettlementTier ?? state.successionOutcomeTier;
-                  const chapter3TierVictoryKey =
-                    successionLevel &&
-                    !successionTrackCapVictory &&
-                    settlementTier &&
-                    ending.victoryBodyByTierKeys?.[settlementTier]
-                      ? ending.victoryBodyByTierKeys[settlementTier]
-                      : null;
-                  const victoryMainKey =
-                    successionTrackCapVictory && ending.victorySuccessionTrackCapBodyKey
-                      ? ending.victorySuccessionTrackCapBodyKey
-                      : chapter3TierVictoryKey ?? ending.victoryBodyKey;
-                  return (
-                    <div className={styles.gameOverBody}>
-                      {successionLevel && !successionTrackCapVictory && settlementTier ? (
-                        <p>{t(`outcome.utrechtVictoryEpilogue.${settlementTier}` as MessageKey)}</p>
-                      ) : null}
-                      <p>{t(victoryMainKey as MessageKey)}</p>
-                      {successionLevel && !successionTrackCapVictory && state.successionOutcomeTier ? (
-                        <p>
-                          {t(
-                            `outcome.successionCalendar1720Extra.${state.utrechtSettlementTier ?? state.successionOutcomeTier}` as MessageKey,
-                          )}
-                        </p>
-                      ) : null}
-                      {continuityKeys.length > 0
-                        ? continuityKeys.map((key) => <p key={key}>{t(key as MessageKey)}</p>)
-                        : state.warOfDevolutionAttacked
-                          ? <p>{t(ending.victoryWarDevolutionExtraKey as MessageKey)}</p>
-                          : null}
-                    </div>
-                  );
-                }
-                const hasHuguenotContainment = state.playerStatuses.some((s) => s.templateId === "huguenotContainment");
-                const defeatMainKey =
-                  state.outcome === "defeatTime" &&
-                  hasHuguenotContainment &&
-                  ending.defeatTimeWithHuguenotContainmentBodyKey
-                    ? ending.defeatTimeWithHuguenotContainmentBodyKey
-                    : level.victoryRule.kind === "successionWar" &&
-                        state.outcome === "defeatSuccession" &&
-                        ending.defeatSuccessionTrackFloorBodyKey
-                    ? ending.defeatSuccessionTrackFloorBodyKey
-                    : ending.defeatBodyKey;
-                return (
-                  <div className={styles.gameOverBody}>
-                    <p>{t(defeatMainKey as MessageKey)}</p>
-                    {continuityEndingBodyKeys(ending, state).map((key) => (
-                      <p key={key}>{t(key as MessageKey)}</p>
-                    ))}
-                  </div>
-                );
-              })()}
+              <h2>{outcomeCopy?.headline}</h2>
+              {outcomeCopy && outcomeCopy.paragraphs.length > 0 ? (
+                <div className={styles.gameOverBody}>
+                  {outcomeCopy.paragraphs.map((line, i) => (
+                    <p key={i}>{line}</p>
+                  ))}
+                </div>
+              ) : null}
               <button type="button" className={`${styles.btn} ${styles.btnPrimary}`} onClick={() => restartCurrentLevelRun()}>
                 {t("ui.newGame")}
               </button>

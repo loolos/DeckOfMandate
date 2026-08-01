@@ -69,6 +69,48 @@ export type CampaignUiComponents = {
 };
 
 /**
+ * End-of-run narrative for the game-over modal, fully composed by the campaign:
+ * a headline plus already-translated body paragraphs.
+ */
+export type CampaignOutcomeCopy = {
+  headline: string;
+  paragraphs: readonly string[];
+};
+
+export type CampaignOutcomeCopyBuilder = (state: GameState, t: UiTranslator) => CampaignOutcomeCopy;
+
+let outcomeCopyBuilder: CampaignOutcomeCopyBuilder | null = null;
+
+export function registerCampaignOutcomeCopyBuilder(fn: CampaignOutcomeCopyBuilder | null): void {
+  outcomeCopyBuilder = fn;
+}
+
+export function buildCampaignOutcomeCopy(state: GameState, t: UiTranslator): CampaignOutcomeCopy | null {
+  return outcomeCopyBuilder ? outcomeCopyBuilder(state, t) : null;
+}
+
+/** In-run goals line shown above the board; the campaign owns what "goals" means. */
+export type CampaignTargetsLineBuilder = (
+  state: GameState,
+  turnLimit: number,
+  t: UiTranslator,
+) => string | null;
+
+let targetsLineBuilder: CampaignTargetsLineBuilder | null = null;
+
+export function registerCampaignTargetsLineBuilder(fn: CampaignTargetsLineBuilder | null): void {
+  targetsLineBuilder = fn;
+}
+
+export function buildCampaignTargetsLine(
+  state: GameState,
+  turnLimit: number,
+  t: UiTranslator,
+): string | null {
+  return targetsLineBuilder ? targetsLineBuilder(state, turnLimit, t) : null;
+}
+
+/**
  * Per-level shell theming owned by the campaign: backdrop art plus whether the shell and its
  * modals use the translucent "glass" treatment. Levels with no registered theme render plain.
  */

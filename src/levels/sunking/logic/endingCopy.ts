@@ -1,4 +1,4 @@
-import type { LevelEndingCopyKeys } from "../../../data/levels";
+import type { LevelEndingCopyKeys } from "../types/levelConfig";
 import type { GameState } from "../../../types/game";
 
 type ContinuityEndingState = Pick<

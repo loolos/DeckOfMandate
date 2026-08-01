@@ -1,10 +1,4 @@
-export type {
-  LevelContent,
-  ScriptedCalendarAntiCoalitionConfig,
-  ScriptedCalendarAttackConfig,
-  ScriptedCalendarEventConfig,
-  SlotEscalation,
-} from "./levelTypes";
+export type { LevelContent } from "./levelTypes";
 import { getLevelContent as getLevelContentFromRegistry } from "./levelRegistry";
 
 export { getLevelContent } from "./levelRegistry";

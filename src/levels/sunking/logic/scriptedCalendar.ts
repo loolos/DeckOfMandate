@@ -1,4 +1,5 @@
-import { getLevelContent, type ScriptedCalendarEventConfig } from "../../../data/levelContent";
+import { getLevelContent } from "../../../data/levelContent";
+import type { ScriptedCalendarEventConfig } from "../types/levelConfig";
 import { getLevelDef } from "../../../data/levels";
 import { getEventTemplate } from "./eventTemplateApi";
 import { EVENT_SLOT_ORDER, type EventInstance, type EventTemplateId, type SlotId } from "../../types/event";

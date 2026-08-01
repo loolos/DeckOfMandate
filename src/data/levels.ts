@@ -1,4 +1,3 @@
-export type { LevelEndingCopyKeys } from "./levelTypes";
 export type { LevelId } from "./levelRegistry";
 export {
   getDefaultLevelId,
