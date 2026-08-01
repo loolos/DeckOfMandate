@@ -9,17 +9,17 @@ import { appendInflationActivationLogIfNeeded, getPlayableCardCost } from "../lo
 import { normalizeGameState } from "../logic/normalizeGameState";
 import { applyPlayedCardEffects } from "../logic/resolveCard";
 import { resolveEndOfYearPenalties } from "../logic/resolveEvents";
-import { opponentEndYearPlayPhase } from "../logic/opponentHabsburg";
 import { beginYear, evaluateTimeDefeat, evaluateVictory, retentionCapacity } from "../logic/turnFlow";
 import type { GameState } from "../types/game";
 import type { LogInfoKey } from "../types/game";
 import {
-  applyAntiFrenchContainmentDeckAfterRetentionYear,
+  applyCampaignPostRetentionDeckEffects,
   applyCampaignConsumeInvariant,
   applyCampaignEndYearResourceReset,
   applyCampaignPlayCardExtras,
-  maybeAppendHuguenotContainmentClearedLog,
+  maybeAppendCampaignConsumePlayLog,
   maybeBeginCampaignCardPlayInteraction,
+  runCampaignEndYearPhase,
 } from "../levels/campaignLogicBundle";
 import { tryCampaignReducerBridge } from "../levels/campaignReducerBridge";
 import { createInitialState } from "./initialState";
@@ -59,10 +59,10 @@ function completeYearAfterRetention(state: GameState, keepIds: readonly string[]
     discard: [...state.discard, ...discardIds],
     phase: "action",
   };
-  s = applyAntiFrenchContainmentDeckAfterRetentionYear(s);
+  s = applyCampaignPostRetentionDeckEffects(s);
   s = resolveEndOfYearPenalties(s);
   if (s.outcome !== "playing") return purgeExtraCardsIfLevelEnded(s);
-  s = opponentEndYearPlayPhase(s);
+  s = runCampaignEndYearPhase(s);
   if (s.outcome !== "playing") return purgeExtraCardsIfLevelEnded(s);
   s = evaluateVictory(s);
   if (s.outcome === "victory") return purgeExtraCardsIfLevelEnded(s);
@@ -100,7 +100,7 @@ function handlePlayCard(state: GameState, action: Extract<GameAction, { type: "P
       fundingCost: cost,
       effects: tmpl.effects,
     });
-    s = maybeAppendHuguenotContainmentClearedLog(paid, s, inst.templateId);
+    s = maybeAppendCampaignConsumePlayLog(paid, s, inst.templateId);
     return s;
   }
   let s = applyPlayedCardEffects(paid, inst.templateId);

@@ -57,12 +57,12 @@ export {
   applySunkingPlayCardExtras as applyCampaignPlayCardExtras,
   applySunkingConsumeInvariant as applyCampaignConsumeInvariant,
   maybeBeginSunkingCardPlayInteraction as maybeBeginCampaignCardPlayInteraction,
-  maybeAppendHuguenotContainmentClearedLog,
+  maybeAppendHuguenotContainmentClearedLog as maybeAppendCampaignConsumePlayLog,
 } from "./sunking/logic/playCardExtras";
 export { applyEndYearResourceResetHook as applyCampaignEndYearResourceReset } from "./sunking/logic/turnFlowHooks";
 export { applyScriptedAttackCampaignFlags } from "./sunking/logic/scriptedAttackFollowup";
 export { stateAfterHarmfulEventCrackdown } from "./sunking/logic/crackdownHarmfulSolve";
-export { applyAntiFrenchContainmentDeckAfterRetentionYear } from "./sunking/logic/eoyRetentionCampaign";
+export { applyAntiFrenchContainmentDeckAfterRetentionYear as applyCampaignPostRetentionDeckEffects } from "./sunking/logic/eoyRetentionCampaign";
 export { attemptNineYearsWarCampaign, performFundSolve } from "./sunking/logic/fundSolve";
 export {
   maybeAddEuropeAlertSupplementalEventHook,
@@ -77,3 +77,5 @@ export {
   buildSunkingInitialStateFields as buildCampaignInitialStateFields,
   finalizeSunkingInitialStateFields as finalizeCampaignInitialStateFields,
 } from "./sunking/logic/initialStateFields";
+
+export { opponentEndYearPlayPhase as runCampaignEndYearPhase } from "./sunking/logic/opponentHabsburg";
