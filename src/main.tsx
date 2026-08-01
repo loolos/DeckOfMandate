@@ -1,4 +1,5 @@
 import "./levels/load";
+import "./levels/loadUi";
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { Game } from "./app/Game";

@@ -3,8 +3,8 @@
  * `registerCampaign.ts` (module load, before first render); framework components consult
  * the registry and render nothing campaign-specific on their own.
  */
-import type { ReactNode } from "react";
-import type { ActionLogEntry, GameState } from "../types/game";
+import type { ComponentType, ReactNode } from "react";
+import type { ActionLogEntry, GameState, Resources } from "../types/game";
 import type { MessageKey } from "../locales";
 
 export type UiTranslator = (key: MessageKey, vars?: Record<string, string | number>) => string;
@@ -44,4 +44,27 @@ export function registerCampaignStatusRowsBuilder(fn: CampaignStatusRowsBuilder 
 
 export function buildCampaignStatusRows(state: GameState, t: UiTranslator): CampaignStatusRow[] {
   return statusRowsBuilder ? statusRowsBuilder(state, t) : [];
+}
+
+/** Campaign-provided components for the resource system (panel, inline icon, icon-annotated text). */
+export type CampaignUiComponents = {
+  ResourceBar: ComponentType<{ resources: Resources }>;
+  ResourceTooltipText: ComponentType<{ text: string; resources?: Resources }>;
+  ResourceTooltipIcon: ComponentType<{
+    resource: keyof Resources & string;
+    resources?: Resources;
+    className?: string;
+  }>;
+};
+
+const uiComponents: Partial<CampaignUiComponents> = {};
+
+export function registerCampaignUiComponents(components: Partial<CampaignUiComponents>): void {
+  Object.assign(uiComponents, components);
+}
+
+export function getCampaignUiComponent<K extends keyof CampaignUiComponents>(
+  key: K,
+): CampaignUiComponents[K] | null {
+  return uiComponents[key] ?? null;
 }
