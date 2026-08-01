@@ -34,7 +34,7 @@ import {
 import { cardLabelWithIcon, resourceLabelWithIcon } from "../logic/icons";
 import { normalizeGameState } from "../logic/normalizeGameState";
 import { currentCalendarYear } from "../logic/scriptedCalendar";
-import { antiFrenchSentimentEmotionValue } from "../logic/antiFrenchSentiment";
+import { buildCampaignStatusRows } from "../levels/campaignUiRegistry";
 import { slotIsHandledOrNoFurtherAction } from "../logic/uiHelpers";
 import { useSmallScreen } from "../logic/useSmallScreen";
 import { loadGame, saveGame } from "../logic/saveLoad";
@@ -334,8 +334,7 @@ export function Game() {
   }, [levelIntroOpen, pendingIntroLevelId]);
 
   const level = useMemo(() => getLevelDef(state.levelId), [state.levelId]);
-  const successionTrackUiActive =
-    level.victoryRule.kind === "successionWar" && state.outcome === "playing" && !state.warEnded;
+  const statusRows = useMemo(() => buildCampaignStatusRows(state, t), [state, t]);
   const runTurnLimit = useMemo(
     () => getTurnLimitForRun(state.levelId, state.calendarStartYear),
     [state.levelId, state.calendarStartYear],
@@ -1467,25 +1466,7 @@ export function Game() {
           <h2>{t("ui.resources")}</h2>
           <ResourceBar resources={state.resources} />
           <h3 className={styles.statusSectionTitle}>{t("ui.statuses")}</h3>
-          <StatusBar
-            statuses={state.playerStatuses}
-            levelId={state.levelId}
-            europeAlertActive={state.europeAlert && state.outcome === "playing"}
-            europeAlertPowerLoss={state.europeAlertPowerLoss}
-            europeAlertProgress={state.europeAlertProgress}
-            antiFrenchSentimentEmotion={antiFrenchSentimentEmotionValue(state)}
-            coalitionActive={
-              !!state.antiFrenchLeague &&
-              state.turn <= state.antiFrenchLeague.untilTurn &&
-              state.outcome === "playing"
-            }
-            coalitionProbabilityPct={
-              state.antiFrenchLeague
-                ? Math.round(state.antiFrenchLeague.drawPenaltyProbability * 100)
-                : undefined
-            }
-            successionTrack={successionTrackUiActive ? state.successionTrack : undefined}
-          />
+          <StatusBar rows={statusRows} />
         </section>
 
         {wideGameGrid && hasEventsPanel ? (

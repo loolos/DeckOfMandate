@@ -6,7 +6,10 @@ import type { LevelContent, LevelDef } from "../../data/levelTypes";
 import { registerLevel, setDefaultLevelId } from "../../data/levelRegistry";
 import type { Level2StartDraft, Level3StartDraft } from "./types/continuity";
 import { registerCampaignReducerBridge } from "../campaignReducerBridge";
+import { registerCampaignLogEntryRenderer, registerCampaignStatusRowsBuilder } from "../campaignUiRegistry";
 import { trySunkingCampaignReducerBridge } from "./logic/campaignReducerBridgeImpl";
+import { renderSunkingLogEntry } from "./ui/actionLogEntries";
+import { buildSunkingStatusRows } from "./ui/statusRows";
 import { registerSunkingInitialStateHooks } from "./sunkingInitialStateHooks";
 
 type ChapterModule = {
@@ -21,6 +24,8 @@ const chapterModules = import.meta.glob("./chapters/*.ts", { eager: true }) as R
 
 export function registerSunking(): void {
   registerCampaignReducerBridge(trySunkingCampaignReducerBridge);
+  registerCampaignLogEntryRenderer(renderSunkingLogEntry);
+  registerCampaignStatusRowsBuilder(buildSunkingStatusRows);
   registerSunkingInitialStateHooks();
   let defaultLevelId: string | null = null;
   for (const path of Object.keys(chapterModules).sort()) {
