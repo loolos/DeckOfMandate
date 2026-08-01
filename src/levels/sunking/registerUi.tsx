@@ -13,6 +13,8 @@ import { renderSunkingLogEntry } from "./ui/actionLogEntries";
 import { buildSunkingStatusRows } from "./ui/statusRows";
 import { ResourceBar } from "./ui/SunkingResourceBar";
 import { ResourceTooltipIcon, ResourceTooltipText } from "./ui/SunkingResourceTooltipText";
+import { EventPanel } from "./ui/SunkingEventPanel";
+import { Hand } from "./ui/SunkingHand";
 
 export function registerSunkingUi(): void {
   registerCampaignLogEntryRenderer(renderSunkingLogEntry);
@@ -21,6 +23,8 @@ export function registerSunkingUi(): void {
     ResourceBar,
     ResourceTooltipText,
     ResourceTooltipIcon,
+    EventPanel,
+    Hand,
   });
 }
 

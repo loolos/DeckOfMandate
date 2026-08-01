@@ -3,7 +3,8 @@
  * `registerCampaign.ts` (module load, before first render); framework components consult
  * the registry and render nothing campaign-specific on their own.
  */
-import type { ComponentType, ReactNode } from "react";
+import type { ComponentType, ReactNode, Ref } from "react";
+import type { GameAction } from "../app/gameReducer";
 import type { ActionLogEntry, GameState, Resources } from "../types/game";
 import type { MessageKey } from "../locales";
 
@@ -46,7 +47,7 @@ export function buildCampaignStatusRows(state: GameState, t: UiTranslator): Camp
   return statusRowsBuilder ? statusRowsBuilder(state, t) : [];
 }
 
-/** Campaign-provided components for the resource system (panel, inline icon, icon-annotated text). */
+/** Campaign-provided components: resource system UI and the event interaction panel. */
 export type CampaignUiComponents = {
   ResourceBar: ComponentType<{ resources: Resources }>;
   ResourceTooltipText: ComponentType<{ text: string; resources?: Resources }>;
@@ -54,6 +55,16 @@ export type CampaignUiComponents = {
     resource: keyof Resources & string;
     resources?: Resources;
     className?: string;
+  }>;
+  EventPanel: ComponentType<{
+    state: GameState;
+    dispatch: (a: GameAction) => void;
+    scrollContainerRef?: Ref<HTMLDivElement>;
+  }>;
+  Hand: ComponentType<{
+    state: GameState;
+    dispatch: (a: GameAction) => void;
+    scrollContainerRef?: Ref<HTMLDivElement>;
   }>;
 };
 
