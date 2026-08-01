@@ -52,7 +52,7 @@ export const messagesFrSecondMandate: Record<keyof typeof messagesEnSecondMandat
   "event.revocationNantes.history":
     "En 1598, Henri IV promulgua l'édit de Nantes après des décennies de guerres de Religion. Ce texte n'instaurait pas l'égalité confessionnelle : il organisait plutôt un compromis politique, en maintenant le catholicisme comme religion d'État tout en accordant aux huguenots des droits de culte limités, certaines protections juridiques et quelques places de sûreté. Dans la seconde moitié du XVIIe siècle, la monarchie associa de plus en plus l'unité religieuse à l'obéissance administrative et à l'autorité dynastique. Pression fiscale, guerres de frontière et contrôle confessionnel se renforcèrent mutuellement, et les communautés protestantes furent de plus en plus perçues comme un risque intérieur durable. La révocation de 1685 rompit ce compromis : de nombreux huguenots partirent vers l'Angleterre, les Provinces-Unies, le Brandebourg ou la Suisse, emportant capitaux, savoir-faire et réseaux commerciaux ; ceux qui restèrent durent souvent passer à la clandestinité, entre assemblées secrètes et entraide souterraine.",
   "event.revocationNantes.desc":
-    "Événement Continu avec pénalité de pioche s'il n'est pas traité. La voie de tolérance réduit le choc immédiat mais peut réintroduire des crises confessionnelles récurrentes ; la voie de répression offre un contrôle plus dur au prix de résurgences périodiques et d'une usure de gouvernance plus longue.",
+    "Événement Continu qui, non traité, cumule deux statuts Perte d'autorité pendant 1 tour (pioche -2 l'an prochain). La voie de tolérance réduit le choc immédiat mais peut réintroduire des crises confessionnelles récurrentes ; la voie de répression offre un contrôle plus dur au prix de résurgences périodiques et d'une usure de gouvernance plus longue.",
   "event.leagueOfAugsburg.name": "Formation de la Ligue d'Augsbourg",
   "event.leagueOfAugsburg.history":
     "Après les années 1680, l'expansion française sur le Rhin et dans les Pays-Bas entretient une inquiétude durable chez ses voisins. Versailles n'est pas spectateur passif : la monarchie s'appuie sur les chambres des Réunions pour intégrer par voie juridique des places rhénanes stratégiques (dont Strasbourg), soutient la pression par garnisons, rappels d'ambassadeurs, pensions et intimidations ciblées sur les électeurs et villes libres de l'Empire, afin d'imposer des faits accomplis avant qu'une riposte concertée ne se cristallise. Le durcissement confessionnel après la révocation de l'édit de Nantes pousse Provinces-Unies et princes protestants du nord de l'Allemagne à lier « grignotage territorial » et menace religieuse. En 1686, princes du Saint-Empire, Habsbourg et États allemands se regroupent à Augsbourg, puis l'Angleterre, les Provinces-Unies et l'Espagne s'alignent : la Ligue est une réponse collective à cette diplomatie offensive, et elle oblige Versailles à payer au long cours subsides, intrigues et postures frontalières pour tenter de briser l'encerclement. Pour Louis XIV, ce n'est plus une friction diplomatique ponctuelle : l'équilibre européen se transforme en contrainte d'alliance institutionnalisée.",
@@ -82,7 +82,7 @@ export const messagesFrSecondMandate: Record<keyof typeof messagesEnSecondMandat
   "event.provincialNoncompliance.history":
     "Parlements et états provinciaux testaient encore les intendants contre chartes et immunités, ralentissant la politique centrale sur le terrain.",
   "event.provincialNoncompliance.desc":
-    "Les officiels locaux ralentissent l'application : payez 2 Financement ou subissez pioche -2 l'an prochain, puis pioche -1 chacune des deux années suivantes.",
+    "Les officiels locaux ralentissent l'application : payez 2 Financement ou subissez Perte d'autorité pendant 3 tours plus un second pendant 1 tour : pioche -2 l'an prochain, puis pioche -1 chacune des deux années suivantes.",
   "event.risingGrainPrices.name": "Hausse des prix du grain",
   "event.risingGrainPrices.history":
     "Mauvaises récoltes et politique du grain pouvaient transformer émeutes de subsistance en crise politique en quelques jours.",
@@ -97,17 +97,17 @@ export const messagesFrSecondMandate: Record<keyof typeof messagesEnSecondMandat
   "event.frontierGarrisons.history":
     "Rhin et Pays-Bas : garnisons et sièges absorbèrent les budgets des années 1680-1690, faisant des places fortes une saignée durable du Trésor.",
   "event.frontierGarrisons.desc":
-    "Les garnisons frontalières absorbent les recettes : payez 3 Financement ou utilisez Intervention royale / Intervention diplomatique ; toute résolution réussie réduit la progression d'Alerte Europe de 1 tant que l'alerte est active. Sinon, perdez 1 Trésor et subissez une pénalité de pioche l'an prochain.",
+    "Les garnisons frontalières absorbent les recettes : payez 3 Financement ou utilisez Intervention royale / Intervention diplomatique ; toute résolution réussie réduit la progression d'Alerte Europe de 1 tant que l'alerte est active. Sinon, perdez 1 Trésor et subissez Perte d'autorité pendant 1 tour (pioche -1 l'an prochain).",
   "event.tradeDisruption.name": "Perturbation commerciale",
   "event.tradeDisruption.history":
     "Guerre de convois et corsaires anglo-hollandais pinçaient les recettes atlantiques et augmentaient le risque de chaque traversée marchande.",
   "event.tradeDisruption.desc":
-    "Les risques sur routes maritimes et convois réduisent la marge de gouvernance : payez 1 Financement ou subissez un modificateur de pioche -2 l'an prochain.",
+    "Les risques sur routes maritimes et convois réduisent la marge de gouvernance : payez 1 Financement ou cumulez deux statuts Perte d'autorité pendant 1 tour (pioche -2 l'an prochain).",
   "event.embargoCoalition.name": "Coalition d'embargo",
   "event.embargoCoalition.history":
     "Les marines de la Grande Alliance resserrèrent les cordons maritimes quand la guerre de coalition devint la norme, faisant du blocus et des tarifs coordonnés des outils d'endiguement ordinaires.",
   "event.embargoCoalition.desc":
-    "Les restrictions maritimes se resserrent autour du commerce français : payez ⌊Trésor/8⌋+1 Financement ou utilisez Intervention royale / Intervention diplomatique ; toute résolution réussie réduit la progression d'Alerte Europe de 1 tant que l'alerte est active. Sinon, perdez 1 Trésor et subissez une pénalité de pioche l'an prochain.",
+    "Les restrictions maritimes se resserrent autour du commerce français : payez ⌊Trésor/8⌋+1 Financement ou utilisez Intervention royale / Intervention diplomatique ; toute résolution réussie réduit la progression d'Alerte Europe de 1 tant que l'alerte est active. Sinon, perdez 1 Trésor et subissez Perte d'autorité pendant 1 tour (pioche -1 l'an prochain).",
   "event.mercenaryRaiders.name": "Raiders mercenaires",
   "event.mercenaryRaiders.history":
     "Entre deux campagnes, compagnies libres et raids payés hantaient encore les marches, mettant à l'épreuve le contrôle royal des frontières.",
@@ -122,7 +122,7 @@ export const messagesFrSecondMandate: Record<keyof typeof messagesEnSecondMandat
   "event.courtScandal.history":
     "Cabinet du lit et rivalités ministérielles à Versailles alimentaient feuilles volantes et rumeurs publiques, ébranlant le prestige de la cour.",
   "event.courtScandal.desc":
-    "Les intrigues de faction affaiblissent l'autorité : payez 3 Financement pour contenir ; sinon, Légitimité -1 et toutes les cartes taguées Royal sont bloquées au prochain tour.",
+    "Les intrigues de faction affaiblissent l'autorité : payez 3 Financement pour contenir ; sinon, Légitimité -1 et subissez Accès royal gelé pendant 1 tour (les cartes taguées Royal ne peuvent pas être jouées au prochain tour).",
   "event.militaryPrestige.name": "Prestige militaire",
   "event.militaryPrestige.history":
     "Des sièges comme Namur étaient exhibés comme preuve des armes bourboniennes et du droit divin ; la gloire militaire restait la source la plus directe d'autorité.",

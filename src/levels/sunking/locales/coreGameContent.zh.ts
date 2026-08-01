@@ -57,7 +57,8 @@ export const sunkingCoreGameContentZh = {
     "旧制度下首都民众对粮价与警讯极为敏感，面包价与流言数日之内就能挤满街头，任何迟疑都会被读成王权软弱。",
   "event.publicUnrest.desc": "仅可用「干预」解决，否则合法性 -1。",
   "event.administrativeDelay.name": "官僚拖延",
-  "event.administrativeDelay.desc": "地方官员拖延执行宫廷新令：支付 1 经费，否则下一回合少抽 1 张牌（至少仍抽 1）。",
+  "event.administrativeDelay.desc":
+    "地方官员拖延执行宫廷新令：支付 1 经费，否则获得「权力流失」1 回合（下一回合抽牌 -1，至少仍抽 1）。",
   "event.administrativeDelay.history":
     "高等法院、省三级会议与包税利益集团常以特权与惯例为由，拖延或改写中央敕令，让王命在路上层层变形。",
   "event.tradeOpportunity.name": "殖民贸易机遇",
@@ -72,7 +73,7 @@ export const sunkingCoreGameContentZh = {
   "event.majorCrisis.history":
     "投石党的记忆犹在，任何「王权失灵」的观感都极具政治爆炸性，足以让贵族与法院重新试探王权底线。",
   "event.majorCrisis.desc":
-    "仅可用干预解决。带「持续」标签：若未处理将留到下一回合，并在每回合继续触发合法性 -1 与抽牌惩罚，直到被解决。",
+    "仅可用干预解决。带「持续」标签：若未处理将留到下一回合，并在每回合继续触发合法性 -1 与「权力流失」1 回合（下一回合抽牌 -1），直到被解决。",
   "event.politicalGridlock.name": "贵族阻挠",
   "event.politicalGridlock.history":
     "大贵族对中央加税与削权仍易迅速串联，常令人联想到马扎然时期的财政反弹。",

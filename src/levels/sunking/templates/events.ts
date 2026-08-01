@@ -30,7 +30,7 @@ export const eventTemplates: Record<EventTemplateId, EventTemplate> = {
     historyKey: "event.administrativeDelay.history",
     descriptionKey: "event.administrativeDelay.desc",
     solve: { kind: "funding", amount: 1 },
-    penaltiesIfUnresolved: [{ kind: "scheduleNextTurnDrawModifier", delta: -1 }],
+    penaltiesIfUnresolved: [{ kind: "addPlayerStatus", templateId: "powerLeak", turns: 1 }],
   },
   tradeOpportunity: {
     id: "tradeOpportunity",
@@ -76,7 +76,7 @@ export const eventTemplates: Record<EventTemplateId, EventTemplate> = {
     solve: { kind: "crackdownOnly" },
     penaltiesIfUnresolved: [
       { kind: "modResource", resource: "legitimacy", delta: -1 },
-      { kind: "scheduleNextTurnDrawModifier", delta: -1 },
+      { kind: "addPlayerStatus", templateId: "powerLeak", turns: 1 },
     ],
   },
   warOfDevolution: {
@@ -116,7 +116,11 @@ export const eventTemplates: Record<EventTemplateId, EventTemplate> = {
     historyKey: "event.revocationNantes.history",
     descriptionKey: "event.revocationNantes.desc",
     solve: { kind: "nantesPolicyChoice" },
-    penaltiesIfUnresolved: [{ kind: "scheduleNextTurnDrawModifier", delta: -2 }],
+    /** Two stacks of the same status = draw -2 for one year, and both show in the status bar. */
+    penaltiesIfUnresolved: [
+      { kind: "addPlayerStatus", templateId: "powerLeak", turns: 1 },
+      { kind: "addPlayerStatus", templateId: "powerLeak", turns: 1 },
+    ],
   },
   leagueOfAugsburg: {
     id: "leagueOfAugsburg",
@@ -189,7 +193,11 @@ export const eventTemplates: Record<EventTemplateId, EventTemplate> = {
     historyKey: "event.provincialNoncompliance.history",
     descriptionKey: "event.provincialNoncompliance.desc",
     solve: { kind: "funding", amount: 2 },
-    penaltiesIfUnresolved: [{ kind: "scheduleDrawModifiers", deltas: [-2, -1, -1] }],
+    /** Stacked statuses reproduce the old `[-2, -1, -1]` queue: -2 next year, then -1, -1. */
+    penaltiesIfUnresolved: [
+      { kind: "addPlayerStatus", templateId: "powerLeak", turns: 3 },
+      { kind: "addPlayerStatus", templateId: "powerLeak", turns: 1 },
+    ],
   },
   risingGrainPrices: {
     id: "risingGrainPrices",
@@ -226,7 +234,7 @@ export const eventTemplates: Record<EventTemplateId, EventTemplate> = {
     onFundSolveEffects: [{ kind: "modEuropeAlertProgress", delta: -1 }],
     penaltiesIfUnresolved: [
       { kind: "modResource", resource: "treasuryStat", delta: -1 },
-      { kind: "scheduleNextTurnDrawModifier", delta: -1 },
+      { kind: "addPlayerStatus", templateId: "powerLeak", turns: 1 },
     ],
   },
   tradeDisruption: {
@@ -238,7 +246,10 @@ export const eventTemplates: Record<EventTemplateId, EventTemplate> = {
     descriptionKey: "event.tradeDisruption.desc",
     solve: { kind: "funding", amount: 1 },
     tags: ["antiFrenchAlliance"],
-    penaltiesIfUnresolved: [{ kind: "scheduleNextTurnDrawModifier", delta: -2 }],
+    penaltiesIfUnresolved: [
+      { kind: "addPlayerStatus", templateId: "powerLeak", turns: 1 },
+      { kind: "addPlayerStatus", templateId: "powerLeak", turns: 1 },
+    ],
   },
   embargoCoalition: {
     id: "embargoCoalition",
@@ -252,7 +263,7 @@ export const eventTemplates: Record<EventTemplateId, EventTemplate> = {
     onFundSolveEffects: [{ kind: "modEuropeAlertProgress", delta: -1 }],
     penaltiesIfUnresolved: [
       { kind: "modResource", resource: "treasuryStat", delta: -1 },
-      { kind: "scheduleNextTurnDrawModifier", delta: -1 },
+      { kind: "addPlayerStatus", templateId: "powerLeak", turns: 1 },
     ],
   },
   mercenaryRaiders: {

@@ -64,7 +64,7 @@ export const sunkingCoreGameContentFr = {
   "event.administrativeDelay.history":
     "Parlements, états provinciaux et fermiers testaient souvent les édits contre leurs privilèges : les ordres royaux se déformaient et ralentissaient en sortant de Paris.",
   "event.administrativeDelay.desc":
-    "Les officiels provinciaux ralentissent l'application des nouveaux ordres : payez 1 Financement ou piochez une carte de moins au prochain tour (min 1).",
+    "Les officiels provinciaux ralentissent l'application des nouveaux ordres : payez 1 Financement ou subissez Perte d'autorité pendant 1 tour (tentatives de pioche -1 au prochain tour, min 1).",
   "event.tradeOpportunity.name": "Boom du commerce colonial",
   "event.tradeOpportunity.history":
     "Routes atlantiques et coloniales : sucre, tabac et capitaux affluaient vers Bordeaux ou La Rochelle, et les marchands sollicitaient chartes et escortes de la couronne.",
@@ -78,7 +78,7 @@ export const sunkingCoreGameContentFr = {
   "event.majorCrisis.history":
     "Le souvenir de la Fronde rendait toute cassure visible du commandement royal explosive, incitant nobles et cours souveraines à tester de nouveau les limites de la couronne.",
   "event.majorCrisis.desc":
-    "Intervention uniquement. Tag Continu : si non résolu, il reste au tour suivant et répète Légitimité -1 plus pénalité de pioche chaque année jusqu'à résolution.",
+    "Intervention uniquement. Tag Continu : si non résolu, il reste au tour suivant et répète Légitimité -1 plus Perte d'autorité pendant 1 tour (tentatives de pioche -1) chaque année jusqu'à résolution.",
   "event.politicalGridlock.name": "Résistance nobiliaire",
   "event.politicalGridlock.history":
     "Les grands se coalisaient vite contre une centralisation fiscale qui rappelait les levées de Mazarin.",

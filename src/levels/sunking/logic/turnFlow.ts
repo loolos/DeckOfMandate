@@ -26,6 +26,7 @@ import { applyScriptedCalendarPhase, rollAntiFrenchLeagueDrawAdjustment } from "
 import { rngNext, shuffle } from "../../../logic/rng";
 import { opponentBeginYearDrawPhase } from "../../../logic/opponentHabsburg";
 import { enforceLegitimacy } from "./applyEffects";
+import { tickBeginYearStatuses } from "./playerStatusTick";
 import {
   maybeAddEuropeAlertSupplementalEventHook,
   maybeAddReligiousTensionEventHook,
@@ -449,21 +450,6 @@ export function retentionCapacity(state: GameState): number {
   return Math.max(0, state.resources.legitimacy + bonus);
 }
 
-function tickPlayerStatusesAfterDraw(statuses: readonly PlayerStatusInstance[]): PlayerStatusInstance[] {
-  return statuses
-    .map((p) => {
-      if (
-        p.templateId === "religiousTolerance"
-        || p.templateId === "huguenotContainment"
-        || p.templateId === "greatPowerEncirclement"
-      ) {
-        return p;
-      }
-      return { ...p, turnsRemaining: p.turnsRemaining - 1 };
-    })
-    .filter((p) => p.turnsRemaining > 0);
-}
-
 /** Start-of-year pipeline: Income → Draw → Event roll (transforms, clear, fill). */
 export function beginYear(state: GameState): GameState {
   if (state.outcome !== "playing") return state;
@@ -541,7 +527,7 @@ export function beginYear(state: GameState): GameState {
     s = enforceLegitimacy(s);
     if (s.outcome !== "playing") return s;
   }
-  s = { ...s, playerStatuses: tickPlayerStatusesAfterDraw(s.playerStatuses) };
+  s = tickBeginYearStatuses(s);
   s = runEventPhase(s);
   if (s.outcome !== "playing") return s;
   return { ...s, phase: "action" };

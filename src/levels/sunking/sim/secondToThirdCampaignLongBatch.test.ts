@@ -17,22 +17,22 @@ const SMOKE_RUNS = 150;
 const SMOKE_BASELINE = {
   chapter2Wins: 77,
   chapter3Runs: 77,
-  chapter3Wins: 13,
-  fullCampaignWins: 13,
+  chapter3Wins: 14,
+  fullCampaignWins: 14,
   chapter3OutcomeBreakdown: {
     victorySuccessionTrackCap10: 2,
     victoryUtrechtBourbon: 0,
-    victoryUtrechtCompromise: 2,
+    victoryUtrechtCompromise: 3,
     victoryUtrechtHabsburg: 9,
     victoryCalendarNoUtrecht: 0,
-    defeatSuccession: 60,
+    defeatSuccession: 58,
     defeatLegitimacyPower: 0,
-    defeatLegitimacyLegitimacy: 4,
+    defeatLegitimacyLegitimacy: 5,
     defeatLegitimacyBoth: 0,
     other: 0,
   },
-  averageChapter2EndTurn: 23.64,
-  averageChapter3EndTurnOnReached: 13.506,
+  averageChapter2EndTurn: 23.647,
+  averageChapter3EndTurnOnReached: 13.688,
 };
 
 /** Longest run a chapter can last (continuity starts can only shorten it). */

@@ -79,22 +79,22 @@ describe("aiStrategySimulation", () => {
     const report = simulateSecondMandateStandaloneBatch({ seedStart: 1, runCount: 200 });
     expect(report).toMatchInlineSnapshot(`
       {
-        "averageEndTurn": 23.64,
-        "averageEndTurnOnLoss": 24.701,
-        "averageEndTurnOnWin": 22.641,
+        "averageEndTurn": 23.635,
+        "averageEndTurnOnLoss": 24.688,
+        "averageEndTurnOnWin": 22.663,
         "averageEndingResources": {
           "funding": 0,
-          "legitimacy": 8.635,
-          "power": 7.52,
-          "treasuryStat": 9.315,
+          "legitimacy": 8.68,
+          "power": 7.6,
+          "treasuryStat": 9.345,
         },
         "levelId": "secondMandate",
-        "losses": 97,
+        "losses": 96,
         "runCount": 200,
         "startMode": "standalone",
         "strategyId": "a-strategy-i",
-        "winRate": 0.515,
-        "wins": 103,
+        "winRate": 0.52,
+        "wins": 104,
       }
     `);
   });
@@ -103,46 +103,46 @@ describe("aiStrategySimulation", () => {
     const report = simulateThirdMandateStandaloneBatch({ seedStart: 1, runCount: 200 });
     expect(report).toMatchInlineSnapshot(`
       {
-        "averageEndTurn": 16.81,
-        "averageEndTurnOnLoss": 12.091,
-        "averageEndTurnOnWin": 18.141,
+        "averageEndTurn": 16.895,
+        "averageEndTurnOnLoss": 12.119,
+        "averageEndTurnOnWin": 18.165,
         "averageEndingResources": {
           "funding": 0.715,
-          "legitimacy": 4.89,
-          "power": 13.185,
-          "treasuryStat": 15.59,
+          "legitimacy": 4.97,
+          "power": 13.22,
+          "treasuryStat": 15.575,
         },
         "levelId": "thirdMandate",
-        "losses": 44,
+        "losses": 42,
         "outcomeBreakdown": {
           "defeatLegitimacyBoth": 0,
-          "defeatLegitimacyLegitimacy": 44,
+          "defeatLegitimacyLegitimacy": 42,
           "defeatLegitimacyPower": 0,
           "defeatSuccession": 0,
           "other": 0,
           "victoryCalendarNoUtrecht": 0,
           "victorySuccessionTrackCap10": 21,
           "victoryUtrechtBourbon": 1,
-          "victoryUtrechtCompromise": 88,
-          "victoryUtrechtHabsburg": 46,
+          "victoryUtrechtCompromise": 89,
+          "victoryUtrechtHabsburg": 47,
         },
         "outcomeBreakdownRates": {
           "defeatLegitimacyBoth": 0,
-          "defeatLegitimacyLegitimacy": 0.22,
+          "defeatLegitimacyLegitimacy": 0.21,
           "defeatLegitimacyPower": 0,
           "defeatSuccession": 0,
           "other": 0,
           "victoryCalendarNoUtrecht": 0,
           "victorySuccessionTrackCap10": 0.105,
           "victoryUtrechtBourbon": 0.005,
-          "victoryUtrechtCompromise": 0.44,
-          "victoryUtrechtHabsburg": 0.23,
+          "victoryUtrechtCompromise": 0.445,
+          "victoryUtrechtHabsburg": 0.235,
         },
         "runCount": 200,
         "startMode": "standalone",
         "strategyId": "a-strategy-i",
-        "winRate": 0.78,
-        "wins": 156,
+        "winRate": 0.79,
+        "wins": 158,
       }
     `);
   });

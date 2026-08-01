@@ -64,7 +64,7 @@ export const sunkingCoreGameContentEn = {
   "event.administrativeDelay.history":
     "Provincial estates, parlements, and tax farmers often tested new edicts against local privilege, so royal orders bent and slowed on the road out of Paris.",
   "event.administrativeDelay.desc":
-    "Provincial officials slow-walk new orders from the court: pay 1 Funding or draw one fewer next turn (min 1 draw).",
+    "Provincial officials slow-walk new orders from the court: pay 1 Funding or gain Loss of Authority for 1 turn (draw attempts -1 next turn, min 1 draw).",
   "event.tradeOpportunity.name": "Colonial Trade Boom",
   "event.tradeOpportunity.history":
     "Atlantic and colonial routes tied sugar, tobacco, and shipping capital to Bordeaux and La Rochelle, and merchants petitioned the crown for charters and convoy support.",
@@ -77,7 +77,7 @@ export const sunkingCoreGameContentEn = {
   "event.majorCrisis.history":
     "Fronde memory made any visible break in royal command politically explosive, tempting nobles and courts to probe the crown's limits again.",
   "event.majorCrisis.desc":
-    "Intervention only. Tagged Continued: if unresolved it remains into next turn and repeats Legitimacy -1 plus a draw penalty each year until solved.",
+    "Intervention only. Tagged Continued: if unresolved it remains into next turn and repeats Legitimacy -1 plus Loss of Authority for 1 turn (draw attempts -1) each year until solved.",
   "event.politicalGridlock.name": "Noble Resistance",
   "event.politicalGridlock.history":
     "Great families still combined quickly against fiscal centralization that recalled Mazarin’s levies.",
