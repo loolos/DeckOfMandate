@@ -263,7 +263,7 @@ function buildContinuityLevel2State(draft: Level2StartDraft): GameState {
     actionLog: [],
     successionTrack: 0,
     opponentStrength: 3,
-    greatPowerEncirclementHighPressureApplied: false,
+    greatPowerEncirclementStrengthApplied: 0,
     opponentHabsburgUnlocked: false,
     warEnded: false,
     utrechtTreatyCountdown: null,

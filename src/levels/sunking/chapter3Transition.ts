@@ -248,7 +248,7 @@ export function buildLevel3StateFromDraft(draft: Level3StartDraft): GameState {
     actionLog: [],
     successionTrack: 0,
     opponentStrength: opponentStrengthPreUnlock,
-    greatPowerEncirclementHighPressureApplied: false,
+    greatPowerEncirclementStrengthApplied: 0,
     opponentHabsburgUnlocked: false,
     warEnded: false,
     utrechtTreatyCountdown: null,

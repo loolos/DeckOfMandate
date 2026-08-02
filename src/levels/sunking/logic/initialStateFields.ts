@@ -64,7 +64,7 @@ export function buildSunkingInitialStateFields(
     pendingMajorCrisis: { ...EMPTY_PENDING_MAJOR_CRISIS },
     successionTrack: 0,
     opponentStrength: 3,
-    greatPowerEncirclementHighPressureApplied: false,
+    greatPowerEncirclementStrengthApplied: 0,
     opponentHabsburgUnlocked: false,
     warEnded: false,
     utrechtTreatyCountdown: null,

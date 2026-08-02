@@ -374,7 +374,7 @@ export function stateAfterUtrechtTreatyEndsWar(state: GameState, utrechtSlot: Sl
     utrechtSettlementTier: tier,
     slots,
     playerStatuses: state.playerStatuses.filter((s) => s.templateId !== "greatPowerEncirclement"),
-    greatPowerEncirclementHighPressureApplied: false,
+    greatPowerEncirclementStrengthApplied: 0,
     opponentHabsburgUnlocked: false,
     opponentDeck: [],
     opponentHand: [],

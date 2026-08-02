@@ -124,7 +124,7 @@ export const sunkingCoreGameContentEn = {
   "status.greatPowerEncirclement.history":
     "During the War of the Spanish Succession, Bourbon dynastic expansion from Versailles was increasingly viewed as a continental balance-of-power threat. Britain, the Dutch Republic, Savoy, and Portugal therefore coordinated money, fleets, and field support for the Habsburg camp, turning a dynastic dispute into a broader coalition war. Until the Utrecht settlement closes the conflict, that external backing keeps lifting Habsburg war capacity.",
   "status.greatPowerEncirclement.desc":
-    "Chapter 3: if the Habsburg opponent row is present and Treasury + Power + Legitimacy exceeds 50, gain this status and Habsburg opponent budget +1; if that total exceeds 75, it adds one more opponent budget +1 (once per war). It does not clear while the war lasts.",
+    "Chapter 3: if the Habsburg opponent row is present and Treasury + Power + Legitimacy exceeds 45, gain this status. Totals above 45 / 60 / 75 / 90 are worth Habsburg opponent budget +1 / +2 / +3 / +4; each tier pays out once and the ladder only climbs — spending back down never refunds strength already granted. It does not clear while the war lasts.",
   "status.supplyLineSqueeze.name": "Supply Line Squeeze",
   "status.supplyLineSqueeze.history": "Blockades, embargoes and requisition in the field cut the chain that turns tax rolls into cash at hand.",
   "status.supplyLineSqueeze.desc": "While active, Funding income at turn start -1 (stacks; income floors at 0).",
