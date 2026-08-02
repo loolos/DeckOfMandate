@@ -105,6 +105,9 @@ declare module "../../types/status" {
     seaLaneDisarray: true;
     embargoPressure: true;
     confessionalDeadlock: true;
+    customsSnarl: true;
+    convoyDetention: true;
+    warRequisition: true;
   }
 }
 

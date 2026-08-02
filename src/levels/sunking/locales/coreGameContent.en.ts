@@ -157,8 +157,20 @@ export const sunkingCoreGameContentEn = {
   "status.confessionalDeadlock.history":
     "With the edict neither upheld nor revoked, bishops, parlements and local congregations each hold their own line. Conversion rolls, church-property suits and worship disputes climb the hierarchy until the crown's calendar has become an ecclesiastical one.",
   "status.confessionalDeadlock.desc": "While active, draw attempts at turn start -1 (min 1 draw); stacks.",
+  "status.customsSnarl.name": "Customs Snarl",
+  "status.customsSnarl.history":
+    "Imperial tollhouses turn inspection into a weapon: French goods and military stores are opened, revalued and re-papered at every Rhine and Low Countries post. Nothing is confiscated; everything simply takes months longer.",
+  "status.customsSnarl.desc": "While active, draw attempts at turn start -1 (min 1 draw); stacks.",
+  "status.convoyDetention.name": "Convoy Detention",
+  "status.convoyDetention.history":
+    "Anglo-Dutch squadrons need not sink French merchantmen; they need only escort them into their own harbours and let the prize courts take their time. The petitions of owners, insurers and consuls all end up on a desk at Versailles.",
+  "status.convoyDetention.desc": "While active, draw attempts at turn start -1 (min 1 draw); stacks.",
+  "status.warRequisition.name": "Requisition in the Field",
+  "status.warRequisition.history":
+    "An army living off the land eats the tax base before the tax base reaches the treasury. The commissary's receipts may be honoured after the war; this year's ledger records only a hole.",
+  "status.warRequisition.desc": "While active, Funding income at turn start -1 (stacks; income floors at 0).",
   "status.supplyLineSqueeze.name": "Supply Line Squeeze",
-  "status.supplyLineSqueeze.history": "Blockades, embargoes and requisition in the field cut the chain that turns tax rolls into cash at hand.",
+  "status.supplyLineSqueeze.history": "Blockade and embargo need not sink a fleet; they need only cut the chain that moves specie and stores. With deposits, bills and forage contracts stalled in transit, the figure on the treasury ledger stops becoming cash in hand.",
   "status.supplyLineSqueeze.desc": "While active, Funding income at turn start -1 (stacks; income floors at 0).",
   "status.usurpationMobilization.name": "Edict Mobilization",
   "status.usurpationMobilization.history": "An extra-legal succession edict forces court and provinces to declare themselves at once, producing a brief burst of paperwork and appointments.",

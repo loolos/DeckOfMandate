@@ -137,7 +137,7 @@ describe("opponentHabsburg AI", () => {
     const burdenAfter = Object.values(next.cardsById).filter((c) => c.templateId === "fiscalBurden").length;
     expect(burdenAfter).toBe(burdenBefore + 1);
     expect(next.deck.some((id) => next.cardsById[id]?.templateId === "fiscalBurden")).toBe(true);
-    expect(statusStacks(next, "powerLeak")).toBe(1);
+    expect(statusStacks(next, "customsSnarl")).toBe(1);
     expect(next.opponentHand).toEqual([]);
     expect(next.opponentDiscard).toEqual([customsId]);
   });
@@ -303,7 +303,7 @@ describe("opponentHabsburg AI", () => {
     const next = opponentEndYearPlayPhase(st);
     expect(next.resources.power).toBe(base.resources.power - 1);
     expect(statusStacks(next, "supplyLineSqueeze")).toBe(1);
-    expect(statusStacks(next, "powerLeak")).toBe(1);
+    expect(statusStacks(next, "convoyDetention")).toBe(1);
     expect(next.opponentDiscard).toEqual([cardId]);
   });
 
@@ -327,7 +327,7 @@ describe("opponentHabsburg AI", () => {
     const next = opponentEndYearPlayPhase(st);
     expect(next.successionTrack).toBe(base.successionTrack - 1);
     expect(statusStacks(next, "supplyLineSqueeze")).toBe(1);
-    expect(statusStacks(next, "powerLeak")).toBe(0);
+    expect(statusStacks(next, "convoyDetention")).toBe(0);
     expect(next.opponentDiscard).toEqual([cardId]);
   });
 });

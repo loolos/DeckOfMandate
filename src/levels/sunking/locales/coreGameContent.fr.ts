@@ -163,8 +163,20 @@ export const sunkingCoreGameContentFr = {
   "status.confessionalDeadlock.history":
     "L'édit n'étant ni maintenu ni révoqué, évêques, parlements et congrégations locales tiennent chacun leur ligne. Rôles de conversion, procès sur les biens d'Église et querelles de culte remontent la hiérarchie jusqu'à ce que l'agenda de la couronne soit devenu ecclésiastique.",
   "status.confessionalDeadlock.desc": "Tant qu'actif, tentatives de pioche au début du tour -1 (minimum 1) ; cumulable.",
+  "status.customsSnarl.name": "Enlisement douanier",
+  "status.customsSnarl.history":
+    "Les péages impériaux font de l'inspection une arme : marchandises et fournitures françaises sont ouvertes, réévaluées et repaperassées à chaque poste du Rhin et des Pays-Bas. Rien n'est confisqué ; tout prend simplement des mois de plus.",
+  "status.customsSnarl.desc": "Tant qu'actif, tentatives de pioche au début du tour -1 (minimum 1) ; cumulable.",
+  "status.convoyDetention.name": "Détention des convois",
+  "status.convoyDetention.history":
+    "Les escadres anglo-hollandaises n'ont pas besoin de couler les navires français : il leur suffit de les escorter vers leurs propres ports et de laisser les cours des prises prendre leur temps. Les requêtes des armateurs, assureurs et consuls finissent toutes sur un bureau à Versailles.",
+  "status.convoyDetention.desc": "Tant qu'actif, tentatives de pioche au début du tour -1 (minimum 1) ; cumulable.",
+  "status.warRequisition.name": "Réquisition sur le terrain",
+  "status.warRequisition.history":
+    "Une armée qui vit sur le pays consomme l'assiette fiscale avant qu'elle n'atteigne le Trésor. Les reçus du commissaire seront peut-être honorés après la guerre ; le registre de cette année n'enregistre qu'un trou.",
+  "status.warRequisition.desc": "Tant qu'actif, revenu de Financement au début du tour -1 (cumulable ; revenu plancher 0).",
   "status.supplyLineSqueeze.name": "Transferts entravés",
-  "status.supplyLineSqueeze.history": "Blocus, embargos et réquisitions sur le terrain coupent la chaîne qui transforme les rôles fiscaux en numéraire disponible.",
+  "status.supplyLineSqueeze.history": "Blocus et embargo n'ont pas besoin de couler une flotte ; il leur suffit de couper la chaîne qui achemine numéraire et fournitures. Dépôts, lettres de change et contrats de fourrage bloqués en route, le chiffre du registre cesse de devenir de l'argent disponible.",
   "status.supplyLineSqueeze.desc": "Tant qu'actif, revenu de Financement au début du tour -1 (cumulable ; revenu plancher 0).",
   "status.usurpationMobilization.name": "Mobilisation par édit",
   "status.usurpationMobilization.history": "Un édit de succession extra-légal force la cour et les provinces à se prononcer d'un coup, provoquant une brève flambée de correspondance et de nominations.",

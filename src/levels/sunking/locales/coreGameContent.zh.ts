@@ -149,8 +149,20 @@ export const sunkingCoreGameContentZh = {
   "status.confessionalDeadlock.history":
     "敕令的存废迟迟不决，主教、高等法院与地方教团各执一词；改宗名册、教产争讼与礼拜纠纷层层上呈，把王命的日程挤成了教务的日程。",
   "status.confessionalDeadlock.desc": "生效期间回合开始时抽牌尝试 -1（仍至少抽 1）；可叠加多层。",
+  "status.customsSnarl.name": "通关壅塞",
+  "status.customsSnarl.history":
+    "帝国关卡把「查验」变成武器：法国货与军需在莱茵与低地的税关上被反复开箱、估价、补办通行文书。没有一船被没收，但每一船都要多花几个月。",
+  "status.customsSnarl.desc": "生效期间回合开始时抽牌尝试 -1（仍至少抽 1）；可叠加多层。",
+  "status.convoyDetention.name": "商船滞押",
+  "status.convoyDetention.history":
+    "英荷分舰队不必击沉法国商船，只要拦下来押进本国港口，交给捕获法庭慢慢审。船东、保险人与领事的往返陈情，最终都会堆到凡尔赛的案头。",
+  "status.convoyDetention.desc": "生效期间回合开始时抽牌尝试 -1（仍至少抽 1）；可叠加多层。",
+  "status.warRequisition.name": "就地征发",
+  "status.warRequisition.history":
+    "军队就地征粮、征夫与征车，等于先把本该入库的税源吃掉一轮。军需官开出的收据或许战后能兑现，本年度的国库却只能记一笔空账。",
+  "status.warRequisition.desc": "生效期间回合开始时经费收入 -1（可叠加多层；收入最低为 0）。",
   "status.supplyLineSqueeze.name": "转输受阻",
-  "status.supplyLineSqueeze.history": "封锁、禁运与战场就地征发会切断税银与军需的转输链条，使国库能兑现的现钱缩水。",
+  "status.supplyLineSqueeze.history": "封锁与禁运不必击沉船队，只要掐断税银与军需的转输链条——押金、汇票与粮秣合同在半路停摆，国库账面上的数字就兑不成手里的现钱。",
   "status.supplyLineSqueeze.desc": "生效期间回合开始时经费收入 -1（可叠加多层；收入最低为 0）。",
   "status.usurpationMobilization.name": "诏书动员",
   "status.usurpationMobilization.history": "非常规继位诏书一经颁下，宫廷与外廷会被迫加速表态，短期内文书与人事调度异常密集。",

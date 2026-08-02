@@ -133,14 +133,14 @@ export const messagesEnThirdMandate = {
   "card.habsburgImperialCustomsDelay.background":
     "Imperial ports and Rhine toll stations use inspections, seizures, and temporary tariff posts to slow French commerce, choking royal cash flow without a major battle.",
   "card.habsburgImperialCustomsDelay.desc":
-    "Opponent cost 2. Immediate: Treasury −1 and add 1 Fiscal Burden to your draw pile at a random position; delayed: gain Loss of Authority for 1 turn (next year draw attempts −1, still at least 1).",
+    "Opponent cost 2. Immediate: Treasury −1 and add 1 Fiscal Burden to your draw pile at a random position; delayed: gain Customs Snarl for 1 turn (next year draw attempts −1, still at least 1).",
   "card.habsburgImperialCustomsDelay.opponentHistory":
     "Port-side customs delays choke cash flow without a major battle. In play: Treasury −1, add 1 Fiscal Burden, and next year draw attempts −1 (min 1).",
   "card.habsburgAngloDutchMaritimeInterdiction.name": "Anglo-Dutch deferrals",
   "card.habsburgAngloDutchMaritimeInterdiction.background":
     "Letters of marque, stricter convoys, and seizures along the Channel and North Sea routes delay bills of exchange and remittances, thinning the cash position available to Versailles’ war chest.",
   "card.habsburgAngloDutchMaritimeInterdiction.desc":
-    "Opponent cost 1. Immediate: Power −1; delayed: gain Supply Line Squeeze for 1 turn (next year your treasury-to-funding income is reduced by 1, not below 0) and Loss of Authority for 1 turn (draw attempts −1, still at least 1).",
+    "Opponent cost 1. Immediate: Power −1; delayed: gain Supply Line Squeeze for 1 turn (next year your treasury-to-funding income is reduced by 1, not below 0) and Convoy Detention for 1 turn (draw attempts −1, still at least 1).",
   "card.habsburgAngloDutchMaritimeInterdiction.opponentHistory":
     "Letters of marque, stricter convoys, and seizures along the Channel and North Sea routes delay bills of exchange and tighten liquidity for Versailles’ war chest. In play: Power −1, next year’s funding from treasury −1 (min 0 total), and draw attempts −1 (min 1).",
   "card.habsburgRhineMagazineEmbargo.name": "Magazine embargo",

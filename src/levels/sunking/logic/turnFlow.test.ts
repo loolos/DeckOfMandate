@@ -700,10 +700,10 @@ describe("beginYear + playerStatuses", () => {
         A: { instanceId: "evt_local_war", templateId: "localWar", resolved: false },
       },
     };
-    // The cut travels as two `supplyLineSqueeze` stacks granted at year end, not as a
+    // The cut travels as two `warRequisition` stacks granted at year end, not as a
     // board lookup during beginYear, so it is visible in the status bar.
     const afterStrike = resolveEndOfYearPenalties(s0);
-    expect(afterStrike.playerStatuses.filter((p) => p.templateId === "supplyLineSqueeze")).toHaveLength(2);
+    expect(afterStrike.playerStatuses.filter((p) => p.templateId === "warRequisition")).toHaveLength(2);
     const s1 = beginYear({ ...afterStrike, turn: afterStrike.turn + 1 });
     expect(s1.resources.funding).toBe(0);
   });

@@ -542,8 +542,8 @@ export const eventTemplates: Record<EventTemplateId, EventTemplate> = {
     tags: ["antiFrenchAlliance"],
     /** Two stacks = next year's funding income -2 (floored at 0), re-granted every year it sits. */
     penaltiesIfUnresolved: [
-      { kind: "addPlayerStatus", templateId: "supplyLineSqueeze", turns: 1 },
-      { kind: "addPlayerStatus", templateId: "supplyLineSqueeze", turns: 1 },
+      { kind: "addPlayerStatus", templateId: "warRequisition", turns: 1 },
+      { kind: "addPlayerStatus", templateId: "warRequisition", turns: 1 },
     ],
   },
 };
