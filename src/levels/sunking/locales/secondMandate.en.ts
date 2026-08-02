@@ -49,7 +49,7 @@ export const messagesEnSecondMandate = {
   "event.revocationNantes.history":
     "In 1598, Henry IV issued the Edict of Nantes after decades of civil war between Catholics and Protestants. It was not a program of equality, but a political settlement: Catholicism stayed the state religion, while Huguenots kept limited worship rights, legal protections, and a few fortified places for security. By the later seventeenth century, however, the monarchy increasingly linked religious conformity to administrative obedience and dynastic authority. Fiscal strain, frontier war, and confessional policing reinforced each other, and Protestant communities were recast by many officials as a standing internal risk. The 1685 revocation ended that compromise. Large numbers of Huguenots fled to England, the Dutch Republic, Brandenburg, Switzerland, and beyond, carrying capital, technical skills, and commercial networks with them; those who remained often shifted to clandestine worship and underground mutual-aid circles, which kept the conflict alive inside the kingdom.",
   "event.revocationNantes.desc":
-    "A Continued event that stacks two Loss of Authority statuses for 1 turn (draw -2 next year) while unresolved. The tolerance route softens immediate confrontation but can reintroduce recurring confessional crises; the crackdown route grants stronger control tools but forces you to absorb periodic resurgence and longer governance drag.",
+    "A Continued event that stacks two Confessional Deadlock statuses for 1 turn (draw -2 next year) while unresolved. The tolerance route softens immediate confrontation but can reintroduce recurring confessional crises; the crackdown route grants stronger control tools but forces you to absorb periodic resurgence and longer governance drag.",
   "event.leagueOfAugsburg.name": "League of Augsburg Forms",
   "event.leagueOfAugsburg.history":
     "After the 1680s, French expansion along the Rhine and into the Low Countries fed sustained alarm among the neighboring courts. Versailles was not a passive spectator: royal policy leaned on the Chambers of Reunion to fold strategic Rhineland towns (including Strasbourg) into France through juridical fait accompli, backed by garrisons, recalled embassies, pensions, and thinly veiled pressure on Imperial electors and free cities—trying to widen cracks in the Empire's constitution before neighbors could synchronize a response. Confessional hardening after the Edict of Nantes was revoked let Dutch and north-German Protestants read territorial nibbling and religious intimidation as one combined threat. In 1686, princes of the Holy Roman Empire, the Habsburgs, and German states aligned at Augsburg, and over the following years England, the Dutch Republic, and Spain progressively joined the anti-French coordination: the League was a collective answer to that French activism, and it forced Versailles to treat \"breaking the ring\" as a standing bill paid in subsidies, secret diplomacy, and frontier posturing. For Louis XIV this was no longer a passing diplomatic friction: the European balance was hardening into an institutionalized alliance constraint on France.",
@@ -74,12 +74,12 @@ export const messagesEnSecondMandate = {
   "event.nobleResentment.history":
     "Great families resented lost military clienteles and new fiscal audits that recalled Mazarin's levies.",
   "event.nobleResentment.desc":
-    "Elite resistance grows at court and in the provinces: pay 2 Funding or Intervention, or lose 1 Power and gain Loss of Authority for 2 turns.",
+    "Elite resistance grows at court and in the provinces: pay 2 Funding or Intervention, or lose 1 Power and gain Noble Grudge for 2 turns.",
   "event.provincialNoncompliance.name": "Provincial Noncompliance",
   "event.provincialNoncompliance.history":
     "Parlements and provincial estates still tested intendants against charters and tax immunities, slowing central policy on the ground.",
   "event.provincialNoncompliance.desc":
-    "Local officials stall implementation: pay 2 Funding or gain Loss of Authority for 3 turns plus another for 1 turn: draw -2 next year, then draw -1 in each of the next two years.",
+    "Local officials stall implementation: pay 2 Funding or gain Provincial Foot-Dragging for 3 turns plus another for 1 turn: draw -2 next year, then draw -1 in each of the next two years.",
   "event.risingGrainPrices.name": "Rising Grain Prices",
   "event.risingGrainPrices.history":
     "Bad harvests and royal grain politics could turn bread riots into political crises within days.",
@@ -94,17 +94,17 @@ export const messagesEnSecondMandate = {
   "event.frontierGarrisons.history":
     "Rhine and Low Countries garrisons soaked budgets during the league wars of the 1680s–1690s, making fortresses a standing drain on the treasury.",
   "event.frontierGarrisons.desc":
-    "Border garrisons consume revenue: pay 3 Funding or use Royal Intervention / Diplomatic Intervention; any successful resolve lowers Europe Alert progress by 1 while alert is active. If ignored, lose 1 Treasury and gain Loss of Authority for 1 turn (draw -1 next year).",
+    "Border garrisons consume revenue: pay 3 Funding or use Royal Intervention / Diplomatic Intervention; any successful resolve lowers Europe Alert progress by 1 while alert is active. If ignored, lose 1 Treasury and gain Frontier Watch for 1 turn (draw -1 next year).",
   "event.tradeDisruption.name": "Trade Disruption",
   "event.tradeDisruption.history":
     "Anglo-Dutch convoy war and privateering squeezed receipts from Atlantic routes and raised risk for every merchant sailing.",
   "event.tradeDisruption.desc":
-    "Sea lanes and convoy risk cut into policy bandwidth: pay 1 Funding or stack two Loss of Authority statuses for 1 turn (draw -2 next year).",
+    "Sea lanes and convoy risk cut into policy bandwidth: pay 1 Funding or stack two Sea-Lane Disarray statuses for 1 turn (draw -2 next year).",
   "event.embargoCoalition.name": "Embargo Coalition",
   "event.embargoCoalition.history":
     "Grand Alliance navies tightened maritime cordons as coalition war became routine, turning blockade and tariff coordination into standard containment tools.",
   "event.embargoCoalition.desc":
-    "Maritime restrictions tighten around French commerce: pay floor(Treasury/8)+1 Funding or use Royal Intervention / Diplomatic Intervention; any successful resolve lowers Europe Alert progress by 1 while alert is active. If ignored, lose 1 Treasury and gain Loss of Authority for 1 turn (draw -1 next year).",
+    "Maritime restrictions tighten around French commerce: pay floor(Treasury/8)+1 Funding or use Royal Intervention / Diplomatic Intervention; any successful resolve lowers Europe Alert progress by 1 while alert is active. If ignored, lose 1 Treasury and gain Embargo Pressure for 1 turn (draw -1 next year).",
   "event.mercenaryRaiders.name": "Mercenary Raiders",
   "event.mercenaryRaiders.history":
     "Between campaigns, free companies and paid raiders still haunted frontier marches, testing royal control over the borderlands.",
@@ -143,7 +143,7 @@ export const messagesEnSecondMandate = {
   "event.warWeariness.history":
     "By the Nine Years' War even victory parades could not mask fiscal strain at home.",
   "event.warWeariness.desc":
-    "Long conflict exhausts support: pay 3 Funding or Intervention, or lose 1 Legitimacy and gain Loss of Authority for 2 turns.",
+    "Long conflict exhausts support: pay 3 Funding or Intervention, or lose 1 Legitimacy and gain War Exhaustion for 2 turns.",
   "event.jesuitPatronage.name": "Jesuit Patronage",
   "event.jesuitPatronage.history":
     "Since 1675, Jesuit confessors like Père de La Chaise have bound the Society to the Crown; elite collèges train royal-aligned elites and counter Jansenism, but stir Gallican and Jansenist unease.",

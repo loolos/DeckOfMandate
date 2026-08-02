@@ -70,6 +70,54 @@ describe("delayed effects are always statuses", () => {
     }
   });
 
+  /**
+   * Each unresolved-event penalty carries its own status, so the status bar reads back as
+   * "which event did I let slide". Sharing one status across events is allowed only where
+   * the events' narratives genuinely coincide — `powerLeak` (权力流失) is authority draining
+   * to factional obstruction, which is exactly what these two events are about.
+   */
+  const SHARED_STATUS_ALLOWLIST: Readonly<Record<string, readonly string[]>> = {
+    powerLeak: ["politicalGridlock", "majorCrisis"],
+  };
+
+  it("gives every delayed-penalty event its own status unless the narrative is shared", () => {
+    const grantedBy = new Map<string, string[]>();
+    for (const [eventId, tmpl] of Object.entries(eventTemplates)) {
+      for (const effect of tmpl.penaltiesIfUnresolved) {
+        if (effect.kind !== "addPlayerStatus") continue;
+        const events = grantedBy.get(effect.templateId) ?? [];
+        if (!events.includes(eventId)) events.push(eventId);
+        grantedBy.set(effect.templateId, events);
+      }
+    }
+    expect(grantedBy.size).toBeGreaterThan(5);
+
+    for (const [statusId, events] of grantedBy) {
+      if (events.length === 1) continue;
+      expect(
+        SHARED_STATUS_ALLOWLIST[statusId],
+        `status "${statusId}" is granted by ${events.join(", ")} — give each event its own status, `
+          + "or add it to SHARED_STATUS_ALLOWLIST with the narrative reason",
+      ).toBeTruthy();
+      expect([...events].sort()).toEqual([...(SHARED_STATUS_ALLOWLIST[statusId] ?? [])].sort());
+    }
+  });
+
+  it("keeps the allowlisted narrative sharing accurate", () => {
+    for (const [statusId, events] of Object.entries(SHARED_STATUS_ALLOWLIST)) {
+      for (const eventId of events) {
+        const tmpl = eventTemplates[eventId as keyof typeof eventTemplates];
+        expect(tmpl, `allowlist names unknown event ${eventId}`).toBeTruthy();
+        expect(
+          tmpl.penaltiesIfUnresolved.some(
+            (e) => e.kind === "addPlayerStatus" && e.templateId === statusId,
+          ),
+          `${eventId} no longer grants ${statusId}; drop it from SHARED_STATUS_ALLOWLIST`,
+        ).toBe(true);
+      }
+    }
+  });
+
   it("every status template renders a concrete effect the status bar can describe", () => {
     for (const [id, tmpl] of Object.entries(statusTemplates)) {
       if (tmpl.kind === "blockCardTag") {
