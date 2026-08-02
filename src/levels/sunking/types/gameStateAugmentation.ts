@@ -295,7 +295,12 @@ declare module "../../../types/game" {
     /** Chapter 3: max opponent-cost budget per opponent phase (fixed at 3 in this version). */
     opponentStrength: number;
     /** Chapter 3: true once Great Power Encirclement has applied its high-resource bonus. */
-    greatPowerEncirclementHighPressureApplied: boolean;
+    /**
+     * Opponent-strength this campaign has already granted through `greatPowerEncirclement`
+     * (0 when the status is not held). The ladder only ever tops up, so this records how far
+     * up it the run has climbed; reset to 0 when the rival row leaves the board.
+     */
+    greatPowerEncirclementStrengthApplied: number;
     /** Chapter 3: after `successionCrisis` resolves; enables opponent draw/play. */
     opponentHabsburgUnlocked: boolean;
     /**

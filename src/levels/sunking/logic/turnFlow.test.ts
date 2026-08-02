@@ -769,7 +769,7 @@ describe("beginYear + playerStatuses", () => {
     ).toBe(true);
   });
 
-  it("third mandate adds great-power encirclement when Habsburg row exists and core-resource sum > 50", () => {
+  it("third mandate adds great-power encirclement when Habsburg row exists and core-resource sum > 45", () => {
     const started = createInitialState(902_020, "thirdMandate");
     const s0: GameState = {
       ...started,
@@ -790,7 +790,7 @@ describe("beginYear + playerStatuses", () => {
     expect(s1.opponentStrength).toBe(4);
   });
 
-  it("third mandate immediately applies both encirclement strength bumps when core-resource sum > 75", () => {
+  it("third mandate immediately applies every encirclement tier the core-resource sum has cleared", () => {
     const started = createInitialState(902_022, "thirdMandate");
     const s0: GameState = {
       ...started,
@@ -808,11 +808,12 @@ describe("beginYear + playerStatuses", () => {
     };
     const s1 = beginYear(s0);
     expect(s1.playerStatuses.some((st) => st.templateId === "greatPowerEncirclement")).toBe(true);
-    expect(s1.opponentStrength).toBe(5);
-    expect(s1.greatPowerEncirclementHighPressureApplied).toBe(true);
+    // Sum is 76: over 45, 60 and 75, so +3 in one go.
+    expect(s1.opponentStrength).toBe(6);
+    expect(s1.greatPowerEncirclementStrengthApplied).toBe(3);
   });
 
-  it("third mandate applies the >75 encirclement strength bump once after the status already exists", () => {
+  it("third mandate tops the ladder up once when a higher tier is reached with the status already held", () => {
     const started = createInitialState(902_023, "thirdMandate");
     const encirclementStatus = {
       instanceId: "st_gp",
@@ -825,6 +826,7 @@ describe("beginYear + playerStatuses", () => {
       ...started,
       resources: { ...started.resources, treasuryStat: 30, power: 24, legitimacy: 22 },
       opponentStrength: 4,
+      greatPowerEncirclementStrengthApplied: 1,
       opponentHabsburgUnlocked: true,
       opponentDeck: [],
       opponentHand: [],
@@ -837,10 +839,11 @@ describe("beginYear + playerStatuses", () => {
       proceduralEventSequence: [],
     };
     const s1 = beginYear(s0);
-    expect(s1.opponentStrength).toBe(5);
-    expect(s1.greatPowerEncirclementHighPressureApplied).toBe(true);
+    // Already credited with tier 1; sum 76 is tier 3, so it tops up by 2 and then holds.
+    expect(s1.opponentStrength).toBe(6);
+    expect(s1.greatPowerEncirclementStrengthApplied).toBe(3);
     const s2 = beginYear({ ...s1, phase: "action" });
-    expect(s2.opponentStrength).toBe(5);
+    expect(s2.opponentStrength).toBe(6);
   });
 
   it("third mandate does not add great-power encirclement when Habsburg row is absent", () => {

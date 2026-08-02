@@ -1,5 +1,6 @@
 import { getLevelDef } from "../../../data/levels";
 import { EVENT_SLOT_ORDER, type EventInstance } from "../../types/event";
+import type { Effect } from "../../types/effect";
 import type { GameState } from "../../../types/game";
 import { appendActionLog } from "./actionLog";
 import { enforceHuguenotContainmentInvariant, addCardsToDeck } from "./cardRuntime";
@@ -28,8 +29,11 @@ const RELIGIOUS_TENSION_EVENTS: readonly EventInstance["templateId"][] = [
   "arminianTension",
   "huguenotTension",
 ];
-const GREAT_POWER_ENCIRCLEMENT_TRIGGER_SUM = 50;
-const GREAT_POWER_ENCIRCLEMENT_HIGH_PRESSURE_SUM = 75;
+/**
+ * Encirclement ladder: each threshold the core-resource sum strictly exceeds is worth one
+ * more point of Habsburg opponent strength, so >45 / >60 / >75 / >90 map to +1 / +2 / +3 / +4.
+ */
+const GREAT_POWER_ENCIRCLEMENT_TIER_SUMS: readonly number[] = [45, 60, 75, 90];
 
 /** Sun King: unspent funding is lost at year end before victory evaluation. */
 export function applyEndYearResourceResetHook(state: GameState): GameState {
@@ -182,10 +186,19 @@ function sumCoreResources(state: GameState): number {
   return state.resources.treasuryStat + state.resources.power + state.resources.legitimacy;
 }
 
+/** How much opponent strength the current core-resource sum is worth (0 when below the first tier). */
+export function greatPowerEncirclementTier(resourceSum: number): number {
+  return GREAT_POWER_ENCIRCLEMENT_TIER_SUMS.filter((threshold) => resourceSum > threshold).length;
+}
+
 /**
- * Chapter 3 only: once core resources exceed 50 while the Habsburg rival row is present,
- * grant a permanent "greatPowerEncirclement" status and +1 opponent strength until Utrecht ends the war.
- * If that pressure later crosses 75, the same status applies one additional opponent-strength bump.
+ * Chapter 3 only: while the Habsburg rival row is on the board, a growing France provokes a
+ * growing coalition. Core resources above 45 / 60 / 75 / 90 grant a permanent
+ * "greatPowerEncirclement" status worth +1 / +2 / +3 / +4 Habsburg opponent strength.
+ *
+ * The ladder only climbs: spending back down below a threshold keeps the strength already
+ * granted, so the player cannot dump resources before the opponent phase to weaken the rival.
+ * Everything granted here is released when the rival row leaves the board (Utrecht).
  */
 export function syncGreatPowerEncirclementStatusHook(state: GameState): GameState {
   if (state.levelId !== THIRD_MANDATE_LEVEL_ID) return state;
@@ -195,26 +208,21 @@ export function syncGreatPowerEncirclementStatusHook(state: GameState): GameStat
     return {
       ...state,
       playerStatuses: state.playerStatuses.filter((s) => s.templateId !== "greatPowerEncirclement"),
-      greatPowerEncirclementHighPressureApplied: false,
+      greatPowerEncirclementStrengthApplied: 0,
     };
   }
-  const resourceSum = sumCoreResources(state);
-  const highPressureActive = resourceSum > GREAT_POWER_ENCIRCLEMENT_HIGH_PRESSURE_SUM;
-  if (hasStatus && highPressureActive && !state.greatPowerEncirclementHighPressureApplied) {
-    const s = applyEffects(state, [{ kind: "modOpponentStrength", delta: 1 }]);
-    return { ...s, greatPowerEncirclementHighPressureApplied: true };
+  if (!opponentRowPresent) return state;
+
+  const tier = greatPowerEncirclementTier(sumCoreResources(state));
+  const applied = hasStatus ? state.greatPowerEncirclementStrengthApplied : 0;
+  const topUp = tier - applied;
+  if (topUp <= 0) return state;
+
+  const effects: Effect[] = [];
+  if (!hasStatus) {
+    effects.push({ kind: "addPlayerStatus", templateId: "greatPowerEncirclement", turns: 99 });
   }
-  if (
-    hasStatus
-    || !opponentRowPresent
-    || resourceSum <= GREAT_POWER_ENCIRCLEMENT_TRIGGER_SUM
-  ) {
-    return state;
-  }
-  const strengthDelta = highPressureActive ? 2 : 1;
-  const s = applyEffects(state, [
-    { kind: "addPlayerStatus", templateId: "greatPowerEncirclement", turns: 99 },
-    { kind: "modOpponentStrength", delta: strengthDelta },
-  ]);
-  return { ...s, greatPowerEncirclementHighPressureApplied: highPressureActive };
+  effects.push({ kind: "modOpponentStrength", delta: topUp });
+  const s = applyEffects(state, effects);
+  return { ...s, greatPowerEncirclementStrengthApplied: tier };
 }

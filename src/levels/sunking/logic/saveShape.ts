@@ -8,6 +8,7 @@ export function campaignSaveStateShapeValid(s: Record<string, unknown>): boolean
     "utrechtTreatyCountdown" in s &&
     "utrechtSettlementTier" in s &&
     "successionOutcomeTier" in s &&
-    "greatPowerEncirclementHighPressureApplied" in s
+    // Legacy key accepted so saves written before the tiered encirclement ladder still hydrate.
+    ("greatPowerEncirclementStrengthApplied" in s || "greatPowerEncirclementHighPressureApplied" in s)
   );
 }

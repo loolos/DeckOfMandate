@@ -118,8 +118,16 @@ export function normalizeGameState(state: GameState): GameState {
   if (typeof s.opponentStrength !== "number" || !Number.isFinite(s.opponentStrength)) {
     s = { ...s, opponentStrength: 3 };
   }
-  if (typeof s.greatPowerEncirclementHighPressureApplied !== "boolean") {
-    s = { ...s, greatPowerEncirclementHighPressureApplied: false };
+  if (typeof s.greatPowerEncirclementStrengthApplied !== "number" || !Number.isFinite(s.greatPowerEncirclementStrengthApplied)) {
+    /**
+     * Legacy saves carried a `greatPowerEncirclementHighPressureApplied` boolean from the
+     * two-step ladder: holding the status meant +1, and the flag meant a second +1 on top.
+     */
+    const legacyFlag = (s as unknown as Record<string, unknown>).greatPowerEncirclementHighPressureApplied;
+    const holdsStatus = Array.isArray(s.playerStatuses)
+      && s.playerStatuses.some((p) => p?.templateId === "greatPowerEncirclement");
+    const migrated = holdsStatus ? (legacyFlag === true ? 2 : 1) : 0;
+    s = { ...s, greatPowerEncirclementStrengthApplied: migrated };
   }
   if (typeof s.opponentHabsburgUnlocked !== "boolean") {
     s = { ...s, opponentHabsburgUnlocked: false };
