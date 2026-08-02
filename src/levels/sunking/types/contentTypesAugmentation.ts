@@ -97,6 +97,17 @@ declare module "../../types/status" {
     grandAllianceInfiltration: true;
     supplyLineSqueeze: true;
     usurpationMobilization: true;
+    edictBacklog: true;
+    provincialFootDragging: true;
+    nobleGrudge: true;
+    warExhaustion: true;
+    frontierWatch: true;
+    seaLaneDisarray: true;
+    embargoPressure: true;
+    confessionalDeadlock: true;
+    customsSnarl: true;
+    convoyDetention: true;
+    warRequisition: true;
   }
 }
 

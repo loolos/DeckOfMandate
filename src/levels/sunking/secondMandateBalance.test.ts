@@ -145,8 +145,8 @@ describe("secondMandate balance data", () => {
     expect(getEventTemplate("mercenaryRaiders").tags).toEqual(["antiFrenchAlliance"]);
     expect(getEventTemplate("localWar").tags).toEqual(["antiFrenchAlliance"]);
     expect(getEventTemplate("provincialNoncompliance").penaltiesIfUnresolved).toEqual([
-      { kind: "addPlayerStatus", templateId: "powerLeak", turns: 3 },
-      { kind: "addPlayerStatus", templateId: "powerLeak", turns: 1 },
+      { kind: "addPlayerStatus", templateId: "provincialFootDragging", turns: 3 },
+      { kind: "addPlayerStatus", templateId: "provincialFootDragging", turns: 1 },
     ]);
     expect(getEventTemplate("courtScandal").solve).toEqual({
       kind: "funding",
@@ -272,8 +272,8 @@ describe("secondMandate balance data", () => {
     expect(getEventTemplate("revocationNantes").solve).toEqual({ kind: "nantesPolicyChoice" });
     expect(getEventTemplate("revocationNantes").crisisPersistence).toBe("continued");
     expect(getEventTemplate("revocationNantes").penaltiesIfUnresolved).toEqual([
-      { kind: "addPlayerStatus", templateId: "powerLeak", turns: 1 },
-      { kind: "addPlayerStatus", templateId: "powerLeak", turns: 1 },
+      { kind: "addPlayerStatus", templateId: "confessionalDeadlock", turns: 1 },
+      { kind: "addPlayerStatus", templateId: "confessionalDeadlock", turns: 1 },
     ]);
     expect(getEventTemplate("jansenistTension").solve).toEqual({ kind: "funding", amount: 2 });
     expect(getEventTemplate("arminianTension").solve).toEqual({ kind: "funding", amount: 1 });

@@ -70,6 +70,64 @@ describe("delayed effects are always statuses", () => {
     }
   });
 
+  /**
+   * Every delayed penalty carries its own status, so a chip in the status bar reads back as
+   * "which event did I let slide / which rival card just hit me". Sharing one status across
+   * sources is allowed only where the narratives genuinely coincide, and each share has to be
+   * spelled out here with its reason.
+   */
+  const SHARED_STATUS_ALLOWLIST: Readonly<Record<string, readonly string[]>> = {
+    /** Both are the crown's authority draining away to factional obstruction at home. */
+    powerLeak: ["politicalGridlock", "majorCrisis"],
+    /** Both are an outside blockade cutting the chain that moves specie and stores. */
+    supplyLineSqueeze: ["habsburgAngloDutchMaritimeInterdiction", "habsburgRhineMagazineEmbargo"],
+  };
+
+  /** Status id -> the events and opponent cards whose delayed penalty grants it. */
+  function collectDelayedStatusSources(): Map<string, string[]> {
+    const grantedBy = new Map<string, string[]>();
+    const record = (statusId: string, sourceId: string) => {
+      const sources = grantedBy.get(statusId) ?? [];
+      if (!sources.includes(sourceId)) sources.push(sourceId);
+      grantedBy.set(statusId, sources);
+    };
+    for (const [eventId, tmpl] of Object.entries(eventTemplates)) {
+      for (const effect of tmpl.penaltiesIfUnresolved) {
+        if (effect.kind === "addPlayerStatus") record(effect.templateId, eventId);
+      }
+    }
+    for (const cardId of Object.keys(cardTemplates) as CardTemplateId[]) {
+      if (!cardTemplates[cardId].tags.includes("opponent")) continue;
+      for (const effect of opponentTemplatesToAppliedEffects([cardId])) {
+        if (effect.kind === "addPlayerStatus") record(effect.templateId, cardId);
+      }
+    }
+    return grantedBy;
+  }
+
+  it("gives every delayed penalty its own status unless the narrative is shared", () => {
+    const grantedBy = collectDelayedStatusSources();
+    expect(grantedBy.size).toBeGreaterThan(8);
+
+    for (const [statusId, sources] of grantedBy) {
+      if (sources.length === 1) continue;
+      expect(
+        SHARED_STATUS_ALLOWLIST[statusId],
+        `status "${statusId}" is granted by ${sources.join(", ")} — give each source its own `
+          + "status, or add it to SHARED_STATUS_ALLOWLIST with the narrative reason",
+      ).toBeTruthy();
+      expect([...sources].sort()).toEqual([...(SHARED_STATUS_ALLOWLIST[statusId] ?? [])].sort());
+    }
+  });
+
+  it("keeps the allowlisted narrative sharing accurate", () => {
+    const grantedBy = collectDelayedStatusSources();
+    for (const [statusId, sources] of Object.entries(SHARED_STATUS_ALLOWLIST)) {
+      expect([...(grantedBy.get(statusId) ?? [])].sort(), `SHARED_STATUS_ALLOWLIST["${statusId}"] is stale`)
+        .toEqual([...sources].sort());
+    }
+  });
+
   it("every status template renders a concrete effect the status bar can describe", () => {
     for (const [id, tmpl] of Object.entries(statusTemplates)) {
       if (tmpl.kind === "blockCardTag") {

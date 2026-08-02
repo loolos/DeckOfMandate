@@ -132,14 +132,14 @@ export const messagesFrThirdMandate = {
   "card.habsburgImperialCustomsDelay.background":
     "Ports impériaux et péages rhénans usent d’inspections, de saisies et de bureaux de taxe provisoires pour ralentir le commerce français, étranglant la trésorerie royale sans bataille décisive.",
   "card.habsburgImperialCustomsDelay.desc":
-    "Coût adverse 2. Immédiat : Trésor −1 et +1 Fardeau fiscal à votre pioche (position aléatoire) ; différé : gagnez Perte d’autorité pendant 1 tour (l’année suivante, tentatives de pioche −1, minimum 1).",
+    "Coût adverse 2. Immédiat : Trésor −1 et +1 Fardeau fiscal à votre pioche (position aléatoire) ; différé : gagnez Enlisement douanier pendant 1 tour (l’année suivante, tentatives de pioche −1, minimum 1).",
   "card.habsburgImperialCustomsDelay.opponentHistory":
     "Les retards douaniers étranglent la trésorerie sans bataille décisive. En jeu : Trésor −1, +1 Fardeau fiscal, et tentatives de pioche −1 l’année suivante (min 1).",
   "card.habsburgAngloDutchMaritimeInterdiction.name": "Retenue anglo-hollandaise",
   "card.habsburgAngloDutchMaritimeInterdiction.background":
     "Lettres de marque, convois plus serrés et saisies sur la Manche et la mer du Nord retardent lettres de change et caisses militaires : la liquidité disponible pour le trésor de guerre de Versailles s’amincit.",
   "card.habsburgAngloDutchMaritimeInterdiction.desc":
-    "Coût adverse 1. Immédiat : Pouvoir −1 ; différé : gagnez Transferts entravés pendant 1 tour (l’année suivante, le Financement issu du Trésor au début d’année est réduit de 1, pas en dessous de 0) et Perte d’autorité pendant 1 tour (tentatives de pioche −1, minimum 1).",
+    "Coût adverse 1. Immédiat : Pouvoir −1 ; différé : gagnez Transferts entravés pendant 1 tour (l’année suivante, le Financement issu du Trésor au début d’année est réduit de 1, pas en dessous de 0) et Détention des convois pendant 1 tour (tentatives de pioche −1, minimum 1).",
   "card.habsburgAngloDutchMaritimeInterdiction.opponentHistory":
     "Lettres de marque, convois plus serrés et saisies sur la Manche et la mer du Nord retardent lettres de change et caisses : Versailles voit sa liquidité opérationnelle amincie. En jeu : Pouvoir −1, Financement depuis le Trésor l’année suivante −1 (min 0 au total) et tentatives de pioche −1 (min 1).",
   "card.habsburgRhineMagazineEmbargo.name": "Embargo des magasins",

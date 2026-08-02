@@ -58,7 +58,7 @@ export const sunkingCoreGameContentZh = {
   "event.publicUnrest.desc": "仅可用「干预」解决，否则合法性 -1。",
   "event.administrativeDelay.name": "官僚拖延",
   "event.administrativeDelay.desc":
-    "地方官员拖延执行宫廷新令：支付 1 经费，否则获得「权力流失」1 回合（下一回合抽牌 -1，至少仍抽 1）。",
+    "地方官员拖延执行宫廷新令：支付 1 经费，否则获得「政令积压」1 回合（下一回合抽牌 -1，至少仍抽 1）。",
   "event.administrativeDelay.history":
     "高等法院、省三级会议与包税利益集团常以特权与惯例为由，拖延或改写中央敕令，让王命在路上层层变形。",
   "event.tradeOpportunity.name": "殖民贸易机遇",
@@ -117,8 +117,52 @@ export const sunkingCoreGameContentZh = {
     "在西班牙王位继承战争中，凡尔赛的扩张势头与波旁王朝的继承布局，被欧洲多国视为权力失衡信号。英国、荷兰、萨伏依与葡萄牙因此向哈布斯堡持续输送财政、海军与陆军协同支持，把局部战场推向更广泛的围堵格局。只要乌德勒支和约尚未终结战争，这股外援就会持续抬高哈布斯堡阵营的作战能力。",
   "status.greatPowerEncirclement.desc":
     "第三关中，哈布斯堡对手行存在且财政、权力、合法性合计超过 45 时获得此状态。合计超过 45 / 60 / 75 / 90 分别对应对手实力 +1 / +2 / +3 / +4；每一档只结算一次，且只升不降——之后花掉资源跌回低档也不会退还已加的实力。战争结束前不会解除。",
+  "status.edictBacklog.name": "政令积压",
+  "status.edictBacklog.history":
+    "高等法院的注册权、省三级会议的陈情与包税人的自利，把王命拖成一叠迟迟不批的公文。抄录、复核与解释的往返之间，中央的一年只够办成半年的事。",
+  "status.edictBacklog.desc": "生效期间回合开始时抽牌尝试 -1（仍至少抽 1）；可叠加多层。",
+  "status.provincialFootDragging.name": "阳奉阴违",
+  "status.provincialFootDragging.history":
+    "总督与地方法官不会公开抗命，他们只是把敕令读作「待议」：先请示，再勘察，最后按旧例办。指令从未被驳回，只是从未落地。",
+  "status.provincialFootDragging.desc": "生效期间回合开始时抽牌尝试 -1（仍至少抽 1）；可叠加多层。",
+  "status.nobleGrudge.name": "勋贵积怨",
+  "status.nobleGrudge.history":
+    "恩庇是双向契约。当宫廷收紧荐任与年金，被冷落的大族不必举兵——只要在征税、征兵与传令的每一环上慢半拍，王权就会感到窒息。",
+  "status.nobleGrudge.desc": "生效期间回合开始时抽牌尝试 -1（仍至少抽 1）；可叠加多层。",
+  "status.warExhaustion.name": "兵疲民困",
+  "status.warExhaustion.history":
+    "连年征伐之后，教区交不出壮丁，市镇凑不出军税，伤兵与逃兵沿路返乡。战争仍在继续，支撑战争的社会却已先一步疲惫。",
+  "status.warExhaustion.desc": "生效期间回合开始时抽牌尝试 -1（仍至少抽 1）；可叠加多层。",
+  "status.frontierWatch.name": "边备牵制",
+  "status.frontierWatch.history":
+    "沃邦的棱堡链锁住了边境，也锁住了王国的注意力：粮秣、冬营与换防的公文常年压在军政衙门案头，内政只能往后排。",
+  "status.frontierWatch.desc": "生效期间回合开始时抽牌尝试 -1（仍至少抽 1）；可叠加多层。",
+  "status.seaLaneDisarray.name": "航路失序",
+  "status.seaLaneDisarray.history":
+    "私掠船与护航队的博弈让商船改道、延期或滞港；税关报单、货主诉状与保险纠纷随之堆积，行政节奏被海上的不确定性牵着走。",
+  "status.seaLaneDisarray.desc": "生效期间回合开始时抽牌尝试 -1（仍至少抽 1）；可叠加多层。",
+  "status.embargoPressure.name": "禁运压迫",
+  "status.embargoPressure.history":
+    "同盟以关税表、通行证与黑名单协同封锁法国货物。抵制不必击沉一艘船，只要让每一笔交易都多绕几道手续，王国的商政机器就会跟着变慢。",
+  "status.embargoPressure.desc": "生效期间回合开始时抽牌尝试 -1（仍至少抽 1）；可叠加多层。",
+  "status.confessionalDeadlock.name": "宗务悬置",
+  "status.confessionalDeadlock.history":
+    "敕令的存废迟迟不决，主教、高等法院与地方教团各执一词；改宗名册、教产争讼与礼拜纠纷层层上呈，把王命的日程挤成了教务的日程。",
+  "status.confessionalDeadlock.desc": "生效期间回合开始时抽牌尝试 -1（仍至少抽 1）；可叠加多层。",
+  "status.customsSnarl.name": "通关壅塞",
+  "status.customsSnarl.history":
+    "帝国关卡把「查验」变成武器：法国货与军需在莱茵与低地的税关上被反复开箱、估价、补办通行文书。没有一船被没收，但每一船都要多花几个月。",
+  "status.customsSnarl.desc": "生效期间回合开始时抽牌尝试 -1（仍至少抽 1）；可叠加多层。",
+  "status.convoyDetention.name": "商船滞押",
+  "status.convoyDetention.history":
+    "英荷分舰队不必击沉法国商船，只要拦下来押进本国港口，交给捕获法庭慢慢审。船东、保险人与领事的往返陈情，最终都会堆到凡尔赛的案头。",
+  "status.convoyDetention.desc": "生效期间回合开始时抽牌尝试 -1（仍至少抽 1）；可叠加多层。",
+  "status.warRequisition.name": "就地征发",
+  "status.warRequisition.history":
+    "军队就地征粮、征夫与征车，等于先把本该入库的税源吃掉一轮。军需官开出的收据或许战后能兑现，本年度的国库却只能记一笔空账。",
+  "status.warRequisition.desc": "生效期间回合开始时经费收入 -1（可叠加多层；收入最低为 0）。",
   "status.supplyLineSqueeze.name": "转输受阻",
-  "status.supplyLineSqueeze.history": "封锁、禁运与战场就地征发会切断税银与军需的转输链条，使国库能兑现的现钱缩水。",
+  "status.supplyLineSqueeze.history": "封锁与禁运不必击沉船队，只要掐断税银与军需的转输链条——押金、汇票与粮秣合同在半路停摆，国库账面上的数字就兑不成手里的现钱。",
   "status.supplyLineSqueeze.desc": "生效期间回合开始时经费收入 -1（可叠加多层；收入最低为 0）。",
   "status.usurpationMobilization.name": "诏书动员",
   "status.usurpationMobilization.history": "非常规继位诏书一经颁下，宫廷与外廷会被迫加速表态，短期内文书与人事调度异常密集。",

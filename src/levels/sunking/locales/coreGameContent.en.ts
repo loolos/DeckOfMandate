@@ -64,7 +64,7 @@ export const sunkingCoreGameContentEn = {
   "event.administrativeDelay.history":
     "Provincial estates, parlements, and tax farmers often tested new edicts against local privilege, so royal orders bent and slowed on the road out of Paris.",
   "event.administrativeDelay.desc":
-    "Provincial officials slow-walk new orders from the court: pay 1 Funding or gain Loss of Authority for 1 turn (draw attempts -1 next turn, min 1 draw).",
+    "Provincial officials slow-walk new orders from the court: pay 1 Funding or gain Edict Backlog for 1 turn (draw attempts -1 next turn, min 1 draw).",
   "event.tradeOpportunity.name": "Colonial Trade Boom",
   "event.tradeOpportunity.history":
     "Atlantic and colonial routes tied sugar, tobacco, and shipping capital to Bordeaux and La Rochelle, and merchants petitioned the crown for charters and convoy support.",
@@ -125,8 +125,52 @@ export const sunkingCoreGameContentEn = {
     "During the War of the Spanish Succession, Bourbon dynastic expansion from Versailles was increasingly viewed as a continental balance-of-power threat. Britain, the Dutch Republic, Savoy, and Portugal therefore coordinated money, fleets, and field support for the Habsburg camp, turning a dynastic dispute into a broader coalition war. Until the Utrecht settlement closes the conflict, that external backing keeps lifting Habsburg war capacity.",
   "status.greatPowerEncirclement.desc":
     "Chapter 3: if the Habsburg opponent row is present and Treasury + Power + Legitimacy exceeds 45, gain this status. Totals above 45 / 60 / 75 / 90 are worth Habsburg opponent budget +1 / +2 / +3 / +4; each tier pays out once and the ladder only climbs — spending back down never refunds strength already granted. It does not clear while the war lasts.",
+  "status.edictBacklog.name": "Edict Backlog",
+  "status.edictBacklog.history":
+    "Parlement registration rights, provincial estates' remonstrances and tax farmers' self-interest together turn royal orders into a pile of unsigned paper. Between copying, review and clarification, a year at the centre gets half a year of work done.",
+  "status.edictBacklog.desc": "While active, draw attempts at turn start -1 (min 1 draw); stacks.",
+  "status.provincialFootDragging.name": "Provincial Foot-Dragging",
+  "status.provincialFootDragging.history":
+    "Governors and local magistrates never refuse outright. They simply read an edict as “under consideration”: first a query, then a survey, then business as usual. The order is never rejected, only never carried out.",
+  "status.provincialFootDragging.desc": "While active, draw attempts at turn start -1 (min 1 draw); stacks.",
+  "status.nobleGrudge.name": "Noble Grudge",
+  "status.nobleGrudge.history":
+    "Patronage is a two-way bargain. When the court tightens appointments and pensions, slighted houses need not take up arms: half a beat of delay at every step of taxation, levy and dispatch is enough to leave the crown short of breath.",
+  "status.nobleGrudge.desc": "While active, draw attempts at turn start -1 (min 1 draw); stacks.",
+  "status.warExhaustion.name": "War Exhaustion",
+  "status.warExhaustion.history":
+    "After campaign upon campaign, parishes cannot produce recruits, towns cannot raise the war tax, and the wounded and the deserters walk home along the same roads. The war continues; the society carrying it has already tired first.",
+  "status.warExhaustion.desc": "While active, draw attempts at turn start -1 (min 1 draw); stacks.",
+  "status.frontierWatch.name": "Frontier Watch",
+  "status.frontierWatch.history":
+    "Vauban's chain of bastions locks down the border and the kingdom's attention with it: forage, winter quarters and rotation paperwork sit permanently on the war ministry's desk, and domestic business waits its turn.",
+  "status.frontierWatch.desc": "While active, draw attempts at turn start -1 (min 1 draw); stacks.",
+  "status.seaLaneDisarray.name": "Sea-Lane Disarray",
+  "status.seaLaneDisarray.history":
+    "The contest between privateers and convoys sends merchantmen rerouting, running late or sitting in port. Customs filings, shippers' suits and insurance disputes pile up behind them, and the pace of government is set by uncertainty at sea.",
+  "status.seaLaneDisarray.desc": "While active, draw attempts at turn start -1 (min 1 draw); stacks.",
+  "status.embargoPressure.name": "Embargo Pressure",
+  "status.embargoPressure.history":
+    "The alliance coordinates tariff schedules, passes and blacklists against French goods. Boycott need not sink a single ship: make every transaction pass through a few more hands and the kingdom's commercial administration slows down with it.",
+  "status.embargoPressure.desc": "While active, draw attempts at turn start -1 (min 1 draw); stacks.",
+  "status.confessionalDeadlock.name": "Confessional Deadlock",
+  "status.confessionalDeadlock.history":
+    "With the edict neither upheld nor revoked, bishops, parlements and local congregations each hold their own line. Conversion rolls, church-property suits and worship disputes climb the hierarchy until the crown's calendar has become an ecclesiastical one.",
+  "status.confessionalDeadlock.desc": "While active, draw attempts at turn start -1 (min 1 draw); stacks.",
+  "status.customsSnarl.name": "Customs Snarl",
+  "status.customsSnarl.history":
+    "Imperial tollhouses turn inspection into a weapon: French goods and military stores are opened, revalued and re-papered at every Rhine and Low Countries post. Nothing is confiscated; everything simply takes months longer.",
+  "status.customsSnarl.desc": "While active, draw attempts at turn start -1 (min 1 draw); stacks.",
+  "status.convoyDetention.name": "Convoy Detention",
+  "status.convoyDetention.history":
+    "Anglo-Dutch squadrons need not sink French merchantmen; they need only escort them into their own harbours and let the prize courts take their time. The petitions of owners, insurers and consuls all end up on a desk at Versailles.",
+  "status.convoyDetention.desc": "While active, draw attempts at turn start -1 (min 1 draw); stacks.",
+  "status.warRequisition.name": "Requisition in the Field",
+  "status.warRequisition.history":
+    "An army living off the land eats the tax base before the tax base reaches the treasury. The commissary's receipts may be honoured after the war; this year's ledger records only a hole.",
+  "status.warRequisition.desc": "While active, Funding income at turn start -1 (stacks; income floors at 0).",
   "status.supplyLineSqueeze.name": "Supply Line Squeeze",
-  "status.supplyLineSqueeze.history": "Blockades, embargoes and requisition in the field cut the chain that turns tax rolls into cash at hand.",
+  "status.supplyLineSqueeze.history": "Blockade and embargo need not sink a fleet; they need only cut the chain that moves specie and stores. With deposits, bills and forage contracts stalled in transit, the figure on the treasury ledger stops becoming cash in hand.",
   "status.supplyLineSqueeze.desc": "While active, Funding income at turn start -1 (stacks; income floors at 0).",
   "status.usurpationMobilization.name": "Edict Mobilization",
   "status.usurpationMobilization.history": "An extra-legal succession edict forces court and provinces to declare themselves at once, producing a brief burst of paperwork and appointments.",

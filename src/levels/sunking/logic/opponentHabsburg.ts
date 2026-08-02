@@ -63,9 +63,12 @@ export function opponentTemplatesToAppliedEffects(ids: readonly CardTemplateId[]
   }
   const fundingDrawPressureCount = ids.filter((id) => isHabsburgFundingDrawPressureCard(id)).length;
   const rhineEmbargoCount = ids.filter((id) => id === "habsburgRhineMagazineEmbargo").length;
-  /** One stack per card: next year's draw -1 / funding income -1 each, shown in the status bar. */
-  for (let i = 0; i < customsCount + fundingDrawPressureCount; i++) {
-    out.push({ kind: "addPlayerStatus", templateId: "powerLeak", turns: 1 });
+  /** One stack per card, each card with its own status so the bar reads back to its source. */
+  for (let i = 0; i < customsCount; i++) {
+    out.push({ kind: "addPlayerStatus", templateId: "customsSnarl", turns: 1 });
+  }
+  for (let i = 0; i < fundingDrawPressureCount; i++) {
+    out.push({ kind: "addPlayerStatus", templateId: "convoyDetention", turns: 1 });
   }
   for (let i = 0; i < fundingDrawPressureCount + rhineEmbargoCount; i++) {
     out.push({ kind: "addPlayerStatus", templateId: "supplyLineSqueeze", turns: 1 });
@@ -205,13 +208,13 @@ function applyOpponentCardToState(state: GameState, templateId: CardTemplateId):
   if (templateId === "habsburgImperialCustomsDelay") {
     effects.push(
       { kind: "addCardsToDeck", templateId: "fiscalBurden", count: 1 },
-      { kind: "addPlayerStatus", templateId: "powerLeak", turns: 1 },
+      { kind: "addPlayerStatus", templateId: "customsSnarl", turns: 1 },
     );
   }
   if (isHabsburgFundingDrawPressureCard(templateId)) {
     effects.push(
       { kind: "addPlayerStatus", templateId: "supplyLineSqueeze", turns: 1 },
-      { kind: "addPlayerStatus", templateId: "powerLeak", turns: 1 },
+      { kind: "addPlayerStatus", templateId: "convoyDetention", turns: 1 },
     );
   }
   if (templateId === "habsburgRhineMagazineEmbargo") {

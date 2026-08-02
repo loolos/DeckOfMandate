@@ -64,7 +64,7 @@ export const sunkingCoreGameContentFr = {
   "event.administrativeDelay.history":
     "Parlements, états provinciaux et fermiers testaient souvent les édits contre leurs privilèges : les ordres royaux se déformaient et ralentissaient en sortant de Paris.",
   "event.administrativeDelay.desc":
-    "Les officiels provinciaux ralentissent l'application des nouveaux ordres : payez 1 Financement ou subissez Perte d'autorité pendant 1 tour (tentatives de pioche -1 au prochain tour, min 1).",
+    "Les officiels provinciaux ralentissent l'application des nouveaux ordres : payez 1 Financement ou subissez Arriéré d'édits pendant 1 tour (tentatives de pioche -1 au prochain tour, min 1).",
   "event.tradeOpportunity.name": "Boom du commerce colonial",
   "event.tradeOpportunity.history":
     "Routes atlantiques et coloniales : sucre, tabac et capitaux affluaient vers Bordeaux ou La Rochelle, et les marchands sollicitaient chartes et escortes de la couronne.",
@@ -131,8 +131,52 @@ export const sunkingCoreGameContentFr = {
     "Pendant la guerre de Succession d'Espagne, l'expansion versaillaise et l'avantage dynastique bourbonien sont perçus comme une menace à l'équilibre européen. L'Angleterre, les Provinces-Unies, la Savoie et le Portugal coordonnent alors crédit, flotte et troupes au profit du camp habsbourgeois. Tant que le règlement d'Utrecht n'a pas clos le conflit, cet appui extérieur maintient une pression militaire renforcée contre la France.",
   "status.greatPowerEncirclement.desc":
     "Chapitre 3 : si la ligne adverse habsbourgeoise est présente et que Trésor + Pouvoir + Légitimité dépasse 45, gagnez ce statut. Un total supérieur à 45 / 60 / 75 / 90 vaut budget adverse habsbourgeois +1 / +2 / +3 / +4 ; chaque palier ne se paie qu'une fois et l'échelle ne fait que monter — redescendre en dépensant ne rend jamais la force déjà accordée. Il ne se dissipe pas tant que la guerre dure.",
+  "status.edictBacklog.name": "Arriéré d'édits",
+  "status.edictBacklog.history":
+    "Le droit d'enregistrement des parlements, les remontrances des états provinciaux et l'intérêt propre des fermiers généraux transforment les ordres royaux en pile de papier non signé. Entre copies, révisions et éclaircissements, une année au centre n'accomplit qu'un semestre de travail.",
+  "status.edictBacklog.desc": "Tant qu'actif, tentatives de pioche au début du tour -1 (minimum 1) ; cumulable.",
+  "status.provincialFootDragging.name": "Traînage provincial",
+  "status.provincialFootDragging.history":
+    "Gouverneurs et magistrats locaux ne refusent jamais ouvertement. Ils lisent simplement l'édit comme « à l'étude » : d'abord une requête, puis une enquête, puis l'usage ancien. L'ordre n'est jamais rejeté, seulement jamais appliqué.",
+  "status.provincialFootDragging.desc": "Tant qu'actif, tentatives de pioche au début du tour -1 (minimum 1) ; cumulable.",
+  "status.nobleGrudge.name": "Rancune nobiliaire",
+  "status.nobleGrudge.history":
+    "Le patronage est un marché réciproque. Quand la cour resserre charges et pensions, les maisons délaissées n'ont pas besoin de prendre les armes : un demi-temps de retard à chaque étape de l'impôt, de la levée et de la dépêche suffit à essouffler la couronne.",
+  "status.nobleGrudge.desc": "Tant qu'actif, tentatives de pioche au début du tour -1 (minimum 1) ; cumulable.",
+  "status.warExhaustion.name": "Épuisement de guerre",
+  "status.warExhaustion.history":
+    "Après campagne sur campagne, les paroisses ne fournissent plus de recrues, les villes ne lèvent plus la taxe de guerre, et blessés comme déserteurs rentrent par les mêmes routes. La guerre continue ; la société qui la porte s'est épuisée la première.",
+  "status.warExhaustion.desc": "Tant qu'actif, tentatives de pioche au début du tour -1 (minimum 1) ; cumulable.",
+  "status.frontierWatch.name": "Garde des frontières",
+  "status.frontierWatch.history":
+    "La chaîne de bastions de Vauban verrouille la frontière et, avec elle, l'attention du royaume : fourrage, quartiers d'hiver et relèves encombrent en permanence le bureau de la guerre, et les affaires intérieures attendent leur tour.",
+  "status.frontierWatch.desc": "Tant qu'actif, tentatives de pioche au début du tour -1 (minimum 1) ; cumulable.",
+  "status.seaLaneDisarray.name": "Désordre des routes maritimes",
+  "status.seaLaneDisarray.history":
+    "Le duel entre corsaires et convois fait dérouter, retarder ou immobiliser les navires marchands. Déclarations de douane, plaintes d'armateurs et litiges d'assurance s'accumulent derrière eux, et le rythme du gouvernement suit l'incertitude de la mer.",
+  "status.seaLaneDisarray.desc": "Tant qu'actif, tentatives de pioche au début du tour -1 (minimum 1) ; cumulable.",
+  "status.embargoPressure.name": "Pression d'embargo",
+  "status.embargoPressure.history":
+    "L'alliance coordonne tarifs, passeports et listes noires contre les marchandises françaises. Le boycott n'a pas besoin de couler un navire : il suffit que chaque transaction passe par quelques mains de plus pour que l'administration commerciale du royaume ralentisse.",
+  "status.embargoPressure.desc": "Tant qu'actif, tentatives de pioche au début du tour -1 (minimum 1) ; cumulable.",
+  "status.confessionalDeadlock.name": "Impasse confessionnelle",
+  "status.confessionalDeadlock.history":
+    "L'édit n'étant ni maintenu ni révoqué, évêques, parlements et congrégations locales tiennent chacun leur ligne. Rôles de conversion, procès sur les biens d'Église et querelles de culte remontent la hiérarchie jusqu'à ce que l'agenda de la couronne soit devenu ecclésiastique.",
+  "status.confessionalDeadlock.desc": "Tant qu'actif, tentatives de pioche au début du tour -1 (minimum 1) ; cumulable.",
+  "status.customsSnarl.name": "Enlisement douanier",
+  "status.customsSnarl.history":
+    "Les péages impériaux font de l'inspection une arme : marchandises et fournitures françaises sont ouvertes, réévaluées et repaperassées à chaque poste du Rhin et des Pays-Bas. Rien n'est confisqué ; tout prend simplement des mois de plus.",
+  "status.customsSnarl.desc": "Tant qu'actif, tentatives de pioche au début du tour -1 (minimum 1) ; cumulable.",
+  "status.convoyDetention.name": "Détention des convois",
+  "status.convoyDetention.history":
+    "Les escadres anglo-hollandaises n'ont pas besoin de couler les navires français : il leur suffit de les escorter vers leurs propres ports et de laisser les cours des prises prendre leur temps. Les requêtes des armateurs, assureurs et consuls finissent toutes sur un bureau à Versailles.",
+  "status.convoyDetention.desc": "Tant qu'actif, tentatives de pioche au début du tour -1 (minimum 1) ; cumulable.",
+  "status.warRequisition.name": "Réquisition sur le terrain",
+  "status.warRequisition.history":
+    "Une armée qui vit sur le pays consomme l'assiette fiscale avant qu'elle n'atteigne le Trésor. Les reçus du commissaire seront peut-être honorés après la guerre ; le registre de cette année n'enregistre qu'un trou.",
+  "status.warRequisition.desc": "Tant qu'actif, revenu de Financement au début du tour -1 (cumulable ; revenu plancher 0).",
   "status.supplyLineSqueeze.name": "Transferts entravés",
-  "status.supplyLineSqueeze.history": "Blocus, embargos et réquisitions sur le terrain coupent la chaîne qui transforme les rôles fiscaux en numéraire disponible.",
+  "status.supplyLineSqueeze.history": "Blocus et embargo n'ont pas besoin de couler une flotte ; il leur suffit de couper la chaîne qui achemine numéraire et fournitures. Dépôts, lettres de change et contrats de fourrage bloqués en route, le chiffre du registre cesse de devenir de l'argent disponible.",
   "status.supplyLineSqueeze.desc": "Tant qu'actif, revenu de Financement au début du tour -1 (cumulable ; revenu plancher 0).",
   "status.usurpationMobilization.name": "Mobilisation par édit",
   "status.usurpationMobilization.history": "Un édit de succession extra-légal force la cour et les provinces à se prononcer d'un coup, provoquant une brève flambée de correspondance et de nominations.",
