@@ -12,6 +12,7 @@ import {
 } from "./europeAlert";
 import { antiFrenchSentimentActive } from "./antiFrenchSentiment";
 import { applyEffects } from "./applyEffects";
+import { greatPowerEncirclementTier, sumCoreResources } from "./greatPowerEncirclement";
 import { rngNext } from "../../../logic/rng";
 import { THIRD_MANDATE_LEVEL_ID } from "./thirdMandateConstants";
 
@@ -29,11 +30,6 @@ const RELIGIOUS_TENSION_EVENTS: readonly EventInstance["templateId"][] = [
   "arminianTension",
   "huguenotTension",
 ];
-/**
- * Encirclement ladder: each threshold the core-resource sum strictly exceeds is worth one
- * more point of Habsburg opponent strength, so >45 / >60 / >75 / >90 map to +1 / +2 / +3 / +4.
- */
-const GREAT_POWER_ENCIRCLEMENT_TIER_SUMS: readonly number[] = [45, 60, 75, 90];
 
 /** Sun King: unspent funding is lost at year end before victory evaluation. */
 export function applyEndYearResourceResetHook(state: GameState): GameState {
@@ -182,19 +178,12 @@ function hasHabsburgOpponentRow(state: GameState): boolean {
   return EVENT_SLOT_ORDER.some((slot) => state.slots[slot]?.templateId === "opponentHabsburg");
 }
 
-function sumCoreResources(state: GameState): number {
-  return state.resources.treasuryStat + state.resources.power + state.resources.legitimacy;
-}
-
-/** How much opponent strength the current core-resource sum is worth (0 when below the first tier). */
-export function greatPowerEncirclementTier(resourceSum: number): number {
-  return GREAT_POWER_ENCIRCLEMENT_TIER_SUMS.filter((threshold) => resourceSum > threshold).length;
-}
-
 /**
  * Chapter 3 only: while the Habsburg rival row is on the board, a growing France provokes a
  * growing coalition. Core resources above 45 / 60 / 75 / 90 grant a permanent
- * "greatPowerEncirclement" status worth +1 / +2 / +3 / +4 Habsburg opponent strength.
+ * "greatPowerEncirclement" status worth +1 / +2 / +3 / +4 Habsburg opponent strength, and
+ * from the second rung up the coalition also feeds the rival extra cards each year
+ * (see `greatPowerEncirclementDrawBonus` in ./greatPowerEncirclement).
  *
  * The ladder only climbs: spending back down below a threshold keeps the strength already
  * granted, so the player cannot dump resources before the opponent phase to weaken the rival.

@@ -6,6 +6,7 @@ import type { GameState } from "../../../types/game";
 import type { SuccessionIntervalTier } from "../types/campaignState";
 import { appendActionLog } from "./actionLog";
 import { applyEffects, enforceLegitimacy, enforceSuccessionImmediateOutcome } from "./applyEffects";
+import { greatPowerEncirclementDrawBonus } from "./greatPowerEncirclement";
 import { OPPONENT_AI_NEAR_WIN_THRESHOLD, THIRD_MANDATE_LEVEL_ID } from "./thirdMandateConstants";
 import { shuffle } from "../../../logic/rng";
 
@@ -424,7 +425,8 @@ export function opponentBeginYearDrawPhase(state: GameState): GameState {
     return { ...state, opponentCostDiscountThisTurn: 0 };
   }
   const drawMod = state.opponentNextTurnDrawModifier;
-  const drawN = Math.max(2, 2 + drawMod);
+  /** Encirclement rungs above the first add cards on top of the base draw, never through it. */
+  const drawN = Math.max(2, 2 + drawMod) + greatPowerEncirclementDrawBonus(state);
   const reset = { ...state, opponentCostDiscountThisTurn: 0, opponentNextTurnDrawModifier: 0 };
   const beforeDraw = reset.opponentHand.length;
   const drawnState = opponentDrawFromDeck(reset, drawN);
