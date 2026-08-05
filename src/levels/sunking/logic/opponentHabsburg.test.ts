@@ -243,6 +243,38 @@ describe("opponentHabsburg AI", () => {
     expect(next.opponentNextTurnDrawModifier).toBe(0);
   });
 
+  it("great-power encirclement adds begin-year draws on top of the base two", () => {
+    const base = createInitialState(103_001, THIRD_MANDATE_LEVEL_ID);
+    const deck = ["opp_a", "opp_b", "opp_c", "opp_d", "opp_e"];
+    const cardsById = { ...base.cardsById };
+    for (const id of deck) {
+      cardsById[id] = { instanceId: id, templateId: "habsburgGrandAllianceLevy" };
+    }
+    const st: GameState = {
+      ...base,
+      opponentHabsburgUnlocked: true,
+      opponentNextTurnDrawModifier: 0,
+      opponentDeck: deck,
+      opponentHand: [],
+      cardsById,
+      // Core-resource sum 76: encirclement rung 3, worth +2 rival draws.
+      resources: { ...base.resources, treasuryStat: 26, power: 25, legitimacy: 25 },
+      greatPowerEncirclementStrengthApplied: 3,
+      playerStatuses: [
+        {
+          instanceId: "st_gp",
+          templateId: "greatPowerEncirclement",
+          kind: "drawAttemptsDelta",
+          delta: 0,
+          turnsRemaining: 99,
+        },
+      ],
+    };
+    const next = opponentBeginYearDrawPhase(st);
+    expect(next.opponentHand).toEqual(["opp_a", "opp_b", "opp_c", "opp_d"]);
+    expect(next.opponentDeck).toEqual(["opp_e"]);
+  });
+
   it("begin year skips opponent draw after Utrecht ends war", () => {
     const base = createInitialState(104, THIRD_MANDATE_LEVEL_ID);
     const st: GameState = {
