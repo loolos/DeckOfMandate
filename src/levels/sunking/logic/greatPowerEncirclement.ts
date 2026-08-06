@@ -7,11 +7,12 @@ import type { GameState } from "../../../types/game";
 export const GREAT_POWER_ENCIRCLEMENT_TIER_SUMS: readonly number[] = [45, 60, 75, 90];
 
 /**
- * The draw ladder shares the same rungs, minus the first one: the coalition only starts
- * feeding the rival extra cards from rung 2 upwards, so >60 / >75 / >90 map to +1 / +2 / +3
- * Habsburg begin-year draws.
+ * Extra Habsburg begin-year draws per rung of the ladder above, indexed by tier: rungs
+ * >45 / >60 / >75 / >90 are worth +0 / +1 / +1 / +2 cards. The draw ladder is deliberately
+ * flatter than the strength one — an extra card compounds across the rival's whole hand, so
+ * it only steps at the second and fourth rungs.
  */
-const GREAT_POWER_ENCIRCLEMENT_DRAW_LADDER_OFFSET = 1;
+const GREAT_POWER_ENCIRCLEMENT_DRAW_BONUS_BY_TIER: readonly number[] = [0, 0, 1, 1, 2];
 
 export function sumCoreResources(state: GameState): number {
   return state.resources.treasuryStat + state.resources.power + state.resources.legitimacy;
@@ -35,10 +36,12 @@ export function greatPowerEncirclementEffectiveTier(state: GameState): number {
 
 /**
  * Extra cards the Habsburg rival draws each begin-year while `greatPowerEncirclement` is held:
- * core resources above 60 / 75 / 90 are worth +1 / +2 / +3. Like the strength ladder it never
- * gives back, so spending down before the draw phase cannot starve the rival's hand.
+ * core resources above 45 / 60 / 75 / 90 are worth +0 / +1 / +1 / +2. Like the strength ladder
+ * it never gives back, so spending down before the draw phase cannot starve the rival's hand.
  */
 export function greatPowerEncirclementDrawBonus(state: GameState): number {
   if (!state.playerStatuses.some((s) => s.templateId === "greatPowerEncirclement")) return 0;
-  return Math.max(0, greatPowerEncirclementEffectiveTier(state) - GREAT_POWER_ENCIRCLEMENT_DRAW_LADDER_OFFSET);
+  const tier = greatPowerEncirclementEffectiveTier(state);
+  const capped = Math.min(tier, GREAT_POWER_ENCIRCLEMENT_DRAW_BONUS_BY_TIER.length - 1);
+  return GREAT_POWER_ENCIRCLEMENT_DRAW_BONUS_BY_TIER[Math.max(0, capped)] ?? 0;
 }

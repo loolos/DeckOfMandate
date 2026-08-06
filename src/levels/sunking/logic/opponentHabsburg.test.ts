@@ -257,9 +257,9 @@ describe("opponentHabsburg AI", () => {
       opponentDeck: deck,
       opponentHand: [],
       cardsById,
-      // Core-resource sum 76: encirclement rung 3, worth +2 rival draws.
-      resources: { ...base.resources, treasuryStat: 26, power: 25, legitimacy: 25 },
-      greatPowerEncirclementStrengthApplied: 3,
+      // Core-resource sum 91: encirclement rung 4, worth +2 rival draws.
+      resources: { ...base.resources, treasuryStat: 31, power: 30, legitimacy: 30 },
+      greatPowerEncirclementStrengthApplied: 4,
       playerStatuses: [
         {
           instanceId: "st_gp",
