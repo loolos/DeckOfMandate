@@ -1,7 +1,7 @@
 /**
  * The chapter-3 encirclement ladder: core resources above 45 / 60 / 75 / 90 are worth
  * +1 / +2 / +3 / +4 Habsburg opponent strength while the rival row is on the board, and the
- * rungs above the first also give the rival +1 / +2 / +3 cards at each begin-year draw.
+ * same rungs give the rival +0 / +1 / +1 / +2 cards at each begin-year draw.
  */
 import { describe, expect, it } from "vitest";
 import { createInitialState } from "../../../app/initialState";
@@ -133,10 +133,10 @@ describe("greatPowerEncirclementDrawBonus", () => {
     [60, 0],
     [61, 1],
     [75, 1],
-    [76, 2],
-    [90, 2],
-    [91, 3],
-    [200, 3],
+    [76, 1],
+    [90, 1],
+    [91, 2],
+    [200, 2],
   ])("sum %i is worth +%i Habsburg draws", (sum, bonus) => {
     const held = syncGreatPowerEncirclementStatusHook(atSum(sum));
     expect(greatPowerEncirclementDrawBonus(held)).toBe(bonus);
@@ -148,10 +148,10 @@ describe("greatPowerEncirclementDrawBonus", () => {
 
   it("does not give draws back when the player spends below a threshold", () => {
     const held = syncGreatPowerEncirclementStatusHook(atSum(91));
-    expect(greatPowerEncirclementDrawBonus(held)).toBe(3);
+    expect(greatPowerEncirclementDrawBonus(held)).toBe(2);
 
     const spentDown: GameState = { ...held, resources: atSum(46).resources };
-    expect(greatPowerEncirclementDrawBonus(spentDown)).toBe(3);
+    expect(greatPowerEncirclementDrawBonus(spentDown)).toBe(2);
   });
 
   it("counts a rung reached during the player's turn before the next status sync", () => {
@@ -159,7 +159,7 @@ describe("greatPowerEncirclementDrawBonus", () => {
     expect(greatPowerEncirclementDrawBonus(held)).toBe(0);
 
     // Resources climb after the event phase already synced; the draw phase runs first next year.
-    const grown: GameState = { ...held, resources: atSum(76).resources };
+    const grown: GameState = { ...held, resources: atSum(91).resources };
     expect(grown.greatPowerEncirclementStrengthApplied).toBe(1);
     expect(greatPowerEncirclementDrawBonus(grown)).toBe(2);
   });
