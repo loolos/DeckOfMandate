@@ -590,3 +590,96 @@
   justify-content: flex-end;
   margin-top: 1rem;
 }
+
+/* ---------------------------------------------------------------- 略缩模式 */
+
+.compactToggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.9rem;
+  color: var(--zh-muted);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.compactCard {
+  cursor: pointer;
+  gap: 0.2rem;
+  padding: 0.45rem 0.6rem;
+}
+
+.compactCard:hover,
+.compactCard:focus-visible {
+  border-color: var(--zh-gold);
+  outline: none;
+}
+
+.compactTitle {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  font-weight: 700;
+}
+
+.compactTitle .cardKind {
+  margin-left: auto;
+}
+
+.compactSummary {
+  font-size: 0.82rem;
+  color: var(--zh-muted);
+  line-height: 1.35;
+}
+
+.handCardDisabled {
+  opacity: 0.6;
+}
+
+.cardKind,
+.cardHead .btn {
+  white-space: nowrap;
+}
+
+.compact .events,
+.compact .hand {
+  align-items: start;
+}
+
+.expandedCard {
+  grid-column: span 2;
+}
+
+.compact .events {
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 0.5rem;
+}
+
+.compact .hand {
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 0.5rem;
+}
+
+.compact .bar {
+  gap: 0.4rem;
+  margin-bottom: 0.5rem;
+}
+
+.compact .stat,
+.compact .pile {
+  flex-basis: 110px;
+  padding: 0.3rem 0.55rem;
+}
+
+.compact .statValue {
+  font-size: 1.05rem;
+}
+
+.compact .log {
+  max-height: 150px;
+}
+
+.compact .sectionTitle {
+  margin: 0.5rem 0 0.3rem;
+}

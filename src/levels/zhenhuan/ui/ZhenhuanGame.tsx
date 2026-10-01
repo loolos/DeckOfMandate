@@ -1,5 +1,6 @@
-import { useEffect, useMemo, useRef, type ReactNode } from "react";
+import { useEffect, useMemo, useRef, useState, type KeyboardEvent, type ReactNode } from "react";
 import { RunCodePanel } from "../../../components/RunCodePanel";
+import { useSmallScreen } from "../../../logic/useSmallScreen";
 import {
   CARDS,
   CHAPTER,
@@ -31,6 +32,7 @@ import {
   type ZhState,
 } from "../logic/engine";
 import { decodeRunCode, encodeRunCode } from "../logic/persistence";
+import { CompactModeToggle } from "./CompactModeToggle";
 import { RulesSummary } from "./RulesSummary";
 import styles from "./zhenhuan.module.css";
 
@@ -125,6 +127,52 @@ function MatchChips({ state, def }: { state: ZhState; def: EventDef }) {
   );
 }
 
+/** 略缩模式 (thumbnail mode): cards collapse to a one-line strip; tap to expand. */
+type Fold = { compact: boolean; expanded: boolean; onToggle: () => void };
+
+function activateOnKey(e: KeyboardEvent, fn: () => void) {
+  if (e.key === "Enter" || e.key === " ") {
+    e.preventDefault();
+    fn();
+  }
+}
+
+/** Collapsed strip: whole card is a button that expands it. */
+function FoldStrip({
+  className,
+  onToggle,
+  onDoubleActivate,
+  children,
+}: {
+  className: string;
+  onToggle: () => void;
+  onDoubleActivate?: () => void;
+  children: ReactNode;
+}) {
+  return (
+    <div
+      className={`${className} ${styles.compactCard}`}
+      role="button"
+      tabIndex={0}
+      aria-expanded="false"
+      onClick={onToggle}
+      onDoubleClick={onDoubleActivate}
+      onKeyDown={(e) => activateOnKey(e, onToggle)}
+    >
+      {children}
+    </div>
+  );
+}
+
+function CollapseButton({ fold }: { fold: Fold }) {
+  if (!fold.compact) return null;
+  return (
+    <button type="button" className={`${styles.btn} ${styles.btnSmall}`} aria-expanded="true" onClick={fold.onToggle}>
+      收起 ▴
+    </button>
+  );
+}
+
 /** Resolved banner: distinct mark per event kind, plus which card handled it. */
 function ResolvedBanner({ icon, label, detail }: { icon: string; label: string; detail: string }) {
   return (
@@ -144,15 +192,32 @@ function eventResolvedDetail(inst: EventInst): string {
   return `${by}把握，已获得${def.resolvedText}${inst.rewardDoubled ? "（眉庄相助：奖励翻倍）" : ""}。`;
 }
 
-function EventCard({ state, inst }: { state: ZhState; inst: EventInst }) {
+function EventCard({ state, inst, fold }: { state: ZhState; inst: EventInst; fold: Fold }) {
   const def = EVENTS[inst.id];
   const isOpp = def.kind === "opportunity";
+  const className = [styles.card, isOpp ? styles.cardOpportunity : styles.cardCrisis, inst.resolved && styles.cardResolved]
+    .filter(Boolean)
+    .join(" ");
+  if (fold.compact && !fold.expanded) {
+    return (
+      <FoldStrip className={className} onToggle={fold.onToggle}>
+        <div className={styles.compactTitle}>
+          {def.emoji} {def.name}
+          {inst.resolved ? " 🆗" : ""}
+          <span className={[styles.cardKind, isOpp ? styles.kindOpportunity : styles.kindCrisis].join(" ")}>
+            {isOpp ? "机会" : "危机"}
+          </span>
+        </div>
+        <div className={styles.compactSummary}>
+          {inst.resolved
+            ? `${isOpp ? "✅ 已把握" : "🛡️ 已化解"} · ${eventResolvedDetail(inst)}`
+            : `处理：${def.resolvedText} · 未处理：${def.unresolvedText}`}
+        </div>
+      </FoldStrip>
+    );
+  }
   return (
-    <div
-      className={[styles.card, isOpp ? styles.cardOpportunity : styles.cardCrisis, inst.resolved && styles.cardResolved]
-        .filter(Boolean)
-        .join(" ")}
-    >
+    <div className={fold.compact ? `${className} ${styles.expandedCard}` : className}>
       <div className={styles.cardHead}>
         <span className={styles.cardName}>
           <span className={styles.cardEmoji}>{def.emoji}</span>
@@ -162,6 +227,7 @@ function EventCard({ state, inst }: { state: ZhState; inst: EventInst }) {
         <span className={[styles.cardKind, isOpp ? styles.kindOpportunity : styles.kindCrisis].join(" ")}>
           {isOpp ? "机会" : "危机"}
         </span>
+        <CollapseButton fold={fold} />
       </div>
       {inst.resolved ? (
         <ResolvedBanner
@@ -185,15 +251,32 @@ function EventCard({ state, inst }: { state: ZhState; inst: EventInst }) {
   );
 }
 
-function StoryCard({ state, dispatch }: { state: ZhState; dispatch: (a: ZhAction) => void }) {
+function StoryCard({ state, dispatch, fold }: { state: ZhState; dispatch: (a: ZhAction) => void; fold: Fold }) {
   const story = currentStory(state);
   if (!story || !state.story) return null;
   const chosen = state.story.chosenOptionId;
   const defaultOption = story.options.find((o) => o.id === story.defaultOptionId)!;
   const locked = chosen != null || state.pending != null || state.outcome !== "playing";
   const chosenOption = chosen ? story.options.find((o) => o.id === chosen) : undefined;
+  const className = [styles.card, styles.cardStory, chosen && styles.cardResolved].filter(Boolean).join(" ");
+  if (fold.compact && !fold.expanded) {
+    return (
+      <FoldStrip className={className} onToggle={fold.onToggle}>
+        <div className={styles.compactTitle}>
+          {story.emoji} {story.name}
+          {chosen ? " 🆗" : ""}
+          <span className={[styles.cardKind, styles.kindStory].join(" ")}>剧情</span>
+        </div>
+        <div className={styles.compactSummary}>
+          {chosenOption
+            ? `📝 已抉择「${chosenOption.name}」：${chosenOption.text}`
+            : `点开选择 1 项（不选按默认「${defaultOption.name}」）`}
+        </div>
+      </FoldStrip>
+    );
+  }
   return (
-    <div className={[styles.card, styles.cardStory, chosen && styles.cardResolved].filter(Boolean).join(" ")}>
+    <div className={fold.compact ? `${className} ${styles.expandedCard}` : className}>
       <div className={styles.cardHead}>
         <span className={styles.cardName}>
           <span className={styles.cardEmoji}>{story.emoji}</span>
@@ -201,6 +284,7 @@ function StoryCard({ state, dispatch }: { state: ZhState; dispatch: (a: ZhAction
           {chosen ? " 🆗" : null}
         </span>
         <span className={[styles.cardKind, styles.kindStory].join(" ")}>剧情 · 第 {story.turn} 回合</span>
+        <CollapseButton fold={fold} />
       </div>
       {chosenOption ? (
         <ResolvedBanner
@@ -242,12 +326,30 @@ function StoryCard({ state, dispatch }: { state: ZhState; dispatch: (a: ZhAction
   );
 }
 
-function TrialCard({ state }: { state: ZhState }) {
+function TrialCard({ state, fold }: { state: ZhState; fold: Fold }) {
   if (!state.trial.active) return null;
   const p = trialProgress(state);
   const mark = (ok: boolean) => <span className={ok ? styles.ok : styles.no}>{ok ? "✓" : "✗"}</span>;
+  const className = [styles.card, styles.cardStory, p.all && styles.cardReady].filter(Boolean).join(" ");
+  if (fold.compact && !fold.expanded) {
+    return (
+      <FoldStrip className={className} onToggle={fold.onToggle}>
+        <div className={styles.compactTitle}>
+          {PROMOTION_TRIAL.emoji} {PROMOTION_TRIAL.name}
+          {p.all ? " 🏮" : ""}
+          <span className={[styles.cardKind, styles.kindStory].join(" ")}>
+            第 {PROMOTION_TRIAL.firstTurn}—{PROMOTION_TRIAL.lastTurn} 回合
+          </span>
+        </div>
+        <div className={styles.compactSummary}>
+          {mark(p.shengchong)} 圣宠 {state.shengchong}/{PROMOTION_TRIAL.minShengchong} · {mark(p.qingyu)} 清誉 {state.qingyu}/
+          {PROMOTION_TRIAL.minQingyu} · {mark(p.keyCard)} 考验牌
+        </div>
+      </FoldStrip>
+    );
+  }
   return (
-    <div className={[styles.card, styles.cardStory, p.all && styles.cardReady].filter(Boolean).join(" ")}>
+    <div className={fold.compact ? `${className} ${styles.expandedCard}` : className}>
       <div className={styles.cardHead}>
         <span className={styles.cardName}>
           <span className={styles.cardEmoji}>{PROMOTION_TRIAL.emoji}</span>
@@ -256,6 +358,7 @@ function TrialCard({ state }: { state: ZhState }) {
         <span className={[styles.cardKind, styles.kindStory].join(" ")}>
           持续 · 第 {PROMOTION_TRIAL.firstTurn}—{PROMOTION_TRIAL.lastTurn} 回合
         </span>
+        <CollapseButton fold={fold} />
       </div>
       {p.all ? (
         <ResolvedBanner icon="🏮" label="条件已满足" detail="保持到回合末（危机惩罚结算之后）即可晋封为常在。" />
@@ -278,31 +381,61 @@ function TrialCard({ state }: { state: ZhState }) {
   );
 }
 
-function HandCard({ state, card, dispatch }: { state: ZhState; card: CardInst; dispatch: (a: ZhAction) => void }) {
+function HandCard({
+  state,
+  card,
+  dispatch,
+  fold,
+}: {
+  state: ZhState;
+  card: CardInst;
+  dispatch: (a: ZhAction) => void;
+  fold: Fold;
+}) {
   const def = CARDS[card.id];
   const solves = matchedEvents(state, card.id);
   const isPending = state.pending?.cardUid === card.uid;
   const isTrialCard = state.trial.active && PROMOTION_TRIAL.keyCards.includes(card.id);
   const canPlay = state.outcome === "playing" && state.pending == null && playsLeft(state) > 0;
+  const play = () => {
+    if (canPlay) dispatch({ type: "playCard", cardUid: card.uid });
+  };
+  const className = [
+    styles.handCard,
+    solves.length > 0 && styles.handCardMatch,
+    isPending && styles.handCardPending,
+    fold.compact && !canPlay && !isPending && styles.handCardDisabled,
+  ]
+    .filter(Boolean)
+    .join(" ");
+  const trialTag = isTrialCard ? (
+    <span className={[styles.cardKind, styles.kindTrial].join(" ")} title="晋封考验期间打出这张牌，即可满足第 3 个条件">
+      考验{state.trial.keyCardPlayed ? " ✓" : ""}
+    </span>
+  ) : null;
+  if (fold.compact && !fold.expanded && !isPending) {
+    return (
+      <FoldStrip className={className} onToggle={fold.onToggle} onDoubleActivate={play}>
+        <div className={styles.compactTitle}>
+          {def.emoji} {def.name}
+          {trialTag}
+        </div>
+        <div className={styles.compactSummary}>{def.rulesText[0]}</div>
+        {solves.length > 0 ? (
+          <div className={styles.solves}>可解决：{solves.map((e) => EVENTS[e.id].name).join("、")}</div>
+        ) : null}
+      </FoldStrip>
+    );
+  }
   return (
-    <div
-      className={[styles.handCard, solves.length > 0 && styles.handCardMatch, isPending && styles.handCardPending]
-        .filter(Boolean)
-        .join(" ")}
-    >
+    <div className={fold.compact ? `${className} ${styles.expandedCard}` : className} onDoubleClick={fold.compact ? play : undefined}>
       <div className={styles.cardHead}>
         <span className={styles.cardName}>
           <span className={styles.cardEmoji}>{def.emoji}</span>
           {def.name}
         </span>
-        {isTrialCard ? (
-          <span
-            className={[styles.cardKind, styles.kindTrial].join(" ")}
-            title="晋封考验期间打出这张牌，即可满足第 3 个条件"
-          >
-            考验{state.trial.keyCardPlayed ? " ✓" : ""}
-          </span>
-        ) : null}
+        {trialTag}
+        {isPending ? null : <CollapseButton fold={fold} />}
       </div>
       <p className={styles.flavor}>{def.flavor}</p>
       {def.rulesText.map((line) => (
@@ -459,9 +592,16 @@ export function ZhenhuanGame({ state, dispatch, showRules, onShowRules, onRestar
   const hints = endTurnHints(state);
   const usedOpp = state.opportunityUsed;
   const usedCrisis = state.crisisUsed;
+  const compact = useSmallScreen();
+  const [expandedKey, setExpandedKey] = useState<string | null>(null);
+  const fold = (key: string): Fold => ({
+    compact,
+    expanded: expandedKey === key,
+    onToggle: () => setExpandedKey((cur) => (cur === key ? null : key)),
+  });
 
   return (
-    <div className={styles.page}>
+    <div className={[styles.page, compact && styles.compact].filter(Boolean).join(" ")}>
       <header className={styles.header}>
         <div>
           <h1 className={styles.title}>甄嬛传 · {CHAPTER.title}</h1>
@@ -476,6 +616,7 @@ export function ZhenhuanGame({ state, dispatch, showRules, onShowRules, onRestar
           </div>
         </div>
         <div className={styles.headerMeta}>
+          <CompactModeToggle />
           <button type="button" className={styles.btn} onClick={() => onShowRules(true)}>
             规则说明
           </button>
@@ -523,19 +664,22 @@ export function ZhenhuanGame({ state, dispatch, showRules, onShowRules, onRestar
 
       <h2 className={styles.sectionTitle}>本回合事件</h2>
       <div className={styles.events}>
-        {state.opportunity ? <EventCard state={state} inst={state.opportunity} /> : null}
-        {state.crisis ? <EventCard state={state} inst={state.crisis} /> : null}
-        <StoryCard state={state} dispatch={dispatch} />
-        <TrialCard state={state} />
+        {state.opportunity ? (
+          <EventCard state={state} inst={state.opportunity} fold={fold(state.opportunity.uid)} />
+        ) : null}
+        {state.crisis ? <EventCard state={state} inst={state.crisis} fold={fold(state.crisis.uid)} /> : null}
+        <StoryCard state={state} dispatch={dispatch} fold={fold("story")} />
+        <TrialCard state={state} fold={fold("trial")} />
       </div>
 
       <h2 className={styles.sectionTitle}>
         手牌（{state.hand.length}）· 回合结束时全部弃置
+        {compact ? <span className={styles.muted}> · 点击展开，双击打出</span> : null}
       </h2>
       <div className={styles.hand}>
         {state.hand.length === 0 ? <p className={styles.muted}>没有手牌。</p> : null}
         {state.hand.map((card) => (
-          <HandCard key={card.uid} state={state} card={card} dispatch={dispatch} />
+          <HandCard key={card.uid} state={state} card={card} dispatch={dispatch} fold={fold(card.uid)} />
         ))}
       </div>
 

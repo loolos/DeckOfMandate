@@ -4,6 +4,7 @@ import { RunCodePanel } from "../../../components/RunCodePanel";
 import { CHAPTER } from "../data/content";
 import { newGame, reduce, type ZhAction, type ZhState } from "../logic/engine";
 import { clearSave, decodeRunCode, loadSave, saveAtTurnStart } from "../logic/persistence";
+import { CompactModeToggle } from "./CompactModeToggle";
 import { RulesSummary } from "./RulesSummary";
 import { ZhenhuanGame } from "./ZhenhuanGame";
 import styles from "./zhenhuan.module.css";
@@ -71,6 +72,7 @@ export function ZhenhuanRoot() {
             甄嬛传
           </h1>
           <CampaignSwitcher labelClassName={styles.menuLabel} selectClassName={styles.menuInput} />
+          <CompactModeToggle />
           <p className={styles.menuHint}>{CHAPTER.title}：从答应起步，在晋封考验中晋为常在，并坚持到第 {CHAPTER.totalTurns} 回合。</p>
           <details>
             <summary className={styles.muted}>规则概要</summary>
