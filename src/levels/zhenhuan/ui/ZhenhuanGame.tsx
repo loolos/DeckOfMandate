@@ -245,6 +245,7 @@ function HandCard({ state, card, dispatch }: { state: ZhState; card: CardInst; d
   const def = CARDS[card.id];
   const solves = matchedEvents(state, card.id);
   const isPending = state.pending?.cardUid === card.uid;
+  const isTrialCard = state.trial.active && PROMOTION_TRIAL.keyCards.includes(card.id);
   const canPlay = state.outcome === "playing" && state.pending == null && playsLeft(state) > 0;
   return (
     <div
@@ -257,6 +258,14 @@ function HandCard({ state, card, dispatch }: { state: ZhState; card: CardInst; d
           <span className={styles.cardEmoji}>{def.emoji}</span>
           {def.name}
         </span>
+        {isTrialCard ? (
+          <span
+            className={[styles.cardKind, styles.kindTrial].join(" ")}
+            title="晋封考验期间打出这张牌，即可满足第 3 个条件"
+          >
+            考验{state.trial.keyCardPlayed ? " ✓" : ""}
+          </span>
+        ) : null}
       </div>
       <p className={styles.flavor}>{def.flavor}</p>
       {def.rulesText.map((line) => (

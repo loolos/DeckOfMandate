@@ -20,12 +20,12 @@ export type RankDef = {
   readonly name: string;
   readonly draw: number;
   readonly plays: number;
-  /** Cap for both 清誉 and 圣宠. Values above 答应 are provisional (design.md §2). */
+  /** Cap for both 清誉 and 圣宠. 答应 is 8 so the trial's 圣宠 ≥ 6 isn't the cap; higher ranks are provisional (design.md §2). */
   readonly cap: number;
 };
 
 export const RANKS: Record<RankId, RankDef> = {
-  daying: { id: "daying", name: "答应", draw: 3, plays: 1, cap: 6 },
+  daying: { id: "daying", name: "答应", draw: 3, plays: 1, cap: 8 },
   changzai: { id: "changzai", name: "常在", draw: 3, plays: 2, cap: 10 },
   guiren: { id: "guiren", name: "贵人", draw: 4, plays: 2, cap: 14 },
   pin: { id: "pin", name: "嫔", draw: 5, plays: 3, cap: 18 },

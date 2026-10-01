@@ -345,6 +345,11 @@
   color: var(--zh-story);
 }
 
+.kindTrial {
+  color: var(--zh-gold);
+  font-weight: 600;
+}
+
 .cardOpportunity {
   border-top: 3px solid var(--zh-opportunity);
 }

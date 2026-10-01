@@ -91,9 +91,9 @@ describe("zhenhuan engine", () => {
 
   it("gains are capped by rank", () => {
     let s = newGame(1);
-    s.shengchong = 5;
+    s.shengchong = 7;
     s = act(s, { type: "playCard", cardUid: uidOf(s, "yirongZhengsu") });
-    expect(s.shengchong).toBe(6);
+    expect(s.shengchong).toBe(8);
   });
 
   it("静观其变 draws, adds a play, and stacks", () => {
@@ -175,7 +175,7 @@ describe("zhenhuan engine", () => {
     s.opportunity = { uid: "y", id: "taihouChuixun", resolved: false };
     const mz = giveCard(s, "meizhuangXiangzhu");
     s = act(s, { type: "playCard", cardUid: mz });
-    expect(s.qingyu).toBe(6); // 2 + 1 base + 2 reward + 2 doubled, capped at 6
+    expect(s.qingyu).toBe(7); // 2 + 1 base + 2 reward + 2 doubled
     expect(s.shengchong).toBe(3);
   });
 
@@ -197,7 +197,7 @@ describe("zhenhuan engine", () => {
     s.opportunity = { uid: "o", id: "huangdiZhaojian", resolved: false };
     const uid = giveCard(s, "yirongZhengsu");
     s = act(s, { type: "chooseStory", optionId: "shengzhuangFuzhao", cardUid: uid });
-    expect(s.shengchong).toBe(6); // 2 + 3 (option, no base) + 2 (皇帝召见) → capped 6
+    expect(s.shengchong).toBe(7); // 2 + 3 (option, no base) + 2 (皇帝召见)
     expect(s.opportunity?.resolved).toBe(true);
     expect(s.playsUsed).toBe(1);
 
