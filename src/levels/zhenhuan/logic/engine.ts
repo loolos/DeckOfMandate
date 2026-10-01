@@ -28,6 +28,8 @@ import {
   type StoryDef,
   type StoryId,
   type StoryOptionDef,
+  type TagId,
+  TAG_INFO,
 } from "../data/content";
 
 export type CardInst = { readonly uid: string; readonly id: CardId };
@@ -53,10 +55,12 @@ export type LogEntry = { readonly turn: number; readonly text: string; readonly 
 
 export type ZhAction =
   | { readonly type: "playCard"; readonly cardUid: string }
-  | { readonly type: "chooseStory"; readonly optionId: string; readonly cardUid?: string }
+  | { readonly type: "chooseStory"; readonly optionId: string }
   | { readonly type: "removeStatus"; readonly statusUid: string }
   | { readonly type: "cancelPending" }
-  | { readonly type: "endTurn" };
+  | { readonly type: "endTurn" }
+  /** UI-only: explains a clicked tag in the log. Not recorded (no effect on the run). */
+  | { readonly type: "explainTag"; readonly tag: TagId };
 
 export type ZhOutcome = "playing" | "won" | "lost";
 
@@ -143,14 +147,21 @@ export function trialProgress(s: ZhState): TrialProgress {
   return { shengchong, qingyu, keyCard, all: shengchong && qingyu && keyCard };
 }
 
-export type StoryOptionAvailability = { available: boolean; cardUid?: string; reason?: string };
+/** Basic (no-card) options of a story event: the only ones chosen on the event itself. */
+export function storyBasicOptions(story: StoryDef): StoryOptionDef[] {
+  return story.options.filter((o) => !o.card);
+}
 
-export function storyOptionAvailability(s: ZhState, option: StoryOptionDef): StoryOptionAvailability {
-  if (!option.card) return { available: true };
-  const inst = s.hand.find((c) => c.id === option.card);
-  if (!inst) return { available: false, reason: `手牌中没有【${CARDS[option.card].name}】` };
-  if (playsLeft(s) <= 0) return { available: false, reason: "本回合出牌次数已用完" };
-  return { available: true, cardUid: inst.uid };
+/** Card responses of a story event: resolved by playing that card from hand. */
+export function storyCardResponses(story: StoryDef): StoryOptionDef[] {
+  return story.options.filter((o) => o.card);
+}
+
+/** The open story's response to `cardId`, if playing it now would resolve the story. */
+export function storyResponseFor(s: ZhState, cardId: CardId): StoryOptionDef | undefined {
+  const story = currentStory(s);
+  if (!story || s.story?.chosenOptionId != null) return undefined;
+  return story.options.find((o) => o.card === cardId);
 }
 
 export function canEndTurn(s: ZhState): boolean {
@@ -498,7 +509,7 @@ export function newGame(seed: number): ZhState {
 
 /** Returns the next state, or the same object when the action is not legal right now. */
 export function reduce(state: ZhState, action: ZhAction): ZhState {
-  if (state.outcome !== "playing") return state;
+  if (state.outcome !== "playing" && action.type !== "explainTag") return state;
   const s = structuredClone(state);
   switch (action.type) {
     case "playCard": {
@@ -509,7 +520,7 @@ export function reduce(state: ZhState, action: ZhAction): ZhState {
         s.pending = { cardUid: card.uid };
         log(s, "温太医诊治：请选择要移除的负面状态（可取消）。");
       } else {
-        resolvePlay(s, card.uid);
+        resolvePlay(s, card.uid, { storyOption: storyResponseFor(s, card.id) });
       }
       break;
     }
@@ -518,8 +529,12 @@ export function reduce(state: ZhState, action: ZhAction): ZhState {
       const st = negativeStatuses(s).find((x) => x.uid === action.statusUid);
       if (!st) return state;
       const cardUid = s.pending.cardUid;
+      const pendingCard = s.hand.find((c) => c.uid === cardUid);
       s.pending = null;
-      resolvePlay(s, cardUid, { removeStatusUid: st.uid });
+      resolvePlay(s, cardUid, {
+        removeStatusUid: st.uid,
+        storyOption: pendingCard ? storyResponseFor(s, pendingCard.id) : undefined,
+      });
       break;
     }
     case "cancelPending": {
@@ -532,16 +547,17 @@ export function reduce(state: ZhState, action: ZhAction): ZhState {
       if (s.pending) return state;
       const story = currentStory(s);
       if (!story || !s.story || s.story.chosenOptionId != null) return state;
-      const option = story.options.find((o) => o.id === action.optionId);
+      // Cards are always played from hand; only basic options are chosen on the event.
+      const option = storyBasicOptions(story).find((o) => o.id === action.optionId);
       if (!option) return state;
-      if (option.card) {
-        const card = s.hand.find((c) => c.uid === action.cardUid);
-        if (!card || card.id !== option.card || playsLeft(s) <= 0) return state;
-        resolvePlay(s, card.uid, { storyOption: option });
-      } else {
-        applyStoryBasicOption(s, story, option, `【${story.name}】选择：${option.name}`);
-      }
+      applyStoryBasicOption(s, story, option, `【${story.name}】选择：${option.name}`);
       break;
+    }
+    case "explainTag": {
+      const info = TAG_INFO[action.tag];
+      s.log.push({ turn: s.turn, text: `【${info.label}】${info.lore}`, tone: "info" });
+      s.log.push({ turn: s.turn, text: `机制：${info.rules}`, tone: "info" });
+      return s;
     }
     case "endTurn": {
       if (!canEndTurn(s)) return state;

@@ -12,7 +12,8 @@ export function RulesSummary() {
         每回合出现 1 个<strong>机会事件</strong>和 1 个<strong>危机事件</strong>，只能打出卡面上的<strong>匹配牌</strong>来解决。
         一张牌可以同时解决两个匹配事件。未解决的危机会在回合末造成惩罚。
       </li>
-      <li>第 4、8 回合有剧情事件，需要从选项中选 1 项；不选则按默认选项处理。</li>
+      <li>第 4、8 回合有剧情事件：在事件上选 1 个基础选项，或从手牌打出事件卡上列出的牌来解决；都不做则按默认选项处理。卡牌永远从手牌打出。</li>
+      <li>点击事件、手牌或状态上的标签，可以在日志里查看它的说明。</li>
       <li>
         第 {PROMOTION_TRIAL.firstTurn}—{PROMOTION_TRIAL.lastTurn} 回合是<strong>晋封考验</strong>：回合末圣宠 ≥{" "}
         {PROMOTION_TRIAL.minShengchong}、清誉 ≥ {PROMOTION_TRIAL.minQingyu}，且考验期间打出过仪容整肃或谨言慎行，即晋封为常在。

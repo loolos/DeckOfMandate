@@ -14,13 +14,15 @@ function encodeAction(a: ZhAction): string {
     case "playCard":
       return `p${a.cardUid}`;
     case "chooseStory":
-      return a.cardUid ? `s${a.optionId}.${a.cardUid}` : `s${a.optionId}`;
+      return `s${a.optionId}`;
     case "removeStatus":
       return `r${a.statusUid}`;
     case "cancelPending":
       return "x";
     case "endTurn":
       return "e";
+    case "explainTag":
+      throw new Error("explainTag is never recorded");
   }
 }
 
@@ -30,10 +32,8 @@ function decodeAction(raw: string): ZhAction {
   switch (head) {
     case "p":
       return { type: "playCard", cardUid: body };
-    case "s": {
-      const [optionId, cardUid] = body.split(".");
-      return cardUid ? { type: "chooseStory", optionId: optionId!, cardUid } : { type: "chooseStory", optionId: optionId! };
-    }
+    case "s":
+      return { type: "chooseStory", optionId: body };
     case "r":
       return { type: "removeStatus", statusUid: body };
     case "x":

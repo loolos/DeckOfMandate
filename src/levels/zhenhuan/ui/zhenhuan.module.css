@@ -683,3 +683,22 @@
 .compact .sectionTitle {
   margin: 0.5rem 0 0.3rem;
 }
+
+.tagButton {
+  font: inherit;
+  font-size: 0.75rem;
+  background: transparent;
+  cursor: help;
+}
+
+.tagButton:hover,
+.tagButton:focus-visible {
+  background: rgba(217, 178, 106, 0.15);
+  outline: none;
+}
+
+.status .tagButton {
+  color: var(--zh-text);
+  border: none;
+  background: var(--zh-bg);
+}

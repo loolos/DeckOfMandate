@@ -6,7 +6,6 @@ import {
   playLimit,
   reduce,
   replay,
-  storyOptionAvailability,
   type ZhAction,
   type ZhState,
 } from "./engine";
@@ -194,23 +193,53 @@ describe("zhenhuan engine", () => {
     return s;
   }
 
-  it("story events: card option replaces base effect and still resolves events; default when unchosen", () => {
+  it("story events: playing a listed card from hand resolves the story and matching events", () => {
     let s = advanceTo(newGame(11), 4);
     expect(s.story?.id).toBe("diyiciMiansheng");
     s.shengchong = 2;
     s.qingyu = 2;
     s.opportunity = { uid: "o", id: "huangdiZhaojian", resolved: false };
-    const uid = giveCard(s, "yirongZhengsu");
-    s = act(s, { type: "chooseStory", optionId: "shengzhuangFuzhao", cardUid: uid });
-    expect(s.shengchong).toBe(7); // 2 + 3 (option, no base) + 2 (皇帝召见)
+    s = act(s, { type: "playCard", cardUid: giveCard(s, "yirongZhengsu") });
+    expect(s.story?.chosenOptionId).toBe("shengzhuangFuzhao");
+    expect(s.shengchong).toBe(7); // 2 + 3 (story response, replaces base) + 2 (皇帝召见)
     expect(s.opportunity?.resolved).toBe(true);
     expect(s.playsUsed).toBe(1);
+  });
 
+  it("reported bug: 谨言慎行 resolves 第一次面圣 and 宫中流言 together", () => {
+    let s = advanceTo(newGame(11), 4);
+    s.qingyu = 3;
+    s.shengchong = 3;
+    s.crisis = { uid: "c", id: "gongzhongLiuyan", resolved: false };
+    s = act(s, { type: "playCard", cardUid: giveCard(s, "jinyanShenxing") });
+    expect(s.story?.chosenOptionId).toBe("yantanDeti");
+    expect(s.crisis?.resolved).toBe(true);
+    expect(s.shengchong).toBe(5); // 言谈得体 圣宠 +2
+    expect(s.qingyu).toBe(4); // 清誉 +1 (not also the base +1)
+  });
+
+  it("story events: card responses cannot be chosen on the event; basic options can", () => {
+    const s = advanceTo(newGame(11), 4);
+    giveCard(s, "yirongZhengsu");
+    expect(reduce(s, { type: "chooseStory", optionId: "shengzhuangFuzhao" })).toBe(s);
+    const t = act(s, { type: "chooseStory", optionId: "keyiBiaoxian" });
+    expect(t.playsUsed).toBe(0);
+    // once chosen, a matching card falls back to its base effect
+    const before = t.shengchong;
+    const u = act(t, { type: "playCard", cardUid: t.hand.find((c) => c.id === "yirongZhengsu")!.uid });
+    expect(u.story?.chosenOptionId).toBe("keyiBiaoxian");
+    expect(u.shengchong).toBeGreaterThanOrEqual(Math.min(8, before + 1));
+  });
+
+  it("tag explanations go to the log without being recorded", () => {
+    const s = newGame(3);
+    const t = act(s, { type: "explainTag", tag: "crisis" });
+    expect(t.log.length).toBe(s.log.length + 2);
+    expect(t.actions).toHaveLength(0);
+  });
+
+  it("story events: default option when nothing chosen", () => {
     let t = advanceTo(newGame(11), 4);
-    t.playsUsed = playLimit(t);
-    giveCard(t, "yirongZhengsu");
-    const opt = { id: "shengzhuangFuzhao", name: "", card: "yirongZhengsu" as CardId, effects: [], text: "" };
-    expect(storyOptionAvailability(t, opt).available).toBe(false);
     t.qingyu = 3;
     t.shengchong = 3;
     if (t.crisis) t.crisis.resolved = true;
@@ -223,8 +252,7 @@ describe("zhenhuan engine", () => {
   it("华妃敲打: 收拢人心 grants 先机在握 for the next 3 turns", () => {
     let s = advanceTo(newGame(13), 8);
     expect(s.story?.id).toBe("huafeiQiaoda");
-    const uid = giveCard(s, "shoulongRenxin");
-    s = act(s, { type: "chooseStory", optionId: "tiqianDezhi", cardUid: uid });
+    s = act(s, { type: "playCard", cardUid: giveCard(s, "shoulongRenxin") });
     expect(s.statuses.map((x) => x.id)).toEqual(["xianjiZaiwo"]);
     s = advanceTo(s, 9);
     expect(s.drawnThisTurn).toBe(4);
