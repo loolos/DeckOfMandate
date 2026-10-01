@@ -299,13 +299,10 @@ export const CARDS: Record<CardId, CardDef> = {
     name: "温太医诊治",
     emoji: "💊",
     flavor: "温实初的方子，总是最妥帖的。",
-    base: [{ resource: "qingyu", amount: 1 }],
+    base: [],
     baseDraw: 0,
     matches: ["wenTaiyiQingmai"],
-    rulesText: [
-      "清誉 +1。",
-      "移除你的 1 个【负面】状态：只有 1 个时直接移除；有多个时由你选择。没有负面状态时无额外效果。",
-    ],
+    rulesText: ["移除 1 个【负面】状态。"],
   },
   shoulongRenxin: {
     id: "shoulongRenxin",
@@ -323,9 +320,9 @@ export const CARDS: Record<CardId, CardDef> = {
     emoji: "🍵",
     flavor: "先按兵不动，看清局势。",
     base: [],
-    baseDraw: 1,
+    baseDraw: 2,
     matches: [],
-    rulesText: ["抽 1 张牌。", "本回合最多出牌数 +1（本身仍占用 1 次出牌；可叠加）。"],
+    rulesText: ["抽 2 张牌。", "本回合最多出牌数 +1（本身仍占用 1 次出牌；可叠加）。"],
   },
   meizhuangXiangzhu: {
     id: "meizhuangXiangzhu",
