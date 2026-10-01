@@ -31,7 +31,15 @@ import {
 } from "../data/content";
 
 export type CardInst = { readonly uid: string; readonly id: CardId };
-export type EventInst = { readonly uid: string; readonly id: EventId; resolved: boolean };
+export type EventInst = {
+  readonly uid: string;
+  readonly id: EventId;
+  resolved: boolean;
+  /** Card that resolved it (for the resolved mark). */
+  resolvedBy?: CardId;
+  /** 眉庄相助 doubled the opportunity reward. */
+  rewardDoubled?: boolean;
+};
 export type StatusInst = {
   readonly uid: string;
   readonly id: StatusId;
@@ -278,6 +286,7 @@ function resolvePlay(
   // 2. opportunity reward
   if (opp && s.outcome === "playing") {
     opp.resolved = true;
+    opp.resolvedBy = card.id;
     log(s, `解决机会事件【${EVENTS[opp.id].name}】`, "good");
     applyDeltas(s, EVENTS[opp.id].reward, EVENTS[opp.id].name);
   }
@@ -285,6 +294,7 @@ function resolvePlay(
   // 3. crisis
   if (crisis && s.outcome === "playing") {
     crisis.resolved = true;
+    crisis.resolvedBy = card.id;
     log(s, `解决危机事件【${EVENTS[crisis.id].name}】`, "good");
   }
 
@@ -295,6 +305,7 @@ function resolvePlay(
       drawCards(s, 1);
     }
     if (card.id === "meizhuangXiangzhu" && opp) {
+      opp.rewardDoubled = true;
       applyDeltas(s, EVENTS[opp.id].reward, "眉庄相助联动：奖励翻倍");
     }
   }

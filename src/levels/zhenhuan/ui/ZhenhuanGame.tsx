@@ -125,6 +125,25 @@ function MatchChips({ state, def }: { state: ZhState; def: EventDef }) {
   );
 }
 
+/** Resolved banner: distinct mark per event kind, plus which card handled it. */
+function ResolvedBanner({ icon, label, detail }: { icon: string; label: string; detail: string }) {
+  return (
+    <div className={styles.resolvedBanner} role="status">
+      <span className={styles.resolvedBadge}>
+        {icon} {label}
+      </span>
+      <span className={styles.resolvedDetail}>{detail}</span>
+    </div>
+  );
+}
+
+function eventResolvedDetail(inst: EventInst): string {
+  const def = EVENTS[inst.id];
+  const by = inst.resolvedBy ? `由【${CARDS[inst.resolvedBy].name}】` : "";
+  if (def.kind === "crisis") return `${by}化解，回合末不受惩罚。`;
+  return `${by}把握，已获得${def.resolvedText}${inst.rewardDoubled ? "（眉庄相助：奖励翻倍）" : ""}。`;
+}
+
 function EventCard({ state, inst }: { state: ZhState; inst: EventInst }) {
   const def = EVENTS[inst.id];
   const isOpp = def.kind === "opportunity";
@@ -134,16 +153,23 @@ function EventCard({ state, inst }: { state: ZhState; inst: EventInst }) {
         .filter(Boolean)
         .join(" ")}
     >
-      {inst.resolved ? <span className={styles.resolvedStamp}>已解决</span> : null}
       <div className={styles.cardHead}>
         <span className={styles.cardName}>
           <span className={styles.cardEmoji}>{def.emoji}</span>
           {def.name}
+          {inst.resolved ? " 🆗" : null}
         </span>
         <span className={[styles.cardKind, isOpp ? styles.kindOpportunity : styles.kindCrisis].join(" ")}>
           {isOpp ? "机会" : "危机"}
         </span>
       </div>
+      {inst.resolved ? (
+        <ResolvedBanner
+          icon={isOpp ? "✅" : "🛡️"}
+          label={isOpp ? "已把握" : "已化解"}
+          detail={eventResolvedDetail(inst)}
+        />
+      ) : null}
       <p className={styles.flavor}>{def.flavor}</p>
       <p className={styles.rule}>
         <span className={styles.ruleLabel}>处理：</span>
@@ -165,16 +191,24 @@ function StoryCard({ state, dispatch }: { state: ZhState; dispatch: (a: ZhAction
   const chosen = state.story.chosenOptionId;
   const defaultOption = story.options.find((o) => o.id === story.defaultOptionId)!;
   const locked = chosen != null || state.pending != null || state.outcome !== "playing";
+  const chosenOption = chosen ? story.options.find((o) => o.id === chosen) : undefined;
   return (
     <div className={[styles.card, styles.cardStory, chosen && styles.cardResolved].filter(Boolean).join(" ")}>
-      {chosen ? <span className={styles.resolvedStamp}>已选择</span> : null}
       <div className={styles.cardHead}>
         <span className={styles.cardName}>
           <span className={styles.cardEmoji}>{story.emoji}</span>
           {story.name}
+          {chosen ? " 🆗" : null}
         </span>
         <span className={[styles.cardKind, styles.kindStory].join(" ")}>剧情 · 第 {story.turn} 回合</span>
       </div>
+      {chosenOption ? (
+        <ResolvedBanner
+          icon="📝"
+          label="已抉择"
+          detail={`${chosenOption.card ? `打出【${CARDS[chosenOption.card].name}】` : ""}选择「${chosenOption.name}」：${chosenOption.text}。`}
+        />
+      ) : null}
       <p className={styles.flavor}>{story.flavor}</p>
       <p className={styles.rule}>
         必须且只能选择 1 项。基础选项不消耗出牌次数；卡牌选项需打出对应手牌并消耗 1 次出牌，其数值替代该牌的基础效果，但该牌仍会同时解决匹配的普通事件。
@@ -213,7 +247,7 @@ function TrialCard({ state }: { state: ZhState }) {
   const p = trialProgress(state);
   const mark = (ok: boolean) => <span className={ok ? styles.ok : styles.no}>{ok ? "✓" : "✗"}</span>;
   return (
-    <div className={[styles.card, styles.cardStory].join(" ")}>
+    <div className={[styles.card, styles.cardStory, p.all && styles.cardReady].filter(Boolean).join(" ")}>
       <div className={styles.cardHead}>
         <span className={styles.cardName}>
           <span className={styles.cardEmoji}>{PROMOTION_TRIAL.emoji}</span>
@@ -223,6 +257,9 @@ function TrialCard({ state }: { state: ZhState }) {
           持续 · 第 {PROMOTION_TRIAL.firstTurn}—{PROMOTION_TRIAL.lastTurn} 回合
         </span>
       </div>
+      {p.all ? (
+        <ResolvedBanner icon="🏮" label="条件已满足" detail="保持到回合末（危机惩罚结算之后）即可晋封为常在。" />
+      ) : null}
       <p className={styles.flavor}>{PROMOTION_TRIAL.flavor}</p>
       <p className={styles.check}>
         {mark(p.shengchong)} 圣宠 ≥ {PROMOTION_TRIAL.minShengchong}（当前 {state.shengchong}）

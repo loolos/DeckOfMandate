@@ -67,6 +67,9 @@ describe("zhenhuan engine", () => {
     expect(s.opportunity?.resolved).toBe(true);
     expect(s.crisis?.resolved).toBe(true);
     expect(s.playsUsed).toBe(1);
+    expect(s.opportunity?.resolvedBy).toBe("yirongZhengsu");
+    expect(s.crisis?.resolvedBy).toBe("yirongZhengsu");
+    expect(s.opportunity?.rewardDoubled).toBeUndefined();
     // no plays left
     expect(reduce(s, { type: "playCard", cardUid: uidOf(s, "shoulongRenxin") })).toBe(s);
     s = act(s, { type: "endTurn" });
@@ -176,6 +179,8 @@ describe("zhenhuan engine", () => {
     const mz = giveCard(s, "meizhuangXiangzhu");
     s = act(s, { type: "playCard", cardUid: mz });
     expect(s.qingyu).toBe(7); // 2 + 1 base + 2 reward + 2 doubled
+    expect(s.opportunity?.resolvedBy).toBe("meizhuangXiangzhu");
+    expect(s.opportunity?.rewardDoubled).toBe(true);
     expect(s.shengchong).toBe(3);
   });
 

@@ -363,6 +363,13 @@
 }
 
 .cardResolved {
+  border-color: var(--zh-green);
+}
+
+.cardResolved .rule,
+.cardResolved .flavor,
+.cardResolved .option,
+.cardResolved .cardKind {
   opacity: 0.55;
 }
 
@@ -397,14 +404,30 @@
   color: var(--zh-gold);
 }
 
-.resolvedStamp {
-  position: absolute;
-  bottom: 0.6rem;
-  right: 0.8rem;
-  font-size: 1.1rem;
+.resolvedBanner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+  border: 1px solid var(--zh-green);
+  background: rgba(108, 191, 138, 0.12);
+  border-radius: 8px;
+  padding: 0.3rem 0.5rem;
+  font-size: 0.86rem;
+}
+
+.resolvedBadge {
   color: var(--zh-green);
   font-weight: 700;
-  transform: rotate(-8deg);
+  white-space: nowrap;
+}
+
+.resolvedDetail {
+  color: var(--zh-text);
+}
+
+.cardReady {
+  border-color: var(--zh-green);
 }
 
 .option {
