@@ -136,7 +136,7 @@ describe("zhenhuan engine", () => {
     let s = newGame(7);
     let uid = giveCard(s, "wenTaiyiZhenzhi");
     s = act(s, { type: "playCard", cardUid: uid });
-    expect(s.qingyu).toBe(4);
+    expect(s.qingyu).toBe(3);
     expect(s.pending).toBeNull();
 
     s = newGame(7);
@@ -162,7 +162,7 @@ describe("zhenhuan engine", () => {
     s = act(s, { type: "removeStatus", statusUid: target });
     expect(s.statuses.map((x) => x.uid)).not.toContain(target);
     expect(s.statuses).toHaveLength(1);
-    expect(s.qingyu).toBe(4);
+    expect(s.qingyu).toBe(3);
   });
 
   it("收拢人心 draws when it resolves 内务府刁难; 眉庄相助 doubles opportunity rewards", () => {
@@ -180,7 +180,7 @@ describe("zhenhuan engine", () => {
     expect(s.qingyu).toBe(7); // 2 + 1 base + 2 reward + 2 doubled
     expect(s.opportunity?.resolvedBy).toBe("meizhuangXiangzhu");
     expect(s.opportunity?.rewardDoubled).toBe(true);
-    expect(s.shengchong).toBe(3);
+    expect(s.shengchong).toBe(2); // 眉庄相助 base is 清誉 only;
   });
 
   function advanceTo(s: ZhState, turn: number): ZhState {

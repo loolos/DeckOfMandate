@@ -198,6 +198,7 @@ export const STATUSES: Record<StatusId, StatusDef> = {
 
 export type CardId = "yirongZhengsu" | "jinyanShenxing" | "wenTaiyiZhenzhi" | "shoulongRenxin" | "jingguanQibian" | "meizhuangXiangzhu";
 
+/** Design rule (design.md §4): a card's base effect gives at most +1 to ONE of 清誉 / 圣宠. */
 export type CardDef = {
   readonly id: CardId;
   readonly name: string;
@@ -237,11 +238,11 @@ export const CARDS: Record<CardId, CardDef> = {
     name: "温太医诊治",
     emoji: "💊",
     flavor: "温实初的方子，总是最妥帖的。",
-    base: [{ resource: "qingyu", amount: 2 }],
+    base: [{ resource: "qingyu", amount: 1 }],
     baseDraw: 0,
     matches: ["wenTaiyiQingmai"],
     rulesText: [
-      "清誉 +2。",
+      "清誉 +1。",
       "移除你的 1 个【负面】状态：只有 1 个时直接移除；有多个时由你选择。没有负面状态时无额外效果。",
     ],
   },
@@ -250,13 +251,10 @@ export const CARDS: Record<CardId, CardDef> = {
     name: "收拢人心",
     emoji: "🤝",
     flavor: "赏下去的银子，总会换回些什么。",
-    base: [
-      { resource: "qingyu", amount: 1 },
-      { resource: "shengchong", amount: 1 },
-    ],
+    base: [{ resource: "shengchong", amount: 1 }],
     baseDraw: 0,
     matches: ["neiwufuDiaonan"],
-    rulesText: ["清誉 +1、圣宠 +1。", "联动：用它解决【内务府刁难】时，额外抽 1 张牌。"],
+    rulesText: ["圣宠 +1。", "联动：用它解决【内务府刁难】时，额外抽 1 张牌。"],
   },
   jingguanQibian: {
     id: "jingguanQibian",
@@ -273,13 +271,10 @@ export const CARDS: Record<CardId, CardDef> = {
     name: "眉庄相助",
     emoji: "👭",
     flavor: "眉姐姐总会站在你这边。",
-    base: [
-      { resource: "qingyu", amount: 1 },
-      { resource: "shengchong", amount: 1 },
-    ],
+    base: [{ resource: "qingyu", amount: 1 }],
     baseDraw: 0,
     matches: ["taihouChuixun", "gongzhongLiuyan", "neiwufuDiaonan"],
-    rulesText: ["清誉 +1、圣宠 +1。", "联动：它解决的机会事件，事件奖励翻倍（自身基础效果不翻倍）。"],
+    rulesText: ["清誉 +1。", "联动：它解决的机会事件，事件奖励翻倍（自身基础效果不翻倍）。"],
   },
 };
 
