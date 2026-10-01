@@ -36,8 +36,12 @@ export const RANKS: Record<RankId, RankDef> = {
 
 export type OpportunityId = "huangdiZhaojian" | "taihouChuixun" | "wenTaiyiQingmai";
 export type CrisisId = "gongzhongLiuyan" | "neiwufuDiaonan" | "liyiShiwu";
-export type EventId = OpportunityId | CrisisId;
-export type EventKind = "opportunity" | "crisis";
+/** 嫉妒事件: an extra third event while 圣宠 is high (design.md §7.4). */
+export type EnvyId = "yuDayingZhengchong" | "shichongErjiao" | "anzhongXiaban";
+export type EventId = OpportunityId | CrisisId | EnvyId;
+export type EventKind = "opportunity" | "crisis" | "envy";
+
+export const EVENT_KIND_LABEL: Record<EventKind, string> = { opportunity: "机会", crisis: "危机", envy: "嫉妒" };
 
 export type EventDef = {
   readonly id: EventId;
@@ -47,7 +51,7 @@ export type EventDef = {
   readonly flavor: string;
   /** Opportunity reward when resolved. */
   readonly reward: readonly ResourceDelta[];
-  /** Crisis penalty when unresolved at end of turn. */
+  /** Crisis / envy penalty when unresolved at end of turn. */
   readonly penalty: readonly ResourceDelta[];
   /** Crisis penalty that adds a status instead of / in addition to resource loss. */
   readonly penaltyStatus?: StatusId;
@@ -126,6 +130,40 @@ export const EVENTS: Record<EventId, EventDef> = {
     resolvedText: "移除事件",
     unresolvedText: "清誉 -1、圣宠 -1",
   },
+  yuDayingZhengchong: {
+    id: "yuDayingZhengchong",
+    kind: "envy",
+    name: "余答应争宠",
+    emoji: "🎶",
+    flavor: "倚梅园里的歌声又响起来了，余答应想把皇上的心思拉回去。",
+    reward: [],
+    penalty: [{ resource: "shengchong", amount: -1 }],
+    resolvedText: "移除事件",
+    unresolvedText: "圣宠 -1",
+  },
+  shichongErjiao: {
+    id: "shichongErjiao",
+    kind: "envy",
+    name: "恃宠而骄",
+    emoji: "💍",
+    flavor: "得宠不过几日，各宫已在背后说你轻狂。",
+    reward: [],
+    penalty: [{ resource: "qingyu", amount: -2 }],
+    resolvedText: "移除事件",
+    unresolvedText: "清誉 -2",
+  },
+  anzhongXiaban: {
+    id: "anzhongXiaban",
+    kind: "envy",
+    name: "暗中下绊",
+    emoji: "🪤",
+    flavor: "送来的吃食里，似乎多了些不该有的东西。",
+    reward: [],
+    penalty: [],
+    penaltyStatus: "baoyangZaishen",
+    resolvedText: "移除事件，不产生负面状态",
+    unresolvedText: "获得状态【抱恙在身】",
+  },
 };
 
 export const OPPORTUNITY_POOL: readonly OpportunityId[] = [
@@ -146,9 +184,18 @@ export const CRISIS_POOL: readonly CrisisId[] = [
   "liyiShiwu",
 ];
 
+export const ENVY_POOL: readonly EnvyId[] = ["yuDayingZhengchong", "shichongErjiao", "anzhongXiaban"];
+
+/**
+ * 嫉妒事件 trigger (design.md §7.4), checked at the start of each turn from `firstTurn` on: the first turn that starts
+ * with 圣宠 ≥ minShengchong always triggers, then every `interval` turns while it stays ≥; a turn
+ * starting below the threshold resets it.
+ */
+export const ENVY_TRIGGER = { firstTurn: 6, minShengchong: 5, interval: 2 };
+
 // ---------------------------------------------------------------- statuses
 
-export type StatusId = "liuyanChanshen" | "xianjiZaiwo";
+export type StatusId = "liuyanChanshen" | "xianjiZaiwo" | "baoyangZaishen";
 export type StatusTag = "negative" | "positive";
 
 export const STATUS_TAG_LABEL: Record<StatusTag, string> = { negative: "负面", positive: "正面" };
@@ -161,6 +208,8 @@ export type StatusDef = {
   /** Number of future turns the status applies to. */
   readonly duration: number;
   readonly drawModifier: number;
+  /** Cards that cannot be played while the status applies. */
+  readonly blocksCards?: readonly CardId[];
   /** 机制文本 */
   readonly effectText: string;
   /** 剧情文本 (placeholder flavor) */
@@ -192,6 +241,18 @@ export const STATUSES: Record<StatusId, StatusDef> = {
     flavor: "早早打点好了各处，宫里的消息总比别人快一步。",
     source: "第 8 回合【华妃敲打】时从手牌打出【收拢人心】（提前得知消息）",
   },
+  baoyangZaishen: {
+    id: "baoyangZaishen",
+    name: "抱恙在身",
+    emoji: "🥀",
+    tag: "negative",
+    duration: 3,
+    drawModifier: 0,
+    blocksCards: ["yirongZhengsu", "jinyanShenxing"],
+    effectText: "未来 3 回合，不能打出【仪容整肃】和【谨言慎行】。",
+    flavor: "身子一阵阵发虚，连起身梳妆都勉强。",
+    source: "回合末未处理的嫉妒事件【暗中下绊】",
+  },
 };
 
 // ---------------------------------------------------------------- cards
@@ -220,7 +281,7 @@ export const CARDS: Record<CardId, CardDef> = {
     flavor: "衣饰妆容一丝不苟。",
     base: [{ resource: "shengchong", amount: 1 }],
     baseDraw: 0,
-    matches: ["huangdiZhaojian", "liyiShiwu"],
+    matches: ["huangdiZhaojian", "liyiShiwu", "yuDayingZhengchong"],
     rulesText: ["圣宠 +1。"],
   },
   jinyanShenxing: {
@@ -230,7 +291,7 @@ export const CARDS: Record<CardId, CardDef> = {
     flavor: "话到嘴边留三分。",
     base: [{ resource: "qingyu", amount: 1 }],
     baseDraw: 0,
-    matches: ["huangdiZhaojian", "taihouChuixun", "gongzhongLiuyan"],
+    matches: ["huangdiZhaojian", "taihouChuixun", "gongzhongLiuyan", "shichongErjiao"],
     rulesText: ["清誉 +1。"],
   },
   wenTaiyiZhenzhi: {
@@ -250,7 +311,7 @@ export const CARDS: Record<CardId, CardDef> = {
     flavor: "赏下去的银子，总会换回些什么。",
     base: [{ resource: "shengchong", amount: 1 }],
     baseDraw: 0,
-    matches: ["neiwufuDiaonan"],
+    matches: ["neiwufuDiaonan", "yuDayingZhengchong"],
     rulesText: ["圣宠 +1。", "联动：用它解决【内务府刁难】时，额外抽 1 张牌。"],
   },
   jingguanQibian: {
@@ -270,7 +331,7 @@ export const CARDS: Record<CardId, CardDef> = {
     flavor: "眉姐姐总会站在你这边。",
     base: [{ resource: "qingyu", amount: 1 }],
     baseDraw: 0,
-    matches: ["taihouChuixun", "gongzhongLiuyan", "neiwufuDiaonan"],
+    matches: ["taihouChuixun", "gongzhongLiuyan", "neiwufuDiaonan", "anzhongXiaban"],
     rulesText: ["清誉 +1。", "联动：它解决的机会事件，事件奖励翻倍（自身基础效果不翻倍）。"],
   },
 };
@@ -358,7 +419,7 @@ export const STORIES: Record<StoryId, StoryDef> = {
 
 // ---------------------------------------------------------------- tag explanations (click a tag → log)
 
-export type TagId = "opportunity" | "crisis" | "story" | "trial" | "trialCard" | "negative" | "positive";
+export type TagId = "opportunity" | "crisis" | "envy" | "story" | "trial" | "trialCard" | "negative" | "positive";
 
 export type TagInfo = { readonly label: string; readonly lore: string; readonly rules: string };
 
@@ -372,6 +433,11 @@ export const TAG_INFO: Record<TagId, TagInfo> = {
     label: "危机",
     lore: "后宫里的风浪，躲不过就得接住。",
     rules: "每回合从危机牌池抽 1 张。打出匹配牌即可化解；未解决时回合末结算未处理效果后离场。",
+  },
+  envy: {
+    label: "嫉妒",
+    lore: "树大招风，圣宠越盛，盯着你的眼睛就越多。",
+    rules: "第 6 回合起，回合开始时圣宠 ≥ 5 才会出现：第一次达到时必定出现，之后只要每回合开始时圣宠仍 ≥ 5，就每隔一回合出现一次；某回合开始时圣宠 < 5 则重新计算。作为本回合的额外事件，打出匹配牌即可化解；未解决时回合末结算未处理效果后离场。",
   },
   story: {
     label: "剧情",

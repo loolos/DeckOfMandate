@@ -11,6 +11,7 @@
   --zh-opportunity: #6aa9d9;
   --zh-crisis: #d9706a;
   --zh-story: #c49ad9;
+  --zh-envy: #e08cb4;
   min-height: 100vh;
   min-height: 100dvh;
   background:
@@ -367,6 +368,10 @@
   color: var(--zh-crisis);
 }
 
+.kindEnvy {
+  color: var(--zh-envy);
+}
+
 .kindStory {
   color: var(--zh-story);
 }
@@ -382,6 +387,10 @@
 
 .cardCrisis {
   border-top: 3px solid var(--zh-crisis);
+}
+
+.cardEnvy {
+  border-top: 3px solid var(--zh-envy);
 }
 
 .cardStory {
