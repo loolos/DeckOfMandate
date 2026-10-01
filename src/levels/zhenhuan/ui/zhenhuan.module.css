@@ -292,10 +292,34 @@
   margin: 0.75rem 0 0.4rem;
 }
 
-.events {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+/* Events and hand are single rows that scroll sideways (drag, swipe or wheel) instead of wrapping. */
+.scrollRow {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: stretch;
   gap: 0.75rem;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x proximity;
+  padding-bottom: 0.5rem;
+  cursor: grab;
+  scrollbar-width: thin;
+  scrollbar-color: var(--zh-border) transparent;
+}
+
+.scrollRow > * {
+  flex: 0 0 auto;
+  scroll-snap-align: start;
+}
+
+.scrollRowDragging {
+  cursor: grabbing;
+  scroll-snap-type: none;
+  user-select: none;
+}
+
+.events > * {
+  width: 250px;
 }
 
 .card {
@@ -464,10 +488,8 @@
 
 /* ---------------------------------------------------------------- hand */
 
-.hand {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 0.75rem;
+.hand > * {
+  width: 210px;
 }
 
 .handCard {
@@ -642,23 +664,21 @@
   white-space: nowrap;
 }
 
-.compact .events,
-.compact .hand {
-  align-items: start;
-}
-
-.expandedCard {
-  grid-column: span 2;
-}
-
-.compact .events {
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+.compact .scrollRow {
+  align-items: flex-start;
   gap: 0.5rem;
 }
 
-.compact .hand {
-  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-  gap: 0.5rem;
+.compact .events > * {
+  width: 180px;
+}
+
+.compact .hand > * {
+  width: 150px;
+}
+
+.compact .scrollRow > .expandedCard {
+  width: min(320px, 85vw);
 }
 
 .compact .bar {

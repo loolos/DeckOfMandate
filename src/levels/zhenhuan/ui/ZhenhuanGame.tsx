@@ -130,6 +130,63 @@ function MatchChips({ state, def }: { state: ZhState; def: EventDef }) {
   );
 }
 
+/**
+ * One horizontal row of cards. Overflow scrolls sideways: swipe on touch, trackpad/shift+wheel,
+ * or press-and-drag with a mouse (a drag never counts as a click on the card under it).
+ */
+function ScrollRow({ className, children }: { className?: string; children: ReactNode }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const drag = useRef<{ x: number; left: number; moved: boolean; id: number } | null>(null);
+  const [dragging, setDragging] = useState(false);
+  return (
+    <div
+      ref={ref}
+      className={[styles.scrollRow, className, dragging && styles.scrollRowDragging].filter(Boolean).join(" ")}
+      onPointerDown={(e) => {
+        if (e.pointerType !== "mouse" || e.button !== 0 || !ref.current) return;
+        drag.current = { x: e.clientX, left: ref.current.scrollLeft, moved: false, id: e.pointerId };
+      }}
+      onPointerMove={(e) => {
+        const d = drag.current;
+        if (!d || !ref.current) return;
+        const dx = e.clientX - d.x;
+        if (!d.moved && Math.abs(dx) < 6) return;
+        if (!d.moved) {
+          d.moved = true;
+          setDragging(true);
+          ref.current.setPointerCapture(d.id);
+        }
+        ref.current.scrollLeft = d.left - dx;
+      }}
+      onPointerUp={() => {
+        if (!drag.current?.moved) {
+          drag.current = null;
+          return;
+        }
+        setDragging(false);
+        // keep the drag marker until the trailing click (same task) has been swallowed
+        window.setTimeout(() => {
+          drag.current = null;
+        }, 0);
+      }}
+      onPointerCancel={() => {
+        drag.current = null;
+        setDragging(false);
+      }}
+      onClickCapture={(e) => {
+        // swallow the click that ends a drag
+        if (drag.current?.moved) {
+          e.stopPropagation();
+          e.preventDefault();
+        }
+        drag.current = null;
+      }}
+    >
+      {children}
+    </div>
+  );
+}
+
 /** 略缩模式 (thumbnail mode): cards collapse to a one-line strip; tap to expand. */
 type Fold = { compact: boolean; expanded: boolean; onToggle: () => void };
 
@@ -723,7 +780,7 @@ export function ZhenhuanGame({ state, dispatch, showRules, onShowRules, onRestar
       <Statuses state={state} dispatch={dispatch} />
 
       <h2 className={styles.sectionTitle}>本回合事件</h2>
-      <div className={styles.events}>
+      <ScrollRow className={styles.events}>
         {state.opportunity ? (
           <EventCard state={state} inst={state.opportunity} fold={fold(state.opportunity.uid)} dispatch={dispatch} />
         ) : null}
@@ -732,18 +789,18 @@ export function ZhenhuanGame({ state, dispatch, showRules, onShowRules, onRestar
         ) : null}
         <StoryCard state={state} dispatch={dispatch} fold={fold("story")} />
         <TrialCard state={state} fold={fold("trial")} dispatch={dispatch} />
-      </div>
+      </ScrollRow>
 
       <h2 className={styles.sectionTitle}>
         手牌（{state.hand.length}）· 回合结束时全部弃置
         {compact ? <span className={styles.muted}> · 点击展开，双击打出</span> : null}
       </h2>
-      <div className={styles.hand}>
+      <ScrollRow className={styles.hand}>
         {state.hand.length === 0 ? <p className={styles.muted}>没有手牌。</p> : null}
         {state.hand.map((card) => (
           <HandCard key={card.uid} state={state} card={card} dispatch={dispatch} fold={fold(card.uid)} />
         ))}
-      </div>
+      </ScrollRow>
 
       <div className={styles.endTurnRow}>
         <button
