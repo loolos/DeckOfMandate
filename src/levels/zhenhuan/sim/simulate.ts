@@ -5,7 +5,7 @@
  * - casual: plays a matching card if it has one (else a random card), never picks story options
  */
 import { CARDS } from "../data/content";
-import { negativeStatuses, newGame, playsLeft, reduce, storyOptionAvailability, currentStory, type ZhAction, type ZhState } from "../logic/engine";
+import { negativeStatuses, newGame, playsLeft, reduce, storyBasicOptions, currentStory, type ZhAction, type ZhState } from "../logic/engine";
 
 export type Policy = (s: ZhState, seed: number) => ZhState;
 
@@ -25,10 +25,7 @@ function legalTurnActions(s: ZhState): ZhAction[] {
   }
   const story = currentStory(s);
   if (story && s.story?.chosenOptionId == null) {
-    for (const o of story.options) {
-      const a = storyOptionAvailability(s, o);
-      if (a.available) out.push({ type: "chooseStory", optionId: o.id, cardUid: a.cardUid });
-    }
+    for (const o of storyBasicOptions(story)) out.push({ type: "chooseStory", optionId: o.id });
   }
   return out;
 }
