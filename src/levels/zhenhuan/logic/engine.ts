@@ -395,7 +395,7 @@ function beginTurn(s: ZhState, turn: number): void {
 
 /** 嫉妒事件 trigger, at turn start (design.md §7.4). */
 function checkEnvy(s: ZhState): void {
-  if (s.shengchong < ENVY_TRIGGER.minShengchong) {
+  if (s.turn < ENVY_TRIGGER.firstTurn || s.shengchong < ENVY_TRIGGER.minShengchong) {
     s.envyLastTurn = null;
     return;
   }

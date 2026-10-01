@@ -160,9 +160,9 @@ export const EVENTS: Record<EventId, EventDef> = {
     flavor: "送来的吃食里，似乎多了些不该有的东西。",
     reward: [],
     penalty: [],
-    penaltyStatus: "yutiWeihe",
+    penaltyStatus: "baoyangZaishen",
     resolvedText: "移除事件，不产生负面状态",
-    unresolvedText: "获得状态【玉体违和】",
+    unresolvedText: "获得状态【抱恙在身】",
   },
 };
 
@@ -187,15 +187,15 @@ export const CRISIS_POOL: readonly CrisisId[] = [
 export const ENVY_POOL: readonly EnvyId[] = ["yuDayingZhengchong", "shichongErjiao", "anzhongXiaban"];
 
 /**
- * 嫉妒事件 trigger (design.md §7.4), checked at the start of each turn: the first turn that starts
+ * 嫉妒事件 trigger (design.md §7.4), checked at the start of each turn from `firstTurn` on: the first turn that starts
  * with 圣宠 ≥ minShengchong always triggers, then every `interval` turns while it stays ≥; a turn
  * starting below the threshold resets it.
  */
-export const ENVY_TRIGGER = { minShengchong: 5, interval: 2 };
+export const ENVY_TRIGGER = { firstTurn: 6, minShengchong: 5, interval: 2 };
 
 // ---------------------------------------------------------------- statuses
 
-export type StatusId = "liuyanChanshen" | "xianjiZaiwo" | "yutiWeihe";
+export type StatusId = "liuyanChanshen" | "xianjiZaiwo" | "baoyangZaishen";
 export type StatusTag = "negative" | "positive";
 
 export const STATUS_TAG_LABEL: Record<StatusTag, string> = { negative: "负面", positive: "正面" };
@@ -241,9 +241,9 @@ export const STATUSES: Record<StatusId, StatusDef> = {
     flavor: "早早打点好了各处，宫里的消息总比别人快一步。",
     source: "第 8 回合【华妃敲打】时从手牌打出【收拢人心】（提前得知消息）",
   },
-  yutiWeihe: {
-    id: "yutiWeihe",
-    name: "玉体违和",
+  baoyangZaishen: {
+    id: "baoyangZaishen",
+    name: "抱恙在身",
     emoji: "🥀",
     tag: "negative",
     duration: 3,
@@ -440,7 +440,7 @@ export const TAG_INFO: Record<TagId, TagInfo> = {
   envy: {
     label: "嫉妒",
     lore: "树大招风，圣宠越盛，盯着你的眼睛就越多。",
-    rules: "回合开始时圣宠 ≥ 5 才会出现：第一次达到时必定出现，之后只要每回合开始时圣宠仍 ≥ 5，就每隔一回合出现一次；某回合开始时圣宠 < 5 则重新计算。作为本回合的额外事件，打出匹配牌即可化解；未解决时回合末结算未处理效果后离场。",
+    rules: "第 6 回合起，回合开始时圣宠 ≥ 5 才会出现：第一次达到时必定出现，之后只要每回合开始时圣宠仍 ≥ 5，就每隔一回合出现一次；某回合开始时圣宠 < 5 则重新计算。作为本回合的额外事件，打出匹配牌即可化解；未解决时回合末结算未处理效果后离场。",
   },
   story: {
     label: "剧情",

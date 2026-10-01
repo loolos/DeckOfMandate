@@ -13,7 +13,7 @@ export function RulesSummary() {
         一张牌可以同时解决多个匹配事件。未解决的危机会在回合末造成惩罚。
       </li>
       <li>
-        圣宠太盛会招来<strong>嫉妒事件</strong>：回合开始时圣宠 ≥ {ENVY_TRIGGER.minShengchong} 时额外出现 1 个（首次必出，之后每隔一回合一次；圣宠跌回{" "}
+        圣宠太盛会招来<strong>嫉妒事件</strong>：第 {ENVY_TRIGGER.firstTurn} 回合起，回合开始时圣宠 ≥ {ENVY_TRIGGER.minShengchong} 时额外出现 1 个（首次必出，之后每隔一回合一次；圣宠跌回{" "}
         {ENVY_TRIGGER.minShengchong} 以下则重新计算），处理方式与危机相同。
       </li>
       <li>第 4、8 回合有剧情事件：在事件上选 1 个基础选项，或从手牌打出事件卡上列出的牌来解决；都不做则按默认选项处理。卡牌永远从手牌打出。</li>

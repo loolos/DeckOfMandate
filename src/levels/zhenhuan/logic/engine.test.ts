@@ -205,16 +205,16 @@ describe("zhenhuan engine", () => {
     return act(s, { type: "endTurn" });
   }
 
-  it("嫉妒事件: first turn starting at 圣宠 ≥ 5 triggers, then every other turn; dropping below resets", () => {
+  it("嫉妒事件: never before turn 6; then first turn at 圣宠 ≥ 5 triggers, every other turn after; dropping below resets", () => {
     let s = newGame(21);
     const fired: number[] = [];
-    const plan = [5, 5, 5, 5, 4, 5, 6, 3, 3, 5];
+    const plan = [5, 5, 5, 5, 5, 5, 4, 5, 6, 3, 5];
     for (const sc of plan) {
       s = endTurnWith(s, sc);
       if (s.envy) fired.push(s.turn);
     }
-    // turns 2..11 start with 圣宠 5,5,5,5,4,5,6,3,3,5
-    expect(fired).toEqual([2, 4, 7, 11]);
+    // turns 2..12 start with 圣宠 5,5,5,5,5,5,4,5,6,3,5
+    expect(fired).toEqual([6, 9, 12]);
     expect(s.envyPool.length + s.envyUsed.length + (s.envy ? 1 : 0)).toBe(3);
   });
 
@@ -234,12 +234,12 @@ describe("zhenhuan engine", () => {
     expect(s.envyUsed).toContain("shichongErjiao");
   });
 
-  it("暗中下绊 → 玉体违和 blocks 仪容整肃 / 谨言慎行 from next turn; 温太医诊治 removes it", () => {
+  it("暗中下绊 → 抱恙在身 blocks 仪容整肃 / 谨言慎行 from next turn; 温太医诊治 removes it", () => {
     let s = newGame(25);
     s.crisis!.resolved = true;
     s.envy = { uid: "e", id: "anzhongXiaban", resolved: false };
     s = act(s, { type: "endTurn" });
-    expect(s.statuses.map((x) => x.id)).toEqual(["yutiWeihe"]);
+    expect(s.statuses.map((x) => x.id)).toEqual(["baoyangZaishen"]);
 
     const blocked = giveCard(s, "yirongZhengsu");
     const blocked2 = giveCard(s, "jinyanShenxing");

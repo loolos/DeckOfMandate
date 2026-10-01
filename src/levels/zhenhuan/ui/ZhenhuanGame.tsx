@@ -890,7 +890,7 @@ export function ZhenhuanGame({ state, dispatch, showRules, onShowRules, onRestar
         </Pile>
         <Pile label="👀 嫉妒牌池" count={state.envyPool.length}>
           <p className={styles.popoverTitle}>
-            回合开始时圣宠 ≥ {ENVY_TRIGGER.minShengchong}：首次必出，之后每隔一回合出现一次
+            第 {ENVY_TRIGGER.firstTurn} 回合起，回合开始时圣宠 ≥ {ENVY_TRIGGER.minShengchong}：首次必出，之后每隔一回合出现一次
           </p>
           <p className={styles.popoverTitle}>剩余嫉妒事件</p>
           <EventCountList ids={state.envyPool} empty="已抽完，下次将把已用事件重新洗匀。" />
