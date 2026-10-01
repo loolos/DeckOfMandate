@@ -161,7 +161,12 @@ export type StatusDef = {
   /** Number of future turns the status applies to. */
   readonly duration: number;
   readonly drawModifier: number;
+  /** 机制文本 */
   readonly effectText: string;
+  /** 剧情文本 (placeholder flavor) */
+  readonly flavor: string;
+  /** Where the status comes from. */
+  readonly source: string;
 };
 
 export const STATUSES: Record<StatusId, StatusDef> = {
@@ -173,6 +178,8 @@ export const STATUSES: Record<StatusId, StatusDef> = {
     duration: 3,
     drawModifier: -1,
     effectText: "未来 3 回合，每回合抓牌数 -1。多个实例分别计时、效果叠加。",
+    flavor: "宫里的闲话越传越离谱，连走动见人都要多几分小心。",
+    source: "回合末未处理的危机事件【宫中流言】",
   },
   xianjiZaiwo: {
     id: "xianjiZaiwo",
@@ -182,6 +189,8 @@ export const STATUSES: Record<StatusId, StatusDef> = {
     duration: 3,
     drawModifier: 1,
     effectText: "未来 3 回合，每回合抓牌数 +1。",
+    flavor: "早早打点好了各处，宫里的消息总比别人快一步。",
+    source: "第 8 回合【华妃敲打】时从手牌打出【收拢人心】（提前得知消息）",
   },
 };
 
