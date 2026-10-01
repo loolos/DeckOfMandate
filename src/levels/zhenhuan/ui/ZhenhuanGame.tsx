@@ -199,6 +199,11 @@ function activateOnKey(e: KeyboardEvent, fn: () => void) {
 
 const INTERACTIVE = "button, a, input, textarea, select, label";
 
+function isTypingTarget(target: EventTarget | null): boolean {
+  if (!(target instanceof HTMLElement)) return false;
+  return target.tagName === "INPUT" || target.tagName === "TEXTAREA" || target.tagName === "SELECT" || target.isContentEditable;
+}
+
 /**
  * Card container. In 略缩模式 the whole card toggles collapsed/expanded with a single click
  * (clicks on its own buttons don't toggle). With `onDouble` (hand cards) the toggle waits a
@@ -216,7 +221,23 @@ function FoldBox({
   children: ReactNode;
 }) {
   const timer = useRef<number | null>(null);
-  if (!fold.compact) return <div className={className}>{children}</div>;
+  if (!fold.compact) {
+    // Desktop layout: double-click a hand card to play it (same as the Sun King campaign).
+    return (
+      <div
+        className={onDouble ? `${className} ${styles.playableByDouble}` : className}
+        onDoubleClick={
+          onDouble
+            ? (e) => {
+                if (!(e.target as HTMLElement).closest(INTERACTIVE)) onDouble();
+              }
+            : undefined
+        }
+      >
+        {children}
+      </div>
+    );
+  }
   const clearTimer = () => {
     if (timer.current !== null) window.clearTimeout(timer.current);
     timer.current = null;
@@ -769,6 +790,20 @@ export function ZhenhuanGame({ state, dispatch, showRules, onShowRules, onRestar
   const usedOpp = state.opportunityUsed;
   const usedCrisis = state.crisisUsed;
   const compact = useSmallScreen();
+
+  // Space ends the turn (same shortcut as the Sun King campaign); ignored while typing.
+  const endTurnReady = canEndTurn(state) && !showRules;
+  useEffect(() => {
+    const onKeyDown = (event: globalThis.KeyboardEvent) => {
+      if (event.key !== " " && event.code !== "Space") return;
+      if (event.defaultPrevented || isTypingTarget(event.target)) return;
+      if (!endTurnReady) return;
+      event.preventDefault();
+      dispatch({ type: "endTurn" });
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [endTurnReady, dispatch]);
   const [expandedKey, setExpandedKey] = useState<string | null>(null);
   const fold = (key: string): Fold => ({
     compact,
@@ -852,7 +887,7 @@ export function ZhenhuanGame({ state, dispatch, showRules, onShowRules, onRestar
 
       <h2 className={styles.sectionTitle}>
         手牌（{state.hand.length}）· 回合结束时全部弃置
-        {compact ? <span className={styles.muted}> · 点击展开，双击打出</span> : null}
+        <span className={styles.muted}>{compact ? " · 点击展开，双击打出" : " · 双击打出"}</span>
       </h2>
       <ScrollRow className={styles.hand}>
         {state.hand.length === 0 ? <p className={styles.muted}>没有手牌。</p> : null}
@@ -868,7 +903,7 @@ export function ZhenhuanGame({ state, dispatch, showRules, onShowRules, onRestar
           disabled={!canEndTurn(state)}
           onClick={() => dispatch({ type: "endTurn" })}
         >
-          结束回合
+          结束回合（空格）
         </button>
         {hints.map((h) => (
           <span key={h} className={styles.endHint}>

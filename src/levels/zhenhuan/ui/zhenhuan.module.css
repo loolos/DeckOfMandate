@@ -762,3 +762,7 @@
   outline: none;
   border-color: var(--zh-gold);
 }
+
+.playableByDouble {
+  user-select: none;
+}
