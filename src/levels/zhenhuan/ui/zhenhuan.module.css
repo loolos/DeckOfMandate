@@ -1,0 +1,685 @@
+.root {
+  --zh-bg: #1a1013;
+  --zh-panel: #261a1e;
+  --zh-panel-2: #2f2025;
+  --zh-border: #4a3238;
+  --zh-text: #f2e8e0;
+  --zh-muted: #b9a59c;
+  --zh-gold: #d9b26a;
+  --zh-red: #c2474f;
+  --zh-green: #6cbf8a;
+  --zh-opportunity: #6aa9d9;
+  --zh-crisis: #d9706a;
+  --zh-story: #c49ad9;
+  min-height: 100vh;
+  min-height: 100dvh;
+  background:
+    radial-gradient(ellipse at top, rgba(194, 71, 79, 0.18), transparent 60%),
+    var(--zh-bg);
+  color: var(--zh-text);
+}
+
+.page {
+  max-width: min(1280px, 96vw);
+  margin: 0 auto;
+  padding: 1rem 16px 2rem;
+}
+
+.btn {
+  border: 1px solid var(--zh-border);
+  background: var(--zh-panel-2);
+  color: var(--zh-text);
+  border-radius: 8px;
+  padding: 0.45rem 0.9rem;
+}
+
+.btn:hover:not(:disabled) {
+  border-color: var(--zh-gold);
+}
+
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.btnPrimary {
+  background: linear-gradient(180deg, #a8343d, #7d232b);
+  border-color: #c2474f;
+  font-weight: 600;
+}
+
+.btnSmall {
+  padding: 0.2rem 0.55rem;
+  font-size: 0.85rem;
+}
+
+.muted {
+  color: var(--zh-muted);
+}
+
+/* ---------------------------------------------------------------- start menu */
+
+.menuScreen {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+}
+
+.menuPanel {
+  width: min(520px, 100%);
+  background: var(--zh-panel);
+  border: 1px solid var(--zh-border);
+  border-radius: 14px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
+}
+
+.menuTitle {
+  margin: 0;
+  font-size: 1.8rem;
+  letter-spacing: 0.2em;
+  color: var(--zh-gold);
+}
+
+.menuLabel {
+  font-size: 0.85rem;
+  color: var(--zh-muted);
+  margin-top: 0.4rem;
+}
+
+.menuInput {
+  background: var(--zh-bg);
+  color: var(--zh-text);
+  border: 1px solid var(--zh-border);
+  border-radius: 8px;
+  padding: 0.45rem 0.6rem;
+  font: inherit;
+}
+
+.menuError {
+  color: var(--zh-red);
+  font-size: 0.85rem;
+  margin: 0;
+}
+
+.menuHint {
+  font-size: 0.85rem;
+  color: var(--zh-muted);
+  margin: 0;
+}
+
+/* ---------------------------------------------------------------- header + bars */
+
+.header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--zh-border);
+  margin-bottom: 0.75rem;
+}
+
+.title {
+  margin: 0;
+  font-size: 1.3rem;
+  color: var(--zh-gold);
+}
+
+.headerMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  border: 1px solid var(--zh-border);
+  background: var(--zh-panel);
+  border-radius: 999px;
+  padding: 0.15rem 0.65rem;
+  font-size: 0.9rem;
+}
+
+.badgeGold {
+  border-color: var(--zh-gold);
+  color: var(--zh-gold);
+}
+
+.bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-bottom: 0.75rem;
+}
+
+.stat {
+  flex: 1 1 160px;
+  background: var(--zh-panel);
+  border: 1px solid var(--zh-border);
+  border-radius: 10px;
+  padding: 0.5rem 0.75rem;
+}
+
+.statLabel {
+  font-size: 0.8rem;
+  color: var(--zh-muted);
+}
+
+.statValue {
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+
+.statDanger {
+  color: var(--zh-red);
+}
+
+.meter {
+  height: 6px;
+  border-radius: 999px;
+  background: var(--zh-bg);
+  margin-top: 0.3rem;
+  overflow: hidden;
+}
+
+.meterFill {
+  height: 100%;
+  background: var(--zh-gold);
+}
+
+/* hover popovers for piles */
+
+.pile {
+  position: relative;
+  flex: 1 1 140px;
+  background: var(--zh-panel);
+  border: 1px dashed var(--zh-border);
+  border-radius: 10px;
+  padding: 0.45rem 0.75rem;
+  cursor: help;
+  outline: none;
+}
+
+.pile:hover,
+.pile:focus-visible {
+  border-color: var(--zh-gold);
+}
+
+.popover {
+  display: none;
+  position: absolute;
+  z-index: 20;
+  top: calc(100% + 6px);
+  left: 0;
+  min-width: 220px;
+  max-width: min(320px, 90vw);
+  background: #120b0d;
+  border: 1px solid var(--zh-gold);
+  border-radius: 10px;
+  padding: 0.6rem 0.75rem;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
+  font-size: 0.88rem;
+}
+
+.pile:hover .popover,
+.pile:focus-within .popover {
+  display: block;
+}
+
+.popoverTitle {
+  font-weight: 600;
+  color: var(--zh-gold);
+  margin: 0.2rem 0;
+}
+
+.popoverList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* ---------------------------------------------------------------- statuses */
+
+.statusRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+  align-items: center;
+}
+
+.status {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  border-radius: 10px;
+  padding: 0.35rem 0.6rem;
+  background: var(--zh-panel);
+  border: 1px solid var(--zh-border);
+  font-size: 0.9rem;
+}
+
+.statusNegative {
+  border-color: var(--zh-red);
+}
+
+.statusPositive {
+  border-color: var(--zh-green);
+}
+
+.tag {
+  font-size: 0.75rem;
+  border-radius: 4px;
+  padding: 0 0.3rem;
+  background: var(--zh-bg);
+}
+
+/* ---------------------------------------------------------------- layout */
+
+.sectionTitle {
+  font-size: 0.95rem;
+  color: var(--zh-muted);
+  margin: 0.75rem 0 0.4rem;
+}
+
+.events {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 0.75rem;
+}
+
+.card {
+  position: relative;
+  background: var(--zh-panel);
+  border: 1px solid var(--zh-border);
+  border-radius: 12px;
+  padding: 0.7rem 0.8rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.cardHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.cardName {
+  font-weight: 700;
+  font-size: 1.05rem;
+}
+
+.cardEmoji {
+  font-size: 1.4rem;
+  margin-right: 0.3rem;
+}
+
+.cardKind {
+  font-size: 0.75rem;
+  border-radius: 4px;
+  padding: 0.05rem 0.4rem;
+  border: 1px solid currentColor;
+}
+
+.kindOpportunity {
+  color: var(--zh-opportunity);
+}
+
+.kindCrisis {
+  color: var(--zh-crisis);
+}
+
+.kindStory {
+  color: var(--zh-story);
+}
+
+.kindTrial {
+  color: var(--zh-gold);
+  font-weight: 600;
+}
+
+.cardOpportunity {
+  border-top: 3px solid var(--zh-opportunity);
+}
+
+.cardCrisis {
+  border-top: 3px solid var(--zh-crisis);
+}
+
+.cardStory {
+  border-top: 3px solid var(--zh-story);
+}
+
+.cardResolved {
+  border-color: var(--zh-green);
+}
+
+.cardResolved .rule,
+.cardResolved .flavor,
+.cardResolved .option,
+.cardResolved .cardKind {
+  opacity: 0.55;
+}
+
+.flavor {
+  font-size: 0.82rem;
+  color: var(--zh-muted);
+  font-style: italic;
+  margin: 0;
+}
+
+.rule {
+  font-size: 0.88rem;
+  margin: 0;
+}
+
+.ruleLabel {
+  color: var(--zh-muted);
+}
+
+.matchChip {
+  display: inline-block;
+  font-size: 0.8rem;
+  border-radius: 4px;
+  padding: 0 0.35rem;
+  margin: 0.1rem 0.2rem 0 0;
+  background: var(--zh-bg);
+  border: 1px solid var(--zh-border);
+}
+
+.matchChipInHand {
+  border-color: var(--zh-gold);
+  color: var(--zh-gold);
+}
+
+.resolvedBanner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+  border: 1px solid var(--zh-green);
+  background: rgba(108, 191, 138, 0.12);
+  border-radius: 8px;
+  padding: 0.3rem 0.5rem;
+  font-size: 0.86rem;
+}
+
+.resolvedBadge {
+  color: var(--zh-green);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.resolvedDetail {
+  color: var(--zh-text);
+}
+
+.cardReady {
+  border-color: var(--zh-green);
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  border-top: 1px dashed var(--zh-border);
+  padding-top: 0.35rem;
+  font-size: 0.88rem;
+}
+
+.option .btn {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.optionChosen {
+  color: var(--zh-gold);
+}
+
+.check {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.ok {
+  color: var(--zh-green);
+}
+
+.no {
+  color: var(--zh-red);
+}
+
+/* ---------------------------------------------------------------- hand */
+
+.hand {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 0.75rem;
+}
+
+.handCard {
+  background: linear-gradient(180deg, var(--zh-panel-2), var(--zh-panel));
+  border: 1px solid var(--zh-border);
+  border-radius: 12px;
+  padding: 0.7rem 0.8rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.handCardMatch {
+  border-color: var(--zh-gold);
+  box-shadow: 0 0 0 1px rgba(217, 178, 106, 0.35);
+}
+
+.handCardPending {
+  border-color: var(--zh-story);
+  box-shadow: 0 0 0 2px rgba(196, 154, 217, 0.45);
+}
+
+.solves {
+  font-size: 0.82rem;
+  color: var(--zh-gold);
+  margin: 0;
+}
+
+.cardActions {
+  margin-top: auto;
+  display: flex;
+  gap: 0.4rem;
+  padding-top: 0.35rem;
+}
+
+/* ---------------------------------------------------------------- footer */
+
+.endTurnRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 1rem 0 0.5rem;
+}
+
+.endHint {
+  font-size: 0.88rem;
+  color: var(--zh-muted);
+}
+
+.bottom {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.log {
+  background: #120b0d;
+  border: 1px solid var(--zh-border);
+  border-radius: 10px;
+  padding: 0.5rem 0.75rem;
+  max-height: 260px;
+  overflow-y: auto;
+  font-size: 0.86rem;
+}
+
+.logLine {
+  margin: 0.1rem 0;
+}
+
+.logTurn {
+  color: var(--zh-gold);
+  margin-top: 0.4rem;
+}
+
+.logGood {
+  color: var(--zh-green);
+}
+
+.logBad {
+  color: var(--zh-red);
+}
+
+/* ---------------------------------------------------------------- modal */
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: rgba(0, 0, 0, 0.6);
+  display: grid;
+  place-items: center;
+  padding: 16px;
+}
+
+.modal {
+  width: min(560px, 100%);
+  max-height: 90vh;
+  overflow-y: auto;
+  background: var(--zh-panel);
+  border: 1px solid var(--zh-gold);
+  border-radius: 14px;
+  padding: 1.25rem 1.4rem;
+}
+
+.modal h2 {
+  margin-top: 0;
+  color: var(--zh-gold);
+}
+
+.modal ul {
+  padding-left: 1.2rem;
+}
+
+.modalActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: flex-end;
+  margin-top: 1rem;
+}
+
+/* ---------------------------------------------------------------- 略缩模式 */
+
+.compactToggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.9rem;
+  color: var(--zh-muted);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.compactCard {
+  cursor: pointer;
+  gap: 0.2rem;
+  padding: 0.45rem 0.6rem;
+}
+
+.compactCard:hover,
+.compactCard:focus-visible {
+  border-color: var(--zh-gold);
+  outline: none;
+}
+
+.compactTitle {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  font-weight: 700;
+}
+
+.compactTitle .cardKind {
+  margin-left: auto;
+}
+
+.compactSummary {
+  font-size: 0.82rem;
+  color: var(--zh-muted);
+  line-height: 1.35;
+}
+
+.handCardDisabled {
+  opacity: 0.6;
+}
+
+.cardKind,
+.cardHead .btn {
+  white-space: nowrap;
+}
+
+.compact .events,
+.compact .hand {
+  align-items: start;
+}
+
+.expandedCard {
+  grid-column: span 2;
+}
+
+.compact .events {
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 0.5rem;
+}
+
+.compact .hand {
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 0.5rem;
+}
+
+.compact .bar {
+  gap: 0.4rem;
+  margin-bottom: 0.5rem;
+}
+
+.compact .stat,
+.compact .pile {
+  flex-basis: 110px;
+  padding: 0.3rem 0.55rem;
+}
+
+.compact .statValue {
+  font-size: 1.05rem;
+}
+
+.compact .log {
+  max-height: 150px;
+}
+
+.compact .sectionTitle {
+  margin: 0.5rem 0 0.3rem;
+}

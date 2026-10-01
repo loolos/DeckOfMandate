@@ -8,6 +8,7 @@ export const messagesFrCore: Record<keyof typeof messagesEnCore, string> = {
   ...messagesEnCore,
   "banner.turn": "Tour {turn} / {limit}",
   "menu.introContinue": "Entrer dans la partie",
+  "menu.campaignLabel": "Campagne",
   "menu.levelLabel": "Niveau",
   "menu.resumeSave": "Reprendre la sauvegarde",
   "menu.runCodeLoad": "Charger depuis un code de partie",

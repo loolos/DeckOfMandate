@@ -1,0 +1,300 @@
+import { describe, expect, it } from "vitest";
+import type { CardId, StatusId } from "../data/content";
+import {
+  drawCountForTurn,
+  newGame,
+  playLimit,
+  reduce,
+  replay,
+  storyOptionAvailability,
+  type ZhAction,
+  type ZhState,
+} from "./engine";
+import { decodeRunCode, encodeRunCode } from "./persistence";
+
+function uidOf(s: ZhState, id: CardId): string {
+  const c = s.hand.find((x) => x.id === id);
+  if (!c) throw new Error(`no ${id} in hand`);
+  return c.uid;
+}
+
+/** Puts a card of `id` into hand (taken from wherever it is). */
+function giveCard(s: ZhState, id: CardId): string {
+  for (const pile of [s.drawPile, s.discard]) {
+    const i = pile.findIndex((c) => c.id === id);
+    if (i >= 0) {
+      const [c] = pile.splice(i, 1);
+      s.hand.push(c!);
+      return c!.uid;
+    }
+  }
+  return uidOf(s, id);
+}
+
+function withStatus(s: ZhState, id: StatusId, appliesFromTurn = s.turn): void {
+  s.statuses.push({ uid: `s${s.nextUid++}`, id, appliesFromTurn, remaining: 3 });
+}
+
+function act(s: ZhState, a: ZhAction): ZhState {
+  const next = reduce(s, a);
+  expect(next).not.toBe(s);
+  return next;
+}
+
+function totalCards(s: ZhState): number {
+  return s.drawPile.length + s.hand.length + s.discard.length;
+}
+
+describe("zhenhuan engine", () => {
+  it("starts with the fixed opening", () => {
+    const s = newGame(42);
+    expect(s.turn).toBe(1);
+    expect(s.qingyu).toBe(2);
+    expect(s.shengchong).toBe(2);
+    expect(s.hand.map((c) => c.id)).toEqual(["shoulongRenxin", "yirongZhengsu", "jingguanQibian"]);
+    expect(s.opportunity?.id).toBe("huangdiZhaojian");
+    expect(s.crisis?.id).toBe("liyiShiwu");
+    expect(s.drawPile).toHaveLength(9);
+    expect(s.opportunityPool).toHaveLength(5);
+    expect(s.crisisPool).toHaveLength(5);
+    expect(playLimit(s)).toBe(1);
+  });
+
+  it("one card resolves both matching events for one play", () => {
+    let s = newGame(1);
+    s = act(s, { type: "playCard", cardUid: uidOf(s, "yirongZhengsu") });
+    expect(s.shengchong).toBe(5); // 2 + base 1 + 皇帝召见 2
+    expect(s.opportunity?.resolved).toBe(true);
+    expect(s.crisis?.resolved).toBe(true);
+    expect(s.playsUsed).toBe(1);
+    expect(s.opportunity?.resolvedBy).toBe("yirongZhengsu");
+    expect(s.crisis?.resolvedBy).toBe("yirongZhengsu");
+    expect(s.opportunity?.rewardDoubled).toBeUndefined();
+    // no plays left
+    expect(reduce(s, { type: "playCard", cardUid: uidOf(s, "shoulongRenxin") })).toBe(s);
+    s = act(s, { type: "endTurn" });
+    expect(s.qingyu).toBe(2); // 礼仪失误 resolved → no penalty
+    expect(s.turn).toBe(2);
+    expect(totalCards(s)).toBe(12);
+  });
+
+  it("unresolved crisis applies its penalty and can defeat immediately", () => {
+    let s = newGame(1);
+    s = act(s, { type: "endTurn" });
+    expect(s.qingyu).toBe(1);
+    expect(s.shengchong).toBe(1);
+    const t = structuredClone(s);
+    t.crisis = { uid: "x", id: "liyiShiwu", resolved: false };
+    t.opportunity = null;
+    const after = act(t, { type: "endTurn" });
+    expect(after.outcome).toBe("lost");
+    expect(after.qingyu).toBe(0);
+    expect(after.shengchong).toBe(1); // stopped after the first effect hit 0
+  });
+
+  it("gains are capped by rank", () => {
+    let s = newGame(1);
+    s.shengchong = 7;
+    s = act(s, { type: "playCard", cardUid: uidOf(s, "yirongZhengsu") });
+    expect(s.shengchong).toBe(8);
+  });
+
+  it("静观其变 draws, adds a play, and stacks", () => {
+    let s = newGame(3);
+    const second = giveCard(s, "jingguanQibian");
+    const handBefore = s.hand.length;
+    s = act(s, { type: "playCard", cardUid: uidOf(s, "jingguanQibian") });
+    expect(s.hand.length).toBe(handBefore); // -1 played +1 drawn
+    expect(playLimit(s)).toBe(2);
+    s = act(s, { type: "playCard", cardUid: second });
+    expect(playLimit(s)).toBe(3);
+    expect(s.playsUsed).toBe(2);
+  });
+
+  it("流言缠身 applies from next turn for 3 turns, stacks, and draw stays ≥ 1", () => {
+    let s = newGame(5);
+    s = act(s, { type: "playCard", cardUid: uidOf(s, "yirongZhengsu") });
+    s.crisis = { uid: "x", id: "gongzhongLiuyan", resolved: false };
+    s = act(s, { type: "endTurn" });
+    expect(s.statuses).toHaveLength(1);
+    expect(s.drawnThisTurn).toBe(2); // turn 2: 3 - 1
+    withStatus(s, "liuyanChanshen", 3);
+    withStatus(s, "liuyanChanshen", 3);
+    expect(drawCountForTurn(s, 3)).toBe(1); // 3 - 3 → clamped to 1
+    // first instance: turns 2,3,4 then gone
+    s.statuses = s.statuses.slice(0, 1);
+    for (let i = 0; i < 3 && s.outcome === "playing"; i++) {
+      s.qingyu = 6;
+      s.shengchong = 6;
+      if (s.crisis) s.crisis.resolved = true;
+      s = act(s, { type: "endTurn" });
+    }
+    expect(s.turn).toBe(5);
+    expect(s.statuses).toHaveLength(0);
+  });
+
+  it("温太医诊治: no status → no extra; one → auto remove; many → pick or cancel", () => {
+    let s = newGame(7);
+    let uid = giveCard(s, "wenTaiyiZhenzhi");
+    s = act(s, { type: "playCard", cardUid: uid });
+    expect(s.qingyu).toBe(4);
+    expect(s.pending).toBeNull();
+
+    s = newGame(7);
+    withStatus(s, "liuyanChanshen");
+    withStatus(s, "xianjiZaiwo");
+    uid = giveCard(s, "wenTaiyiZhenzhi");
+    s = act(s, { type: "playCard", cardUid: uid });
+    expect(s.statuses.map((x) => x.id)).toEqual(["xianjiZaiwo"]);
+
+    s = newGame(7);
+    withStatus(s, "liuyanChanshen");
+    withStatus(s, "liuyanChanshen");
+    uid = giveCard(s, "wenTaiyiZhenzhi");
+    s = act(s, { type: "playCard", cardUid: uid });
+    expect(s.pending).not.toBeNull();
+    expect(s.qingyu).toBe(2); // nothing resolved yet
+    expect(reduce(s, { type: "endTurn" })).toBe(s);
+    s = act(s, { type: "cancelPending" });
+    expect(s.playsUsed).toBe(0);
+    expect(s.hand.some((c) => c.uid === uid)).toBe(true);
+    s = act(s, { type: "playCard", cardUid: uid });
+    const target = s.statuses[1]!.uid;
+    s = act(s, { type: "removeStatus", statusUid: target });
+    expect(s.statuses.map((x) => x.uid)).not.toContain(target);
+    expect(s.statuses).toHaveLength(1);
+    expect(s.qingyu).toBe(4);
+  });
+
+  it("收拢人心 draws when it resolves 内务府刁难; 眉庄相助 doubles opportunity rewards", () => {
+    let s = newGame(9);
+    s.crisis = { uid: "x", id: "neiwufuDiaonan", resolved: false };
+    const handBefore = s.hand.length;
+    s = act(s, { type: "playCard", cardUid: uidOf(s, "shoulongRenxin") });
+    expect(s.hand.length).toBe(handBefore); // -1 played +1 linkage draw
+    expect(s.crisis?.resolved).toBe(true);
+
+    s = newGame(9);
+    s.opportunity = { uid: "y", id: "taihouChuixun", resolved: false };
+    const mz = giveCard(s, "meizhuangXiangzhu");
+    s = act(s, { type: "playCard", cardUid: mz });
+    expect(s.qingyu).toBe(7); // 2 + 1 base + 2 reward + 2 doubled
+    expect(s.opportunity?.resolvedBy).toBe("meizhuangXiangzhu");
+    expect(s.opportunity?.rewardDoubled).toBe(true);
+    expect(s.shengchong).toBe(3);
+  });
+
+  function advanceTo(s: ZhState, turn: number): ZhState {
+    while (s.turn < turn) {
+      s.qingyu = 6;
+      s.shengchong = 6;
+      if (s.crisis) s.crisis.resolved = true;
+      s = act(s, { type: "endTurn" });
+    }
+    return s;
+  }
+
+  it("story events: card option replaces base effect and still resolves events; default when unchosen", () => {
+    let s = advanceTo(newGame(11), 4);
+    expect(s.story?.id).toBe("diyiciMiansheng");
+    s.shengchong = 2;
+    s.qingyu = 2;
+    s.opportunity = { uid: "o", id: "huangdiZhaojian", resolved: false };
+    const uid = giveCard(s, "yirongZhengsu");
+    s = act(s, { type: "chooseStory", optionId: "shengzhuangFuzhao", cardUid: uid });
+    expect(s.shengchong).toBe(7); // 2 + 3 (option, no base) + 2 (皇帝召见)
+    expect(s.opportunity?.resolved).toBe(true);
+    expect(s.playsUsed).toBe(1);
+
+    let t = advanceTo(newGame(11), 4);
+    t.playsUsed = playLimit(t);
+    giveCard(t, "yirongZhengsu");
+    const opt = { id: "shengzhuangFuzhao", name: "", card: "yirongZhengsu" as CardId, effects: [], text: "" };
+    expect(storyOptionAvailability(t, opt).available).toBe(false);
+    t.qingyu = 3;
+    t.shengchong = 3;
+    if (t.crisis) t.crisis.resolved = true;
+    t = act(t, { type: "endTurn" });
+    expect(t.log.some((l) => l.text.includes("默认选项【谨慎应对】"))).toBe(true);
+    expect(t.qingyu).toBe(4);
+    expect(t.shengchong).toBe(4);
+  });
+
+  it("华妃敲打: 收拢人心 grants 先机在握 for the next 3 turns", () => {
+    let s = advanceTo(newGame(13), 8);
+    expect(s.story?.id).toBe("huafeiQiaoda");
+    const uid = giveCard(s, "shoulongRenxin");
+    s = act(s, { type: "chooseStory", optionId: "tiqianDezhi", cardUid: uid });
+    expect(s.statuses.map((x) => x.id)).toEqual(["xianjiZaiwo"]);
+    s = advanceTo(s, 9);
+    expect(s.drawnThisTurn).toBe(4);
+  });
+
+  it("promotion trial is judged at end of turn; game continues to turn 15", () => {
+    let s = advanceTo(newGame(17), 10);
+    expect(s.trial.active).toBe(true);
+    s.qingyu = 5;
+    s.shengchong = 5;
+    if (s.crisis) s.crisis.resolved = true;
+    s.opportunity = { uid: "o", id: "huangdiZhaojian", resolved: false };
+    s = act(s, { type: "playCard", cardUid: giveCard(s, "jinyanShenxing") });
+    expect(s.trial.keyCardPlayed).toBe(true);
+    expect(s.rank).toBe("daying"); // not before end of turn
+    s = act(s, { type: "endTurn" });
+    expect(s.promoted).toBe(true);
+    expect(s.rank).toBe("changzai");
+    expect(s.outcome).toBe("playing");
+    expect(playLimit(s)).toBe(2);
+    s = advanceTo(s, 15);
+    if (s.crisis) s.crisis.resolved = true;
+    s = act(s, { type: "endTurn" });
+    expect(s.outcome).toBe("won");
+  });
+
+  it("failing the trial by end of turn 12 loses", () => {
+    let s = advanceTo(newGame(19), 12);
+    if (s.crisis) s.crisis.resolved = true;
+    s = act(s, { type: "endTurn" });
+    expect(s.outcome).toBe("lost");
+    expect(s.lossReason).toContain("晋封考验");
+  });
+
+  it("random playthroughs keep invariants and replay from run codes", () => {
+    for (let seed = 1; seed <= 60; seed++) {
+      let s = newGame(seed);
+      let guard = 0;
+      while (s.outcome === "playing" && guard++ < 200) {
+        const story = s.story && s.story.chosenOptionId == null;
+        let next: ZhState = s;
+        if (s.pending) {
+          const neg = s.statuses.find((x) => x.id === "liuyanChanshen")!;
+          next = reduce(s, { type: "removeStatus", statusUid: neg.uid });
+        } else if (story && seed % 2 === 0) {
+          next = reduce(s, { type: "chooseStory", optionId: seed % 4 === 0 ? "jinshenYingdui" : "renqiTunsheng" });
+          if (next === s) next = reduce(s, { type: "chooseStory", optionId: "renqiTunsheng" });
+          if (next === s) next = reduce(s, { type: "chooseStory", optionId: "jinshenYingdui" });
+        } else if (s.hand.length > 0 && s.playsUsed < playLimit(s)) {
+          next = reduce(s, { type: "playCard", cardUid: s.hand[(seed + s.turn) % s.hand.length]!.uid });
+        }
+        if (next === s) next = reduce(s, { type: "endTurn" });
+        expect(next).not.toBe(s);
+        s = next;
+        expect(totalCards(s)).toBe(12);
+        expect(s.opportunityPool.length + s.opportunityUsed.length + (s.opportunity ? 1 : 0)).toBe(6);
+        expect(s.crisisPool.length + s.crisisUsed.length + (s.crisis ? 1 : 0)).toBe(6);
+        expect(s.qingyu).toBeLessThanOrEqual(10);
+        expect(s.shengchong).toBeLessThanOrEqual(10);
+      }
+      expect(s.outcome).not.toBe("playing");
+      const decoded = decodeRunCode(encodeRunCode(s));
+      expect(decoded.ok).toBe(true);
+      if (decoded.ok) expect(decoded.state).toEqual(s);
+      expect(replay(seed, s.actions)).toEqual(s);
+    }
+  });
+
+  it("rejects foreign or corrupted run codes", () => {
+    expect(decodeRunCode("abc").ok).toBe(false);
+    expect(decodeRunCode("ZH1-!!!").ok).toBe(false);
+  });
+});
