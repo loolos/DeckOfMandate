@@ -753,3 +753,12 @@
   border-top: 1px dashed var(--zh-border);
   padding-top: 0.3rem;
 }
+
+.compact .expandedCard {
+  cursor: pointer;
+}
+
+.compact .expandedCard:focus-visible {
+  outline: none;
+  border-color: var(--zh-gold);
+}

@@ -197,39 +197,59 @@ function activateOnKey(e: KeyboardEvent, fn: () => void) {
   }
 }
 
-/** Collapsed strip: whole card is a button that expands it. */
-function FoldStrip({
+const INTERACTIVE = "button, a, input, textarea, select, label";
+
+/**
+ * Card container. In 略缩模式 the whole card toggles collapsed/expanded with a single click
+ * (clicks on its own buttons don't toggle). With `onDouble` (hand cards) the toggle waits a
+ * moment so a double-click plays the card instead.
+ */
+function FoldBox({
+  fold,
   className,
-  onToggle,
-  onDoubleActivate,
+  onDouble,
   children,
 }: {
+  fold: Fold;
   className: string;
-  onToggle: () => void;
-  onDoubleActivate?: () => void;
+  onDouble?: () => void;
   children: ReactNode;
 }) {
+  const timer = useRef<number | null>(null);
+  if (!fold.compact) return <div className={className}>{children}</div>;
+  const clearTimer = () => {
+    if (timer.current !== null) window.clearTimeout(timer.current);
+    timer.current = null;
+  };
   return (
     <div
-      className={`${className} ${styles.compactCard}`}
+      className={`${className} ${fold.expanded ? styles.expandedCard : styles.compactCard}`}
       role="button"
       tabIndex={0}
-      aria-expanded="false"
-      onClick={onToggle}
-      onDoubleClick={onDoubleActivate}
-      onKeyDown={(e) => activateOnKey(e, onToggle)}
+      aria-expanded={fold.expanded}
+      onClick={(e) => {
+        if ((e.target as HTMLElement).closest(INTERACTIVE)) return;
+        if (!onDouble) {
+          fold.onToggle();
+          return;
+        }
+        clearTimer();
+        timer.current = window.setTimeout(() => {
+          timer.current = null;
+          fold.onToggle();
+        }, 220);
+      }}
+      onDoubleClick={(e) => {
+        if (!onDouble || (e.target as HTMLElement).closest(INTERACTIVE)) return;
+        clearTimer();
+        onDouble();
+      }}
+      onKeyDown={(e) => {
+        if (e.target === e.currentTarget) activateOnKey(e, fold.onToggle);
+      }}
     >
       {children}
     </div>
-  );
-}
-
-function CollapseButton({ fold }: { fold: Fold }) {
-  if (!fold.compact) return null;
-  return (
-    <button type="button" className={`${styles.btn} ${styles.btnSmall}`} aria-expanded="true" onClick={fold.onToggle}>
-      收起 ▴
-    </button>
   );
 }
 
@@ -285,7 +305,7 @@ function EventCard({ state, inst, fold, dispatch }: { state: ZhState; inst: Even
     .join(" ");
   if (fold.compact && !fold.expanded) {
     return (
-      <FoldStrip className={className} onToggle={fold.onToggle}>
+      <FoldBox fold={fold} className={className}>
         <div className={styles.compactTitle}>
           {def.emoji} {def.name}
           {inst.resolved ? " 🆗" : ""}
@@ -296,11 +316,11 @@ function EventCard({ state, inst, fold, dispatch }: { state: ZhState; inst: Even
             ? `${isOpp ? "✅ 已把握" : "🛡️ 已化解"} · ${eventResolvedDetail(inst)}`
             : `处理：${def.resolvedText} · 未处理：${def.unresolvedText}`}
         </div>
-      </FoldStrip>
+      </FoldBox>
     );
   }
   return (
-    <div className={fold.compact ? `${className} ${styles.expandedCard}` : className}>
+    <FoldBox fold={fold} className={className}>
       <div className={styles.cardHead}>
         <span className={styles.cardName}>
           <span className={styles.cardEmoji}>{def.emoji}</span>
@@ -308,7 +328,6 @@ function EventCard({ state, inst, fold, dispatch }: { state: ZhState; inst: Even
           {inst.resolved ? " 🆗" : null}
         </span>
         {kindTag}
-        <CollapseButton fold={fold} />
       </div>
       {inst.resolved ? (
         <ResolvedBanner
@@ -328,7 +347,7 @@ function EventCard({ state, inst, fold, dispatch }: { state: ZhState; inst: Even
       </p>
       <MatchChips state={state} def={def} />
       <p className={styles.flavor}>只能通过打出匹配牌解决；本回合结束时离场。</p>
-    </div>
+    </FoldBox>
   );
 }
 
@@ -342,7 +361,7 @@ function StoryCard({ state, dispatch, fold }: { state: ZhState; dispatch: Dispat
   const className = [styles.card, styles.cardStory, chosen && styles.cardResolved].filter(Boolean).join(" ");
   if (fold.compact && !fold.expanded) {
     return (
-      <FoldStrip className={className} onToggle={fold.onToggle}>
+      <FoldBox fold={fold} className={className}>
         <div className={styles.compactTitle}>
           {story.emoji} {story.name}
           {chosen ? " 🆗" : ""}
@@ -355,11 +374,11 @@ function StoryCard({ state, dispatch, fold }: { state: ZhState; dispatch: Dispat
             ? `📝 已抉择「${chosenOption.name}」：${chosenOption.text}`
             : `选 1 个基础选项或从手牌打出对应牌（不处理按默认「${defaultOption.name}」）`}
         </div>
-      </FoldStrip>
+      </FoldBox>
     );
   }
   return (
-    <div className={fold.compact ? `${className} ${styles.expandedCard}` : className}>
+    <FoldBox fold={fold} className={className}>
       <div className={styles.cardHead}>
         <span className={styles.cardName}>
           <span className={styles.cardEmoji}>{story.emoji}</span>
@@ -369,7 +388,6 @@ function StoryCard({ state, dispatch, fold }: { state: ZhState; dispatch: Dispat
         <TagButton tag="story" tone={styles.kindStory} dispatch={dispatch}>
           剧情 · 第 {story.turn} 回合
         </TagButton>
-        <CollapseButton fold={fold} />
       </div>
       {chosenOption ? (
         <ResolvedBanner
@@ -423,7 +441,7 @@ function StoryCard({ state, dispatch, fold }: { state: ZhState; dispatch: Dispat
       {!chosen ? (
         <p className={styles.flavor}>未作选择就结束回合时，按默认选项【{defaultOption.name}】处理。</p>
       ) : null}
-    </div>
+    </FoldBox>
   );
 }
 
@@ -434,7 +452,7 @@ function TrialCard({ state, fold, dispatch }: { state: ZhState; fold: Fold; disp
   const className = [styles.card, styles.cardStory, p.all && styles.cardReady].filter(Boolean).join(" ");
   if (fold.compact && !fold.expanded) {
     return (
-      <FoldStrip className={className} onToggle={fold.onToggle}>
+      <FoldBox fold={fold} className={className}>
         <div className={styles.compactTitle}>
           {PROMOTION_TRIAL.emoji} {PROMOTION_TRIAL.name}
           {p.all ? " 🏮" : ""}
@@ -446,11 +464,11 @@ function TrialCard({ state, fold, dispatch }: { state: ZhState; fold: Fold; disp
           {mark(p.shengchong)} 圣宠 {state.shengchong}/{PROMOTION_TRIAL.minShengchong} · {mark(p.qingyu)} 清誉 {state.qingyu}/
           {PROMOTION_TRIAL.minQingyu} · {mark(p.keyCard)} 考验牌
         </div>
-      </FoldStrip>
+      </FoldBox>
     );
   }
   return (
-    <div className={fold.compact ? `${className} ${styles.expandedCard}` : className}>
+    <FoldBox fold={fold} className={className}>
       <div className={styles.cardHead}>
         <span className={styles.cardName}>
           <span className={styles.cardEmoji}>{PROMOTION_TRIAL.emoji}</span>
@@ -459,7 +477,6 @@ function TrialCard({ state, fold, dispatch }: { state: ZhState; fold: Fold; disp
         <TagButton tag="trial" tone={styles.kindStory} dispatch={dispatch}>
           持续 · 第 {PROMOTION_TRIAL.firstTurn}—{PROMOTION_TRIAL.lastTurn} 回合
         </TagButton>
-        <CollapseButton fold={fold} />
       </div>
       {p.all ? (
         <ResolvedBanner icon="🏮" label="条件已满足" detail="保持到回合末（危机惩罚结算之后）即可晋封为常在。" />
@@ -478,7 +495,7 @@ function TrialCard({ state, fold, dispatch }: { state: ZhState; fold: Fold; disp
         每回合<strong>回合末</strong>判定：三项全部满足即晋封为常在，游戏继续到第 {CHAPTER.totalTurns} 回合；第{" "}
         {PROMOTION_TRIAL.lastTurn} 回合末仍未满足则失败。
       </p>
-    </div>
+    </FoldBox>
   );
 }
 
@@ -522,25 +539,24 @@ function HandCard({
   ) : null;
   if (fold.compact && !fold.expanded && !isPending) {
     return (
-      <FoldStrip className={className} onToggle={fold.onToggle} onDoubleActivate={play}>
+      <FoldBox fold={fold} className={className} onDouble={play}>
         <div className={styles.compactTitle}>
           {def.emoji} {def.name}
           {trialTag}
         </div>
         <div className={styles.compactSummary}>{def.rulesText[0]}</div>
         {solveNames.length > 0 ? <div className={styles.solves}>可解决：{solveNames.join("、")}</div> : null}
-      </FoldStrip>
+      </FoldBox>
     );
   }
   return (
-    <div className={fold.compact ? `${className} ${styles.expandedCard}` : className} onDoubleClick={fold.compact ? play : undefined}>
+    <FoldBox fold={fold} className={className} onDouble={play}>
       <div className={styles.cardHead}>
         <span className={styles.cardName}>
           <span className={styles.cardEmoji}>{def.emoji}</span>
           {def.name}
         </span>
         {trialTag}
-        {isPending ? null : <CollapseButton fold={fold} />}
       </div>
       <p className={styles.flavor}>{def.flavor}</p>
       {def.rulesText.map((line) => (
@@ -579,7 +595,7 @@ function HandCard({
           </button>
         )}
       </div>
-    </div>
+    </FoldBox>
   );
 }
 
@@ -615,7 +631,7 @@ function Statuses({ state, dispatch }: { state: ZhState; dispatch: Dispatch }) {
             role="button"
             tabIndex={0}
             aria-expanded={expanded}
-            title={expanded ? "点击收起" : "点击展开说明"}
+            title={expanded ? "点击收起" : "点击展开"}
             onClick={() => toggle(st.uid)}
             onKeyDown={(e) => activateOnKey(e, () => toggle(st.uid))}
           >
@@ -650,9 +666,6 @@ function Statuses({ state, dispatch }: { state: ZhState; dispatch: Dispatch }) {
                   移除
                 </button>
               ) : null}
-              <span className={styles.muted} aria-hidden="true">
-                {expanded ? "▴" : "▸"}
-              </span>
             </div>
             {expanded ? (
               <div className={styles.statusDetail}>
