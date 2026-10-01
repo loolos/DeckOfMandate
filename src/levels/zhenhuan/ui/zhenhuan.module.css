@@ -775,3 +775,145 @@
 .playableByDouble {
   user-select: none;
 }
+
+/* ---------------------------------------------------------------- phone sizing (same query as the Sun King layout) */
+
+@media (max-width: 760px) and (hover: none), (max-width: 760px) and (pointer: coarse) {
+  .page {
+    padding: max(0.5rem, env(safe-area-inset-top, 0px)) max(0.6rem, env(safe-area-inset-right, 0px))
+      max(0.75rem, env(safe-area-inset-bottom, 0px)) max(0.6rem, env(safe-area-inset-left, 0px));
+  }
+
+  .header {
+    gap: 0.4rem;
+    margin-bottom: 0.45rem;
+    padding-bottom: 0.45rem;
+  }
+
+  .title {
+    font-size: 1.08rem;
+  }
+
+  .headerMeta {
+    gap: 0.35rem;
+  }
+
+  .badge {
+    padding: 0.1rem 0.5rem;
+    font-size: 0.74rem;
+  }
+
+  .btn {
+    padding: 0.3rem 0.65rem;
+    font-size: 0.82rem;
+  }
+
+  .btnSmall {
+    padding: 0.15rem 0.45rem;
+    font-size: 0.76rem;
+  }
+
+  .compactToggle {
+    font-size: 0.78rem;
+  }
+
+  .page .bar {
+    gap: 0.35rem;
+    margin-bottom: 0.45rem;
+  }
+
+  .page .stat {
+    flex: 1 1 90px;
+    min-width: 0;
+    padding: 0.3rem 0.5rem;
+  }
+
+  .page .pile {
+    flex: 1 1 56px;
+    min-width: 0;
+    padding: 0.25rem 0.3rem;
+  }
+
+  .statLabel {
+    font-size: 0.68rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .pile .statLabel {
+    font-size: 0.62rem;
+  }
+
+  .statHint,
+  .pileIcon {
+    display: none;
+  }
+
+  .page .statValue {
+    font-size: 0.95rem;
+  }
+
+  .meter {
+    height: 4px;
+    margin-top: 0.2rem;
+  }
+
+  .page .sectionTitle {
+    margin: 0.45rem 0 0.25rem;
+    font-size: 0.82rem;
+  }
+
+  .statusRow {
+    gap: 0.35rem;
+    margin-bottom: 0.45rem;
+    font-size: 0.8rem;
+  }
+
+  .status {
+    padding: 0.25rem 0.45rem;
+    font-size: 0.78rem;
+  }
+
+  .cardName {
+    font-size: 0.92rem;
+  }
+
+  .cardEmoji {
+    font-size: 1.1rem;
+  }
+
+  .compactTitle {
+    font-size: 0.88rem;
+  }
+
+  .compactSummary,
+  .rule,
+  .solves {
+    font-size: 0.76rem;
+  }
+
+  .flavor {
+    font-size: 0.72rem;
+  }
+
+  .tag,
+  .tagButton,
+  .matchChip {
+    font-size: 0.68rem;
+  }
+
+  .endTurnRow {
+    gap: 0.45rem;
+    margin: 0.6rem 0 0.4rem;
+  }
+
+  .endHint {
+    font-size: 0.74rem;
+  }
+
+  .page .log {
+    padding: 0.4rem 0.55rem;
+    font-size: 0.74rem;
+  }
+}

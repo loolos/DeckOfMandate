@@ -84,10 +84,13 @@ function EventCountList({ ids, empty }: { ids: readonly EventId[]; empty: string
   );
 }
 
-function Pile({ label, count, children }: { label: string; count: number; children: ReactNode }) {
+function Pile({ icon, label, count, children }: { icon: string; label: string; count: number; children: ReactNode }) {
   return (
     <div className={styles.pile} tabIndex={0}>
-      <div className={styles.statLabel}>{label}</div>
+      <div className={styles.statLabel}>
+        <span className={styles.pileIcon}>{icon} </span>
+        {label}
+      </div>
       <div className={styles.statValue}>{count}</div>
       <div className={styles.popover} role="tooltip">
         {children}
@@ -102,7 +105,8 @@ function ResourceStat({ state, resource }: { state: ZhState; resource: Resource 
   return (
     <div className={styles.stat}>
       <div className={styles.statLabel}>
-        {RESOURCE_EMOJI[resource]} {RESOURCE_LABEL[resource]}（归 0 即失败）
+        {RESOURCE_EMOJI[resource]} {RESOURCE_LABEL[resource]}
+        <span className={styles.statHint}>（归 0 即失败）</span>
       </div>
       <div className={[styles.statValue, value <= 1 && styles.statDanger].filter(Boolean).join(" ")}>
         {value} / {max}
@@ -801,6 +805,31 @@ function OutcomeModal({ state, onRestart, onMenu }: { state: ZhState; onRestart:
   );
 }
 
+/** Shown once when the promotion trial is passed; the run continues afterwards. */
+function PromotionModal({ state, onClose }: { state: ZhState; onClose: () => void }) {
+  const rank = RANKS[state.rank];
+  return (
+    <div className={styles.overlay} role="dialog" aria-modal="true" aria-labelledby="zh-promotion-title">
+      <div className={styles.modal}>
+        <h2 id="zh-promotion-title">🏮 晋封成功</h2>
+        <p>恭喜小主晋为{rank.name}！只是位分越高，盯着你的人就越多，后面还有更大的风浪。</p>
+        <p>
+          接下来只要撑到<strong>第 {CHAPTER.totalTurns} 回合结束</strong>，清誉与圣宠都不降到 0，即可通过第一关。
+        </p>
+        <p className={styles.muted}>
+          从下一回合起每回合抓 {rank.draw} 张、最多打 {rank.plays} 张，清誉 / 圣宠上限提高到 {rank.cap}。
+        </p>
+        <div className={styles.modalActions}>
+          {/* Takes focus so Space closes the notice instead of re-pressing 结束回合 underneath. */}
+          <button type="button" className={`${styles.btn} ${styles.btnPrimary}`} onClick={onClose} autoFocus>
+            谨记在心
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function ZhenhuanGame({ state, dispatch, showRules, onShowRules, onRestart, onMenu, onLoadState }: Props) {
   const rank = RANKS[state.rank];
   const runCode = useMemo(() => encodeRunCode(state), [state]);
@@ -810,8 +839,17 @@ export function ZhenhuanGame({ state, dispatch, showRules, onShowRules, onRestar
   const usedEnvy = state.envyUsed;
   const compact = useSmallScreen();
 
+  // Pop the promotion notice only when it happens during play, not when loading a promoted save.
+  const [showPromotion, setShowPromotion] = useState(false);
+  const wasPromoted = useRef(state.promoted);
+  useEffect(() => {
+    if (state.promoted && !wasPromoted.current && state.outcome === "playing") setShowPromotion(true);
+    if (!state.promoted) setShowPromotion(false);
+    wasPromoted.current = state.promoted;
+  }, [state.promoted, state.outcome]);
+
   // Space ends the turn (same shortcut as the Sun King campaign); ignored while typing.
-  const endTurnReady = canEndTurn(state) && !showRules;
+  const endTurnReady = canEndTurn(state) && !showRules && !showPromotion;
   useEffect(() => {
     const onKeyDown = (event: globalThis.KeyboardEvent) => {
       if (event.key !== " " && event.code !== "Space") return;
@@ -868,27 +906,27 @@ export function ZhenhuanGame({ state, dispatch, showRules, onShowRules, onRestar
       </div>
 
       <div className={styles.bar}>
-        <Pile label="🎴 抽牌堆" count={state.drawPile.length}>
+        <Pile icon="🎴" label="抽牌堆" count={state.drawPile.length}>
           <p className={styles.popoverTitle}>抽牌堆剩余（顺序未知）</p>
           <CardCountList ids={state.drawPile.map((c) => c.id)} empty="已空，需要时将弃牌堆洗回。" />
         </Pile>
-        <Pile label="🗑️ 弃牌堆" count={state.discard.length}>
+        <Pile icon="🗑️" label="弃牌堆" count={state.discard.length}>
           <p className={styles.popoverTitle}>弃牌堆</p>
           <CardCountList ids={state.discard.map((c) => c.id)} empty="空" />
         </Pile>
-        <Pile label="🌸 机会牌池" count={state.opportunityPool.length}>
+        <Pile icon="🌸" label="机会牌池" count={state.opportunityPool.length}>
           <p className={styles.popoverTitle}>剩余机会事件</p>
           <EventCountList ids={state.opportunityPool} empty="已抽完，下次将把已用事件重新洗匀。" />
           <p className={styles.popoverTitle}>本轮已出现</p>
           <EventCountList ids={state.opportunity ? [...usedOpp, state.opportunity.id] : usedOpp} empty="无" />
         </Pile>
-        <Pile label="⚡ 危机牌池" count={state.crisisPool.length}>
+        <Pile icon="⚡" label="危机牌池" count={state.crisisPool.length}>
           <p className={styles.popoverTitle}>剩余危机事件</p>
           <EventCountList ids={state.crisisPool} empty="已抽完，下次将把已用事件重新洗匀。" />
           <p className={styles.popoverTitle}>本轮已出现</p>
           <EventCountList ids={state.crisis ? [...usedCrisis, state.crisis.id] : usedCrisis} empty="无" />
         </Pile>
-        <Pile label="👀 嫉妒牌池" count={state.envyPool.length}>
+        <Pile icon="👀" label="嫉妒牌池" count={state.envyPool.length}>
           <p className={styles.popoverTitle}>
             第 {ENVY_TRIGGER.firstTurn} 回合起，回合开始时圣宠 ≥ {ENVY_TRIGGER.minShengchong}：首次必出，之后每隔一回合出现一次
           </p>
@@ -970,6 +1008,7 @@ export function ZhenhuanGame({ state, dispatch, showRules, onShowRules, onRestar
         </div>
       ) : null}
 
+      {showPromotion ? <PromotionModal state={state} onClose={() => setShowPromotion(false)} /> : null}
       <OutcomeModal state={state} onRestart={onRestart} onMenu={onMenu} />
     </div>
   );
