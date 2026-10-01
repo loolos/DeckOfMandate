@@ -136,7 +136,8 @@ describe("zhenhuan engine", () => {
     let s = newGame(7);
     let uid = giveCard(s, "wenTaiyiZhenzhi");
     s = act(s, { type: "playCard", cardUid: uid });
-    expect(s.qingyu).toBe(3);
+    expect(s.qingyu).toBe(2); // no 清誉 / 圣宠 effect of its own
+    expect(s.shengchong).toBe(2);
     expect(s.pending).toBeNull();
 
     s = newGame(7);
@@ -162,7 +163,7 @@ describe("zhenhuan engine", () => {
     s = act(s, { type: "removeStatus", statusUid: target });
     expect(s.statuses.map((x) => x.uid)).not.toContain(target);
     expect(s.statuses).toHaveLength(1);
-    expect(s.qingyu).toBe(3);
+    expect(s.qingyu).toBe(2);
   });
 
   it("收拢人心 draws when it resolves 内务府刁难; 眉庄相助 doubles opportunity rewards", () => {
