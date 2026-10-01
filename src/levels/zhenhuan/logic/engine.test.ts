@@ -126,6 +126,7 @@ describe("zhenhuan engine", () => {
       s.qingyu = 6;
       s.shengchong = 6;
       if (s.crisis) s.crisis.resolved = true;
+      if (s.envy) s.envy.resolved = true;
       s = act(s, { type: "endTurn" });
     }
     expect(s.turn).toBe(5);
@@ -188,10 +189,73 @@ describe("zhenhuan engine", () => {
       s.qingyu = 6;
       s.shengchong = 6;
       if (s.crisis) s.crisis.resolved = true;
+      if (s.envy) s.envy.resolved = true;
       s = act(s, { type: "endTurn" });
     }
     return s;
   }
+
+  /** Ends the turn with every event handled and 圣宠 set for the next turn-start check. */
+  function endTurnWith(s: ZhState, shengchong: number): ZhState {
+    s.qingyu = 6;
+    s.shengchong = shengchong;
+    s.story = null;
+    if (s.crisis) s.crisis.resolved = true;
+    if (s.envy) s.envy.resolved = true;
+    return act(s, { type: "endTurn" });
+  }
+
+  it("嫉妒事件: first turn starting at 圣宠 ≥ 5 triggers, then every other turn; dropping below resets", () => {
+    let s = newGame(21);
+    const fired: number[] = [];
+    const plan = [5, 5, 5, 5, 4, 5, 6, 3, 3, 5];
+    for (const sc of plan) {
+      s = endTurnWith(s, sc);
+      if (s.envy) fired.push(s.turn);
+    }
+    // turns 2..11 start with 圣宠 5,5,5,5,4,5,6,3,3,5
+    expect(fired).toEqual([2, 4, 7, 11]);
+    expect(s.envyPool.length + s.envyUsed.length + (s.envy ? 1 : 0)).toBe(3);
+  });
+
+  it("嫉妒事件: matching cards resolve them; unresolved ones apply their penalty", () => {
+    let s = newGame(23);
+    s.envy = { uid: "e", id: "yuDayingZhengchong", resolved: false };
+    s = act(s, { type: "playCard", cardUid: uidOf(s, "shoulongRenxin") });
+    expect(s.envy?.resolved).toBe(true);
+    expect(s.envy?.resolvedBy).toBe("shoulongRenxin");
+
+    s = newGame(23);
+    s.crisis!.resolved = true;
+    s.qingyu = 5;
+    s.envy = { uid: "e", id: "shichongErjiao", resolved: false };
+    s = act(s, { type: "endTurn" });
+    expect(s.qingyu).toBe(3);
+    expect(s.envyUsed).toContain("shichongErjiao");
+  });
+
+  it("暗中下绊 → 玉体违和 blocks 仪容整肃 / 谨言慎行 from next turn; 温太医诊治 removes it", () => {
+    let s = newGame(25);
+    s.crisis!.resolved = true;
+    s.envy = { uid: "e", id: "anzhongXiaban", resolved: false };
+    s = act(s, { type: "endTurn" });
+    expect(s.statuses.map((x) => x.id)).toEqual(["yutiWeihe"]);
+
+    const blocked = giveCard(s, "yirongZhengsu");
+    const blocked2 = giveCard(s, "jinyanShenxing");
+    expect(reduce(s, { type: "playCard", cardUid: blocked })).toBe(s);
+    expect(reduce(s, { type: "playCard", cardUid: blocked2 })).toBe(s);
+    s.extraPlays = 1;
+    s = act(s, { type: "playCard", cardUid: giveCard(s, "wenTaiyiZhenzhi") });
+    expect(s.statuses).toHaveLength(0);
+    s = act(s, { type: "playCard", cardUid: blocked });
+
+    // 眉庄相助 resolves 暗中下绊 so no status is gained
+    s = newGame(25);
+    s.envy = { uid: "e", id: "anzhongXiaban", resolved: false };
+    s = act(s, { type: "playCard", cardUid: giveCard(s, "meizhuangXiangzhu") });
+    expect(s.envy?.resolved).toBe(true);
+  });
 
   it("story events: playing a listed card from hand resolves the story and matching events", () => {
     let s = advanceTo(newGame(11), 4);
@@ -243,6 +307,7 @@ describe("zhenhuan engine", () => {
     t.qingyu = 3;
     t.shengchong = 3;
     if (t.crisis) t.crisis.resolved = true;
+    if (t.envy) t.envy.resolved = true;
     t = act(t, { type: "endTurn" });
     expect(t.log.some((l) => l.text.includes("默认选项【谨慎应对】"))).toBe(true);
     expect(t.qingyu).toBe(4);
@@ -295,7 +360,7 @@ describe("zhenhuan engine", () => {
         const story = s.story && s.story.chosenOptionId == null;
         let next: ZhState = s;
         if (s.pending) {
-          const neg = s.statuses.find((x) => x.id === "liuyanChanshen")!;
+          const neg = s.statuses.find((x) => x.id !== "xianjiZaiwo")!;
           next = reduce(s, { type: "removeStatus", statusUid: neg.uid });
         } else if (story && seed % 2 === 0) {
           next = reduce(s, { type: "chooseStory", optionId: seed % 4 === 0 ? "jinshenYingdui" : "renqiTunsheng" });
@@ -310,6 +375,7 @@ describe("zhenhuan engine", () => {
         expect(totalCards(s)).toBe(12);
         expect(s.opportunityPool.length + s.opportunityUsed.length + (s.opportunity ? 1 : 0)).toBe(6);
         expect(s.crisisPool.length + s.crisisUsed.length + (s.crisis ? 1 : 0)).toBe(6);
+        expect(s.envyPool.length + s.envyUsed.length + (s.envy ? 1 : 0)).toBe(3);
         expect(s.qingyu).toBeLessThanOrEqual(10);
         expect(s.shengchong).toBeLessThanOrEqual(10);
       }

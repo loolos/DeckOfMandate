@@ -8,6 +8,9 @@ import {
   CARDS,
   CHAPTER,
   CRISIS_POOL,
+  ENVY_POOL,
+  ENVY_TRIGGER,
+  EVENT_KIND_LABEL,
   EVENTS,
   OPENING,
   OPPORTUNITY_POOL,
@@ -19,6 +22,7 @@ import {
   STORIES,
   type CardId,
   type CrisisId,
+  type EnvyId,
   type EventId,
   type EventKind,
   type OpportunityId,
@@ -78,8 +82,14 @@ export type ZhState = {
   opportunityUsed: OpportunityId[];
   crisisPool: CrisisId[];
   crisisUsed: CrisisId[];
+  envyPool: EnvyId[];
+  envyUsed: EnvyId[];
   opportunity: EventInst | null;
   crisis: EventInst | null;
+  /** 嫉妒事件 (extra third event while 圣宠 is high). */
+  envy: EventInst | null;
+  /** Turn the current ≥ 5 streak last drew a 嫉妒事件; null when the streak is broken. */
+  envyLastTurn: number | null;
   story: { id: StoryId; chosenOptionId: string | null } | null;
   trial: { active: boolean; keyCardPlayed: boolean };
   promoted: boolean;
@@ -130,10 +140,15 @@ export function currentStory(s: ZhState): StoryDef | null {
   return s.story ? STORIES[s.story.id] : null;
 }
 
+/** Statuses that block `cardId` from being played this turn. */
+export function blockingStatuses(s: ZhState, cardId: CardId): StatusInst[] {
+  return s.statuses.filter((st) => st.appliesFromTurn <= s.turn && (STATUSES[st.id].blocksCards ?? []).includes(cardId));
+}
+
 /** Events in play that `cardId` would resolve if played now. */
 export function matchedEvents(s: ZhState, cardId: CardId): EventInst[] {
   const matches = CARDS[cardId].matches;
-  return [s.opportunity, s.crisis].filter(
+  return [s.opportunity, s.crisis, s.envy].filter(
     (e): e is EventInst => e != null && !e.resolved && matches.includes(e.id),
   );
 }
@@ -224,15 +239,20 @@ function drawCards(s: ZhState, n: number): void {
   }
 }
 
+const POOL_KEYS = {
+  opportunity: ["opportunityPool", "opportunityUsed"],
+  crisis: ["crisisPool", "crisisUsed"],
+  envy: ["envyPool", "envyUsed"],
+} as const;
+
 function drawEvent<T extends EventId>(s: ZhState, kind: EventKind): T {
-  const poolKey = kind === "opportunity" ? "opportunityPool" : "crisisPool";
-  const usedKey = kind === "opportunity" ? "opportunityUsed" : "crisisUsed";
+  const [poolKey, usedKey] = POOL_KEYS[kind];
   if (s[poolKey].length === 0) {
     const [rng, shuffled] = shuffle(s.rng, s[usedKey] as EventId[]);
     s.rng = rng;
     (s[poolKey] as EventId[]) = shuffled;
     (s[usedKey] as EventId[]) = [];
-    log(s, `${kind === "opportunity" ? "机会" : "危机"}牌池已抽完，已用事件重新洗匀。`);
+    log(s, `${EVENT_KIND_LABEL[kind]}牌池已抽完，已用事件重新洗匀。`);
   }
   return (s[poolKey] as EventId[]).shift() as T;
 }
@@ -252,9 +272,8 @@ function removeStatus(s: ZhState, uid: string, source: string): void {
 
 function setEvent(s: ZhState, kind: EventKind, id: EventId): void {
   const inst: EventInst = { uid: `${kind}-${s.turn}`, id, resolved: false };
-  if (kind === "opportunity") s.opportunity = inst;
-  else s.crisis = inst;
-  log(s, `${kind === "opportunity" ? "机会" : "危机"}事件：【${EVENTS[id].name}】`);
+  s[kind] = inst;
+  log(s, `${EVENT_KIND_LABEL[kind]}事件：【${EVENTS[id].name}】`, kind === "envy" ? "bad" : "info");
 }
 
 /**
@@ -274,6 +293,7 @@ function resolvePlay(
 
   const opp = s.opportunity && !s.opportunity.resolved && def.matches.includes(s.opportunity.id) ? s.opportunity : null;
   const crisis = s.crisis && !s.crisis.resolved && def.matches.includes(s.crisis.id) ? s.crisis : null;
+  const envy = s.envy && !s.envy.resolved && def.matches.includes(s.envy.id) ? s.envy : null;
 
   const option = opts.storyOption;
   const story = currentStory(s);
@@ -302,11 +322,12 @@ function resolvePlay(
     applyDeltas(s, EVENTS[opp.id].reward, EVENTS[opp.id].name);
   }
 
-  // 3. crisis
-  if (crisis && s.outcome === "playing") {
-    crisis.resolved = true;
-    crisis.resolvedBy = card.id;
-    log(s, `解决危机事件【${EVENTS[crisis.id].name}】`, "good");
+  // 3. crisis and 嫉妒事件
+  for (const ev of [crisis, envy]) {
+    if (!ev || s.outcome !== "playing") continue;
+    ev.resolved = true;
+    ev.resolvedBy = card.id;
+    log(s, `解决${EVENT_KIND_LABEL[EVENTS[ev.id].kind]}事件【${EVENTS[ev.id].name}】`, "good");
   }
 
   // 4. linkage
@@ -366,9 +387,22 @@ function beginTurn(s: ZhState, turn: number): void {
 
   setEvent(s, "opportunity", drawEvent(s, "opportunity"));
   setEvent(s, "crisis", drawEvent(s, "crisis"));
+  checkEnvy(s);
 
   drawCards(s, drawCount);
   log(s, `抓 ${drawCount} 张牌${mod !== 0 ? `（状态修正 ${mod > 0 ? "+" : ""}${mod}，最低 1 张）` : ""}。`);
+}
+
+/** 嫉妒事件 trigger, at turn start (design.md §7.4). */
+function checkEnvy(s: ZhState): void {
+  if (s.shengchong < ENVY_TRIGGER.minShengchong) {
+    s.envyLastTurn = null;
+    return;
+  }
+  if (s.envyLastTurn != null && s.turn - s.envyLastTurn < ENVY_TRIGGER.interval) return;
+  s.envyLastTurn = s.turn;
+  log(s, `圣宠 ≥ ${ENVY_TRIGGER.minShengchong}，树大招风：`, "bad");
+  setEvent(s, "envy", drawEvent(s, "envy"));
 }
 
 function endTurn(s: ZhState): void {
@@ -384,9 +418,10 @@ function endTurn(s: ZhState): void {
   if (s.opportunity && !s.opportunity.resolved) {
     log(s, `机会事件【${EVENTS[s.opportunity.id].name}】未处理，直接离场。`);
   }
-  if (s.crisis && !s.crisis.resolved) {
-    const def = EVENTS[s.crisis.id];
-    log(s, `危机事件【${def.name}】未处理：${def.unresolvedText}。`, "bad");
+  for (const ev of [s.crisis, s.envy]) {
+    if (!ev || ev.resolved || s.outcome !== "playing") continue;
+    const def = EVENTS[ev.id];
+    log(s, `${EVENT_KIND_LABEL[def.kind]}事件【${def.name}】未处理：${def.unresolvedText}。`, "bad");
     applyDeltas(s, def.penalty, def.name);
     if (def.penaltyStatus && s.outcome === "playing") addStatus(s, def.penaltyStatus);
   }
@@ -395,8 +430,10 @@ function endTurn(s: ZhState): void {
   // 11. events to used areas
   if (s.opportunity) s.opportunityUsed.push(s.opportunity.id as OpportunityId);
   if (s.crisis) s.crisisUsed.push(s.crisis.id as CrisisId);
+  if (s.envy) s.envyUsed.push(s.envy.id as EnvyId);
   s.opportunity = null;
   s.crisis = null;
+  s.envy = null;
   s.story = null;
 
   // 12. hand to discard
@@ -468,6 +505,8 @@ export function newGame(seed: number): ZhState {
   let crisisPool: CrisisId[];
   [rng, opportunityPool] = shuffle(rng, oppRest);
   [rng, crisisPool] = shuffle(rng, crisisRest);
+  let envyPool: EnvyId[];
+  [rng, envyPool] = shuffle(rng, [...ENVY_POOL]);
 
   const s: ZhState = {
     seed,
@@ -483,8 +522,12 @@ export function newGame(seed: number): ZhState {
     opportunityUsed: [],
     crisisPool,
     crisisUsed: [],
+    envyPool,
+    envyUsed: [],
     opportunity: null,
     crisis: null,
+    envy: null,
+    envyLastTurn: null,
     story: null,
     trial: { active: false, keyCardPlayed: false },
     promoted: false,
@@ -515,7 +558,7 @@ export function reduce(state: ZhState, action: ZhAction): ZhState {
     case "playCard": {
       if (s.pending) return state;
       const card = s.hand.find((c) => c.uid === action.cardUid);
-      if (!card || playsLeft(s) <= 0) return state;
+      if (!card || playsLeft(s) <= 0 || blockingStatuses(s, card.id).length > 0) return state;
       if (card.id === "wenTaiyiZhenzhi" && negativeStatuses(s).length > 1) {
         s.pending = { cardUid: card.uid };
         log(s, "温太医诊治：请选择要移除的负面状态（可取消）。");

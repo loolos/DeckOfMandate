@@ -4,6 +4,8 @@ import { useSmallScreen } from "../../../logic/useSmallScreen";
 import {
   CARDS,
   CHAPTER,
+  ENVY_TRIGGER,
+  EVENT_KIND_LABEL,
   EVENTS,
   PROMOTION_TRIAL,
   RANKS,
@@ -18,6 +20,7 @@ import {
   type TagId,
 } from "../data/content";
 import {
+  blockingStatuses,
   canEndTurn,
   cap,
   currentStory,
@@ -309,19 +312,21 @@ function ResolvedBanner({ icon, label, detail }: { icon: string; label: string; 
 function eventResolvedDetail(inst: EventInst): string {
   const def = EVENTS[inst.id];
   const by = inst.resolvedBy ? `由【${CARDS[inst.resolvedBy].name}】` : "";
-  if (def.kind === "crisis") return `${by}化解，回合末不受惩罚。`;
+  if (def.kind !== "opportunity") return `${by}化解，回合末不受惩罚。`;
   return `${by}把握，已获得${def.resolvedText}${inst.rewardDoubled ? "（眉庄相助：奖励翻倍）" : ""}。`;
 }
 
 function EventCard({ state, inst, fold, dispatch }: { state: ZhState; inst: EventInst; fold: Fold; dispatch: Dispatch }) {
   const def = EVENTS[inst.id];
   const isOpp = def.kind === "opportunity";
+  const kindTone = { opportunity: styles.kindOpportunity, crisis: styles.kindCrisis, envy: styles.kindEnvy }[def.kind];
+  const cardTone = { opportunity: styles.cardOpportunity, crisis: styles.cardCrisis, envy: styles.cardEnvy }[def.kind];
   const kindTag = (
-    <TagButton tag={def.kind} tone={isOpp ? styles.kindOpportunity : styles.kindCrisis} dispatch={dispatch}>
-      {isOpp ? "机会" : "危机"}
+    <TagButton tag={def.kind} tone={kindTone} dispatch={dispatch}>
+      {EVENT_KIND_LABEL[def.kind]}
     </TagButton>
   );
-  const className = [styles.card, isOpp ? styles.cardOpportunity : styles.cardCrisis, inst.resolved && styles.cardResolved]
+  const className = [styles.card, cardTone, inst.resolved && styles.cardResolved]
     .filter(Boolean)
     .join(" ");
   if (fold.compact && !fold.expanded) {
@@ -358,6 +363,9 @@ function EventCard({ state, inst, fold, dispatch }: { state: ZhState; inst: Even
         />
       ) : null}
       <p className={styles.flavor}>{def.flavor}</p>
+      {def.kind === "envy" ? (
+        <p className={styles.flavor}>圣宠 ≥ {ENVY_TRIGGER.minShengchong} 引来的额外事件。</p>
+      ) : null}
       <p className={styles.rule}>
         <span className={styles.ruleLabel}>处理：</span>
         {def.resolvedText}
@@ -541,7 +549,12 @@ function HandCard({
   ];
   const isPending = state.pending?.cardUid === card.uid;
   const isTrialCard = state.trial.active && PROMOTION_TRIAL.keyCards.includes(card.id);
-  const canPlay = state.outcome === "playing" && state.pending == null && playsLeft(state) > 0;
+  const blockers = blockingStatuses(state, card.id);
+  const canPlay = state.outcome === "playing" && state.pending == null && playsLeft(state) > 0 && blockers.length === 0;
+  const blockedNote =
+    blockers.length > 0 ? (
+      <div className={styles.endHint}>【{STATUSES[blockers[0]!.id].name}】期间不能打出</div>
+    ) : null;
   const play = () => {
     if (canPlay) dispatch({ type: "playCard", cardUid: card.uid });
   };
@@ -567,6 +580,7 @@ function HandCard({
         </div>
         <div className={styles.compactSummary}>{def.rulesText[0]}</div>
         {solveNames.length > 0 ? <div className={styles.solves}>可解决：{solveNames.join("、")}</div> : null}
+        {blockedNote}
       </FoldBox>
     );
   }
@@ -597,6 +611,7 @@ function HandCard({
       {solves.length > 0 ? (
         <p className={styles.solves}>打出将同时解决：{solves.map((e) => `【${EVENTS[e.id].name}】`).join("")}</p>
       ) : null}
+      {blockedNote}
       <div className={styles.cardActions}>
         {isPending ? (
           <>
@@ -672,8 +687,10 @@ function Statuses({ state, dispatch }: { state: ZhState; dispatch: Dispatch }) {
                 {STATUS_TAG_LABEL[def.tag]}
               </button>
               <span className={styles.muted}>
-                抓牌 {def.drawModifier > 0 ? "+" : ""}
-                {def.drawModifier} · {notYet ? `下回合起生效，共 ${st.remaining} 回合` : `剩余 ${st.remaining} 回合`}
+                {def.blocksCards
+                  ? `不能打出${def.blocksCards.map((id) => CARDS[id].name).join("、")}`
+                  : `抓牌 ${def.drawModifier > 0 ? "+" : ""}${def.drawModifier}`}{" "}
+                · {notYet ? `下回合起生效，共 ${st.remaining} 回合` : `剩余 ${st.remaining} 回合`}
               </span>
               {removable.has(st.uid) ? (
                 <button
@@ -719,9 +736,10 @@ function endTurnHints(state: ZhState): string[] {
     const def = story.options.find((o) => o.id === story.defaultOptionId)!;
     hints.push(`【${story.name}】未选择，将按默认【${def.name}】处理。`);
   }
-  if (state.crisis && !state.crisis.resolved) {
-    const def = EVENTS[state.crisis.id];
-    hints.push(`危机【${def.name}】未处理：${def.unresolvedText}。`);
+  for (const ev of [state.crisis, state.envy]) {
+    if (!ev || ev.resolved) continue;
+    const def = EVENTS[ev.id];
+    hints.push(`${EVENT_KIND_LABEL[def.kind]}【${def.name}】未处理：${def.unresolvedText}。`);
   }
   return hints;
 }
@@ -789,6 +807,7 @@ export function ZhenhuanGame({ state, dispatch, showRules, onShowRules, onRestar
   const hints = endTurnHints(state);
   const usedOpp = state.opportunityUsed;
   const usedCrisis = state.crisisUsed;
+  const usedEnvy = state.envyUsed;
   const compact = useSmallScreen();
 
   // Space ends the turn (same shortcut as the Sun King campaign); ignored while typing.
@@ -869,6 +888,15 @@ export function ZhenhuanGame({ state, dispatch, showRules, onShowRules, onRestar
           <p className={styles.popoverTitle}>本轮已出现</p>
           <EventCountList ids={state.crisis ? [...usedCrisis, state.crisis.id] : usedCrisis} empty="无" />
         </Pile>
+        <Pile label="👀 嫉妒牌池" count={state.envyPool.length}>
+          <p className={styles.popoverTitle}>
+            回合开始时圣宠 ≥ {ENVY_TRIGGER.minShengchong}：首次必出，之后每隔一回合出现一次
+          </p>
+          <p className={styles.popoverTitle}>剩余嫉妒事件</p>
+          <EventCountList ids={state.envyPool} empty="已抽完，下次将把已用事件重新洗匀。" />
+          <p className={styles.popoverTitle}>本轮已出现</p>
+          <EventCountList ids={state.envy ? [...usedEnvy, state.envy.id] : usedEnvy} empty="无" />
+        </Pile>
       </div>
 
       <Statuses state={state} dispatch={dispatch} />
@@ -880,6 +908,9 @@ export function ZhenhuanGame({ state, dispatch, showRules, onShowRules, onRestar
         ) : null}
         {state.crisis ? (
           <EventCard state={state} inst={state.crisis} fold={fold(state.crisis.uid)} dispatch={dispatch} />
+        ) : null}
+        {state.envy ? (
+          <EventCard state={state} inst={state.envy} fold={fold(state.envy.uid)} dispatch={dispatch} />
         ) : null}
         <StoryCard state={state} dispatch={dispatch} fold={fold("story")} />
         <TrialCard state={state} fold={fold("trial")} dispatch={dispatch} />
