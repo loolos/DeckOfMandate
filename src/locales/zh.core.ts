@@ -31,6 +31,7 @@ export const messagesZhCore = {
   "ui.newGame": "新开一局",
   "menu.title": "主菜单",
   "menu.resumeSave": "读取本地存档",
+  "menu.campaignLabel": "战役",
   "menu.levelLabel": "关卡",
   "menu.seedLabel": "随机种子（可选）",
   "menu.seedPlaceholder": "留空则随机",

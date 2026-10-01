@@ -12,6 +12,7 @@ import startMenuBackdropUrl from "../img/maintheme.webp";
 import { ActionLog } from "../components/ActionLog";
 import { EventPanel } from "../components/EventPanel";
 import { Hand } from "../components/Hand";
+import { CampaignSwitcher } from "../components/CampaignSwitcher";
 import { LanguageToggle } from "../components/LanguageToggle";
 import { LevelTutorialOverlay } from "../components/LevelTutorialOverlay";
 import { ResourceBar } from "../components/ResourceBar";
@@ -669,6 +670,7 @@ export function Game() {
             <LanguageToggle />
           </div>
           <div className={styles.startMenuForm}>
+          <CampaignSwitcher labelClassName={styles.startMenuLabel} selectClassName={styles.startMenuSelect} />
           <label className={styles.startMenuLabel} htmlFor="start-menu-level">
             {t("menu.levelLabel")}
           </label>

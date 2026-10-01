@@ -32,6 +32,7 @@ export const messagesEnCore = {
   "ui.newGame": "New run",
   "menu.title": "Main menu",
   "menu.resumeSave": "Resume saved run",
+  "menu.campaignLabel": "Campaign",
   "menu.levelLabel": "Level",
   "menu.seedLabel": "Run seed (optional)",
   "menu.seedPlaceholder": "Random if empty",

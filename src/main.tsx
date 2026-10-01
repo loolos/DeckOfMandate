@@ -2,14 +2,14 @@ import "./levels/load";
 import "./levels/loadUi";
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { Game } from "./app/Game";
+import { CampaignShell } from "./app/CampaignShell";
 import { I18nProvider } from "./locales";
 import "./styles/global.css";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <I18nProvider>
-      <Game />
+      <CampaignShell />
     </I18nProvider>
   </React.StrictMode>,
 );
