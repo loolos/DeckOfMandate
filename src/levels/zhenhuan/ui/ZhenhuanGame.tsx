@@ -805,6 +805,31 @@ function OutcomeModal({ state, onRestart, onMenu }: { state: ZhState; onRestart:
   );
 }
 
+/** Shown once when the promotion trial is passed; the run continues afterwards. */
+function PromotionModal({ state, onClose }: { state: ZhState; onClose: () => void }) {
+  const rank = RANKS[state.rank];
+  return (
+    <div className={styles.overlay} role="dialog" aria-modal="true" aria-labelledby="zh-promotion-title">
+      <div className={styles.modal}>
+        <h2 id="zh-promotion-title">🏮 晋封成功</h2>
+        <p>恭喜小主晋为{rank.name}！只是位分越高，盯着你的人就越多，后面还有更大的风浪。</p>
+        <p>
+          接下来只要撑到<strong>第 {CHAPTER.totalTurns} 回合结束</strong>，清誉与圣宠都不降到 0，即可通过第一关。
+        </p>
+        <p className={styles.muted}>
+          从下一回合起每回合抓 {rank.draw} 张、最多打 {rank.plays} 张，清誉 / 圣宠上限提高到 {rank.cap}。
+        </p>
+        <div className={styles.modalActions}>
+          {/* Takes focus so Space closes the notice instead of re-pressing 结束回合 underneath. */}
+          <button type="button" className={`${styles.btn} ${styles.btnPrimary}`} onClick={onClose} autoFocus>
+            谨记在心
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function ZhenhuanGame({ state, dispatch, showRules, onShowRules, onRestart, onMenu, onLoadState }: Props) {
   const rank = RANKS[state.rank];
   const runCode = useMemo(() => encodeRunCode(state), [state]);
@@ -814,8 +839,17 @@ export function ZhenhuanGame({ state, dispatch, showRules, onShowRules, onRestar
   const usedEnvy = state.envyUsed;
   const compact = useSmallScreen();
 
+  // Pop the promotion notice only when it happens during play, not when loading a promoted save.
+  const [showPromotion, setShowPromotion] = useState(false);
+  const wasPromoted = useRef(state.promoted);
+  useEffect(() => {
+    if (state.promoted && !wasPromoted.current && state.outcome === "playing") setShowPromotion(true);
+    if (!state.promoted) setShowPromotion(false);
+    wasPromoted.current = state.promoted;
+  }, [state.promoted, state.outcome]);
+
   // Space ends the turn (same shortcut as the Sun King campaign); ignored while typing.
-  const endTurnReady = canEndTurn(state) && !showRules;
+  const endTurnReady = canEndTurn(state) && !showRules && !showPromotion;
   useEffect(() => {
     const onKeyDown = (event: globalThis.KeyboardEvent) => {
       if (event.key !== " " && event.code !== "Space") return;
@@ -974,6 +1008,7 @@ export function ZhenhuanGame({ state, dispatch, showRules, onShowRules, onRestar
         </div>
       ) : null}
 
+      {showPromotion ? <PromotionModal state={state} onClose={() => setShowPromotion(false)} /> : null}
       <OutcomeModal state={state} onRestart={onRestart} onMenu={onMenu} />
     </div>
   );
