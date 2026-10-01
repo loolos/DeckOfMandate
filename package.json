@@ -16,7 +16,8 @@
     "test:ai:a-strategy-i:1000": "npx tsx src/levels/sunking/cli/secondMandateAndCampaignReport.ts --seed-start 1 --runs 1000",
     "test:ai:second-to-third:5000": "node scripts/runSecondToThirdCampaignBatch.mjs",
     "test:ai:first-to-third:5000": "node scripts/runFirstToThirdCampaignBatch.mjs",
-    "test:ai:menu-standalone:5000": "node scripts/runMenuStandaloneChaptersBatch.mjs"
+    "test:ai:menu-standalone:5000": "node scripts/runMenuStandaloneChaptersBatch.mjs",
+    "sim:zhenhuan": "npx tsx src/levels/zhenhuan/sim/simulate.ts 1000"
   },
   "dependencies": {
     "react": "^18.3.1",
