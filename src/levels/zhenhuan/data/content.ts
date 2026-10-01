@@ -259,9 +259,9 @@ export const CARDS: Record<CardId, CardDef> = {
     emoji: "🍵",
     flavor: "先按兵不动，看清局势。",
     base: [],
-    baseDraw: 1,
+    baseDraw: 2,
     matches: [],
-    rulesText: ["抽 1 张牌。", "本回合最多出牌数 +1（本身仍占用 1 次出牌；可叠加）。"],
+    rulesText: ["抽 2 张牌。", "本回合最多出牌数 +1（本身仍占用 1 次出牌；可叠加）。"],
   },
   meizhuangXiangzhu: {
     id: "meizhuangXiangzhu",

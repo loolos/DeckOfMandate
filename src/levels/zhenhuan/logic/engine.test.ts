@@ -103,7 +103,7 @@ describe("zhenhuan engine", () => {
     const second = giveCard(s, "jingguanQibian");
     const handBefore = s.hand.length;
     s = act(s, { type: "playCard", cardUid: uidOf(s, "jingguanQibian") });
-    expect(s.hand.length).toBe(handBefore); // -1 played +1 drawn
+    expect(s.hand.length).toBe(handBefore + 1); // -1 played +2 drawn
     expect(playLimit(s)).toBe(2);
     s = act(s, { type: "playCard", cardUid: second });
     expect(playLimit(s)).toBe(3);
