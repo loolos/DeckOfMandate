@@ -151,13 +151,16 @@ function ResourceStat({ state, resource }: { state: ZhState; resource: Resource 
   );
 }
 
-/** Hand/event match hints are a first-turn tutorial only; afterwards players work out matches themselves. */
+/**
+ * Proactive match hints (hand-card border, "可解决…" lines) are a first-turn tutorial only. Expanded
+ * event and hand cards always highlight live matches in their own match lists.
+ */
 function showMatchHints(state: ZhState): boolean {
   return state.turn === 1;
 }
 
-function MatchChips({ state, def }: { state: ZhState; def: EventDef }) {
-  const handIds = new Set(showMatchHints(state) ? state.hand.map((c) => c.id) : []);
+function MatchChips({ state, def, resolved }: { state: ZhState; def: EventDef; resolved: boolean }) {
+  const handIds = new Set(resolved ? [] : state.hand.map((c) => c.id));
   const matching = (Object.keys(CARDS) as CardId[]).filter((id) => CARDS[id].matches.includes(def.id));
   return (
     <p className={styles.rule}>
@@ -416,7 +419,7 @@ function EventCard({ state, inst, fold, dispatch }: { state: ZhState; inst: Even
         <span className={styles.ruleLabel}>未处理（回合末）：</span>
         {def.unresolvedText}
       </p>
-      <MatchChips state={state} def={def} />
+      <MatchChips state={state} def={def} resolved={inst.resolved} />
       <p className={styles.flavor}>只能通过打出匹配牌解决；本回合结束时离场。</p>
     </FoldBox>
   );
@@ -495,7 +498,7 @@ function StoryCard({ state, dispatch, fold }: { state: ZhState; dispatch: Dispat
         <span className={styles.ruleLabel}>可由手牌打出解决：</span>
       </p>
       {storyCardResponses(story).map((option) => {
-        const inHand = showMatchHints(state) && state.hand.some((c) => c.id === option.card);
+        const inHand = state.hand.some((c) => c.id === option.card);
         const isChosen = chosen === option.id;
         return (
           <p key={option.id} className={[styles.rule, isChosen && styles.optionChosen].filter(Boolean).join(" ")}>
@@ -583,6 +586,7 @@ function HandCard({
 }) {
   const def = CARDS[card.id];
   const hints = showMatchHints(state);
+  const liveEvents = new Set(matchedEvents(state, card.id).map((e) => e.id));
   const solves = hints ? matchedEvents(state, card.id) : [];
   const storyResponse = hints ? storyResponseFor(state, card.id) : undefined;
   const story = currentStory(state);
@@ -644,7 +648,17 @@ function HandCard({
       ))}
       <p className={styles.rule}>
         <span className={styles.ruleLabel}>匹配事件：</span>
-        {def.matches.length > 0 ? def.matches.map((id) => EVENTS[id].name).join("、") : "无"}
+        {def.matches.length > 0
+          ? def.matches.map((id) => (
+              <span
+                key={id}
+                className={[styles.matchChip, liveEvents.has(id) && styles.matchChipInHand].filter(Boolean).join(" ")}
+                title={liveEvents.has(id) ? "本回合有这个事件，尚未解决" : undefined}
+              >
+                {EVENTS[id].emoji} {EVENTS[id].name}
+              </span>
+            ))
+          : "无"}
       </p>
       {storyResponse && story ? (
         <p className={styles.solves}>
