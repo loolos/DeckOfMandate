@@ -304,8 +304,7 @@ function resolvePlay(
     log(s, `晋封考验：已打出【${def.name}】，条件达成。`, "good");
   }
 
-  // 1. base effect, or the story option that replaces it (unless it keeps the card's effect)
-  const keepCardEffect = !option || option.keepCardEffect === true;
+  // 1. story option (if this card answers the open story), then the card's own base effect
   if (option && story) {
     s.story = { id: story.id, chosenOptionId: option.id };
     log(s, option.story);
@@ -313,7 +312,7 @@ function resolvePlay(
     if (option.gainStatus && s.outcome === "playing") addStatus(s, option.gainStatus);
     if (option.epilogue && s.outcome === "playing") log(s, option.epilogue, "good");
   }
-  if (keepCardEffect && s.outcome === "playing") {
+  if (s.outcome === "playing") {
     applyDeltas(s, def.base, def.name);
     if (def.baseStatus && s.outcome === "playing") addStatus(s, def.baseStatus);
     if (def.baseDraw > 0 && s.outcome === "playing") drawCards(s, def.baseDraw);
@@ -347,8 +346,8 @@ function resolvePlay(
     }
   }
 
-  // 5. extra effect (not on story options, unless the option keeps the card's effect)
-  if (keepCardEffect && s.outcome === "playing") {
+  // 5. extra effect
+  if (s.outcome === "playing") {
     if (card.id === "jingguanQibian") {
       s.extraPlays++;
       log(s, `静观其变：本回合最多出牌数 +1（现为 ${playLimit(s)}）。`, "good");

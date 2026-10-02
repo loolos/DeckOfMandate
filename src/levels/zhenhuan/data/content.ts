@@ -381,11 +381,9 @@ export type StoryOptionDef = {
   readonly name: string;
   /**
    * Card response: playing this card FROM HAND while the story is open resolves it with these
-   * effects (instead of the card's base effect). Never a button on the event (design.md §9).
+   * effects, on top of the card's own effects. Never a button on the event (design.md §9).
    */
   readonly card?: CardId;
-  /** Card response that ALSO resolves the card's usual effects (base, draw, extra) after its own. */
-  readonly keepCardEffect?: boolean;
   readonly effects: readonly ResourceDelta[];
   readonly gainStatus?: StatusId;
   /** Effect summary shown on the event and hand card. */
@@ -484,9 +482,8 @@ export const STORIES: Record<StoryId, StoryDef> = {
         id: "kanpoBushuopo",
         name: "看破不说破",
         card: "jingguanQibian",
-        keepCardEffect: true,
         effects: [{ resource: "qingyu", amount: 2 }],
-        text: "清誉 +2，并照常抽 2 张牌、本回合出牌数 +1",
+        text: "清誉 +2",
         story: "你瞥见他腰间系着明黄络子，心中了然，却只当他是王爷，进退有度，半分不逾矩。",
       },
     ],

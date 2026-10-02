@@ -151,8 +151,13 @@ function ResourceStat({ state, resource }: { state: ZhState; resource: Resource 
   );
 }
 
+/** Hand/event match hints are a first-turn tutorial only; afterwards players work out matches themselves. */
+function showMatchHints(state: ZhState): boolean {
+  return state.turn === 1;
+}
+
 function MatchChips({ state, def }: { state: ZhState; def: EventDef }) {
-  const handIds = new Set(state.hand.map((c) => c.id));
+  const handIds = new Set(showMatchHints(state) ? state.hand.map((c) => c.id) : []);
   const matching = (Object.keys(CARDS) as CardId[]).filter((id) => CARDS[id].matches.includes(def.id));
   return (
     <p className={styles.rule}>
@@ -464,7 +469,7 @@ function StoryCard({ state, dispatch, fold }: { state: ZhState; dispatch: Dispat
       ) : null}
       <p className={styles.flavor}>{story.flavor}</p>
       <p className={styles.rule}>
-        二选一处理：选择 1 个基础选项（不消耗出牌次数），或从手牌打出下列牌之一（消耗 1 次出牌，按剧情效果结算，除注明外替代该牌的基础效果，同时解决匹配的普通事件）。
+        二选一处理：选择 1 个基础选项（不消耗出牌次数），或从手牌打出下列牌之一（消耗 1 次出牌，结算剧情效果，该牌自身的效果也照常结算，同时解决匹配的普通事件）。
       </p>
       {storyBasicOptions(story).map((option) => {
         const isChosen = chosen === option.id;
@@ -490,7 +495,7 @@ function StoryCard({ state, dispatch, fold }: { state: ZhState; dispatch: Dispat
         <span className={styles.ruleLabel}>可由手牌打出解决：</span>
       </p>
       {storyCardResponses(story).map((option) => {
-        const inHand = state.hand.some((c) => c.id === option.card);
+        const inHand = showMatchHints(state) && state.hand.some((c) => c.id === option.card);
         const isChosen = chosen === option.id;
         return (
           <p key={option.id} className={[styles.rule, isChosen && styles.optionChosen].filter(Boolean).join(" ")}>
@@ -577,8 +582,9 @@ function HandCard({
   fold: Fold;
 }) {
   const def = CARDS[card.id];
-  const solves = matchedEvents(state, card.id);
-  const storyResponse = storyResponseFor(state, card.id);
+  const hints = showMatchHints(state);
+  const solves = hints ? matchedEvents(state, card.id) : [];
+  const storyResponse = hints ? storyResponseFor(state, card.id) : undefined;
   const story = currentStory(state);
   const solveNames = [
     ...(storyResponse && story ? [`${story.name}·${storyResponse.name}`] : []),
@@ -642,8 +648,7 @@ function HandCard({
       </p>
       {storyResponse && story ? (
         <p className={styles.solves}>
-          打出将解决剧情【{story.name}】·{storyResponse.name}：{storyResponse.text}
-          {storyResponse.keepCardEffect ? "" : "（替代基础效果）"}
+          打出将解决剧情【{story.name}】·{storyResponse.name}：{storyResponse.text}（另加该牌效果）
         </p>
       ) : null}
       {solves.length > 0 ? (

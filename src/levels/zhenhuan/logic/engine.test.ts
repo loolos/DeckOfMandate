@@ -271,7 +271,7 @@ describe("zhenhuan engine", () => {
     expect(s.story?.chosenOptionId).toBe("yishiXianghe");
     expect(s.crisis?.resolved).toBe(true);
     expect(s.shengchong).toBe(4); // 以诗相和 圣宠 +1
-    expect(s.qingyu).toBe(4); // 清誉 +1 (not also the base +1)
+    expect(s.qingyu).toBe(5); // 清誉 +1 (story) + 1 (谨言慎行 base, still applies)
     expect(s.playsUsed).toBe(1);
     expect(s.log.some((l) => l.text.includes("倚梅园念“逆风如解意”的人"))).toBe(true);
   });
@@ -356,13 +356,13 @@ describe("zhenhuan engine", () => {
     expect(s.statuses.some((x) => x.id === "ermuLingtong")).toBe(false);
   });
 
-  it("倚梅园: 收拢人心 grants 先机在握 for the next 3 turns", () => {
+  it("倚梅园: 收拢人心 grants 先机在握 on top of its own 耳目灵通", () => {
     let s = advanceTo(newGame(13), 4);
     expect(s.story?.id).toBe("yimeiYuan");
     s = act(s, { type: "playCard", cardUid: giveCard(s, "shoulongRenxin") });
-    expect(s.statuses.map((x) => x.id)).toEqual(["xianjiZaiwo"]);
+    expect(s.statuses.map((x) => x.id)).toEqual(["xianjiZaiwo", "ermuLingtong"]);
     s = advanceTo(s, 5);
-    expect(s.drawnThisTurn).toBe(4);
+    expect(s.drawnThisTurn).toBe(5);
   });
 
   it("promotion trial is judged at end of turn; game continues to turn 15", () => {
