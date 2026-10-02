@@ -680,12 +680,19 @@
   gap: 0.5rem;
 }
 
-.compact .events > * {
-  width: 180px;
+/* Collapsed events, hand cards and statuses share one narrow column width. */
+.compact {
+  --zh-compact-col: 132px;
 }
 
-.compact .hand > * {
-  width: 150px;
+.compact .events > *,
+.compact .hand > *,
+.compact .status {
+  width: var(--zh-compact-col);
+}
+
+.compact .status.statusExpanded {
+  width: min(320px, 85vw);
 }
 
 .compact .scrollRow > .expandedCard {
