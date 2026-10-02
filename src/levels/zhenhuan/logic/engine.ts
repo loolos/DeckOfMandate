@@ -409,6 +409,12 @@ function beginTurn(s: ZhState, turn: number): void {
 
   drawCards(s, drawCount);
   log(s, `抓 ${drawCount} 张牌${mod !== 0 ? `（状态修正 ${mod > 0 ? "+" : ""}${mod}，最低 1 张）` : ""}。`);
+
+  // per-turn resource statuses (宫人吹风), after events so the 嫉妒 check sees the turn-start 圣宠
+  for (const st of s.statuses) {
+    const perTurn = STATUSES[st.id].perTurn;
+    if (perTurn && st.appliesFromTurn <= turn) applyDeltas(s, perTurn, STATUSES[st.id].name);
+  }
 }
 
 /** 嫉妒事件 trigger, at turn start (design.md §7.4). */
@@ -464,6 +470,8 @@ function endTurn(s: ZhState): void {
   }
   for (const st of s.statuses.filter((x) => x.remaining <= 0)) {
     log(s, `状态【${STATUSES[st.id].name}】结束。`);
+    const endStory = STATUSES[st.id].endStory;
+    if (endStory) log(s, endStory, "good");
   }
   s.statuses = s.statuses.filter((x) => x.remaining > 0);
 

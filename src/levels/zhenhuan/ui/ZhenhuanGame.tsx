@@ -780,7 +780,9 @@ function Statuses({ state, dispatch }: { state: ZhState; dispatch: Dispatch }) {
                   <span className={styles.muted}>
                     {def.blocksCards
                       ? `不能打出${def.blocksCards.map((id) => CARDS[id].name).join("、")}`
-                      : `抓牌 ${def.drawModifier > 0 ? "+" : ""}${def.drawModifier}`}{" "}
+                      : def.perTurn
+                        ? def.perTurn.map((d) => `${RESOURCE_LABEL[d.resource]} ${d.amount > 0 ? "+" : ""}${d.amount}/回合`).join(" ")
+                        : `抓牌 ${def.drawModifier > 0 ? "+" : ""}${def.drawModifier}`}{" "}
                     · {notYet ? `下回合起生效，共 ${st.remaining} 回合` : `剩余 ${st.remaining} 回合`}
                   </span>
                   {removable.has(st.uid) ? (
