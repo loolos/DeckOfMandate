@@ -386,6 +386,22 @@ describe("zhenhuan engine", () => {
     expect(s.outcome).toBe("won");
   });
 
+  it("谨言慎行 during the 晋封考验 counts for the trial and still resolves 恃宠而骄 (only that envy event)", () => {
+    for (const [envyId, resolved] of [
+      ["shichongErjiao", true],
+      ["yuDayingZhengchong", false],
+      ["anzhongXiaban", false],
+    ] as const) {
+      let s = advanceTo(newGame(17), 10);
+      expect(s.trial.active).toBe(true);
+      s.trial.keyCardPlayed = false;
+      s.envy = { uid: "e", id: envyId, resolved: false };
+      s = act(s, { type: "playCard", cardUid: giveCard(s, "jinyanShenxing") });
+      expect(s.trial.keyCardPlayed).toBe(true);
+      expect(s.envy?.resolved).toBe(resolved);
+    }
+  });
+
   it("failing the trial by end of turn 12 loses", () => {
     let s = advanceTo(newGame(19), 12);
     if (s.crisis) s.crisis.resolved = true;
