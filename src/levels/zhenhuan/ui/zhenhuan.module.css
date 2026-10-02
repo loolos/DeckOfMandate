@@ -253,10 +253,18 @@
 
 .statusRow {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 0.5rem;
   margin-bottom: 0.75rem;
   align-items: flex-start;
+}
+
+/* Statuses share the events/hand single-row sideways scroller. */
+.statuses {
+  flex: 1 1 auto;
+  min-width: 0;
+  align-items: flex-start;
+  gap: 0.5rem;
 }
 
 .status {
@@ -742,6 +750,8 @@
 }
 
 .statusRow > .muted {
+  flex: 0 0 auto;
+  white-space: nowrap;
   padding-top: 0.35rem;
 }
 

@@ -654,78 +654,82 @@ function Statuses({ state, dispatch }: { state: ZhState; dispatch: Dispatch }) {
     <div className={styles.statusRow}>
       <span className={styles.muted}>状态：</span>
       {state.statuses.length === 0 ? <span className={styles.muted}>无</span> : null}
-      {state.statuses.map((st) => {
-        const def = STATUSES[st.id];
-        const notYet = st.appliesFromTurn > state.turn;
-        const expanded = open.has(st.uid);
-        return (
-          <div
-            key={st.uid}
-            className={[
-              styles.status,
-              def.tag === "negative" ? styles.statusNegative : styles.statusPositive,
-              expanded && styles.statusExpanded,
-            ]
-              .filter(Boolean)
-              .join(" ")}
-            role="button"
-            tabIndex={0}
-            aria-expanded={expanded}
-            title={expanded ? "点击收起" : "点击展开"}
-            onClick={() => toggle(st.uid)}
-            onKeyDown={(e) => activateOnKey(e, () => toggle(st.uid))}
-          >
-            <div className={styles.statusLine}>
-              <span>
-                {def.emoji} {def.name}
-              </span>
-              <button
-                type="button"
-                className={`${styles.tag} ${styles.tagButton}`}
-                title="点击在日志中查看说明"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  dispatch({ type: "explainTag", tag: def.tag });
-                }}
+      {state.statuses.length > 0 ? (
+        <ScrollRow className={styles.statuses}>
+          {state.statuses.map((st) => {
+            const def = STATUSES[st.id];
+            const notYet = st.appliesFromTurn > state.turn;
+            const expanded = open.has(st.uid);
+            return (
+              <div
+                key={st.uid}
+                className={[
+                  styles.status,
+                  def.tag === "negative" ? styles.statusNegative : styles.statusPositive,
+                  expanded && styles.statusExpanded,
+                ]
+                  .filter(Boolean)
+                  .join(" ")}
+                role="button"
+                tabIndex={0}
+                aria-expanded={expanded}
+                title={expanded ? "点击收起" : "点击展开"}
+                onClick={() => toggle(st.uid)}
+                onKeyDown={(e) => activateOnKey(e, () => toggle(st.uid))}
               >
-                {STATUS_TAG_LABEL[def.tag]}
-              </button>
-              <span className={styles.muted}>
-                {def.blocksCards
-                  ? `不能打出${def.blocksCards.map((id) => CARDS[id].name).join("、")}`
-                  : `抓牌 ${def.drawModifier > 0 ? "+" : ""}${def.drawModifier}`}{" "}
-                · {notYet ? `下回合起生效，共 ${st.remaining} 回合` : `剩余 ${st.remaining} 回合`}
-              </span>
-              {removable.has(st.uid) ? (
-                <button
-                  type="button"
-                  className={`${styles.btn} ${styles.btnPrimary} ${styles.btnSmall}`}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    dispatch({ type: "removeStatus", statusUid: st.uid });
-                  }}
-                >
-                  移除
-                </button>
-              ) : null}
-            </div>
-            {expanded ? (
-              <div className={styles.statusDetail}>
-                <p className={styles.flavor}>{def.flavor}</p>
-                <p className={styles.rule}>
-                  <span className={styles.ruleLabel}>机制：</span>
-                  {def.effectText}从获得后的下一回合开始生效。
-                  {def.tag === "negative" ? "可被【温太医诊治】移除。" : ""}
-                </p>
-                <p className={styles.rule}>
-                  <span className={styles.ruleLabel}>来源：</span>
-                  {def.source}
-                </p>
+                <div className={styles.statusLine}>
+                  <span>
+                    {def.emoji} {def.name}
+                  </span>
+                  <button
+                    type="button"
+                    className={`${styles.tag} ${styles.tagButton}`}
+                    title="点击在日志中查看说明"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      dispatch({ type: "explainTag", tag: def.tag });
+                    }}
+                  >
+                    {STATUS_TAG_LABEL[def.tag]}
+                  </button>
+                  <span className={styles.muted}>
+                    {def.blocksCards
+                      ? `不能打出${def.blocksCards.map((id) => CARDS[id].name).join("、")}`
+                      : `抓牌 ${def.drawModifier > 0 ? "+" : ""}${def.drawModifier}`}{" "}
+                    · {notYet ? `下回合起生效，共 ${st.remaining} 回合` : `剩余 ${st.remaining} 回合`}
+                  </span>
+                  {removable.has(st.uid) ? (
+                    <button
+                      type="button"
+                      className={`${styles.btn} ${styles.btnPrimary} ${styles.btnSmall}`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        dispatch({ type: "removeStatus", statusUid: st.uid });
+                      }}
+                    >
+                      移除
+                    </button>
+                  ) : null}
+                </div>
+                {expanded ? (
+                  <div className={styles.statusDetail}>
+                    <p className={styles.flavor}>{def.flavor}</p>
+                    <p className={styles.rule}>
+                      <span className={styles.ruleLabel}>机制：</span>
+                      {def.effectText}从获得后的下一回合开始生效。
+                      {def.tag === "negative" ? "可被【温太医诊治】移除。" : ""}
+                    </p>
+                    <p className={styles.rule}>
+                      <span className={styles.ruleLabel}>来源：</span>
+                      {def.source}
+                    </p>
+                  </div>
+                ) : null}
               </div>
-            ) : null}
-          </div>
-        );
-      })}
+            );
+          })}
+        </ScrollRow>
+      ) : null}
     </div>
   );
 }
