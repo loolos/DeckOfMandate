@@ -931,18 +931,20 @@ export function ZhenhuanGame({ state, dispatch, showRules, onShowRules, onRestar
         </div>
       </header>
 
-      <div className={styles.bar}>
+      <ScrollRow className={`${styles.bar} ${styles.resources}`}>
         <ResourceStat state={state} resource="qingyu" />
         <ResourceStat state={state} resource="shengchong" />
+      </ScrollRow>
+
+      <ScrollRow className={`${styles.bar} ${styles.piles}`}>
         <div className={styles.stat}>
-          <div className={styles.statLabel}>🀄 本回合出牌</div>
+          <div className={styles.statLabel}>
+            <span className={styles.pileIcon}>🀄 </span>本回合出牌
+          </div>
           <div className={styles.statValue}>
             {state.playsUsed} / {playLimit(state)}
           </div>
         </div>
-      </div>
-
-      <ScrollRow className={`${styles.bar} ${styles.piles}`}>
         <Pile icon="🎴" label="抽牌堆" count={state.drawPile.length}>
           <p className={styles.popoverTitle}>抽牌堆剩余（顺序未知）</p>
           <CardCountList ids={state.drawPile.map((c) => c.id)} empty="已空，需要时将弃牌堆洗回。" />

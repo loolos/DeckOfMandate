@@ -164,7 +164,6 @@
 }
 
 .stat {
-  flex: 1 1 160px;
   background: var(--zh-panel);
   border: 1px solid var(--zh-border);
   border-radius: 10px;
@@ -200,19 +199,36 @@
 
 /* hover popovers for piles */
 
-/* Piles share one narrow width and scroll sideways like events/hand/statuses. */
-.page .piles > .pile {
+/* Resources, and the play counter plus piles, each share one width and scroll sideways like events/hand/statuses. */
+.page .resources > *,
+.page .piles > * {
   flex: 0 0 auto;
+}
+
+.page .resources > * {
+  width: 180px;
+}
+
+.page.compact .resources > * {
+  width: 160px;
+}
+
+.page .piles > * {
   width: 112px;
 }
 
-.page.compact .piles > .pile {
-  width: 96px;
+.page.compact .piles > * {
+  width: 104px;
+}
+
+.piles .statLabel {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .pile {
   position: relative;
-  flex: 1 1 140px;
   background: var(--zh-panel);
   border: 1px dashed var(--zh-border);
   border-radius: 10px;
@@ -714,10 +730,6 @@
   margin-bottom: 0.5rem;
 }
 
-.compact .stat {
-  flex-basis: 110px;
-}
-
 .compact .stat,
 .compact .pile {
   padding: 0.3rem 0.55rem;
@@ -845,8 +857,6 @@
   }
 
   .page .stat {
-    flex: 1 1 90px;
-    min-width: 0;
     padding: 0.3rem 0.5rem;
   }
 
@@ -854,8 +864,16 @@
     padding: 0.25rem 0.3rem;
   }
 
-  .page.compact .piles > .pile {
+  .page.compact .resources > * {
+    width: 120px;
+  }
+
+  .page.compact .piles > * {
     width: 72px;
+  }
+
+  .piles .stat {
+    padding: 0.25rem 0.3rem;
   }
 
   .statLabel {
@@ -865,7 +883,7 @@
     text-overflow: ellipsis;
   }
 
-  .pile .statLabel {
+  .piles .statLabel {
     font-size: 0.62rem;
   }
 
