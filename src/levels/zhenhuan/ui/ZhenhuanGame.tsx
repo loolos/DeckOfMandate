@@ -40,6 +40,7 @@ import {
 import { decodeRunCode, encodeRunCode } from "../logic/persistence";
 import { CompactModeToggle } from "./CompactModeToggle";
 import { RulesSummary } from "./RulesSummary";
+import { compactEffect, expandedEffect } from "./effectText";
 import styles from "./zhenhuan.module.css";
 
 type Props = {
@@ -354,11 +355,11 @@ function ResolvedBanner({ icon, label, detail }: { icon: string; label: string; 
   );
 }
 
-function eventResolvedDetail(inst: EventInst): string {
+function eventResolvedDetail(inst: EventInst, fmt: (text: string) => string): string {
   const def = EVENTS[inst.id];
   const by = inst.resolvedBy ? `由【${CARDS[inst.resolvedBy].name}】` : "";
   if (def.kind !== "opportunity") return `${by}化解，回合末不受惩罚。`;
-  return `${by}把握，已获得${def.resolvedText}${inst.rewardDoubled ? "（眉庄相助：奖励翻倍）" : ""}。`;
+  return `${by}把握，已获得${fmt(def.resolvedText)}${inst.rewardDoubled ? "（眉庄相助：奖励翻倍）" : ""}。`;
 }
 
 function EventCard({ state, inst, fold, dispatch }: { state: ZhState; inst: EventInst; fold: Fold; dispatch: Dispatch }) {
@@ -384,8 +385,10 @@ function EventCard({ state, inst, fold, dispatch }: { state: ZhState; inst: Even
         </div>
         <div className={styles.compactSummary}>
           {inst.resolved
-            ? `${isOpp ? "✅ 已把握" : "🛡️ 已化解"} · ${eventResolvedDetail(inst)}`
-            : `处理：${def.resolvedText} · 未处理：${def.unresolvedText}`}
+            ? `${isOpp ? "✅ 已把握" : "🛡️ 已化解"} · ${eventResolvedDetail(inst, compactEffect)}`
+            : isOpp
+              ? `处理：${compactEffect(def.resolvedText)}`
+              : `未处理：${compactEffect(def.unresolvedText)}`}
         </div>
       </FoldBox>
     );
@@ -404,7 +407,7 @@ function EventCard({ state, inst, fold, dispatch }: { state: ZhState; inst: Even
         <ResolvedBanner
           icon={isOpp ? "✅" : "🛡️"}
           label={isOpp ? "已把握" : "已化解"}
-          detail={eventResolvedDetail(inst)}
+          detail={eventResolvedDetail(inst, expandedEffect)}
         />
       ) : null}
       <p className={styles.flavor}>{def.flavor}</p>
@@ -413,11 +416,11 @@ function EventCard({ state, inst, fold, dispatch }: { state: ZhState; inst: Even
       ) : null}
       <p className={styles.rule}>
         <span className={styles.ruleLabel}>处理：</span>
-        {def.resolvedText}
+        {expandedEffect(def.resolvedText)}
       </p>
       <p className={styles.rule}>
         <span className={styles.ruleLabel}>未处理（回合末）：</span>
-        {def.unresolvedText}
+        {expandedEffect(def.unresolvedText)}
       </p>
       <MatchChips state={state} def={def} resolved={inst.resolved} />
       <p className={styles.flavor}>只能通过打出匹配牌解决；本回合结束时离场。</p>
@@ -445,7 +448,7 @@ function StoryCard({ state, dispatch, fold }: { state: ZhState; dispatch: Dispat
         </div>
         <div className={styles.compactSummary}>
           {chosenOption
-            ? `📝 已抉择「${chosenOption.name}」：${chosenOption.text}`
+            ? `📝 已抉择「${chosenOption.name}」：${compactEffect(chosenOption.text)}`
             : `选 1 个基础选项或从手牌打出对应牌（不处理按默认「${defaultOption.name}」）`}
         </div>
       </FoldBox>
@@ -467,7 +470,7 @@ function StoryCard({ state, dispatch, fold }: { state: ZhState; dispatch: Dispat
         <ResolvedBanner
           icon="📝"
           label="已抉择"
-          detail={`${chosenOption.card ? `打出【${CARDS[chosenOption.card].name}】：` : "选择"}「${chosenOption.name}」：${chosenOption.text}。`}
+          detail={`${chosenOption.card ? `打出【${CARDS[chosenOption.card].name}】：` : "选择"}「${chosenOption.name}」：${expandedEffect(chosenOption.text)}。`}
         />
       ) : null}
       <p className={styles.flavor}>{story.flavor}</p>
@@ -481,7 +484,7 @@ function StoryCard({ state, dispatch, fold }: { state: ZhState; dispatch: Dispat
             <span>
               <strong>{option.name}</strong>
               {option.id === story.defaultOptionId ? <span className={styles.muted}>（默认）</span> : null}
-              ：{option.text}
+              ：{expandedEffect(option.text)}
             </span>
             <button
               type="button"
@@ -508,7 +511,7 @@ function StoryCard({ state, dispatch, fold }: { state: ZhState; dispatch: Dispat
             >
               {CARDS[option.card!].emoji} {CARDS[option.card!].name}
             </span>
-            {option.name}：{option.text}
+            {option.name}：{expandedEffect(option.text)}
           </p>
         );
       })}
@@ -544,7 +547,7 @@ function TrialCard({ state, fold, dispatch }: { state: ZhState; fold: Fold; disp
           {trialTags}
         </div>
         <div className={styles.compactSummary}>
-          {mark(p.shengchong)} 圣宠 {state.shengchong}/{PROMOTION_TRIAL.minShengchong} · {mark(p.qingyu)} 清誉 {state.qingyu}/
+          {mark(p.shengchong)} 👑{state.shengchong}/{PROMOTION_TRIAL.minShengchong} · {mark(p.qingyu)} 🪷{state.qingyu}/
           {PROMOTION_TRIAL.minQingyu} · {mark(p.keyCard)} 考验牌
         </div>
       </FoldBox>
@@ -564,10 +567,10 @@ function TrialCard({ state, fold, dispatch }: { state: ZhState; fold: Fold; disp
       ) : null}
       <p className={styles.flavor}>{PROMOTION_TRIAL.flavor}</p>
       <p className={styles.check}>
-        {mark(p.shengchong)} 圣宠 ≥ {PROMOTION_TRIAL.minShengchong}（当前 {state.shengchong}）
+        {mark(p.shengchong)} 👑圣宠 ≥ {PROMOTION_TRIAL.minShengchong}（当前 {state.shengchong}）
       </p>
       <p className={styles.check}>
-        {mark(p.qingyu)} 清誉 ≥ {PROMOTION_TRIAL.minQingyu}（当前 {state.qingyu}）
+        {mark(p.qingyu)} 🪷清誉 ≥ {PROMOTION_TRIAL.minQingyu}（当前 {state.qingyu}）
       </p>
       <p className={styles.check}>
         {mark(p.keyCard)} 考验期间打出过【仪容整肃】或【谨言慎行】
@@ -632,7 +635,12 @@ function HandCard({
           {def.emoji} {def.name}
           {trialTag}
         </div>
-        <div className={styles.compactSummary}>{def.rulesText[0]}</div>
+        <div className={styles.compactSummary}>
+          {def.rulesText
+            .filter((line) => !line.startsWith("联动"))
+            .map(compactEffect)
+            .join(" ")}
+        </div>
         {solveNames.length > 0 ? <div className={styles.solves}>可解决：{solveNames.join("、")}</div> : null}
         {blockedNote}
       </FoldBox>
@@ -650,7 +658,7 @@ function HandCard({
       <p className={styles.flavor}>{def.flavor}</p>
       {def.rulesText.map((line) => (
         <p key={line} className={styles.rule}>
-          {line}
+          {expandedEffect(line)}
         </p>
       ))}
       <p className={styles.rule}>
@@ -669,7 +677,7 @@ function HandCard({
       </p>
       {storyResponse && story ? (
         <p className={styles.solves}>
-          打出将解决剧情【{story.name}】·{storyResponse.name}：{storyResponse.text}（另加该牌效果）
+          打出将解决剧情【{story.name}】·{storyResponse.name}：{expandedEffect(storyResponse.text)}（另加该牌效果）
         </p>
       ) : null}
       {solves.length > 0 ? (
