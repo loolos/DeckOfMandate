@@ -267,7 +267,7 @@ describe("zhenhuan engine", () => {
     s.opportunity = { uid: "o", id: "huangdiZhaojian", resolved: false };
     s = act(s, { type: "playCard", cardUid: giveCard(s, "yirongZhengsu") });
     expect(s.story?.chosenOptionId).toBe("shengzhuangFuzhao");
-    expect(s.shengchong).toBe(6); // 2 + 2 (story response, replaces base) + 2 (皇帝召见)
+    expect(s.shengchong).toBe(5); // 2 + 1 (story response, replaces base) + 2 (皇帝召见)
     expect(s.log.some((l) => l.text.includes("鬓边簪一支海棠"))).toBe(true);
     expect(s.opportunity?.resolved).toBe(true);
     expect(s.playsUsed).toBe(1);
@@ -330,9 +330,9 @@ describe("zhenhuan engine", () => {
     if (t.crisis) t.crisis.resolved = true;
     if (t.envy) t.envy.resolved = true;
     t = act(t, { type: "endTurn" });
-    expect(t.log.some((l) => l.text.includes("默认选项【谨慎应对】"))).toBe(true);
+    expect(t.log.some((l) => l.text.includes("默认选项【拘谨寡言】"))).toBe(true);
     expect(t.log.some((l) => l.text.includes("问一句答一句"))).toBe(true);
-    expect(t.qingyu).toBe(4);
+    expect(t.qingyu).toBe(3);
     expect(t.shengchong).toBe(2); // no-card options carry a small cost
   });
 
