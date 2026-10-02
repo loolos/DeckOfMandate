@@ -785,7 +785,7 @@ function Statuses({ state, dispatch }: { state: ZhState; dispatch: Dispatch }) {
                     <p className={styles.rule}>
                       <span className={styles.ruleLabel}>机制：</span>
                       {def.effectText}从获得后的下一回合开始生效。
-                      {def.tag === "negative" ? "可被【温太医诊治】移除。" : ""}
+                      {def.tag === "negative" ? "可被【温太医相助】移除。" : ""}
                     </p>
                     <p className={styles.rule}>
                       <span className={styles.ruleLabel}>来源：</span>
@@ -804,7 +804,7 @@ function Statuses({ state, dispatch }: { state: ZhState; dispatch: Dispatch }) {
 
 function endTurnHints(state: ZhState): string[] {
   const hints: string[] = [];
-  if (state.pending) hints.push("请先选择要移除的负面状态，或取消温太医诊治。");
+  if (state.pending) hints.push("请先选择要移除的负面状态，或取消温太医相助。");
   const left = playsLeft(state);
   if (left > 0 && state.hand.length > 0) hints.push(`还可出 ${left} 张牌。`);
   const story = currentStory(state);

@@ -309,12 +309,12 @@ export const CARDS: Record<CardId, CardDef> = {
   },
   wenTaiyiZhenzhi: {
     id: "wenTaiyiZhenzhi",
-    name: "温太医诊治",
+    name: "温太医相助",
     emoji: "💊",
     flavor: "温实初的方子，总是最妥帖的。",
     base: [],
     baseDraw: 0,
-    matches: ["wenTaiyiQingmai"],
+    matches: ["wenTaiyiQingmai", "liyiShiwu"],
     rulesText: ["移除 1 个【负面】状态。"],
   },
   shoulongRenxin: {
@@ -531,7 +531,7 @@ export const TAG_INFO: Record<TagId, TagInfo> = {
   negative: {
     label: "负面",
     lore: "缠身的麻烦，一时半刻甩不掉。",
-    rules: "持续性的不利状态。同名状态可以同时存在多个、分别计时。温太医诊治可以移除 1 个负面状态。",
+    rules: "持续性的不利状态。同名状态可以同时存在多个、分别计时。温太医相助可以移除 1 个负面状态。",
   },
   positive: {
     label: "正面",

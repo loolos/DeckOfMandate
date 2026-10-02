@@ -134,7 +134,7 @@ describe("zhenhuan engine", () => {
     expect(s.statuses).toHaveLength(0);
   });
 
-  it("温太医诊治: no status → no extra; one → auto remove; many → pick or cancel", () => {
+  it("温太医相助: no status → no extra; one → auto remove; many → pick or cancel", () => {
     let s = newGame(7);
     let uid = giveCard(s, "wenTaiyiZhenzhi");
     s = act(s, { type: "playCard", cardUid: uid });
@@ -236,7 +236,7 @@ describe("zhenhuan engine", () => {
     expect(s.envyUsed).toContain("shichongErjiao");
   });
 
-  it("暗中下绊 → 抱恙在身 blocks 仪容整肃 / 谨言慎行 from next turn; 温太医诊治 removes it", () => {
+  it("暗中下绊 → 抱恙在身 blocks 仪容整肃 / 谨言慎行 from next turn; 温太医相助 removes it", () => {
     let s = newGame(25);
     s.crisis!.resolved = true;
     s.envy = { uid: "e", id: "anzhongXiaban", resolved: false };
@@ -400,6 +400,16 @@ describe("zhenhuan engine", () => {
       expect(s.trial.keyCardPlayed).toBe(true);
       expect(s.envy?.resolved).toBe(resolved);
     }
+  });
+
+  it("温太医相助 resolves 礼仪失误 (and still removes a negative status)", () => {
+    let s = newGame(9);
+    expect(s.crisis?.id).toBe("liyiShiwu");
+    s.statuses.push({ uid: "neg", id: "liuyanChanshen", appliesFromTurn: 1, remaining: 2 });
+    s = act(s, { type: "playCard", cardUid: giveCard(s, "wenTaiyiZhenzhi") });
+    expect(s.crisis?.resolved).toBe(true);
+    expect(s.crisis?.resolvedBy).toBe("wenTaiyiZhenzhi");
+    expect(s.statuses).toHaveLength(0);
   });
 
   it("failing the trial by end of turn 12 loses", () => {
