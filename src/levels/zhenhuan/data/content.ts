@@ -248,7 +248,7 @@ export const ENVY_TRIGGER = { firstTurn: 6, minShengchong: 5, interval: 2 };
 
 // ---------------------------------------------------------------- statuses
 
-export type StatusId = "liuyanChanshen" | "xianjiZaiwo" | "ermuLingtong" | "baoyangZaishen";
+export type StatusId = "liuyanChanshen" | "gongrenChuifeng" | "ermuLingtong" | "baoyangZaishen";
 export type StatusTag = "negative" | "positive";
 
 export const STATUS_TAG_LABEL: Record<StatusTag, string> = { negative: "负面", positive: "正面" };
@@ -261,6 +261,10 @@ export type StatusDef = {
   /** Number of future turns the status applies to. */
   readonly duration: number;
   readonly drawModifier: number;
+  /** Resource change at the start of each turn the status applies to (宫人吹风). */
+  readonly perTurn?: readonly ResourceDelta[];
+  /** Story line logged when the status runs out on its own. */
+  readonly endStory?: string;
   /** Cards that cannot be played while the status applies. */
   readonly blocksCards?: readonly CardId[];
   /** 机制文本 */
@@ -283,15 +287,17 @@ export const STATUSES: Record<StatusId, StatusDef> = {
     flavor: "宫里的闲话越传越离谱，连走动见人都要多几分小心。",
     source: "回合末未处理的危机事件【宫中流言】",
   },
-  xianjiZaiwo: {
-    id: "xianjiZaiwo",
-    name: "先机在握",
-    emoji: "🧭",
+  gongrenChuifeng: {
+    id: "gongrenChuifeng",
+    name: "宫人吹风",
+    emoji: "🌬️",
     tag: "positive",
-    duration: 3,
-    drawModifier: 1,
-    effectText: "未来 3 回合，每回合抓牌数 +1。",
-    flavor: "早早打点好了各处，宫里的消息总比别人快一步。",
+    duration: 2,
+    drawModifier: 0,
+    perTurn: [{ resource: "shengchong", amount: 1 }],
+    endStory: "闲话终于传进了养心殿：余答应连字都认不全，除夕夜那句“逆风如解意”怎会是她念的？皇上心里已经明白，那夜的人不是她。",
+    effectText: "未来 2 回合，每回合开始时圣宠 +1。",
+    flavor: "得了赏的宫人们在各宫、御前有意无意地提起：那位余答应，连字都认不全呢。",
     source: "第 4 回合【倚梅园】时从手牌打出【收拢人心】（宫人透底）",
   },
   ermuLingtong: {
@@ -494,9 +500,9 @@ export const STORIES: Record<StoryId, StoryDef> = {
         name: "宫人透底",
         card: "shoulongRenxin",
         effects: [],
-        gainStatus: "xianjiZaiwo",
-        text: "获得【先机在握】：未来 3 回合每回合抓牌 +1",
-        story: "倚梅园的小太监私下告诉你，余答应连字都认不全。你心里有了底，各宫的消息也开始先一步传到你这里。",
+        gainStatus: "gongrenChuifeng",
+        text: "获得【宫人吹风】：未来 2 回合每回合圣宠 +1",
+        story: "倚梅园的小太监私下告诉你，余答应连字都认不全。你赏了他们银子，宫人们便在各宫、御前悄悄吹起风来。",
       },
     ],
   },

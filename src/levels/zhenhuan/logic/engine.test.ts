@@ -160,10 +160,10 @@ describe("zhenhuan engine", () => {
 
     s = newGame(7);
     withStatus(s, "liuyanChanshen");
-    withStatus(s, "xianjiZaiwo");
+    withStatus(s, "gongrenChuifeng");
     uid = giveCard(s, "wenTaiyiZhenzhi");
     s = act(s, { type: "playCard", cardUid: uid });
-    expect(s.statuses.map((x) => x.id)).toEqual(["xianjiZaiwo"]);
+    expect(s.statuses.map((x) => x.id)).toEqual(["gongrenChuifeng"]);
 
     s = newGame(7);
     withStatus(s, "liuyanChanshen");
@@ -372,13 +372,20 @@ describe("zhenhuan engine", () => {
     expect(s.statuses.some((x) => x.id === "ermuLingtong")).toBe(false);
   });
 
-  it("倚梅园: 收拢人心 grants 先机在握 on top of its own 耳目灵通", () => {
+  it("倚梅园: 收拢人心 grants 宫人吹风 (圣宠 +1 for 2 turns) on top of its own 耳目灵通", () => {
     let s = advanceTo(newGame(13), 4);
     expect(s.story?.id).toBe("yimeiYuan");
     s = act(s, { type: "playCard", cardUid: giveCard(s, "shoulongRenxin") });
-    expect(s.statuses.map((x) => x.id)).toEqual(["xianjiZaiwo", "ermuLingtong"]);
+    expect(s.statuses.map((x) => x.id)).toEqual(["gongrenChuifeng", "ermuLingtong"]);
     s = advanceTo(s, 5);
-    expect(s.drawnThisTurn).toBe(5);
+    expect(s.drawnThisTurn).toBe(4); // 耳目灵通 only
+    expect(s.shengchong).toBe(7); // advanceTo leaves 6, then 宫人吹风 +1
+    s = advanceTo(s, 6);
+    expect(s.log.filter((l) => l.turn === 6).some((l) => l.text.startsWith("宫人吹风：圣宠 +1"))).toBe(true);
+    s = advanceTo(s, 7);
+    expect(s.statuses.some((x) => x.id === "gongrenChuifeng")).toBe(false);
+    expect(s.log.map((l) => l.text)).toContain(STATUSES.gongrenChuifeng.endStory);
+    expect(s.log.filter((l) => l.turn === 7).some((l) => l.text.startsWith("宫人吹风"))).toBe(false);
   });
 
   it("promotion trial is judged at end of turn; game continues to turn 15", () => {

@@ -18,7 +18,7 @@ export function compactEffect(text: string): string {
     text
       .replace(/。$/, "")
       // 获得【耳目灵通】：未来 2 回合每回合抓牌 +1 → 👂×2 (status emoji × turns, as in the Sun King compact frames)
-      .replace(/获得(?:状态)?【(.+?)】(?:：未来 \d+ 回合每回合抓牌 [+-]\d+)?/g, (m, name: string) => {
+      .replace(/获得(?:状态)?【(.+?)】(?:：未来 \d+ 回合每回合(?:抓牌|圣宠|清誉) [+-]\d+)?/g, (m, name: string) => {
         const st = STATUS_BY_NAME.get(name);
         return st ? `${st.emoji}×${st.duration}` : m;
       })
