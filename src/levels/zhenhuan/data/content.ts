@@ -70,16 +70,16 @@ export const EVENTS: Record<EventId, EventDef> = {
     kind: "opportunity",
     name: "皇后赏识",
     emoji: "🏮",
-    flavor: "景仁宫晨省时，皇后娘娘夸你规矩好，说要在皇上面前替你美言几句。",
+    flavor: "景仁宫晨省，新入宫的小主们按位分站在最末。皇后娘娘的目光扫过来，在你身上停了一停。",
     reward: [{ resource: "shengchong", amount: 2 }],
     penalty: [],
     resolvedText: "圣宠 +2",
     unresolvedText: "无额外效果，事件消失",
     resolvedStory: {
       yirongZhengsu:
-        "你一身装束素雅得体、举止端庄，皇后看在眼里，当晚便在皇上面前提了一句“碎玉轩的莞答应很是知礼”。",
+        "你妆饰素净、行礼分毫不乱，在一众新人里格外显眼。皇后当众赏了你一支宫花，敬事房的人最会看风向，当晚就把你的绿头牌往前挪了挪。",
       jinyanShenxing:
-        "皇后问起各宫琐事，你只拣不出错的说，半句不议旁人。皇后含笑点头，说你是个懂分寸的，转头便在皇上跟前替你美言。",
+        "皇后问新人们住得惯不惯，旁人忙着诉苦讨巧，你只答“一切都好，谢娘娘挂念”。皇后说你稳重，赏了一匹缎子；消息传开，敬事房对碎玉轩也殷勤了几分。",
     },
   },
   taihouChuixun: {
