@@ -345,12 +345,13 @@ function TagButton({ tag, tone, dispatch, children }: { tag: TagId; tone?: strin
 }
 
 /** Resolved banner: distinct mark per event kind, plus which card handled it. */
-function ResolvedBanner({ icon, label, detail }: { icon: string; label: string; detail: string }) {
+function ResolvedBanner({ icon, label, detail, story }: { icon: string; label: string; detail: string; story?: string }) {
   return (
     <div className={styles.resolvedBanner} role="status">
       <span className={styles.resolvedBadge}>
         {icon} {label}
       </span>
+      {story ? <span className={styles.resolvedStory}>{story}</span> : null}
       <span className={styles.resolvedDetail}>{detail}</span>
     </div>
   );
@@ -410,10 +411,10 @@ function EventCard({ state, inst, fold, dispatch }: { state: ZhState; inst: Even
           icon={isOpp ? "✅" : "🛡️"}
           label={isOpp ? "已把握" : "已化解"}
           detail={eventResolvedDetail(inst, expandedEffect)}
+          story={resolvedStory}
         />
       ) : null}
       <p className={styles.flavor}>{def.flavor}</p>
-      {resolvedStory ? <p className={styles.resolvedStory}>{resolvedStory}</p> : null}
       {def.kind === "envy" ? (
         <p className={styles.flavor}>圣宠 ≥ {ENVY_TRIGGER.minShengchong} 引来的额外事件。</p>
       ) : null}
@@ -474,15 +475,10 @@ function StoryCard({ state, dispatch, fold }: { state: ZhState; dispatch: Dispat
           icon="📝"
           label="已抉择"
           detail={`${chosenOption.card ? `打出【${CARDS[chosenOption.card].name}】：` : "选择"}「${chosenOption.name}」：${expandedEffect(chosenOption.text)}。`}
+          story={chosenOption.epilogue ? `${chosenOption.story}${chosenOption.epilogue}` : chosenOption.story}
         />
       ) : null}
       <p className={styles.flavor}>{story.flavor}</p>
-      {chosenOption ? (
-        <p className={styles.resolvedStory}>
-          {chosenOption.story}
-          {chosenOption.epilogue ? ` ${chosenOption.epilogue}` : null}
-        </p>
-      ) : null}
       <p className={styles.rule}>
         二选一处理：选择 1 个基础选项（不消耗出牌次数），或从手牌打出下列牌之一（消耗 1 次出牌，结算剧情效果，该牌自身的效果也照常结算，同时解决匹配的普通事件）。
       </p>
