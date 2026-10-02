@@ -304,13 +304,16 @@ function resolvePlay(
     log(s, `晋封考验：已打出【${def.name}】，条件达成。`, "good");
   }
 
-  // 1. base effect, or the story option that replaces it
+  // 1. base effect, or the story option that replaces it (unless it keeps the card's effect)
+  const keepCardEffect = !option || option.keepCardEffect === true;
   if (option && story) {
     s.story = { id: story.id, chosenOptionId: option.id };
     log(s, option.story);
     applyDeltas(s, option.effects, `${story.name}·${option.name}`);
     if (option.gainStatus && s.outcome === "playing") addStatus(s, option.gainStatus);
-  } else {
+    if (option.epilogue && s.outcome === "playing") log(s, option.epilogue, "good");
+  }
+  if (keepCardEffect && s.outcome === "playing") {
     applyDeltas(s, def.base, def.name);
     if (def.baseDraw > 0 && s.outcome === "playing") drawCards(s, def.baseDraw);
   }
@@ -343,8 +346,8 @@ function resolvePlay(
     }
   }
 
-  // 5. extra effect (not on story options: the option is the full resolution)
-  if (!option && s.outcome === "playing") {
+  // 5. extra effect (not on story options, unless the option keeps the card's effect)
+  if (keepCardEffect && s.outcome === "playing") {
     if (card.id === "jingguanQibian") {
       s.extraPlays++;
       log(s, `静观其变：本回合最多出牌数 +1（现为 ${playLimit(s)}）。`, "good");
@@ -366,6 +369,7 @@ function applyStoryBasicOption(s: ZhState, story: StoryDef, option: StoryOptionD
   log(s, option.story);
   applyDeltas(s, option.effects, `${story.name}·${option.name}`);
   if (option.gainStatus && s.outcome === "playing") addStatus(s, option.gainStatus);
+  if (option.epilogue && s.outcome === "playing") log(s, option.epilogue, "good");
 }
 
 function beginTurn(s: ZhState, turn: number): void {

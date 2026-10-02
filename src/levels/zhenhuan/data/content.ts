@@ -239,7 +239,7 @@ export const STATUSES: Record<StatusId, StatusDef> = {
     drawModifier: 1,
     effectText: "未来 3 回合，每回合抓牌数 +1。",
     flavor: "早早打点好了各处，宫里的消息总比别人快一步。",
-    source: "第 8 回合【华妃敲打】时从手牌打出【收拢人心】（提前得知消息）",
+    source: "第 4 回合【倚梅园】时从手牌打出【收拢人心】（宫人透底）",
   },
   baoyangZaishen: {
     id: "baoyangZaishen",
@@ -360,7 +360,7 @@ export const OPENING = {
 
 // ---------------------------------------------------------------- story events
 
-export type StoryId = "diyiciMiansheng" | "huafeiQiaoda";
+export type StoryId = "yimeiYuan" | "xinghuaWeiyu";
 
 export type StoryOptionDef = {
   readonly id: string;
@@ -370,12 +370,16 @@ export type StoryOptionDef = {
    * effects (instead of the card's base effect). Never a button on the event (design.md §9).
    */
   readonly card?: CardId;
+  /** Card response that ALSO resolves the card's usual effects (base, draw, extra) after its own. */
+  readonly keepCardEffect?: boolean;
   readonly effects: readonly ResourceDelta[];
   readonly gainStatus?: StatusId;
   /** Effect summary shown on the event and hand card. */
   readonly text: string;
   /** Story text written to the log when this option resolves the event. */
   readonly story: string;
+  /** Hidden follow-up line logged after the effects (no mechanical effect). */
+  readonly epilogue?: string;
 };
 
 export type StoryDef = {
@@ -389,92 +393,87 @@ export type StoryDef = {
 };
 
 export const STORIES: Record<StoryId, StoryDef> = {
-  diyiciMiansheng: {
-    id: "diyiciMiansheng",
+  yimeiYuan: {
+    id: "yimeiYuan",
     turn: 4,
-    name: "第一次面圣",
-    emoji: "🏯",
-    flavor: "敬事房翻了你的牌子，今夜要去养心殿。",
-    defaultOptionId: "jinshenYingdui",
+    name: "倚梅园",
+    emoji: "❄️",
+    flavor:
+      "除夕夜你在倚梅园许愿，念了一句“逆风如解意，容易莫摧残”。如今宫里都在传，皇上寻到了那夜念诗的人，是宫女余莺儿，已被封为答应。",
+    defaultOptionId: "yinrenBuyan",
     options: [
       {
-        id: "keyiBiaoxian",
-        name: "刻意表现",
-        effects: [{ resource: "qingyu", amount: -1 }],
-        text: "清誉 -1",
-        story: "你在御前抚琴唱曲，极尽婉转。皇上只淡淡说了句“尚可”，第二日六宫却传遍了“新人狐媚”的闲话。",
-      },
-      {
-        id: "jinshenYingdui",
-        name: "拘谨寡言",
+        id: "yinrenBuyan",
+        name: "隐忍不言",
         effects: [{ resource: "shengchong", amount: -1 }],
         text: "圣宠 -1",
-        story: "你垂首敛眉，问一句答一句，不敢行差踏错。皇上赞了句“稳重”，却早早歇下，并未多留你说话。",
+        story: "你攥紧了帕子，终究一字未提。余答应夜夜承宠，那句诗成了别人的恩典。",
       },
       {
-        id: "shengzhuangFuzhao",
-        name: "盛装赴召",
-        card: "yirongZhengsu",
-        effects: [{ resource: "shengchong", amount: 1 }],
-        text: "圣宠 +1",
-        story: "你一身簇新宫装，鬓边簪一支海棠，烛下光彩照人。皇上多看了你好几眼，次日便赏下一对玉镯。",
+        id: "dangzhongShuopo",
+        name: "当众说破",
+        effects: [{ resource: "qingyu", amount: -1 }],
+        text: "清誉 -1",
+        story: "你说那夜念诗的是自己，可无凭无据。旁人只当你眼红新宠，背后议论你争风吃醋。",
       },
       {
-        id: "yantanDeti",
-        name: "言谈得体",
-        card: "jinyanShenxing",
-        effects: [{ resource: "shengchong", amount: 1 }, { resource: "qingyu", amount: 1 }],
-        text: "圣宠 +1，清誉 +1",
-        story: "皇上随口考你诗书，你引“嘤其鸣矣，求其友声”应答，不卑不亢。皇上抚掌称妙，宫中也都说新来的小主知书达理。",
-      },
-    ],
-  },
-  huafeiQiaoda: {
-    id: "huafeiQiaoda",
-    turn: 8,
-    name: "华妃敲打",
-    emoji: "🦚",
-    flavor: "翊坤宫召你前去，华妃话里有话。",
-    defaultOptionId: "renqiTunsheng",
-    options: [
-      {
-        id: "renqiTunsheng",
-        name: "忍气吞声",
-        effects: [{ resource: "qingyu", amount: 1 }, { resource: "shengchong", amount: -2 }],
-        text: "清誉 +1，圣宠 -2",
-        story: "你跪在翊坤宫冰凉的金砖上听训，一言不发。宫人都道你守礼知分寸，可华妃转头便在皇上面前说你木讷无趣。",
-      },
-      {
-        id: "dangmianBiabai",
-        name: "当面辩白",
-        effects: [{ resource: "shengchong", amount: 1 }, { resource: "qingyu", amount: -2 }],
-        text: "圣宠 +1，清誉 -2",
-        story: "你据理力争，华妃一时语塞。皇上听说后觉得你有几分胆色，满宫却都在传你顶撞华妃、不知尊卑。",
-      },
-      {
-        id: "jiemeiXianghu",
-        name: "姐妹相护",
+        id: "jiemeiChafang",
+        name: "姐妹查访",
         card: "meizhuangXiangzhu",
         effects: [{ resource: "qingyu", amount: 1 }],
-        text: "清誉 +1，圣宠不下降",
-        story: "眉庄姐姐恰好来翊坤宫请安，三言两语替你解了围。华妃不便当众发作，你全身而退，还落了个姐妹情深的好名声。",
+        text: "清誉 +1",
+        story: "眉庄姐姐悄悄查访倚梅园当夜当值的宫人，替你记下了几处破绽，只待时机。",
       },
       {
-        id: "biqiFengmang",
-        name: "避其锋芒",
-        card: "jinyanShenxing",
-        effects: [],
-        text: "清誉、圣宠都不变",
-        story: "你句句顺着华妃的话头，半点把柄也不留。华妃挑不出错处，只得放你回去，此事不了了之。",
-      },
-      {
-        id: "tiqianDezhi",
-        name: "提前得知消息",
+        id: "gongrenToudi",
+        name: "宫人透底",
         card: "shoulongRenxin",
         effects: [],
         gainStatus: "xianjiZaiwo",
         text: "获得【先机在握】：未来 3 回合每回合抓牌 +1",
-        story: "翊坤宫的小宫女早一步递来消息，你备好说辞从容应对。此后各宫的风吹草动，总有人先来知会你。",
+        story: "倚梅园的小太监私下告诉你，余答应连字都认不全。你心里有了底，各宫的消息也开始先一步传到你这里。",
+      },
+    ],
+  },
+  xinghuaWeiyu: {
+    id: "xinghuaWeiyu",
+    turn: 8,
+    name: "杏花微雨",
+    emoji: "🌸",
+    flavor: "杏花微雨，你在御花园散心，迎面遇见一位自称“果郡王”的男子，与你谈起诗词。他衣着素净，气度却不似寻常王爷。",
+    defaultOptionId: "bixianGaotui",
+    options: [
+      {
+        id: "bixianGaotui",
+        name: "避嫌告退",
+        effects: [{ resource: "shengchong", amount: -1 }],
+        text: "圣宠 -1",
+        story: "你规规矩矩福了一福便告退。后来才知道，那日的“王爷”正是皇上，他望着你的背影站了许久。",
+      },
+      {
+        id: "yuWangyeChangtan",
+        name: "与王爷畅谈",
+        effects: [{ resource: "qingyu", amount: -1 }],
+        text: "清誉 -1",
+        story: "你与“王爷”相谈甚欢。不知被谁瞧见了，宫里渐渐有了“小主私会外男”的闲话。",
+      },
+      {
+        id: "yishiXianghe",
+        name: "以诗相和",
+        card: "jinyanShenxing",
+        effects: [{ resource: "shengchong", amount: 1 }, { resource: "qingyu", amount: 1 }],
+        text: "圣宠 +1，清誉 +1",
+        story: "你只以“王爷”相称，句句守礼，又以诗相和。皇上大为欣赏，回宫后便命人打听杏花树下的那位小主。",
+        epilogue: "皇上听你念诗的声音，忽然认出你才是除夕夜倚梅园念“逆风如解意”的人。",
+      },
+      {
+        id: "kanpoBushuopo",
+        name: "看破不说破",
+        card: "jingguanQibian",
+        keepCardEffect: true,
+        effects: [{ resource: "qingyu", amount: 2 }],
+        text: "清誉 +2，并照常抽 2 张牌、本回合出牌数 +1",
+        story: "你瞥见他腰间系着明黄络子，心中了然，却只当他是王爷，进退有度，半分不逾矩。",
       },
     ],
   },

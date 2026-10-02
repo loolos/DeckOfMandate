@@ -464,7 +464,7 @@ function StoryCard({ state, dispatch, fold }: { state: ZhState; dispatch: Dispat
       ) : null}
       <p className={styles.flavor}>{story.flavor}</p>
       <p className={styles.rule}>
-        二选一处理：选择 1 个基础选项（不消耗出牌次数），或从手牌打出下列牌之一（消耗 1 次出牌，按剧情效果结算并替代该牌的基础效果，同时解决匹配的普通事件）。
+        二选一处理：选择 1 个基础选项（不消耗出牌次数），或从手牌打出下列牌之一（消耗 1 次出牌，按剧情效果结算，除注明外替代该牌的基础效果，同时解决匹配的普通事件）。
       </p>
       {storyBasicOptions(story).map((option) => {
         const isChosen = chosen === option.id;
@@ -642,7 +642,8 @@ function HandCard({
       </p>
       {storyResponse && story ? (
         <p className={styles.solves}>
-          打出将解决剧情【{story.name}】·{storyResponse.name}：{storyResponse.text}（替代基础效果）
+          打出将解决剧情【{story.name}】·{storyResponse.name}：{storyResponse.text}
+          {storyResponse.keepCardEffect ? "" : "（替代基础效果）"}
         </p>
       ) : null}
       {solves.length > 0 ? (
