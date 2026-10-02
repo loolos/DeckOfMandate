@@ -200,6 +200,16 @@
 
 /* hover popovers for piles */
 
+/* Piles share one narrow width and scroll sideways like events/hand/statuses. */
+.page .piles > .pile {
+  flex: 0 0 auto;
+  width: 112px;
+}
+
+.page.compact .piles > .pile {
+  width: 96px;
+}
+
 .pile {
   position: relative;
   flex: 1 1 140px;
@@ -217,11 +227,8 @@
 }
 
 .popover {
-  display: none;
-  position: absolute;
+  position: fixed;
   z-index: 20;
-  top: calc(100% + 6px);
-  left: 0;
   min-width: 220px;
   max-width: min(320px, 90vw);
   background: #120b0d;
@@ -230,11 +237,6 @@
   padding: 0.6rem 0.75rem;
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
   font-size: 0.88rem;
-}
-
-.pile:hover .popover,
-.pile:focus-within .popover {
-  display: block;
 }
 
 .popoverTitle {
@@ -712,9 +714,12 @@
   margin-bottom: 0.5rem;
 }
 
+.compact .stat {
+  flex-basis: 110px;
+}
+
 .compact .stat,
 .compact .pile {
-  flex-basis: 110px;
   padding: 0.3rem 0.55rem;
 }
 
@@ -846,9 +851,11 @@
   }
 
   .page .pile {
-    flex: 1 1 56px;
-    min-width: 0;
     padding: 0.25rem 0.3rem;
+  }
+
+  .page.compact .piles > .pile {
+    width: 72px;
   }
 
   .statLabel {

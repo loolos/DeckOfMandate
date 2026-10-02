@@ -84,17 +84,50 @@ function EventCountList({ ids, empty }: { ids: readonly EventId[]; empty: string
   );
 }
 
+/**
+ * Pile tile with a hover/focus popover. The popover is `position: fixed` (placed from the tile's
+ * rect) so the sideways-scrolling pile row cannot clip it; it closes when anything scrolls.
+ */
 function Pile({ icon, label, count, children }: { icon: string; label: string; count: number; children: ReactNode }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [pos, setPos] = useState<{ top: number; left: number } | null>(null);
+  const show = () => {
+    const r = ref.current?.getBoundingClientRect();
+    if (!r) return;
+    setPos({ top: r.bottom + 6, left: Math.max(8, Math.min(r.left, window.innerWidth - 328)) });
+  };
+  useEffect(() => {
+    if (!pos) return;
+    const hide = () => setPos(null);
+    window.addEventListener("scroll", hide, true);
+    window.addEventListener("resize", hide);
+    return () => {
+      window.removeEventListener("scroll", hide, true);
+      window.removeEventListener("resize", hide);
+    };
+  }, [pos]);
   return (
-    <div className={styles.pile} tabIndex={0}>
+    <div
+      ref={ref}
+      className={styles.pile}
+      tabIndex={0}
+      onMouseEnter={show}
+      onMouseLeave={() => {
+        if (document.activeElement !== ref.current) setPos(null);
+      }}
+      onFocus={show}
+      onBlur={() => setPos(null)}
+    >
       <div className={styles.statLabel}>
         <span className={styles.pileIcon}>{icon} </span>
         {label}
       </div>
       <div className={styles.statValue}>{count}</div>
-      <div className={styles.popover} role="tooltip">
-        {children}
-      </div>
+      {pos ? (
+        <div className={styles.popover} role="tooltip" style={pos}>
+          {children}
+        </div>
+      ) : null}
     </div>
   );
 }
@@ -909,7 +942,7 @@ export function ZhenhuanGame({ state, dispatch, showRules, onShowRules, onRestar
         </div>
       </div>
 
-      <div className={styles.bar}>
+      <ScrollRow className={`${styles.bar} ${styles.piles}`}>
         <Pile icon="🎴" label="抽牌堆" count={state.drawPile.length}>
           <p className={styles.popoverTitle}>抽牌堆剩余（顺序未知）</p>
           <CardCountList ids={state.drawPile.map((c) => c.id)} empty="已空，需要时将弃牌堆洗回。" />
@@ -939,7 +972,7 @@ export function ZhenhuanGame({ state, dispatch, showRules, onShowRules, onRestar
           <p className={styles.popoverTitle}>本轮已出现</p>
           <EventCountList ids={state.envy ? [...usedEnvy, state.envy.id] : usedEnvy} empty="无" />
         </Pile>
-      </div>
+      </ScrollRow>
 
       <Statuses state={state} dispatch={dispatch} />
 
