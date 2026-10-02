@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { CardId, StatusId } from "../data/content";
-import { STORIES } from "../data/content";
+import { STATUSES, STORIES } from "../data/content";
 import {
   drawCountForTurn,
   newGame,
@@ -344,6 +344,18 @@ describe("zhenhuan engine", () => {
     expect(t.shengchong).toBe(2); // no-card options carry a small cost
   });
 
+  it("收拢人心: base effect is 耳目灵通 (draw +1 for the next 2 turns), not 圣宠", () => {
+    let s = newGame(5);
+    const before = s.shengchong;
+    s = act(s, { type: "playCard", cardUid: uidOf(s, "shoulongRenxin") });
+    expect(s.shengchong).toBe(before);
+    expect(s.statuses.map((x) => x.id)).toEqual(["ermuLingtong"]);
+    s = advanceTo(s, 2);
+    expect(s.drawnThisTurn).toBe(4);
+    s = advanceTo(s, 4);
+    expect(s.statuses.some((x) => x.id === "ermuLingtong")).toBe(false);
+  });
+
   it("倚梅园: 收拢人心 grants 先机在握 for the next 3 turns", () => {
     let s = advanceTo(newGame(13), 4);
     expect(s.story?.id).toBe("yimeiYuan");
@@ -390,7 +402,7 @@ describe("zhenhuan engine", () => {
         const story = s.story && s.story.chosenOptionId == null;
         let next: ZhState = s;
         if (s.pending) {
-          const neg = s.statuses.find((x) => x.id !== "xianjiZaiwo")!;
+          const neg = s.statuses.find((x) => STATUSES[x.id].tag === "negative")!;
           next = reduce(s, { type: "removeStatus", statusUid: neg.uid });
         } else if (story && seed % 2 === 0) {
           next = reduce(s, { type: "chooseStory", optionId: seed % 4 === 0 ? "yinrenBuyan" : "bixianGaotui" });

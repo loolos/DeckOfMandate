@@ -4,7 +4,7 @@
  * - careful: per turn, searches every play order (incl. story options) and keeps the best end-of-turn state
  * - casual: plays a matching card if it has one (else a random card), never picks story options
  */
-import { CARDS } from "../data/content";
+import { CARDS, STATUSES } from "../data/content";
 import { negativeStatuses, newGame, playsLeft, reduce, storyBasicOptions, currentStory, type ZhAction, type ZhState } from "../logic/engine";
 
 export type Policy = (s: ZhState, seed: number) => ZhState;
@@ -34,7 +34,7 @@ function score(s: ZhState): number {
   if (s.outcome === "lost") return -1e6 + s.turn * 1000;
   if (s.outcome === "won") return 1e6;
   let h = 3 * Math.min(s.qingyu, s.shengchong) + s.qingyu + s.shengchong;
-  for (const st of s.statuses) h += st.id === "xianjiZaiwo" ? 1 : -1.5;
+  for (const st of s.statuses) h += STATUSES[st.id].tag === "positive" ? 1 : -1.5;
   if (s.promoted) h += 100;
   // pre-trial: being near the trial thresholds matters
   if (!s.promoted && s.turn >= 9) h += 2 * Math.min(s.shengchong, 6) + 2 * Math.min(s.qingyu, 5);

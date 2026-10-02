@@ -195,7 +195,7 @@ export const ENVY_TRIGGER = { firstTurn: 6, minShengchong: 5, interval: 2 };
 
 // ---------------------------------------------------------------- statuses
 
-export type StatusId = "liuyanChanshen" | "xianjiZaiwo" | "baoyangZaishen";
+export type StatusId = "liuyanChanshen" | "xianjiZaiwo" | "ermuLingtong" | "baoyangZaishen";
 export type StatusTag = "negative" | "positive";
 
 export const STATUS_TAG_LABEL: Record<StatusTag, string> = { negative: "负面", positive: "正面" };
@@ -241,6 +241,17 @@ export const STATUSES: Record<StatusId, StatusDef> = {
     flavor: "早早打点好了各处，宫里的消息总比别人快一步。",
     source: "第 4 回合【倚梅园】时从手牌打出【收拢人心】（宫人透底）",
   },
+  ermuLingtong: {
+    id: "ermuLingtong",
+    name: "耳目灵通",
+    emoji: "👂",
+    tag: "positive",
+    duration: 2,
+    drawModifier: 1,
+    effectText: "未来 2 回合，每回合抓牌数 +1。多个实例分别计时、效果叠加。",
+    flavor: "赏下去的银子换来了几双眼睛，各宫的动静渐渐传到你耳边。",
+    source: "打出【收拢人心】",
+  },
   baoyangZaishen: {
     id: "baoyangZaishen",
     name: "抱恙在身",
@@ -268,6 +279,8 @@ export type CardDef = {
   readonly base: readonly ResourceDelta[];
   /** Base-effect card draw (静观其变). */
   readonly baseDraw: number;
+  /** Status gained as part of the base effect (收拢人心). */
+  readonly baseStatus?: StatusId;
   readonly matches: readonly EventId[];
   /** Full mechanic text shown on the card. */
   readonly rulesText: readonly string[];
@@ -309,10 +322,11 @@ export const CARDS: Record<CardId, CardDef> = {
     name: "收拢人心",
     emoji: "🤝",
     flavor: "赏下去的银子，总会换回些什么。",
-    base: [{ resource: "shengchong", amount: 1 }],
+    base: [],
     baseDraw: 0,
+    baseStatus: "ermuLingtong",
     matches: ["neiwufuDiaonan", "yuDayingZhengchong"],
-    rulesText: ["圣宠 +1。", "联动：用它解决【内务府刁难】时，额外抽 1 张牌。"],
+    rulesText: ["获得【耳目灵通】：未来 2 回合每回合抓牌 +1。", "联动：用它解决【内务府刁难】时，额外抽 1 张牌。"],
   },
   jingguanQibian: {
     id: "jingguanQibian",

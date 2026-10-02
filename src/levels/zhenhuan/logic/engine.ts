@@ -315,6 +315,7 @@ function resolvePlay(
   }
   if (keepCardEffect && s.outcome === "playing") {
     applyDeltas(s, def.base, def.name);
+    if (def.baseStatus && s.outcome === "playing") addStatus(s, def.baseStatus);
     if (def.baseDraw > 0 && s.outcome === "playing") drawCards(s, def.baseDraw);
   }
 
