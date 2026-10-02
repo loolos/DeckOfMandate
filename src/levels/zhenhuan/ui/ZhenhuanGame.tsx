@@ -873,6 +873,15 @@ function PromotionModal({ state, onClose }: { state: ZhState; onClose: () => voi
   );
 }
 
+/** Events in this turn's row (opportunity, crisis, envy, story); the promotion trial is a condition, not counted. */
+function countEvents(state: ZhState): { unresolved: number; total: number } {
+  const done = [state.opportunity, state.crisis, state.envy]
+    .filter((e) => e != null)
+    .map((e) => e.resolved);
+  if (state.story) done.push(state.story.chosenOptionId != null);
+  return { unresolved: done.filter((d) => !d).length, total: done.length };
+}
+
 export function ZhenhuanGame({ state, dispatch, showRules, onShowRules, onRestart, onMenu, onLoadState }: Props) {
   const rank = RANKS[state.rank];
   const runCode = useMemo(() => encodeRunCode(state), [state]);
@@ -881,6 +890,7 @@ export function ZhenhuanGame({ state, dispatch, showRules, onShowRules, onRestar
   const usedCrisis = state.crisisUsed;
   const usedEnvy = state.envyUsed;
   const compact = useSmallScreen();
+  const eventCount = countEvents(state);
 
   // Pop the promotion notice only when it happens during play, not when loading a promoted save.
   const [showPromotion, setShowPromotion] = useState(false);
@@ -984,7 +994,9 @@ export function ZhenhuanGame({ state, dispatch, showRules, onShowRules, onRestar
 
       <Statuses state={state} dispatch={dispatch} />
 
-      <h2 className={styles.sectionTitle}>本回合事件</h2>
+      <h2 className={styles.sectionTitle}>
+        本回合事件 <span title="未解决 / 事件总数（不含晋封考验）">{eventCount.unresolved}/{eventCount.total}</span>
+      </h2>
       <ScrollRow className={styles.events}>
         {state.opportunity ? (
           <EventCard state={state} inst={state.opportunity} fold={fold(state.opportunity.uid)} dispatch={dispatch} />
