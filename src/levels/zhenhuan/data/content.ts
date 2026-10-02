@@ -57,6 +57,11 @@ export type EventDef = {
   readonly penaltyStatus?: StatusId;
   readonly resolvedText: string;
   readonly unresolvedText: string;
+  /**
+   * 剧情文本 shown on the event (and logged) once it is resolved, keyed by the card that resolved it.
+   * Every card in `CARDS[x].matches` that lists this event must have an entry (checked by tests).
+   */
+  readonly resolvedStory: Partial<Record<CardId, string>>;
 };
 
 export const EVENTS: Record<EventId, EventDef> = {
@@ -70,6 +75,12 @@ export const EVENTS: Record<EventId, EventDef> = {
     penalty: [],
     resolvedText: "圣宠 +2",
     unresolvedText: "无额外效果，事件消失",
+    resolvedStory: {
+      yirongZhengsu:
+        "你一身装束素雅得体、举止端庄，皇后看在眼里，当晚便在皇上面前提了一句“碎玉轩的莞答应很是知礼”。",
+      jinyanShenxing:
+        "皇后问起各宫琐事，你只拣不出错的说，半句不议旁人。皇后含笑点头，说你是个懂分寸的，转头便在皇上跟前替你美言。",
+    },
   },
   taihouChuixun: {
     id: "taihouChuixun",
@@ -81,6 +92,12 @@ export const EVENTS: Record<EventId, EventDef> = {
     penalty: [],
     resolvedText: "清誉 +2",
     unresolvedText: "无额外效果，事件消失",
+    resolvedStory: {
+      jinyanShenxing:
+        "太后问你读过什么书，你答得谦逊稳妥，不卖弄一字。太后捻着佛珠，说这孩子沉静，是个有福气的。",
+      meizhuangXiangzhu:
+        "眉庄姐姐常往寿康宫抄经，早在太后跟前替你说了不少好话。这回她陪你一同前去，你们一唱一和，太后听得开怀，赏了你们一人一串佛珠。",
+    },
   },
   wenTaiyiQingmai: {
     id: "wenTaiyiQingmai",
@@ -92,6 +109,10 @@ export const EVENTS: Record<EventId, EventDef> = {
     penalty: [],
     resolvedText: "清誉 +1",
     unresolvedText: "无额外效果，事件消失",
+    resolvedStory: {
+      wenTaiyiZhenzhi:
+        "温实初细细诊过脉，开了一剂温补的方子，又低声嘱咐槿汐几句饮食上的忌讳。他走后，宫人都说碎玉轩的小主身子调养得最好。",
+    },
   },
   gongzhongLiuyan: {
     id: "gongzhongLiuyan",
@@ -104,6 +125,12 @@ export const EVENTS: Record<EventId, EventDef> = {
     penaltyStatus: "liuyanChanshen",
     resolvedText: "移除事件，不产生负面状态",
     unresolvedText: "获得状态【流言缠身】",
+    resolvedStory: {
+      jinyanShenxing:
+        "你闭门不出，见了谁都只说些天气花草。流言找不到新的把柄，传了几日便自己散了。",
+      meizhuangXiangzhu:
+        "眉庄姐姐在各宫走动时替你分说清楚，又寻出了最先嚼舌根的那个宫女，交给管事姑姑处置。流言一夜之间便没了声息。",
+    },
   },
   neiwufuDiaonan: {
     id: "neiwufuDiaonan",
@@ -115,6 +142,12 @@ export const EVENTS: Record<EventId, EventDef> = {
     penalty: [{ resource: "shengchong", amount: -1 }],
     resolvedText: "移除事件",
     unresolvedText: "圣宠 -1",
+    resolvedStory: {
+      shoulongRenxin:
+        "你让小允子拿了银子去内务府打点，那管事太监掂了掂分量，当天下午份例便一样不少地送到了碎玉轩，还多添了两篓银炭。",
+      meizhuangXiangzhu:
+        "眉庄姐姐听说了，直接把自己宫里的份例分了一半送来，又请沈家托人递话敲打内务府。没过两日，你的份例便补齐了。",
+    },
   },
   liyiShiwu: {
     id: "liyiShiwu",
@@ -129,6 +162,12 @@ export const EVENTS: Record<EventId, EventDef> = {
     ],
     resolvedText: "移除事件",
     unresolvedText: "清誉 -1、圣宠 -1",
+    resolvedStory: {
+      yirongZhengsu:
+        "你当即端正仪容、从容请罪，礼数周全得挑不出错处。皇后反倒夸你知错能改，那点差错也就没人再提。",
+      wenTaiyiZhenzhi:
+        "温实初替你出了一张脉案，说你那几日身子虚乏、头晕失神。众人这才知道你并非失礼，而是抱病强撑着来请安。",
+    },
   },
   yuDayingZhengchong: {
     id: "yuDayingZhengchong",
@@ -140,6 +179,12 @@ export const EVENTS: Record<EventId, EventDef> = {
     penalty: [{ resource: "shengchong", amount: -1 }],
     resolvedText: "移除事件",
     unresolvedText: "圣宠 -1",
+    resolvedStory: {
+      yirongZhengsu:
+        "你精心妆扮，在皇上必经的路上赏花。皇上见了你，便忘了倚梅园的歌声，当晚翻了你的绿头牌。",
+      shoulongRenxin:
+        "你打点了敬事房的公公，余答应递去的话总是慢了半步。她连唱了几夜，皇上却一次也没去。",
+    },
   },
   shichongErjiao: {
     id: "shichongErjiao",
@@ -151,6 +196,10 @@ export const EVENTS: Record<EventId, EventDef> = {
     penalty: [{ resource: "qingyu", amount: -2 }],
     resolvedText: "移除事件",
     unresolvedText: "清誉 -2",
+    resolvedStory: {
+      jinyanShenxing:
+        "你把皇上的赏赐分送给各宫姐妹，见了谁都谦让三分。背后说你轻狂的人，渐渐也找不出话来。",
+    },
   },
   anzhongXiaban: {
     id: "anzhongXiaban",
@@ -163,6 +212,10 @@ export const EVENTS: Record<EventId, EventDef> = {
     penaltyStatus: "baoyangZaishen",
     resolvedText: "移除事件，不产生负面状态",
     unresolvedText: "获得状态【抱恙在身】",
+    resolvedStory: {
+      meizhuangXiangzhu:
+        "眉庄姐姐尝出那碗燕窝的味道不对，悄悄拦了下来，又叫人顺藤摸瓜查到送膳的小太监。你们心照不宣，暂且按下不发。",
+    },
   },
 };
 

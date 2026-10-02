@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { CardId, StatusId } from "../data/content";
-import { STATUSES, STORIES } from "../data/content";
+import { CARDS, EVENTS, STATUSES, STORIES } from "../data/content";
 import {
   drawCountForTurn,
   newGame,
@@ -46,6 +46,22 @@ function totalCards(s: ZhState): number {
 }
 
 describe("zhenhuan engine", () => {
+  it("every card that can resolve an event has its resolution story text", () => {
+    for (const card of Object.values(CARDS)) {
+      for (const eventId of card.matches) {
+        expect(EVENTS[eventId].resolvedStory[card.id], `${eventId} × ${card.id}`).toBeTruthy();
+      }
+    }
+  });
+
+  it("logs the resolution story text of each event a card resolves", () => {
+    let s = newGame(1);
+    s = act(s, { type: "playCard", cardUid: uidOf(s, "yirongZhengsu") });
+    const texts = s.log.map((l) => l.text);
+    expect(texts).toContain(EVENTS.huanghouShangshi.resolvedStory.yirongZhengsu);
+    expect(texts).toContain(EVENTS.liyiShiwu.resolvedStory.yirongZhengsu);
+  });
+
   it("starts with the fixed opening", () => {
     const s = newGame(42);
     expect(s.turn).toBe(1);

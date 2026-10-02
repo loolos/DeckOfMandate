@@ -24,6 +24,7 @@ import {
   canEndTurn,
   cap,
   currentStory,
+  eventResolvedStory,
   matchedEvents,
   negativeStatuses,
   playLimit,
@@ -365,6 +366,7 @@ function eventResolvedDetail(inst: EventInst, fmt: (text: string) => string): st
 function EventCard({ state, inst, fold, dispatch }: { state: ZhState; inst: EventInst; fold: Fold; dispatch: Dispatch }) {
   const def = EVENTS[inst.id];
   const isOpp = def.kind === "opportunity";
+  const resolvedStory = inst.resolved ? eventResolvedStory(inst.id, inst.resolvedBy) : undefined;
   const kindTone = { opportunity: styles.kindOpportunity, crisis: styles.kindCrisis, envy: styles.kindEnvy }[def.kind];
   const cardTone = { opportunity: styles.cardOpportunity, crisis: styles.cardCrisis, envy: styles.cardEnvy }[def.kind];
   const kindTag = (
@@ -411,6 +413,7 @@ function EventCard({ state, inst, fold, dispatch }: { state: ZhState; inst: Even
         />
       ) : null}
       <p className={styles.flavor}>{def.flavor}</p>
+      {resolvedStory ? <p className={styles.resolvedStory}>{resolvedStory}</p> : null}
       {def.kind === "envy" ? (
         <p className={styles.flavor}>圣宠 ≥ {ENVY_TRIGGER.minShengchong} 引来的额外事件。</p>
       ) : null}
@@ -474,6 +477,12 @@ function StoryCard({ state, dispatch, fold }: { state: ZhState; dispatch: Dispat
         />
       ) : null}
       <p className={styles.flavor}>{story.flavor}</p>
+      {chosenOption ? (
+        <p className={styles.resolvedStory}>
+          {chosenOption.story}
+          {chosenOption.epilogue ? ` ${chosenOption.epilogue}` : null}
+        </p>
+      ) : null}
       <p className={styles.rule}>
         二选一处理：选择 1 个基础选项（不消耗出牌次数），或从手牌打出下列牌之一（消耗 1 次出牌，结算剧情效果，该牌自身的效果也照常结算，同时解决匹配的普通事件）。
       </p>
