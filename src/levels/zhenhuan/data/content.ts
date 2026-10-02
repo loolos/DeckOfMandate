@@ -222,7 +222,7 @@ export const STATUSES: Record<StatusId, StatusDef> = {
   liuyanChanshen: {
     id: "liuyanChanshen",
     name: "流言缠身",
-    emoji: "🌫️",
+    emoji: "🗯️",
     tag: "negative",
     duration: 3,
     drawModifier: -1,
@@ -309,12 +309,12 @@ export const CARDS: Record<CardId, CardDef> = {
   },
   wenTaiyiZhenzhi: {
     id: "wenTaiyiZhenzhi",
-    name: "温太医诊治",
+    name: "温太医相助",
     emoji: "💊",
     flavor: "温实初的方子，总是最妥帖的。",
     base: [],
     baseDraw: 0,
-    matches: ["wenTaiyiQingmai"],
+    matches: ["wenTaiyiQingmai", "liyiShiwu"],
     rulesText: ["移除 1 个【负面】状态。"],
   },
   shoulongRenxin: {
@@ -516,12 +516,12 @@ export const TAG_INFO: Record<TagId, TagInfo> = {
     label: "剧情",
     lore: "命运的关口，在固定的日子里如约而至。",
     rules:
-      "在固定回合出现，与普通事件同时存在。可以选择一个基础选项（不消耗出牌次数），或从手牌打出卡面所列的牌来解决（消耗 1 次出牌，按该牌的剧情效果结算，替代其基础效果，并同时解决匹配的普通事件）。都不做就结束回合时，按默认选项处理。",
+      "在固定回合出现，与普通事件同时存在。可以选择一个基础选项（不消耗出牌次数），或从手牌打出卡面所列的牌来解决（消耗 1 次出牌，结算剧情效果，该牌自身的效果也照常结算，并同时解决匹配的普通事件）。都不做就结束回合时，按默认选项处理。晋封考验也是剧情事件，但会持续多个回合，靠回合末达成条件来完成。",
   },
   trial: {
-    label: "晋封考验",
+    label: "持续",
     lore: "这一批晋封的名单，就看这三日的表现。",
-    rules: "第 10—12 回合持续。每回合末判定：圣宠 ≥ 6、清誉 ≥ 5，且考验期间打出过仪容整肃或谨言慎行，即晋封为常在；第 12 回合末仍未满足则失败。",
+    rules: "晋封考验持续第 10—12 回合，“持续 X”表示包括本回合在内还剩 X 回合。每回合末判定：圣宠 ≥ 6、清誉 ≥ 5，且考验期间打出过仪容整肃或谨言慎行，即晋封为常在；第 12 回合末仍未满足则失败。",
   },
   trialCard: {
     label: "考验",
@@ -531,7 +531,7 @@ export const TAG_INFO: Record<TagId, TagInfo> = {
   negative: {
     label: "负面",
     lore: "缠身的麻烦，一时半刻甩不掉。",
-    rules: "持续性的不利状态。同名状态可以同时存在多个、分别计时。温太医诊治可以移除 1 个负面状态。",
+    rules: "持续性的不利状态。同名状态可以同时存在多个、分别计时。温太医相助可以移除 1 个负面状态。",
   },
   positive: {
     label: "正面",

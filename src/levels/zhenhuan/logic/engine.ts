@@ -97,7 +97,7 @@ export type ZhState = {
   playsUsed: number;
   extraPlays: number;
   drawnThisTurn: number;
-  /** 温太医诊治 waiting for the player to pick which negative status to remove. */
+  /** 温太医相助 waiting for the player to pick which negative status to remove. */
   pending: { cardUid: string } | null;
   outcome: ZhOutcome;
   lossReason: string | null;
@@ -356,7 +356,7 @@ function resolvePlay(
       const negatives = negativeStatuses(s);
       const target = opts.removeStatusUid ?? (negatives.length === 1 ? negatives[0]!.uid : undefined);
       if (target) removeStatus(s, target, def.name);
-      else log(s, "温太医诊治：没有负面状态可移除。");
+      else log(s, "温太医相助：没有负面状态可移除。");
     }
   }
 
@@ -567,7 +567,7 @@ export function reduce(state: ZhState, action: ZhAction): ZhState {
       if (!card || playsLeft(s) <= 0 || blockingStatuses(s, card.id).length > 0) return state;
       if (card.id === "wenTaiyiZhenzhi" && negativeStatuses(s).length > 1) {
         s.pending = { cardUid: card.uid };
-        log(s, "温太医诊治：请选择要移除的负面状态（可取消）。");
+        log(s, "温太医相助：请选择要移除的负面状态（可取消）。");
       } else {
         resolvePlay(s, card.uid, { storyOption: storyResponseFor(s, card.id) });
       }
@@ -589,7 +589,7 @@ export function reduce(state: ZhState, action: ZhAction): ZhState {
     case "cancelPending": {
       if (!s.pending) return state;
       s.pending = null;
-      log(s, "已取消打出温太医诊治。");
+      log(s, "已取消打出温太医相助。");
       break;
     }
     case "chooseStory": {

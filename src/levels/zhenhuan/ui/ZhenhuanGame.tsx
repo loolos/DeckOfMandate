@@ -40,6 +40,7 @@ import {
 import { decodeRunCode, encodeRunCode } from "../logic/persistence";
 import { CompactModeToggle } from "./CompactModeToggle";
 import { RulesSummary } from "./RulesSummary";
+import { compactEffect, expandedEffect } from "./effectText";
 import styles from "./zhenhuan.module.css";
 
 type Props = {
@@ -151,13 +152,16 @@ function ResourceStat({ state, resource }: { state: ZhState; resource: Resource 
   );
 }
 
-/** Hand/event match hints are a first-turn tutorial only; afterwards players work out matches themselves. */
+/**
+ * Proactive match hints (hand-card border, "可解决…" lines) are a first-turn tutorial only. Expanded
+ * event and hand cards always highlight live matches in their own match lists.
+ */
 function showMatchHints(state: ZhState): boolean {
   return state.turn === 1;
 }
 
-function MatchChips({ state, def }: { state: ZhState; def: EventDef }) {
-  const handIds = new Set(showMatchHints(state) ? state.hand.map((c) => c.id) : []);
+function MatchChips({ state, def, resolved }: { state: ZhState; def: EventDef; resolved: boolean }) {
+  const handIds = new Set(resolved ? [] : state.hand.map((c) => c.id));
   const matching = (Object.keys(CARDS) as CardId[]).filter((id) => CARDS[id].matches.includes(def.id));
   return (
     <p className={styles.rule}>
@@ -351,11 +355,11 @@ function ResolvedBanner({ icon, label, detail }: { icon: string; label: string; 
   );
 }
 
-function eventResolvedDetail(inst: EventInst): string {
+function eventResolvedDetail(inst: EventInst, fmt: (text: string) => string): string {
   const def = EVENTS[inst.id];
   const by = inst.resolvedBy ? `由【${CARDS[inst.resolvedBy].name}】` : "";
   if (def.kind !== "opportunity") return `${by}化解，回合末不受惩罚。`;
-  return `${by}把握，已获得${def.resolvedText}${inst.rewardDoubled ? "（眉庄相助：奖励翻倍）" : ""}。`;
+  return `${by}把握，已获得${fmt(def.resolvedText)}${inst.rewardDoubled ? "（眉庄相助：奖励翻倍）" : ""}。`;
 }
 
 function EventCard({ state, inst, fold, dispatch }: { state: ZhState; inst: EventInst; fold: Fold; dispatch: Dispatch }) {
@@ -381,8 +385,10 @@ function EventCard({ state, inst, fold, dispatch }: { state: ZhState; inst: Even
         </div>
         <div className={styles.compactSummary}>
           {inst.resolved
-            ? `${isOpp ? "✅ 已把握" : "🛡️ 已化解"} · ${eventResolvedDetail(inst)}`
-            : `处理：${def.resolvedText} · 未处理：${def.unresolvedText}`}
+            ? `${isOpp ? "✅ 已把握" : "🛡️ 已化解"} · ${eventResolvedDetail(inst, compactEffect)}`
+            : isOpp
+              ? `处理：${compactEffect(def.resolvedText)}`
+              : `未处理：${compactEffect(def.unresolvedText)}`}
         </div>
       </FoldBox>
     );
@@ -401,7 +407,7 @@ function EventCard({ state, inst, fold, dispatch }: { state: ZhState; inst: Even
         <ResolvedBanner
           icon={isOpp ? "✅" : "🛡️"}
           label={isOpp ? "已把握" : "已化解"}
-          detail={eventResolvedDetail(inst)}
+          detail={eventResolvedDetail(inst, expandedEffect)}
         />
       ) : null}
       <p className={styles.flavor}>{def.flavor}</p>
@@ -410,13 +416,13 @@ function EventCard({ state, inst, fold, dispatch }: { state: ZhState; inst: Even
       ) : null}
       <p className={styles.rule}>
         <span className={styles.ruleLabel}>处理：</span>
-        {def.resolvedText}
+        {expandedEffect(def.resolvedText)}
       </p>
       <p className={styles.rule}>
         <span className={styles.ruleLabel}>未处理（回合末）：</span>
-        {def.unresolvedText}
+        {expandedEffect(def.unresolvedText)}
       </p>
-      <MatchChips state={state} def={def} />
+      <MatchChips state={state} def={def} resolved={inst.resolved} />
       <p className={styles.flavor}>只能通过打出匹配牌解决；本回合结束时离场。</p>
     </FoldBox>
   );
@@ -442,7 +448,7 @@ function StoryCard({ state, dispatch, fold }: { state: ZhState; dispatch: Dispat
         </div>
         <div className={styles.compactSummary}>
           {chosenOption
-            ? `📝 已抉择「${chosenOption.name}」：${chosenOption.text}`
+            ? `📝 已抉择「${chosenOption.name}」：${compactEffect(chosenOption.text)}`
             : `选 1 个基础选项或从手牌打出对应牌（不处理按默认「${defaultOption.name}」）`}
         </div>
       </FoldBox>
@@ -457,14 +463,14 @@ function StoryCard({ state, dispatch, fold }: { state: ZhState; dispatch: Dispat
           {chosen ? " 🆗" : null}
         </span>
         <TagButton tag="story" tone={styles.kindStory} dispatch={dispatch}>
-          剧情 · 第 {story.turn} 回合
+          剧情
         </TagButton>
       </div>
       {chosenOption ? (
         <ResolvedBanner
           icon="📝"
           label="已抉择"
-          detail={`${chosenOption.card ? `打出【${CARDS[chosenOption.card].name}】：` : "选择"}「${chosenOption.name}」：${chosenOption.text}。`}
+          detail={`${chosenOption.card ? `打出【${CARDS[chosenOption.card].name}】：` : "选择"}「${chosenOption.name}」：${expandedEffect(chosenOption.text)}。`}
         />
       ) : null}
       <p className={styles.flavor}>{story.flavor}</p>
@@ -478,7 +484,7 @@ function StoryCard({ state, dispatch, fold }: { state: ZhState; dispatch: Dispat
             <span>
               <strong>{option.name}</strong>
               {option.id === story.defaultOptionId ? <span className={styles.muted}>（默认）</span> : null}
-              ：{option.text}
+              ：{expandedEffect(option.text)}
             </span>
             <button
               type="button"
@@ -495,7 +501,7 @@ function StoryCard({ state, dispatch, fold }: { state: ZhState; dispatch: Dispat
         <span className={styles.ruleLabel}>可由手牌打出解决：</span>
       </p>
       {storyCardResponses(story).map((option) => {
-        const inHand = showMatchHints(state) && state.hand.some((c) => c.id === option.card);
+        const inHand = state.hand.some((c) => c.id === option.card);
         const isChosen = chosen === option.id;
         return (
           <p key={option.id} className={[styles.rule, isChosen && styles.optionChosen].filter(Boolean).join(" ")}>
@@ -505,7 +511,7 @@ function StoryCard({ state, dispatch, fold }: { state: ZhState; dispatch: Dispat
             >
               {CARDS[option.card!].emoji} {CARDS[option.card!].name}
             </span>
-            {option.name}：{option.text}
+            {option.name}：{expandedEffect(option.text)}
           </p>
         );
       })}
@@ -521,18 +527,27 @@ function TrialCard({ state, fold, dispatch }: { state: ZhState; fold: Fold; disp
   const p = trialProgress(state);
   const mark = (ok: boolean) => <span className={ok ? styles.ok : styles.no}>{ok ? "✓" : "✗"}</span>;
   const className = [styles.card, styles.cardStory, p.all && styles.cardReady].filter(Boolean).join(" ");
+  // 晋封考验 is a story event that also shows how many turns it lasts, counting this one.
+  const trialTags = (
+    <>
+      <TagButton tag="story" tone={styles.kindStory} dispatch={dispatch}>
+        剧情
+      </TagButton>
+      <TagButton tag="trial" tone={styles.kindStory} dispatch={dispatch}>
+        持续 {PROMOTION_TRIAL.lastTurn - state.turn + 1}
+      </TagButton>
+    </>
+  );
   if (fold.compact && !fold.expanded) {
     return (
       <FoldBox fold={fold} className={className}>
         <div className={styles.compactTitle}>
           {PROMOTION_TRIAL.emoji} {PROMOTION_TRIAL.name}
           {p.all ? " 🏮" : ""}
-          <TagButton tag="trial" tone={styles.kindStory} dispatch={dispatch}>
-            第 {PROMOTION_TRIAL.firstTurn}—{PROMOTION_TRIAL.lastTurn} 回合
-          </TagButton>
+          {trialTags}
         </div>
         <div className={styles.compactSummary}>
-          {mark(p.shengchong)} 圣宠 {state.shengchong}/{PROMOTION_TRIAL.minShengchong} · {mark(p.qingyu)} 清誉 {state.qingyu}/
+          {mark(p.shengchong)} 👑{state.shengchong}/{PROMOTION_TRIAL.minShengchong} · {mark(p.qingyu)} 🪷{state.qingyu}/
           {PROMOTION_TRIAL.minQingyu} · {mark(p.keyCard)} 考验牌
         </div>
       </FoldBox>
@@ -545,19 +560,17 @@ function TrialCard({ state, fold, dispatch }: { state: ZhState; fold: Fold; disp
           <span className={styles.cardEmoji}>{PROMOTION_TRIAL.emoji}</span>
           {PROMOTION_TRIAL.name}
         </span>
-        <TagButton tag="trial" tone={styles.kindStory} dispatch={dispatch}>
-          持续 · 第 {PROMOTION_TRIAL.firstTurn}—{PROMOTION_TRIAL.lastTurn} 回合
-        </TagButton>
+        <span className={styles.tagGroup}>{trialTags}</span>
       </div>
       {p.all ? (
         <ResolvedBanner icon="🏮" label="条件已满足" detail="保持到回合末（危机惩罚结算之后）即可晋封为常在。" />
       ) : null}
       <p className={styles.flavor}>{PROMOTION_TRIAL.flavor}</p>
       <p className={styles.check}>
-        {mark(p.shengchong)} 圣宠 ≥ {PROMOTION_TRIAL.minShengchong}（当前 {state.shengchong}）
+        {mark(p.shengchong)} 👑圣宠 ≥ {PROMOTION_TRIAL.minShengchong}（当前 {state.shengchong}）
       </p>
       <p className={styles.check}>
-        {mark(p.qingyu)} 清誉 ≥ {PROMOTION_TRIAL.minQingyu}（当前 {state.qingyu}）
+        {mark(p.qingyu)} 🪷清誉 ≥ {PROMOTION_TRIAL.minQingyu}（当前 {state.qingyu}）
       </p>
       <p className={styles.check}>
         {mark(p.keyCard)} 考验期间打出过【仪容整肃】或【谨言慎行】
@@ -583,6 +596,7 @@ function HandCard({
 }) {
   const def = CARDS[card.id];
   const hints = showMatchHints(state);
+  const liveEvents = new Set(matchedEvents(state, card.id).map((e) => e.id));
   const solves = hints ? matchedEvents(state, card.id) : [];
   const storyResponse = hints ? storyResponseFor(state, card.id) : undefined;
   const story = currentStory(state);
@@ -621,7 +635,12 @@ function HandCard({
           {def.emoji} {def.name}
           {trialTag}
         </div>
-        <div className={styles.compactSummary}>{def.rulesText[0]}</div>
+        <div className={styles.compactSummary}>
+          {def.rulesText
+            .filter((line) => !line.startsWith("联动"))
+            .map(compactEffect)
+            .join(" ")}
+        </div>
         {solveNames.length > 0 ? <div className={styles.solves}>可解决：{solveNames.join("、")}</div> : null}
         {blockedNote}
       </FoldBox>
@@ -639,16 +658,26 @@ function HandCard({
       <p className={styles.flavor}>{def.flavor}</p>
       {def.rulesText.map((line) => (
         <p key={line} className={styles.rule}>
-          {line}
+          {expandedEffect(line)}
         </p>
       ))}
       <p className={styles.rule}>
         <span className={styles.ruleLabel}>匹配事件：</span>
-        {def.matches.length > 0 ? def.matches.map((id) => EVENTS[id].name).join("、") : "无"}
+        {def.matches.length > 0
+          ? def.matches.map((id) => (
+              <span
+                key={id}
+                className={[styles.matchChip, liveEvents.has(id) && styles.matchChipInHand].filter(Boolean).join(" ")}
+                title={liveEvents.has(id) ? "本回合有这个事件，尚未解决" : undefined}
+              >
+                {EVENTS[id].emoji} {EVENTS[id].name}
+              </span>
+            ))
+          : "无"}
       </p>
       {storyResponse && story ? (
         <p className={styles.solves}>
-          打出将解决剧情【{story.name}】·{storyResponse.name}：{storyResponse.text}（另加该牌效果）
+          打出将解决剧情【{story.name}】·{storyResponse.name}：{expandedEffect(storyResponse.text)}（另加该牌效果）
         </p>
       ) : null}
       {solves.length > 0 ? (
@@ -756,7 +785,7 @@ function Statuses({ state, dispatch }: { state: ZhState; dispatch: Dispatch }) {
                     <p className={styles.rule}>
                       <span className={styles.ruleLabel}>机制：</span>
                       {def.effectText}从获得后的下一回合开始生效。
-                      {def.tag === "negative" ? "可被【温太医诊治】移除。" : ""}
+                      {def.tag === "negative" ? "可被【温太医相助】移除。" : ""}
                     </p>
                     <p className={styles.rule}>
                       <span className={styles.ruleLabel}>来源：</span>
@@ -775,7 +804,7 @@ function Statuses({ state, dispatch }: { state: ZhState; dispatch: Dispatch }) {
 
 function endTurnHints(state: ZhState): string[] {
   const hints: string[] = [];
-  if (state.pending) hints.push("请先选择要移除的负面状态，或取消温太医诊治。");
+  if (state.pending) hints.push("请先选择要移除的负面状态，或取消温太医相助。");
   const left = playsLeft(state);
   if (left > 0 && state.hand.length > 0) hints.push(`还可出 ${left} 张牌。`);
   const story = currentStory(state);
@@ -873,6 +902,16 @@ function PromotionModal({ state, onClose }: { state: ZhState; onClose: () => voi
   );
 }
 
+/** Events in this turn's row; the 晋封考验 story counts as resolved while all its conditions are met. */
+function countEvents(state: ZhState): { unresolved: number; total: number } {
+  const done = [state.opportunity, state.crisis, state.envy]
+    .filter((e) => e != null)
+    .map((e) => e.resolved);
+  if (state.story) done.push(state.story.chosenOptionId != null);
+  if (state.trial.active) done.push(trialProgress(state).all);
+  return { unresolved: done.filter((d) => !d).length, total: done.length };
+}
+
 export function ZhenhuanGame({ state, dispatch, showRules, onShowRules, onRestart, onMenu, onLoadState }: Props) {
   const rank = RANKS[state.rank];
   const runCode = useMemo(() => encodeRunCode(state), [state]);
@@ -881,6 +920,7 @@ export function ZhenhuanGame({ state, dispatch, showRules, onShowRules, onRestar
   const usedCrisis = state.crisisUsed;
   const usedEnvy = state.envyUsed;
   const compact = useSmallScreen();
+  const eventCount = countEvents(state);
 
   // Pop the promotion notice only when it happens during play, not when loading a promoted save.
   const [showPromotion, setShowPromotion] = useState(false);
@@ -984,7 +1024,9 @@ export function ZhenhuanGame({ state, dispatch, showRules, onShowRules, onRestar
 
       <Statuses state={state} dispatch={dispatch} />
 
-      <h2 className={styles.sectionTitle}>本回合事件</h2>
+      <h2 className={styles.sectionTitle}>
+        本回合事件 <span title="未解决 / 事件总数">{eventCount.unresolved}/{eventCount.total}</span>
+      </h2>
       <ScrollRow className={styles.events}>
         {state.opportunity ? (
           <EventCard state={state} inst={state.opportunity} fold={fold(state.opportunity.uid)} dispatch={dispatch} />
