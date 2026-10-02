@@ -398,6 +398,12 @@
   color: var(--zh-envy);
 }
 
+.tagGroup {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+}
+
 .kindStory {
   color: var(--zh-story);
 }

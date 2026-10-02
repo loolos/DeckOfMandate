@@ -460,7 +460,7 @@ function StoryCard({ state, dispatch, fold }: { state: ZhState; dispatch: Dispat
           {chosen ? " 🆗" : null}
         </span>
         <TagButton tag="story" tone={styles.kindStory} dispatch={dispatch}>
-          剧情 · 第 {story.turn} 回合
+          剧情
         </TagButton>
       </div>
       {chosenOption ? (
@@ -524,15 +524,24 @@ function TrialCard({ state, fold, dispatch }: { state: ZhState; fold: Fold; disp
   const p = trialProgress(state);
   const mark = (ok: boolean) => <span className={ok ? styles.ok : styles.no}>{ok ? "✓" : "✗"}</span>;
   const className = [styles.card, styles.cardStory, p.all && styles.cardReady].filter(Boolean).join(" ");
+  // 晋封考验 is a story event that also shows how many turns it lasts, counting this one.
+  const trialTags = (
+    <>
+      <TagButton tag="story" tone={styles.kindStory} dispatch={dispatch}>
+        剧情
+      </TagButton>
+      <TagButton tag="trial" tone={styles.kindStory} dispatch={dispatch}>
+        持续 {PROMOTION_TRIAL.lastTurn - state.turn + 1}
+      </TagButton>
+    </>
+  );
   if (fold.compact && !fold.expanded) {
     return (
       <FoldBox fold={fold} className={className}>
         <div className={styles.compactTitle}>
           {PROMOTION_TRIAL.emoji} {PROMOTION_TRIAL.name}
           {p.all ? " 🏮" : ""}
-          <TagButton tag="trial" tone={styles.kindStory} dispatch={dispatch}>
-            第 {PROMOTION_TRIAL.firstTurn}—{PROMOTION_TRIAL.lastTurn} 回合
-          </TagButton>
+          {trialTags}
         </div>
         <div className={styles.compactSummary}>
           {mark(p.shengchong)} 圣宠 {state.shengchong}/{PROMOTION_TRIAL.minShengchong} · {mark(p.qingyu)} 清誉 {state.qingyu}/
@@ -548,9 +557,7 @@ function TrialCard({ state, fold, dispatch }: { state: ZhState; fold: Fold; disp
           <span className={styles.cardEmoji}>{PROMOTION_TRIAL.emoji}</span>
           {PROMOTION_TRIAL.name}
         </span>
-        <TagButton tag="trial" tone={styles.kindStory} dispatch={dispatch}>
-          持续 · 第 {PROMOTION_TRIAL.firstTurn}—{PROMOTION_TRIAL.lastTurn} 回合
-        </TagButton>
+        <span className={styles.tagGroup}>{trialTags}</span>
       </div>
       {p.all ? (
         <ResolvedBanner icon="🏮" label="条件已满足" detail="保持到回合末（危机惩罚结算之后）即可晋封为常在。" />
@@ -887,12 +894,13 @@ function PromotionModal({ state, onClose }: { state: ZhState; onClose: () => voi
   );
 }
 
-/** Events in this turn's row (opportunity, crisis, envy, story); the promotion trial is a condition, not counted. */
+/** Events in this turn's row; the 晋封考验 story counts as resolved while all its conditions are met. */
 function countEvents(state: ZhState): { unresolved: number; total: number } {
   const done = [state.opportunity, state.crisis, state.envy]
     .filter((e) => e != null)
     .map((e) => e.resolved);
   if (state.story) done.push(state.story.chosenOptionId != null);
+  if (state.trial.active) done.push(trialProgress(state).all);
   return { unresolved: done.filter((d) => !d).length, total: done.length };
 }
 
@@ -1009,7 +1017,7 @@ export function ZhenhuanGame({ state, dispatch, showRules, onShowRules, onRestar
       <Statuses state={state} dispatch={dispatch} />
 
       <h2 className={styles.sectionTitle}>
-        本回合事件 <span title="未解决 / 事件总数（不含晋封考验）">{eventCount.unresolved}/{eventCount.total}</span>
+        本回合事件 <span title="未解决 / 事件总数">{eventCount.unresolved}/{eventCount.total}</span>
       </h2>
       <ScrollRow className={styles.events}>
         {state.opportunity ? (
