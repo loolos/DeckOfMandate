@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { CardId, StatusId } from "../data/content";
+import { STORIES } from "../data/content";
 import {
   drawCountForTurn,
   newGame,
@@ -266,7 +267,8 @@ describe("zhenhuan engine", () => {
     s.opportunity = { uid: "o", id: "huangdiZhaojian", resolved: false };
     s = act(s, { type: "playCard", cardUid: giveCard(s, "yirongZhengsu") });
     expect(s.story?.chosenOptionId).toBe("shengzhuangFuzhao");
-    expect(s.shengchong).toBe(7); // 2 + 3 (story response, replaces base) + 2 (皇帝召见)
+    expect(s.shengchong).toBe(6); // 2 + 2 (story response, replaces base) + 2 (皇帝召见)
+    expect(s.log.some((l) => l.text.includes("鬓边簪一支海棠"))).toBe(true);
     expect(s.opportunity?.resolved).toBe(true);
     expect(s.playsUsed).toBe(1);
   });
@@ -279,7 +281,7 @@ describe("zhenhuan engine", () => {
     s = act(s, { type: "playCard", cardUid: giveCard(s, "jinyanShenxing") });
     expect(s.story?.chosenOptionId).toBe("yantanDeti");
     expect(s.crisis?.resolved).toBe(true);
-    expect(s.shengchong).toBe(5); // 言谈得体 圣宠 +2
+    expect(s.shengchong).toBe(4); // 言谈得体 圣宠 +1
     expect(s.qingyu).toBe(4); // 清誉 +1 (not also the base +1)
   });
 
@@ -294,6 +296,24 @@ describe("zhenhuan engine", () => {
     const u = act(t, { type: "playCard", cardUid: t.hand.find((c) => c.id === "yirongZhengsu")!.uid });
     expect(u.story?.chosenOptionId).toBe("keyiBiaoxian");
     expect(u.shengchong).toBeGreaterThanOrEqual(Math.min(8, before + 1));
+  });
+
+  it("story events: every option has its own log text, and no-card options cost something", () => {
+    for (const story of Object.values(STORIES)) {
+      const texts = story.options.map((o) => o.story);
+      expect(new Set(texts).size).toBe(texts.length);
+      for (const o of story.options) {
+        expect(o.story.length).toBeGreaterThan(0);
+        if (!o.card) expect(o.effects.some((d) => d.amount < 0)).toBe(true);
+      }
+    }
+  });
+
+  it("story events: a chosen basic option writes its story text to the log", () => {
+    const s = advanceTo(newGame(11), 4);
+    const t = act(s, { type: "chooseStory", optionId: "keyiBiaoxian" });
+    const story = STORIES.diyiciMiansheng.options.find((o) => o.id === "keyiBiaoxian")!.story;
+    expect(t.log.some((l) => l.text === story)).toBe(true);
   });
 
   it("tag explanations go to the log without being recorded", () => {
@@ -311,8 +331,9 @@ describe("zhenhuan engine", () => {
     if (t.envy) t.envy.resolved = true;
     t = act(t, { type: "endTurn" });
     expect(t.log.some((l) => l.text.includes("默认选项【谨慎应对】"))).toBe(true);
+    expect(t.log.some((l) => l.text.includes("问一句答一句"))).toBe(true);
     expect(t.qingyu).toBe(4);
-    expect(t.shengchong).toBe(4);
+    expect(t.shengchong).toBe(2); // no-card options carry a small cost
   });
 
   it("华妃敲打: 收拢人心 grants 先机在握 for the next 3 turns", () => {

@@ -235,9 +235,9 @@ export const STATUSES: Record<StatusId, StatusDef> = {
     name: "先机在握",
     emoji: "🧭",
     tag: "positive",
-    duration: 3,
+    duration: 2,
     drawModifier: 1,
-    effectText: "未来 3 回合，每回合抓牌数 +1。",
+    effectText: "未来 2 回合，每回合抓牌数 +1。",
     flavor: "早早打点好了各处，宫里的消息总比别人快一步。",
     source: "第 8 回合【华妃敲打】时从手牌打出【收拢人心】（提前得知消息）",
   },
@@ -372,7 +372,10 @@ export type StoryOptionDef = {
   readonly card?: CardId;
   readonly effects: readonly ResourceDelta[];
   readonly gainStatus?: StatusId;
+  /** Effect summary shown on the event and hand card. */
   readonly text: string;
+  /** Story text written to the log when this option resolves the event. */
+  readonly story: string;
 };
 
 export type StoryDef = {
@@ -394,10 +397,36 @@ export const STORIES: Record<StoryId, StoryDef> = {
     flavor: "敬事房翻了你的牌子，今夜要去养心殿。",
     defaultOptionId: "jinshenYingdui",
     options: [
-      { id: "keyiBiaoxian", name: "刻意表现", effects: [{ resource: "shengchong", amount: 2 }, { resource: "qingyu", amount: -1 }], text: "圣宠 +2，清誉 -1" },
-      { id: "jinshenYingdui", name: "谨慎应对", effects: [{ resource: "shengchong", amount: 1 }, { resource: "qingyu", amount: 1 }], text: "圣宠 +1，清誉 +1" },
-      { id: "shengzhuangFuzhao", name: "盛装赴召", card: "yirongZhengsu", effects: [{ resource: "shengchong", amount: 3 }], text: "圣宠 +3" },
-      { id: "yantanDeti", name: "言谈得体", card: "jinyanShenxing", effects: [{ resource: "shengchong", amount: 2 }, { resource: "qingyu", amount: 1 }], text: "圣宠 +2，清誉 +1" },
+      {
+        id: "keyiBiaoxian",
+        name: "刻意表现",
+        effects: [{ resource: "shengchong", amount: 1 }, { resource: "qingyu", amount: -1 }],
+        text: "圣宠 +1，清誉 -1",
+        story: "你在御前抚琴唱曲，极尽婉转。皇上听得入神，可第二日六宫便传遍了“新人狐媚”的闲话。",
+      },
+      {
+        id: "jinshenYingdui",
+        name: "谨慎应对",
+        effects: [{ resource: "qingyu", amount: 1 }, { resource: "shengchong", amount: -1 }],
+        text: "清誉 +1，圣宠 -1",
+        story: "你垂首敛眉，问一句答一句，不敢行差踏错。皇上赞了句“稳重”，却早早歇下，并未多留你说话。",
+      },
+      {
+        id: "shengzhuangFuzhao",
+        name: "盛装赴召",
+        card: "yirongZhengsu",
+        effects: [{ resource: "shengchong", amount: 2 }],
+        text: "圣宠 +2",
+        story: "你一身簇新宫装，鬓边簪一支海棠，烛下光彩照人。皇上多看了你好几眼，次日便赏下一对玉镯。",
+      },
+      {
+        id: "yantanDeti",
+        name: "言谈得体",
+        card: "jinyanShenxing",
+        effects: [{ resource: "shengchong", amount: 1 }, { resource: "qingyu", amount: 1 }],
+        text: "圣宠 +1，清誉 +1",
+        story: "皇上随口考你诗书，你引“嘤其鸣矣，求其友声”应答，不卑不亢。皇上抚掌称妙，宫中也都说新来的小主知书达理。",
+      },
     ],
   },
   huafeiQiaoda: {
@@ -408,11 +437,45 @@ export const STORIES: Record<StoryId, StoryDef> = {
     flavor: "翊坤宫召你前去，华妃话里有话。",
     defaultOptionId: "renqiTunsheng",
     options: [
-      { id: "renqiTunsheng", name: "忍气吞声", effects: [{ resource: "qingyu", amount: 1 }, { resource: "shengchong", amount: -2 }], text: "清誉 +1，圣宠 -2" },
-      { id: "dangmianBiabai", name: "当面辩白", effects: [{ resource: "shengchong", amount: 1 }, { resource: "qingyu", amount: -2 }], text: "圣宠 +1，清誉 -2" },
-      { id: "jiemeiXianghu", name: "姐妹相护", card: "meizhuangXiangzhu", effects: [{ resource: "qingyu", amount: 2 }], text: "清誉 +2，圣宠不下降" },
-      { id: "biqiFengmang", name: "避其锋芒", card: "jinyanShenxing", effects: [{ resource: "qingyu", amount: 1 }], text: "清誉 +1，圣宠不变" },
-      { id: "tiqianDezhi", name: "提前得知消息", card: "shoulongRenxin", effects: [], gainStatus: "xianjiZaiwo", text: "获得【先机在握】：未来 3 回合每回合抓牌 +1" },
+      {
+        id: "renqiTunsheng",
+        name: "忍气吞声",
+        effects: [{ resource: "qingyu", amount: 1 }, { resource: "shengchong", amount: -2 }],
+        text: "清誉 +1，圣宠 -2",
+        story: "你跪在翊坤宫冰凉的金砖上听训，一言不发。宫人都道你守礼知分寸，可华妃转头便在皇上面前说你木讷无趣。",
+      },
+      {
+        id: "dangmianBiabai",
+        name: "当面辩白",
+        effects: [{ resource: "shengchong", amount: 1 }, { resource: "qingyu", amount: -2 }],
+        text: "圣宠 +1，清誉 -2",
+        story: "你据理力争，华妃一时语塞。皇上听说后觉得你有几分胆色，满宫却都在传你顶撞华妃、不知尊卑。",
+      },
+      {
+        id: "jiemeiXianghu",
+        name: "姐妹相护",
+        card: "meizhuangXiangzhu",
+        effects: [{ resource: "qingyu", amount: 1 }],
+        text: "清誉 +1，圣宠不下降",
+        story: "眉庄姐姐恰好来翊坤宫请安，三言两语替你解了围。华妃不便当众发作，你全身而退，还落了个姐妹情深的好名声。",
+      },
+      {
+        id: "biqiFengmang",
+        name: "避其锋芒",
+        card: "jinyanShenxing",
+        effects: [],
+        text: "清誉、圣宠都不变",
+        story: "你句句顺着华妃的话头，半点把柄也不留。华妃挑不出错处，只得放你回去，此事不了了之。",
+      },
+      {
+        id: "tiqianDezhi",
+        name: "提前得知消息",
+        card: "shoulongRenxin",
+        effects: [],
+        gainStatus: "xianjiZaiwo",
+        text: "获得【先机在握】：未来 2 回合每回合抓牌 +1",
+        story: "翊坤宫的小宫女早一步递来消息，你备好说辞从容应对。此后各宫的风吹草动，总有人先来知会你。",
+      },
     ],
   },
 };

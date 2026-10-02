@@ -307,6 +307,7 @@ function resolvePlay(
   // 1. base effect, or the story option that replaces it
   if (option && story) {
     s.story = { id: story.id, chosenOptionId: option.id };
+    log(s, option.story);
     applyDeltas(s, option.effects, `${story.name}·${option.name}`);
     if (option.gainStatus && s.outcome === "playing") addStatus(s, option.gainStatus);
   } else {
@@ -362,6 +363,7 @@ function resolvePlay(
 function applyStoryBasicOption(s: ZhState, story: StoryDef, option: StoryOptionDef, source: string): void {
   s.story = { id: story.id, chosenOptionId: option.id };
   log(s, source);
+  log(s, option.story);
   applyDeltas(s, option.effects, `${story.name}·${option.name}`);
   if (option.gainStatus && s.outcome === "playing") addStatus(s, option.gainStatus);
 }
