@@ -52,7 +52,7 @@ describe("zhenhuan engine", () => {
     expect(s.qingyu).toBe(2);
     expect(s.shengchong).toBe(2);
     expect(s.hand.map((c) => c.id)).toEqual(["shoulongRenxin", "yirongZhengsu", "jingguanQibian"]);
-    expect(s.opportunity?.id).toBe("huangdiZhaojian");
+    expect(s.opportunity?.id).toBe("huanghouShangshi");
     expect(s.crisis?.id).toBe("liyiShiwu");
     expect(s.drawPile).toHaveLength(9);
     expect(s.opportunityPool).toHaveLength(5);
@@ -63,7 +63,7 @@ describe("zhenhuan engine", () => {
   it("one card resolves both matching events for one play", () => {
     let s = newGame(1);
     s = act(s, { type: "playCard", cardUid: uidOf(s, "yirongZhengsu") });
-    expect(s.shengchong).toBe(5); // 2 + base 1 + 皇帝召见 2
+    expect(s.shengchong).toBe(5); // 2 + base 1 + 皇后赏识 2
     expect(s.opportunity?.resolved).toBe(true);
     expect(s.crisis?.resolved).toBe(true);
     expect(s.playsUsed).toBe(1);
@@ -371,7 +371,7 @@ describe("zhenhuan engine", () => {
     s.qingyu = 5;
     s.shengchong = 5;
     if (s.crisis) s.crisis.resolved = true;
-    s.opportunity = { uid: "o", id: "huangdiZhaojian", resolved: false };
+    s.opportunity = { uid: "o", id: "huanghouShangshi", resolved: false };
     s = act(s, { type: "playCard", cardUid: giveCard(s, "jinyanShenxing") });
     expect(s.trial.keyCardPlayed).toBe(true);
     expect(s.rank).toBe("daying"); // not before end of turn
@@ -384,6 +384,22 @@ describe("zhenhuan engine", () => {
     if (s.crisis) s.crisis.resolved = true;
     s = act(s, { type: "endTurn" });
     expect(s.outcome).toBe("won");
+  });
+
+  it("谨言慎行 during the 晋封考验 counts for the trial and still resolves 恃宠而骄 (only that envy event)", () => {
+    for (const [envyId, resolved] of [
+      ["shichongErjiao", true],
+      ["yuDayingZhengchong", false],
+      ["anzhongXiaban", false],
+    ] as const) {
+      let s = advanceTo(newGame(17), 10);
+      expect(s.trial.active).toBe(true);
+      s.trial.keyCardPlayed = false;
+      s.envy = { uid: "e", id: envyId, resolved: false };
+      s = act(s, { type: "playCard", cardUid: giveCard(s, "jinyanShenxing") });
+      expect(s.trial.keyCardPlayed).toBe(true);
+      expect(s.envy?.resolved).toBe(resolved);
+    }
   });
 
   it("failing the trial by end of turn 12 loses", () => {
