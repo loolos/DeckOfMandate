@@ -1,4 +1,4 @@
-import { CHAPTER, ENVY_TRIGGER, PROMOTION_TRIAL } from "../data/content";
+import { CHAPTER } from "../data/content";
 
 /** Short opening rules (design.md §12: no step-by-step tutorial in v1). */
 export function RulesSummary() {
@@ -13,17 +13,8 @@ export function RulesSummary() {
         一张牌可以同时解决多个匹配事件。未解决的危机会在回合末造成惩罚。
       </li>
       <li>
-        圣宠太盛会招来<strong>嫉妒事件</strong>：第 {ENVY_TRIGGER.firstTurn} 回合起，回合开始时圣宠 ≥ {ENVY_TRIGGER.minShengchong} 时额外出现 1 个（首次必出，之后每隔一回合一次；圣宠跌回{" "}
-        {ENVY_TRIGGER.minShengchong} 以下则重新计算），处理方式与危机相同。
+        <strong>晋封为常在</strong>，并坚持到第 {CHAPTER.totalTurns} 回合结束即通关。
       </li>
-      <li>第 4、8 回合有剧情事件：在事件上选 1 个基础选项，或从手牌打出事件卡上列出的牌来解决；都不做则按默认选项处理。卡牌永远从手牌打出。</li>
-      <li>点击事件、手牌或状态上的标签，可以在日志里查看它的说明。</li>
-      <li>双击手牌直接打出；按空格键结束回合。</li>
-      <li>
-        第 {PROMOTION_TRIAL.firstTurn}—{PROMOTION_TRIAL.lastTurn} 回合是<strong>晋封考验</strong>：回合末圣宠 ≥{" "}
-        {PROMOTION_TRIAL.minShengchong}、清誉 ≥ {PROMOTION_TRIAL.minQingyu}，且考验期间打出过仪容整肃或谨言慎行，即晋封为常在。
-      </li>
-      <li>晋封后坚持到第 {CHAPTER.totalTurns} 回合结束即通关。</li>
       <li>悬浮在抽牌堆、弃牌堆和事件牌池上可以查看其中剩余的内容。</li>
     </ul>
   );

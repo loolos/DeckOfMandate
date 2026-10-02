@@ -195,7 +195,7 @@ export const ENVY_TRIGGER = { firstTurn: 6, minShengchong: 5, interval: 2 };
 
 // ---------------------------------------------------------------- statuses
 
-export type StatusId = "liuyanChanshen" | "xianjiZaiwo" | "baoyangZaishen";
+export type StatusId = "liuyanChanshen" | "xianjiZaiwo" | "ermuLingtong" | "baoyangZaishen";
 export type StatusTag = "negative" | "positive";
 
 export const STATUS_TAG_LABEL: Record<StatusTag, string> = { negative: "负面", positive: "正面" };
@@ -239,7 +239,18 @@ export const STATUSES: Record<StatusId, StatusDef> = {
     drawModifier: 1,
     effectText: "未来 3 回合，每回合抓牌数 +1。",
     flavor: "早早打点好了各处，宫里的消息总比别人快一步。",
-    source: "第 8 回合【华妃敲打】时从手牌打出【收拢人心】（提前得知消息）",
+    source: "第 4 回合【倚梅园】时从手牌打出【收拢人心】（宫人透底）",
+  },
+  ermuLingtong: {
+    id: "ermuLingtong",
+    name: "耳目灵通",
+    emoji: "👂",
+    tag: "positive",
+    duration: 2,
+    drawModifier: 1,
+    effectText: "未来 2 回合，每回合抓牌数 +1。多个实例分别计时、效果叠加。",
+    flavor: "赏下去的银子换来了几双眼睛，各宫的动静渐渐传到你耳边。",
+    source: "打出【收拢人心】",
   },
   baoyangZaishen: {
     id: "baoyangZaishen",
@@ -268,6 +279,8 @@ export type CardDef = {
   readonly base: readonly ResourceDelta[];
   /** Base-effect card draw (静观其变). */
   readonly baseDraw: number;
+  /** Status gained as part of the base effect (收拢人心). */
+  readonly baseStatus?: StatusId;
   readonly matches: readonly EventId[];
   /** Full mechanic text shown on the card. */
   readonly rulesText: readonly string[];
@@ -309,10 +322,11 @@ export const CARDS: Record<CardId, CardDef> = {
     name: "收拢人心",
     emoji: "🤝",
     flavor: "赏下去的银子，总会换回些什么。",
-    base: [{ resource: "shengchong", amount: 1 }],
+    base: [],
     baseDraw: 0,
+    baseStatus: "ermuLingtong",
     matches: ["neiwufuDiaonan", "yuDayingZhengchong"],
-    rulesText: ["圣宠 +1。", "联动：用它解决【内务府刁难】时，额外抽 1 张牌。"],
+    rulesText: ["获得【耳目灵通】：未来 2 回合每回合抓牌 +1。", "联动：用它解决【内务府刁难】时，额外抽 1 张牌。"],
   },
   jingguanQibian: {
     id: "jingguanQibian",
@@ -360,19 +374,24 @@ export const OPENING = {
 
 // ---------------------------------------------------------------- story events
 
-export type StoryId = "diyiciMiansheng" | "huafeiQiaoda";
+export type StoryId = "yimeiYuan" | "xinghuaWeiyu";
 
 export type StoryOptionDef = {
   readonly id: string;
   readonly name: string;
   /**
    * Card response: playing this card FROM HAND while the story is open resolves it with these
-   * effects (instead of the card's base effect). Never a button on the event (design.md §9).
+   * effects, on top of the card's own effects. Never a button on the event (design.md §9).
    */
   readonly card?: CardId;
   readonly effects: readonly ResourceDelta[];
   readonly gainStatus?: StatusId;
+  /** Effect summary shown on the event and hand card. */
   readonly text: string;
+  /** Story text written to the log when this option resolves the event. */
+  readonly story: string;
+  /** Hidden follow-up line logged after the effects (no mechanical effect). */
+  readonly epilogue?: string;
 };
 
 export type StoryDef = {
@@ -386,33 +405,87 @@ export type StoryDef = {
 };
 
 export const STORIES: Record<StoryId, StoryDef> = {
-  diyiciMiansheng: {
-    id: "diyiciMiansheng",
+  yimeiYuan: {
+    id: "yimeiYuan",
     turn: 4,
-    name: "第一次面圣",
-    emoji: "🏯",
-    flavor: "敬事房翻了你的牌子，今夜要去养心殿。",
-    defaultOptionId: "jinshenYingdui",
+    name: "倚梅园",
+    emoji: "❄️",
+    flavor:
+      "除夕夜你在倚梅园许愿，念了一句“逆风如解意，容易莫摧残”。如今宫里都在传，皇上寻到了那夜念诗的人，是宫女余莺儿，已被封为答应。",
+    defaultOptionId: "yinrenBuyan",
     options: [
-      { id: "keyiBiaoxian", name: "刻意表现", effects: [{ resource: "shengchong", amount: 2 }, { resource: "qingyu", amount: -1 }], text: "圣宠 +2，清誉 -1" },
-      { id: "jinshenYingdui", name: "谨慎应对", effects: [{ resource: "shengchong", amount: 1 }, { resource: "qingyu", amount: 1 }], text: "圣宠 +1，清誉 +1" },
-      { id: "shengzhuangFuzhao", name: "盛装赴召", card: "yirongZhengsu", effects: [{ resource: "shengchong", amount: 3 }], text: "圣宠 +3" },
-      { id: "yantanDeti", name: "言谈得体", card: "jinyanShenxing", effects: [{ resource: "shengchong", amount: 2 }, { resource: "qingyu", amount: 1 }], text: "圣宠 +2，清誉 +1" },
+      {
+        id: "yinrenBuyan",
+        name: "隐忍不言",
+        effects: [{ resource: "shengchong", amount: -1 }],
+        text: "圣宠 -1",
+        story: "你攥紧了帕子，终究一字未提。余答应夜夜承宠，那句诗成了别人的恩典。",
+      },
+      {
+        id: "dangzhongShuopo",
+        name: "当众说破",
+        effects: [{ resource: "qingyu", amount: -1 }],
+        text: "清誉 -1",
+        story: "你说那夜念诗的是自己，可无凭无据。旁人只当你眼红新宠，背后议论你争风吃醋。",
+      },
+      {
+        id: "jiemeiChafang",
+        name: "姐妹查访",
+        card: "meizhuangXiangzhu",
+        effects: [{ resource: "qingyu", amount: 1 }],
+        text: "清誉 +1",
+        story: "眉庄姐姐悄悄查访倚梅园当夜当值的宫人，替你记下了几处破绽，只待时机。",
+      },
+      {
+        id: "gongrenToudi",
+        name: "宫人透底",
+        card: "shoulongRenxin",
+        effects: [],
+        gainStatus: "xianjiZaiwo",
+        text: "获得【先机在握】：未来 3 回合每回合抓牌 +1",
+        story: "倚梅园的小太监私下告诉你，余答应连字都认不全。你心里有了底，各宫的消息也开始先一步传到你这里。",
+      },
     ],
   },
-  huafeiQiaoda: {
-    id: "huafeiQiaoda",
+  xinghuaWeiyu: {
+    id: "xinghuaWeiyu",
     turn: 8,
-    name: "华妃敲打",
-    emoji: "🦚",
-    flavor: "翊坤宫召你前去，华妃话里有话。",
-    defaultOptionId: "renqiTunsheng",
+    name: "杏花微雨",
+    emoji: "🌸",
+    flavor: "杏花微雨，你在御花园散心，迎面遇见一位自称“果郡王”的男子，与你谈起诗词。他衣着素净，气度却不似寻常王爷。",
+    defaultOptionId: "bixianGaotui",
     options: [
-      { id: "renqiTunsheng", name: "忍气吞声", effects: [{ resource: "qingyu", amount: 1 }, { resource: "shengchong", amount: -2 }], text: "清誉 +1，圣宠 -2" },
-      { id: "dangmianBiabai", name: "当面辩白", effects: [{ resource: "shengchong", amount: 1 }, { resource: "qingyu", amount: -2 }], text: "圣宠 +1，清誉 -2" },
-      { id: "jiemeiXianghu", name: "姐妹相护", card: "meizhuangXiangzhu", effects: [{ resource: "qingyu", amount: 2 }], text: "清誉 +2，圣宠不下降" },
-      { id: "biqiFengmang", name: "避其锋芒", card: "jinyanShenxing", effects: [{ resource: "qingyu", amount: 1 }], text: "清誉 +1，圣宠不变" },
-      { id: "tiqianDezhi", name: "提前得知消息", card: "shoulongRenxin", effects: [], gainStatus: "xianjiZaiwo", text: "获得【先机在握】：未来 3 回合每回合抓牌 +1" },
+      {
+        id: "bixianGaotui",
+        name: "避嫌告退",
+        effects: [{ resource: "shengchong", amount: -1 }],
+        text: "圣宠 -1",
+        story: "你规规矩矩福了一福便告退。后来才知道，那日的“王爷”正是皇上，他望着你的背影站了许久。",
+      },
+      {
+        id: "yuWangyeChangtan",
+        name: "与王爷畅谈",
+        effects: [{ resource: "qingyu", amount: -1 }],
+        text: "清誉 -1",
+        story: "你与“王爷”相谈甚欢。不知被谁瞧见了，宫里渐渐有了“小主私会外男”的闲话。",
+      },
+      {
+        id: "yishiXianghe",
+        name: "以诗相和",
+        card: "jinyanShenxing",
+        effects: [{ resource: "shengchong", amount: 1 }, { resource: "qingyu", amount: 1 }],
+        text: "圣宠 +1，清誉 +1",
+        story: "你只以“王爷”相称，句句守礼，又以诗相和。皇上大为欣赏，回宫后便命人打听杏花树下的那位小主。",
+        epilogue: "皇上听你念诗的声音，忽然认出你才是除夕夜倚梅园念“逆风如解意”的人。",
+      },
+      {
+        id: "kanpoBushuopo",
+        name: "看破不说破",
+        card: "jingguanQibian",
+        effects: [{ resource: "qingyu", amount: 2 }],
+        text: "清誉 +2",
+        story: "你瞥见他腰间系着明黄络子，心中了然，却只当他是王爷，进退有度，半分不逾矩。",
+      },
     ],
   },
 };

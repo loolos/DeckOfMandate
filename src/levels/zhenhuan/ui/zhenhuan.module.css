@@ -164,7 +164,6 @@
 }
 
 .stat {
-  flex: 1 1 160px;
   background: var(--zh-panel);
   border: 1px solid var(--zh-border);
   border-radius: 10px;
@@ -200,9 +199,36 @@
 
 /* hover popovers for piles */
 
+/* Resources, and the play counter plus piles, each share one width and scroll sideways like events/hand/statuses. */
+.page .resources > *,
+.page .piles > * {
+  flex: 0 0 auto;
+}
+
+.page .resources > * {
+  width: 180px;
+}
+
+.page.compact .resources > * {
+  width: 160px;
+}
+
+.page .piles > * {
+  width: 112px;
+}
+
+.page.compact .piles > * {
+  width: 104px;
+}
+
+.piles .statLabel {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .pile {
   position: relative;
-  flex: 1 1 140px;
   background: var(--zh-panel);
   border: 1px dashed var(--zh-border);
   border-radius: 10px;
@@ -217,11 +243,8 @@
 }
 
 .popover {
-  display: none;
-  position: absolute;
+  position: fixed;
   z-index: 20;
-  top: calc(100% + 6px);
-  left: 0;
   min-width: 220px;
   max-width: min(320px, 90vw);
   background: #120b0d;
@@ -230,11 +253,6 @@
   padding: 0.6rem 0.75rem;
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
   font-size: 0.88rem;
-}
-
-.pile:hover .popover,
-.pile:focus-within .popover {
-  display: block;
 }
 
 .popoverTitle {
@@ -253,10 +271,18 @@
 
 .statusRow {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 0.5rem;
   margin-bottom: 0.75rem;
   align-items: flex-start;
+}
+
+/* Statuses share the events/hand single-row sideways scroller. */
+.statuses {
+  flex: 1 1 auto;
+  min-width: 0;
+  align-items: flex-start;
+  gap: 0.5rem;
 }
 
 .status {
@@ -680,12 +706,19 @@
   gap: 0.5rem;
 }
 
-.compact .events > * {
-  width: 180px;
+/* Collapsed events, hand cards and statuses share one narrow column width. */
+.compact {
+  --zh-compact-col: 132px;
 }
 
-.compact .hand > * {
-  width: 150px;
+.compact .events > *,
+.compact .hand > *,
+.compact .status {
+  width: var(--zh-compact-col);
+}
+
+.compact .status.statusExpanded {
+  width: min(320px, 85vw);
 }
 
 .compact .scrollRow > .expandedCard {
@@ -699,7 +732,6 @@
 
 .compact .stat,
 .compact .pile {
-  flex-basis: 110px;
   padding: 0.3rem 0.55rem;
 }
 
@@ -735,6 +767,8 @@
 }
 
 .statusRow > .muted {
+  flex: 0 0 auto;
+  white-space: nowrap;
   padding-top: 0.35rem;
 }
 
@@ -823,14 +857,22 @@
   }
 
   .page .stat {
-    flex: 1 1 90px;
-    min-width: 0;
     padding: 0.3rem 0.5rem;
   }
 
   .page .pile {
-    flex: 1 1 56px;
-    min-width: 0;
+    padding: 0.25rem 0.3rem;
+  }
+
+  .page.compact .resources > * {
+    width: 120px;
+  }
+
+  .page.compact .piles > * {
+    width: 72px;
+  }
+
+  .piles .stat {
     padding: 0.25rem 0.3rem;
   }
 
@@ -841,7 +883,7 @@
     text-overflow: ellipsis;
   }
 
-  .pile .statLabel {
+  .piles .statLabel {
     font-size: 0.62rem;
   }
 

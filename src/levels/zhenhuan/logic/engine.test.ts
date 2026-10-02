@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { CardId, StatusId } from "../data/content";
+import { STATUSES, STORIES } from "../data/content";
 import {
   drawCountForTurn,
   newGame,
@@ -259,41 +260,68 @@ describe("zhenhuan engine", () => {
   });
 
   it("story events: playing a listed card from hand resolves the story and matching events", () => {
-    let s = advanceTo(newGame(11), 4);
-    expect(s.story?.id).toBe("diyiciMiansheng");
-    s.shengchong = 2;
-    s.qingyu = 2;
-    s.opportunity = { uid: "o", id: "huangdiZhaojian", resolved: false };
-    s = act(s, { type: "playCard", cardUid: giveCard(s, "yirongZhengsu") });
-    expect(s.story?.chosenOptionId).toBe("shengzhuangFuzhao");
-    expect(s.shengchong).toBe(7); // 2 + 3 (story response, replaces base) + 2 (皇帝召见)
-    expect(s.opportunity?.resolved).toBe(true);
-    expect(s.playsUsed).toBe(1);
-  });
-
-  it("reported bug: 谨言慎行 resolves 第一次面圣 and 宫中流言 together", () => {
-    let s = advanceTo(newGame(11), 4);
+    let s = advanceTo(newGame(11), 8);
+    expect(s.story?.id).toBe("xinghuaWeiyu");
     s.qingyu = 3;
     s.shengchong = 3;
+    s.opportunity = null;
+    s.envy = null;
     s.crisis = { uid: "c", id: "gongzhongLiuyan", resolved: false };
     s = act(s, { type: "playCard", cardUid: giveCard(s, "jinyanShenxing") });
-    expect(s.story?.chosenOptionId).toBe("yantanDeti");
+    expect(s.story?.chosenOptionId).toBe("yishiXianghe");
     expect(s.crisis?.resolved).toBe(true);
-    expect(s.shengchong).toBe(5); // 言谈得体 圣宠 +2
-    expect(s.qingyu).toBe(4); // 清誉 +1 (not also the base +1)
+    expect(s.shengchong).toBe(4); // 以诗相和 圣宠 +1
+    expect(s.qingyu).toBe(5); // 清誉 +1 (story) + 1 (谨言慎行 base, still applies)
+    expect(s.playsUsed).toBe(1);
+    expect(s.log.some((l) => l.text.includes("倚梅园念“逆风如解意”的人"))).toBe(true);
+  });
+
+  it("杏花微雨: 静观其变 adds 清誉 +2 and still draws 2 and grants an extra play", () => {
+    let s = advanceTo(newGame(11), 8);
+    s.qingyu = 3;
+    const limit = playLimit(s);
+    const handBefore = s.hand.length;
+    s = act(s, { type: "playCard", cardUid: giveCard(s, "jingguanQibian") });
+    expect(s.story?.chosenOptionId).toBe("kanpoBushuopo");
+    expect(s.qingyu).toBe(5);
+    expect(s.hand.length).toBe(handBefore + 2);
+    expect(playLimit(s)).toBe(limit + 1);
   });
 
   it("story events: card responses cannot be chosen on the event; basic options can", () => {
-    const s = advanceTo(newGame(11), 4);
-    giveCard(s, "yirongZhengsu");
-    expect(reduce(s, { type: "chooseStory", optionId: "shengzhuangFuzhao" })).toBe(s);
-    const t = act(s, { type: "chooseStory", optionId: "keyiBiaoxian" });
+    const s = advanceTo(newGame(11), 8);
+    s.opportunity = null;
+    s.crisis = null;
+    s.envy = null;
+    s.qingyu = 3;
+    giveCard(s, "jinyanShenxing");
+    expect(reduce(s, { type: "chooseStory", optionId: "yishiXianghe" })).toBe(s);
+    const t = act(s, { type: "chooseStory", optionId: "yuWangyeChangtan" });
     expect(t.playsUsed).toBe(0);
     // once chosen, a matching card falls back to its base effect
-    const before = t.shengchong;
-    const u = act(t, { type: "playCard", cardUid: t.hand.find((c) => c.id === "yirongZhengsu")!.uid });
-    expect(u.story?.chosenOptionId).toBe("keyiBiaoxian");
-    expect(u.shengchong).toBeGreaterThanOrEqual(Math.min(8, before + 1));
+    const before = t.qingyu;
+    const u = act(t, { type: "playCard", cardUid: t.hand.find((c) => c.id === "jinyanShenxing")!.uid });
+    expect(u.story?.chosenOptionId).toBe("yuWangyeChangtan");
+    expect(u.qingyu).toBe(Math.min(8, before + 1));
+    expect(u.log.some((l) => l.text.includes("倚梅园念“逆风如解意”的人"))).toBe(false);
+  });
+
+  it("story events: every option has its own log text, and no-card options cost something", () => {
+    for (const story of Object.values(STORIES)) {
+      const texts = story.options.map((o) => o.story);
+      expect(new Set(texts).size).toBe(texts.length);
+      for (const o of story.options) {
+        expect(o.story.length).toBeGreaterThan(0);
+        if (!o.card) expect(o.effects.some((d) => d.amount < 0)).toBe(true);
+      }
+    }
+  });
+
+  it("story events: a chosen basic option writes its story text to the log", () => {
+    const s = advanceTo(newGame(11), 4);
+    const t = act(s, { type: "chooseStory", optionId: "dangzhongShuopo" });
+    const story = STORIES.yimeiYuan.options.find((o) => o.id === "dangzhongShuopo")!.story;
+    expect(t.log.some((l) => l.text === story)).toBe(true);
   });
 
   it("tag explanations go to the log without being recorded", () => {
@@ -310,18 +338,31 @@ describe("zhenhuan engine", () => {
     if (t.crisis) t.crisis.resolved = true;
     if (t.envy) t.envy.resolved = true;
     t = act(t, { type: "endTurn" });
-    expect(t.log.some((l) => l.text.includes("默认选项【谨慎应对】"))).toBe(true);
-    expect(t.qingyu).toBe(4);
-    expect(t.shengchong).toBe(4);
+    expect(t.log.some((l) => l.text.includes("默认选项【隐忍不言】"))).toBe(true);
+    expect(t.log.some((l) => l.text.includes("那句诗成了别人的恩典"))).toBe(true);
+    expect(t.qingyu).toBe(3);
+    expect(t.shengchong).toBe(2); // no-card options carry a small cost
   });
 
-  it("华妃敲打: 收拢人心 grants 先机在握 for the next 3 turns", () => {
-    let s = advanceTo(newGame(13), 8);
-    expect(s.story?.id).toBe("huafeiQiaoda");
-    s = act(s, { type: "playCard", cardUid: giveCard(s, "shoulongRenxin") });
-    expect(s.statuses.map((x) => x.id)).toEqual(["xianjiZaiwo"]);
-    s = advanceTo(s, 9);
+  it("收拢人心: base effect is 耳目灵通 (draw +1 for the next 2 turns), not 圣宠", () => {
+    let s = newGame(5);
+    const before = s.shengchong;
+    s = act(s, { type: "playCard", cardUid: uidOf(s, "shoulongRenxin") });
+    expect(s.shengchong).toBe(before);
+    expect(s.statuses.map((x) => x.id)).toEqual(["ermuLingtong"]);
+    s = advanceTo(s, 2);
     expect(s.drawnThisTurn).toBe(4);
+    s = advanceTo(s, 4);
+    expect(s.statuses.some((x) => x.id === "ermuLingtong")).toBe(false);
+  });
+
+  it("倚梅园: 收拢人心 grants 先机在握 on top of its own 耳目灵通", () => {
+    let s = advanceTo(newGame(13), 4);
+    expect(s.story?.id).toBe("yimeiYuan");
+    s = act(s, { type: "playCard", cardUid: giveCard(s, "shoulongRenxin") });
+    expect(s.statuses.map((x) => x.id)).toEqual(["xianjiZaiwo", "ermuLingtong"]);
+    s = advanceTo(s, 5);
+    expect(s.drawnThisTurn).toBe(5);
   });
 
   it("promotion trial is judged at end of turn; game continues to turn 15", () => {
@@ -361,12 +402,12 @@ describe("zhenhuan engine", () => {
         const story = s.story && s.story.chosenOptionId == null;
         let next: ZhState = s;
         if (s.pending) {
-          const neg = s.statuses.find((x) => x.id !== "xianjiZaiwo")!;
+          const neg = s.statuses.find((x) => STATUSES[x.id].tag === "negative")!;
           next = reduce(s, { type: "removeStatus", statusUid: neg.uid });
         } else if (story && seed % 2 === 0) {
-          next = reduce(s, { type: "chooseStory", optionId: seed % 4 === 0 ? "jinshenYingdui" : "renqiTunsheng" });
-          if (next === s) next = reduce(s, { type: "chooseStory", optionId: "renqiTunsheng" });
-          if (next === s) next = reduce(s, { type: "chooseStory", optionId: "jinshenYingdui" });
+          next = reduce(s, { type: "chooseStory", optionId: seed % 4 === 0 ? "yinrenBuyan" : "bixianGaotui" });
+          if (next === s) next = reduce(s, { type: "chooseStory", optionId: "bixianGaotui" });
+          if (next === s) next = reduce(s, { type: "chooseStory", optionId: "yinrenBuyan" });
         } else if (s.hand.length > 0 && s.playsUsed < playLimit(s)) {
           next = reduce(s, { type: "playCard", cardUid: s.hand[(seed + s.turn) % s.hand.length]!.uid });
         }

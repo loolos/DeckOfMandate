@@ -84,17 +84,50 @@ function EventCountList({ ids, empty }: { ids: readonly EventId[]; empty: string
   );
 }
 
+/**
+ * Pile tile with a hover/focus popover. The popover is `position: fixed` (placed from the tile's
+ * rect) so the sideways-scrolling pile row cannot clip it; it closes when anything scrolls.
+ */
 function Pile({ icon, label, count, children }: { icon: string; label: string; count: number; children: ReactNode }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [pos, setPos] = useState<{ top: number; left: number } | null>(null);
+  const show = () => {
+    const r = ref.current?.getBoundingClientRect();
+    if (!r) return;
+    setPos({ top: r.bottom + 6, left: Math.max(8, Math.min(r.left, window.innerWidth - 328)) });
+  };
+  useEffect(() => {
+    if (!pos) return;
+    const hide = () => setPos(null);
+    window.addEventListener("scroll", hide, true);
+    window.addEventListener("resize", hide);
+    return () => {
+      window.removeEventListener("scroll", hide, true);
+      window.removeEventListener("resize", hide);
+    };
+  }, [pos]);
   return (
-    <div className={styles.pile} tabIndex={0}>
+    <div
+      ref={ref}
+      className={styles.pile}
+      tabIndex={0}
+      onMouseEnter={show}
+      onMouseLeave={() => {
+        if (document.activeElement !== ref.current) setPos(null);
+      }}
+      onFocus={show}
+      onBlur={() => setPos(null)}
+    >
       <div className={styles.statLabel}>
         <span className={styles.pileIcon}>{icon} </span>
         {label}
       </div>
       <div className={styles.statValue}>{count}</div>
-      <div className={styles.popover} role="tooltip">
-        {children}
-      </div>
+      {pos ? (
+        <div className={styles.popover} role="tooltip" style={pos}>
+          {children}
+        </div>
+      ) : null}
     </div>
   );
 }
@@ -118,8 +151,13 @@ function ResourceStat({ state, resource }: { state: ZhState; resource: Resource 
   );
 }
 
+/** Hand/event match hints are a first-turn tutorial only; afterwards players work out matches themselves. */
+function showMatchHints(state: ZhState): boolean {
+  return state.turn === 1;
+}
+
 function MatchChips({ state, def }: { state: ZhState; def: EventDef }) {
-  const handIds = new Set(state.hand.map((c) => c.id));
+  const handIds = new Set(showMatchHints(state) ? state.hand.map((c) => c.id) : []);
   const matching = (Object.keys(CARDS) as CardId[]).filter((id) => CARDS[id].matches.includes(def.id));
   return (
     <p className={styles.rule}>
@@ -431,7 +469,7 @@ function StoryCard({ state, dispatch, fold }: { state: ZhState; dispatch: Dispat
       ) : null}
       <p className={styles.flavor}>{story.flavor}</p>
       <p className={styles.rule}>
-        二选一处理：选择 1 个基础选项（不消耗出牌次数），或从手牌打出下列牌之一（消耗 1 次出牌，按剧情效果结算并替代该牌的基础效果，同时解决匹配的普通事件）。
+        二选一处理：选择 1 个基础选项（不消耗出牌次数），或从手牌打出下列牌之一（消耗 1 次出牌，结算剧情效果，该牌自身的效果也照常结算，同时解决匹配的普通事件）。
       </p>
       {storyBasicOptions(story).map((option) => {
         const isChosen = chosen === option.id;
@@ -457,7 +495,7 @@ function StoryCard({ state, dispatch, fold }: { state: ZhState; dispatch: Dispat
         <span className={styles.ruleLabel}>可由手牌打出解决：</span>
       </p>
       {storyCardResponses(story).map((option) => {
-        const inHand = state.hand.some((c) => c.id === option.card);
+        const inHand = showMatchHints(state) && state.hand.some((c) => c.id === option.card);
         const isChosen = chosen === option.id;
         return (
           <p key={option.id} className={[styles.rule, isChosen && styles.optionChosen].filter(Boolean).join(" ")}>
@@ -544,8 +582,9 @@ function HandCard({
   fold: Fold;
 }) {
   const def = CARDS[card.id];
-  const solves = matchedEvents(state, card.id);
-  const storyResponse = storyResponseFor(state, card.id);
+  const hints = showMatchHints(state);
+  const solves = hints ? matchedEvents(state, card.id) : [];
+  const storyResponse = hints ? storyResponseFor(state, card.id) : undefined;
   const story = currentStory(state);
   const solveNames = [
     ...(storyResponse && story ? [`${story.name}·${storyResponse.name}`] : []),
@@ -609,7 +648,7 @@ function HandCard({
       </p>
       {storyResponse && story ? (
         <p className={styles.solves}>
-          打出将解决剧情【{story.name}】·{storyResponse.name}：{storyResponse.text}（替代基础效果）
+          打出将解决剧情【{story.name}】·{storyResponse.name}：{storyResponse.text}（另加该牌效果）
         </p>
       ) : null}
       {solves.length > 0 ? (
@@ -654,78 +693,82 @@ function Statuses({ state, dispatch }: { state: ZhState; dispatch: Dispatch }) {
     <div className={styles.statusRow}>
       <span className={styles.muted}>状态：</span>
       {state.statuses.length === 0 ? <span className={styles.muted}>无</span> : null}
-      {state.statuses.map((st) => {
-        const def = STATUSES[st.id];
-        const notYet = st.appliesFromTurn > state.turn;
-        const expanded = open.has(st.uid);
-        return (
-          <div
-            key={st.uid}
-            className={[
-              styles.status,
-              def.tag === "negative" ? styles.statusNegative : styles.statusPositive,
-              expanded && styles.statusExpanded,
-            ]
-              .filter(Boolean)
-              .join(" ")}
-            role="button"
-            tabIndex={0}
-            aria-expanded={expanded}
-            title={expanded ? "点击收起" : "点击展开"}
-            onClick={() => toggle(st.uid)}
-            onKeyDown={(e) => activateOnKey(e, () => toggle(st.uid))}
-          >
-            <div className={styles.statusLine}>
-              <span>
-                {def.emoji} {def.name}
-              </span>
-              <button
-                type="button"
-                className={`${styles.tag} ${styles.tagButton}`}
-                title="点击在日志中查看说明"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  dispatch({ type: "explainTag", tag: def.tag });
-                }}
+      {state.statuses.length > 0 ? (
+        <ScrollRow className={styles.statuses}>
+          {state.statuses.map((st) => {
+            const def = STATUSES[st.id];
+            const notYet = st.appliesFromTurn > state.turn;
+            const expanded = open.has(st.uid);
+            return (
+              <div
+                key={st.uid}
+                className={[
+                  styles.status,
+                  def.tag === "negative" ? styles.statusNegative : styles.statusPositive,
+                  expanded && styles.statusExpanded,
+                ]
+                  .filter(Boolean)
+                  .join(" ")}
+                role="button"
+                tabIndex={0}
+                aria-expanded={expanded}
+                title={expanded ? "点击收起" : "点击展开"}
+                onClick={() => toggle(st.uid)}
+                onKeyDown={(e) => activateOnKey(e, () => toggle(st.uid))}
               >
-                {STATUS_TAG_LABEL[def.tag]}
-              </button>
-              <span className={styles.muted}>
-                {def.blocksCards
-                  ? `不能打出${def.blocksCards.map((id) => CARDS[id].name).join("、")}`
-                  : `抓牌 ${def.drawModifier > 0 ? "+" : ""}${def.drawModifier}`}{" "}
-                · {notYet ? `下回合起生效，共 ${st.remaining} 回合` : `剩余 ${st.remaining} 回合`}
-              </span>
-              {removable.has(st.uid) ? (
-                <button
-                  type="button"
-                  className={`${styles.btn} ${styles.btnPrimary} ${styles.btnSmall}`}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    dispatch({ type: "removeStatus", statusUid: st.uid });
-                  }}
-                >
-                  移除
-                </button>
-              ) : null}
-            </div>
-            {expanded ? (
-              <div className={styles.statusDetail}>
-                <p className={styles.flavor}>{def.flavor}</p>
-                <p className={styles.rule}>
-                  <span className={styles.ruleLabel}>机制：</span>
-                  {def.effectText}从获得后的下一回合开始生效。
-                  {def.tag === "negative" ? "可被【温太医诊治】移除。" : ""}
-                </p>
-                <p className={styles.rule}>
-                  <span className={styles.ruleLabel}>来源：</span>
-                  {def.source}
-                </p>
+                <div className={styles.statusLine}>
+                  <span>
+                    {def.emoji} {def.name}
+                  </span>
+                  <button
+                    type="button"
+                    className={`${styles.tag} ${styles.tagButton}`}
+                    title="点击在日志中查看说明"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      dispatch({ type: "explainTag", tag: def.tag });
+                    }}
+                  >
+                    {STATUS_TAG_LABEL[def.tag]}
+                  </button>
+                  <span className={styles.muted}>
+                    {def.blocksCards
+                      ? `不能打出${def.blocksCards.map((id) => CARDS[id].name).join("、")}`
+                      : `抓牌 ${def.drawModifier > 0 ? "+" : ""}${def.drawModifier}`}{" "}
+                    · {notYet ? `下回合起生效，共 ${st.remaining} 回合` : `剩余 ${st.remaining} 回合`}
+                  </span>
+                  {removable.has(st.uid) ? (
+                    <button
+                      type="button"
+                      className={`${styles.btn} ${styles.btnPrimary} ${styles.btnSmall}`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        dispatch({ type: "removeStatus", statusUid: st.uid });
+                      }}
+                    >
+                      移除
+                    </button>
+                  ) : null}
+                </div>
+                {expanded ? (
+                  <div className={styles.statusDetail}>
+                    <p className={styles.flavor}>{def.flavor}</p>
+                    <p className={styles.rule}>
+                      <span className={styles.ruleLabel}>机制：</span>
+                      {def.effectText}从获得后的下一回合开始生效。
+                      {def.tag === "negative" ? "可被【温太医诊治】移除。" : ""}
+                    </p>
+                    <p className={styles.rule}>
+                      <span className={styles.ruleLabel}>来源：</span>
+                      {def.source}
+                    </p>
+                  </div>
+                ) : null}
               </div>
-            ) : null}
-          </div>
-        );
-      })}
+            );
+          })}
+        </ScrollRow>
+      ) : null}
     </div>
   );
 }
@@ -894,18 +937,20 @@ export function ZhenhuanGame({ state, dispatch, showRules, onShowRules, onRestar
         </div>
       </header>
 
-      <div className={styles.bar}>
+      <ScrollRow className={`${styles.bar} ${styles.resources}`}>
         <ResourceStat state={state} resource="qingyu" />
         <ResourceStat state={state} resource="shengchong" />
+      </ScrollRow>
+
+      <ScrollRow className={`${styles.bar} ${styles.piles}`}>
         <div className={styles.stat}>
-          <div className={styles.statLabel}>🀄 本回合出牌</div>
+          <div className={styles.statLabel}>
+            <span className={styles.pileIcon}>🀄 </span>本回合出牌
+          </div>
           <div className={styles.statValue}>
             {state.playsUsed} / {playLimit(state)}
           </div>
         </div>
-      </div>
-
-      <div className={styles.bar}>
         <Pile icon="🎴" label="抽牌堆" count={state.drawPile.length}>
           <p className={styles.popoverTitle}>抽牌堆剩余（顺序未知）</p>
           <CardCountList ids={state.drawPile.map((c) => c.id)} empty="已空，需要时将弃牌堆洗回。" />
@@ -935,7 +980,7 @@ export function ZhenhuanGame({ state, dispatch, showRules, onShowRules, onRestar
           <p className={styles.popoverTitle}>本轮已出现</p>
           <EventCountList ids={state.envy ? [...usedEnvy, state.envy.id] : usedEnvy} empty="无" />
         </Pile>
-      </div>
+      </ScrollRow>
 
       <Statuses state={state} dispatch={dispatch} />
 
