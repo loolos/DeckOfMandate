@@ -24,6 +24,7 @@ import {
   canEndTurn,
   cap,
   currentStory,
+  eventResolvedStory,
   matchedEvents,
   negativeStatuses,
   playLimit,
@@ -344,12 +345,13 @@ function TagButton({ tag, tone, dispatch, children }: { tag: TagId; tone?: strin
 }
 
 /** Resolved banner: distinct mark per event kind, plus which card handled it. */
-function ResolvedBanner({ icon, label, detail }: { icon: string; label: string; detail: string }) {
+function ResolvedBanner({ icon, label, detail, story }: { icon: string; label: string; detail: string; story?: string }) {
   return (
     <div className={styles.resolvedBanner} role="status">
       <span className={styles.resolvedBadge}>
         {icon} {label}
       </span>
+      {story ? <span className={styles.resolvedStory}>{story}</span> : null}
       <span className={styles.resolvedDetail}>{detail}</span>
     </div>
   );
@@ -362,9 +364,22 @@ function eventResolvedDetail(inst: EventInst, fmt: (text: string) => string): st
   return `${by}把握，已获得${fmt(def.resolvedText)}${inst.rewardDoubled ? "（眉庄相助：奖励翻倍）" : ""}。`;
 }
 
+/** Emoji-only resolved summary for 略缩 cards: ✅/🛡️ + resolving card + actual reward. */
+function eventResolvedCompact(inst: EventInst): string {
+  const def = EVENTS[inst.id];
+  const card = inst.resolvedBy ? ` ${CARDS[inst.resolvedBy].emoji}` : "";
+  if (def.kind !== "opportunity") return `🛡️${card}`;
+  const times = inst.rewardDoubled ? 2 : 1;
+  const reward = def.reward
+    .map((d) => `${RESOURCE_EMOJI[d.resource]}${d.amount > 0 ? "+" : ""}${d.amount * times}`)
+    .join(" ");
+  return `✅${card} ${reward}`;
+}
+
 function EventCard({ state, inst, fold, dispatch }: { state: ZhState; inst: EventInst; fold: Fold; dispatch: Dispatch }) {
   const def = EVENTS[inst.id];
   const isOpp = def.kind === "opportunity";
+  const resolvedStory = inst.resolved ? eventResolvedStory(inst.id, inst.resolvedBy) : undefined;
   const kindTone = { opportunity: styles.kindOpportunity, crisis: styles.kindCrisis, envy: styles.kindEnvy }[def.kind];
   const cardTone = { opportunity: styles.cardOpportunity, crisis: styles.cardCrisis, envy: styles.cardEnvy }[def.kind];
   const kindTag = (
@@ -383,9 +398,9 @@ function EventCard({ state, inst, fold, dispatch }: { state: ZhState; inst: Even
           {inst.resolved ? " 🆗" : ""}
           {kindTag}
         </div>
-        <div className={styles.compactSummary}>
+        <div className={styles.compactSummary} title={inst.resolved ? eventResolvedDetail(inst, compactEffect) : undefined}>
           {inst.resolved
-            ? `${isOpp ? "✅ 已把握" : "🛡️ 已化解"} · ${eventResolvedDetail(inst, compactEffect)}`
+            ? eventResolvedCompact(inst)
             : isOpp
               ? `处理：${compactEffect(def.resolvedText)}`
               : `未处理：${compactEffect(def.unresolvedText)}`}
@@ -408,6 +423,7 @@ function EventCard({ state, inst, fold, dispatch }: { state: ZhState; inst: Even
           icon={isOpp ? "✅" : "🛡️"}
           label={isOpp ? "已把握" : "已化解"}
           detail={eventResolvedDetail(inst, expandedEffect)}
+          story={resolvedStory}
         />
       ) : null}
       <p className={styles.flavor}>{def.flavor}</p>
@@ -448,7 +464,7 @@ function StoryCard({ state, dispatch, fold }: { state: ZhState; dispatch: Dispat
         </div>
         <div className={styles.compactSummary}>
           {chosenOption
-            ? `📝 已抉择「${chosenOption.name}」：${compactEffect(chosenOption.text)}`
+            ? `📝 ${chosenOption.card ? CARDS[chosenOption.card].emoji : chosenOption.name} ${compactEffect(chosenOption.text)}`
             : `选 1 个基础选项或从手牌打出对应牌（不处理按默认「${defaultOption.name}」）`}
         </div>
       </FoldBox>
@@ -471,6 +487,7 @@ function StoryCard({ state, dispatch, fold }: { state: ZhState; dispatch: Dispat
           icon="📝"
           label="已抉择"
           detail={`${chosenOption.card ? `打出【${CARDS[chosenOption.card].name}】：` : "选择"}「${chosenOption.name}」：${expandedEffect(chosenOption.text)}。`}
+          story={chosenOption.epilogue ? `${chosenOption.story}${chosenOption.epilogue}` : chosenOption.story}
         />
       ) : null}
       <p className={styles.flavor}>{story.flavor}</p>

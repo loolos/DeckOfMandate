@@ -276,6 +276,16 @@ function setEvent(s: ZhState, kind: EventKind, id: EventId): void {
   log(s, `${EVENT_KIND_LABEL[kind]}事件：【${EVENTS[id].name}】`, kind === "envy" ? "bad" : "info");
 }
 
+/** 剧情文本 for how `cardId` resolved event `id`. */
+export function eventResolvedStory(id: EventId, cardId: CardId | undefined): string | undefined {
+  return cardId ? EVENTS[id].resolvedStory[cardId] : undefined;
+}
+
+function logResolvedStory(s: ZhState, id: EventId, cardId: CardId): void {
+  const text = eventResolvedStory(id, cardId);
+  if (text) log(s, text);
+}
+
 /**
  * Resolves one played card (design.md §4 order): base effect (or story option), opportunity
  * reward, crisis, linkage, extra effect. Each step is defeat-checked.
@@ -323,6 +333,7 @@ function resolvePlay(
     opp.resolved = true;
     opp.resolvedBy = card.id;
     log(s, `解决机会事件【${EVENTS[opp.id].name}】`, "good");
+    logResolvedStory(s, opp.id, card.id);
     applyDeltas(s, EVENTS[opp.id].reward, EVENTS[opp.id].name);
   }
 
@@ -332,6 +343,7 @@ function resolvePlay(
     ev.resolved = true;
     ev.resolvedBy = card.id;
     log(s, `解决${EVENT_KIND_LABEL[EVENTS[ev.id].kind]}事件【${EVENTS[ev.id].name}】`, "good");
+    logResolvedStory(s, ev.id, card.id);
   }
 
   // 4. linkage

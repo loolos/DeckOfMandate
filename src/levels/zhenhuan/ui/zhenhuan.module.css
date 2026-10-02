@@ -237,9 +237,11 @@
   outline: none;
 }
 
+/* Selected / hovered: a thicker border in the same color (gold is reserved for "matches"). */
 .pile:hover,
 .pile:focus-visible {
-  border-color: var(--zh-gold);
+  border-width: 2px;
+  padding: calc(0.45rem - 1px) calc(0.75rem - 1px);
 }
 
 .popover {
@@ -295,15 +297,18 @@
   padding: 0.35rem 0.6rem;
   background: var(--zh-panel);
   border: 1px solid var(--zh-border);
+  --zh-edge: var(--zh-border);
   font-size: 0.9rem;
 }
 
 .statusNegative {
   border-color: var(--zh-red);
+  --zh-edge: var(--zh-red);
 }
 
 .statusPositive {
   border-color: var(--zh-green);
+  --zh-edge: var(--zh-green);
 }
 
 .tag {
@@ -355,6 +360,7 @@
   position: relative;
   background: var(--zh-panel);
   border: 1px solid var(--zh-border);
+  --zh-edge: var(--zh-border);
   border-radius: 12px;
   padding: 0.7rem 0.8rem;
   display: flex;
@@ -431,6 +437,7 @@
 
 .cardResolved {
   border-color: var(--zh-green);
+  --zh-edge: var(--zh-green);
 }
 
 .cardResolved .rule,
@@ -445,6 +452,14 @@
   color: var(--zh-muted);
   font-style: italic;
   margin: 0;
+}
+
+/* 剧情文本 of how a resolved event was handled, as small print inside the resolved banner. */
+.resolvedStory {
+  flex-basis: 100%;
+  font-size: 0.76rem;
+  color: var(--zh-muted);
+  line-height: 1.5;
 }
 
 .rule {
@@ -538,6 +553,7 @@
 .handCard {
   background: linear-gradient(180deg, var(--zh-panel-2), var(--zh-panel));
   border: 1px solid var(--zh-border);
+  --zh-edge: var(--zh-border);
   border-radius: 12px;
   padding: 0.7rem 0.8rem;
   display: flex;
@@ -547,11 +563,13 @@
 
 .handCardMatch {
   border-color: var(--zh-gold);
+  --zh-edge: var(--zh-gold);
   box-shadow: 0 0 0 1px rgba(217, 178, 106, 0.35);
 }
 
 .handCardPending {
   border-color: var(--zh-story);
+  --zh-edge: var(--zh-story);
   box-shadow: 0 0 0 2px rgba(196, 154, 217, 0.45);
 }
 
@@ -674,9 +692,10 @@
   padding: 0.45rem 0.6rem;
 }
 
+/* Selected / hovered: a 1px ring in the element's own border color reads as a thicker border. */
 .compactCard:hover,
 .compactCard:focus-visible {
-  border-color: var(--zh-gold);
+  box-shadow: 0 0 0 1px var(--zh-edge);
   outline: none;
 }
 
@@ -788,7 +807,7 @@
 .status:hover,
 .status:focus-visible {
   outline: none;
-  box-shadow: 0 0 0 1px var(--zh-gold);
+  box-shadow: 0 0 0 1px var(--zh-edge);
 }
 
 .statusExpanded {
@@ -809,7 +828,7 @@
 
 .compact .expandedCard:focus-visible {
   outline: none;
-  border-color: var(--zh-gold);
+  box-shadow: 0 0 0 1px var(--zh-edge);
 }
 
 .playableByDouble {
