@@ -222,7 +222,7 @@ export const STATUSES: Record<StatusId, StatusDef> = {
   liuyanChanshen: {
     id: "liuyanChanshen",
     name: "流言缠身",
-    emoji: "🌫️",
+    emoji: "🗯️",
     tag: "negative",
     duration: 3,
     drawModifier: -1,
