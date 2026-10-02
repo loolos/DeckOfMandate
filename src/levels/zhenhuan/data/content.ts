@@ -34,7 +34,7 @@ export const RANKS: Record<RankId, RankDef> = {
 
 // ---------------------------------------------------------------- events
 
-export type OpportunityId = "huangdiZhaojian" | "taihouChuixun" | "wenTaiyiQingmai";
+export type OpportunityId = "huanghouShangshi" | "taihouChuixun" | "wenTaiyiQingmai";
 export type CrisisId = "gongzhongLiuyan" | "neiwufuDiaonan" | "liyiShiwu";
 /** 嫉妒事件: an extra third event while 圣宠 is high (design.md §7.4). */
 export type EnvyId = "yuDayingZhengchong" | "shichongErjiao" | "anzhongXiaban";
@@ -60,12 +60,12 @@ export type EventDef = {
 };
 
 export const EVENTS: Record<EventId, EventDef> = {
-  huangdiZhaojian: {
-    id: "huangdiZhaojian",
+  huanghouShangshi: {
+    id: "huanghouShangshi",
     kind: "opportunity",
-    name: "皇帝召见",
-    emoji: "🐉",
-    flavor: "养心殿传来口谕，皇上要见你。",
+    name: "皇后赏识",
+    emoji: "🏮",
+    flavor: "景仁宫晨省时，皇后娘娘夸你规矩好，说要在皇上面前替你美言几句。",
     reward: [{ resource: "shengchong", amount: 2 }],
     penalty: [],
     resolvedText: "圣宠 +2",
@@ -167,8 +167,8 @@ export const EVENTS: Record<EventId, EventDef> = {
 };
 
 export const OPPORTUNITY_POOL: readonly OpportunityId[] = [
-  "huangdiZhaojian",
-  "huangdiZhaojian",
+  "huanghouShangshi",
+  "huanghouShangshi",
   "taihouChuixun",
   "taihouChuixun",
   "wenTaiyiQingmai",
@@ -294,7 +294,7 @@ export const CARDS: Record<CardId, CardDef> = {
     flavor: "衣饰妆容一丝不苟。",
     base: [{ resource: "shengchong", amount: 1 }],
     baseDraw: 0,
-    matches: ["huangdiZhaojian", "liyiShiwu", "yuDayingZhengchong"],
+    matches: ["huanghouShangshi", "liyiShiwu", "yuDayingZhengchong"],
     rulesText: ["圣宠 +1。"],
   },
   jinyanShenxing: {
@@ -304,7 +304,7 @@ export const CARDS: Record<CardId, CardDef> = {
     flavor: "话到嘴边留三分。",
     base: [{ resource: "qingyu", amount: 1 }],
     baseDraw: 0,
-    matches: ["huangdiZhaojian", "taihouChuixun", "gongzhongLiuyan", "shichongErjiao"],
+    matches: ["huanghouShangshi", "taihouChuixun", "gongzhongLiuyan", "shichongErjiao"],
     rulesText: ["清誉 +1。"],
   },
   wenTaiyiZhenzhi: {
@@ -368,7 +368,7 @@ export const STARTING_DECK: readonly CardId[] = [
 /** Turn 1 is fixed (design.md §3.5). */
 export const OPENING = {
   hand: ["shoulongRenxin", "yirongZhengsu", "jingguanQibian"] as readonly CardId[],
-  opportunity: "huangdiZhaojian" as OpportunityId,
+  opportunity: "huanghouShangshi" as OpportunityId,
   crisis: "liyiShiwu" as CrisisId,
 };
 
