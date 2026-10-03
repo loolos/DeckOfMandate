@@ -29,6 +29,8 @@ import {
 } from "../data/stage2Content";
 import {
   blockedByChezhou,
+  blockedByStatus,
+  summonUnwell,
   canEndTurn2,
   canPlayCard,
   endingLines,
@@ -284,6 +286,7 @@ function StoryCard({ state, inst, dispatch, fold }: { state: Z2State; inst: Stor
       <p className={styles.flavor}>{def.flavor}</p>
       {def.note ? <p className={styles.rule}>{def.note}</p> : null}
       {blocked ? <p className={styles.endHint}>皇上在翊坤宫，须先化解【欢宜香浓】才能处理召幸。</p> : null}
+      {inst.id === "zhaoxing" && chosen == null && summonUnwell(state) ? <p className={styles.endHint}>抱恙在身，不能侍寝：只能称病避宠或错过。</p> : null}
       {storyBasicOptions2(def).map((option) => (
         <div key={option.id} className={[styles.option, chosen === option.id && styles.optionChosen].filter(Boolean).join(" ")}>
           <span>
@@ -403,6 +406,7 @@ function HandCard({ state, card, dispatch, fold }: { state: Z2State; card: CardI
   const canPlay = canPlayCard(state, card.uid);
   const free = isFreeByLianmei(state, card.uid);
   const blocked = blockedByChezhou(state, card.uid);
+  const unwell = blockedByStatus(state, card.id);
   const responses = storyResponsesFor(state, card.id);
   const events = matchedEvents2(state, card.id);
   const isPending = state.pending?.cardUid === card.uid;
@@ -443,6 +447,7 @@ function HandCard({ state, card, dispatch, fold }: { state: Z2State; card: CardI
     <>
       {free ? <div className={styles.solves}>联袂：可不占出牌名额打出</div> : null}
       {blocked ? <div className={styles.endHint}>被陵容掣肘，不能打出</div> : null}
+      {unwell ? <div className={styles.endHint}>抱恙在身，不能打出</div> : null}
     </>
   );
   const className = [

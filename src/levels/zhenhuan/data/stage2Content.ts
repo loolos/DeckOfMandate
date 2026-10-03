@@ -262,7 +262,9 @@ export type StatusId2 =
   | "wochuangJingyang"
   | "meizhuangZhutuo"
   | "wentaiyiLiufang"
-  | "shenhuaiLongyi";
+  | "shenhuaiLongyi"
+  | "baoyangZaishen"
+  | "bimenSiguo";
 
 export type StatusDef2 = {
   readonly id: StatusId2;
@@ -278,6 +280,10 @@ export type StatusDef2 = {
   readonly drawModifier: number;
   /** Max cards per turn while it applies (卧床静养). */
   readonly playCap?: number;
+  /** Each active instance lowers the play limit by 1 (never below 1); instances stack. */
+  readonly playPenalty?: number;
+  /** Cards that cannot be played while it applies (抱恙在身); also no 侍寝. */
+  readonly blocksCards?: readonly CardId2[];
   readonly effectText: string;
   readonly flavor: string;
   readonly source: string;
@@ -343,6 +349,30 @@ export const STATUSES2: Record<StatusId2, StatusDef2> = {
     flavor: "茶盏底下那张方子，字迹工整，每一味药都写了用量。",
     source: "温太医相助的惜别效果「临行诊治」",
   },
+  baoyangZaishen: {
+    id: "baoyangZaishen",
+    name: "抱恙在身",
+    emoji: "🤒",
+    tag: "negative",
+    duration: 2,
+    drawModifier: 0,
+    blocksCards: ["yirongZhengsu", "jinyanShenxing"],
+    effectText: "未来 2 回合，不能打出【仪容整肃】和【谨言慎行】，也不能侍寝（召幸只能称病避宠或错过）。多个实例分别计时。",
+    flavor: "身子一阵阵发虚，连起身梳妆都勉强。",
+    source: "华妃的暗手、罚跪等",
+  },
+  bimenSiguo: {
+    id: "bimenSiguo",
+    name: "闭门思过",
+    emoji: "🔒",
+    tag: "negative",
+    duration: 2,
+    drawModifier: 0,
+    playPenalty: 1,
+    effectText: "未来 2 回合，每回合出牌上限 -1（最低 1 张）。多个实例分别计时、效果叠加。",
+    flavor: "碎玉轩的宫门半掩，往来的人一日少过一日。",
+    source: "翊坤立威、莺儿伏罪·求情、华妃发难·认罚",
+  },
   shenhuaiLongyi: {
     id: "shenhuaiLongyi",
     name: "身怀龙裔",
@@ -395,6 +425,8 @@ export type EventDef2 = {
   readonly unresolvedHate?: number;
   /** 延烧: unresolved once → stays for one more turn with `burnPenalty`. */
   readonly burnPenalty?: readonly Delta2[];
+  /** Status gained when the 延烧 runs out unresolved. */
+  readonly burnStatus?: StatusId2;
   /** Unresolved 欢宜香浓 voids this turn's 召幸 and blocks it until resolved. */
   readonly blocksSummon?: boolean;
   readonly double?: DoubleRule;
@@ -580,8 +612,9 @@ export const EVENTS2: Record<EventId2, EventDef2> = {
     reward: [],
     penalty: [],
     harmsPregnancy: true,
+    penaltyStatus: "baoyangZaishen",
     resolvedText: "移除事件",
-    unresolvedText: "伤胎：有孕前身子 -1；有孕后直接小产",
+    unresolvedText: "伤胎：有孕前身子 -1；有孕后直接小产；并获得【抱恙在身】",
     resolvedStory: {
       shoulongRenxin: "你打赏了送东西的宫人，顺口一问，才知道这碗冰果是特意给碎玉轩备的。你原封不动地退了回去。",
       jingguanQibian: "你只看了一眼便叫人撤下，说近来脾胃虚寒，碰不得凉的。",
@@ -595,10 +628,11 @@ export const EVENTS2: Record<EventId2, EventDef2> = {
     flavor: "请安时华妃当众挑你的错处，满殿的人都等着看你如何应对。",
     reward: [],
     penalty: [{ resource: "qingyu", amount: -1 }],
+    penaltyStatus: "bimenSiguo",
     unresolvedHate: 1,
     unlockHate: 3,
     resolvedText: "移除事件",
-    unresolvedText: "清誉 -1；激怒：恨意 +1",
+    unresolvedText: "清誉 -1、获得【闭门思过】；激怒：恨意 +1",
     resolvedStory: {
       jinyanShenxing: "你垂首听训，一句不辩，末了只说“娘娘教训得是”。华妃挑不出错，只得作罢。",
     },
@@ -612,10 +646,11 @@ export const EVENTS2: Record<EventId2, EventDef2> = {
     reward: [],
     penalty: [{ resource: "shengchong", amount: -1 }],
     burnPenalty: [{ resource: "shengchong", amount: -2 }],
+    burnStatus: "baoyangZaishen",
     unlockHate: 3,
     evidence: { id: "kekouZhangce", cards: ["shoulongRenxin"] },
     resolvedText: "移除事件（用收拢人心化解可得罪证【克扣账册】）",
-    unresolvedText: "延烧：圣宠 -1，事件留到下回合；下回合仍未化解：圣宠 -2 后离场",
+    unresolvedText: "延烧：圣宠 -1，事件留到下回合；下回合仍未化解：圣宠 -2、获得【抱恙在身】后离场",
     resolvedStory: {
       shoulongRenxin: "你让小允子拿银子去内务府，顺手抄出了一本账册：各宫被克扣的份例，笔笔都记着翊坤宫的吩咐。",
     },
@@ -629,9 +664,10 @@ export const EVENTS2: Record<EventId2, EventDef2> = {
     reward: [],
     penalty: [],
     harmsPregnancy: true,
+    penaltyStatus: "baoyangZaishen",
     unlockHate: 5,
     resolvedText: "移除事件",
-    unresolvedText: "伤胎：有孕前身子 -1；有孕后直接小产",
+    unresolvedText: "伤胎：有孕前身子 -1；有孕后直接小产；并获得【抱恙在身】",
     resolvedStory: {
       wenTaiyiZhenzhi: "温实初验过汤水，脸色一沉：里头加了活血的东西。你命人倒掉，不动声色。",
       shoulongRenxin: "御膳房里收过你赏钱的小太监悄悄递话：今日的汤，别喝。",
@@ -840,6 +876,8 @@ export type StoryOption2 = {
   readonly caoBefriend?: boolean;
   /** 翊坤长跪（有孕）: body loss for this option (before 恨意 / 留方 adjustments). */
   readonly fakuiShenzi?: number;
+  /** Negative status this option adds (blocked by nothing; 温太医相助 can remove it). */
+  readonly status?: StatusId2;
   /** 生分的陵容打出这个卡牌应对时多说的一句风凉话。 */
   readonly distantRemark?: string;
   readonly shuhenjiao?: boolean;
@@ -970,7 +1008,7 @@ export const STORIES2: Record<StoryId2, StoryDef2> = {
     defaultOptionId: "bujiu",
     options: [
       { id: "bujiu", name: "不救", effects: [{ resource: "qingyu", amount: -1 }], text: "清誉 -1", story: "你没有替她说一句话。旁人说你心狠。" },
-      { id: "qiuqing", name: "求情", effects: [{ resource: "shengchong", amount: -1 }], text: "圣宠 -1", story: "你替她求了情，皇上皱眉，说你太过心软。" },
+      { id: "qiuqing", name: "求情", effects: [{ resource: "shengchong", amount: -1 }], status: "bimenSiguo", text: "圣宠 -1；闭门思过", story: "你替她求了情，皇上皱眉，说你太过心软。" },
       {
         id: "yuzhongTanshi",
         name: "狱中探视",
@@ -1069,7 +1107,8 @@ export const STORIES2: Record<StoryId2, StoryDef2> = {
         id: "lingfa",
         name: "领罚",
         effects: [{ resource: "shenzi", amount: -1 }, { resource: "qingyu", amount: -1 }],
-        text: "身子 -1、清誉 -1",
+        status: "baoyangZaishen",
+        text: "身子 -1、清誉 -1；抱恙在身",
         story: "你在烈日下跪了整整两个时辰，回宫时膝上已是一片青紫。",
       },
       {
@@ -1079,7 +1118,8 @@ export const STORIES2: Record<StoryId2, StoryDef2> = {
         effects: [{ resource: "qingyu", amount: -1 }],
         shuhenjiao: true,
         distantRemark: "「跪了这半日，姐姐何苦与华妃硬碰。」",
-        text: "清誉 -1（免去身子 -1）；舒痕胶",
+        status: "baoyangZaishen",
+        text: "清誉 -1（免去身子 -1）；抱恙在身；舒痕胶",
         story: "陵容连夜送来舒痕胶替你敷上，说擦了便不会落疤。",
       },
     ],
@@ -1092,19 +1132,20 @@ export const STORIES2: Record<StoryId2, StoryDef2> = {
     note: "有孕时必定小产（温太医留方也挡不住）；所选的牌决定身子伤得多重。罚跪开始时恨意 ≥ 6，身子再 -1；有温太医留方，身子少扣 1。",
     defaultOptionId: "yingcheng",
     options: [
-      { id: "yingcheng", name: "硬撑到底", effects: [], fakuiShenzi: 3, text: "小产；身子 -3", story: "你咬牙跪到最后，起身时裙下已是一片殷红。" },
-      { id: "jizhaoTaiyi", name: "急召太医", card: "wenTaiyiZhenzhi", effects: [], fakuiShenzi: 1, text: "小产；身子 -1", story: "温实初冒死闯进翊坤宫，孩子终究没能保住，但他保住了你。" },
-      { id: "feibaoHuangshang", name: "宫人飞报皇上", card: "shoulongRenxin", effects: [], fakuiShenzi: 2, text: "小产；身子 -2", story: "小允子拼死跑去养心殿报信，皇上赶到时，一切已经晚了。" },
-      { id: "anzhongLiuxin", name: "暗中留心", card: "jingguanQibian", effects: [], fakuiShenzi: 2, text: "小产；身子 -2", story: "你早有防备，备了参片含在口中，总算撑住了一口气。" },
+      { id: "yingcheng", name: "硬撑到底", effects: [], fakuiShenzi: 3, status: "baoyangZaishen", text: "小产；身子 -3；抱恙在身", story: "你咬牙跪到最后，起身时裙下已是一片殷红。" },
+      { id: "jizhaoTaiyi", name: "急召太医", card: "wenTaiyiZhenzhi", effects: [], fakuiShenzi: 1, status: "baoyangZaishen", text: "小产；身子 -1；抱恙在身", story: "温实初冒死闯进翊坤宫，孩子终究没能保住，但他保住了你。" },
+      { id: "feibaoHuangshang", name: "宫人飞报皇上", card: "shoulongRenxin", effects: [], fakuiShenzi: 2, status: "baoyangZaishen", text: "小产；身子 -2；抱恙在身", story: "小允子拼死跑去养心殿报信，皇上赶到时，一切已经晚了。" },
+      { id: "anzhongLiuxin", name: "暗中留心", card: "jingguanQibian", effects: [], fakuiShenzi: 2, status: "baoyangZaishen", text: "小产；身子 -2；抱恙在身", story: "你早有防备，备了参片含在口中，总算撑住了一口气。" },
       {
         id: "lingrongSongyao",
         name: "陵容送药",
         card: "lingrongXiangzhu",
         effects: [],
         fakuiShenzi: 2,
+        status: "baoyangZaishen",
         shuhenjiao: true,
         distantRemark: "「跪了这半日，姐姐何苦与华妃硬碰。」",
-        text: "小产；身子 -2；舒痕胶",
+        text: "小产；身子 -2；抱恙在身；舒痕胶",
         story: "陵容连夜送来舒痕胶替你敷上，说擦了便不会落疤。",
       },
     ],
@@ -1194,7 +1235,8 @@ export const STORIES2: Record<StoryId2, StoryDef2> = {
           { resource: "shengchong", amount: -3 },
           { resource: "shenzi", amount: -2 },
         ],
-        text: "清誉 -3、圣宠 -3、身子 -2",
+        status: "bimenSiguo",
+        text: "清誉 -3、圣宠 -3、身子 -2；闭门思过",
         story: "你跪在翊坤宫外认罚，华妃当众数落了你半日，又罚你在烈日下抄经。回宫时你已站不稳。",
       },
       {

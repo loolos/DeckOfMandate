@@ -9,6 +9,7 @@ import {
   playLimit2,
   reduce2,
   replay2,
+  storyResponsesFor,
   summonBlocked,
   type EventInst2,
   type Z2Action,
@@ -411,6 +412,54 @@ describe("zhenhuan stage 2 engine", () => {
       const summon = s.stories.some((x) => x.id === "zhaoxing");
       if (!summon) expect(s.huafei.some((e) => e.id === "huanyixiangZhuanchong")).toBe(false);
     }
+  });
+
+  it("闭门思过 stacks: each -1 play, never below 1; 静观其变 still adds", () => {
+    let s = newStage2(22, null);
+    expect(playLimit2(s)).toBe(2);
+    withStatus(s, "bimenSiguo");
+    expect(playLimit2(s)).toBe(1);
+    withStatus(s, "bimenSiguo");
+    expect(playLimit2(s)).toBe(1);
+    s.stories = [];
+    onlyEvents(s, {});
+    const [j] = setHand(s, ["jingguanQibian"]);
+    s = act(s, { type: "playCard", cardUid: j! });
+    expect(playLimit2(s)).toBe(2);
+  });
+
+  it("抱恙在身 blocks 仪容整肃 / 谨言慎行 and 侍寝; 温太医 can remove it", () => {
+    let s = newStage2(23, null);
+    withStatus(s, "baoyangZaishen");
+    onlyEvents(s, {});
+    s.stories = [{ id: "zhaoxing", chosenOptionId: null }];
+    s.relation = 3;
+    const [y, l, w] = setHand(s, ["yirongZhengsu", "lingrongXiangzhu", "wenTaiyiZhenzhi"]);
+    expect(canPlayCard(s, y!)).toBe(false);
+    expect(storyResponsesFor(s, "lingrongXiangzhu")).toHaveLength(0);
+    s = act(s, { type: "playCard", cardUid: w! });
+    expect(s.statuses.some((x) => x.id === "baoyangZaishen")).toBe(false);
+    expect(canPlayCard(s, l!)).toBe(true);
+  });
+
+  it("翊坤立威 unresolved → 闭门思过 (眉庄嘱托 blocks it); 膳食有异 → 抱恙在身 unless 留方 absorbs it", () => {
+    let s = newStage2(24, null);
+    s.stories = [];
+    onlyEvents(s, { huafei: ["yikungongLiGuiju", "shanshiYouyi"] });
+    setHand(s, []);
+    s = act(s, { type: "endTurn" });
+    expect(s.statuses.some((x) => x.id === "bimenSiguo")).toBe(true);
+    expect(s.statuses.some((x) => x.id === "baoyangZaishen")).toBe(true);
+
+    let t = newStage2(24, null);
+    t.stories = [];
+    withStatus(t, "meizhuangZhutuo", 1, 0);
+    withStatus(t, "wentaiyiLiufang", 1, 0);
+    onlyEvents(t, { huafei: ["yikungongLiGuiju", "shanshiYouyi"] });
+    setHand(t, []);
+    t = act(t, { type: "endTurn" });
+    expect(t.statuses.some((x) => x.id === "bimenSiguo")).toBe(false);
+    expect(t.statuses.some((x) => x.id === "baoyangZaishen")).toBe(false);
   });
 
   it("ending lines cover the pregnancy outcome", () => {

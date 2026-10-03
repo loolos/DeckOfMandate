@@ -182,11 +182,24 @@ export function hasStatus(s: Z2State, id: StatusId2): boolean {
 
 export function playLimit2(s: Z2State): number {
   let base = RANKS[s.turnRank].plays;
+  let penalty = 0;
   for (const st of activeStatuses(s)) {
-    const capN = STATUSES2[st.id].playCap;
-    if (capN != null) base = Math.min(base, capN);
+    const def = STATUSES2[st.id];
+    if (def.playCap != null) base = Math.min(base, def.playCap);
+    penalty += def.playPenalty ?? 0;
   }
-  return base + s.extraPlays;
+  // 闭门思过 never takes the limit below 1; 静观其变's +1 still applies on top
+  return Math.max(1, base - penalty) + s.extraPlays;
+}
+
+/** 抱恙在身: a status in effect this turn forbids this card. */
+export function blockedByStatus(s: Z2State, cardId: CardId2): boolean {
+  return activeStatuses(s).some((st) => STATUSES2[st.id].blocksCards?.includes(cardId));
+}
+
+/** 抱恙在身 in effect: no 侍寝 (召幸 can only be declined or missed). */
+export function summonUnwell(s: Z2State): boolean {
+  return activeStatuses(s).some((st) => STATUSES2[st.id].blocksCards != null);
 }
 
 export function playsLeft2(s: Z2State): number {
@@ -239,6 +252,7 @@ export function storyResponsesFor(s: Z2State, cardId: CardId2): { story: StoryIn
   const out: { story: StoryInst2; option: StoryOption2 }[] = [];
   for (const st of openStories(s)) {
     if (storyLocked(s, st)) continue;
+    if (st.id === "zhaoxing" && summonUnwell(s)) continue;
     const option = STORIES2[st.id].options.find((o) => o.card === cardId);
     if (option) out.push({ story: st, option });
   }
@@ -295,6 +309,7 @@ export function canPlayCard(s: Z2State, cardUid: string): boolean {
   if (s.outcome !== "playing" || s.pending) return false;
   if (!s.hand.some((c) => c.uid === cardUid)) return false;
   if (blockedByChezhou(s, cardUid)) return false;
+  if (blockedByStatus(s, s.hand.find((c) => c.uid === cardUid)!.id)) return false;
   return playsLeft2(s) > 0 || isFreeByLianmei(s, cardUid);
 }
 
@@ -475,13 +490,14 @@ function becomePregnant(s: Z2State, source: string): void {
 }
 
 /** 伤胎: 留方 absorbs it; otherwise 身子 -1, or a miscarriage when pregnant. */
-function harmPregnancy(s: Z2State, source: string): void {
+function harmPregnancy(s: Z2State, source: string): boolean /* absorbed by 留方 */ {
   if (removeStatusById(s, "wentaiyiLiufang")) {
     log(s, `【温太医留方】抵消了「${source}」的伤胎后果。`, "good");
-    return;
+    return true;
   }
   if (s.pregnant) miscarry(s, 3, source);
   else applyDelta2(s, { resource: "shenzi", amount: -1 }, `${source}（伤胎）`);
+  return false;
 }
 
 function shuhenjiao(s: Z2State, tier: LingrongTier): void {
@@ -692,6 +708,7 @@ function applyStoryOption(s: Z2State, inst: StoryInst2, option: StoryOption2, so
     s.relation = option.setRelation;
     log(s, `陵容对你的情分：${TIER_LABEL[lingrongTier(s.relation)]}。`);
   }
+  if (option.status) addStatus2(s, option.status);
   relationDelta += option.relation ?? 0;
   if (option.evidence) gainEvidence(s, option.evidence);
   if (option.exit) {
@@ -944,6 +961,7 @@ function settleHuafei(s: Z2State, ev: EventInst2): boolean /* stays */ {
   if (def.burnPenalty) {
     if (ev.burning) {
       applyDeltas2(s, def.burnPenalty, `${def.name}（延烧）`);
+      if (def.burnStatus && alive(s)) addStatus2(s, def.burnStatus);
       return false;
     }
     applyDeltas2(s, def.penalty, def.name);
@@ -952,7 +970,8 @@ function settleHuafei(s: Z2State, ev: EventInst2): boolean /* stays */ {
     return true;
   }
   applyDeltas2(s, def.penalty, def.name);
-  if (def.harmsPregnancy && alive(s)) harmPregnancy(s, def.name);
+  const absorbed = def.harmsPregnancy && alive(s) ? harmPregnancy(s, def.name) : false;
+  if (def.penaltyStatus && alive(s) && !absorbed) addStatus2(s, def.penaltyStatus);
   if (def.unresolvedHate && alive(s)) applyDelta2(s, { resource: "hate", amount: def.unresolvedHate }, `${def.name}（${def.unresolvedHate > 0 ? "激怒" : "出气"}）`);
   return false;
 }
@@ -986,11 +1005,12 @@ function endTurn2(s: Z2State): void {
     const def = EVENTS2[s.crisis.id];
     log(s, `危机事件【${def.name}】未化解：${def.unresolvedText}。`, "bad");
     applyDeltas2(s, def.penalty, def.name);
-    if (def.penaltyStatus && alive(s)) {
+    // 留方 absorbs the whole 伤胎 consequence, 抱恙在身 included
+    const absorbed = def.harmsPregnancy && alive(s) ? harmPregnancy(s, def.name) : false;
+    if (def.penaltyStatus && alive(s) && !absorbed) {
       addStatus2(s, def.penaltyStatus);
       if (s.crisis.aggravated && alive(s)) addStatus2(s, def.penaltyStatus);
     }
-    if (def.harmsPregnancy && alive(s)) harmPregnancy(s, def.name);
   }
   const staying: EventInst2[] = [];
   for (const ev of s.huafei) {
