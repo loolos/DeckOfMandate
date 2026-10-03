@@ -442,7 +442,7 @@ describe("zhenhuan stage 2 engine", () => {
     expect(canPlayCard(s, l!)).toBe(true);
   });
 
-  it("翊坤立威 unresolved → 闭门思过 (眉庄嘱托 blocks it); 膳食有异 → 抱恙在身 unless 留方 absorbs it", () => {
+  it("翊坤立威 unresolved → 闭门思过 (眉庄嘱托 blocks it); 膳食有异 → 抱恙在身 even when 留方 absorbs the 伤胎", () => {
     let s = newStage2(24, null);
     s.stories = [];
     onlyEvents(s, { huafei: ["yikungongLiGuiju", "shanshiYouyi"] });
@@ -459,7 +459,8 @@ describe("zhenhuan stage 2 engine", () => {
     setHand(t, []);
     t = act(t, { type: "endTurn" });
     expect(t.statuses.some((x) => x.id === "bimenSiguo")).toBe(false);
-    expect(t.statuses.some((x) => x.id === "baoyangZaishen")).toBe(false);
+    expect(t.statuses.some((x) => x.id === "wentaiyiLiufang")).toBe(false);
+    expect(t.statuses.some((x) => x.id === "baoyangZaishen")).toBe(true);
   });
 
   it("ending lines cover the pregnancy outcome", () => {

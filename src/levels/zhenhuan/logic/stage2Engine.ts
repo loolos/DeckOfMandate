@@ -970,8 +970,8 @@ function settleHuafei(s: Z2State, ev: EventInst2): boolean /* stays */ {
     return true;
   }
   applyDeltas2(s, def.penalty, def.name);
-  const absorbed = def.harmsPregnancy && alive(s) ? harmPregnancy(s, def.name) : false;
-  if (def.penaltyStatus && alive(s) && !absorbed) addStatus2(s, def.penaltyStatus);
+  if (def.harmsPregnancy && alive(s)) harmPregnancy(s, def.name);
+  if (def.penaltyStatus && alive(s)) addStatus2(s, def.penaltyStatus);
   if (def.unresolvedHate && alive(s)) applyDelta2(s, { resource: "hate", amount: def.unresolvedHate }, `${def.name}（${def.unresolvedHate > 0 ? "激怒" : "出气"}）`);
   return false;
 }
@@ -1005,9 +1005,9 @@ function endTurn2(s: Z2State): void {
     const def = EVENTS2[s.crisis.id];
     log(s, `危机事件【${def.name}】未化解：${def.unresolvedText}。`, "bad");
     applyDeltas2(s, def.penalty, def.name);
-    // 留方 absorbs the whole 伤胎 consequence, 抱恙在身 included
-    const absorbed = def.harmsPregnancy && alive(s) ? harmPregnancy(s, def.name) : false;
-    if (def.penaltyStatus && alive(s) && !absorbed) {
+    // 留方 only absorbs the 伤胎 itself; 抱恙在身 still comes
+    if (def.harmsPregnancy && alive(s)) harmPregnancy(s, def.name);
+    if (def.penaltyStatus && alive(s)) {
       addStatus2(s, def.penaltyStatus);
       if (s.crisis.aggravated && alive(s)) addStatus2(s, def.penaltyStatus);
     }
