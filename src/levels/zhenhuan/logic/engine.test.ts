@@ -79,7 +79,7 @@ describe("zhenhuan engine", () => {
   it("one card resolves both matching events for one play", () => {
     let s = newGame(1);
     s = act(s, { type: "playCard", cardUid: uidOf(s, "yirongZhengsu") });
-    expect(s.shengchong).toBe(5); // 2 + base 1 + 皇后赏识 2
+    expect(s.shengchong).toBe(4); // 2 + base 1 + 皇后赏识 1
     expect(s.opportunity?.resolved).toBe(true);
     expect(s.crisis?.resolved).toBe(true);
     expect(s.playsUsed).toBe(1);
@@ -196,7 +196,7 @@ describe("zhenhuan engine", () => {
     s.opportunity = { uid: "y", id: "taihouChuixun", resolved: false };
     const mz = giveCard(s, "meizhuangXiangzhu");
     s = act(s, { type: "playCard", cardUid: mz });
-    expect(s.qingyu).toBe(7); // 2 + 1 base + 2 reward + 2 doubled
+    expect(s.qingyu).toBe(5); // 2 + 1 base + 1 reward + 1 doubled
     expect(s.opportunity?.resolvedBy).toBe("meizhuangXiangzhu");
     expect(s.opportunity?.rewardDoubled).toBe(true);
     expect(s.shengchong).toBe(2); // 眉庄相助 base is 清誉 only;
@@ -394,6 +394,7 @@ describe("zhenhuan engine", () => {
     s.qingyu = 5;
     s.shengchong = 5;
     if (s.crisis) s.crisis.resolved = true;
+    if (s.envy) s.envy.resolved = true;
     s.opportunity = { uid: "o", id: "huanghouShangshi", resolved: false };
     s = act(s, { type: "playCard", cardUid: giveCard(s, "jinyanShenxing") });
     expect(s.trial.keyCardPlayed).toBe(true);
