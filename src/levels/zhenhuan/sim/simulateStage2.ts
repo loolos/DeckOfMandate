@@ -52,7 +52,7 @@ function score(s: Z2State): number {
   if (s.relation != null) h += s.relation;
   if (s.rank !== "changzai") h += 100;
   if (s.trial.active) {
-    h += 2 * Math.min(s.shengchong, 9) + 2 * Math.min(s.qingyu, 9);
+    h += 2 * Math.min(s.shengchong, 9) + 2 * Math.min(s.qingyu, 9) + (s.trial.summoned ? 15 : 0);
   }
   if (s.pregnant) h += 5;
   if (s.caoOwed) h += 8;

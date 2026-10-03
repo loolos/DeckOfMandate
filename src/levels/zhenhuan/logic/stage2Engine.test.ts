@@ -364,30 +364,38 @@ describe("zhenhuan stage 2 engine", () => {
     expect(s.hate).toBe(6);
   });
 
-  it("贵人考验 (第 5—9 回合) needs 圣宠 ≥ 9 and 清誉 ≥ 9; 召幸 only comes after 晋为贵人", () => {
+  it("贵人考验 (第 5—9 回合) needs 圣宠 ≥ 9, 清誉 ≥ 9 and a 侍寝 during the trial", () => {
     let s = advanceTo(newStage2(19, null), 5);
     expect(s.trial.active).toBe(true);
-    expect(s.stories.some((x) => x.id === "zhaoxing")).toBe(false);
-    s.qingyu = 9;
-    s.shengchong = 8;
-    s.stories = [];
-    onlyEvents(s, {});
-    s = act(s, { type: "endTurn" });
-    expect(s.rank).toBe("changzai");
+    s.trial.summoned = false;
     s.qingyu = 9;
     s.shengchong = 9;
     s.stories = [];
     onlyEvents(s, {});
     s = act(s, { type: "endTurn" });
+    expect(s.rank).toBe("changzai"); // no 侍寝 yet
+    s.qingyu = 9;
+    s.shengchong = 9;
+    s.stories = [{ id: "zhaoxing", chosenOptionId: null }];
+    onlyEvents(s, {});
+    const [y] = setHand(s, ["yirongZhengsu"]);
+    s = act(s, { type: "playCard", cardUid: y! });
+    expect(s.trial.summoned).toBe(true);
+    s.shengchong = 9;
+    s = act(s, { type: "endTurn" });
     expect(s.rank).toBe("guiren");
   });
 
-  it("翊坤宫初请安 comes on turn 3; a 常在 never gets 召幸", () => {
+  it("翊坤宫初请安 comes on turn 3; 召幸 only from turn 5 (贵人考验)", () => {
     let s = newStage2(23, null);
+    expect(s.shengchong).toBe(8);
     expect(s.stories.some((x) => x.id === "chuQingan")).toBe(false);
     expect(s.stories.some((x) => x.id === "zhaoxing")).toBe(false);
     s = advanceTo(s, 3);
     expect(s.stories.some((x) => x.id === "chuQingan")).toBe(true);
+    expect(s.stories.some((x) => x.id === "zhaoxing")).toBe(false);
+    s = advanceTo(s, 5);
+    expect(s.stories.some((x) => x.id === "zhaoxing")).toBe(true);
   });
 
   it("第 30 回合末按罪证结算：≤ 2 失败，3–4 险胜，≥ 5 完胜", () => {

@@ -373,7 +373,7 @@ function TrialCard({ state, fold, dispatch }: { state: Z2State; fold: Fold; disp
           {tags}
         </div>
         <div className={styles.compactSummary}>
-          {mark(p.shengchong)} 👑{state.shengchong}/{GUIREN_TRIAL.minShengchong} · {mark(p.qingyu)} 🪷{state.qingyu}/{GUIREN_TRIAL.minQingyu}
+          {mark(p.shengchong)} 👑{state.shengchong}/{GUIREN_TRIAL.minShengchong} · {mark(p.qingyu)} 🪷{state.qingyu}/{GUIREN_TRIAL.minQingyu} · {mark(p.summoned)} 侍寝
         </div>
       </FoldBox>
     );
@@ -396,7 +396,7 @@ function TrialCard({ state, fold, dispatch }: { state: Z2State; fold: Fold; disp
         {mark(p.qingyu)} 🪷清誉 ≥ {GUIREN_TRIAL.minQingyu}（当前 {state.qingyu}）
       </p>
       <p className={styles.rule}>
-        每回合<strong>回合末</strong>判定，两项都满足即晋为贵人（晋为贵人之后才会有召幸）；第 {GUIREN_TRIAL.lastTurn} 回合末仍未满足则失败。
+        每回合<strong>回合末</strong>判定，三项全部满足即晋为贵人；第 {GUIREN_TRIAL.lastTurn} 回合末仍未满足则失败。
       </p>
     </FoldBox>
   );
@@ -728,7 +728,7 @@ export function Stage2Rules() {
         你如今是<strong>常在</strong>。守住 🪷清誉 与 👑圣宠：任一项降到 0 立即失败。
       </li>
       <li>
-        第 5—9 回合是<strong>贵人考验</strong>：圣宠 ≥ 9、清誉 ≥ 9。第 9 回合末仍未晋为贵人则失败。晋为贵人之后才会有召幸（侍寝）。
+        第 5—9 回合是<strong>贵人考验</strong>：圣宠 ≥ 9、清誉 ≥ 9，且考验期间侍寝成功过。第 9 回合末仍未晋为贵人则失败。召幸（侍寝）从考验开始后才会出现。
       </li>
       <li>
         🔥<strong>华妃恨意</strong>越高，华妃事件越多越狠。侍寝、晋封、有孕都会让她更恨你；失宠、出气、小产会让她消气。恨意到 10 会触发【华妃发难】。
