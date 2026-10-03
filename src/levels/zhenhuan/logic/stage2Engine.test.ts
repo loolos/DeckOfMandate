@@ -345,6 +345,22 @@ describe("zhenhuan stage 2 engine", () => {
     expect(has(s)).toBe(true);
   });
 
+  it("no 召幸 on the 罚跪 turn (17)", () => {
+    const s = newStage2(19, null);
+    s.rank = "guiren";
+    s.shengchong = 14;
+    s.summonLast = null;
+    s.stories = [];
+    s.turn = 16;
+    s.qingyu = 10;
+    s.crisis = null;
+    s.huafei = [];
+    const t = act(s, { type: "endTurn" });
+    expect(t.turn).toBe(17);
+    expect(t.stories.some((x) => x.id === "zhaoxing")).toBe(false);
+    expect(t.stories.some((x) => x.id === "fakuiPlain")).toBe(true);
+  });
+
   it("ending lines cover the pregnancy outcome", () => {
     const s = newStage2(16, null);
     expect(endingLines(s).some((l) => l.includes("始终没有动静"))).toBe(true);
