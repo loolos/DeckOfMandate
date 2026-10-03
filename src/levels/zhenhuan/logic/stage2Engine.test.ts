@@ -114,8 +114,24 @@ describe("zhenhuan stage 2 engine", () => {
     const all = [...s.drawPile, ...s.hand, ...s.discard].filter((c) => c.id === "lingrongXiangzhu");
     expect(all).toHaveLength(3);
     expect(s.turn).toBe(3);
-    s = act(s, { type: "chooseStory", storyId: "chuQingan", optionId: "chuyanDingzhuang" });
+    expect(reduce2(s, { type: "chooseStory", storyId: "chuQingan", optionId: "chuyanDingzhuang" })).toBe(s); // card-only
+    const q = s.qingyu;
+    onlyEvents(s, {});
+    s.stories = s.stories.filter((x) => x.id === "chuQingan");
+    const [m] = setHand(s, ["meizhuangXiangzhu"]);
+    s = act(s, { type: "playCard", cardUid: m! });
     expect(s.hate).toBe(3);
+    expect(s.qingyu).toBeGreaterThanOrEqual(q + 1);
+    let t = newStage2(2, null);
+    t.turn = 3;
+    t.stories = [{ id: "chuQingan", chosenOptionId: null }];
+    onlyEvents(t, {});
+    const [j] = setHand(t, ["jinyanShenxing"]);
+    t = act(t, { type: "playCard", cardUid: j! });
+    expect(t.hate).toBe(1);
+    t.stories = [{ id: "chuQingan", chosenOptionId: null }];
+    t = act(t, { type: "chooseStory", storyId: "chuQingan", optionId: "bubeiBukang" });
+    expect(t.hate).toBe(2);
   });
 
   it("联袂: one neighbour of a 亲厚 陵容 is played free, once per 陵容", () => {
