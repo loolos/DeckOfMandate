@@ -10,13 +10,10 @@ import {
   GUIREN_TRIAL,
   HATE,
   HUAFEI_EVENTS,
-  LINGRONG,
   LINGRONG_EVENT,
-  LINGRONG_SUMMON,
   RANKS,
   SHENZI,
   LINGRONG_PROMOTION_TEXT,
-  SHUHENJIAO_HARM_CHANCE,
   STAGE2,
   STATUSES2,
   STORIES2,
@@ -146,7 +143,6 @@ function resolvedDetail(inst: EventInst2): string {
 function EventCard({ state, inst, fold, dispatch }: { state: Z2State; inst: EventInst2; fold: Fold; dispatch: Dispatch }) {
   const def = EVENTS2[inst.id];
   const isOpp = def.kind === "opportunity";
-  const tier = tierOf(state);
   const handIds = new Set(inst.resolved ? [] : state.hand.map((c) => c.id));
   const className = [styles.card, CARD_TONE[def.kind], inst.resolved && styles.cardResolved].filter(Boolean).join(" ");
   const tags = (
@@ -224,29 +220,10 @@ function EventCard({ state, inst, fold, dispatch }: { state: Z2State; inst: Even
           </span>
         ))}
       </p>
-      {lingrongTable && tier ? (
-        <div className={styles.rule}>
-          <span className={styles.ruleLabel}>🎶 陵容相助（当前 {TIER_EMOJI[tier]}{TIER_LABEL[tier]}）：</span>
-          {(["close", "distant", "resentful"] as const).map((t) => {
-            const o = lingrongTable[t];
-            const summary = [
-              o.resolves ? "解决" : "失效",
-              ...(o.effects ?? []).map((d) => `${d.resource === "qingyu" ? "清誉" : d.resource === "shengchong" ? "圣宠" : d.resource === "shenzi" ? "身子" : "恨意"} ${d.amount > 0 ? "+" : ""}${d.amount}`),
-              o.relation ? `关系 +${o.relation}` : "",
-              o.evidence ? "得罪证" : "",
-              o.extraDraw ? `抽 ${o.extraDraw} 张牌` : "",
-              o.aggravate ? "流言缠身 ×2" : "",
-              o.shuhenjiao ? `🧴舒痕胶（有害 ${SHUHENJIAO_HARM_CHANCE[t] * 100}%${t === "close" ? "，无害时圣宠 +1" : ""}）` : "",
-            ]
-              .filter(Boolean)
-              .join("、");
-            return (
-              <p key={t} className={t === tier ? styles.solves : styles.muted}>
-                {TIER_EMOJI[t]} {TIER_LABEL[t]}：{expandedEffect2(summary)}
-              </p>
-            );
-          })}
-        </div>
+      {lingrongTable ? (
+        <p className={styles.rule}>
+          🎶 也可用【陵容相助】解决，效果视你与陵容的情分而定{Object.values(lingrongTable).some((o) => o.shuhenjiao) ? "；她会送来🧴舒痕胶" : ""}。
+        </p>
       ) : null}
     </FoldBox>
   );
@@ -329,12 +306,7 @@ function StoryCard({ state, inst, dispatch, fold }: { state: Z2State; inst: Stor
       ) : null}
       {storyCardResponses2(def).map((option) => {
         const inHand = state.hand.some((c) => c.id === option.card);
-        const lingrongNote =
-          option.card === "lingrongXiangzhu" && tier
-            ? inst.id === "zhaoxing"
-              ? `（当前${TIER_LABEL[tier]}：${LINGRONG_SUMMON[tier].result === "success" ? "侍寝成功" : LINGRONG_SUMMON[tier].result === "stolen" ? "陵容夺功，关系 +1" : "召幸被截走，圣宠 -1，关系 +1"}）`
-              : `（当前${TIER_LABEL[tier]}：舒痕胶有害 ${SHUHENJIAO_HARM_CHANCE[tier] * 100}%）`
-            : "";
+        const lingrongNote = option.card === "lingrongXiangzhu" && tier ? `（当前情分：${TIER_EMOJI[tier]}${TIER_LABEL[tier]}）` : "";
         return (
           <p key={option.id} className={[styles.rule, chosen === option.id && styles.optionChosen].filter(Boolean).join(" ")}>
             <span className={[styles.matchChip, inHand && !locked && styles.matchChipInHand].filter(Boolean).join(" ")}>
@@ -438,6 +410,12 @@ function HandCard({ state, card, dispatch, fold }: { state: Z2State; card: CardI
   };
   const tags = (
     <span className={styles.tagGroup}>
+      {isLingrong && tier ? (
+        <span className={styles.muted}>
+          {TIER_EMOJI[tier]}
+          {TIER_LABEL[tier]}
+        </span>
+      ) : null}
       {isLingrong && tier === "close" ? (
         <Tag tag="lianmei" tone={styles.kindOpportunity} dispatch={dispatch} dim={!lianmeiLit(state, card)}>
           联袂
@@ -504,13 +482,7 @@ function HandCard({ state, card, dispatch, fold }: { state: Z2State; card: CardI
           {expandedEffect2(line)}
         </p>
       ))}
-      {isLingrong && tier ? (
-        <p className={styles.rule}>
-          当前关系 {state.relation}（{TIER_EMOJI[tier]}
-          {TIER_LABEL[tier]}）
-          {tier === "resentful" ? "；没有可解决的事件时打出：圣宠 -1（反噬）" : ""}
-        </p>
-      ) : null}
+      {isLingrong && tier === "resentful" ? <p className={styles.rule}>没有可解决的事件时打出：圣宠 -1（反噬）</p> : null}
       <p className={styles.rule}>
         <span className={styles.ruleLabel}>匹配事件：</span>
         {def.matches.length > 0
@@ -675,7 +647,7 @@ function endTurnHints(state: Z2State): string[] {
   }
   const lingrongInHand = state.hand.filter((c) => c.id === "lingrongXiangzhu").length;
   if (state.relation != null && lingrongInHand > 0) {
-    hints.push("手里的陵容没打出：冷落，关系 -1。");
+    hints.push("手里的陵容没打出：冷落，她会和你生分些。");
     if (tierOf(state) === "distant") hints.push(`依依：${lingrongInHand} 张陵容会留在手里，下回合少抓 ${lingrongInHand} 张。`);
   }
   return hints;
@@ -735,7 +707,7 @@ export function Stage2Rules() {
         🔥<strong>华妃恨意</strong>越高，华妃事件越多越狠。侍寝、晋封、有孕都会让她更恨你；失宠、出气、小产会让她消气。恨意到 10 会触发【华妃发难】。
       </li>
       <li>
-        🎶<strong>陵容相助</strong>的效果取决于关系：亲厚时她身边的牌可以联袂免费打出；生分时会依依留在手里（留几张，下回合就少抓几张）；怨怼时会掣肘身边的牌。
+        🎶<strong>陵容相助</strong>的效果取决于你与她的情分：亲厚时她身边的牌可以联袂免费打出；生分时会依依留在手里（留几张，下回合就少抓几张）；怨怼时会掣肘身边的牌。
       </li>
       <li>
         🌱<strong>身子</strong>决定能否有孕（贵人以后，侍寝后按身子 ÷ 5 判定）。有孕即晋嫔，但伤胎事件和翊坤长跪都可能让你小产。
@@ -834,19 +806,6 @@ export function Stage2Game({ state, dispatch, runCode, showRules, onShowRules, o
         <Stat label="👑 圣宠" hint="（归 0 即失败）" value={state.shengchong} max={rankCap(state)} danger={state.shengchong <= 1} />
         {state.shenziRevealed ? <Stat label="🌱 身子" value={state.shenzi} max={SHENZI.max} danger={state.shenzi <= 1} /> : null}
         <Stat label={`🔥 华妃恨意 · ${hateTierLabel(state.hate)}`} value={state.hate} max={HATE.max} danger={state.hate >= 9} />
-        {state.relation != null && tier ? (
-          <div className={styles.stat}>
-            <div className={styles.statLabel}>🎶 陵容关系</div>
-            <div className={styles.statValue}>
-              {state.relation > 0 ? "+" : ""}
-              {state.relation}（{TIER_EMOJI[tier]}
-              {TIER_LABEL[tier]}）
-            </div>
-            <div className={styles.meter}>
-              <div className={styles.meterFill} style={{ width: `${((state.relation - LINGRONG.min) / (LINGRONG.max - LINGRONG.min)) * 100}%` }} />
-            </div>
-          </div>
-        ) : null}
       </ScrollRow>
 
       <ScrollRow className={`${styles.bar} ${styles.piles}`}>
@@ -948,11 +907,12 @@ export function Stage2Game({ state, dispatch, runCode, showRules, onShowRules, o
       {notice === "guiren" || notice === "pin" ? (
         <Notice title={`🏮 晋为${RANKS[notice].name}`} onClose={() => setNotice(null)}>
           <p>恭喜小主晋为{RANKS[notice].name}！只是位分越高，华妃的眼睛就盯得越紧。</p>
-          {LINGRONG_PROMOTION_TEXT[notice] && state.relation != null && tier ? (
+          {LINGRONG_PROMOTION_TEXT[notice] && tier ? (
             <p>
               🎶 {LINGRONG_PROMOTION_TEXT[notice]}
               <span className={styles.muted}>
-                （陵容关系 -2，现为 {state.relation}·{TIER_EMOJI[tier]}{TIER_LABEL[tier]}）
+                （陵容与你生分了些，如今情分：{TIER_EMOJI[tier]}
+                {TIER_LABEL[tier]}）
               </span>
             </p>
           ) : null}

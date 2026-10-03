@@ -409,8 +409,9 @@ function changeRelation(s: Z2State, delta: number, source: string): void {
   const next = Math.max(LINGRONG.min, Math.min(LINGRONG.max, before + delta));
   if (next === before) return;
   s.relation = next;
-  const tierChange = lingrongTier(before) !== lingrongTier(next) ? `（${TIER_LABEL[lingrongTier(before)]} → ${TIER_LABEL[lingrongTier(next)]}）` : "";
-  log(s, `${source}：陵容关系 ${delta > 0 ? "+" : ""}${delta} → ${next}${tierChange}`, delta > 0 ? "good" : "bad");
+  // the number stays hidden from the player: only the direction and tier changes are shown
+  const tierChange = lingrongTier(before) !== lingrongTier(next) ? `，情分 ${TIER_LABEL[lingrongTier(before)]} → ${TIER_LABEL[lingrongTier(next)]}` : "";
+  log(s, `${source === "陵容" ? "" : `${source}：`}${delta > 0 ? "陵容待你亲近了些" : "陵容与你生分了些"}${tierChange}`, delta > 0 ? "good" : "bad");
 }
 
 function gainEvidence(s: Z2State, id: EvidenceId): void {
@@ -665,7 +666,7 @@ function applyStoryOption(s: Z2State, inst: StoryInst2, option: StoryOption2, so
   }
   if (option.setRelation != null) {
     s.relation = option.setRelation;
-    log(s, `陵容关系初始为 ${s.relation}（${TIER_LABEL[lingrongTier(s.relation)]}）。`);
+    log(s, `陵容对你的情分：${TIER_LABEL[lingrongTier(s.relation)]}。`);
   }
   relationDelta += option.relation ?? 0;
   if (option.evidence) gainEvidence(s, option.evidence);

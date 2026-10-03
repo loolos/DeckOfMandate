@@ -213,7 +213,7 @@ export const CARDS2: Record<CardId2, CardDef2> = {
       "kekouFenli",
       "huanyixiangZhuanchong",
     ],
-    rulesText: ["本身没有效果；效果取决于与陵容的关系（亲厚 / 生分 / 怨怼）和所解决的事件。"],
+    rulesText: ["本身没有效果；能解决带 🎶 的事件，效果视你与陵容的情分（亲厚 / 生分 / 怨怼）而定。"],
   },
 };
 
@@ -413,7 +413,7 @@ export const EVENTS2: Record<EventId2, EventDef2> = {
   huanghouShangshi: {
     id: "huanghouShangshi",
     kind: "opportunity",
-    name: "皇后赏识",
+    name: "中宫垂青",
     emoji: "🏮",
     flavor: "景仁宫晨省，皇后娘娘当着众人的面问起碎玉轩近来可好。",
     reward: [{ resource: "shengchong", amount: 1 }],
@@ -912,13 +912,13 @@ export const STORIES2: Record<StoryId2, StoryDef2> = {
     note: "你的处理决定陵容最初对你的态度。本回合结束时，3 张【陵容相助】加入弃牌堆（下次洗牌时才会抽到）。",
     defaultOptionId: "bixianBuwen",
     options: [
-      { id: "bixianBuwen", name: "避嫌不问", effects: [], setRelation: -1, text: "陵容关系 -1", story: "宫里人人都在笑她，你没有露面。" },
+      { id: "bixianBuwen", name: "避嫌不问", effects: [], setRelation: -1, text: "陵容：生分（偏冷）", story: "宫里人人都在笑她，你没有露面。" },
       {
         id: "dengmenKuanwei",
         name: "登门宽慰",
         effects: [{ resource: "shengchong", amount: -1 }],
         setRelation: 2,
-        text: "陵容关系 +2；圣宠 -1",
+        text: "陵容：亲厚；圣宠 -1",
         story: "你亲自去看她，陪她说了好一会儿话，却被华妃宫里的人瞧见了。",
       },
       {
@@ -927,7 +927,7 @@ export const STORIES2: Record<StoryId2, StoryDef2> = {
         card: "meizhuangXiangzhu",
         effects: [{ resource: "qingyu", amount: 1 }],
         setRelation: 3,
-        text: "陵容关系 +3；清誉 +1",
+        text: "陵容：亲厚（情分更深）；清誉 +1",
         story: "你和眉庄一起陪她说了半夜的话，三个人的手握在一处。",
       },
       {
@@ -936,7 +936,7 @@ export const STORIES2: Record<StoryId2, StoryDef2> = {
         card: "jinyanShenxing",
         effects: [{ resource: "qingyu", amount: 1 }],
         setRelation: 2,
-        text: "陵容关系 +2；清誉 +1",
+        text: "陵容：亲厚；清誉 +1",
         story: "你细细教她侍寝时的规矩，劝她宽心。",
       },
       {
@@ -945,7 +945,7 @@ export const STORIES2: Record<StoryId2, StoryDef2> = {
         card: "yirongZhengsu",
         effects: [{ resource: "shengchong", amount: 1 }],
         setRelation: 0,
-        text: "陵容关系 0；圣宠 +1",
+        text: "陵容：生分；圣宠 +1",
         story: "你把自己的衣裳首饰送给她。她低头道谢，心里却更自卑了。",
       },
       {
@@ -954,7 +954,7 @@ export const STORIES2: Record<StoryId2, StoryDef2> = {
         card: "shoulongRenxin",
         effects: [],
         setRelation: 1,
-        text: "陵容关系 +1",
+        text: "陵容：生分（偏暖）",
         story: "你托人打点敬事房，让她下次侍寝顺顺当当。",
       },
     ],
@@ -1128,10 +1128,10 @@ export const STORIES2: Record<StoryId2, StoryDef2> = {
   },
   zhaoxing: {
     id: "zhaoxing",
-    name: "翻牌承恩",
+    name: "凤鸾承恩",
     emoji: "🌙",
     flavor: "敬事房的公公来报：今夜皇上翻了你的绿头牌。",
-    note: "打出仪容整肃 / 谨言慎行即侍寝成功（恨意 +1；贵人以后按身子判定喜脉）；打出陵容相助按关系结算。不处理则错过。欢宜香浓在场时须先化解它。",
+    note: "打出仪容整肃 / 谨言慎行即侍寝成功（恨意 +1；贵人以后按身子判定喜脉）；打出陵容相助，效果视情分而定。不处理则错过。欢宜香浓在场时须先化解它。",
     defaultOptionId: "cuoguo",
     options: [
       { id: "cuoguo", name: "错过", hidden: true, effects: [], text: "无效果", story: "这一夜就这样过去了。" },
@@ -1150,7 +1150,7 @@ export const STORIES2: Record<StoryId2, StoryDef2> = {
         name: "陵容相助",
         card: "lingrongXiangzhu",
         effects: [],
-        text: "按关系：亲厚侍寝成功；生分陵容夺功（你不侍寝，关系 +1）；怨怼召幸被截走（圣宠 -1，关系 +1）",
+        text: "效果视你与陵容的情分而定",
         story: "陵容来了碎玉轩。",
       },
     ],
@@ -1249,10 +1249,10 @@ export const TAG2_INFO: Record<TagId2, { label: string; lore: string; rules: str
   lianmei: {
     label: "联袂",
     lore: "姐妹同心，其利断金。",
-    rules: "关系亲厚时，陵容在手牌中，她左边或右边的一张牌可以打出一次而不占出牌名额。用掉后标签变灰；每次抓到陵容时重新亮起。",
+    rules: "情分亲厚时，陵容在手牌中，她左边或右边的一张牌可以打出一次而不占出牌名额。用掉后标签变灰；每次抓到陵容时重新亮起。",
   },
-  chezhou: { label: "掣肘", lore: "处处牵制，暗中作梗。", rules: "关系怨怼时，陵容在手牌中，她左右相邻的牌不能打出（陵容自己不受影响）。打出陵容后解除。" },
-  yiyi: { label: "依依", lore: "依依不舍，缠着姐姐不肯走。", rules: "关系生分时，陵容在回合末不进弃牌堆，留在手牌最左边；留下几张，下回合就少抓几张。" },
+  chezhou: { label: "掣肘", lore: "处处牵制，暗中作梗。", rules: "情分怨怼时，陵容在手牌中，她左右相邻的牌不能打出（陵容自己不受影响）。打出陵容后解除。" },
+  yiyi: { label: "依依", lore: "依依不舍，缠着姐姐不肯走。", rules: "情分生分时，陵容在回合末不进弃牌堆，留在手牌最左边；留下几张，下回合就少抓几张。" },
   xibie: { label: "惜别", lore: "人将远去，情分只够再相助一回。", rules: "打出带惜别标签的牌时按惜别效果结算；打出后，此人的所有牌都将离场。" },
   shuhenjiao: { label: "舒痕胶", lore: "祛疤的药膏，香气清冽。", rules: "陵容送药时判定：亲厚无害并圣宠 +1；生分 30%、怨怼 60% 有害，有害时身子 -1（最多扣到 1）。" },
   harm: { label: "伤胎", lore: "防不胜防的暗手。", rules: "未化解时：有孕前身子 -1；有孕后直接小产。温太医留方可抵消一次。" },
