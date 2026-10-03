@@ -633,6 +633,7 @@ function applyStoryOption(s: Z2State, inst: StoryInst2, option: StoryOption2, so
   }
 
   log(s, option.story);
+  if (option.distantRemark && tier === "distant") log(s, `陵容（生分）：${option.distantRemark}`);
   if (inst.id === "fakuiPregnant") {
     let loss = option.fakuiShenzi ?? 3;
     if (s.fakuiHarsh) loss++;
@@ -1193,8 +1194,9 @@ export function endingLines(s: Z2State): string[] {
   const lines: string[] = [];
   for (const id of s.evidence) lines.push(EVIDENCE[id].ending);
   lines.push(s.rank === "pin" ? "你以嫔位立于六宫之中。" : `你如今是${RANKS[s.rank].name}。`);
-  if (s.pregnant) lines.push("腹中的龙裔安然无恙，阖宫都在等着这个孩子降生。");
-  else if (s.miscarriages > 0) lines.push("那个没能保住的孩子，成了你心里一道过不去的坎。");
+  if (s.miscarriages > 0) lines.push("那个没能保住的孩子，成了你心里一道过不去的坎。");
+  if (s.pregnant) lines.push(s.miscarriages > 0 ? "所幸腹中又有了龙裔，这一回安然无恙，阖宫都在等着这个孩子降生。" : "腹中的龙裔安然无恙，阖宫都在等着这个孩子降生。");
+  else if (s.pregnancies === 0) lines.push("这一路走来，腹中始终没有动静。");
   if (s.xibie) lines.push(s.xibie === "meizhuangXiangzhu" ? "存菊堂的宫门依旧紧闭，眉庄姐姐还在等一个昭雪的日子。" : "疫所的书信隔几日便到，温实初总说一切安好。");
   const tier = tierOf(s);
   if (tier === "close") lines.push("陵容依旧常来碎玉轩，姐妹情分一如往昔。");

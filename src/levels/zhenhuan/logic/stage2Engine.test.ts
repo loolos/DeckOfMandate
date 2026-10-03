@@ -3,6 +3,7 @@ import { CARDS2, EVENTS2, LINGRONG_EVENT, STORIES2, type CardId2, type EventId2,
 import {
   blockedByChezhou,
   canPlayCard,
+  endingLines,
   isFreeByLianmei,
   newStage2,
   playLimit2,
@@ -287,6 +288,32 @@ describe("zhenhuan stage 2 engine", () => {
     expect(s.shenzi).toBe(3);
     expect(s.hate).toBe(4);
     expect(s.statuses.some((x) => x.id === "wentaiyiLiufang")).toBe(false);
+  });
+
+  it("罚跪（未有孕）陵容送药: 免身子 -1；生分时多一句风凉话", () => {
+    let s = newStage2(15, null);
+    s.relation = 0;
+    s.shenzi = 3;
+    s.qingyu = 8;
+    s.fakuiHarsh = false;
+    openStory(s, "fakuiPlain");
+    onlyEvents(s, {});
+    const [l] = setHand(s, ["lingrongXiangzhu"]);
+    s = act(s, { type: "playCard", cardUid: l! });
+    expect(s.qingyu).toBe(7);
+    expect(s.shenzi).toBeGreaterThanOrEqual(2);
+    expect(s.log.some((e) => e.text.includes("何苦与华妃硬碰"))).toBe(true);
+  });
+
+  it("ending lines cover the pregnancy outcome", () => {
+    const s = newStage2(16, null);
+    expect(endingLines(s).some((l) => l.includes("始终没有动静"))).toBe(true);
+    s.pregnancies = 2;
+    s.miscarriages = 1;
+    s.pregnant = true;
+    const lines = endingLines(s);
+    expect(lines.some((l) => l.includes("没能保住"))).toBe(true);
+    expect(lines.some((l) => l.includes("又有了龙裔"))).toBe(true);
   });
 
   it("伤胎 while pregnant → miscarriage; 留方 absorbs it once", () => {

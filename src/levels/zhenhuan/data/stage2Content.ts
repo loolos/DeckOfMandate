@@ -841,8 +841,8 @@ export type StoryOption2 = {
   readonly caoBefriend?: boolean;
   /** 翊坤宫罚跪（有孕）: body loss for this option (before 恨意 / 留方 adjustments). */
   readonly fakuiShenzi?: number;
-  /** 翊坤宫罚跪（未有孕）: skip the 身子 -1. */
-  readonly fakuiSkipShenzi?: boolean;
+  /** 生分的陵容打出这个卡牌应对时多说的一句风凉话。 */
+  readonly distantRemark?: string;
   readonly shuhenjiao?: boolean;
 };
 
@@ -1072,8 +1072,8 @@ export const STORIES2: Record<StoryId2, StoryDef2> = {
         name: "陵容送药",
         card: "lingrongXiangzhu",
         effects: [{ resource: "qingyu", amount: -1 }],
-        fakuiSkipShenzi: true,
         shuhenjiao: true,
+        distantRemark: "「跪了这半日，姐姐何苦与华妃硬碰。」",
         text: "清誉 -1（免去身子 -1）；舒痕胶",
         story: "陵容连夜送来舒痕胶替你敷上，说擦了便不会落疤。",
       },
@@ -1098,6 +1098,7 @@ export const STORIES2: Record<StoryId2, StoryDef2> = {
         effects: [],
         fakuiShenzi: 2,
         shuhenjiao: true,
+        distantRemark: "「跪了这半日，姐姐何苦与华妃硬碰。」",
         text: "小产；身子 -2；舒痕胶",
         story: "陵容连夜送来舒痕胶替你敷上，说擦了便不会落疤。",
       },
