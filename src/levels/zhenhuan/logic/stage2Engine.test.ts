@@ -321,6 +321,17 @@ describe("zhenhuan stage 2 engine", () => {
     expect(s.log.some((e) => e.text.includes("何苦与华妃硬碰"))).toBe(true);
   });
 
+  it("怨怼 陵容 that 失效 still nudges the relation up by 1", () => {
+    let s = newStage2(17, null);
+    s.relation = -3;
+    s.stories = [];
+    onlyEvents(s, { crisis: "gongzhongLiuyan" });
+    const [l] = setHand(s, ["lingrongXiangzhu"]);
+    s = act(s, { type: "playCard", cardUid: l! });
+    expect(s.crisis!.resolved).toBe(false);
+    expect(s.relation).toBe(-2);
+  });
+
   it("ending lines cover the pregnancy outcome", () => {
     const s = newStage2(16, null);
     expect(endingLines(s).some((l) => l.includes("始终没有动静"))).toBe(true);

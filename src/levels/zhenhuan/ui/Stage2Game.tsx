@@ -331,7 +331,7 @@ function StoryCard({ state, inst, dispatch, fold }: { state: Z2State; inst: Stor
         const lingrongNote =
           option.card === "lingrongXiangzhu" && tier
             ? inst.id === "zhaoxing"
-              ? `（当前${TIER_LABEL[tier]}：${LINGRONG_SUMMON[tier].result === "success" ? "侍寝成功" : LINGRONG_SUMMON[tier].result === "stolen" ? "陵容夺功，关系 +1" : "召幸被截走，圣宠 -1"}）`
+              ? `（当前${TIER_LABEL[tier]}：${LINGRONG_SUMMON[tier].result === "success" ? "侍寝成功" : LINGRONG_SUMMON[tier].result === "stolen" ? "陵容夺功，关系 +1" : "召幸被截走，圣宠 -1，关系 +1"}）`
               : `（当前${TIER_LABEL[tier]}：舒痕胶有害 ${SHUHENJIAO_HARM_CHANCE[tier] * 100}%）`
             : "";
         return (
