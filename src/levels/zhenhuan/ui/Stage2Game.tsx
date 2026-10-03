@@ -299,7 +299,7 @@ function StoryCard({ state, inst, dispatch, fold }: { state: Z2State; inst: Stor
           icon="📝"
           label="已抉择"
           detail={`${inst.viaCard ? `打出【${CARDS2[inst.viaCard].name}】：` : "选择"}「${chosenOption.name}」：${expandedEffect2(resultText)}。`}
-          story={chosenOption.story}
+          story={inst.story ?? chosenOption.story}
         />
       ) : null}
       <p className={styles.flavor}>{def.flavor}</p>

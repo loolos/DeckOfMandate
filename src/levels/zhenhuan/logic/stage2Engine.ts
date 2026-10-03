@@ -81,7 +81,7 @@ export type EventInst2 = {
   evidence?: EvidenceId;
 };
 
-export type StoryInst2 = { readonly id: StoryId2; chosenOptionId: string | null; viaCard?: CardId2; result?: string };
+export type StoryInst2 = { readonly id: StoryId2; chosenOptionId: string | null; viaCard?: CardId2; result?: string; story?: string };
 export type StatusInst2 = { readonly uid: string; readonly id: StatusId2; readonly appliesFromTurn: number; remaining: number };
 export type LogTone = "info" | "good" | "bad";
 export type LogEntry = { readonly turn: number; readonly text: string; readonly tone: LogTone };
@@ -625,6 +625,7 @@ function applyStoryOption(s: Z2State, inst: StoryInst2, option: StoryOption2, so
   if (inst.id === "zhaoxing" && option.card === "lingrongXiangzhu" && tier) {
     const o = LINGRONG_SUMMON[tier];
     log(s, o.story, tier === "close" ? "good" : "bad");
+    inst.story = o.story;
     inst.result = o.result === "success" ? "侍寝成功" : o.result === "stolen" ? "陵容夺功，你未侍寝" : "召幸被截走";
     if (o.effects) applyDeltas2(s, o.effects, "陵容截宠");
     if (o.result === "success") summonSuccess(s, "召幸");

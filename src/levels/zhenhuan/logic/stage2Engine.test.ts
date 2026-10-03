@@ -401,6 +401,30 @@ describe("zhenhuan stage 2 engine", () => {
     expect(s.stories.some((x) => x.id === "yuyingerShishi")).toBe(false);
   });
 
+  it("陵容 on 召幸 by tier: 亲厚 侍寝; 生分 夺功 (+1 关系, no 侍寝); 怨怼 截走 (圣宠 -1)", () => {
+    const run = (relation: number) => {
+      let s = newStage2(31, null);
+      s.relation = relation;
+      s.hate = 0;
+      s.stories = [{ id: "zhaoxing", chosenOptionId: null }];
+      onlyEvents(s, {});
+      s.trial = { active: true, summoned: false };
+      s.shengchong = 8;
+      const [l] = setHand(s, ["lingrongXiangzhu"]);
+      s = act(s, { type: "playCard", cardUid: l! });
+      return s;
+    };
+    const close = run(3);
+    expect(close.trial.summoned).toBe(true);
+    expect(close.stories[0]!.chosenOptionId).toBe("lingrongXiezhuang");
+    const distant = run(0);
+    expect(distant.trial.summoned).toBe(false);
+    expect(distant.relation).toBe(1);
+    const resentful = run(-3);
+    expect(resentful.trial.summoned).toBe(false);
+    expect(resentful.shengchong).toBe(7); // 截走 -1, no 反噬 on top
+  });
+
   it("第 30 回合末按罪证结算：≤ 2 失败，3–4 险胜，≥ 5 完胜", () => {
     const base = newStage2(20, null);
     const at30 = (n: number) => {

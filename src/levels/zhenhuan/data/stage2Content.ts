@@ -1128,7 +1128,7 @@ export const STORIES2: Record<StoryId2, StoryDef2> = {
     name: "敬事房翻牌",
     emoji: "🌙",
     flavor: "敬事房的公公来报：今夜皇上翻了你的绿头牌。",
-    note: "打出仪容整肃 / 谨言慎行即侍寝成功（恨意 +1；贵人以后按身子判定喜脉）。不处理则错过。欢宜香专宠在场时须先化解它。",
+    note: "打出仪容整肃 / 谨言慎行即侍寝成功（恨意 +1；贵人以后按身子判定喜脉）；打出陵容相助按关系结算。不处理则错过。欢宜香专宠在场时须先化解它。",
     defaultOptionId: "cuoguo",
     options: [
       { id: "cuoguo", name: "错过", hidden: true, effects: [], text: "无效果", story: "这一夜就这样过去了。" },
@@ -1142,6 +1142,14 @@ export const STORIES2: Record<StoryId2, StoryDef2> = {
       },
       { id: "shengzhuangChengen", name: "盛装承恩", card: "yirongZhengsu", effects: [], summon: "success", text: "侍寝成功", story: "你盛装承恩，皇上留你到天明。" },
       { id: "shiciDechong", name: "以诗词得宠", card: "jinyanShenxing", effects: [], summon: "success", text: "侍寝成功", story: "你与皇上对诗到深夜，他笑着说你是解语花。" },
+      {
+        id: "lingrongXiezhuang",
+        name: "陵容相助",
+        card: "lingrongXiangzhu",
+        effects: [],
+        text: "按关系：亲厚侍寝成功；生分陵容夺功（你不侍寝，关系 +1）；怨怼召幸被截走（圣宠 -1）",
+        story: "陵容来了碎玉轩。",
+      },
     ],
   },
   caoGuirenLaifang: {
