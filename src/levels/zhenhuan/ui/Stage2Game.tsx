@@ -853,6 +853,7 @@ export function Stage2Game({ state, dispatch, runCode, showRules, onShowRules, o
           </p>
           <p className={styles.popoverTitle}>已解锁</p>
           <EventList ids={unlocked} empty="恨意不足 3，暂无华妃事件。" />
+          {unlocked.includes("huanyixiangZhuanchong") ? <p className={styles.muted}>【欢宜香浓】只在有召幸的回合出现。</p> : null}
         </Pile>
         ) : null}
       </ScrollRow>

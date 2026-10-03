@@ -361,6 +361,58 @@ describe("zhenhuan stage 2 engine", () => {
     expect(t.stories.some((x) => x.id === "fakuiPlain")).toBe(true);
   });
 
+  it("惜别: first draw of a 温太医 culls the other copy; unplayed it reshuffles and stays usable", () => {
+    let s = advanceTo(newStage2(20, null), 8);
+    // keep 温太医 out of the hand so the cull waits for a draw
+    s.discard.push(...s.hand.filter((c) => c.id === "wenTaiyiZhenzhi"));
+    s.hand = s.hand.filter((c) => c.id !== "wenTaiyiZhenzhi");
+    s = act(s, { type: "chooseStory", storyId: "jiaYunFengbo", optionId: "chumianLibao" });
+    expect(s.xibie).toBe("wenTaiyiZhenzhi");
+    expect(s.xibieCulled).toBe(false);
+    const all = (x: Z2State) => [...x.drawPile, ...x.hand, ...x.discard].filter((c) => c.id === "wenTaiyiZhenzhi");
+    expect(all(s)).toHaveLength(2);
+    // force both copies to the top of the draw pile and end the turn
+    const wens = all(s);
+    s.discard = s.discard.filter((c) => c.id !== "wenTaiyiZhenzhi");
+    s.hand = s.hand.filter((c) => c.id !== "wenTaiyiZhenzhi");
+    s.drawPile = [...wens, ...s.drawPile.filter((c) => c.id !== "wenTaiyiZhenzhi")];
+    s.crisis = null;
+    s.huafei = [];
+    s.qingyu = 9;
+    s.shengchong = 9;
+    s.trial.summoned = true;
+    s = act(s, { type: "endTurn" });
+    expect(s.xibieCulled).toBe(true);
+    expect(s.hand.filter((c) => c.id === "wenTaiyiZhenzhi")).toHaveLength(1);
+    expect(all(s)).toHaveLength(1);
+    expect(s.departed.filter((c) => c.id === "wenTaiyiZhenzhi")).toHaveLength(1);
+    // not played: it goes back to the discard pile and can still be used later
+    s.crisis = null;
+    s.huafei = [];
+    s.stories = [];
+    s = act(s, { type: "endTurn" });
+    expect(all(s)).toHaveLength(1);
+    expect(s.xibieDone).toBe(false);
+  });
+
+  it("欢宜香浓 only shows up on a turn with 召幸", () => {
+    for (let seed = 1; seed <= 40; seed++) {
+      let s = newStage2(seed, null);
+      s.rank = "guiren";
+      s.turn = 12;
+      s.hate = 9;
+      s.shengchong = 8; // ≥ threshold: 召幸 every 4 turns
+      s.summonLast = 12;
+      s.qingyu = 10;
+      s.stories = [];
+      s.crisis = null;
+      s.huafei = [];
+      s = act(s, { type: "endTurn" }); // turn 13: no 召幸 (interval 4)
+      const summon = s.stories.some((x) => x.id === "zhaoxing");
+      if (!summon) expect(s.huafei.some((e) => e.id === "huanyixiangZhuanchong")).toBe(false);
+    }
+  });
+
   it("ending lines cover the pregnancy outcome", () => {
     const s = newStage2(16, null);
     expect(endingLines(s).some((l) => l.includes("始终没有动静"))).toBe(true);

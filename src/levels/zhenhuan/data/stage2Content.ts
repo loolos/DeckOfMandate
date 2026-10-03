@@ -224,14 +224,14 @@ export const XIBIE: Record<DepartingCard, { effectName: string; rulesText: strin
   meizhuangXiangzhu: {
     effectName: "临别相托",
     who: "眉庄",
-    rulesText: "惜别：清誉 +2（解决机会事件时奖励照样翻倍）；获得【眉庄嘱托】。打出后，所有眉庄相助离场。",
+    rulesText: "惜别：清誉 +2（解决机会事件时奖励照样翻倍）；获得【眉庄嘱托】。这是最后一张眉庄相助，打出后离场。",
     playStory: "存菊堂的宫门落锁前，眉庄隔着门缝塞给你一方帕子：“华妃不会就此罢手，你万事当心。”",
     leaveStory: "从此宫门深锁，眉庄再不出存菊堂一步。",
   },
   wenTaiyiZhenzhi: {
     effectName: "临行诊治",
     who: "温太医",
-    rulesText: "惜别：移除全部可移除的负面状态；身子 +2；获得【温太医留方】。打出后，所有温太医相助离场。",
+    rulesText: "惜别：移除全部可移除的负面状态；身子 +2；获得【温太医留方】。这是最后一张温太医相助，打出后离场。",
     playStory: "临去疫所前夜，温实初最后一次替你请脉，把一张方子压在了茶盏底下。",
     leaveStory: "疫所路远，从此只有书信偶尔递进宫来。",
   },
@@ -672,7 +672,7 @@ export const EVENTS2: Record<EventId2, EventDef2> = {
     double: { kind: "both", cards: ["yirongZhengsu", "jingguanQibian"] },
     resolvedText: "移除事件；召幸恢复可处理",
     unresolvedText: "本回合召幸作废、圣宠 -1；出气：恨意 -1",
-    note: "陵容相助单张，或同一回合打出仪容整肃 + 静观其变。在场时召幸不能处理。",
+    note: "只在有召幸的回合出现。陵容相助单张，或同一回合打出仪容整肃 + 静观其变。在场时召幸不能处理。",
     resolvedStory: {
       yirongZhengsu: "你盛装在御花园赏花，又沉得住气不争不抢。皇上终于想起了碎玉轩。",
       jingguanQibian: "你沉得住气，不争不抢，只在皇上必经的路上赏花。皇上终于想起了碎玉轩。",
@@ -987,7 +987,7 @@ export const STORIES2: Record<StoryId2, StoryDef2> = {
     name: "假孕风波",
     emoji: "⚖️",
     flavor: "眉庄有孕本是喜事，却是华妃串通太医刘畏卿设下的局：药物推迟月信，宫女茯苓被收买。",
-    note: "眉庄与温太医，终究要有一人离你远去。退场一方的牌会带上【惜别】标签。",
+    note: "眉庄与温太医，终究要有一人离你远去。退场一方的牌会带上【惜别】标签：下次抓到时只留一张，这是最后一次相助。",
     defaultOptionId: "xiushouPangguan",
     options: [
       {
@@ -1256,7 +1256,7 @@ export const TAG2_INFO: Record<TagId2, { label: string; lore: string; rules: str
   },
   chezhou: { label: "掣肘", lore: "处处牵制，暗中作梗。", rules: "情分怨怼时，陵容在手牌中，她左右相邻的牌不能打出（陵容自己不受影响）。打出陵容后解除。" },
   yiyi: { label: "依依", lore: "依依不舍，缠着姐姐不肯走。", rules: "情分生分时，陵容在回合末不进弃牌堆，留在手牌最左边；留下几张，下回合就少抓几张。" },
-  xibie: { label: "惜别", lore: "人将远去，情分只够再相助一回。", rules: "打出带惜别标签的牌时按惜别效果结算；打出后，此人的所有牌都将离场。" },
+  xibie: { label: "惜别", lore: "人将远去，情分只够再相助一回。", rules: "第一次抓到此人的牌时，其余同名牌立即离场，只留这一张，这是最后一次相助。打出时按惜别效果结算，打出后离场；本回合没打出则照常进弃牌堆、洗回牌库，还有机会再用。" },
   shuhenjiao: { label: "舒痕胶", lore: "祛疤的药膏，香气清冽。", rules: "陵容送药时送来。情分亲厚时无害，并圣宠 +1；情分越差，越可能有害（有害时身子 -1，最多扣到 1）。" },
   harm: { label: "伤胎", lore: "防不胜防的暗手。", rules: "未化解时：有孕前身子 -1；有孕后直接小产。温太医留方可抵消一次。" },
   burn: { label: "延烧", lore: "拖得越久，越难收拾。", rules: "未化解时圣宠 -1 并留到下回合（不占下回合的华妃事件名额）；下回合仍未化解，圣宠 -2 后离场。" },

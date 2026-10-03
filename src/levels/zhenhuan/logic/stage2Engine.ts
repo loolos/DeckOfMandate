@@ -126,6 +126,8 @@ export type Z2State = {
   /** Whose cards carry 惜别, and whether they have already left. */
   xibie: DepartingCard | null;
   xibieDone: boolean;
+  /** The first 惜别 card reached the hand: the person's other copies have left, this one is the last. */
+  xibieCulled: boolean;
   opportunityPool: OpportunityId2[];
   opportunityUsed: OpportunityId2[];
   crisisPool: CrisisId2[];
@@ -525,6 +527,26 @@ function openStory(s: Z2State, id: StoryId2): void {
   log(s, `剧情事件：【${STORIES2[id].name}】`);
 }
 
+/** 惜别: once one of the leaving person's cards is in hand, all their other copies leave; only this one stays. */
+function cullXibie(s: Z2State): void {
+  const who = s.xibie;
+  if (!who || s.xibieDone || s.xibieCulled) return;
+  const keep = s.hand.find((c) => c.id === who);
+  if (!keep) return;
+  s.xibieCulled = true;
+  const others = (c: CardInst2) => c.id === who && c.uid !== keep.uid;
+  const removed = [...s.hand.filter(others), ...s.drawPile.filter(others), ...s.discard.filter(others)];
+  s.hand = s.hand.filter((c) => !others(c));
+  s.drawPile = s.drawPile.filter((c) => !others(c));
+  s.discard = s.discard.filter((c) => !others(c));
+  s.departed.push(...removed);
+  log(
+    s,
+    `🕯️ ${XIBIE[who].who}将要远去：${removed.length > 0 ? `其余 ${removed.length} 张【${CARDS2[who].name}】离场，` : ""}只剩手里这一张带【惜别】的，这是最后一次相助。`,
+    "bad",
+  );
+}
+
 function drawCards2(s: Z2State, n: number): void {
   for (let i = 0; i < n; i++) {
     if (s.drawPile.length === 0) {
@@ -541,6 +563,7 @@ function drawCards2(s: Z2State, n: number): void {
     s.hand.push(s.drawPile.shift()!);
     s.drawnThisTurn++;
   }
+  cullXibie(s);
 }
 
 function drawFromPool<T extends EventId2>(s: Z2State, poolKey: "opportunityPool" | "crisisPool", usedKey: "opportunityUsed" | "crisisUsed"): T | null {
@@ -673,7 +696,8 @@ function applyStoryOption(s: Z2State, inst: StoryInst2, option: StoryOption2, so
   if (option.evidence) gainEvidence(s, option.evidence);
   if (option.exit) {
     s.xibie = option.exit;
-    log(s, `${XIBIE[option.exit].who}将要离你远去：所有【${CARDS2[option.exit].name}】带上【惜别】标签。`, "bad");
+    log(s, `${XIBIE[option.exit].who}将要离你远去：【${CARDS2[option.exit].name}】带上【惜别】标签。下次抓到时，其余的同名牌离场，只留这一张。`, "bad");
+    cullXibie(s);
   }
   if (option.pregnancy) becomePregnant(s, def.name);
   if (option.summon === "success") {
@@ -705,7 +729,7 @@ function departXibie(s: Z2State, who: DepartingCard): void {
   s.discard = s.discard.filter((c) => !leaving(c));
   s.xibieDone = true;
   log(s, XIBIE[who].leaveStory, "bad");
-  log(s, `所有【${CARDS2[who].name}】离场。`);
+  log(s, `【${CARDS2[who].name}】离场。`);
 }
 
 function resolvePlay2(s: Z2State, cardUid: string, removeStatusUid?: string): void {
@@ -816,7 +840,9 @@ function drawHuafei(s: Z2State): void {
   const plan = huafeiDrawPlan(s.hate);
   let n = plan.fixed;
   if (plan.chance > 0 && roll(s) < plan.chance) n++;
-  const unlocked = HUAFEI_EVENTS.filter((id) => s.hate >= (EVENTS2[id].unlockHate ?? 0));
+  // 欢宜香浓 (截宠) only shows up on a turn that has a 召幸 to steal.
+  const summonTonight = s.stories.some((st) => st.id === "zhaoxing");
+  const unlocked = HUAFEI_EVENTS.filter((id) => s.hate >= (EVENTS2[id].unlockHate ?? 0) && (summonTonight || !EVENTS2[id].blocksSummon));
   const drawn: HuafeiId[] = [];
   for (let i = 0; i < n; i++) {
     const options = unlocked.filter((id) => !drawn.includes(id));
@@ -894,8 +920,8 @@ function beginTurn2(s: Z2State, turn: number): void {
     s.crisis = newEvent(s, crisis);
     log(s, `危机事件：【${EVENTS2[crisis].name}】`);
   }
-  drawHuafei(s);
   checkSummon(s);
+  drawHuafei(s);
 
   // 依依: 陵容 kept from last turn take up this turn's draws.
   const kept = s.hand.length;
@@ -1092,6 +1118,7 @@ export function newStage2(seed: number, carry: Carry | null): Z2State {
     departed: [],
     xibie: null,
     xibieDone: false,
+    xibieCulled: false,
     opportunityPool,
     opportunityUsed: [],
     crisisPool,
