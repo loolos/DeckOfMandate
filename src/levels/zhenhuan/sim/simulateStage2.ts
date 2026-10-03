@@ -64,7 +64,7 @@ function score(s: Z2State): number {
 export const careful2: Policy2 = (s) => {
   let best: Z2State | null = null;
   let bestScore = -Infinity;
-  let budget = 4000;
+  let budget = 600;
   const visit = (cur: Z2State, depth: number) => {
     if (budget-- <= 0) return;
     const ended = reduce2(cur, { type: "endTurn" });
@@ -126,7 +126,10 @@ export function simulate2(policy: Policy2, runs: number, carry: Carry | null = n
   for (let seed = 1; seed <= runs; seed++) {
     let s = newStage2(seed, carry);
     let guard = 0;
-    while (s.outcome === "playing" && guard++ < 60) s = policy(s, seed);
+    while (s.outcome === "playing" && guard++ < 60) {
+      s = policy(s, seed);
+      s.log = []; // keeps cloning cheap; the sim never reads the log
+    }
     if (s.rank !== "changzai") r.guiren++;
     if (s.rank === "pin") r.pin++;
     if (s.miscarriages > 0) r.miscarriage++;

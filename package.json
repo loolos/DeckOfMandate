@@ -17,7 +17,8 @@
     "test:ai:second-to-third:5000": "node scripts/runSecondToThirdCampaignBatch.mjs",
     "test:ai:first-to-third:5000": "node scripts/runFirstToThirdCampaignBatch.mjs",
     "test:ai:menu-standalone:5000": "node scripts/runMenuStandaloneChaptersBatch.mjs",
-    "sim:zhenhuan": "npx tsx src/levels/zhenhuan/sim/simulate.ts 1000"
+    "sim:zhenhuan": "npx tsx src/levels/zhenhuan/sim/simulate.ts 1000",
+    "sim:zhenhuan2": "npx tsx src/levels/zhenhuan/sim/simulateStage2.ts 200"
   },
   "dependencies": {
     "react": "^18.3.1",
