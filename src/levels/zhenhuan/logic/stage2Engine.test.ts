@@ -358,6 +358,7 @@ describe("zhenhuan stage 2 engine", () => {
     s.stories = [{ id: "zhaoxing", chosenOptionId: null }];
     const [y] = setHand(s, ["yirongZhengsu"]);
     s = act(s, { type: "playCard", cardUid: y! }); // 侍寝 +1 → 10
+    expect(s.shenziRevealedBy).toBe("summon");
     expect(s.stories.some((x) => x.id === "huafeiFanan")).toBe(true);
     s = act(s, { type: "chooseStory", storyId: "huafeiFanan", optionId: "qiuHuanghou" });
     expect(s.hate).toBe(6);

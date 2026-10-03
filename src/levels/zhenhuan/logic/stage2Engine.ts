@@ -113,6 +113,8 @@ export type Z2State = {
   shenzi: number;
   hate: number;
   shenziRevealed: boolean;
+  /** What first brought 身子 into play: the first 侍寝, or something else changing it. */
+  shenziRevealedBy: "summon" | "other" | null;
   /** null until 陵容 joins (第 2 回合). */
   relation: number | null;
   drawPile: CardInst2[];
@@ -332,10 +334,12 @@ function alive(s: Z2State): boolean {
   return s.outcome === "playing";
 }
 
-function revealShenzi(s: Z2State): void {
+function revealShenzi(s: Z2State, by: "summon" | "other" = "other"): void {
   if (s.shenziRevealed) return;
   s.shenziRevealed = true;
-  log(s, `🌱 身子：关系到能否怀上龙裔，以及能否平安生产。当前身子 ${s.shenzi} / ${SHENZI.max}。`, "info");
+  s.shenziRevealedBy = by;
+  const why = by === "summon" ? "因为侍寝，新出现了一项资源" : "新出现了一项资源";
+  log(s, `🌱 ${why}【身子】：关系到能否怀上龙裔，以及能否平安生产。当前身子 ${s.shenzi} / ${SHENZI.max}。`, "info");
 }
 
 function applyDelta2(s: Z2State, d: Delta2, source: string): void {
@@ -487,7 +491,7 @@ function shuhenjiao(s: Z2State, tier: LingrongTier): void {
 
 function summonSuccess(s: Z2State, source: string): void {
   log(s, `${source}：侍寝成功。`, "good");
-  revealShenzi(s);
+  revealShenzi(s, "summon");
   if (s.trial.active && !s.trial.summoned) {
     s.trial.summoned = true;
     log(s, "晋封考验：侍寝条件达成。", "good");
@@ -1066,6 +1070,7 @@ export function newStage2(seed: number, carry: Carry | null): Z2State {
     shenzi: SHENZI.start,
     hate: 0,
     shenziRevealed: false,
+    shenziRevealedBy: null,
     relation: null,
     drawPile,
     hand: [],

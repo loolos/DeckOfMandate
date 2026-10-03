@@ -955,7 +955,10 @@ export function Stage2Game({ state, dispatch, runCode, showRules, onShowRules, o
       ) : null}
       {notice === "shenzi" ? (
         <Notice title="🌱 身子" onClose={() => setNotice(null)}>
-          <p>身子关系到能否怀上龙裔，以及能否平安生产。</p>
+          <p>
+            {state.shenziRevealedBy === "summon" ? "因为侍寝，新出现了一项资源：" : "新出现了一项资源："}
+            <strong>🌱 身子</strong>。它关系到能否怀上龙裔，以及能否平安生产。
+          </p>
           <p>贵人以后，每次侍寝成功都按「身子 ÷ 5」判定能否有喜（5 以上必定有孕）。身子降到 0 时须卧床静养两回合。</p>
           <p className={styles.muted}>
             当前身子 {state.shenzi} / {SHENZI.max}。
