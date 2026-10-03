@@ -495,8 +495,26 @@ describe("zhenhuan stage 2 engine", () => {
     s = act(s, { type: "playCard", cardUid: y! }); // 侍寝 +1 → 10
     expect(s.shenziRevealedBy).toBe("summon");
     expect(s.stories.some((x) => x.id === "huafeiFanan")).toBe(true);
+    const before = { q: s.qingyu, c: s.shengchong, z: s.shenzi };
     s = act(s, { type: "chooseStory", storyId: "huafeiFanan", optionId: "qiuHuanghou" });
     expect(s.hate).toBe(6);
+    expect(s.qingyu).toBe(before.q - 2);
+    expect(s.shengchong).toBe(before.c - 4);
+    expect(s.shenzi).toBe(Math.max(0, before.z - 2));
+  });
+
+  it("华妃发难 card responses each spare one resource: 温太医 keeps 身子", () => {
+    let s = newStage2(21, null);
+    onlyEvents(s, {});
+    s.qingyu = 8;
+    s.shengchong = 8;
+    s.shenzi = 3;
+    s.stories = [{ id: "huafeiFanan", chosenOptionId: null }];
+    const [w] = setHand(s, ["wenTaiyiZhenzhi"]);
+    s = act(s, { type: "playCard", cardUid: w! });
+    expect(s.qingyu).toBe(5);
+    expect(s.shengchong).toBe(5);
+    expect(s.shenzi).toBe(4); // not hit, plus 温太医's own 身子 +1
   });
 
   it("贵人考验 (第 5—9 回合) needs 圣宠 ≥ 9, 清誉 ≥ 9 and a 侍寝 during the trial", () => {
