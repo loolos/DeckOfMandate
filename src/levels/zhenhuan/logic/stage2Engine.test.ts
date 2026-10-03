@@ -101,7 +101,7 @@ describe("zhenhuan stage 2 engine", () => {
     expect(s.shengchong).toBe(10);
   });
 
-  it("初请安 sets the starting hate; 陵容侍寝被退回 sets relation and shuffles 3 陵容 in", () => {
+  it("初请安 sets the starting hate; 凤鸾空返 sets relation and puts 3 陵容 into the discard pile", () => {
     let s = newStage2(2, null);
     s.crisis = null;
     s = act(s, { type: "endTurn" });
@@ -113,6 +113,7 @@ describe("zhenhuan stage 2 engine", () => {
     s = act(s, { type: "endTurn" });
     const all = [...s.drawPile, ...s.hand, ...s.discard].filter((c) => c.id === "lingrongXiangzhu");
     expect(all).toHaveLength(3);
+    expect(s.drawPile.some((c) => c.id === "lingrongXiangzhu")).toBe(false);
     expect(s.turn).toBe(3);
     expect(reduce2(s, { type: "chooseStory", storyId: "chuQingan", optionId: "chuyanDingzhuang" })).toBe(s); // card-only
     const q = s.qingyu;
@@ -212,7 +213,7 @@ describe("zhenhuan stage 2 engine", () => {
     expect(s.departed.filter((c) => c.id === "meizhuangXiangzhu").length).toBeGreaterThanOrEqual(2);
   });
 
-  it("欢宜香专宠 blocks 召幸 until resolved; unresolved voids it", () => {
+  it("欢宜香浓 blocks 召幸 until resolved; unresolved voids it", () => {
     let s = newStage2(8, null);
     s.relation = 0;
     s.stories = [{ id: "zhaoxing", chosenOptionId: null }];
@@ -440,7 +441,7 @@ describe("zhenhuan stage 2 engine", () => {
     expect(s.rank).toBe("guiren");
   });
 
-  it("翊坤宫初请安 comes on turn 3; 召幸 only from turn 5 (贵人考验)", () => {
+  it("初谒翊坤 comes on turn 3; 召幸 only from turn 5 (贵人考验)", () => {
     let s = newStage2(23, null);
     expect(s.shengchong).toBe(8);
     expect(s.stories.some((x) => x.id === "chuQingan")).toBe(false);

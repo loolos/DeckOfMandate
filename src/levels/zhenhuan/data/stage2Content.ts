@@ -339,7 +339,7 @@ export const STATUSES2: Record<StatusId2, StatusDef2> = {
     duration: 0,
     permanent: true,
     drawModifier: 0,
-    effectText: "抵消一次伤胎类事件的后果（有孕前不扣身子；有孕后免于小产）；翊坤宫罚跪时不能阻止小产，但身子少扣 1。第一次适用时自动用掉。",
+    effectText: "抵消一次伤胎类事件的后果（有孕前不扣身子；有孕后免于小产）；翊坤长跪时不能阻止小产，但身子少扣 1。第一次适用时自动用掉。",
     flavor: "茶盏底下那张方子，字迹工整，每一味药都写了用量。",
     source: "温太医相助的惜别效果「临行诊治」",
   },
@@ -395,7 +395,7 @@ export type EventDef2 = {
   readonly unresolvedHate?: number;
   /** 延烧: unresolved once → stays for one more turn with `burnPenalty`. */
   readonly burnPenalty?: readonly Delta2[];
-  /** Unresolved 欢宜香专宠 voids this turn's 召幸 and blocks it until resolved. */
+  /** Unresolved 欢宜香浓 voids this turn's 召幸 and blocks it until resolved. */
   readonly blocksSummon?: boolean;
   readonly double?: DoubleRule;
   /** 华妃事件 unlock threshold. */
@@ -461,7 +461,7 @@ export const EVENTS2: Record<EventId2, EventDef2> = {
   baohuadianQifu: {
     id: "baohuadianQifu",
     kind: "opportunity",
-    name: "宝华殿祈福",
+    name: "宝华祈福",
     emoji: "🙏",
     flavor: "宝华殿做法事，各宫小主都去上香祈福。",
     reward: [
@@ -478,7 +478,7 @@ export const EVENTS2: Record<EventId2, EventDef2> = {
   supeishengToufeng: {
     id: "supeishengToufeng",
     kind: "opportunity",
-    name: "苏培盛透风",
+    name: "御前密语",
     emoji: "🗝️",
     flavor: "槿汐与御前的苏公公是旧识，这日回来，神色有些异样。",
     reward: [],
@@ -590,7 +590,7 @@ export const EVENTS2: Record<EventId2, EventDef2> = {
   yikungongLiGuiju: {
     id: "yikungongLiGuiju",
     kind: "huafei",
-    name: "翊坤宫立规矩",
+    name: "翊坤立威",
     emoji: "🏯",
     flavor: "请安时华妃当众挑你的错处，满殿的人都等着看你如何应对。",
     reward: [],
@@ -661,7 +661,7 @@ export const EVENTS2: Record<EventId2, EventDef2> = {
   huanyixiangZhuanchong: {
     id: "huanyixiangZhuanchong",
     kind: "huafei",
-    name: "欢宜香专宠",
+    name: "欢宜香浓",
     emoji: "🌺",
     flavor: "皇上连日宿在翊坤宫，满宫都闻得见欢宜香的味道。",
     reward: [],
@@ -839,7 +839,7 @@ export type StoryOption2 = {
   readonly pregnancy?: boolean;
   readonly summon?: "success" | "avoid";
   readonly caoBefriend?: boolean;
-  /** 翊坤宫罚跪（有孕）: body loss for this option (before 恨意 / 留方 adjustments). */
+  /** 翊坤长跪（有孕）: body loss for this option (before 恨意 / 留方 adjustments). */
   readonly fakuiShenzi?: number;
   /** 生分的陵容打出这个卡牌应对时多说的一句风凉话。 */
   readonly distantRemark?: string;
@@ -870,7 +870,7 @@ export const FAKUI_TURN = 17;
 export const STORIES2: Record<StoryId2, StoryDef2> = {
   chuQingan: {
     id: "chuQingan",
-    name: "翊坤宫初请安",
+    name: "初谒翊坤",
     emoji: "🏯",
     flavor: "新人初到翊坤宫请安，华妃斜倚在榻上，有意给个下马威。",
     note: "你的应对决定华妃恨意的初始值。恭顺低头、出言顶撞须打出特定手牌。",
@@ -906,10 +906,10 @@ export const STORIES2: Record<StoryId2, StoryDef2> = {
   },
   lingrongTuihui: {
     id: "lingrongTuihui",
-    name: "陵容侍寝被退回",
+    name: "凤鸾空返",
     emoji: "🌙",
     flavor: "安陵容第一次侍寝时战战兢兢，没侍成寝就被原样抬回了宫，成了阖宫的笑柄。",
-    note: "你的处理决定陵容最初对你的态度。本回合结束时，3 张【陵容相助】洗入抽牌堆。",
+    note: "你的处理决定陵容最初对你的态度。本回合结束时，3 张【陵容相助】加入弃牌堆（下次洗牌时才会抽到）。",
     defaultOptionId: "bixianBuwen",
     options: [
       { id: "bixianBuwen", name: "避嫌不问", effects: [], setRelation: -1, text: "陵容关系 -1", story: "宫里人人都在笑她，你没有露面。" },
@@ -961,7 +961,7 @@ export const STORIES2: Record<StoryId2, StoryDef2> = {
   },
   yuyingerShishi: {
     id: "yuyingerShishi",
-    name: "余莺儿失势",
+    name: "莺儿伏罪",
     emoji: "🥀",
     flavor: "冒认倚梅园之功的余莺儿恃宠犯上，获罪下狱。",
     defaultOptionId: "bujiu",
@@ -1027,10 +1027,10 @@ export const STORIES2: Record<StoryId2, StoryDef2> = {
   },
   yuanmingyuan: {
     id: "yuanmingyuan",
-    name: "随驾圆明园",
+    name: "圆明伴驾",
     emoji: "🏞️",
     flavor: "皇上带你住进圆明园碧桐书院，恩宠一时无两。",
-    note: "结算后恨意 +2；第 14—16 回合每回合都出现召幸（有孕后不再出现）；3 回合后翊坤宫罚跪。",
+    note: "结算后恨意 +2；第 14—16 回合每回合都出现召幸（有孕后不再出现）；3 回合后翊坤长跪。",
     defaultOptionId: "anfenSuishi",
     options: [
       { id: "anfenSuishi", name: "安分随侍", effects: [{ resource: "hate", amount: 2 }], text: "恨意 +2", story: "你安分随侍，不争不抢。" },
@@ -1056,7 +1056,7 @@ export const STORIES2: Record<StoryId2, StoryDef2> = {
   },
   fakuiPlain: {
     id: "fakuiPlain",
-    name: "翊坤宫罚跪",
+    name: "翊坤长跪",
     emoji: "☀️",
     flavor: "华妃借故罚你跪于翊坤宫外的烈日下。",
     note: "罚跪开始时恨意 ≥ 6，清誉再 -1。",
@@ -1083,7 +1083,7 @@ export const STORIES2: Record<StoryId2, StoryDef2> = {
   },
   fakuiPregnant: {
     id: "fakuiPregnant",
-    name: "翊坤宫罚跪",
+    name: "翊坤长跪",
     emoji: "☀️",
     flavor: "华妃借故罚你跪于翊坤宫外的烈日下。你腹中隐隐作痛。",
     note: "有孕时必定小产（温太医留方也挡不住）；所选的牌决定身子伤得多重。罚跪开始时恨意 ≥ 6，身子再 -1；有温太医留方，身子少扣 1。",
@@ -1128,10 +1128,10 @@ export const STORIES2: Record<StoryId2, StoryDef2> = {
   },
   zhaoxing: {
     id: "zhaoxing",
-    name: "敬事房翻牌",
+    name: "翻牌承恩",
     emoji: "🌙",
     flavor: "敬事房的公公来报：今夜皇上翻了你的绿头牌。",
-    note: "打出仪容整肃 / 谨言慎行即侍寝成功（恨意 +1；贵人以后按身子判定喜脉）；打出陵容相助按关系结算。不处理则错过。欢宜香专宠在场时须先化解它。",
+    note: "打出仪容整肃 / 谨言慎行即侍寝成功（恨意 +1；贵人以后按身子判定喜脉）；打出陵容相助按关系结算。不处理则错过。欢宜香浓在场时须先化解它。",
     defaultOptionId: "cuoguo",
     options: [
       { id: "cuoguo", name: "错过", hidden: true, effects: [], text: "无效果", story: "这一夜就这样过去了。" },
@@ -1157,7 +1157,7 @@ export const STORIES2: Record<StoryId2, StoryDef2> = {
   },
   caoGuirenLaifang: {
     id: "caoGuirenLaifang",
-    name: "曹贵人来访",
+    name: "琴默叩门",
     emoji: "🍵",
     flavor: "曹贵人看出华妃已难收场，开始为女儿温宜给自己留后路。她提着一盒点心，来碎玉轩坐坐。",
     defaultOptionId: "wanjuShuyuan",
@@ -1199,7 +1199,13 @@ export const LINGRONG_SUMMON: Record<LingrongTier, { story: string; result: "suc
 
 export const NOTICES = {
   fakuiAftermath: { emoji: "☀️", name: "罚跪之后", text: "罚跪的事传遍了六宫。有人幸灾乐祸，也有人暗暗替你不平。" },
-  nianGengyao: { emoji: "⛓️", name: "年羹尧失势", text: "年羹尧获罪下狱，翊坤宫失了靠山。宫里的风向，变了。" },
+  nianGengyao: { emoji: "⛓️", name: "年氏倾颓", text: "年羹尧获罪下狱，翊坤宫失了靠山。宫里的风向，变了。" },
+};
+
+/** 陵容 on 甄嬛's promotions (关系 -2): shown in the log and the promotion notice. */
+export const LINGRONG_PROMOTION_TEXT: Partial<Record<RankId, string>> = {
+  guiren: "陵容来碎玉轩道贺，笑得有些勉强：「姐姐如今是贵人了，妹妹往后还要仰仗姐姐。」话没说完，便低下了头。",
+  pin: "陵容送来一双亲手绣的虎头鞋，指尖还缠着线：「姐姐如今是嫔了，妹妹……替姐姐高兴。」",
 };
 
 export const NIAN_TURN = 24;
@@ -1230,7 +1236,7 @@ export const TAG2_INFO: Record<TagId2, { label: string; lore: string; rules: str
   huafei: {
     label: "华妃",
     lore: "翊坤宫的手，伸得比谁都长。",
-    rules: "恨意 3–4：50% 出 1 张；5–6：必出 1 张；7–8：1 张再 50% 加 1 张；9：2 张。恨意 3 解锁立规矩、克扣份例；5 解锁膳食有异、一丈红；7 解锁欢宜香专宠。按回合开始时的恨意计算。",
+    rules: "恨意 3–4：50% 出 1 张；5–6：必出 1 张；7–8：1 张再 50% 加 1 张；9：2 张。恨意 3 解锁翊坤立威、克扣份例；5 解锁膳食有异、一丈红；7 解锁欢宜香浓。按回合开始时的恨意计算。",
   },
   story: {
     label: "剧情",

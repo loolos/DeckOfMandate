@@ -15,6 +15,7 @@ import {
   LINGRONG_SUMMON,
   RANKS,
   SHENZI,
+  LINGRONG_PROMOTION_TEXT,
   SHUHENJIAO_HARM_CHANCE,
   STAGE2,
   STATUSES2,
@@ -278,7 +279,7 @@ function StoryCard({ state, inst, dispatch, fold }: { state: Z2State; inst: Stor
           {chosenOption
             ? `📝 ${inst.viaCard ? CARDS2[inst.viaCard].emoji : chosenOption.name} ${compactEffect2(resultText)}`
             : blocked
-              ? "皇上在翊坤宫，须先化解欢宜香专宠"
+              ? "皇上在翊坤宫，须先化解欢宜香浓"
               : `选基础选项或打出对应牌（默认「${defaultOption.name}」）`}
         </div>
       </FoldBox>
@@ -304,7 +305,7 @@ function StoryCard({ state, inst, dispatch, fold }: { state: Z2State; inst: Stor
       ) : null}
       <p className={styles.flavor}>{def.flavor}</p>
       {def.note ? <p className={styles.rule}>{def.note}</p> : null}
-      {blocked ? <p className={styles.endHint}>皇上在翊坤宫，须先化解【欢宜香专宠】才能处理召幸。</p> : null}
+      {blocked ? <p className={styles.endHint}>皇上在翊坤宫，须先化解【欢宜香浓】才能处理召幸。</p> : null}
       {storyBasicOptions2(def).map((option) => (
         <div key={option.id} className={[styles.option, chosen === option.id && styles.optionChosen].filter(Boolean).join(" ")}>
           <span>
@@ -737,7 +738,7 @@ export function Stage2Rules() {
         🎶<strong>陵容相助</strong>的效果取决于关系：亲厚时她身边的牌可以联袂免费打出；生分时会依依留在手里（留几张，下回合就少抓几张）；怨怼时会掣肘身边的牌。
       </li>
       <li>
-        🌱<strong>身子</strong>决定能否有孕（贵人以后，侍寝后按身子 ÷ 5 判定）。有孕即晋嫔，但伤胎事件和翊坤宫罚跪都可能让你小产。
+        🌱<strong>身子</strong>决定能否有孕（贵人以后，侍寝后按身子 ÷ 5 判定）。有孕即晋嫔，但伤胎事件和翊坤长跪都可能让你小产。
       </li>
       <li>
         一路搜集 🗂️<strong>华妃罪证</strong>（都要打出特定的牌才能拿到）。第 30 回合末：不足 3 条关卡失败；3–4 条险胜；5 条以上完胜。
@@ -947,6 +948,14 @@ export function Stage2Game({ state, dispatch, runCode, showRules, onShowRules, o
       {notice === "guiren" || notice === "pin" ? (
         <Notice title={`🏮 晋为${RANKS[notice].name}`} onClose={() => setNotice(null)}>
           <p>恭喜小主晋为{RANKS[notice].name}！只是位分越高，华妃的眼睛就盯得越紧。</p>
+          {LINGRONG_PROMOTION_TEXT[notice] && state.relation != null && tier ? (
+            <p>
+              🎶 {LINGRONG_PROMOTION_TEXT[notice]}
+              <span className={styles.muted}>
+                （陵容关系 -2，现为 {state.relation}·{TIER_EMOJI[tier]}{TIER_LABEL[tier]}）
+              </span>
+            </p>
+          ) : null}
           <p className={styles.muted}>
             从下一回合起每回合抓 {RANKS[notice].draw} 张、最多打 {RANKS[notice].plays} 张，清誉 / 圣宠上限提高到 {RANKS[notice].cap}。
           </p>

@@ -21,6 +21,7 @@ import {
   LINGRONG_COPIES,
   LINGRONG_EVENT,
   LINGRONG_NEGLECT_TEXT,
+  LINGRONG_PROMOTION_TEXT,
   LINGRONG_SUMMON,
   NIAN_TURN,
   NOTICES,
@@ -213,7 +214,7 @@ export function openStories(s: Z2State): StoryInst2[] {
   return s.stories.filter((st) => st.chosenOptionId == null);
 }
 
-/** 欢宜香专宠 unresolved on the board: 召幸 cannot be handled. */
+/** 欢宜香浓 unresolved on the board: 召幸 cannot be handled. */
 export function summonBlocked(s: Z2State): boolean {
   return s.huafei.some((e) => !e.resolved && EVENTS2[e.id].blocksSummon);
 }
@@ -445,6 +446,14 @@ function miscarry(s: Z2State, shenziLoss: number, cause: string): void {
   );
 }
 
+/** 晋封 (贵人 / 有孕晋嫔): 陵容 feels left behind. */
+function lingrongOnPromotion(s: Z2State): void {
+  if (s.relation == null) return;
+  const text = LINGRONG_PROMOTION_TEXT[s.rank];
+  if (text) log(s, text);
+  changeRelation(s, -2, "晋封（姐姐越走越远）");
+}
+
 function becomePregnant(s: Z2State, source: string): void {
   if (s.pregnant || !alive(s)) return;
   s.pregnant = true;
@@ -456,7 +465,7 @@ function becomePregnant(s: Z2State, source: string): void {
     s.rank = "pin";
     const r = RANKS.pin;
     log(s, `有孕晋封为【${r.name}】：清誉 / 圣宠上限 ${r.cap}；下回合起每回合抓 ${r.draw} 打 ${r.plays}。`, "good");
-    changeRelation(s, -2, "晋封（姐姐越走越远）");
+    lingrongOnPromotion(s);
   }
   applyDelta2(s, { resource: "hate", amount: 3 }, "喜脉");
 }
@@ -641,7 +650,7 @@ function applyStoryOption(s: Z2State, inst: StoryInst2, option: StoryOption2, so
       loss = Math.max(0, loss - 1);
       log(s, "【温太医留方】保住了你的身子：身子少扣 1。", "good");
     }
-    miscarry(s, loss, "翊坤宫罚跪");
+    miscarry(s, loss, "翊坤长跪");
   } else if (inst.id === "fakuiPlain") {
     applyDeltas2(s, option.effects, `${def.name}·${option.name}`);
     if (s.fakuiHarsh) applyDelta2(s, { resource: "qingyu", amount: -1 }, "华妃恨意正盛，罚得更重");
@@ -934,7 +943,7 @@ function endTurn2(s: Z2State): void {
     if (inst.id === "zhaoxing" && summonBlocked(s)) {
       inst.chosenOptionId = "cuoguo";
       inst.result = "召幸作废";
-      log(s, "【欢宜香专宠】未化解：皇上留在翊坤宫，本回合召幸作废。", "bad");
+      log(s, "【欢宜香浓】未化解：皇上留在翊坤宫，本回合召幸作废。", "bad");
       continue;
     }
     const option = def.options.find((o) => o.id === def.defaultOptionId)!;
@@ -1008,7 +1017,7 @@ function endTurn2(s: Z2State): void {
       const r = RANKS[s.rank];
       log(s, `晋封成功！位分晋升为【${r.name}】：每回合抓 ${r.draw} 打 ${r.plays}，清誉 / 圣宠上限 ${r.cap}。`, "good");
       applyDelta2(s, { resource: "hate", amount: 2 }, "晋为贵人");
-      changeRelation(s, -2, "晋封（姐姐越走越远）");
+      lingrongOnPromotion(s);
     } else if (s.turn >= GUIREN_TRIAL.lastTurn) {
       s.trial.active = false;
       lose(s, `第 ${GUIREN_TRIAL.lastTurn} 回合结束时仍未晋为贵人`);
@@ -1020,10 +1029,9 @@ function endTurn2(s: Z2State): void {
   // scheduled additions
   if (s.turn === 2) {
     const added: CardInst2[] = Array.from({ length: LINGRONG_COPIES }, () => ({ uid: `c${s.nextUid++}`, id: "lingrongXiangzhu" as const }));
-    const [rng, shuffled] = shuffle(s.rng, [...s.drawPile, ...added]);
-    s.rng = rng;
-    s.drawPile = shuffled;
-    log(s, `${LINGRONG_COPIES} 张【陵容相助】洗入抽牌堆。`);
+    // into the discard pile, so they arrive with the next reshuffle instead of in one clump
+    s.discard.push(...added);
+    log(s, `${LINGRONG_COPIES} 张【陵容相助】加入弃牌堆，下次洗牌后才会抽到。`);
   }
   if (s.turn === 8) {
     const [rng, shuffled] = shuffle(s.rng, [...s.opportunityPool, "liPinJingmeng" as const]);
