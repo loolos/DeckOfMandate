@@ -860,7 +860,7 @@ export type StoryDef2 = {
 export const FIXED_STORY_TURNS: Partial<Record<number, StoryId2>> = {
   3: "chuQingan",
   2: "lingrongTuihui",
-  5: "yuyingerShishi",
+  4: "yuyingerShishi",
   8: "jiaYunFengbo",
   14: "yuanmingyuan",
   20: "duanfeiJiushi",

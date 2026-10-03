@@ -394,8 +394,11 @@ describe("zhenhuan stage 2 engine", () => {
     s = advanceTo(s, 3);
     expect(s.stories.some((x) => x.id === "chuQingan")).toBe(true);
     expect(s.stories.some((x) => x.id === "zhaoxing")).toBe(false);
+    s = advanceTo(s, 4);
+    expect(s.stories.some((x) => x.id === "yuyingerShishi")).toBe(true);
     s = advanceTo(s, 5);
     expect(s.stories.some((x) => x.id === "zhaoxing")).toBe(true);
+    expect(s.stories.some((x) => x.id === "yuyingerShishi")).toBe(false);
   });
 
   it("第 30 回合末按罪证结算：≤ 2 失败，3–4 险胜，≥ 5 完胜", () => {
