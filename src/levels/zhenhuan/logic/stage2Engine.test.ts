@@ -333,6 +333,18 @@ describe("zhenhuan stage 2 engine", () => {
     expect(s.relation).toBe(-2);
   });
 
+  it("御前密语 joins the opportunity pool only after turn 10", () => {
+    let s = newStage2(18, null);
+    s.rank = "guiren"; // skip the 贵人考验
+    const has = (x: Z2State) => [...x.opportunityPool, ...x.opportunityUsed, x.opportunity?.id].includes("supeishengToufeng");
+    expect(has(s)).toBe(false);
+    s = advanceTo(s, 10);
+    expect(has(s)).toBe(false);
+    s = advanceTo(s, 11);
+    expect(s.outcome).toBe("playing");
+    expect(has(s)).toBe(true);
+  });
+
   it("ending lines cover the pregnancy outcome", () => {
     const s = newStage2(16, null);
     expect(endingLines(s).some((l) => l.includes("始终没有动静"))).toBe(true);

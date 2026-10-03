@@ -689,7 +689,6 @@ export const OPPORTUNITY2_POOL: readonly OpportunityId2[] = [
   "jingxinTiaoyang",
   "baohuadianQifu",
   "baohuadianQifu",
-  "supeishengToufeng",
 ];
 
 export const CRISIS2_POOL: readonly CrisisId2[] = [
@@ -866,6 +865,10 @@ export const FIXED_STORY_TURNS: Partial<Record<number, StoryId2>> = {
   20: "duanfeiJiushi",
 };
 export const FAKUI_TURN = 17;
+/** 华妃恨意 appears (and is explained) when 初谒翊坤 begins. */
+export const HATE_REVEAL_TURN = 3;
+/** Opportunity events shuffled into the pool at the end of a given turn. */
+export const LATE_OPPORTUNITIES: Partial<Record<number, OpportunityId2>> = { 8: "liPinJingmeng", 10: "supeishengToufeng" };
 
 export const STORIES2: Record<StoryId2, StoryDef2> = {
   chuQingan: {

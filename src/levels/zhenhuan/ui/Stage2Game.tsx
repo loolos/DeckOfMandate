@@ -21,6 +21,7 @@ import {
   TIER_LABEL,
   XIBIE,
   hateTierLabel,
+  HATE_REVEAL_TURN,
   huafeiDrawPlan,
   type CardId2,
   type EventId2,
@@ -740,7 +741,7 @@ export function Stage2Game({ state, dispatch, runCode, showRules, onShowRules, o
   const tier = tierOf(state);
 
   // One-off notices during play (not when loading a save): promotion and 身子 appearing.
-  const [notice, setNotice] = useState<"guiren" | "pin" | "shenzi" | null>(null);
+  const [notice, setNotice] = useState<"guiren" | "pin" | "shenzi" | "hate" | null>(null);
   const prev = useRef({ rank: state.rank, shenzi: state.shenziRevealed, turn: state.turn, seed: state.seed });
   useEffect(() => {
     const p = prev.current;
@@ -748,6 +749,7 @@ export function Stage2Game({ state, dispatch, runCode, showRules, onShowRules, o
     if (sameRun && state.outcome === "playing") {
       if (state.rank !== p.rank && (state.rank === "guiren" || state.rank === "pin")) setNotice(state.rank);
       else if (state.shenziRevealed && !p.shenzi) setNotice("shenzi");
+      else if (p.turn < HATE_REVEAL_TURN && state.turn >= HATE_REVEAL_TURN) setNotice("hate");
     }
     prev.current = { rank: state.rank, shenzi: state.shenziRevealed, turn: state.turn, seed: state.seed };
   }, [state]);
@@ -772,6 +774,7 @@ export function Stage2Game({ state, dispatch, runCode, showRules, onShowRules, o
     onToggle: () => setExpandedKey((cur) => (cur === key ? null : key)),
   });
 
+  const hateShown = state.turn >= HATE_REVEAL_TURN;
   const plan = huafeiDrawPlan(state.hate);
   const unlocked = HUAFEI_EVENTS.filter((id) => state.hate >= (EVENTS2[id].unlockHate ?? 0));
 
@@ -805,7 +808,7 @@ export function Stage2Game({ state, dispatch, runCode, showRules, onShowRules, o
         <Stat label="🪷 清誉" hint="（归 0 即失败）" value={state.qingyu} max={rankCap(state)} danger={state.qingyu <= 1} />
         <Stat label="👑 圣宠" hint="（归 0 即失败）" value={state.shengchong} max={rankCap(state)} danger={state.shengchong <= 1} />
         {state.shenziRevealed ? <Stat label="🌱 身子" value={state.shenzi} max={SHENZI.max} danger={state.shenzi <= 1} /> : null}
-        <Stat label={`🔥 华妃恨意 · ${hateTierLabel(state.hate)}`} value={state.hate} max={HATE.max} danger={state.hate >= 9} />
+        {hateShown ? <Stat label={`🔥 华妃恨意 · ${hateTierLabel(state.hate)}`} value={state.hate} max={HATE.max} danger={state.hate >= 9} /> : null}
       </ScrollRow>
 
       <ScrollRow className={`${styles.bar} ${styles.piles}`}>
@@ -843,6 +846,7 @@ export function Stage2Game({ state, dispatch, runCode, showRules, onShowRules, o
           <p className={styles.popoverTitle}>本轮已出现</p>
           <EventList ids={state.crisis ? [...state.crisisUsed, state.crisis.id] : state.crisisUsed} empty="无" />
         </Pile>
+        {hateShown ? (
         <Pile icon="🏯" label="华妃事件" count={unlocked.length}>
           <p className={styles.popoverTitle}>
             恨意 {state.hate}：每回合 {plan.fixed} 张{plan.chance > 0 ? `，再 ${plan.chance * 100}% 加 1 张` : ""}（按回合开始时计算）
@@ -850,6 +854,7 @@ export function Stage2Game({ state, dispatch, runCode, showRules, onShowRules, o
           <p className={styles.popoverTitle}>已解锁</p>
           <EventList ids={unlocked} empty="恨意不足 3，暂无华妃事件。" />
         </Pile>
+        ) : null}
       </ScrollRow>
 
       <Statuses state={state} dispatch={dispatch} />
@@ -919,6 +924,15 @@ export function Stage2Game({ state, dispatch, runCode, showRules, onShowRules, o
           <p className={styles.muted}>
             从下一回合起每回合抓 {RANKS[notice].draw} 张、最多打 {RANKS[notice].plays} 张，清誉 / 圣宠上限提高到 {RANKS[notice].cap}。
           </p>
+        </Notice>
+      ) : null}
+      {notice === "hate" ? (
+        <Notice title="🔥 华妃恨意" onClose={() => setNotice(null)}>
+          <p>
+            今日要去翊坤宫请安，新出现了一项数值：<strong>🔥 华妃恨意</strong>（0–10），表示华妃有多忌恨你。你在翊坤宫的应对，决定它的初始值。
+          </p>
+          <p>恨意越高，每回合出现的华妃事件越多、越狠：恨意 3 起开始出现，5、7 时解锁更狠的事件；恨意到 10，华妃当场发难。</p>
+          <p className={styles.muted}>侍寝、晋封、有孕、宠冠六宫会让她更恨你；失宠、称病避宠、让她出气、小产会让她消气。</p>
         </Notice>
       ) : null}
       {notice === "shenzi" ? (

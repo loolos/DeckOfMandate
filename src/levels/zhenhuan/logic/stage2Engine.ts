@@ -16,6 +16,7 @@ import {
   GUIREN_TRIAL,
   HATE,
   HUAFEI_EVENTS,
+  LATE_OPPORTUNITIES,
   LINGRONG,
   LINGRONG_BACKLASH,
   LINGRONG_COPIES,
@@ -1034,11 +1035,12 @@ function endTurn2(s: Z2State): void {
     s.discard.push(...added);
     log(s, `${LINGRONG_COPIES} 张【陵容相助】加入弃牌堆，下次洗牌后才会抽到。`);
   }
-  if (s.turn === 8) {
-    const [rng, shuffled] = shuffle(s.rng, [...s.opportunityPool, "liPinJingmeng" as const]);
+  const late = LATE_OPPORTUNITIES[s.turn];
+  if (late) {
+    const [rng, shuffled] = shuffle(s.rng, [...s.opportunityPool, late]);
     s.rng = rng;
     s.opportunityPool = shuffled;
-    log(s, "【丽嫔惊梦】洗入机会池。");
+    log(s, `【${EVENTS2[late].name}】洗入机会池。`);
   }
 
   // 16. 扳倒华妃
