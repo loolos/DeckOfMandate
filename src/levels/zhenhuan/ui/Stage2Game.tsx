@@ -673,7 +673,11 @@ function endTurnHints(state: Z2State): string[] {
     const def = EVENTS2[ev.id];
     hints.push(`【${def.name}】未化解：${ev.burning ? "圣宠 -2" : def.unresolvedText}。`);
   }
-  if (state.relation != null && state.hand.some((c) => c.id === "lingrongXiangzhu")) hints.push("手里的陵容没打出：冷落，关系 -1。");
+  const lingrongInHand = state.hand.filter((c) => c.id === "lingrongXiangzhu").length;
+  if (state.relation != null && lingrongInHand > 0) {
+    hints.push("手里的陵容没打出：冷落，关系 -1。");
+    if (tierOf(state) === "distant") hints.push(`依依：${lingrongInHand} 张陵容会留在手里，下回合少抓 ${lingrongInHand} 张。`);
+  }
   return hints;
 }
 
@@ -731,7 +735,7 @@ export function Stage2Rules() {
         🔥<strong>华妃恨意</strong>越高，华妃事件越多越狠。侍寝、晋封、有孕都会让她更恨你；失宠、出气、小产会让她消气。恨意到 10 会触发【华妃发难】。
       </li>
       <li>
-        🎶<strong>陵容相助</strong>的效果取决于关系：亲厚时她身边的牌可以联袂免费打出；生分时会依依留在手里；怨怼时会掣肘身边的牌。
+        🎶<strong>陵容相助</strong>的效果取决于关系：亲厚时她身边的牌可以联袂免费打出；生分时会依依留在手里（留几张，下回合就少抓几张）；怨怼时会掣肘身边的牌。
       </li>
       <li>
         🌱<strong>身子</strong>决定能否有孕（贵人以后，侍寝后按身子 ÷ 5 判定）。有孕即晋嫔，但伤胎事件和翊坤宫罚跪都可能让你小产。
@@ -739,7 +743,7 @@ export function Stage2Rules() {
       <li>
         一路搜集 🗂️<strong>华妃罪证</strong>（都要打出特定的牌才能拿到）。第 30 回合末：不足 3 条关卡失败；3–4 条险胜；5 条以上完胜。
       </li>
-      <li>手牌按抓牌顺序排列，不能调整；回合结束时手牌全部弃置（依依的陵容除外）。</li>
+      <li>手牌按抓牌顺序排列，不能调整；回合结束时手牌全部弃置（依依的陵容除外，且会占掉下回合的抓牌数）。</li>
     </ul>
   );
 }

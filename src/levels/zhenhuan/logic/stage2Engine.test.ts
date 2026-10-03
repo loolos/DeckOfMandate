@@ -156,6 +156,9 @@ describe("zhenhuan stage 2 engine", () => {
     s = act(s, { type: "endTurn" });
     expect(s.relation).toBe(-1);
     expect(s.hand[0]!.id).toBe("lingrongXiangzhu");
+    // the kept 陵容 takes one of this turn's draws: 常在 draws 3 → 1 kept + 2 new
+    expect(s.drawnThisTurn).toBe(2);
+    expect(s.hand).toHaveLength(3);
     s.stories = [];
     onlyEvents(s, {});
     s = act(s, { type: "endTurn" });

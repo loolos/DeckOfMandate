@@ -879,10 +879,14 @@ function beginTurn2(s: Z2State, turn: number): void {
   drawHuafei(s);
   checkSummon(s);
 
-  const n = drawCount2(s, turn);
+  // 依依: 陵容 kept from last turn take up this turn's draws.
+  const kept = s.hand.length;
+  const base = drawCount2(s, turn);
+  const n = Math.max(0, base - kept);
   const mod = drawModifier2(s, turn);
   drawCards2(s, n);
-  log(s, `抓 ${n} 张牌${mod !== 0 ? `（状态修正 ${mod > 0 ? "+" : ""}${mod}，最低 1 张）` : ""}。`);
+  const notes = [mod !== 0 ? `状态修正 ${mod > 0 ? "+" : ""}${mod}，最低 1 张` : "", kept > 0 ? `依依留下 ${kept} 张陵容，少抓 ${base - n} 张` : ""].filter(Boolean);
+  log(s, `抓 ${n} 张牌${notes.length ? `（${notes.join("；")}）` : ""}。`);
 }
 
 function settleHuafei(s: Z2State, ev: EventInst2): boolean /* stays */ {
@@ -966,7 +970,7 @@ function endTurn2(s: Z2State): void {
   const keep = tier === "distant" ? s.hand.filter((c) => c.id === "lingrongXiangzhu") : [];
   s.discard.push(...s.hand.filter((c) => !keep.includes(c)));
   s.hand = keep;
-  if (keep.length > 0) log(s, `依依：${keep.length} 张【陵容相助】留在手牌中。`);
+  if (keep.length > 0) log(s, `依依：${keep.length} 张【陵容相助】留在手牌中，下回合少抓 ${keep.length} 张。`);
   if (lingrongLeft && s.relation != null) {
     if (s.relation > LINGRONG.neglectFloor) {
       log(s, LINGRONG_NEGLECT_TEXT.drop, "bad");
