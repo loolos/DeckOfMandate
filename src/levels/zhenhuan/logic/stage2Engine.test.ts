@@ -53,9 +53,8 @@ function withStatus(s: Z2State, id: StatusId2, appliesFromTurn = s.turn, remaini
 /** Ends turns choosing default options until `turn` begins. */
 function advanceTo(s: Z2State, turn: number): Z2State {
   while (s.turn < turn && s.outcome === "playing") {
-    s.qingyu = Math.max(s.qingyu, 8);
-    s.shengchong = Math.max(s.shengchong, 8);
-    s.trial.summoned = true;
+    s.qingyu = Math.max(s.qingyu, 9);
+    s.shengchong = Math.max(s.shengchong, 9);
     s.crisis = null;
     s.huafei = [];
     s = act(s, { type: "endTurn" });
@@ -82,7 +81,7 @@ describe("zhenhuan stage 2 content", () => {
 });
 
 describe("zhenhuan stage 2 engine", () => {
-  it("standalone start: 常在, 8/8, 身子 2 hidden, 初请安 open", () => {
+  it("standalone start: 常在, 8/8, 身子 2 hidden, no story on turn 1", () => {
     const s = newStage2(1, null);
     expect(s.turn).toBe(1);
     expect(s.rank).toBe("changzai");
@@ -90,7 +89,7 @@ describe("zhenhuan stage 2 engine", () => {
     expect(s.shengchong).toBe(8);
     expect(s.shenzi).toBe(2);
     expect(s.shenziRevealed).toBe(false);
-    expect(s.stories.map((x) => x.id)).toContain("chuQingan");
+    expect(s.stories).toHaveLength(0);
     expect(s.hand).toHaveLength(3);
     expect(s.relation).toBeNull();
   });
@@ -103,8 +102,6 @@ describe("zhenhuan stage 2 engine", () => {
 
   it("初请安 sets the starting hate; 陵容侍寝被退回 sets relation and shuffles 3 陵容 in", () => {
     let s = newStage2(2, null);
-    s = act(s, { type: "chooseStory", storyId: "chuQingan", optionId: "chuyanDingzhuang" });
-    expect(s.hate).toBe(3);
     s.crisis = null;
     s = act(s, { type: "endTurn" });
     expect(s.turn).toBe(2);
@@ -115,6 +112,9 @@ describe("zhenhuan stage 2 engine", () => {
     s = act(s, { type: "endTurn" });
     const all = [...s.drawPile, ...s.hand, ...s.discard].filter((c) => c.id === "lingrongXiangzhu");
     expect(all).toHaveLength(3);
+    expect(s.turn).toBe(3);
+    s = act(s, { type: "chooseStory", storyId: "chuQingan", optionId: "chuyanDingzhuang" });
+    expect(s.hate).toBe(3);
   });
 
   it("联袂: one neighbour of a 亲厚 陵容 is played free, once per 陵容", () => {
@@ -364,21 +364,30 @@ describe("zhenhuan stage 2 engine", () => {
     expect(s.hate).toBe(6);
   });
 
-  it("贵人考验 needs 侍寝 during the trial", () => {
-    let s = advanceTo(newStage2(19, null), 9);
+  it("贵人考验 (第 5—9 回合) needs 圣宠 ≥ 9 and 清誉 ≥ 9; 召幸 only comes after 晋为贵人", () => {
+    let s = advanceTo(newStage2(19, null), 5);
     expect(s.trial.active).toBe(true);
-    s.trial.summoned = false;
-    s.qingyu = 8;
+    expect(s.stories.some((x) => x.id === "zhaoxing")).toBe(false);
+    s.qingyu = 9;
     s.shengchong = 8;
     s.stories = [];
     onlyEvents(s, {});
     s = act(s, { type: "endTurn" });
     expect(s.rank).toBe("changzai");
-    s.trial.summoned = true;
+    s.qingyu = 9;
+    s.shengchong = 9;
     s.stories = [];
     onlyEvents(s, {});
     s = act(s, { type: "endTurn" });
     expect(s.rank).toBe("guiren");
+  });
+
+  it("翊坤宫初请安 comes on turn 3; a 常在 never gets 召幸", () => {
+    let s = newStage2(23, null);
+    expect(s.stories.some((x) => x.id === "chuQingan")).toBe(false);
+    expect(s.stories.some((x) => x.id === "zhaoxing")).toBe(false);
+    s = advanceTo(s, 3);
+    expect(s.stories.some((x) => x.id === "chuQingan")).toBe(true);
   });
 
   it("第 30 回合末按罪证结算：≤ 2 失败，3–4 险胜，≥ 5 完胜", () => {

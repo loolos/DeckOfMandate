@@ -133,7 +133,7 @@ export type Z2State = {
   huafei: EventInst2[];
   stories: StoryInst2[];
   notices: Notice[];
-  trial: { active: boolean; summoned: boolean };
+  trial: { active: boolean };
   pregnant: boolean;
   pregnancies: number;
   miscarriages: number;
@@ -294,13 +294,12 @@ export function canPlayCard(s: Z2State, cardUid: string): boolean {
   return playsLeft2(s) > 0 || isFreeByLianmei(s, cardUid);
 }
 
-export type TrialProgress2 = { shengchong: boolean; qingyu: boolean; summoned: boolean; all: boolean };
+export type TrialProgress2 = { shengchong: boolean; qingyu: boolean; all: boolean };
 
 export function guirenTrialProgress(s: Z2State): TrialProgress2 {
   const shengchong = s.shengchong >= GUIREN_TRIAL.minShengchong;
   const qingyu = s.qingyu >= GUIREN_TRIAL.minQingyu;
-  const summoned = s.trial.summoned;
-  return { shengchong, qingyu, summoned, all: shengchong && qingyu && summoned };
+  return { shengchong, qingyu, all: shengchong && qingyu };
 }
 
 export function canEndTurn2(s: Z2State): boolean {
@@ -492,10 +491,6 @@ function shuhenjiao(s: Z2State, tier: LingrongTier): void {
 function summonSuccess(s: Z2State, source: string): void {
   log(s, `${source}：侍寝成功。`, "good");
   revealShenzi(s, "summon");
-  if (s.trial.active && !s.trial.summoned) {
-    s.trial.summoned = true;
-    log(s, "晋封考验：侍寝条件达成。", "good");
-  }
   applyDelta2(s, { resource: "hate", amount: 1 }, "侍寝");
   if (!alive(s) || s.pregnant || (s.rank !== "guiren" && s.rank !== "pin")) return;
   const chance = Math.min(1, s.shenzi / SHENZI.divisor);
@@ -862,7 +857,7 @@ function beginTurn2(s: Z2State, turn: number): void {
     }
   }
   if (turn === GUIREN_TRIAL.firstTurn && s.rank === "changzai") {
-    s.trial = { active: true, summoned: false };
+    s.trial = { active: true };
     log(s, `剧情事件：【${GUIREN_TRIAL.name}】开始（第 ${GUIREN_TRIAL.firstTurn}—${GUIREN_TRIAL.lastTurn} 回合）`);
   }
   if (!s.caoTriggered && s.hate > 5) {
@@ -1087,7 +1082,7 @@ export function newStage2(seed: number, carry: Carry | null): Z2State {
     huafei: [],
     stories: [],
     notices: [],
-    trial: { active: false, summoned: false },
+    trial: { active: false },
     pregnant: false,
     pregnancies: 0,
     miscarriages: 0,

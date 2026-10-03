@@ -8,7 +8,6 @@ import {
   boardEvents,
   canPlayCard,
   cardAffectsEvent,
-  guirenTrialProgress,
   newStage2,
   openStories,
   reduce2,
@@ -53,8 +52,7 @@ function score(s: Z2State): number {
   if (s.relation != null) h += s.relation;
   if (s.rank !== "changzai") h += 100;
   if (s.trial.active) {
-    const p = guirenTrialProgress(s);
-    h += 2 * Math.min(s.shengchong, 7) + 2 * Math.min(s.qingyu, 6) + (p.summoned ? 15 : 0);
+    h += 2 * Math.min(s.shengchong, 9) + 2 * Math.min(s.qingyu, 9);
   }
   if (s.pregnant) h += 5;
   if (s.caoOwed) h += 8;

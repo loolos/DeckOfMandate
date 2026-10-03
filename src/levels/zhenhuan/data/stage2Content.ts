@@ -34,15 +34,15 @@ export const GUIREN_TRIAL = {
   name: "晋封考验：贵人",
   emoji: "🏮",
   flavor: "宫里要晋一批位分，皇上也问起了碎玉轩。能不能更进一步，就看这几日。",
-  firstTurn: 9,
-  lastTurn: 13,
-  minShengchong: 7,
-  minQingyu: 6,
+  firstTurn: 5,
+  lastTurn: 9,
+  minShengchong: 9,
+  minQingyu: 9,
   promoteTo: "guiren" as RankId,
 };
 
-/** 召幸 thresholds by rank (§10.1). */
-export const SUMMON_THRESHOLD: Partial<Record<RankId, number>> = { changzai: 6, guiren: 8, pin: 8 };
+/** 召幸 thresholds by rank (§10.1); 常在 has none: 召幸 only starts once 晋为贵人. */
+export const SUMMON_THRESHOLD: Partial<Record<RankId, number>> = { guiren: 8, pin: 8 };
 
 /** 召幸 interval by how far 圣宠 is above the threshold (§10.1). */
 export function summonInterval(excess: number): number {
@@ -858,7 +858,7 @@ export type StoryDef2 = {
 };
 
 export const FIXED_STORY_TURNS: Partial<Record<number, StoryId2>> = {
-  1: "chuQingan",
+  3: "chuQingan",
   2: "lingrongTuihui",
   5: "yuyingerShishi",
   8: "jiaYunFengbo",
@@ -1128,7 +1128,7 @@ export const STORIES2: Record<StoryId2, StoryDef2> = {
     name: "敬事房翻牌",
     emoji: "🌙",
     flavor: "敬事房的公公来报：今夜皇上翻了你的绿头牌。",
-    note: "打出仪容整肃 / 谨言慎行即侍寝成功（恨意 +1；贵人以后判定喜脉）。不处理则错过。欢宜香专宠在场时须先化解它。",
+    note: "打出仪容整肃 / 谨言慎行即侍寝成功（恨意 +1；按身子判定喜脉）。不处理则错过。欢宜香专宠在场时须先化解它。",
     defaultOptionId: "cuoguo",
     options: [
       { id: "cuoguo", name: "错过", hidden: true, effects: [], text: "无效果", story: "这一夜就这样过去了。" },
@@ -1226,7 +1226,7 @@ export const TAG2_INFO: Record<TagId2, { label: string; lore: string; rules: str
     lore: "命运的关口，如约而至。",
     rules: "可以选一个基础选项（不占出牌），或从手牌打出卡面所列的牌（占 1 次出牌，另加该牌效果）。不处理就结束回合时，按默认选项处理。",
   },
-  trial: { label: "持续", lore: "这一批晋封的名单，就看这几日的表现。", rules: "贵人考验持续第 9—13 回合。每回合末判定：圣宠 ≥ 7、清誉 ≥ 6，且考验期间侍寝成功过，即晋为贵人；第 13 回合末仍未满足则失败。" },
+  trial: { label: "持续", lore: "这一批晋封的名单，就看这几日的表现。", rules: "贵人考验持续第 5—9 回合。每回合末判定：圣宠 ≥ 9、清誉 ≥ 9，即晋为贵人；第 9 回合末仍未满足则失败。晋为贵人之后才会有召幸。" },
   negative: { label: "负面", lore: "缠身的麻烦，一时半刻甩不掉。", rules: "持续性的不利状态。温太医相助可移除 1 个（标“不可移除”的除外）。" },
   positive: { label: "正面", lore: "占得的先机，要趁早用上。", rules: "持续性的有利状态。" },
   lianmei: {
