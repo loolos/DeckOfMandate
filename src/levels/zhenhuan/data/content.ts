@@ -71,9 +71,9 @@ export const EVENTS: Record<EventId, EventDef> = {
     name: "皇后赏识",
     emoji: "🏮",
     flavor: "景仁宫晨省，新入宫的小主们按位分站在最末。皇后娘娘的目光扫过来，在你身上停了一停。",
-    reward: [{ resource: "shengchong", amount: 2 }],
+    reward: [{ resource: "shengchong", amount: 1 }],
     penalty: [],
-    resolvedText: "圣宠 +2",
+    resolvedText: "圣宠 +1",
     unresolvedText: "无额外效果，事件消失",
     resolvedStory: {
       yirongZhengsu:
@@ -88,9 +88,9 @@ export const EVENTS: Record<EventId, EventDef> = {
     name: "太后垂询",
     emoji: "🪭",
     flavor: "寿康宫请你过去说说话。",
-    reward: [{ resource: "qingyu", amount: 2 }],
+    reward: [{ resource: "qingyu", amount: 1 }],
     penalty: [],
-    resolvedText: "清誉 +2",
+    resolvedText: "清誉 +1",
     unresolvedText: "无额外效果，事件消失",
     resolvedStory: {
       jinyanShenxing:
