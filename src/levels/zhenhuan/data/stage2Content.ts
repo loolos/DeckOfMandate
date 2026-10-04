@@ -438,7 +438,7 @@ export const STATUSES2: Record<StatusId2, StatusDef2> = {
     turnStart: [{ resource: "shengchong", amount: 1 }],
     effectText: "未来 3 回合，每回合开始时圣宠 +1。",
     flavor: "一舞惊鸿，皇上的目光再也没从你身上移开。",
-    source: "贵人考验期间，同一回合打出眉庄相助与陵容相助（陵容怨怼时不肯帮忙）",
+    source: "贵人考验期间打出过眉庄相助与陵容相助（陵容怨怼时不肯帮忙）",
   },
   shenhuaiLongyi: {
     id: "shenhuaiLongyi",

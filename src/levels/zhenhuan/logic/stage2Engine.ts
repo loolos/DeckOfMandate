@@ -141,7 +141,7 @@ export type Z2State = {
   stories: StoryInst2[];
   notices: Notice[];
   trial: { active: boolean; summoned: boolean };
-  /** 惊鸿舞: 眉庄 / 陵容 played this turn during the 贵人考验; done once it has happened. */
+  /** 惊鸿舞 (a bonus, not part of the promotion): 眉庄 / 陵容 played at any point of the 贵人考验; done once it happened. */
   jinghong: { meizhuang: boolean; lingrong: boolean; done: boolean };
   pregnant: boolean;
   pregnancies: number;
@@ -1027,8 +1027,6 @@ function beginTurn2(s: Z2State, turn: number): void {
   s.drawnThisTurn = 0;
   s.lianmeiSpent = [];
   s.notices = [];
-  s.jinghong.meizhuang = false;
-  s.jinghong.lingrong = false;
   log(s, `—— 第 ${turn} 回合 ——`);
 
   for (const st of activeStatuses(s)) {
