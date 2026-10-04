@@ -1,4 +1,5 @@
-import { useEffect, useMemo, useRef, useState, type KeyboardEvent, type ReactNode } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { FoldBox, LogView, Pile, ResolvedBanner, ScrollRow, activateOnKey, countBy, isTypingTarget, type Fold } from "./common";
 import { RunCodePanel } from "../../../components/RunCodePanel";
 import { useSmallScreen } from "../../../logic/useSmallScreen";
 import {
@@ -38,7 +39,7 @@ import {
   type ZhAction,
   type ZhState,
 } from "../logic/engine";
-import { decodeRunCode, encodeRunCode } from "../logic/persistence";
+import { encodeRunCode } from "../logic/persistence";
 import { CompactModeToggle } from "./CompactModeToggle";
 import { RulesSummary } from "./RulesSummary";
 import { compactEffect, expandedEffect } from "./effectText";
@@ -51,14 +52,11 @@ type Props = {
   onShowRules: (open: boolean) => void;
   onRestart: () => void;
   onMenu: () => void;
-  onLoadState: (state: ZhState) => void;
+  /** Loads a run code (either chapter); returns an error message on failure. */
+  onLoadCode: (raw: string) => { ok: true } | { ok: false; error: string };
+  /** 第一关胜利后进入第二关。 */
+  onNextStage?: () => void;
 };
-
-function countBy<T extends string>(ids: readonly T[]): [T, number][] {
-  const m = new Map<T, number>();
-  for (const id of ids) m.set(id, (m.get(id) ?? 0) + 1);
-  return [...m.entries()];
-}
 
 function CardCountList({ ids, empty }: { ids: readonly CardId[]; empty: string }) {
   if (ids.length === 0) return <p className={styles.muted}>{empty}</p>;
@@ -83,54 +81,6 @@ function EventCountList({ ids, empty }: { ids: readonly EventId[]; empty: string
         </li>
       ))}
     </ul>
-  );
-}
-
-/**
- * Pile tile with a hover/focus popover. The popover is `position: fixed` (placed from the tile's
- * rect) so the sideways-scrolling pile row cannot clip it; it closes when anything scrolls.
- */
-function Pile({ icon, label, count, children }: { icon: string; label: string; count: number; children: ReactNode }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const [pos, setPos] = useState<{ top: number; left: number } | null>(null);
-  const show = () => {
-    const r = ref.current?.getBoundingClientRect();
-    if (!r) return;
-    setPos({ top: r.bottom + 6, left: Math.max(8, Math.min(r.left, window.innerWidth - 328)) });
-  };
-  useEffect(() => {
-    if (!pos) return;
-    const hide = () => setPos(null);
-    window.addEventListener("scroll", hide, true);
-    window.addEventListener("resize", hide);
-    return () => {
-      window.removeEventListener("scroll", hide, true);
-      window.removeEventListener("resize", hide);
-    };
-  }, [pos]);
-  return (
-    <div
-      ref={ref}
-      className={styles.pile}
-      tabIndex={0}
-      onMouseEnter={show}
-      onMouseLeave={() => {
-        if (document.activeElement !== ref.current) setPos(null);
-      }}
-      onFocus={show}
-      onBlur={() => setPos(null)}
-    >
-      <div className={styles.statLabel}>
-        <span className={styles.pileIcon}>{icon} </span>
-        {label}
-      </div>
-      <div className={styles.statValue}>{count}</div>
-      {pos ? (
-        <div className={styles.popover} role="tooltip" style={pos}>
-          {children}
-        </div>
-      ) : null}
-    </div>
   );
 }
 
@@ -180,150 +130,6 @@ function MatchChips({ state, def, resolved }: { state: ZhState; def: EventDef; r
   );
 }
 
-/**
- * One horizontal row of cards. Overflow scrolls sideways: swipe on touch, trackpad/shift+wheel,
- * or press-and-drag with a mouse (a drag never counts as a click on the card under it).
- */
-function ScrollRow({ className, children }: { className?: string; children: ReactNode }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const drag = useRef<{ x: number; left: number; moved: boolean; id: number } | null>(null);
-  const [dragging, setDragging] = useState(false);
-  return (
-    <div
-      ref={ref}
-      className={[styles.scrollRow, className, dragging && styles.scrollRowDragging].filter(Boolean).join(" ")}
-      onPointerDown={(e) => {
-        if (e.pointerType !== "mouse" || e.button !== 0 || !ref.current) return;
-        drag.current = { x: e.clientX, left: ref.current.scrollLeft, moved: false, id: e.pointerId };
-      }}
-      onPointerMove={(e) => {
-        const d = drag.current;
-        if (!d || !ref.current) return;
-        const dx = e.clientX - d.x;
-        if (!d.moved && Math.abs(dx) < 6) return;
-        if (!d.moved) {
-          d.moved = true;
-          setDragging(true);
-          ref.current.setPointerCapture(d.id);
-        }
-        ref.current.scrollLeft = d.left - dx;
-      }}
-      onPointerUp={() => {
-        if (!drag.current?.moved) {
-          drag.current = null;
-          return;
-        }
-        setDragging(false);
-        // keep the drag marker until the trailing click (same task) has been swallowed
-        window.setTimeout(() => {
-          drag.current = null;
-        }, 0);
-      }}
-      onPointerCancel={() => {
-        drag.current = null;
-        setDragging(false);
-      }}
-      onClickCapture={(e) => {
-        // swallow the click that ends a drag
-        if (drag.current?.moved) {
-          e.stopPropagation();
-          e.preventDefault();
-        }
-        drag.current = null;
-      }}
-    >
-      {children}
-    </div>
-  );
-}
-
-/** 略缩模式 (thumbnail mode): cards collapse to a one-line strip; tap to expand. */
-type Fold = { compact: boolean; expanded: boolean; onToggle: () => void };
-
-function activateOnKey(e: KeyboardEvent, fn: () => void) {
-  if (e.key === "Enter" || e.key === " ") {
-    e.preventDefault();
-    fn();
-  }
-}
-
-const INTERACTIVE = "button, a, input, textarea, select, label";
-
-function isTypingTarget(target: EventTarget | null): boolean {
-  if (!(target instanceof HTMLElement)) return false;
-  return target.tagName === "INPUT" || target.tagName === "TEXTAREA" || target.tagName === "SELECT" || target.isContentEditable;
-}
-
-/**
- * Card container. In 略缩模式 the whole card toggles collapsed/expanded with a single click
- * (clicks on its own buttons don't toggle). With `onDouble` (hand cards) the toggle waits a
- * moment so a double-click plays the card instead.
- */
-function FoldBox({
-  fold,
-  className,
-  onDouble,
-  children,
-}: {
-  fold: Fold;
-  className: string;
-  onDouble?: () => void;
-  children: ReactNode;
-}) {
-  const timer = useRef<number | null>(null);
-  if (!fold.compact) {
-    // Desktop layout: double-click a hand card to play it (same as the Sun King campaign).
-    return (
-      <div
-        className={onDouble ? `${className} ${styles.playableByDouble}` : className}
-        onDoubleClick={
-          onDouble
-            ? (e) => {
-                if (!(e.target as HTMLElement).closest(INTERACTIVE)) onDouble();
-              }
-            : undefined
-        }
-      >
-        {children}
-      </div>
-    );
-  }
-  const clearTimer = () => {
-    if (timer.current !== null) window.clearTimeout(timer.current);
-    timer.current = null;
-  };
-  return (
-    <div
-      className={`${className} ${fold.expanded ? styles.expandedCard : styles.compactCard}`}
-      role="button"
-      tabIndex={0}
-      aria-expanded={fold.expanded}
-      onClick={(e) => {
-        if ((e.target as HTMLElement).closest(INTERACTIVE)) return;
-        if (!onDouble) {
-          fold.onToggle();
-          return;
-        }
-        clearTimer();
-        timer.current = window.setTimeout(() => {
-          timer.current = null;
-          fold.onToggle();
-        }, 220);
-      }}
-      onDoubleClick={(e) => {
-        if (!onDouble || (e.target as HTMLElement).closest(INTERACTIVE)) return;
-        clearTimer();
-        onDouble();
-      }}
-      onKeyDown={(e) => {
-        if (e.target === e.currentTarget) activateOnKey(e, fold.onToggle);
-      }}
-    >
-      {children}
-    </div>
-  );
-}
-
 type Dispatch = (a: ZhAction) => void;
 
 /** Clickable tag: writes its lore + mechanic explanation to the log (does not expand strips). */
@@ -341,19 +147,6 @@ function TagButton({ tag, tone, dispatch, children }: { tag: TagId; tone?: strin
     >
       {children}
     </button>
-  );
-}
-
-/** Resolved banner: distinct mark per event kind, plus which card handled it. */
-function ResolvedBanner({ icon, label, detail, story }: { icon: string; label: string; detail: string; story?: string }) {
-  return (
-    <div className={styles.resolvedBanner} role="status">
-      <span className={styles.resolvedBadge}>
-        {icon} {label}
-      </span>
-      {story ? <span className={styles.resolvedStory}>{story}</span> : null}
-      <span className={styles.resolvedDetail}>{detail}</span>
-    </div>
   );
 }
 
@@ -839,34 +632,17 @@ function endTurnHints(state: ZhState): string[] {
   return hints;
 }
 
-function Log({ state }: { state: ZhState }) {
-  const ref = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    const el = ref.current;
-    if (el) el.scrollTop = el.scrollHeight;
-  }, [state.log.length]);
-  return (
-    <div className={styles.log} ref={ref} aria-label="日志">
-      {state.log.map((entry, i) => (
-        <p
-          key={i}
-          className={[
-            styles.logLine,
-            entry.text.startsWith("——") && styles.logTurn,
-            entry.tone === "good" && styles.logGood,
-            entry.tone === "bad" && styles.logBad,
-          ]
-            .filter(Boolean)
-            .join(" ")}
-        >
-          {entry.text}
-        </p>
-      ))}
-    </div>
-  );
-}
-
-function OutcomeModal({ state, onRestart, onMenu }: { state: ZhState; onRestart: () => void; onMenu: () => void }) {
+function OutcomeModal({
+  state,
+  onRestart,
+  onMenu,
+  onNextStage,
+}: {
+  state: ZhState;
+  onRestart: () => void;
+  onMenu: () => void;
+  onNextStage?: () => void;
+}) {
   if (state.outcome === "playing") return null;
   const won = state.outcome === "won";
   return (
@@ -874,7 +650,7 @@ function OutcomeModal({ state, onRestart, onMenu }: { state: ZhState; onRestart:
       <div className={styles.modal}>
         <h2 id="zh-outcome-title">{won ? "🎉 第一关胜利" : "🥀 功亏一篑"}</h2>
         {won ? (
-          <p>你从答应晋为常在，在这深宫里站稳了第一步。后面的路还长，敬请期待。</p>
+          <p>你从答应晋为常在，在这深宫里站稳了第一步。可翊坤宫的华妃，已经注意到了你。</p>
         ) : (
           <p>
             {state.lossReason}。紫禁城里一步走错，便再难回头。
@@ -887,9 +663,14 @@ function OutcomeModal({ state, onRestart, onMenu }: { state: ZhState; onRestart:
           <button type="button" className={styles.btn} onClick={onMenu}>
             返回主菜单
           </button>
-          <button type="button" className={`${styles.btn} ${styles.btnPrimary}`} onClick={onRestart}>
+          <button type="button" className={won && onNextStage ? styles.btn : `${styles.btn} ${styles.btnPrimary}`} onClick={onRestart}>
             重新开始
           </button>
+          {won && onNextStage ? (
+            <button type="button" className={`${styles.btn} ${styles.btnPrimary}`} onClick={onNextStage} autoFocus>
+              进入第二关
+            </button>
+          ) : null}
         </div>
       </div>
     </div>
@@ -931,7 +712,7 @@ function countEvents(state: ZhState): { unresolved: number; total: number } {
   return { unresolved: done.filter((d) => !d).length, total: done.length };
 }
 
-export function ZhenhuanGame({ state, dispatch, showRules, onShowRules, onRestart, onMenu, onLoadState }: Props) {
+export function ZhenhuanGame({ state, dispatch, showRules, onShowRules, onRestart, onMenu, onLoadCode, onNextStage }: Props) {
   const rank = RANKS[state.rank];
   const runCode = useMemo(() => encodeRunCode(state), [state]);
   const hints = endTurnHints(state);
@@ -1088,16 +869,8 @@ export function ZhenhuanGame({ state, dispatch, showRules, onShowRules, onRestar
       </div>
 
       <div className={styles.bottom}>
-        <Log state={state} />
-        <RunCodePanel
-          code={runCode}
-          onLoad={(raw) => {
-            const result = decodeRunCode(raw);
-            if (!result.ok) return { ok: false, error: result.error };
-            onLoadState(result.state);
-            return { ok: true };
-          }}
-        />
+        <LogView entries={state.log} />
+        <RunCodePanel code={runCode} onLoad={onLoadCode} />
       </div>
 
       {showRules ? (
@@ -1115,7 +888,7 @@ export function ZhenhuanGame({ state, dispatch, showRules, onShowRules, onRestar
       ) : null}
 
       {showPromotion ? <PromotionModal state={state} onClose={() => setShowPromotion(false)} /> : null}
-      <OutcomeModal state={state} onRestart={onRestart} onMenu={onMenu} />
+      <OutcomeModal state={state} onRestart={onRestart} onMenu={onMenu} onNextStage={onNextStage} />
     </div>
   );
 }

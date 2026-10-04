@@ -984,3 +984,8 @@
     font-size: 0.74rem;
   }
 }
+
+/* 第二关: a spent 联袂 tag */
+.tagDim {
+  opacity: 0.45;
+}

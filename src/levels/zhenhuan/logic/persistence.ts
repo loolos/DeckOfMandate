@@ -9,7 +9,7 @@ const RUN_CODE_PREFIX = "ZH1-";
 
 type RunRecord = { readonly seed: number; readonly actions: readonly ZhAction[] };
 
-function encodeAction(a: ZhAction): string {
+export function encodeAction(a: ZhAction): string {
   switch (a.type) {
     case "playCard":
       return `p${a.cardUid}`;
@@ -26,7 +26,7 @@ function encodeAction(a: ZhAction): string {
   }
 }
 
-function decodeAction(raw: string): ZhAction {
+export function decodeAction(raw: string): ZhAction {
   const head = raw[0];
   const body = raw.slice(1);
   switch (head) {
