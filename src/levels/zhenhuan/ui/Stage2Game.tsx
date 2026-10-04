@@ -236,6 +236,8 @@ function StoryCard({ state, inst, dispatch, fold }: { state: Z2State; inst: Stor
   const def = STORIES2[inst.id];
   const chosen = inst.chosenOptionId;
   const blocked = inst.id === "zhaoxing" && summonBlocked(state);
+  // 抱恙在身: no 侍寝, so the card answers are hidden until it is removed
+  const cardResponses = inst.id === "zhaoxing" && chosen == null && summonUnwell(state) ? [] : storyCardResponses2(def);
   const locked = chosen != null || state.pending != null || state.outcome !== "playing" || blocked;
   const chosenOption = chosen ? def.options.find((o) => o.id === chosen) : undefined;
   const defaultOption = def.options.find((o) => o.id === def.defaultOptionId)!;
@@ -303,12 +305,12 @@ function StoryCard({ state, inst, dispatch, fold }: { state: Z2State; inst: Stor
           </button>
         </div>
       ))}
-      {storyCardResponses2(def).length > 0 ? (
+      {cardResponses.length > 0 ? (
         <p className={styles.rule}>
           <span className={styles.ruleLabel}>可由手牌打出解决：</span>
         </p>
       ) : null}
-      {storyCardResponses2(def).map((option) => {
+      {cardResponses.map((option) => {
         const inHand = state.hand.some((c) => c.id === option.card);
         const lingrongNote = option.card === "lingrongXiangzhu" && tier ? `（当前情分：${TIER_EMOJI[tier]}${TIER_LABEL[tier]}）` : "";
         return (
@@ -755,7 +757,7 @@ export function Stage2Game({ state, dispatch, runCode, showRules, onShowRules, o
     const p = prev.current;
     const sameRun = p.seed === state.seed && state.actions.length > 0;
     if (sameRun && state.outcome === "playing") {
-      if (state.miscarriages > p.miscarriages) setNotice("miscarriage");
+      if (p.miscarriages === 0 && state.miscarriages > 0) setNotice("miscarriage"); // first time only
       else if (state.rank !== p.rank && (state.rank === "guiren" || state.rank === "pin")) setNotice(state.rank);
       else if (state.shenziRevealed && !p.shenzi) setNotice("shenzi");
       else if (p.turn < HATE_REVEAL_TURN && state.turn >= HATE_REVEAL_TURN) setNotice("hate");

@@ -511,25 +511,6 @@ describe("zhenhuan stage 2 engine", () => {
     expect(t.statuses.some((x) => x.id === "baoyangZaishen")).toBe(true);
   });
 
-  it("罚跪之后 (turn 18) recaps how the 罚跪 went", () => {
-    let s = newStage2(26, null);
-    s.rank = "guiren";
-    s.turn = 16;
-    s.qingyu = 10;
-    s.shengchong = 10;
-    s.stories = [];
-    s.crisis = null;
-    s.huafei = [];
-    s = act(s, { type: "endTurn" });
-    expect(s.stories.some((x) => x.id === "fakuiPlain")).toBe(true);
-    s.crisis = null;
-    s.huafei = [];
-    s = act(s, { type: "endTurn" }); // default 领罚
-    expect(s.turn).toBe(18);
-    const n = s.notices.find((x) => x.name === "罚跪之后");
-    expect(n?.text).toContain("领罚");
-  });
-
   it("ending lines cover the pregnancy outcome", () => {
     const s = newStage2(16, null);
     expect(endingLines(s).some((l) => l.includes("始终没有动静"))).toBe(true);

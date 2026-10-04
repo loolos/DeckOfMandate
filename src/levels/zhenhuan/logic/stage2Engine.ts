@@ -150,8 +150,6 @@ export type Z2State = {
   caoOwed: boolean;
   /** 罚跪 started with 恨意 ≥ 6. */
   fakuiHarsh: boolean;
-  /** How the 罚跪 was handled (recapped on the next turn's aftermath card). */
-  fakuiOutcome: string | null;
   /** 陵容 uids whose 联袂 was used this turn. */
   lianmeiSpent: string[];
   evidence: EvidenceId[];
@@ -709,7 +707,6 @@ function applyStoryOption(s: Z2State, inst: StoryInst2, option: StoryOption2, so
   }
 
   log(s, option.story);
-  if (inst.id === "fakuiPlain" || inst.id === "fakuiPregnant") s.fakuiOutcome = `${option.name}：${option.text}`;
   if (option.distantRemark && tier === "distant") log(s, `陵容（生分）：${option.distantRemark}`);
   if (inst.id === "fakuiPregnant") {
     let loss = option.fakuiShenzi ?? 3;
@@ -935,10 +932,6 @@ function beginTurn2(s: Z2State, turn: number): void {
   if (turn === FAKUI_TURN) {
     s.fakuiHarsh = s.hate >= 6;
     openStory(s, s.pregnant ? "fakuiPregnant" : "fakuiPlain");
-  }
-  if (turn === FAKUI_TURN + 1) {
-    const recap = s.fakuiOutcome ? `昨日在翊坤宫外罚跪（${s.fakuiOutcome}）。` : "";
-    s.notices.push({ ...NOTICES.fakuiAftermath, text: `${recap}${NOTICES.fakuiAftermath.text}` });
   }
   if (turn === NIAN_TURN) {
     s.notices.push(NOTICES.nianGengyao);
@@ -1196,7 +1189,6 @@ export function newStage2(seed: number, carry: Carry | null): Z2State {
     caoBefriended: false,
     caoOwed: false,
     fakuiHarsh: false,
-    fakuiOutcome: null,
     lianmeiSpent: [],
     evidence: [],
     shuhenjiaoHarm: 0,

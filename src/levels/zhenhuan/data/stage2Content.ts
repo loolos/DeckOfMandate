@@ -1316,11 +1316,6 @@ export const LINGRONG_SUMMON: Record<LingrongTier, { story: string; result: "suc
 };
 
 export const NOTICES = {
-  fakuiAftermath: {
-    emoji: "☀️",
-    name: "罚跪之后",
-    text: "罚跪的事传遍了六宫，有人幸灾乐祸，也有人暗暗替你不平。你在床上歇着，把这笔账记在了心里。",
-  },
   nianGengyao: { emoji: "⛓️", name: "年氏倾颓", text: "年羹尧获罪下狱，翊坤宫失了靠山。宫里的风向，变了。" },
 };
 
