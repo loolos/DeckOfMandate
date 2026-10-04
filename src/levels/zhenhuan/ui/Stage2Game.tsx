@@ -388,7 +388,14 @@ function NoticeCard({ emoji, name, text, fold }: { emoji: string; name: string; 
           {name}
         </span>
       </div>
-      {fold.compact && !fold.expanded ? <div className={styles.compactSummary}>剧情</div> : <p className={styles.flavor}>{text}</p>}
+      {fold.compact && !fold.expanded ? (
+        <div className={styles.compactSummary}>剧情 · 无需处理</div>
+      ) : (
+        <>
+          <p className={styles.flavor}>{text}</p>
+          <p className={styles.muted}>仅为剧情交代，没有选项、不影响数值，无需处理。</p>
+        </>
+      )}
     </FoldBox>
   );
 }
