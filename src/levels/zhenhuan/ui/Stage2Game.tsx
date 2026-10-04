@@ -742,17 +742,18 @@ export function Stage2Game({ state, dispatch, runCode, showRules, onShowRules, o
   const tier = tierOf(state);
 
   // One-off notices during play (not when loading a save): promotion and 身子 appearing.
-  const [notice, setNotice] = useState<"guiren" | "pin" | "shenzi" | "hate" | null>(null);
-  const prev = useRef({ rank: state.rank, shenzi: state.shenziRevealed, turn: state.turn, seed: state.seed });
+  const [notice, setNotice] = useState<"guiren" | "pin" | "shenzi" | "hate" | "miscarriage" | null>(null);
+  const prev = useRef({ rank: state.rank, shenzi: state.shenziRevealed, turn: state.turn, seed: state.seed, miscarriages: state.miscarriages });
   useEffect(() => {
     const p = prev.current;
     const sameRun = p.seed === state.seed && state.actions.length > 0;
     if (sameRun && state.outcome === "playing") {
-      if (state.rank !== p.rank && (state.rank === "guiren" || state.rank === "pin")) setNotice(state.rank);
+      if (state.miscarriages > p.miscarriages) setNotice("miscarriage");
+      else if (state.rank !== p.rank && (state.rank === "guiren" || state.rank === "pin")) setNotice(state.rank);
       else if (state.shenziRevealed && !p.shenzi) setNotice("shenzi");
       else if (p.turn < HATE_REVEAL_TURN && state.turn >= HATE_REVEAL_TURN) setNotice("hate");
     }
-    prev.current = { rank: state.rank, shenzi: state.shenziRevealed, turn: state.turn, seed: state.seed };
+    prev.current = { rank: state.rank, shenzi: state.shenziRevealed, turn: state.turn, seed: state.seed, miscarriages: state.miscarriages };
   }, [state]);
 
   const endTurnReady = canEndTurn2(state) && !showRules && notice == null;
@@ -926,6 +927,21 @@ export function Stage2Game({ state, dispatch, runCode, showRules, onShowRules, o
           <p className={styles.muted}>
             从下一回合起每回合抓 {RANKS[notice].draw} 张、最多打 {RANKS[notice].plays} 张，清誉 / 圣宠上限提高到 {RANKS[notice].cap}。
           </p>
+        </Notice>
+      ) : null}
+      {notice === "miscarriage" ? (
+        <Notice title="🥀 小产" onClose={() => setNotice(null)}>
+          <p>
+            {state.miscarriageCause === "翊坤长跪"
+              ? "烈日下跪了这许久，腹中一阵绞痛。太医赶到时，孩子已经保不住了。"
+              : state.miscarriageCause === "身子亏空"
+                ? "身子亏空到了极处，再也护不住腹中的孩子。太医跪在榻前，只说了一句「小主节哀」。"
+                : `「${state.miscarriageCause ?? "暗手"}」伤了胎气。太医跪在榻前，只说了一句「小主节哀」。`}
+          </p>
+          <p>
+            失去了【身怀龙裔】；身子大伤，清誉、圣宠也跟着下降。位分不降，华妃的恨意倒是消了些。身子若亏空到 0，还得卧床静养。
+          </p>
+          <p className={styles.muted}>召幸会重新出现。要再有身孕，只能等下一次侍寝了。</p>
         </Notice>
       ) : null}
       {notice === "hate" ? (

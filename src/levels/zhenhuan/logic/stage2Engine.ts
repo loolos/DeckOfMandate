@@ -141,6 +141,8 @@ export type Z2State = {
   pregnant: boolean;
   pregnancies: number;
   miscarriages: number;
+  /** What caused the latest 小产 (for the notice). */
+  miscarriageCause: string | null;
   /** Turn of the last 召幸; null = next turn at the threshold summons right away. */
   summonLast: number | null;
   caoTriggered: boolean;
@@ -451,6 +453,7 @@ function miscarry(s: Z2State, shenziLoss: number, cause: string): void {
   s.pregnant = false;
   removeStatusById(s, "shenhuaiLongyi");
   s.miscarriages++;
+  s.miscarriageCause = cause;
   s.summonLast = null;
   dropPinEvent(s);
   log(s, `小产（${cause}）：失去【身怀龙裔】。`, "bad");
@@ -1181,6 +1184,7 @@ export function newStage2(seed: number, carry: Carry | null): Z2State {
     pregnant: false,
     pregnancies: 0,
     miscarriages: 0,
+    miscarriageCause: null,
     summonLast: null,
     caoTriggered: false,
     caoBefriended: false,
