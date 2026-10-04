@@ -161,13 +161,11 @@ export const FINALE = {
     narrow: "年家倒了，你手里已攒下不少罪证，可要一举扳倒华妃，还得在御前多费些心力。",
     thin: "年家虽倒，你手里几乎没有华妃的把柄。想在今日扳倒她，只能拼尽全力一搏。",
   },
-  /** Every card can be thrown in (more than needed is fine); each distinct card tells its part. */
-  cards: ["jinyanShenxing", "yirongZhengsu", "shoulongRenxin", "jingguanQibian", "meizhuangXiangzhu", "wenTaiyiZhenzhi", "lingrongXiangzhu"] as const,
+  /** Cards that count (more than needed is fine); each distinct card tells its part. */
+  cards: ["jinyanShenxing", "shoulongRenxin", "meizhuangXiangzhu", "wenTaiyiZhenzhi", "lingrongXiangzhu"] as const,
   cardStory: {
     jinyanShenxing: "你在御前一桩桩陈说翊坤宫的罪状，字字有据，不急不躁。",
-    yirongZhengsu: "你素服跪在养心殿外，仪态端庄，皇上终于肯召你进去说话。",
     shoulongRenxin: "当年受过翊坤宫欺凌的宫人一个接一个站了出来。",
-    jingguanQibian: "你按兵不动，只等华妃自乱阵脚，在御前失了分寸。",
     meizhuangXiangzhu: "眉庄托人递来一封亲笔书信，替你作证。",
     wenTaiyiZhenzhi: "温实初呈上当年的脉案，与华妃的罪状一一对上。",
   } as Partial<Record<string, string>>,
