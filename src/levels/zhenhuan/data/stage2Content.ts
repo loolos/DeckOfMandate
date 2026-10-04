@@ -188,13 +188,13 @@ export const CARDS2: Record<CardId2, CardDef2> = {
   }),
   wenTaiyiZhenzhi: fromStage1("wenTaiyiZhenzhi", {
     base: [{ resource: "shenzi", amount: 1 }],
-    matches: ["jingxinTiaoyang", "liyiShiwu", "shanshiYouyi", "wenyiBaoyang"],
+    matches: ["jingxinTiaoyang", "liyiShiwu", "hanliangZhiwu", "shanshiYouyi", "wenyiBaoyang"],
     rulesText: ["移除 1 个【负面】状态；身子 +1。"],
     rulesCompact: "🧹负面 🌱+1",
   }),
   shoulongRenxin: fromStage1("shoulongRenxin", {
     rulesCompact: "👂×2 📦→🎴+1",
-    matches: ["supeishengToufeng", "liPinJingmeng", "wenyiBaoyang", "qinmoChenqing", "neiwufuDiaonan", "hanliangZhiwu", "kekouFenli", "shanshiYouyi"],
+    matches: ["supeishengToufeng", "liPinJingmeng", "wenyiBaoyang", "qinmoChenqing", "neiwufuDiaonan", "kekouFenli", "shanshiYouyi"],
   }),
   jingguanQibian: fromStage1("jingguanQibian", { matches: ["jingxinTiaoyang", "hanliangZhiwu"] }),
   meizhuangXiangzhu: fromStage1("meizhuangXiangzhu", {
@@ -215,6 +215,7 @@ export const CARDS2: Record<CardId2, CardDef2> = {
       "gongzhongLiuyan",
       "neiwufuDiaonan",
       "liyiShiwu",
+      "hanliangZhiwu",
       "kekouFenli",
       "huanyixiangZhuanchong",
     ],
@@ -676,7 +677,7 @@ export const EVENTS2: Record<EventId2, EventDef2> = {
     resolvedText: "移除事件",
     unresolvedText: "伤胎：有孕前身子 -1、获得【抱恙在身】；有孕后直接小产",
     resolvedStory: {
-      shoulongRenxin: "你打赏了送东西的宫人，顺口一问，才知道这碗冰果是特意给碎玉轩备的。你原封不动地退了回去。",
+      wenTaiyiZhenzhi: "温实初正好来请脉，看了一眼那碗冰果便摇头：小主体寒，这东西碰不得。",
       jingguanQibian: "你只看了一眼便叫人撤下，说近来脾胃虚寒，碰不得凉的。",
     },
   },
@@ -906,6 +907,11 @@ export const LINGRONG_EVENT: Partial<Record<EventId2, TierTable>> = {
     close: { resolves: true, shuhenjiao: true, story: "陵容扶你起来，替你整好衣裳，又说回头送药来。" },
     distant: { resolves: true, shuhenjiao: true, story: "「姐姐素来最重仪态，这回可要仔细些。」陵容替你遮掩过去，说回头送药来。" },
     resentful: { resolves: true, shuhenjiao: true, story: "陵容上前替你圆了场，低头时嘴角却像是笑了一下。她说回头送药来。" },
+  },
+  hanliangZhiwu: {
+    close: { resolves: true, relation: 1, story: "陵容抢先端走了那碗冰果：「姐姐身子要紧，这个我替姐姐吃了。」" },
+    distant: { resolves: true, story: "「姐姐如今金贵，连口凉的都吃不得了。」陵容嘴上打趣，还是把冰果端走了。" },
+    resentful: { resolves: false, relation: 1, story: "陵容看了那碗冰果一眼，什么也没说。等你吃下了，她才低声说了句「姐姐仔细身子」。" },
   },
   kekouFenli: {
     close: { resolves: true, relation: 1, effects: [{ resource: "shengchong", amount: -1 }], story: "陵容把自己的份例分了一半送来：「姐姐别嫌弃。咱们姐妹，原该如此。」只是内务府那边，到底还是记了你一笔。" },
