@@ -70,6 +70,8 @@ export function lingrongTier(relation: number): LingrongTier {
 
 /** 舒痕胶有害概率 (§5.5). */
 export const SHUHENJIAO_HARM_CHANCE: Record<LingrongTier, number> = { close: 0, distant: 0.3, resentful: 0.6 };
+/** 无害时疤痕尽消（圣宠 +1）的概率：亲厚必定；生分 30%（有害 30% 之外的另一段）。 */
+export const SHUHENJIAO_HEAL_CHANCE: Record<LingrongTier, number> = { close: 1, distant: 0.3, resentful: 0 };
 
 // ---------------------------------------------------------------- 罪证
 
@@ -1089,6 +1091,7 @@ export const LINGRONG_NEGLECT_TEXT = {
 
 export const SHUHENJIAO_TEXT = {
   close: "陵容亲手替你上药，药膏清凉，伤处好得很快。",
+  heal: "药膏清凉，伤处好得很快，竟连一点疤痕也没留下。",
   safe: "药膏清凉，伤处好得很快。",
   harm: "药膏香气浓得有些异样，你只当是好药。",
 };
@@ -1691,7 +1694,7 @@ export const TAG2_INFO: Record<TagId2, { label: string; lore: string; rules: str
   chezhou: { label: "掣肘", lore: "处处牵制，暗中作梗。", rules: "情分怨怼时，陵容在手牌中，她左右相邻的牌不能打出（陵容自己不受影响）。打出陵容后解除。" },
   yiyi: { label: "依依", lore: "依依不舍，缠着姐姐不肯走。", rules: "情分生分时，陵容在回合末不进弃牌堆，留在手牌最左边；留下几张，下回合就少抓几张。" },
   xibie: { label: "惜别", lore: "人将远去，情分只够再相助一回。", rules: "第一次抓到此人的牌时，其余同名牌立即离场，只留这一张，这是最后一次相助。打出时按惜别效果结算，打出后离场；本回合没打出则照常进弃牌堆、洗回牌库，还有机会再用。" },
-  shuhenjiao: { label: "舒痕胶", lore: "祛疤的药膏，香气清冽。", rules: "陵容送药时送来。情分亲厚时无害，并圣宠 +1；情分越差，越可能有害（有害时身子 -1，最多扣到 1）。" },
+  shuhenjiao: { label: "舒痕胶", lore: "祛疤的药膏，香气清冽。", rules: "陵容送药时送来。情分亲厚时无害，并圣宠 +1；生分时也可能疤痕尽消（圣宠 +1）；情分越差，越可能有害（有害时身子 -1，最多扣到 1）。" },
   harm: { label: "伤胎", lore: "防不胜防的暗手。", rules: "未化解时：有孕前身子 -1；有孕后直接小产。温太医留方可抵消一次。" },
   burn: { label: "延烧", lore: "拖得越久，越难收拾。", rules: "未化解时圣宠 -1 并留到下回合（不占下回合的华妃事件名额）；下回合仍未化解，圣宠 -2 后离场。" },
   double: { label: "双牌", lore: "一个人扛不住，就得多想一步。", rules: "同一回合内打出两张匹配牌才算化解，每张牌自身效果照常结算；回合末不满 2 张则进度清零。" },
