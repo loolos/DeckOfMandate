@@ -807,10 +807,7 @@ export function Stage2Rules() {
         本关会有<strong>晋封贵人的考验</strong>，须在考验期间成功侍寝才能通过。
       </li>
       <li>
-        🎶<strong>安陵容</strong>会以【陵容相助】进入你的牌库，效果随你与她的情分而变。
-      </li>
-      <li>
-        🌱<strong>身子</strong>决定能否有孕。贵人有孕后可借【请脉报喜】晋为嫔，但也要提防小产。
+        🎶<strong>安陵容</strong>很快就会加入。
       </li>
     </ul>
   );
