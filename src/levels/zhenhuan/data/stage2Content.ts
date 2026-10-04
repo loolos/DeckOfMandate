@@ -164,16 +164,16 @@ export const FINALE = {
   /** Cards that count (more than needed is fine); each distinct card tells its part. */
   cards: ["jinyanShenxing", "shoulongRenxin", "meizhuangXiangzhu", "wenTaiyiZhenzhi", "lingrongXiangzhu"] as const,
   cardStory: {
-    jinyanShenxing: "你在御前一桩桩陈说翊坤宫的罪状，字字有据，不急不躁。",
-    shoulongRenxin: "当年受过翊坤宫欺凌的宫人一个接一个站了出来。",
-    meizhuangXiangzhu: "眉庄托人递来一封亲笔书信，替你作证。",
-    wenTaiyiZhenzhi: "温实初呈上当年的脉案，与华妃的罪状一一对上。",
+    jinyanShenxing: "你跪在御前，一字一句道：「臣妾不敢妄言，只求皇上明察。年氏一门的所作所为，桩桩件件都有人证物证。」",
+    shoulongRenxin: "槿汐领着一众宫人跪了一地，叩首道：「奴婢们人微言轻，可翊坤宫这些年做下的事，奴婢们都亲眼见过。」",
+    meizhuangXiangzhu: "眉庄挺直了背，朗声道：「皇上，臣妾当日假孕失宠，正是翊坤宫一手设下的局。臣妾禁足存菊堂时，连炭火都被克扣了去。」",
+    wenTaiyiZhenzhi: "温实初捧着脉案跪下：「微臣愿以项上人头担保，这些方子皆出自翊坤宫授意，绝无半字虚言。」",
   } as Partial<Record<string, string>>,
   /** 陵容 is no friend of 华妃 whatever she thinks of you; only her manner differs. */
   lingrongStory: {
-    close: "陵容拉着你的手说：「姐姐受的委屈，妹妹都记着。」她在御前唱了一支曲子，又似是无意地提起了翊坤宫的旧事。",
-    distant: "陵容没多说什么，只在御前唱曲时，「无意」提起了翊坤宫这些年的跋扈。",
-    resentful: "陵容不是为你，她自己也恨透了翊坤宫。她在御前轻描淡写的几句，比谁都狠。",
+    close: "陵容握着你的手，轻声道：「姐姐受的委屈，妹妹都记着。」到了御前，她低眉顺眼地补了一句：「臣妾也曾见翊坤宫的人，往碎玉轩送过不干净的东西。」",
+    distant: "陵容低着头，声音细细的：「臣妾人微言轻，本不该多嘴。只是那年在翊坤宫外，臣妾亲耳听见娘娘说，要让碎玉轩好看。」",
+    resentful: "陵容不是为你，她自己也恨透了翊坤宫。她在御前只淡淡一句：「华妃娘娘这些年，对谁都不曾手软过。」却比谁都狠。",
   } as Record<LingrongTier, string>,
   doneStory: {
     full: "皇上将罪证掷在华妃面前，良久无言，终于下旨：年氏降为答应，打入冷宫。",
