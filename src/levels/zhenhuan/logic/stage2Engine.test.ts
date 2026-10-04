@@ -849,20 +849,6 @@ describe("zhenhuan stage 2 engine", () => {
     t = act(t, { type: "playCard", cardUid: l2! });
     expect(t.statuses.some((x) => x.id === "jinghongWu")).toBe(true);
     expect(t.log.some((e) => e.text.includes("惊鸿舞"))).toBe(true);
-
-    // still open after an early promotion, within 第 5–9 回合
-    let u = newStage2(48, null);
-    u.turn = 7;
-    u.rank = "guiren";
-    u.trial = { active: false, summoned: true };
-    u.relation = 3;
-    u.stories = [];
-    onlyEvents(u, {});
-    u.extraPlays = 2;
-    const [m3, l3] = setHand(u, ["meizhuangXiangzhu", "lingrongXiangzhu"]);
-    u = act(u, { type: "playCard", cardUid: m3! });
-    u = act(u, { type: "playCard", cardUid: l3! });
-    expect(u.jinghong.done).toBe(true);
   });
 
   it("ending lines cover the pregnancy outcome", () => {

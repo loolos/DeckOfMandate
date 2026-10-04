@@ -34,7 +34,6 @@ import {
   blockedByStatus,
   summonUnwell,
   finaleAccepts,
-  jinghongOpen,
   finaleTier,
   finaleDoneStory,
   canEndTurn2,
@@ -537,12 +536,6 @@ function HandCard({ state, card, dispatch, fold }: { state: Z2State; card: CardI
       {free ? <div className={styles.solves}>联袂：可不占出牌名额打出</div> : null}
       {blocked ? <div className={styles.endHint}>被陵容掣肘，不能打出</div> : null}
       {unwell ? <div className={styles.endHint}>抱恙在身，不能打出</div> : null}
-      {jinghongOpen(state) &&
-      ((card.id === "meizhuangXiangzhu" && !state.jinghong.meizhuang) || (isLingrong && tier !== "resentful" && !state.jinghong.lingrong)) ? (
-        <div className={styles.solves}>
-          💃 惊鸿舞：{state.jinghong.meizhuang || state.jinghong.lingrong ? "打出即可献舞" : `还需打出${card.id === "meizhuangXiangzhu" ? "陵容相助" : "眉庄相助"}`}
-        </div>
-      ) : null}
     </>
   );
   const className = [

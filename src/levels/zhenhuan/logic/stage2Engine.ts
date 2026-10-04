@@ -336,11 +336,6 @@ export function guirenTrialProgress(s: Z2State): TrialProgress2 {
   return { shengchong, qingyu, summoned, all: shengchong && qingyu && summoned };
 }
 
-/** 惊鸿舞 still to be had this turn (第 5–9 回合, not yet danced). */
-export function jinghongOpen(s: Z2State): boolean {
-  return !s.jinghong.done && s.turn >= GUIREN_TRIAL.firstTurn && s.turn <= GUIREN_TRIAL.lastTurn;
-}
-
 /** Does this card count toward 【翊坤落幕】 right now? */
 export function finaleAccepts(s: Z2State, cardId: CardId2): boolean {
   return s.finale != null && (FINALE.cards as readonly CardId2[]).includes(cardId);
@@ -942,8 +937,7 @@ function resolvePlay2(s: Z2State, cardUid: string, removeStatusUid?: string): vo
     else log(s, "温太医相助：没有可移除的负面状态。");
   }
 
-  // 惊鸿舞 window is the whole 贵人考验 span (第 5–9 回合), even after an early promotion
-  if (alive(s) && jinghongOpen(s)) {
+  if (alive(s) && s.trial.active && !s.jinghong.done) {
     if (card.id === "meizhuangXiangzhu") s.jinghong.meizhuang = true;
     if (isLingrong && tier && tier !== "resentful") s.jinghong.lingrong = true;
     if (s.jinghong.meizhuang && s.jinghong.lingrong) {
