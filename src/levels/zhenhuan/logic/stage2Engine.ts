@@ -196,13 +196,15 @@ export function hasStatus(s: Z2State, id: StatusId2): boolean {
 export function playLimit2(s: Z2State): number {
   let base = RANKS[s.turnRank].plays;
   let penalty = 0;
+  let bonus = 0;
   for (const st of activeStatuses(s)) {
     const def = STATUSES2[st.id];
     if (def.playCap != null) base = Math.min(base, def.playCap);
     penalty += def.playPenalty ?? 0;
+    bonus += def.playBonus ?? 0;
   }
-  // 闭门思过 never takes the limit below 1; 静观其变's +1 still applies on top
-  return Math.max(1, base - penalty) + s.extraPlays;
+  // 闭门思过 never takes the limit below 1; 诸事妥帖 and 静观其变's +1 still apply on top
+  return Math.max(1, base - penalty) + bonus + s.extraPlays;
 }
 
 /** 抱恙在身: a status in effect this turn forbids this card. */

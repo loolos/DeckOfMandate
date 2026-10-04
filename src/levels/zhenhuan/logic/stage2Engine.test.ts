@@ -487,6 +487,23 @@ describe("zhenhuan stage 2 engine", () => {
     expect(playLimit2(s)).toBe(2);
   });
 
+  it("槿汐相助: 诸事妥帖 gives +1 play next turn only; she answers 克扣份例 for 圣宠 -1", () => {
+    let s = newStage2(24, null);
+    expect([...s.drawPile, ...s.hand].filter((c) => c.id === "jinxiXiangzhu")).toHaveLength(2);
+    s.stories = [];
+    onlyEvents(s, { huafei: ["kekouFenli"] });
+    const sc = s.shengchong;
+    const [j] = setHand(s, ["jinxiXiangzhu"]);
+    s = act(s, { type: "playCard", cardUid: j! });
+    expect(s.huafei[0]!.resolved).toBe(true);
+    expect(s.shengchong).toBe(sc - 1);
+    expect(playLimit2(s)).toBe(2);
+    s = act(s, { type: "endTurn" });
+    expect(playLimit2(s)).toBe(3);
+    s = act(s, { type: "endTurn" });
+    expect(playLimit2(s)).toBe(2);
+  });
+
   it("抱恙在身 blocks 仪容整肃 / 谨言慎行 and 侍寝; 温太医 can remove it", () => {
     let s = newStage2(23, null);
     withStatus(s, "baoyangZaishen");

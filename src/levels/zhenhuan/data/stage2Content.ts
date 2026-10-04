@@ -162,11 +162,12 @@ export const FINALE = {
     thin: "年家虽倒，你手里几乎没有华妃的把柄。想在今日扳倒她，只能拼尽全力一搏。",
   },
   /** Cards that count (more than needed is fine); each distinct card tells its part. */
-  cards: ["jinyanShenxing", "shoulongRenxin", "meizhuangXiangzhu", "wenTaiyiZhenzhi", "lingrongXiangzhu"] as const,
+  cards: ["jinyanShenxing", "shoulongRenxin", "meizhuangXiangzhu", "wenTaiyiZhenzhi", "lingrongXiangzhu", "jinxiXiangzhu"] as const,
   cardStory: {
     jinyanShenxing: "你跪在御前，一字一句道：「臣妾不敢妄言，只求皇上明察。年氏一门的所作所为，桩桩件件都有人证物证。」",
-    shoulongRenxin: "槿汐领着一众宫人跪了一地，叩首道：「奴婢们人微言轻，可翊坤宫这些年做下的事，奴婢们都亲眼见过。」",
+    shoulongRenxin: "小允子领着一众宫人跪了一地，叩首道：「奴婢们人微言轻，可翊坤宫这些年做下的事，奴婢们都亲眼见过。」",
     meizhuangXiangzhu: "眉庄挺直了背，朗声道：「皇上，臣妾当日假孕失宠，正是翊坤宫一手设下的局。臣妾禁足存菊堂时，连炭火都被克扣了去。」",
+    jinxiXiangzhu: "槿汐跪在殿下，不疾不徐地道：「奴婢在宫里伺候了大半辈子，翊坤宫这些年的手段，奴婢一桩一桩都记着。」",
     wenTaiyiZhenzhi: "温实初捧着脉案跪下：「微臣愿以项上人头担保，这些方子皆出自翊坤宫授意，绝无半字虚言。」",
   } as Partial<Record<string, string>>,
   /** 陵容 is no friend of 华妃 whatever she thinks of you; only her manner differs. */
@@ -186,7 +187,15 @@ export const FINALE = {
 
 // ---------------------------------------------------------------- cards
 
-export type CardId2 = "yirongZhengsu" | "jinyanShenxing" | "wenTaiyiZhenzhi" | "shoulongRenxin" | "jingguanQibian" | "meizhuangXiangzhu" | "lingrongXiangzhu";
+export type CardId2 =
+  | "yirongZhengsu"
+  | "jinyanShenxing"
+  | "wenTaiyiZhenzhi"
+  | "shoulongRenxin"
+  | "jingguanQibian"
+  | "meizhuangXiangzhu"
+  | "lingrongXiangzhu"
+  | "jinxiXiangzhu";
 
 export type CardDef2 = {
   readonly id: CardId2;
@@ -203,7 +212,7 @@ export type CardDef2 = {
   readonly rulesCompact?: string;
 };
 
-function fromStage1(id: Exclude<CardId2, "lingrongXiangzhu">, overrides: Partial<CardDef2>): CardDef2 {
+function fromStage1(id: Exclude<CardId2, "lingrongXiangzhu" | "jinxiXiangzhu">, overrides: Partial<CardDef2>): CardDef2 {
   const c = STAGE1_CARDS[id];
   return {
     id,
@@ -261,6 +270,18 @@ export const CARDS2: Record<CardId2, CardDef2> = {
     rulesText: ["本身没有效果；能解决带 🎶 的事件，效果视你与陵容的情分（亲厚 / 生分 / 怨怼）而定。"],
     rulesCompact: "🎶视情分",
   },
+  jinxiXiangzhu: {
+    id: "jinxiXiangzhu",
+    name: "槿汐相助",
+    emoji: "🏮",
+    flavor: "槿汐在宫里伺候了大半辈子，碎玉轩的大小事务交到她手里，你便能腾出手来。",
+    base: [],
+    baseDraw: 0,
+    baseStatus: "zhushiTuotie",
+    matches: ["neiwufuDiaonan", "kekouFenli", "shanshiYouyi", "songzhiKuisi", "liyiShiwu", "gongzhongLiuyan"],
+    rulesText: ["获得【诸事妥帖】：下回合出牌数 +1。"],
+    rulesCompact: "🗝️ 下回合🀄+1",
+  },
 };
 
 /** Cards that leave the deck when their 惜别 card is played (§6). */
@@ -298,6 +319,8 @@ export const STAGE2_START_DECK: readonly CardId2[] = [
   "jingguanQibian",
   "meizhuangXiangzhu",
   "meizhuangXiangzhu",
+  "jinxiXiangzhu",
+  "jinxiXiangzhu",
 ];
 
 export const LINGRONG_COPIES = 3;
@@ -313,7 +336,8 @@ export type StatusId2 =
   | "shenhuaiLongyi"
   | "baoyangZaishen"
   | "bimenSiguo"
-  | "jinghongWu";
+  | "jinghongWu"
+  | "zhushiTuotie";
 
 export type StatusDef2 = {
   readonly id: StatusId2;
@@ -331,6 +355,8 @@ export type StatusDef2 = {
   readonly playCap?: number;
   /** Each active instance lowers the play limit by 1 (never below 1); instances stack. */
   readonly playPenalty?: number;
+  /** Each active instance raises the play limit by 1 (诸事妥帖); instances stack. */
+  readonly playBonus?: number;
   /** Cards that cannot be played while it applies (抱恙在身). */
   readonly blocksCards?: readonly CardId2[];
   /** No 侍寝 while it applies: 召幸 can only be declined or missed. */
@@ -375,7 +401,7 @@ export const STATUSES2: Record<StatusId2, StatusDef2> = {
     drawModifier: 0,
     playCap: 1,
     noSummon: true,
-    effectText: "未来 2 回合，每回合最多打出 1 张牌（静观其变的出牌数 +1 与陵容的联袂仍然有效），也不能侍寝（召幸只能称病避宠或错过）；结束时身子恢复为 1。不可移除。",
+    effectText: "未来 2 回合，每回合最多打出 1 张牌（静观其变、诸事妥帖的出牌数 +1 与陵容的联袂仍然有效），也不能侍寝（召幸只能称病避宠或错过）；结束时身子恢复为 1。不可移除。",
     flavor: "身子已亏空到了极处，太医嘱咐须得卧床好生将养。",
     source: "身子降到 0",
   },
@@ -439,6 +465,18 @@ export const STATUSES2: Record<StatusId2, StatusDef2> = {
     effectText: "未来 3 回合，每回合开始时圣宠 +1。",
     flavor: "一舞惊鸿，皇上的目光再也没从你身上移开。",
     source: "贵人考验期间打出过眉庄相助与陵容相助（陵容怨怼时不肯帮忙）",
+  },
+  zhushiTuotie: {
+    id: "zhushiTuotie",
+    name: "诸事妥帖",
+    emoji: "🗝️",
+    tag: "positive",
+    duration: 1,
+    drawModifier: 0,
+    playBonus: 1,
+    effectText: "下回合出牌上限 +1。多个实例效果叠加。",
+    flavor: "宫里的琐碎事槿汐都替你料理妥当了，你只管腾出手来应付要紧的。",
+    source: "打出【槿汐相助】",
   },
   shenhuaiLongyi: {
     id: "shenhuaiLongyi",
@@ -691,14 +729,16 @@ export const EVENTS2: Record<EventId2, EventDef2> = {
     responsePenalty: {
       shoulongRenxin: { effects: [{ resource: "qingyu", amount: -1 }] },
       jingguanQibian: { effects: [{ resource: "hate", amount: 1 }] },
+      jinxiXiangzhu: { effects: [{ resource: "hate", amount: 1 }] },
     },
-    resolvedText: "收拢人心：只清誉 -1；静观其变：只恨意 +1；眉庄相助：完美化解，没有代价；陵容相助：视情分而定",
-    resolvedCompact: "🤝🪷-1 · 🍵🔥+1 · 👭✨ · 🎶",
+    resolvedText: "收拢人心：只清誉 -1；静观其变、槿汐相助：只恨意 +1；眉庄相助：完美化解，没有代价；陵容相助：视情分而定",
+    resolvedCompact: "🤝🪷-1 · 🍵🏮🔥+1 · 👭✨ · 🎶",
     unresolvedText: "清誉 -1、获得【流言缠身】（2 回合）",
     unresolvedCompact: "🪷-1 🗯️×2",
     note: "不论恨意高低都可能抽到（恨意 ≥ 3 才会出现华妃事件）。",
     resolvedStory: {
-      shoulongRenxin: "槿汐不动声色地查了几日，揪出了那个收了好处的小宫女。打发走时动静不小，宫里都说碎玉轩的主子刻薄。",
+      shoulongRenxin: "你拿银子撬开了几个宫人的嘴，揪出了那个收了好处的小宫女。打发走时动静不小，宫里都说碎玉轩的主子刻薄。",
+      jinxiXiangzhu: "槿汐不动声色地查了几日，寻了个由头把那小宫女退回了内务府。颂芝断了耳目，翊坤宫又把这笔账记在了你头上。",
       jingguanQibian: "你只当不知，故意让那小宫女听见几句假话。翊坤宫扑了个空，华妃气得摔了茶盏。",
       meizhuangXiangzhu: "眉庄不动声色地把那小宫女调去了自己宫里当差，碎玉轩清净了，翊坤宫也挑不出半点错处。",
     },
@@ -717,6 +757,7 @@ export const EVENTS2: Record<EventId2, EventDef2> = {
     resolvedStory: {
       jinyanShenxing: "你闭门不出，见了谁都只说些天气花草。流言找不到新的把柄，几日便散了。",
       meizhuangXiangzhu: "眉庄姐姐在各宫走动时替你分说清楚，又寻出了嚼舌根的宫女。流言一夜之间没了声息。",
+      jinxiXiangzhu: "槿汐暗中寻到了传话的源头，把几个碎嘴的宫人敲打了一番。流言没了下文。",
     },
   },
   neiwufuDiaonan: {
@@ -733,6 +774,7 @@ export const EVENTS2: Record<EventId2, EventDef2> = {
     resolvedStory: {
       shoulongRenxin: "小允子拿了银子去内务府打点，当天下午份例便一样不少地送到了碎玉轩。",
       meizhuangXiangzhu: "眉庄姐姐把自己宫里的份例分了一半送来，又托人敲打内务府，没过两日便补齐了。",
+      jinxiXiangzhu: "槿汐拿着碎玉轩的份例单子去内务府对账，一笔一笔说得清清楚楚，管事太监只得赔着笑补齐。",
     },
   },
   liyiShiwu: {
@@ -752,6 +794,7 @@ export const EVENTS2: Record<EventId2, EventDef2> = {
     resolvedStory: {
       yirongZhengsu: "你当即整好衣饰、从容请罪，礼数周全得挑不出错处，那点狼狈也就没人再提。",
       wenTaiyiZhenzhi: "温实初替你出了一张脉案，说你那几日头晕乏力。众人这才知道你是抱病强撑。",
+      jinxiXiangzhu: "槿汐上前一步扶住你，替你理好衣襟，又从容替你告了罪。众人只当是地滑，没人再多说什么。",
     },
   },
   hanliangZhiwu: {
@@ -809,13 +852,17 @@ export const EVENTS2: Record<EventId2, EventDef2> = {
     burnStatus: "baoyangZaishen",
     unlockHate: 3,
     evidence: { id: "kekouZhangce", cards: ["shoulongRenxin"] },
-    responsePenalty: { shoulongRenxin: { effects: [{ resource: "shengchong", amount: -1 }] } },
-    resolvedCompact: "🤝👑-1 🗂️×2？ · 🎶👑-1",
+    responsePenalty: {
+      shoulongRenxin: { effects: [{ resource: "shengchong", amount: -1 }] },
+      jinxiXiangzhu: { effects: [{ resource: "shengchong", amount: -1 }] },
+    },
+    resolvedCompact: "🤝👑-1 🗂️×2？ · 🏮👑-1 · 🎶👑-1",
     unresolvedCompact: "👑-1 🪷-1 ⏳→👑-2 🤒×2",
-    resolvedText: "收拢人心：只圣宠 -1，多次应对后可能搜集到华妃的罪证；陵容相助：视情分而定",
+    resolvedText: "收拢人心：只圣宠 -1，多次应对后可能搜集到华妃的罪证；槿汐相助：只圣宠 -1；陵容相助：视情分而定",
     unresolvedText: "延烧：圣宠 -1、清誉 -1，事件留到下回合；下回合仍未应对：圣宠 -2、获得【抱恙在身】后离场",
     resolvedStory: {
       shoulongRenxin: "你让小允子拿银子去内务府，顺手抄出了一本账册：各宫被克扣的份例，笔笔都记着翊坤宫的吩咐。",
+      jinxiXiangzhu: "槿汐去内务府走了一趟，几句软中带硬的话，炭火吃食总算补回来大半。只是皇上听说碎玉轩为份例跟内务府争执，有些不快。",
     },
   },
   shanshiYouyi: {
@@ -832,14 +879,16 @@ export const EVENTS2: Record<EventId2, EventDef2> = {
     responsePenalty: {
       wenTaiyiZhenzhi: { effects: [{ resource: "shenzi", amount: -1 }] },
       shoulongRenxin: { effects: [{ resource: "shengchong", amount: -1 }] },
+      jinxiXiangzhu: { effects: [{ resource: "hate", amount: 1 }] },
     },
-    resolvedCompact: "💊🌱-1 · 🤝👑-1",
+    resolvedCompact: "💊🌱-1 · 🤝👑-1 · 🏮🔥+1",
     unresolvedCompact: "⚠️ 🌱-1",
-    resolvedText: "温太医相助：只身子 -1；收拢人心：只圣宠 -1",
+    resolvedText: "温太医相助：只身子 -1；收拢人心：只圣宠 -1；槿汐相助：只恨意 +1",
     unresolvedText: "伤胎：有孕前身子 -1、获得【抱恙在身】；有孕后直接小产；另外身子 -1",
     resolvedStory: {
       wenTaiyiZhenzhi: "温实初验过汤水，脸色一沉：里头加了活血的东西。你只抿了一口便觉不适，好在发现得早。",
       shoulongRenxin: "御膳房里收过你赏钱的小太监悄悄递话：今日的汤，别喝。你把这事闹到了御前，皇上却嫌你小题大做。",
+      jinxiXiangzhu: "槿汐先尝了一口便放下了碗，悄悄把汤倒进了花盆。第二日那盆花就枯了。翊坤宫听说碎玉轩没上当，又记了你一笔。",
     },
   },
   yizhangHong: {
@@ -1274,6 +1323,16 @@ export const STORIES2: Record<StoryId2, StoryDef2> = {
         text: "眉庄退场；可能搜集到华妃的罪证",
         story: "眉庄的假孕仍被当众揭穿，但被你买通的茯苓供出了刘畏卿。",
       },
+      {
+        id: "jinxiAnfang",
+        name: "槿汐暗访",
+        card: "jinxiXiangzhu",
+        effects: [],
+        exit: "meizhuangXiangzhu",
+        evidence: "liuweiqingYaofang",
+        text: "眉庄退场；可能搜集到华妃的罪证",
+        story: "眉庄的假孕仍被当众揭穿，但槿汐托人在太医院打听到，刘畏卿开给眉庄的方子，原是翊坤宫授意的。",
+      },
     ],
   },
   yuanmingyuan: {
@@ -1330,6 +1389,15 @@ export const STORIES2: Record<StoryId2, StoryDef2> = {
         story: "你在烈日下跪了整整两个时辰，回宫时膝上已是一片青紫。",
       },
       {
+        id: "jinxiHuxi",
+        name: "槿汐护膝",
+        card: "jinxiXiangzhu",
+        effects: [{ resource: "shenzi", amount: -1 }],
+        status: "baoyangZaishen",
+        text: "身子 -1（免去清誉 -1）；抱恙在身",
+        story: "槿汐早在你膝下垫了一层软布，又一刻不停地替你打扇。你跪满了时辰，起身时仍是端端正正，没在人前失了体面。",
+      },
+      {
         id: "lingrongSongyao",
         name: "陵容送药",
         card: "lingrongXiangzhu",
@@ -1354,6 +1422,7 @@ export const STORIES2: Record<StoryId2, StoryDef2> = {
       { id: "jizhaoTaiyi", name: "急召太医", card: "wenTaiyiZhenzhi", effects: [], fakuiShenzi: 1, text: "小产；身子 -1", story: "温实初冒死闯进翊坤宫，孩子终究没能保住，但他保住了你。" },
       { id: "feibaoHuangshang", name: "宫人飞报皇上", card: "shoulongRenxin", effects: [], fakuiShenzi: 2, text: "小产；身子 -2", story: "小允子拼死跑去养心殿报信，皇上赶到时，一切已经晚了。" },
       { id: "anzhongLiuxin", name: "暗中留心", card: "jingguanQibian", effects: [], fakuiShenzi: 2, text: "小产；身子 -2", story: "你早有防备，备了参片含在口中，总算撑住了一口气。" },
+      { id: "jinxiHuchi", name: "槿汐护持", card: "jinxiXiangzhu", effects: [], fakuiShenzi: 2, text: "小产；身子 -2", story: "槿汐一直跪在你身侧扶着你。你倒下时，是她一把将你抱住，一路喊着太医。" },
       {
         id: "lingrongSongyao",
         name: "陵容送药",

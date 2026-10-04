@@ -111,7 +111,7 @@ export const EVENTS: Record<EventId, EventDef> = {
     unresolvedText: "无额外效果，事件消失",
     resolvedStory: {
       wenTaiyiZhenzhi:
-        "温实初细细诊过脉，开了一剂温补的方子，又低声嘱咐槿汐几句饮食上的忌讳。他走后，宫人都说碎玉轩的小主身子调养得最好。",
+        "温实初细细诊过脉，开了一剂温补的方子，又低声嘱咐流朱几句饮食上的忌讳。他走后，宫人都说碎玉轩的小主身子调养得最好。",
     },
   },
   gongzhongLiuyan: {
