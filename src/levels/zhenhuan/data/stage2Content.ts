@@ -241,7 +241,7 @@ export const CARDS2: Record<CardId2, CardDef2> = {
   }),
   shoulongRenxin: fromStage1("shoulongRenxin", {
     rulesCompact: "👂×2 📦→🎴+1",
-    matches: ["supeishengToufeng", "liPinJingmeng", "wenyiBaoyang", "qinmoChenqing", "neiwufuDiaonan", "kekouFenli", "shanshiYouyi", "songzhiKuisi"],
+    matches: ["supeishengToufeng", "liPinJingmeng", "wenyiBaoyang", "qinmoChenqing", "gongzhongLiuyan", "neiwufuDiaonan", "kekouFenli", "shanshiYouyi", "songzhiKuisi"],
   }),
   jingguanQibian: fromStage1("jingguanQibian", { matches: ["jingxinTiaoyang", "hanliangZhiwu", "songzhiKuisi"] }),
   meizhuangXiangzhu: fromStage1("meizhuangXiangzhu", {
@@ -757,6 +757,7 @@ export const EVENTS2: Record<EventId2, EventDef2> = {
     resolvedStory: {
       jinyanShenxing: "你闭门不出，见了谁都只说些天气花草。流言找不到新的把柄，几日便散了。",
       meizhuangXiangzhu: "眉庄姐姐在各宫走动时替你分说清楚，又寻出了嚼舌根的宫女。流言一夜之间没了声息。",
+      shoulongRenxin: "你让小允子拿了些碎银子，在各宫的宫人间打点了一圈。收了好处的人自然换了口风，流言渐渐没人再提。",
       jinxiXiangzhu: "槿汐暗中寻到了传话的源头，把几个碎嘴的宫人敲打了一番。流言没了下文。",
     },
   },
