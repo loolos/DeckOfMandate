@@ -715,6 +715,25 @@ describe("zhenhuan stage 2 engine", () => {
     expect(s.hate).toBe(4);
   });
 
+  it("陵容 played with nothing to answer: 情分 +1 (怨怼 still 反噬)", () => {
+    const run = (relation: number) => {
+      let s = newStage2(41, null);
+      s.relation = relation;
+      s.shengchong = 8;
+      s.stories = [];
+      onlyEvents(s, {});
+      const [l] = setHand(s, ["lingrongXiangzhu"]);
+      s = act(s, { type: "playCard", cardUid: l! });
+      return s;
+    };
+    const distant = run(0);
+    expect(distant.relation).toBe(1);
+    expect(distant.shengchong).toBe(8);
+    const resentful = run(-3);
+    expect(resentful.relation).toBe(-2);
+    expect(resentful.shengchong).toBe(7);
+  });
+
   it("ending lines cover the pregnancy outcome", () => {
     const s = newStage2(16, null);
     expect(endingLines(s).some((l) => l.includes("始终没有动静"))).toBe(true);

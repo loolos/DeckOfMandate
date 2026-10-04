@@ -570,7 +570,11 @@ function HandCard({ state, card, dispatch, fold }: { state: Z2State; card: CardI
           {expandedEffect2(line)}
         </p>
       ))}
-      {isLingrong && tier === "resentful" ? <p className={styles.rule}>没有可解决的事件时打出：圣宠 -1（反噬）</p> : null}
+      {isLingrong && tier ? (
+        <p className={styles.rule}>
+          没有可解决的事件时打出：陪她说说话，情分会近一些{tier === "resentful" ? "；但怨怼的她仍会反噬，圣宠 -1" : ""}。
+        </p>
+      ) : null}
       <p className={styles.rule}>
         <span className={styles.ruleLabel}>匹配事件：</span>
         {def.matches.length > 0
