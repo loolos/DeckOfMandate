@@ -232,11 +232,11 @@ export const CARDS2: Record<CardId2, CardDef2> = {
   }),
   shoulongRenxin: fromStage1("shoulongRenxin", {
     rulesCompact: "👂×2 📦→🎴+1",
-    matches: ["supeishengToufeng", "liPinJingmeng", "wenyiBaoyang", "qinmoChenqing", "neiwufuDiaonan", "kekouFenli", "shanshiYouyi"],
+    matches: ["supeishengToufeng", "liPinJingmeng", "wenyiBaoyang", "qinmoChenqing", "neiwufuDiaonan", "kekouFenli", "shanshiYouyi", "songzhiKuisi"],
   }),
-  jingguanQibian: fromStage1("jingguanQibian", { matches: ["jingxinTiaoyang", "hanliangZhiwu"] }),
+  jingguanQibian: fromStage1("jingguanQibian", { matches: ["jingxinTiaoyang", "hanliangZhiwu", "songzhiKuisi"] }),
   meizhuangXiangzhu: fromStage1("meizhuangXiangzhu", {
-    rulesCompact: "🪷+1 🌸奖励×2", matches: ["taihouChuixun", "gongzhongLiuyan", "neiwufuDiaonan", "yikungongLiGuiju"] }),
+    rulesCompact: "🪷+1 🌸奖励×2", matches: ["taihouChuixun", "gongzhongLiuyan", "neiwufuDiaonan", "yikungongLiGuiju", "songzhiKuisi"] }),
   lingrongXiangzhu: {
     id: "lingrongXiangzhu",
     name: "陵容相助",
@@ -256,6 +256,7 @@ export const CARDS2: Record<CardId2, CardDef2> = {
       "hanliangZhiwu",
       "kekouFenli",
       "huanyixiangZhuanchong",
+      "songzhiKuisi",
     ],
     rulesText: ["本身没有效果；能解决带 🎶 的事件，效果视你与陵容的情分（亲厚 / 生分 / 怨怼）而定。"],
     rulesCompact: "🎶视情分",
@@ -452,7 +453,7 @@ export type OpportunityId2 =
   | "qingmaiBaoxi"
   | "qinmoChenqing";
 export type CrisisId2 = "gongzhongLiuyan" | "neiwufuDiaonan" | "liyiShiwu" | "hanliangZhiwu";
-export type HuafeiId = "yikungongLiGuiju" | "kekouFenli" | "shanshiYouyi" | "yizhangHong" | "huanyixiangZhuanchong";
+export type HuafeiId = "yikungongLiGuiju" | "kekouFenli" | "shanshiYouyi" | "yizhangHong" | "huanyixiangZhuanchong" | "songzhiKuisi";
 export type EventId2 = OpportunityId2 | CrisisId2 | HuafeiId;
 export type EventKind2 = "opportunity" | "crisis" | "huafei";
 
@@ -476,6 +477,8 @@ export type EventDef2 = {
   readonly cardBonus?: Partial<Record<CardId2, readonly Delta2[]>>;
   readonly penalty: readonly Delta2[];
   readonly penaltyStatus?: StatusId2;
+  /** Overrides the status's own duration when it comes from this event. */
+  readonly penaltyStatusTurns?: number;
   /** 伤胎类 (§7.2). */
   readonly harmsPregnancy?: boolean;
   /** 激怒 (+1) / 出气 (-1) hate change when unresolved. */
@@ -657,6 +660,32 @@ export const EVENTS2: Record<EventId2, EventDef2> = {
     resolvedStory: {
       shoulongRenxin: "你让槿汐守着门，听曹贵人把翊坤宫这些年的事一桩桩说了出来，又悄悄录成了供词。",
       jinyanShenxing: "你只静静听着，一句也不多问。曹贵人说完，自己把供词按了手印递了过来。",
+    },
+  },
+  songzhiKuisi: {
+    id: "songzhiKuisi",
+    kind: "huafei",
+    name: "隔墙有耳",
+    emoji: "👁️",
+    flavor: "碎玉轩里有小宫女收了颂芝的好处，你屋里的一举一动，翊坤宫都知道了。",
+    reward: [],
+    penalty: [{ resource: "qingyu", amount: -1 }],
+    penaltyStatus: "liuyanChanshen",
+    penaltyStatusTurns: 2,
+    unlockHate: 0,
+    responsePenalty: {
+      shoulongRenxin: { effects: [{ resource: "qingyu", amount: -1 }] },
+      jingguanQibian: { effects: [{ resource: "hate", amount: 1 }] },
+    },
+    resolvedText: "收拢人心：只清誉 -1；静观其变：只恨意 +1；眉庄相助：完美化解，没有代价；陵容相助：视情分而定",
+    resolvedCompact: "🤝🪷-1 · 🍵🔥+1 · 👭✨ · 🎶",
+    unresolvedText: "清誉 -1、获得【流言缠身】（2 回合）",
+    unresolvedCompact: "🪷-1 🗯️×2",
+    note: "不论恨意高低都可能抽到（恨意 ≥ 3 才会出现华妃事件）。",
+    resolvedStory: {
+      shoulongRenxin: "槿汐不动声色地查了几日，揪出了那个收了好处的小宫女。打发走时动静不小，宫里都说碎玉轩的主子刻薄。",
+      jingguanQibian: "你只当不知，故意让那小宫女听见几句假话。翊坤宫扑了个空，华妃气得摔了茶盏。",
+      meizhuangXiangzhu: "眉庄不动声色地把那小宫女调去了自己宫里当差，碎玉轩清净了，翊坤宫也挑不出半点错处。",
     },
   },
   gongzhongLiuyan: {
@@ -877,7 +906,7 @@ export const CRISIS2_POOL: readonly CrisisId2[] = [
   "hanliangZhiwu",
 ];
 
-export const HUAFEI_EVENTS: readonly HuafeiId[] = ["yikungongLiGuiju", "kekouFenli", "shanshiYouyi", "yizhangHong", "huanyixiangZhuanchong"];
+export const HUAFEI_EVENTS: readonly HuafeiId[] = ["yikungongLiGuiju", "kekouFenli", "shanshiYouyi", "yizhangHong", "huanyixiangZhuanchong", "songzhiKuisi"];
 
 /** How many 华妃 events a turn draws at this (turn-start) hate: [guaranteed, extra chance]. */
 export function huafeiDrawPlan(hate: number): { fixed: number; chance: number } {
@@ -958,6 +987,11 @@ export const LINGRONG_EVENT: Partial<Record<EventId2, TierTable>> = {
     close: { resolves: true, relation: 1, story: "陵容抢先端走了那碗冰果：「姐姐身子要紧，这个我替姐姐吃了。」" },
     distant: { resolves: true, story: "「姐姐如今金贵，连口凉的都吃不得了。」陵容嘴上打趣，还是把冰果端走了。" },
     resentful: { resolves: true, effects: [{ resource: "qingyu", amount: -1 }], story: "陵容当着众人的面把冰果打翻了，说姐姐身子弱、碰不得凉的。东西是没吃成，宫里却都说你娇气。" },
+  },
+  songzhiKuisi: {
+    close: { resolves: true, effects: [{ resource: "hate", amount: 1 }], story: "陵容替你留意着，没两日便认出了那个常往翊坤宫跑的小宫女。「姐姐身边的人，可得仔细些。」" },
+    distant: { resolves: true, effects: [{ resource: "shengchong", amount: -1 }], story: "「姐姐宫里的事，原轮不到我多嘴。」陵容嘴上这么说，还是把内鬼指了出来。" },
+    resentful: { resolves: false, relation: 1, story: "陵容只说没瞧见什么。过了几日，她却托人捎来一句：「碎玉轩的门，夜里该落锁了。」" },
   },
   kekouFenli: {
     close: { resolves: true, relation: 1, effects: [{ resource: "shengchong", amount: -1 }], story: "陵容把自己的份例分了一半送来：「姐姐别嫌弃。咱们姐妹，原该如此。」只是内务府那边，到底还是记了你一笔。" },

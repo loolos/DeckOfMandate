@@ -756,6 +756,38 @@ describe("zhenhuan stage 2 engine", () => {
     expect(t.shengchong).toBe(5);
   });
 
+  it("隔墙有耳: unanswered → 清誉 -1 and a 2-turn 流言缠身; 静观其变 → only 恨意 +1", () => {
+    let s = newStage2(43, null);
+    s.qingyu = 8;
+    s.stories = [];
+    onlyEvents(s, { huafei: ["songzhiKuisi"] });
+    setHand(s, []);
+    s = act(s, { type: "endTurn" });
+    expect(s.qingyu).toBeLessThanOrEqual(7);
+    const st = s.statuses.find((x) => x.id === "liuyanChanshen");
+    expect(st?.remaining).toBe(2);
+
+    let t = newStage2(44, null);
+    t.hate = 2;
+    t.stories = [];
+    onlyEvents(t, { huafei: ["songzhiKuisi"] });
+    const [j] = setHand(t, ["jingguanQibian"]);
+    t = act(t, { type: "playCard", cardUid: j! });
+    expect(t.huafei[0]!.resolved).toBe(true);
+    expect(t.hate).toBe(3);
+
+    let u = newStage2(45, null);
+    u.qingyu = 8;
+    u.shengchong = 8;
+    u.hate = 2;
+    u.stories = [];
+    onlyEvents(u, { huafei: ["songzhiKuisi"] });
+    const [m] = setHand(u, ["meizhuangXiangzhu"]);
+    u = act(u, { type: "playCard", cardUid: m! });
+    expect(u.huafei[0]!.resolved).toBe(true);
+    expect([u.qingyu, u.shengchong, u.hate]).toEqual([9, 8, 2]); // only 眉庄相助's own 清誉 +1
+  });
+
   it("华妃发难·求皇后庇护 via 陵容: story follows her 情分", () => {
     const run = (relation: number) => {
       let s = newStage2(42, null);

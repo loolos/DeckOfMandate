@@ -429,10 +429,12 @@ function applyDeltas2(s: Z2State, deltas: readonly Delta2[], source: string): vo
   }
 }
 
-function addStatus2(s: Z2State, id: StatusId2): void {
+function addStatus2(s: Z2State, id: StatusId2, turns?: number): void {
   const def = STATUSES2[id];
-  s.statuses.push({ uid: `s${s.nextUid++}`, id, appliesFromTurn: s.turn + 1, remaining: def.duration });
-  log(s, `获得状态【${def.name}】（${def.effectText}）`, def.tag === "negative" ? "bad" : "good");
+  const remaining = turns ?? def.duration;
+  s.statuses.push({ uid: `s${s.nextUid++}`, id, appliesFromTurn: s.turn + 1, remaining });
+  const text = turns != null ? def.effectText.replace(/未来 \d+ 回合/, `未来 ${turns} 回合`) : def.effectText;
+  log(s, `获得状态【${def.name}】（${text}）`, def.tag === "negative" ? "bad" : "good");
 }
 
 function removeStatusById(s: Z2State, id: StatusId2): boolean {
@@ -1098,7 +1100,7 @@ function settleHuafei(s: Z2State, ev: EventInst2): boolean /* stays */ {
   applyDeltas2(s, def.penalty, def.name);
   const wasPregnant = s.pregnant;
   if (def.harmsPregnancy && alive(s)) harmPregnancy(s, def.name);
-  if (def.penaltyStatus && alive(s) && !(def.harmsPregnancy && wasPregnant)) addStatus2(s, def.penaltyStatus);
+  if (def.penaltyStatus && alive(s) && !(def.harmsPregnancy && wasPregnant)) addStatus2(s, def.penaltyStatus, def.penaltyStatusTurns);
   if (def.unresolvedHate && alive(s)) applyDelta2(s, { resource: "hate", amount: def.unresolvedHate }, `${def.name}（${def.unresolvedHate > 0 ? "激怒" : "出气"}）`);
   return false;
 }
