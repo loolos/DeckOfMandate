@@ -964,6 +964,25 @@ describe("zhenhuan stage 2 engine", () => {
     expect(seen.none).toBeGreaterThan(0);
   });
 
+  it("陵容 answering 欢宜香浓 / 克扣份例 costs 情分 -1; a 怨怼 no-show still warms +1", () => {
+    for (const id of ["huanyixiangZhuanchong", "kekouFenli"] as const) {
+      for (const [start, after, resolved] of [
+        [3, 2, true],
+        [0, -1, true],
+        [-3, -2, false],
+      ] as const) {
+        let s = newStage2(40, null);
+        s.relation = start;
+        s.stories = [];
+        onlyEvents(s, { huafei: [id] });
+        const [l] = setHand(s, ["lingrongXiangzhu"]);
+        s = act(s, { type: "playCard", cardUid: l! });
+        expect(s.huafei[0]!.resolved, `${id} @${start}`).toBe(resolved);
+        expect(s.relation, `${id} @${start}`).toBe(after);
+      }
+    }
+  });
+
   it("恨意 10 opens 华妃发难; resolving it drops hate to 6", () => {
     let s = newStage2(18, null);
     s.stories = [];
