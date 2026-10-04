@@ -1047,9 +1047,7 @@ function beginTurn2(s: Z2State, turn: number): void {
     log(s, `危机事件：【${EVENTS2[crisis].name}】`);
   }
   checkSummon(s);
-  // 第 30 回合 is the reckoning itself (翊坤落幕): no 华妃 events, not even one still 延烧
-  if (turn === STAGE2.totalTurns) s.huafei = [];
-  else drawHuafei(s);
+  drawHuafei(s);
   makeRoomForSummon(s);
 
   // 依依: 陵容 kept from last turn take up this turn's draws.
