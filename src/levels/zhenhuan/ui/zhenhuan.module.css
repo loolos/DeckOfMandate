@@ -210,7 +210,7 @@
 }
 
 .page.compact .resources > * {
-  width: 160px;
+  width: 132px;
 }
 
 .page .piles > * {
@@ -889,8 +889,9 @@
     padding: 0.25rem 0.3rem;
   }
 
+  /* four resources stay well inside a phone width */
   .page.compact .resources > * {
-    width: 120px;
+    width: 76px;
   }
 
   .page.compact .piles > * {
