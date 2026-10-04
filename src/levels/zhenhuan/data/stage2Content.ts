@@ -1443,7 +1443,7 @@ export const STORIES2: Record<StoryId2, StoryDef2> = {
           { resource: "shenzi", amount: -2 },
         ],
         text: "清誉 -2、圣宠 -4、身子 -2",
-        story: "你求到了景仁宫，皇后替你挡下了最难堪的一节，皇上却嫌你惹是生非，也记下了这份人情。",
+        story: "你求到了景仁宫。皇后替你挡下了最难堪的一节，又温言劝你凡事忍耐——这份人情，她是记下了。只是事情传到养心殿，皇上嫌你惹是生非，冷落了你好些日子。",
       },
       {
         id: "juliLizheng",
