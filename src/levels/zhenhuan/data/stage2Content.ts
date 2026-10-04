@@ -144,19 +144,21 @@ export const EVIDENCE: Record<EvidenceId, EvidenceDef> = {
   },
 };
 
-export const EVIDENCE_THRESHOLDS = { narrowWin: 3, fullWin: 5 };
+export const EVIDENCE_THRESHOLDS = { fullWin: 5 };
 
 /** 第 30 回合 the closing event: how many cards it takes depends on the evidence gathered. */
 export const FINALE = {
   name: "翊坤落幕",
   emoji: "👑",
-  /** Cards needed: ≥ 5 evidence → 1; 3–4 → 2; ≤ 2 → 3. */
+  /** ≤ this many evidence: no case at all, the stage is lost when 第 30 回合 begins. */
+  hopeless: 1,
+  /** Cards needed: ≥ 7 evidence → 1; 4–6 → 2; 2–3 → 3. */
   needed(evidence: number): number {
-    return evidence >= EVIDENCE_THRESHOLDS.fullWin ? 1 : evidence >= EVIDENCE_THRESHOLDS.narrowWin ? 2 : 3;
+    return evidence >= 7 ? 1 : evidence >= 4 ? 2 : 3;
   },
   flavor: {
     full: "年家已倒，你手里的罪状一桩桩、一件件，足够让翊坤宫再也翻不了身。只差最后一步。",
-    narrow: "年家倒了，你手里的罪证却还单薄。要扳倒华妃，还得在御前多费些心力。",
+    narrow: "年家倒了，你手里已攒下不少罪证，可要一举扳倒华妃，还得在御前多费些心力。",
     thin: "年家虽倒，你手里几乎没有华妃的把柄。想在今日扳倒她，只能拼尽全力一搏。",
   },
   /** Every card but 陵容相助 can be thrown in; each tells its part. */
@@ -175,6 +177,7 @@ export const FINALE = {
     thin: "证据虽薄，你却把能说的话都说尽了。皇上终于动了怒，收回了华妃协理六宫之权。",
   },
   failStory: "你没能在御前把话说透。皇上念及旧情，华妃复起，翊坤宫的灯又亮了。",
+  hopelessStory: "年家倒了，你手里却几乎拿不出华妃的一条罪状。皇上念及旧情，华妃复起，翊坤宫的灯又亮了。",
 };
 
 // ---------------------------------------------------------------- cards
@@ -1532,5 +1535,5 @@ export const TAG2_INFO: Record<TagId2, { label: string; lore: string; rules: str
   harm: { label: "伤胎", lore: "防不胜防的暗手。", rules: "未化解时：有孕前身子 -1；有孕后直接小产。温太医留方可抵消一次。" },
   burn: { label: "延烧", lore: "拖得越久，越难收拾。", rules: "未化解时圣宠 -1 并留到下回合（不占下回合的华妃事件名额）；下回合仍未化解，圣宠 -2 后离场。" },
   double: { label: "双牌", lore: "一个人扛不住，就得多想一步。", rules: "同一回合内打出两张匹配牌才算化解，每张牌自身效果照常结算；回合末不满 2 张则进度清零。" },
-  evidence: { label: "线索", lore: "华妃的罪状，一桩桩都要攒在手里。", rules: "第 30 回合末按罪证数结算：≤ 2 关卡失败；3–4 险胜；≥ 5 完胜。" },
+  evidence: { label: "线索", lore: "华妃的罪状，一桩桩都要攒在手里。", rules: "第 30 回合【翊坤落幕】：罪证 ≤ 1 条直接失败；2–3 条须打出 3 张牌，4–6 条 2 张，≥ 7 条 1 张；没打够即失败。罪证 ≥ 5 条为完胜。" },
 };

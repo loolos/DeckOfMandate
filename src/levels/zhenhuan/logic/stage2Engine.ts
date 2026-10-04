@@ -335,8 +335,16 @@ export function finaleAccepts(s: Z2State, cardId: CardId2): boolean {
   return s.finale != null && s.finale.played.length < s.finale.needed && (FINALE.cards as readonly CardId2[]).includes(cardId);
 }
 
+/** Opening text follows the cards needed: 1 → full, 2 → narrow, 3 → thin. */
 export function finaleTier(evidence: number): "full" | "narrow" | "thin" {
-  return evidence >= EVIDENCE_THRESHOLDS.fullWin ? "full" : evidence >= EVIDENCE_THRESHOLDS.narrowWin ? "narrow" : "thin";
+  const n = FINALE.needed(evidence);
+  return n === 1 ? "full" : n === 2 ? "narrow" : "thin";
+}
+
+/** Closing text follows the verdict: 完胜 (≥ 5 evidence) or 险胜 (thinner with 2–3). */
+export function finaleDoneStory(evidence: number): string {
+  if (evidence >= EVIDENCE_THRESHOLDS.fullWin) return FINALE.doneStory.full;
+  return evidence >= 4 ? FINALE.doneStory.narrow : FINALE.doneStory.thin;
 }
 
 export function canEndTurn2(s: Z2State): boolean {
@@ -909,7 +917,7 @@ function resolvePlay2(s: Z2State, cardUid: string, removeStatusUid?: string): vo
     const f = s.finale!;
     f.played.push(card.id);
     log(s, `【${FINALE.name}】${FINALE.cardStory[card.id] ?? ""}（${f.played.length}/${f.needed}）`, "good");
-    if (f.played.length >= f.needed) log(s, FINALE.doneStory[finaleTier(s.evidence.length)], "good");
+    if (f.played.length >= f.needed) log(s, finaleDoneStory(s.evidence.length), "good");
   }
 
   if (alive(s) && relationDelta !== 0) changeRelation(s, relationDelta, "陵容");
@@ -990,6 +998,11 @@ function beginTurn2(s: Z2State, turn: number): void {
   if (turn === FAKUI_TURN) {
     s.fakuiHarsh = s.hate >= 6;
     openStory(s, s.pregnant ? "fakuiPregnant" : "fakuiPlain");
+  }
+  if (turn === STAGE2.totalTurns && s.evidence.length <= FINALE.hopeless) {
+    log(s, FINALE.hopelessStory, "bad");
+    lose(s, `罪证只有 ${s.evidence.length} 条，扳不倒华妃`);
+    return;
   }
   if (turn === STAGE2.totalTurns) {
     const needed = FINALE.needed(s.evidence.length);
@@ -1356,9 +1369,10 @@ export function replay2(seed: number, carry: Carry | null, actions: readonly Z2A
 /** Ending lines for the outcome screen (§12.10). */
 export function endingLines(s: Z2State): string[] {
   const lines: string[] = [];
+  if (s.turn >= STAGE2.totalTurns && !s.finale) lines.push(FINALE.hopelessStory);
   if (s.finale) {
     const done = s.finale.played.length >= s.finale.needed;
-    lines.push(done ? FINALE.doneStory[finaleTier(s.evidence.length)] : FINALE.failStory);
+    lines.push(done ? finaleDoneStory(s.evidence.length) : FINALE.failStory);
   }
   for (const id of s.evidence) lines.push(EVIDENCE[id].ending);
   lines.push(s.rank === "pin" ? "你以嫔位立于六宫之中。" : `你如今是${RANKS[s.rank].name}。`);

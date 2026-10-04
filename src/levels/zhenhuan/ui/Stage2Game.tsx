@@ -34,6 +34,7 @@ import {
   summonUnwell,
   finaleAccepts,
   finaleTier,
+  finaleDoneStory,
   canEndTurn2,
   canPlayCard,
   endingLines,
@@ -372,7 +373,7 @@ function FinaleCard({ state, fold, dispatch }: { state: Z2State; fold: Fold; dis
         </span>
         {tags}
       </div>
-      {done ? <ResolvedBanner icon="👑" label="大局已定" detail={FINALE.doneStory[tier]} /> : null}
+      {done ? <ResolvedBanner icon="👑" label="大局已定" detail={finaleDoneStory(state.evidence.length)} /> : null}
       <p className={styles.flavor}>{FINALE.flavor[tier]}</p>
       {f.played.map((id, i) => (
         <p key={`${id}-${i}`} className={styles.rule}>
@@ -646,8 +647,7 @@ function Statuses({ state, dispatch }: { state: Z2State; dispatch: Dispatch }) {
                 </p>
               ))}
               <p className={styles.rule}>
-                第 30 回合末：≤ {EVIDENCE_THRESHOLDS.narrowWin - 1} 条关卡失败；{EVIDENCE_THRESHOLDS.narrowWin}–{EVIDENCE_THRESHOLDS.fullWin - 1} 条险胜；≥{" "}
-                {EVIDENCE_THRESHOLDS.fullWin} 条完胜。
+                第 30 回合【{FINALE.name}】：≤ 1 条直接失败；2–3 条须打出 3 张牌，4–6 条 2 张，≥ 7 条 1 张。罪证 ≥ {EVIDENCE_THRESHOLDS.fullWin} 条为完胜。
               </p>
             </div>
           ) : null}
@@ -802,7 +802,7 @@ export function Stage2Rules() {
         🌱<strong>身子</strong>决定能否有孕（贵人以后，侍寝后按身子 ÷ 5 判定）。贵人有孕后，机会事件【请脉报喜】会出现，同一回合打出两张相关的牌请太医确诊，才能晋为嫔；伤胎事件和翊坤长跪都可能让你小产。
       </li>
       <li>
-        一路搜集 🗂️<strong>华妃罪证</strong>（都要打出特定的牌才能拿到）。第 30 回合末：不足 3 条关卡失败；3–4 条险胜；5 条以上完胜。
+        一路搜集 🗂️<strong>华妃罪证</strong>（都要打出特定的牌才能拿到）。罪证越多，第 30 回合扳倒华妃需要打出的牌越少（≤ 1 条直接失败）；5 条以上完胜。
       </li>
       <li>手牌按抓牌顺序排列，不能调整；回合结束时手牌全部弃置（依依的陵容除外，且会占掉下回合的抓牌数）。</li>
     </ul>
@@ -1040,7 +1040,7 @@ export function Stage2Game({ state, dispatch, runCode, showRules, onShowRules, o
             <strong>🔥 华妃恨意</strong>（0–10）越高，华妃事件越多越狠，到 10 她当场发难。侍寝、晋封、有孕会让她更恨你；失宠、避宠、让她出气、小产会让她消气。
           </p>
           <p>
-            <strong>🗂️ 搜集华妃罪证</strong>：从今日起留心华妃的罪状。第 30 回合末，罪证不足 3 条则失败，3–4 条险胜，5 条以上完胜。
+            <strong>🗂️ 搜集华妃罪证</strong>：从今日起留心华妃的罪状。罪证越多，第 30 回合扳倒华妃越容易；只有 1 条或更少则必败。
           </p>
         </Notice>
       ) : null}
