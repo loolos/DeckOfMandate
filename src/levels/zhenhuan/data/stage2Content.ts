@@ -885,7 +885,7 @@ export const LINGRONG_EVENT: Partial<Record<EventId2, TierTable>> = {
     resentful: { resolves: true, shuhenjiao: true, story: "陵容上前替你圆了场，低头时嘴角却像是笑了一下。她说回头送药来。" },
   },
   kekouFenli: {
-    close: { resolves: true, relation: 1, story: "陵容把自己的份例分了一半送来：「姐姐别嫌弃。咱们姐妹，原该如此。」" },
+    close: { resolves: true, relation: 1, effects: [{ resource: "shengchong", amount: -1 }], story: "陵容把自己的份例分了一半送来：「姐姐别嫌弃。咱们姐妹，原该如此。」只是内务府那边，到底还是记了你一笔。" },
     distant: { resolves: true, effects: [{ resource: "shengchong", amount: -1 }], story: "「我一个答应的份例，哪比得上姐姐的。」陵容嘴上这么说，还是送了些炭来，只是不够撑到月底。" },
     resentful: { resolves: false, relation: 1, story: "陵容推说自己也不够用，一样东西也没送来。第二日清早，碎玉轩门口却多了一小篓炭，没留话。" },
   },
