@@ -144,6 +144,8 @@ export type Z2State = {
   miscarriages: number;
   /** What caused the latest 小产 (for the notice). */
   miscarriageCause: string | null;
+  /** What the latest 小产 actually cost (after caps), for the notice. */
+  miscarriageCost: { shenzi: number; qingyu: number; shengchong: number; hate: number } | null;
   /** Turn of the last 召幸; null = next turn at the threshold summons right away. */
   summonLast: number | null;
   caoTriggered: boolean;
@@ -480,6 +482,7 @@ function miscarry(s: Z2State, shenziLoss: number, cause: string): void {
   s.summonLast = null;
   dropPinEvent(s);
   log(s, `小产（${cause}）：失去【身怀龙裔】。`, "bad");
+  const before = { shenzi: s.shenzi, qingyu: s.qingyu, shengchong: s.shengchong, hate: s.hate };
   applyDeltas2(
     s,
     [
@@ -490,6 +493,12 @@ function miscarry(s: Z2State, shenziLoss: number, cause: string): void {
     ],
     "小产",
   );
+  s.miscarriageCost = {
+    shenzi: s.shenzi - before.shenzi,
+    qingyu: s.qingyu - before.qingyu,
+    shengchong: s.shengchong - before.shengchong,
+    hate: s.hate - before.hate,
+  };
 }
 
 /** 晋封 (贵人 / 有孕晋嫔): 陵容 feels left behind. */
@@ -1272,6 +1281,7 @@ export function newStage2(seed: number, carry: Carry | null): Z2State {
     pregnancies: 0,
     miscarriages: 0,
     miscarriageCause: null,
+    miscarriageCost: null,
     summonLast: null,
     caoTriggered: false,
     caoBefriended: false,

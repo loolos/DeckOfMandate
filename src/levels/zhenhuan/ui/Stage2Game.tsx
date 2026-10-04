@@ -1028,7 +1028,19 @@ export function Stage2Game({ state, dispatch, runCode, showRules, onShowRules, o
                 : `「${state.miscarriageCause ?? "暗手"}」伤了胎气。太医跪在榻前，只说了一句「小主节哀」。`}
           </p>
           <p>
-            失去了【身怀龙裔】；身子大伤，清誉、圣宠也跟着下降。位分不降，华妃的恨意倒是消了些。身子若亏空到 0，还得卧床静养。
+            失去了【👶身怀龙裔】。
+            {state.miscarriageCost
+              ? [
+                  state.miscarriageCost.shenzi ? `🌱身子 ${state.miscarriageCost.shenzi}` : "",
+                  state.miscarriageCost.qingyu ? `🪷清誉 ${state.miscarriageCost.qingyu}` : "",
+                  state.miscarriageCost.shengchong ? `👑圣宠 ${state.miscarriageCost.shengchong}` : "",
+                  state.miscarriageCost.hate ? `🔥恨意 ${state.miscarriageCost.hate}` : "",
+                ]
+                  .filter(Boolean)
+                  .join("、") + "。"
+              : null}
+            位分不降。
+            {state.statuses.some((x) => x.id === "wochuangJingyang") ? "身子已亏空到 0，须【🛏️卧床静养】两回合（每回合只能出 1 张牌、不能侍寝），之后身子恢复为 1。" : ""}
           </p>
           <p className={styles.muted}>召幸会重新出现。要再有身孕，只能等下一次侍寝了。</p>
         </Notice>

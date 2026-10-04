@@ -685,6 +685,21 @@ describe("zhenhuan stage 2 engine", () => {
     expect(t.stories[0]!.chosenOptionId).toBe("chengbingBichong");
   });
 
+  it("小产 records what it actually cost (for the notice)", () => {
+    let s = newStage2(37, null);
+    s.pregnant = true;
+    s.statuses.push({ uid: "p", id: "shenhuaiLongyi", appliesFromTurn: 1, remaining: 0 });
+    s.shenzi = 5;
+    s.qingyu = 6;
+    s.shengchong = 6;
+    s.hate = 2;
+    s.stories = [];
+    onlyEvents(s, { crisis: "hanliangZhiwu" });
+    setHand(s, []);
+    s = act(s, { type: "endTurn" });
+    expect(s.miscarriageCost).toEqual({ shenzi: -3, qingyu: -1, shengchong: -1, hate: -2 });
+  });
+
   it("ending lines cover the pregnancy outcome", () => {
     const s = newStage2(16, null);
     expect(endingLines(s).some((l) => l.includes("始终没有动静"))).toBe(true);
