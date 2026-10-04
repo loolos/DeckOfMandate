@@ -33,6 +33,7 @@ import {
   RESOURCE2_LABEL,
   SHENZI,
   SHUHENJIAO_HARM_CHANCE,
+  SHUHENJIAO_HEAL_CHANCE,
   SHUHENJIAO_TEXT,
   STAGE2,
   STAGE2_START_DECK,
@@ -578,11 +579,15 @@ function shuhenjiao(s: Z2State, tier: LingrongTier): void {
     applyDelta2(s, { resource: "shengchong", amount: 1 }, "舒痕胶（疤痕尽消）");
     return;
   }
-  if (roll(s) < SHUHENJIAO_HARM_CHANCE[tier]) {
+  const r = roll(s);
+  if (r < SHUHENJIAO_HARM_CHANCE[tier]) {
     s.shuhenjiaoHarm++;
     log(s, SHUHENJIAO_TEXT.harm, "bad");
     if (s.shenzi > 1) applyDelta2(s, { resource: "shenzi", amount: -1 }, "舒痕胶");
     else revealShenzi(s);
+  } else if (r < SHUHENJIAO_HARM_CHANCE[tier] + SHUHENJIAO_HEAL_CHANCE[tier]) {
+    log(s, SHUHENJIAO_TEXT.heal, "good");
+    applyDelta2(s, { resource: "shengchong", amount: 1 }, "舒痕胶（疤痕尽消）");
   } else {
     log(s, SHUHENJIAO_TEXT.safe);
   }

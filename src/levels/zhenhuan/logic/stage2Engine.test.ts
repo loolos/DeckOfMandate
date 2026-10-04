@@ -11,6 +11,7 @@ import {
   replay2,
   storyResponsesFor,
   summonBlocked,
+  tierOf,
   type EventInst2,
   type Z2Action,
   type Z2State,
@@ -938,6 +939,27 @@ describe("zhenhuan stage 2 engine", () => {
     [l] = setHand(t, ["lingrongXiangzhu"]);
     t = act(t, { type: "playCard", cardUid: l! });
     expect(t.shenzi).toBe(1);
+  });
+
+  it("舒痕胶 when 生分: sometimes harmful, sometimes 疤痕尽消 (圣宠 +1), sometimes nothing", () => {
+    const seen = { harm: 0, heal: 0, none: 0 };
+    for (let seed = 100; seed < 160; seed++) {
+      let s = newStage2(seed, null);
+      s.relation = 0;
+      expect(tierOf(s)).toBe("distant");
+      s.shenzi = 3;
+      s.shengchong = 5;
+      s.stories = [];
+      onlyEvents(s, { crisis: "liyiShiwu" });
+      const [l] = setHand(s, ["lingrongXiangzhu"]);
+      s = act(s, { type: "playCard", cardUid: l! });
+      if (s.shenzi === 2) seen.harm++;
+      else if (s.shengchong === 6) seen.heal++;
+      else seen.none++;
+    }
+    expect(seen.harm).toBeGreaterThan(0);
+    expect(seen.heal).toBeGreaterThan(0);
+    expect(seen.none).toBeGreaterThan(0);
   });
 
   it("恨意 10 opens 华妃发难; resolving it drops hate to 6", () => {
