@@ -230,16 +230,27 @@ describe("zhenhuan stage 2 engine", () => {
     expect(summonBlocked(s)).toBe(false);
   });
 
-  it("一丈红: two of the set in one turn resolve it; 收拢人心 among them gives 滥用私刑", () => {
-    let s = newStage2(9, null);
-    s.stories = [];
-    s.extraPlays = 1;
-    onlyEvents(s, { huafei: ["yizhangHong"] });
-    const [a, b] = setHand(s, ["shoulongRenxin", "jinyanShenxing"]);
-    s = act(s, { type: "playCard", cardUid: a! });
-    expect(s.huafei[0]!.resolved).toBe(false);
-    s = act(s, { type: "playCard", cardUid: b! });
-    expect(s.huafei[0]!.resolved).toBe(true);
+  it("一丈红: two of the set in one turn resolve it; 收拢人心 among them twice gives 滥用私刑", () => {
+    const answer = (s: Z2State) => {
+      s.stories = [];
+      s.extraPlays = 3;
+      onlyEvents(s, { huafei: ["yizhangHong"] });
+      const [a, b] = setHand(s, ["shoulongRenxin", "jinyanShenxing"]);
+      s = act(s, { type: "playCard", cardUid: a! });
+      expect(s.huafei[0]!.resolved).toBe(false);
+      s = act(s, { type: "playCard", cardUid: b! });
+      expect(s.huafei[0]!.resolved).toBe(true);
+      return s;
+    };
+    const fresh = newStage2(9, null);
+    fresh.hate = 5;
+    let s = answer(fresh);
+    expect(s.hate).toBe(6); // fully answered: only 恨意 +1
+    expect(s.evidence).not.toContain("lanyongSixing"); // first time: only a clue
+    expect(s.evidenceClues.lanyongSixing).toBe(1);
+    s.qingyu = 8;
+    s.shengchong = 8;
+    s = answer(s);
     expect(s.evidence).toContain("lanyongSixing");
   });
 
@@ -274,7 +285,7 @@ describe("zhenhuan stage 2 engine", () => {
     expect(s.huafei).toHaveLength(1);
   });
 
-  it("圆明园 card response: 必定有孕; 贵人 → 嫔, 恨意 +5, relation -2", () => {
+  it("圆明园 card response: 必定有孕; 贵人 waits for 请脉报喜 (two cards) before 嫔", () => {
     let s = newStage2(12, null);
     s.rank = "guiren";
     s.relation = 3;
@@ -284,10 +295,58 @@ describe("zhenhuan stage 2 engine", () => {
     const [y] = setHand(s, ["yirongZhengsu"]);
     s = act(s, { type: "playCard", cardUid: y! });
     expect(s.pregnant).toBe(true);
-    expect(s.rank).toBe("pin");
+    expect(s.rank).toBe("guiren");
     expect(s.hate).toBe(5);
+    expect(s.opportunityPool[s.opportunityPool.length - 1]).toBe("qingmaiBaoxi");
+    // once the rest of the pool is used up it comes; one card is not enough
+    s.opportunityPool = ["qingmaiBaoxi"];
+    s.crisis = null;
+    s.huafei = [];
+    s.stories = [];
+    s = act(s, { type: "endTurn" });
+    expect(s.opportunity?.id).toBe("qingmaiBaoxi");
+    s.stories = [];
+    s.crisis = null;
+    s.huafei = [];
+    s.extraPlays = 5;
+    const [w, j] = setHand(s, ["wenTaiyiZhenzhi", "jinyanShenxing"]);
+    s = act(s, { type: "playCard", cardUid: w! });
+    expect(s.rank).toBe("guiren");
+    s = act(s, { type: "playCard", cardUid: j! });
+    expect(s.rank).toBe("pin");
     expect(s.relation).toBe(1);
-    expect(s.turnRank).toBe("changzai"); // plays follow the turn-start rank until next turn
+  });
+
+  it("请脉报喜 unresolved goes back into the pool; a miscarriage removes it", () => {
+    let s = newStage2(25, null);
+    s.rank = "guiren";
+    openStory(s, "yuanmingyuan");
+    onlyEvents(s, {});
+    const [y] = setHand(s, ["yirongZhengsu"]);
+    s = act(s, { type: "playCard", cardUid: y! });
+    s.opportunityPool = ["qingmaiBaoxi"];
+    s.crisis = null;
+    s.huafei = [];
+    s.stories = [];
+    s = act(s, { type: "endTurn" });
+    expect(s.opportunity?.id).toBe("qingmaiBaoxi");
+    s.crisis = null;
+    s.huafei = [];
+    s.stories = [];
+    setHand(s, []);
+    s = act(s, { type: "endTurn" });
+    expect(s.rank).toBe("guiren");
+    const inPool = (x: Z2State) => [...x.opportunityPool, x.opportunity?.id].includes("qingmaiBaoxi");
+    expect(inPool(s)).toBe(true);
+    // 伤胎 while pregnant → 小产 → gone
+    s.stories = [];
+    s.huafei = [];
+    s.crisis = ev(s, "hanliangZhiwu");
+    setHand(s, []);
+    s = act(s, { type: "endTurn" });
+    expect(s.pregnant).toBe(false);
+    expect(inPool(s)).toBe(false);
+    expect(s.opportunityUsed.includes("qingmaiBaoxi")).toBe(false);
   });
 
   it("罚跪 while pregnant: forced miscarriage; harsh +1, 留方 -1", () => {
@@ -461,6 +520,157 @@ describe("zhenhuan stage 2 engine", () => {
     expect(t.statuses.some((x) => x.id === "bimenSiguo")).toBe(false);
     expect(t.statuses.some((x) => x.id === "wentaiyiLiufang")).toBe(false);
     expect(t.statuses.some((x) => x.id === "baoyangZaishen")).toBe(true);
+  });
+
+  it("年氏倾颓 (turn 24) changes hate; an owed 曹贵人 brings 琴默陈情 once", () => {
+    const toNian = (seed: number, owed: boolean) => {
+      let s = newStage2(seed, null);
+      s.rank = "guiren";
+      s.turn = 23;
+      s.qingyu = 10;
+      s.shengchong = 10;
+      s.hate = 4;
+      s.caoOwed = owed;
+      s.stories = [];
+      s.crisis = null;
+      s.huafei = [];
+      s = act(s, { type: "endTurn" });
+      return s;
+    };
+    let s = toNian(27, true);
+    expect(s.turn).toBe(24);
+    expect(s.stories.some((x) => x.id === "nianShiQingtui")).toBe(true);
+    const h = s.hate;
+    s = act(s, { type: "chooseStory", storyId: "nianShiQingtui", optionId: "luojingXiashi" });
+    expect(s.hate).toBe(h + 2);
+    expect(s.evidence.includes("caoguirenGaofa")).toBe(false);
+    s.crisis = null;
+    s.huafei = [];
+    s = act(s, { type: "endTurn" });
+    expect(s.opportunity?.id).toBe("qinmoChenqing");
+    s.stories = [];
+    const [r] = setHand(s, ["shoulongRenxin"]);
+    s = act(s, { type: "playCard", cardUid: r! });
+    expect(s.evidence.includes("caoguirenGaofa")).toBe(true);
+
+    // unresolved: gone for good
+    let t = toNian(28, true);
+    t.crisis = null;
+    t.huafei = [];
+    t = act(t, { type: "endTurn" });
+    expect(t.opportunity?.id).toBe("qinmoChenqing");
+    t.stories = [];
+    t.crisis = null;
+    t.huafei = [];
+    setHand(t, []);
+    t = act(t, { type: "endTurn" });
+    expect([...t.opportunityPool, ...t.opportunityUsed, t.opportunity?.id].includes("qinmoChenqing")).toBe(false);
+
+    // not owed: never comes
+    let u = toNian(29, false);
+    u.crisis = null;
+    u.huafei = [];
+    u = act(u, { type: "endTurn" });
+    expect([...u.opportunityPool, u.opportunity?.id].includes("qinmoChenqing")).toBe(false);
+  });
+
+  it("华妃事件 always cost something: each answering card swaps the full penalty for one lighter one", () => {
+    // 翊坤立威 + 眉庄相助 → only 闭门思过, no 清誉 loss, no 激怒
+    let s = newStage2(30, null);
+    s.stories = [];
+    s.hate = 4;
+    s.qingyu = 8;
+    onlyEvents(s, { huafei: ["yikungongLiGuiju"] });
+    const [m] = setHand(s, ["meizhuangXiangzhu"]);
+    s = act(s, { type: "playCard", cardUid: m! });
+    expect(s.huafei[0]!.resolved).toBe(true);
+    expect(s.qingyu).toBe(9); // 眉庄相助's own 清誉 +1
+    expect(s.statuses.some((x) => x.id === "bimenSiguo")).toBe(true);
+    s = act(s, { type: "endTurn" });
+    expect(s.hate).toBeLessThanOrEqual(5);
+
+    // 膳食有异 + 收拢人心 → only 圣宠 -1, no 伤胎 / 抱恙
+    let t = newStage2(31, null);
+    t.stories = [];
+    t.shengchong = 8;
+    t.shenzi = 3;
+    onlyEvents(t, { huafei: ["shanshiYouyi"] });
+    const [r] = setHand(t, ["shoulongRenxin"]);
+    t = act(t, { type: "playCard", cardUid: r! });
+    expect(t.shengchong).toBe(7);
+    expect(t.shenzi).toBe(3);
+    expect(t.statuses.some((x) => x.id === "baoyangZaishen")).toBe(false);
+
+    // 一丈红: one card → 清誉 -1、圣宠 -1 at end of turn, no 出气
+    let u = newStage2(32, null);
+    u.stories = [];
+    u.qingyu = 8;
+    u.shengchong = 8;
+    u.hate = 6;
+    onlyEvents(u, { huafei: ["yizhangHong"] });
+    const [y] = setHand(u, ["yirongZhengsu"]);
+    u = act(u, { type: "playCard", cardUid: y! });
+    const q = u.qingyu;
+    const c = u.shengchong;
+    u.crisis = null;
+    u = act(u, { type: "endTurn" });
+    expect(u.qingyu).toBe(q - 1);
+    expect(u.shengchong).toBe(c - 1);
+  });
+
+  it("琴默叩门 comes only from turn 10, once 恨意 > 5", () => {
+    const at = (turn: number) => {
+      let s = newStage2(33, null);
+      s.rank = "guiren";
+      s.turn = turn - 1;
+      s.hate = 7;
+      s.qingyu = 10;
+      s.shengchong = 10;
+      s.stories = [];
+      s.crisis = null;
+      s.huafei = [];
+      s = act(s, { type: "endTurn" });
+      return s.stories.some((x) => x.id === "caoGuirenLaifang");
+    };
+    expect(at(7)).toBe(false);
+    expect(at(10)).toBe(true);
+  });
+
+  it("伤胎 events: 抱恙在身 only when not pregnant; a 小产 does not add it", () => {
+    let s = newStage2(34, null);
+    s.pregnant = true;
+    s.statuses.push({ uid: "p", id: "shenhuaiLongyi", appliesFromTurn: 1, remaining: 0 });
+    s.shenzi = 5;
+    s.stories = [];
+    onlyEvents(s, { crisis: "hanliangZhiwu" });
+    setHand(s, []);
+    s = act(s, { type: "endTurn" });
+    expect(s.miscarriages).toBe(1);
+    expect(s.statuses.some((x) => x.id === "baoyangZaishen")).toBe(false);
+  });
+
+  it("凤鸾承恩 on a crowded turn (≥ 4 other events) pushes out the opportunity event", () => {
+    const next = (hate: number) => {
+      let s = newStage2(35, null);
+      s.rank = "guiren";
+      s.turn = 12;
+      s.hate = hate;
+      s.qingyu = 10;
+      s.shengchong = 10;
+      s.summonLast = null;
+      s.caoTriggered = true;
+      s.stories = [];
+      s.crisis = null;
+      s.huafei = [];
+      s = act(s, { type: "endTurn" });
+      expect(s.stories.some((x) => x.id === "zhaoxing")).toBe(true);
+      return s;
+    };
+    const crowded = next(9); // 机会 + 危机 + 2 华妃 = 4
+    expect(crowded.huafei).toHaveLength(2);
+    expect(crowded.opportunity).toBeNull();
+    const calm = next(0); // 机会 + 危机 only
+    expect(calm.opportunity).not.toBeNull();
   });
 
   it("ending lines cover the pregnancy outcome", () => {

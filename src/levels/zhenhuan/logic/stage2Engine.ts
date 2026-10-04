@@ -25,7 +25,6 @@ import {
   LINGRONG_PROMOTION_TEXT,
   LINGRONG_SUMMON,
   NIAN_TURN,
-  NOTICES,
   OPPORTUNITY2_POOL,
   RANKS,
   RESOURCE2_LABEL,
@@ -60,6 +59,7 @@ import {
   type StoryId2,
   type StoryOption2,
   type TagId2,
+  type ResponsePenalty,
 } from "../data/stage2Content";
 
 export type CardInst2 = { readonly uid: string; readonly id: CardId2 };
@@ -141,6 +141,8 @@ export type Z2State = {
   pregnant: boolean;
   pregnancies: number;
   miscarriages: number;
+  /** What caused the latest 小产 (for the notice). */
+  miscarriageCause: string | null;
   /** Turn of the last 召幸; null = next turn at the threshold summons right away. */
   summonLast: number | null;
   caoTriggered: boolean;
@@ -151,6 +153,8 @@ export type Z2State = {
   /** 陵容 uids whose 联袂 was used this turn. */
   lianmeiSpent: string[];
   evidence: EvidenceId[];
+  /** 华妃事件 evidence needs two qualifying answers: how many so far, per evidence. */
+  evidenceClues: Partial<Record<EvidenceId, number>>;
   shuhenjiaoHarm: number;
   statuses: StatusInst2[];
   playsUsed: number;
@@ -451,7 +455,9 @@ function miscarry(s: Z2State, shenziLoss: number, cause: string): void {
   s.pregnant = false;
   removeStatusById(s, "shenhuaiLongyi");
   s.miscarriages++;
+  s.miscarriageCause = cause;
   s.summonLast = null;
+  dropPinEvent(s);
   log(s, `小产（${cause}）：失去【身怀龙裔】。`, "bad");
   applyDeltas2(
     s,
@@ -479,14 +485,40 @@ function becomePregnant(s: Z2State, source: string): void {
   s.pregnancies++;
   revealShenzi(s);
   s.statuses.push({ uid: `s${s.nextUid++}`, id: "shenhuaiLongyi", appliesFromTurn: s.turn, remaining: 0 });
-  log(s, `💗 ${source}：太医诊出喜脉，获得【身怀龙裔】！`, "good");
+  log(s, `💗 ${source}：有了喜脉，获得【身怀龙裔】！`, "good");
   if (s.rank === "guiren") {
-    s.rank = "pin";
-    const r = RANKS.pin;
-    log(s, `有孕晋封为【${r.name}】：清誉 / 圣宠上限 ${r.cap}；下回合起每回合抓 ${r.draw} 打 ${r.plays}。`, "good");
-    lingrongOnPromotion(s);
+    // 晋嫔 waits for the 请脉报喜 opportunity, put at the bottom of the pool
+    s.opportunityPool = [...s.opportunityPool.filter((id) => id !== PIN_EVENT), PIN_EVENT];
+    log(s, "【请脉报喜】加入机会牌池：太医确诊后才能晋为嫔。", "good");
   }
   applyDelta2(s, { resource: "hate", amount: 3 }, "喜脉");
+}
+
+const PIN_EVENT = "qingmaiBaoxi" as const;
+/** 华妃事件 evidence: the second qualifying answer turns the clues into evidence. */
+const HUAFEI_EVIDENCE_CLUES = 2;
+const CAO_EVENT = "qinmoChenqing" as const;
+/** With this many other events (贵人考验 not counted), 凤鸾承恩 takes the opportunity event's place. */
+const SUMMON_CROWD_LIMIT = 4;
+/** 琴默叩门 never comes before this turn. */
+const CAO_VISIT_MIN_TURN = 10;
+
+function promoteToPin(s: Z2State): void {
+  if (s.rank !== "guiren" || !s.pregnant) return;
+  s.rank = "pin";
+  const r = RANKS.pin;
+  log(s, `有孕晋封为【${r.name}】：清誉 / 圣宠上限 ${r.cap}；下回合起每回合抓 ${r.draw} 打 ${r.plays}。`, "good");
+  lingrongOnPromotion(s);
+}
+
+/** 小产: the pending 请脉报喜 leaves the pool (and the board). */
+function dropPinEvent(s: Z2State): void {
+  const had = s.opportunityPool.includes(PIN_EVENT) || s.opportunityUsed.includes(PIN_EVENT) || (s.opportunity?.id === PIN_EVENT && !s.opportunity.resolved);
+  if (!had) return;
+  s.opportunityPool = s.opportunityPool.filter((id) => id !== PIN_EVENT);
+  s.opportunityUsed = s.opportunityUsed.filter((id) => id !== PIN_EVENT);
+  if (s.opportunity?.id === PIN_EVENT && !s.opportunity.resolved) s.opportunity = null;
+  log(s, "【请脉报喜】随之从机会牌池移除。");
 }
 
 /** 伤胎: 留方 absorbs it; otherwise 身子 -1, or a miscarriage when pregnant. */
@@ -602,6 +634,15 @@ function newEvent(s: Z2State, id: EventId2): EventInst2 {
 
 // ---------------------------------------------------------------- resolution
 
+function verb(kind: string): string {
+  return kind === "opportunity" ? "把握" : kind === "huafei" ? "应对" : "化解";
+}
+
+function applyResponsePenalty(s: Z2State, cost: ResponsePenalty, source: string): void {
+  applyDeltas2(s, cost.effects, source);
+  if (cost.status && alive(s)) addStatus2(s, cost.status);
+}
+
 function eventStoryFor(ev: EventInst2, card: CardId2): string | undefined {
   return EVENTS2[ev.id].resolvedStory[card];
 }
@@ -610,9 +651,12 @@ function resolveEventByCard(s: Z2State, ev: EventInst2, card: CardId2, doubleRew
   const def = EVENTS2[ev.id];
   ev.resolved = true;
   ev.resolvedBy = card;
-  log(s, `${def.kind === "opportunity" ? "把握" : "化解"}${EVENT_KIND2_LABEL[def.kind]}事件【${def.name}】`, "good");
+  log(s, `${verb(def.kind)}${EVENT_KIND2_LABEL[def.kind]}事件【${def.name}】`, "good");
   const story = eventStoryFor(ev, card);
   if (story) log(s, story);
+  // 华妃事件 are never free: answering still costs one lighter penalty
+  const cost = def.double ? def.doublePenalty : def.responsePenalty?.[card];
+  if (cost && alive(s)) applyResponsePenalty(s, cost, `${def.name}（应对的代价）`);
   if (def.kind === "opportunity") {
     applyDeltas2(s, def.reward, def.name);
     if (doubleReward && def.reward.length > 0 && alive(s)) {
@@ -623,11 +667,19 @@ function resolveEventByCard(s: Z2State, ev: EventInst2, card: CardId2, doubleRew
   const evidence = def.evidence;
   if (evidence && alive(s)) {
     const via = def.double ? (ev.progress ?? []) : [card];
-    if (via.some((c) => evidence.cards.includes(c))) {
-      ev.evidence = evidence.id;
-      gainEvidence(s, evidence.id);
+    if (via.some((c) => evidence.cards.includes(c)) && !s.evidence.includes(evidence.id)) {
+      // 华妃事件 come back again and again: the first time only leaves a clue
+      const clues = (s.evidenceClues[evidence.id] ?? 0) + 1;
+      s.evidenceClues[evidence.id] = clues;
+      if (def.kind === "huafei" && clues < HUAFEI_EVIDENCE_CLUES) {
+        log(s, "你记下了些蛛丝马迹，只是还不足以成为罪证。", "info");
+      } else {
+        ev.evidence = evidence.id;
+        gainEvidence(s, evidence.id);
+      }
     }
   }
+  if (ev.id === PIN_EVENT && alive(s)) promoteToPin(s);
   if (ev.id === "wenyiBaoyang" && alive(s)) {
     s.caoOwed = true;
     log(s, "曹贵人欠下了你的人情。", "good");
@@ -650,7 +702,7 @@ function resolveEventByLingrong(s: Z2State, ev: EventInst2, tier: LingrongTier):
   }
   ev.resolved = true;
   ev.resolvedBy = "lingrongXiangzhu";
-  log(s, `${def.kind === "opportunity" ? "把握" : "化解"}${EVENT_KIND2_LABEL[def.kind]}事件【${def.name}】`, "good");
+  log(s, `${verb(def.kind)}${EVENT_KIND2_LABEL[def.kind]}事件【${def.name}】`, "good");
   if (o.effects) applyDeltas2(s, o.effects, `${def.name}（陵容·${TIER_LABEL[tier]}）`);
   if (o.extraDraw && alive(s)) {
     log(s, `陵容联动：额外抽 ${o.extraDraw} 张牌。`, "good");
@@ -887,6 +939,16 @@ function checkSummon(s: Z2State): void {
   openStory(s, "zhaoxing");
 }
 
+/** Too crowded a turn: 凤鸾承恩 pushes the opportunity event back to the top of its pool. */
+function makeRoomForSummon(s: Z2State): void {
+  if (!s.opportunity || !s.stories.some((st) => st.id === "zhaoxing")) return;
+  const others = s.stories.filter((st) => st.id !== "zhaoxing").length + (s.opportunity ? 1 : 0) + (s.crisis ? 1 : 0) + s.huafei.length;
+  if (others < SUMMON_CROWD_LIMIT) return;
+  const id = s.opportunity.id as OpportunityId2;
+  s.opportunityPool = [id, ...s.opportunityPool];
+  s.opportunity = null;
+}
+
 function beginTurn2(s: Z2State, turn: number): void {
   s.turn = turn;
   s.turnRank = s.rank;
@@ -909,20 +971,11 @@ function beginTurn2(s: Z2State, turn: number): void {
     s.fakuiHarsh = s.hate >= 6;
     openStory(s, s.pregnant ? "fakuiPregnant" : "fakuiPlain");
   }
-  if (turn === FAKUI_TURN + 1) s.notices.push(NOTICES.fakuiAftermath);
-  if (turn === NIAN_TURN) {
-    s.notices.push(NOTICES.nianGengyao);
-    log(s, NOTICES.nianGengyao.text);
-    if (s.caoOwed) {
-      log(s, "曹贵人眼见年家倒台，出面告发华妃。", "good");
-      gainEvidence(s, "caoguirenGaofa");
-    }
-  }
   if (turn === GUIREN_TRIAL.firstTurn && s.rank === "changzai") {
     s.trial = { active: true, summoned: false };
     log(s, `剧情事件：【${GUIREN_TRIAL.name}】开始（第 ${GUIREN_TRIAL.firstTurn}—${GUIREN_TRIAL.lastTurn} 回合）`);
   }
-  if (!s.caoTriggered && s.hate > 5) {
+  if (!s.caoTriggered && s.hate > 5 && turn >= CAO_VISIT_MIN_TURN) {
     s.caoTriggered = true;
     openStory(s, "caoGuirenLaifang");
   }
@@ -939,6 +992,7 @@ function beginTurn2(s: Z2State, turn: number): void {
   }
   checkSummon(s);
   drawHuafei(s);
+  makeRoomForSummon(s);
 
   // 依依: 陵容 kept from last turn take up this turn's draws.
   const kept = s.hand.length;
@@ -952,12 +1006,18 @@ function beginTurn2(s: Z2State, turn: number): void {
 
 function settleHuafei(s: Z2State, ev: EventInst2): boolean /* stays */ {
   const def = EVENTS2[ev.id];
+  // 双牌 half done: a lighter penalty, no 激怒 / 出气, and 嘱托 is not needed
+  if (def.partialPenalty && (ev.progress?.length ?? 0) === 1) {
+    log(s, `华妃事件【${def.name}】只应对了一半。`, "bad");
+    applyResponsePenalty(s, def.partialPenalty, `${def.name}（应对了一半）`);
+    return false;
+  }
   if (removeStatusById(s, "meizhuangZhutuo")) {
     log(s, `【眉庄嘱托】抵消了华妃事件【${def.name}】的未化解效果。`, "good");
     if ((def.unresolvedHate ?? 0) < 0) applyDelta2(s, { resource: "hate", amount: def.unresolvedHate! }, `${def.name}（出气）`);
     return false;
   }
-  log(s, `华妃事件【${def.name}】未化解：${ev.burning ? "延烧未止" : def.unresolvedText}。`, "bad");
+  log(s, `华妃事件【${def.name}】未应对：${ev.burning ? "延烧未止" : def.unresolvedText}。`, "bad");
   if (def.burnPenalty) {
     if (ev.burning) {
       applyDeltas2(s, def.burnPenalty, `${def.name}（延烧）`);
@@ -970,8 +1030,9 @@ function settleHuafei(s: Z2State, ev: EventInst2): boolean /* stays */ {
     return true;
   }
   applyDeltas2(s, def.penalty, def.name);
+  const wasPregnant = s.pregnant;
   if (def.harmsPregnancy && alive(s)) harmPregnancy(s, def.name);
-  if (def.penaltyStatus && alive(s)) addStatus2(s, def.penaltyStatus);
+  if (def.penaltyStatus && alive(s) && !(def.harmsPregnancy && wasPregnant)) addStatus2(s, def.penaltyStatus);
   if (def.unresolvedHate && alive(s)) applyDelta2(s, { resource: "hate", amount: def.unresolvedHate }, `${def.name}（${def.unresolvedHate > 0 ? "激怒" : "出气"}）`);
   return false;
 }
@@ -1005,9 +1066,10 @@ function endTurn2(s: Z2State): void {
     const def = EVENTS2[s.crisis.id];
     log(s, `危机事件【${def.name}】未化解：${def.unresolvedText}。`, "bad");
     applyDeltas2(s, def.penalty, def.name);
-    // 留方 only absorbs the 伤胎 itself; 抱恙在身 still comes
+    // 留方 only absorbs the 伤胎 itself; 抱恙在身 still comes — unless pregnant (the 伤胎 is a 小产 then)
+    const wasPregnant = s.pregnant;
     if (def.harmsPregnancy && alive(s)) harmPregnancy(s, def.name);
-    if (def.penaltyStatus && alive(s)) {
+    if (def.penaltyStatus && alive(s) && !(def.harmsPregnancy && wasPregnant)) {
       addStatus2(s, def.penaltyStatus);
       if (s.crisis.aggravated && alive(s)) addStatus2(s, def.penaltyStatus);
     }
@@ -1021,7 +1083,17 @@ function endTurn2(s: Z2State): void {
   if (!alive(s)) return;
 
   // 12. events leave
-  if (s.opportunity && !retiredOpportunity(s, s.opportunity)) s.opportunityUsed.push(s.opportunity.id as OpportunityId2);
+  if (s.opportunity?.id === CAO_EVENT) {
+    // 琴默陈情 comes once only, resolved or not
+  } else if (s.opportunity?.id === PIN_EVENT) {
+    // not confirmed yet: shuffled back into the remaining pool while still pregnant
+    if (!s.opportunity.resolved && s.pregnant && s.rank === "guiren") {
+      const [rng, shuffled] = shuffle(s.rng, [...s.opportunityPool, PIN_EVENT]);
+      s.rng = rng;
+      s.opportunityPool = shuffled;
+      log(s, "【请脉报喜】没能确诊，洗回机会牌池。");
+    }
+  } else if (s.opportunity && !retiredOpportunity(s, s.opportunity)) s.opportunityUsed.push(s.opportunity.id as OpportunityId2);
   if (s.crisis) s.crisisUsed.push(s.crisis.id as CrisisId2);
   s.opportunity = null;
   s.crisis = null;
@@ -1080,6 +1152,10 @@ function endTurn2(s: Z2State): void {
     // into the discard pile, so they arrive with the next reshuffle instead of in one clump
     s.discard.push(...added);
     log(s, `${LINGRONG_COPIES} 张【陵容相助】加入弃牌堆，下次洗牌后才会抽到。`);
+  }
+  if (s.turn === NIAN_TURN && s.caoOwed) {
+    s.opportunityPool = [CAO_EVENT, ...s.opportunityPool];
+    log(s, "曹贵人眼见年家倒台，托人递话说要来碎玉轩一趟：【琴默陈情】加入机会牌池。", "good");
   }
   const late = LATE_OPPORTUNITIES[s.turn];
   if (late) {
@@ -1152,6 +1228,7 @@ export function newStage2(seed: number, carry: Carry | null): Z2State {
     pregnant: false,
     pregnancies: 0,
     miscarriages: 0,
+    miscarriageCause: null,
     summonLast: null,
     caoTriggered: false,
     caoBefriended: false,
@@ -1159,6 +1236,7 @@ export function newStage2(seed: number, carry: Carry | null): Z2State {
     fakuiHarsh: false,
     lianmeiSpent: [],
     evidence: [],
+    evidenceClues: {},
     shuhenjiaoHarm: 0,
     statuses: [],
     playsUsed: 0,
