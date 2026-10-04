@@ -193,7 +193,7 @@ export const CARDS2: Record<CardId2, CardDef2> = {
     matches: ["supeishengToufeng", "liPinJingmeng", "wenyiBaoyang", "qinmoChenqing", "neiwufuDiaonan", "hanliangZhiwu", "kekouFenli", "shanshiYouyi"],
   }),
   jingguanQibian: fromStage1("jingguanQibian", { matches: ["jingxinTiaoyang", "hanliangZhiwu"] }),
-  meizhuangXiangzhu: fromStage1("meizhuangXiangzhu", { matches: ["taihouChuixun", "gongzhongLiuyan", "neiwufuDiaonan"] }),
+  meizhuangXiangzhu: fromStage1("meizhuangXiangzhu", { matches: ["taihouChuixun", "gongzhongLiuyan", "neiwufuDiaonan", "yikungongLiGuiju"] }),
   lingrongXiangzhu: {
     id: "lingrongXiangzhu",
     name: "陵容相助",
@@ -412,6 +412,8 @@ export type DoubleRule =
   | { readonly kind: "anyTwo"; readonly cards: readonly CardId2[] }
   | { readonly kind: "both"; readonly cards: readonly [CardId2, CardId2] };
 
+export type ResponsePenalty = { readonly effects: readonly Delta2[]; readonly status?: StatusId2 };
+
 export type EventDef2 = {
   readonly id: EventId2;
   readonly kind: EventKind2;
@@ -432,6 +434,12 @@ export type EventDef2 = {
   /** Unresolved 欢宜香浓 voids this turn's 召幸 and blocks it until resolved. */
   readonly blocksSummon?: boolean;
   readonly double?: DoubleRule;
+  /** 华妃事件: answering with this card still costs this one penalty (applied when played). */
+  readonly responsePenalty?: Partial<Record<CardId2, ResponsePenalty>>;
+  /** 华妃双牌事件: the penalty left once both cards are in. */
+  readonly doublePenalty?: ResponsePenalty;
+  /** 华妃双牌事件: only one card in by the end of the turn — this lighter penalty instead (no 激怒 / 出气). */
+  readonly partialPenalty?: ResponsePenalty;
   /** 华妃事件 unlock threshold. */
   readonly unlockHate?: number;
   /** Evidence and which cards earn it. For double events: any of the cards in the pair. */
@@ -664,14 +672,19 @@ export const EVENTS2: Record<EventId2, EventDef2> = {
     emoji: "🏯",
     flavor: "请安时华妃当众挑你的错处，满殿的人都等着看你如何应对。",
     reward: [],
-    penalty: [{ resource: "qingyu", amount: -1 }],
+    penalty: [{ resource: "qingyu", amount: -2 }],
     penaltyStatus: "bimenSiguo",
     unresolvedHate: 1,
     unlockHate: 3,
-    resolvedText: "移除事件",
-    unresolvedText: "清誉 -1、获得【闭门思过】；激怒：恨意 +1",
+    responsePenalty: {
+      jinyanShenxing: { effects: [{ resource: "qingyu", amount: -1 }] },
+      meizhuangXiangzhu: { effects: [], status: "bimenSiguo" },
+    },
+    resolvedText: "谨言慎行：只清誉 -1；眉庄相助：只获得【闭门思过】",
+    unresolvedText: "清誉 -2、获得【闭门思过】；激怒：恨意 +1",
     resolvedStory: {
-      jinyanShenxing: "你垂首听训，一句不辩，末了只说“娘娘教训得是”。华妃挑不出错，只得作罢。",
+      jinyanShenxing: "你垂首听训，一句不辩，末了只说“娘娘教训得是”。华妃挑不出大错，却还是当众数落了你几句。",
+      meizhuangXiangzhu: "眉庄陪你一同站了半日规矩，替你挡下了不少难听的话。华妃冷笑一声，罚你们回去闭门思过。",
     },
   },
   kekouFenli: {
@@ -681,13 +694,17 @@ export const EVENTS2: Record<EventId2, EventDef2> = {
     emoji: "🍚",
     flavor: "内务府看着翊坤宫的脸色，碎玉轩的炭火、吃食一日比一日少。",
     reward: [],
-    penalty: [{ resource: "shengchong", amount: -1 }],
+    penalty: [
+      { resource: "shengchong", amount: -1 },
+      { resource: "qingyu", amount: -1 },
+    ],
     burnPenalty: [{ resource: "shengchong", amount: -2 }],
     burnStatus: "baoyangZaishen",
     unlockHate: 3,
     evidence: { id: "kekouZhangce", cards: ["shoulongRenxin"] },
-    resolvedText: "移除事件（用收拢人心化解，可能搜集到华妃的罪证）",
-    unresolvedText: "延烧：圣宠 -1，事件留到下回合；下回合仍未化解：圣宠 -2、获得【抱恙在身】后离场",
+    responsePenalty: { shoulongRenxin: { effects: [{ resource: "shengchong", amount: -1 }] } },
+    resolvedText: "收拢人心：只圣宠 -1，可能搜集到华妃的罪证；陵容相助：视情分而定",
+    unresolvedText: "延烧：圣宠 -1、清誉 -1，事件留到下回合；下回合仍未应对：圣宠 -2、获得【抱恙在身】后离场",
     resolvedStory: {
       shoulongRenxin: "你让小允子拿银子去内务府，顺手抄出了一本账册：各宫被克扣的份例，笔笔都记着翊坤宫的吩咐。",
     },
@@ -699,15 +716,19 @@ export const EVENTS2: Record<EventId2, EventDef2> = {
     emoji: "🍲",
     flavor: "御膳房送来的汤水，闻着与往日不大一样。",
     reward: [],
-    penalty: [],
+    penalty: [{ resource: "shenzi", amount: -1 }],
     harmsPregnancy: true,
     penaltyStatus: "baoyangZaishen",
     unlockHate: 5,
-    resolvedText: "移除事件",
-    unresolvedText: "伤胎：有孕前身子 -1；有孕后直接小产；并获得【抱恙在身】",
+    responsePenalty: {
+      wenTaiyiZhenzhi: { effects: [{ resource: "shenzi", amount: -1 }] },
+      shoulongRenxin: { effects: [{ resource: "shengchong", amount: -1 }] },
+    },
+    resolvedText: "温太医相助：只身子 -1；收拢人心：只圣宠 -1",
+    unresolvedText: "伤胎：有孕前身子 -1；有孕后直接小产；另外身子 -1、获得【抱恙在身】",
     resolvedStory: {
-      wenTaiyiZhenzhi: "温实初验过汤水，脸色一沉：里头加了活血的东西。你命人倒掉，不动声色。",
-      shoulongRenxin: "御膳房里收过你赏钱的小太监悄悄递话：今日的汤，别喝。",
+      wenTaiyiZhenzhi: "温实初验过汤水，脸色一沉：里头加了活血的东西。你只抿了一口便觉不适，好在发现得早。",
+      shoulongRenxin: "御膳房里收过你赏钱的小太监悄悄递话：今日的汤，别喝。你把这事闹到了御前，皇上却嫌你小题大做。",
     },
   },
   yizhangHong: {
@@ -717,13 +738,23 @@ export const EVENTS2: Record<EventId2, EventDef2> = {
     emoji: "🩸",
     flavor: "华妃又要拿人立威，这回被拖到翊坤宫外的，是你宫里的人。",
     reward: [],
-    penalty: [{ resource: "qingyu", amount: -2 }],
+    penalty: [
+      { resource: "qingyu", amount: -2 },
+      { resource: "shengchong", amount: -1 },
+    ],
     unresolvedHate: -1,
     unlockHate: 5,
     double: { kind: "anyTwo", cards: ["jinyanShenxing", "yirongZhengsu", "shoulongRenxin"] },
+    partialPenalty: {
+      effects: [
+        { resource: "qingyu", amount: -1 },
+        { resource: "shengchong", amount: -1 },
+      ],
+    },
+    doublePenalty: { effects: [{ resource: "qingyu", amount: -1 }] },
     evidence: { id: "lanyongSixing", cards: ["shoulongRenxin"] },
-    resolvedText: "移除事件（两张中含收拢人心，可能搜集到华妃的罪证）",
-    unresolvedText: "清誉 -2；出气：恨意 -1",
+    resolvedText: "打出 2 张：只清誉 -1（两张中含收拢人心，可能搜集到华妃的罪证）；只打出 1 张：回合末清誉 -1、圣宠 -1",
+    unresolvedText: "清誉 -2、圣宠 -1；出气：恨意 -1",
     note: "双牌：同一回合打出谨言慎行、仪容整肃、收拢人心中任意 2 张。",
     resolvedStory: {
       jinyanShenxing: "你跪在翊坤宫外替宫人求情，句句恭顺，华妃寻不到再发作的由头。",
@@ -738,13 +769,14 @@ export const EVENTS2: Record<EventId2, EventDef2> = {
     emoji: "🌺",
     flavor: "皇上连日宿在翊坤宫，满宫都闻得见欢宜香的味道。",
     reward: [],
-    penalty: [{ resource: "shengchong", amount: -1 }],
+    penalty: [{ resource: "shengchong", amount: -2 }],
     unresolvedHate: -1,
     blocksSummon: true,
     unlockHate: 7,
     double: { kind: "both", cards: ["yirongZhengsu", "jingguanQibian"] },
-    resolvedText: "移除事件；召幸恢复可处理",
-    unresolvedText: "本回合召幸作废、圣宠 -1；出气：恨意 -1",
+    doublePenalty: { effects: [{ resource: "hate", amount: 1 }] },
+    resolvedText: "召幸恢复可处理；只恨意 +1（把皇上从翊坤宫拉了回来）",
+    unresolvedText: "本回合召幸作废、圣宠 -2；出气：恨意 -1",
     note: "只在有召幸的回合出现。陵容相助单张，或同一回合打出仪容整肃 + 静观其变。在场时召幸不能处理。",
     resolvedStory: {
       yirongZhengsu: "你盛装在御花园赏花，又沉得住气不争不抢。皇上终于想起了碎玉轩。",
@@ -854,12 +886,12 @@ export const LINGRONG_EVENT: Partial<Record<EventId2, TierTable>> = {
   },
   kekouFenli: {
     close: { resolves: true, relation: 1, story: "陵容把自己的份例分了一半送来：「姐姐别嫌弃。咱们姐妹，原该如此。」" },
-    distant: { resolves: true, story: "「我一个答应的份例，哪比得上姐姐的。」陵容嘴上这么说，还是送了些炭来。" },
+    distant: { resolves: true, effects: [{ resource: "shengchong", amount: -1 }], story: "「我一个答应的份例，哪比得上姐姐的。」陵容嘴上这么说，还是送了些炭来，只是不够撑到月底。" },
     resentful: { resolves: false, relation: 1, story: "陵容推说自己也不够用，一样东西也没送来。第二日清早，碎玉轩门口却多了一小篓炭，没留话。" },
   },
   huanyixiangZhuanchong: {
-    close: { resolves: true, story: "陵容在御花园唱曲，把皇上从翊坤宫引了过来，又借故走开，留你陪驾。" },
-    distant: { resolves: true, story: "陵容的歌声把皇上引了过来。「姐姐这回可欠妹妹一个人情。」" },
+    close: { resolves: true, effects: [{ resource: "hate", amount: 1 }], story: "陵容在御花园唱曲，把皇上从翊坤宫引了过来，又借故走开，留你陪驾。" },
+    distant: { resolves: true, effects: [{ resource: "hate", amount: 1 }], story: "陵容的歌声把皇上引了过来。「姐姐这回可欠妹妹一个人情。」" },
     resentful: { resolves: false, relation: 1, effects: [{ resource: "shengchong", amount: -2 }], story: "陵容趁机自己去御前献唱，皇上当晚留在了她那里。次日她来请安，眼圈红红的，只说了一句「姐姐别怪我」。" },
   },
 };

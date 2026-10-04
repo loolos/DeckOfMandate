@@ -563,6 +563,50 @@ describe("zhenhuan stage 2 engine", () => {
     expect([...u.opportunityPool, u.opportunity?.id].includes("qinmoChenqing")).toBe(false);
   });
 
+  it("华妃事件 always cost something: each answering card swaps the full penalty for one lighter one", () => {
+    // 翊坤立威 + 眉庄相助 → only 闭门思过, no 清誉 loss, no 激怒
+    let s = newStage2(30, null);
+    s.stories = [];
+    s.hate = 4;
+    s.qingyu = 8;
+    onlyEvents(s, { huafei: ["yikungongLiGuiju"] });
+    const [m] = setHand(s, ["meizhuangXiangzhu"]);
+    s = act(s, { type: "playCard", cardUid: m! });
+    expect(s.huafei[0]!.resolved).toBe(true);
+    expect(s.qingyu).toBe(9); // 眉庄相助's own 清誉 +1
+    expect(s.statuses.some((x) => x.id === "bimenSiguo")).toBe(true);
+    s = act(s, { type: "endTurn" });
+    expect(s.hate).toBeLessThanOrEqual(5);
+
+    // 膳食有异 + 收拢人心 → only 圣宠 -1, no 伤胎 / 抱恙
+    let t = newStage2(31, null);
+    t.stories = [];
+    t.shengchong = 8;
+    t.shenzi = 3;
+    onlyEvents(t, { huafei: ["shanshiYouyi"] });
+    const [r] = setHand(t, ["shoulongRenxin"]);
+    t = act(t, { type: "playCard", cardUid: r! });
+    expect(t.shengchong).toBe(7);
+    expect(t.shenzi).toBe(3);
+    expect(t.statuses.some((x) => x.id === "baoyangZaishen")).toBe(false);
+
+    // 一丈红: one card → 清誉 -1、圣宠 -1 at end of turn, no 出气
+    let u = newStage2(32, null);
+    u.stories = [];
+    u.qingyu = 8;
+    u.shengchong = 8;
+    u.hate = 6;
+    onlyEvents(u, { huafei: ["yizhangHong"] });
+    const [y] = setHand(u, ["yirongZhengsu"]);
+    u = act(u, { type: "playCard", cardUid: y! });
+    const q = u.qingyu;
+    const c = u.shengchong;
+    u.crisis = null;
+    u = act(u, { type: "endTurn" });
+    expect(u.qingyu).toBe(q - 1);
+    expect(u.shengchong).toBe(c - 1);
+  });
+
   it("ending lines cover the pregnancy outcome", () => {
     const s = newStage2(16, null);
     expect(endingLines(s).some((l) => l.includes("始终没有动静"))).toBe(true);

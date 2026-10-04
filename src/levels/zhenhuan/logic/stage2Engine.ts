@@ -59,6 +59,7 @@ import {
   type StoryId2,
   type StoryOption2,
   type TagId2,
+  type ResponsePenalty,
 } from "../data/stage2Content";
 
 export type CardInst2 = { readonly uid: string; readonly id: CardId2 };
@@ -625,6 +626,15 @@ function newEvent(s: Z2State, id: EventId2): EventInst2 {
 
 // ---------------------------------------------------------------- resolution
 
+function verb(kind: string): string {
+  return kind === "opportunity" ? "把握" : kind === "huafei" ? "应对" : "化解";
+}
+
+function applyResponsePenalty(s: Z2State, cost: ResponsePenalty, source: string): void {
+  applyDeltas2(s, cost.effects, source);
+  if (cost.status && alive(s)) addStatus2(s, cost.status);
+}
+
 function eventStoryFor(ev: EventInst2, card: CardId2): string | undefined {
   return EVENTS2[ev.id].resolvedStory[card];
 }
@@ -633,9 +643,12 @@ function resolveEventByCard(s: Z2State, ev: EventInst2, card: CardId2, doubleRew
   const def = EVENTS2[ev.id];
   ev.resolved = true;
   ev.resolvedBy = card;
-  log(s, `${def.kind === "opportunity" ? "把握" : "化解"}${EVENT_KIND2_LABEL[def.kind]}事件【${def.name}】`, "good");
+  log(s, `${verb(def.kind)}${EVENT_KIND2_LABEL[def.kind]}事件【${def.name}】`, "good");
   const story = eventStoryFor(ev, card);
   if (story) log(s, story);
+  // 华妃事件 are never free: answering still costs one lighter penalty
+  const cost = def.double ? def.doublePenalty : def.responsePenalty?.[card];
+  if (cost && alive(s)) applyResponsePenalty(s, cost, `${def.name}（应对的代价）`);
   if (def.kind === "opportunity") {
     applyDeltas2(s, def.reward, def.name);
     if (doubleReward && def.reward.length > 0 && alive(s)) {
@@ -674,7 +687,7 @@ function resolveEventByLingrong(s: Z2State, ev: EventInst2, tier: LingrongTier):
   }
   ev.resolved = true;
   ev.resolvedBy = "lingrongXiangzhu";
-  log(s, `${def.kind === "opportunity" ? "把握" : "化解"}${EVENT_KIND2_LABEL[def.kind]}事件【${def.name}】`, "good");
+  log(s, `${verb(def.kind)}${EVENT_KIND2_LABEL[def.kind]}事件【${def.name}】`, "good");
   if (o.effects) applyDeltas2(s, o.effects, `${def.name}（陵容·${TIER_LABEL[tier]}）`);
   if (o.extraDraw && alive(s)) {
     log(s, `陵容联动：额外抽 ${o.extraDraw} 张牌。`, "good");
@@ -967,12 +980,18 @@ function beginTurn2(s: Z2State, turn: number): void {
 
 function settleHuafei(s: Z2State, ev: EventInst2): boolean /* stays */ {
   const def = EVENTS2[ev.id];
+  // 双牌 half done: a lighter penalty, no 激怒 / 出气, and 嘱托 is not needed
+  if (def.partialPenalty && (ev.progress?.length ?? 0) === 1) {
+    log(s, `华妃事件【${def.name}】只应对了一半。`, "bad");
+    applyResponsePenalty(s, def.partialPenalty, `${def.name}（应对了一半）`);
+    return false;
+  }
   if (removeStatusById(s, "meizhuangZhutuo")) {
     log(s, `【眉庄嘱托】抵消了华妃事件【${def.name}】的未化解效果。`, "good");
     if ((def.unresolvedHate ?? 0) < 0) applyDelta2(s, { resource: "hate", amount: def.unresolvedHate! }, `${def.name}（出气）`);
     return false;
   }
-  log(s, `华妃事件【${def.name}】未化解：${ev.burning ? "延烧未止" : def.unresolvedText}。`, "bad");
+  log(s, `华妃事件【${def.name}】未应对：${ev.burning ? "延烧未止" : def.unresolvedText}。`, "bad");
   if (def.burnPenalty) {
     if (ev.burning) {
       applyDeltas2(s, def.burnPenalty, `${def.name}（延烧）`);

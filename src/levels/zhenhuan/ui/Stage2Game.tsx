@@ -139,6 +139,7 @@ function resolvedDetail(inst: EventInst2): string {
   const by = inst.resolvedBy ? `由【${CARDS2[inst.resolvedBy].name}】` : "";
   const tier = inst.lingrong ? `（陵容·${TIER_LABEL[inst.lingrong]}）` : "";
   const ev = inst.evidence ? `；得到罪证【${EVIDENCE[inst.evidence].name}】` : "";
+  if (def.kind === "huafei") return `${by}应对${tier}，只付出了应对的代价${ev}。`;
   if (def.kind !== "opportunity") return `${by}化解${tier}，回合末不受惩罚${ev}。`;
   return `${by}把握${tier}${inst.rewardDoubled ? "（眉庄相助：奖励翻倍）" : ""}${ev}。`;
 }
@@ -202,16 +203,16 @@ function EventCard({ state, inst, fold, dispatch }: { state: Z2State; inst: Even
         {tags}
       </div>
       {inst.resolved ? (
-        <ResolvedBanner icon={isOpp ? "✅" : "🛡️"} label={isOpp ? "已把握" : "已化解"} detail={resolvedDetail(inst)} story={story ?? lingrongStory} />
+        <ResolvedBanner icon={isOpp ? "✅" : "🛡️"} label={isOpp ? "已把握" : def.kind === "huafei" ? "已应对" : "已化解"} detail={resolvedDetail(inst)} story={story ?? lingrongStory} />
       ) : null}
       {!inst.resolved && inst.lingrongFailed ? <p className={styles.endHint}>陵容失效：{lingrongStory}</p> : null}
       <p className={styles.flavor}>{def.flavor}</p>
       <p className={styles.rule}>
-        <span className={styles.ruleLabel}>处理：</span>
+        <span className={styles.ruleLabel}>{def.kind === "huafei" ? "应对（仍有代价）：" : "处理："}</span>
         {expandedEffect2(def.resolvedText)}
       </p>
       <p className={styles.rule}>
-        <span className={styles.ruleLabel}>未处理（回合末）：</span>
+        <span className={styles.ruleLabel}>{def.kind === "huafei" ? "不应对（回合末）：" : "未处理（回合末）："}</span>
         {expandedEffect2(inst.burning ? "延烧未止：圣宠 -2 后离场" : def.unresolvedText)}
       </p>
       {def.note ? <p className={styles.rule}>{def.note}</p> : null}
