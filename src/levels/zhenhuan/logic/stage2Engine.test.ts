@@ -575,7 +575,7 @@ describe("zhenhuan stage 2 engine", () => {
   });
 
   it("华妃事件 always cost something: each answering card swaps the full penalty for one lighter one", () => {
-    // 翊坤立威 + 眉庄相助 → only 闭门思过, no 清誉 loss, no 激怒
+    // 翊坤立威 + 眉庄相助 → only 恨意 +1, no 清誉 loss, no 闭门思过
     let s = newStage2(30, null);
     s.stories = [];
     s.hate = 4;
@@ -585,7 +585,8 @@ describe("zhenhuan stage 2 engine", () => {
     s = act(s, { type: "playCard", cardUid: m! });
     expect(s.huafei[0]!.resolved).toBe(true);
     expect(s.qingyu).toBe(9); // 眉庄相助's own 清誉 +1
-    expect(s.statuses.some((x) => x.id === "bimenSiguo")).toBe(true);
+    expect(s.hate).toBe(5);
+    expect(s.statuses.some((x) => x.id === "bimenSiguo")).toBe(false);
     s = act(s, { type: "endTurn" });
     expect(s.hate).toBeLessThanOrEqual(5);
 
@@ -671,6 +672,17 @@ describe("zhenhuan stage 2 engine", () => {
     expect(crowded.opportunity).toBeNull();
     const calm = next(0); // 机会 + 危机 only
     expect(calm.opportunity).not.toBeNull();
+  });
+
+  it("卧床静养 also rules out 侍寝: 召幸 has no card answers", () => {
+    const s = newStage2(36, null);
+    withStatus(s, "wochuangJingyang");
+    s.stories = [{ id: "zhaoxing", chosenOptionId: null }];
+    onlyEvents(s, {});
+    setHand(s, ["yirongZhengsu"]);
+    expect(storyResponsesFor(s, "yirongZhengsu")).toHaveLength(0);
+    const t = act(s, { type: "chooseStory", storyId: "zhaoxing", optionId: "chengbingBichong" });
+    expect(t.stories[0]!.chosenOptionId).toBe("chengbingBichong");
   });
 
   it("ending lines cover the pregnancy outcome", () => {

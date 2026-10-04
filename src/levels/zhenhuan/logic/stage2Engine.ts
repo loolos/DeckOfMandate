@@ -201,9 +201,10 @@ export function blockedByStatus(s: Z2State, cardId: CardId2): boolean {
   return activeStatuses(s).some((st) => STATUSES2[st.id].blocksCards?.includes(cardId));
 }
 
-/** 抱恙在身 in effect: no 侍寝 (召幸 can only be declined or missed). */
-export function summonUnwell(s: Z2State): boolean {
-  return activeStatuses(s).some((st) => STATUSES2[st.id].blocksCards != null);
+/** 抱恙在身 / 卧床静养 in effect: no 侍寝 (召幸 can only be declined or missed). Returns the status name. */
+export function summonUnwell(s: Z2State): string | null {
+  const st = activeStatuses(s).find((x) => STATUSES2[x.id].noSummon);
+  return st ? STATUSES2[st.id].name : null;
 }
 
 export function playsLeft2(s: Z2State): number {
