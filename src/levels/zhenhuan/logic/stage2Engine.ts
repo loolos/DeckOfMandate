@@ -166,7 +166,7 @@ export type Z2State = {
   lossReason: string | null;
   victory: "narrow" | "full" | null;
   /** 第 30 回合【翊坤落幕】: cards needed and cards played toward it. */
-  finale: { needed: number; played: CardId2[] } | null;
+  finale: { needed: number; played: CardId2[]; stories: string[] } | null;
   log: LogEntry[];
   actions: Z2Action[];
   turnStartActionCount: number;
@@ -917,7 +917,9 @@ function resolvePlay2(s: Z2State, cardUid: string, removeStatusUid?: string): vo
     const f = s.finale!;
     const first = !f.played.includes(card.id);
     f.played.push(card.id);
-    log(s, `【${FINALE.name}】${first ? FINALE.cardStory[card.id] ?? "" : ""}（解牌 ${f.played.length}/${f.needed}）`, "good");
+    const story = !first ? "" : isLingrong ? FINALE.lingrongStory[tier ?? "distant"] : (FINALE.cardStory[card.id] ?? "");
+    if (story) f.stories.push(`${def.emoji} ${story}`);
+    log(s, `【${FINALE.name}】${story}（解牌 ${f.played.length}/${f.needed}）`, "good");
     if (f.played.length === f.needed) log(s, finaleDoneStory(s.evidence.length), "good");
   }
 
@@ -1007,7 +1009,7 @@ function beginTurn2(s: Z2State, turn: number): void {
   }
   if (turn === STAGE2.totalTurns) {
     const needed = FINALE.needed(s.evidence.length);
-    s.finale = { needed, played: [] };
+    s.finale = { needed, played: [], stories: [] };
     log(s, `剧情事件：【${FINALE.name}】——${FINALE.flavor[finaleTier(s.evidence.length)]}本回合须打出 ${needed} 张牌才能扳倒华妃。`);
   }
   if (turn === GUIREN_TRIAL.firstTurn && s.rank === "changzai") {

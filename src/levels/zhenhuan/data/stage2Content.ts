@@ -170,8 +170,13 @@ export const FINALE = {
     jingguanQibian: "你按兵不动，只等华妃自乱阵脚，在御前失了分寸。",
     meizhuangXiangzhu: "眉庄托人递来一封亲笔书信，替你作证。",
     wenTaiyiZhenzhi: "温实初呈上当年的脉案，与华妃的罪状一一对上。",
-    lingrongXiangzhu: "陵容在御前唱了一支曲子，又似是无意地提起了翊坤宫的旧事。",
   } as Partial<Record<string, string>>,
+  /** 陵容 is no friend of 华妃 whatever she thinks of you; only her manner differs. */
+  lingrongStory: {
+    close: "陵容拉着你的手说：「姐姐受的委屈，妹妹都记着。」她在御前唱了一支曲子，又似是无意地提起了翊坤宫的旧事。",
+    distant: "陵容没多说什么，只在御前唱曲时，「无意」提起了翊坤宫这些年的跋扈。",
+    resentful: "陵容不是为你，她自己也恨透了翊坤宫。她在御前轻描淡写的几句，比谁都狠。",
+  } as Record<LingrongTier, string>,
   doneStory: {
     full: "皇上将罪证掷在华妃面前，良久无言，终于下旨：年氏降为答应，打入冷宫。",
     narrow: "皇上沉吟良久，收回了华妃协理六宫之权，命她在翊坤宫闭门思过。",

@@ -375,9 +375,9 @@ function FinaleCard({ state, fold, dispatch }: { state: Z2State; fold: Fold; dis
       </div>
       {done ? <ResolvedBanner icon="👑" label="大局已定" detail={finaleDoneStory(state.evidence.length)} /> : null}
       <p className={styles.flavor}>{FINALE.flavor[tier]}</p>
-      {[...new Set(f.played)].map((id) => (
-        <p key={id} className={styles.rule}>
-          {CARDS2[id].emoji} {FINALE.cardStory[id]}
+      {f.stories.map((line) => (
+        <p key={line} className={styles.rule}>
+          {line}
         </p>
       ))}
       <p className={styles.rule}>
