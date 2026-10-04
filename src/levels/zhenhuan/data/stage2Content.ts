@@ -241,7 +241,7 @@ export const CARDS2: Record<CardId2, CardDef2> = {
   }),
   shoulongRenxin: fromStage1("shoulongRenxin", {
     rulesCompact: "👂×2 📦→🎴+1",
-    matches: ["supeishengToufeng", "liPinJingmeng", "wenyiBaoyang", "qinmoChenqing", "neiwufuDiaonan", "kekouFenli", "shanshiYouyi", "songzhiKuisi"],
+    matches: ["supeishengToufeng", "liPinJingmeng", "wenyiBaoyang", "qinmoChenqing", "gongzhongLiuyan", "neiwufuDiaonan", "kekouFenli", "shanshiYouyi", "songzhiKuisi"],
   }),
   jingguanQibian: fromStage1("jingguanQibian", { matches: ["jingxinTiaoyang", "hanliangZhiwu", "songzhiKuisi"] }),
   meizhuangXiangzhu: fromStage1("meizhuangXiangzhu", {
@@ -278,7 +278,7 @@ export const CARDS2: Record<CardId2, CardDef2> = {
     base: [],
     baseDraw: 0,
     baseStatus: "zhushiTuotie",
-    matches: ["neiwufuDiaonan", "kekouFenli", "shanshiYouyi", "songzhiKuisi", "liyiShiwu", "gongzhongLiuyan"],
+    matches: ["neiwufuDiaonan", "kekouFenli", "shanshiYouyi", "songzhiKuisi", "yikungongLiGuiju", "liyiShiwu", "gongzhongLiuyan"],
     rulesText: ["获得【诸事妥帖】：下回合出牌数 +1。"],
     rulesCompact: "🗝️ 下回合🀄+1",
   },
@@ -757,6 +757,7 @@ export const EVENTS2: Record<EventId2, EventDef2> = {
     resolvedStory: {
       jinyanShenxing: "你闭门不出，见了谁都只说些天气花草。流言找不到新的把柄，几日便散了。",
       meizhuangXiangzhu: "眉庄姐姐在各宫走动时替你分说清楚，又寻出了嚼舌根的宫女。流言一夜之间没了声息。",
+      shoulongRenxin: "你让小允子拿了些碎银子，在各宫的宫人间打点了一圈。收了好处的人自然换了口风，流言渐渐没人再提。",
       jinxiXiangzhu: "槿汐暗中寻到了传话的源头，把几个碎嘴的宫人敲打了一番。流言没了下文。",
     },
   },
@@ -828,13 +829,15 @@ export const EVENTS2: Record<EventId2, EventDef2> = {
     responsePenalty: {
       jinyanShenxing: { effects: [{ resource: "qingyu", amount: -1 }] },
       meizhuangXiangzhu: { effects: [{ resource: "hate", amount: 1 }] },
+      jinxiXiangzhu: { effects: [{ resource: "qingyu", amount: -1 }] },
     },
-    resolvedCompact: "🤐🪷-1 · 👭🔥+1",
-    resolvedText: "谨言慎行：只清誉 -1；眉庄相助：只恨意 +1",
+    resolvedCompact: "🤐🏮🪷-1 · 👭🔥+1",
+    resolvedText: "谨言慎行、槿汐相助：只清誉 -1；眉庄相助：只恨意 +1",
     unresolvedText: "清誉 -2、获得【闭门思过】；激怒：恨意 +1",
     resolvedStory: {
       jinyanShenxing: "你垂首听训，一句不辩，末了只说“娘娘教训得是”。华妃挑不出大错，却还是当众数落了你几句。",
       meizhuangXiangzhu: "眉庄陪你一同站了半日规矩，替你挡下了不少难听的话。华妃冷笑一声，把这笔账记在了你头上。",
+      jinxiXiangzhu: "槿汐上前跪下，把错处都揽到自己身上：“是奴婢没提点好小主。”华妃罚了她半月月钱，满殿的人却都看在眼里，说碎玉轩的主子连个奴才都护不住。",
     },
   },
   kekouFenli: {
