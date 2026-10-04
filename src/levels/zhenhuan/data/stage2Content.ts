@@ -280,7 +280,7 @@ export const CARDS2: Record<CardId2, CardDef2> = {
     base: [],
     baseDraw: 0,
     baseStatus: "zhushiTuotie",
-    matches: ["neiwufuDiaonan", "kekouFenli", "shanshiYouyi", "songzhiKuisi", "yikungongLiGuiju", "liyiShiwu", "gongzhongLiuyan"],
+    matches: ["neiwufuDiaonan", "kekouFenli", "shanshiYouyi", "songzhiKuisi", "yikungongLiGuiju", "gongzhongLiuyan"],
     rulesText: ["获得【诸事妥帖】：下回合出牌数 +1。"],
     rulesCompact: "🗝️ 下回合🀄+1",
   },
@@ -797,7 +797,6 @@ export const EVENTS2: Record<EventId2, EventDef2> = {
     resolvedStory: {
       yirongZhengsu: "你当即整好衣饰、从容请罪，礼数周全得挑不出错处，那点狼狈也就没人再提。",
       wenTaiyiZhenzhi: "温实初替你出了一张脉案，说你那几日头晕乏力。众人这才知道你是抱病强撑。",
-      jinxiXiangzhu: "槿汐上前一步扶住你，替你理好衣襟，又从容替你告了罪。众人只当是地滑，没人再多说什么。",
     },
   },
   hanliangZhiwu: {
@@ -858,16 +857,16 @@ export const EVENTS2: Record<EventId2, EventDef2> = {
     unlockHate: 3,
     evidence: { id: "kekouZhangce", cards: ["shoulongRenxin"] },
     responsePenalty: {
-      shoulongRenxin: { effects: [{ resource: "shengchong", amount: -1 }] },
-      jinxiXiangzhu: { effects: [{ resource: "shengchong", amount: -1 }] },
+      shoulongRenxin: { effects: [{ resource: "qingyu", amount: -1 }] },
+      jinxiXiangzhu: { effects: [{ resource: "qingyu", amount: -1 }] },
     },
-    resolvedCompact: "🤝👑-1 🗂️×2？ · 🏮👑-1 · 🎶👑-1",
+    resolvedCompact: "🤝🪷-1 🗂️×2？ · 🏮🪷-1 · 🎶🪷-1",
     unresolvedCompact: "👑-1 🪷-1 ⏳→👑-2 🤒×2",
-    resolvedText: "收拢人心：只圣宠 -1，多次应对后可能搜集到华妃的罪证；槿汐相助：只圣宠 -1；陵容相助：视情分而定",
+    resolvedText: "收拢人心：只清誉 -1，多次应对后可能搜集到华妃的罪证；槿汐相助：只清誉 -1；陵容相助：视情分而定",
     unresolvedText: "延烧：圣宠 -1、清誉 -1，事件留到下回合；下回合仍未应对：圣宠 -2、获得【抱恙在身】后离场",
     resolvedStory: {
       shoulongRenxin: "你让小允子拿银子去内务府，顺手抄出了一本账册：各宫被克扣的份例，笔笔都记着翊坤宫的吩咐。",
-      jinxiXiangzhu: "槿汐去内务府走了一趟，几句软中带硬的话，炭火吃食总算补回来大半。只是皇上听说碎玉轩为份例跟内务府争执，有些不快。",
+      jinxiXiangzhu: "槿汐去内务府走了一趟，几句软中带硬的话，炭火吃食总算补回来大半。只是宫里都在传，碎玉轩为了几篓炭跟内务府斤斤计较。",
     },
   },
   shanshiYouyi: {
@@ -1063,8 +1062,8 @@ export const LINGRONG_EVENT: Partial<Record<EventId2, TierTable>> = {
     resentful: { resolves: false, relation: 1, story: "陵容只说没瞧见什么。过了几日，她却托人捎来一句：「碎玉轩的门，夜里该落锁了。」" },
   },
   kekouFenli: {
-    close: { resolves: true, relation: 1, effects: [{ resource: "shengchong", amount: -1 }], story: "陵容把自己的份例分了一半送来：「姐姐别嫌弃。咱们姐妹，原该如此。」只是内务府那边，到底还是记了你一笔。" },
-    distant: { resolves: true, effects: [{ resource: "shengchong", amount: -1 }], story: "「我一个答应的份例，哪比得上姐姐的。」陵容嘴上这么说，还是送了些炭来，只是不够撑到月底。" },
+    close: { resolves: true, relation: 1, effects: [{ resource: "qingyu", amount: -1 }], story: "陵容把自己的份例分了一半送来：「姐姐别嫌弃。咱们姐妹，原该如此。」只是内务府那边，到底还是记了你一笔。" },
+    distant: { resolves: true, effects: [{ resource: "qingyu", amount: -1 }], story: "「我一个答应的份例，哪比得上姐姐的。」陵容嘴上这么说，还是送了些炭来，只是不够撑到月底。" },
     resentful: { resolves: false, relation: 1, story: "陵容推说自己也不够用，一样东西也没送来。第二日清早，碎玉轩门口却多了一小篓炭，没留话。" },
   },
   huanyixiangZhuanchong: {
