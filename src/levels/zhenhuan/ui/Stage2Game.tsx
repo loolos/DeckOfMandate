@@ -31,7 +31,7 @@ import {
 } from "../data/stage2Content";
 import {
   blockedByChezhou,
-  blockedByStatus,
+  blockingStatusName,
   summonUnwell,
   finaleAccepts,
   finaleTier,
@@ -494,7 +494,7 @@ function HandCard({ state, card, dispatch, fold }: { state: Z2State; card: CardI
   const canPlay = canPlayCard(state, card.uid);
   const free = isFreeByLianmei(state, card.uid);
   const blocked = blockedByChezhou(state, card.uid);
-  const unwell = blockedByStatus(state, card.id);
+  const blocker = blockingStatusName(state, card.id);
   const responses = storyResponsesFor(state, card.id);
   const events = matchedEvents2(state, card.id);
   const isPending = state.pending?.cardUid === card.uid;
@@ -535,7 +535,7 @@ function HandCard({ state, card, dispatch, fold }: { state: Z2State; card: CardI
     <>
       {free ? <div className={styles.solves}>联袂：可不占出牌名额打出</div> : null}
       {blocked ? <div className={styles.endHint}>被陵容掣肘，不能打出</div> : null}
-      {unwell ? <div className={styles.endHint}>抱恙在身，不能打出</div> : null}
+      {blocker ? <div className={styles.endHint}>{blocker}，不能打出</div> : null}
     </>
   );
   const className = [
