@@ -498,6 +498,8 @@ const PIN_EVENT = "qingmaiBaoxi" as const;
 /** 华妃事件 evidence: the second qualifying answer turns the clues into evidence. */
 const HUAFEI_EVIDENCE_CLUES = 2;
 const CAO_EVENT = "qinmoChenqing" as const;
+/** 琴默叩门 never comes before this turn. */
+const CAO_VISIT_MIN_TURN = 10;
 
 function promoteToPin(s: Z2State): void {
   if (s.rank !== "guiren" || !s.pregnant) return;
@@ -961,7 +963,7 @@ function beginTurn2(s: Z2State, turn: number): void {
     s.trial = { active: true, summoned: false };
     log(s, `剧情事件：【${GUIREN_TRIAL.name}】开始（第 ${GUIREN_TRIAL.firstTurn}—${GUIREN_TRIAL.lastTurn} 回合）`);
   }
-  if (!s.caoTriggered && s.hate > 5) {
+  if (!s.caoTriggered && s.hate > 5 && turn >= CAO_VISIT_MIN_TURN) {
     s.caoTriggered = true;
     openStory(s, "caoGuirenLaifang");
   }

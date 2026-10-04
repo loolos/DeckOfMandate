@@ -615,6 +615,24 @@ describe("zhenhuan stage 2 engine", () => {
     expect(u.shengchong).toBe(c - 1);
   });
 
+  it("琴默叩门 comes only from turn 10, once 恨意 > 5", () => {
+    const at = (turn: number) => {
+      let s = newStage2(33, null);
+      s.rank = "guiren";
+      s.turn = turn - 1;
+      s.hate = 7;
+      s.qingyu = 10;
+      s.shengchong = 10;
+      s.stories = [];
+      s.crisis = null;
+      s.huafei = [];
+      s = act(s, { type: "endTurn" });
+      return s.stories.some((x) => x.id === "caoGuirenLaifang");
+    };
+    expect(at(7)).toBe(false);
+    expect(at(10)).toBe(true);
+  });
+
   it("ending lines cover the pregnancy outcome", () => {
     const s = newStage2(16, null);
     expect(endingLines(s).some((l) => l.includes("始终没有动静"))).toBe(true);
