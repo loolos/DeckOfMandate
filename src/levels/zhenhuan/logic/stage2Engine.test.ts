@@ -756,6 +756,27 @@ describe("zhenhuan stage 2 engine", () => {
     expect(t.shengchong).toBe(5);
   });
 
+  it("颂芝窥伺: unanswered → 清誉 -1 and a 2-turn 流言缠身; 静观其变 → only 恨意 +1", () => {
+    let s = newStage2(43, null);
+    s.qingyu = 8;
+    s.stories = [];
+    onlyEvents(s, { huafei: ["songzhiKuisi"] });
+    setHand(s, []);
+    s = act(s, { type: "endTurn" });
+    expect(s.qingyu).toBeLessThanOrEqual(7);
+    const st = s.statuses.find((x) => x.id === "liuyanChanshen");
+    expect(st?.remaining).toBe(2);
+
+    let t = newStage2(44, null);
+    t.hate = 2;
+    t.stories = [];
+    onlyEvents(t, { huafei: ["songzhiKuisi"] });
+    const [j] = setHand(t, ["jingguanQibian"]);
+    t = act(t, { type: "playCard", cardUid: j! });
+    expect(t.huafei[0]!.resolved).toBe(true);
+    expect(t.hate).toBe(3);
+  });
+
   it("ending lines cover the pregnancy outcome", () => {
     const s = newStage2(16, null);
     expect(endingLines(s).some((l) => l.includes("始终没有动静"))).toBe(true);
