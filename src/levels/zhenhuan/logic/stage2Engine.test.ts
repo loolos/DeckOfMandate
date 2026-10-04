@@ -802,6 +802,55 @@ describe("zhenhuan stage 2 engine", () => {
     expect(run(-3)).toContain("并不是为你");
   });
 
+  it("惊鸿舞: 眉庄 + a non-怨怼 陵容 during the 贵人考验 → 圣宠 +1 for 3 turns", () => {
+    const run = (relation: number) => {
+      let s = newStage2(46, null);
+      s.turn = 5;
+      s.trial = { active: true, summoned: false };
+      s.relation = relation;
+      s.shengchong = 5;
+      s.qingyu = 5;
+      s.hate = 3;
+      s.stories = [];
+      onlyEvents(s, {});
+      s.extraPlays = 2;
+      const [m, x, l] = setHand(s, ["meizhuangXiangzhu", "yirongZhengsu", "lingrongXiangzhu"]);
+      s = act(s, { type: "playCard", cardUid: m! });
+      void x;
+      s = act(s, { type: "playCard", cardUid: l! });
+      return s;
+    };
+    let s = run(0);
+    expect(s.statuses.some((x) => x.id === "jinghongWu")).toBe(true);
+    const c = s.shengchong;
+    s.stories = [];
+    s.crisis = null;
+    s.huafei = [];
+    s = act(s, { type: "endTurn" });
+    expect(s.shengchong).toBe(c + 1);
+    expect(run(-3).statuses.some((x) => x.id === "jinghongWu")).toBe(false);
+
+    // across turns counts too
+    let t = newStage2(47, null);
+    t.turn = 5;
+    t.trial = { active: true, summoned: false };
+    t.relation = 3;
+    t.stories = [];
+    onlyEvents(t, {});
+    const [m2] = setHand(t, ["meizhuangXiangzhu"]);
+    t = act(t, { type: "playCard", cardUid: m2! });
+    t.stories = [];
+    t.crisis = null;
+    t.huafei = [];
+    t = act(t, { type: "endTurn" });
+    t.stories = [];
+    onlyEvents(t, {});
+    const [l2] = setHand(t, ["lingrongXiangzhu"]);
+    t = act(t, { type: "playCard", cardUid: l2! });
+    expect(t.statuses.some((x) => x.id === "jinghongWu")).toBe(true);
+    expect(t.log.some((e) => e.text.includes("惊鸿舞"))).toBe(true);
+  });
+
   it("ending lines cover the pregnancy outcome", () => {
     const s = newStage2(16, null);
     expect(endingLines(s).some((l) => l.includes("始终没有动静"))).toBe(true);

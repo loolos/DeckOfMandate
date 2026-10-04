@@ -22,6 +22,7 @@ import {
   XIBIE,
   hateTierLabel,
   HATE_REVEAL_TURN,
+  JINGHONG_STORY,
   FINALE,
   huafeiDrawPlan,
   type CardId2,
@@ -441,6 +442,12 @@ function TrialCard({ state, fold, dispatch }: { state: Z2State; fold: Fold; disp
         {mark(p.qingyu)} 🪷清誉 ≥ {GUIREN_TRIAL.minQingyu}（当前 {state.qingyu}）
       </p>
       <p className={styles.rule}>
+        💃 <strong>惊鸿舞</strong>：
+        {state.jinghong.done
+          ? JINGHONG_STORY
+          : `额外奖励，不影响晋封：考验期间打出过 👭眉庄相助 与 🎶陵容相助（陵容怨怼时不肯帮忙），获得【惊鸿舞】，未来 3 回合每回合圣宠 +1。${state.jinghong.meizhuang || state.jinghong.lingrong ? `已打出：${state.jinghong.meizhuang ? "👭" : ""}${state.jinghong.lingrong ? "🎶" : ""}` : ""}`}
+      </p>
+      <p className={styles.rule}>
         每回合<strong>回合末</strong>判定，三项全部满足即晋为贵人；第 {GUIREN_TRIAL.lastTurn} 回合末仍未满足则失败。
       </p>
     </FoldBox>
@@ -834,18 +841,19 @@ export function Stage2Game({ state, dispatch, runCode, showRules, onShowRules, o
   const tier = tierOf(state);
 
   // One-off notices during play (not when loading a save): promotion and 身子 appearing.
-  const [notice, setNotice] = useState<"guiren" | "pin" | "shenzi" | "hate" | "miscarriage" | null>(null);
-  const prev = useRef({ rank: state.rank, shenzi: state.shenziRevealed, turn: state.turn, seed: state.seed, miscarriages: state.miscarriages });
+  const [notice, setNotice] = useState<"guiren" | "pin" | "shenzi" | "hate" | "miscarriage" | "jinghong" | null>(null);
+  const prev = useRef({ rank: state.rank, shenzi: state.shenziRevealed, turn: state.turn, seed: state.seed, miscarriages: state.miscarriages, jinghong: state.jinghong.done });
   useEffect(() => {
     const p = prev.current;
     const sameRun = p.seed === state.seed && state.actions.length > 0;
     if (sameRun && state.outcome === "playing") {
       if (p.miscarriages === 0 && state.miscarriages > 0) setNotice("miscarriage"); // first time only
+      else if (!p.jinghong && state.jinghong.done) setNotice("jinghong");
       else if (state.rank !== p.rank && (state.rank === "guiren" || state.rank === "pin")) setNotice(state.rank);
       else if (state.shenziRevealed && !p.shenzi) setNotice("shenzi");
       else if (p.turn < HATE_REVEAL_TURN && state.turn >= HATE_REVEAL_TURN) setNotice("hate");
     }
-    prev.current = { rank: state.rank, shenzi: state.shenziRevealed, turn: state.turn, seed: state.seed, miscarriages: state.miscarriages };
+    prev.current = { rank: state.rank, shenzi: state.shenziRevealed, turn: state.turn, seed: state.seed, miscarriages: state.miscarriages, jinghong: state.jinghong.done };
   }, [state]);
 
   const endTurnReady = canEndTurn2(state) && !showRules && notice == null;
@@ -1020,6 +1028,12 @@ export function Stage2Game({ state, dispatch, runCode, showRules, onShowRules, o
           <p className={styles.muted}>
             从下一回合起每回合抓 {RANKS[notice].draw} 张、最多打 {RANKS[notice].plays} 张，清誉 / 圣宠上限提高到 {RANKS[notice].cap}。
           </p>
+        </Notice>
+      ) : null}
+      {notice === "jinghong" ? (
+        <Notice title="💃 惊鸿舞" onClose={() => setNotice(null)}>
+          <p>{JINGHONG_STORY}</p>
+          <p className={styles.muted}>获得【💃惊鸿舞】：未来 3 回合，每回合开始时圣宠 +1。这是额外的奖励，不影响晋封考验本身。</p>
         </Notice>
       ) : null}
       {notice === "miscarriage" ? (
