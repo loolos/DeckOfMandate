@@ -144,7 +144,45 @@ export const EVIDENCE: Record<EvidenceId, EvidenceDef> = {
   },
 };
 
-export const EVIDENCE_THRESHOLDS = { narrowWin: 3, fullWin: 5 };
+export const EVIDENCE_THRESHOLDS = { fullWin: 5 };
+
+/** 第 30 回合 the closing event: how many cards it takes depends on the evidence gathered. */
+export const FINALE = {
+  name: "翊坤落幕",
+  emoji: "👑",
+  /** ≤ this many evidence: no case at all, the stage is lost when 第 30 回合 begins. */
+  hopeless: 1,
+  /** Cards needed: ≥ 7 evidence → 1; 4–6 → 2; 2–3 → 3. */
+  needed(evidence: number): number {
+    return evidence >= 7 ? 1 : evidence >= 4 ? 2 : 3;
+  },
+  flavor: {
+    full: "年家已倒，你手里的罪状一桩桩、一件件，足够让翊坤宫再也翻不了身。只差最后一步。",
+    narrow: "年家倒了，你手里已攒下不少罪证，可要一举扳倒华妃，还得在御前多费些心力。",
+    thin: "年家虽倒，你手里几乎没有华妃的把柄。想在今日扳倒她，只能拼尽全力一搏。",
+  },
+  /** Cards that count (more than needed is fine); each distinct card tells its part. */
+  cards: ["jinyanShenxing", "shoulongRenxin", "meizhuangXiangzhu", "wenTaiyiZhenzhi", "lingrongXiangzhu"] as const,
+  cardStory: {
+    jinyanShenxing: "你跪在御前，一字一句道：「臣妾不敢妄言，只求皇上明察。年氏一门的所作所为，桩桩件件都有人证物证。」",
+    shoulongRenxin: "槿汐领着一众宫人跪了一地，叩首道：「奴婢们人微言轻，可翊坤宫这些年做下的事，奴婢们都亲眼见过。」",
+    meizhuangXiangzhu: "眉庄挺直了背，朗声道：「皇上，臣妾当日假孕失宠，正是翊坤宫一手设下的局。臣妾禁足存菊堂时，连炭火都被克扣了去。」",
+    wenTaiyiZhenzhi: "温实初捧着脉案跪下：「微臣愿以项上人头担保，这些方子皆出自翊坤宫授意，绝无半字虚言。」",
+  } as Partial<Record<string, string>>,
+  /** 陵容 is no friend of 华妃 whatever she thinks of you; only her manner differs. */
+  lingrongStory: {
+    close: "陵容握着你的手，轻声道：「姐姐受的委屈，妹妹都记着。」到了御前，她低眉顺眼地补了一句：「臣妾也曾见翊坤宫的人，往碎玉轩送过不干净的东西。」",
+    distant: "陵容低着头，声音细细的：「臣妾人微言轻，本不该多嘴。只是那年在翊坤宫外，臣妾亲耳听见娘娘说，要让碎玉轩好看。」",
+    resentful: "陵容不是为你，她自己也恨透了翊坤宫。她在御前只淡淡一句：「华妃娘娘这些年，对谁都不曾手软过。」却比谁都狠。",
+  } as Record<LingrongTier, string>,
+  doneStory: {
+    full: "皇上将罪证掷在华妃面前，良久无言，终于下旨：年氏降为答应，打入冷宫。",
+    narrow: "皇上沉吟良久，收回了华妃协理六宫之权，命她在翊坤宫闭门思过。",
+    thin: "证据虽薄，你却把能说的话都说尽了。皇上终于动了怒，收回了华妃协理六宫之权。",
+  },
+  failStory: "你没能在御前把话说透。皇上念及旧情，华妃复起，翊坤宫的灯又亮了。",
+  hopelessStory: "年家倒了，你手里却几乎拿不出华妃的一条罪状。皇上念及旧情，华妃复起，翊坤宫的灯又亮了。",
+};
 
 // ---------------------------------------------------------------- cards
 
@@ -1501,5 +1539,5 @@ export const TAG2_INFO: Record<TagId2, { label: string; lore: string; rules: str
   harm: { label: "伤胎", lore: "防不胜防的暗手。", rules: "未化解时：有孕前身子 -1；有孕后直接小产。温太医留方可抵消一次。" },
   burn: { label: "延烧", lore: "拖得越久，越难收拾。", rules: "未化解时圣宠 -1 并留到下回合（不占下回合的华妃事件名额）；下回合仍未化解，圣宠 -2 后离场。" },
   double: { label: "双牌", lore: "一个人扛不住，就得多想一步。", rules: "同一回合内打出两张匹配牌才算化解，每张牌自身效果照常结算；回合末不满 2 张则进度清零。" },
-  evidence: { label: "线索", lore: "华妃的罪状，一桩桩都要攒在手里。", rules: "第 30 回合末按罪证数结算：≤ 2 关卡失败；3–4 险胜；≥ 5 完胜。" },
+  evidence: { label: "线索", lore: "华妃的罪状，一桩桩都要攒在手里。", rules: "第 30 回合【翊坤落幕】：罪证 ≤ 1 条直接失败；2–3 条须打出 3 张牌，4–6 条 2 张，≥ 7 条 1 张；没打够即失败。罪证 ≥ 5 条为完胜。" },
 };

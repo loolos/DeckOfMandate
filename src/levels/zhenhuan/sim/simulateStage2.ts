@@ -8,6 +8,7 @@ import {
   boardEvents,
   canPlayCard,
   cardAffectsEvent,
+  finaleAccepts,
   newStage2,
   openStories,
   reduce2,
@@ -56,6 +57,7 @@ function score(s: Z2State): number {
   }
   if (s.pregnant) h += 5;
   if (s.caoOwed) h += 8;
+  if (s.finale) h += 300 * Math.min(s.finale.played.length, s.finale.needed);
   return h;
 }
 
@@ -86,7 +88,7 @@ export const careful2: Policy2 = (s) => {
 function answersSomething(s: Z2State, uid: string): boolean {
   const c = s.hand.find((x) => x.uid === uid);
   if (!c) return false;
-  return storyResponsesFor(s, c.id).length > 0 || boardEvents(s).some((e) => cardAffectsEvent(e, c.id));
+  return storyResponsesFor(s, c.id).length > 0 || boardEvents(s).some((e) => cardAffectsEvent(e, c.id)) || finaleAccepts(s, c.id);
 }
 
 export const casual2: Policy2 = (s, seed) => {
