@@ -756,6 +756,20 @@ describe("zhenhuan stage 2 engine", () => {
     expect(t.shengchong).toBe(5);
   });
 
+  it("华妃发难·求皇后庇护 via 陵容: story follows her 情分", () => {
+    const run = (relation: number) => {
+      let s = newStage2(42, null);
+      s.relation = relation;
+      s.stories = [{ id: "huafeiFanan", chosenOptionId: null }];
+      onlyEvents(s, {});
+      const [l] = setHand(s, ["lingrongXiangzhu"]);
+      s = act(s, { type: "playCard", cardUid: l! });
+      return s.stories[0]!.story ?? "";
+    };
+    expect(run(3)).toContain("姐姐别怕");
+    expect(run(-3)).toContain("并不是为你");
+  });
+
   it("ending lines cover the pregnancy outcome", () => {
     const s = newStage2(16, null);
     expect(endingLines(s).some((l) => l.includes("始终没有动静"))).toBe(true);
@@ -849,6 +863,7 @@ describe("zhenhuan stage 2 engine", () => {
     expect(s.qingyu).toBe(before.q - 1);
     expect(s.shengchong).toBe(before.c - 3);
     expect(s.shenzi).toBe(Math.max(0, before.z - 1));
+    expect(s.stories.find((x) => x.id === "huafeiFanan")?.story).toBeUndefined(); // no 陵容 relation yet → generic story
   });
 
   it("华妃发难 card responses each spare one resource: 温太医 keeps 身子", () => {
