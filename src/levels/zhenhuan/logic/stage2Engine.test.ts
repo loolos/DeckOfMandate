@@ -788,6 +788,20 @@ describe("zhenhuan stage 2 engine", () => {
     expect([u.qingyu, u.shengchong, u.hate]).toEqual([9, 8, 2]); // only 眉庄相助's own 清誉 +1
   });
 
+  it("华妃发难·求皇后庇护 via 陵容: story follows her 情分", () => {
+    const run = (relation: number) => {
+      let s = newStage2(42, null);
+      s.relation = relation;
+      s.stories = [{ id: "huafeiFanan", chosenOptionId: null }];
+      onlyEvents(s, {});
+      const [l] = setHand(s, ["lingrongXiangzhu"]);
+      s = act(s, { type: "playCard", cardUid: l! });
+      return s.stories[0]!.story ?? "";
+    };
+    expect(run(3)).toContain("姐姐别怕");
+    expect(run(-3)).toContain("并不是为你");
+  });
+
   it("ending lines cover the pregnancy outcome", () => {
     const s = newStage2(16, null);
     expect(endingLines(s).some((l) => l.includes("始终没有动静"))).toBe(true);
@@ -871,11 +885,17 @@ describe("zhenhuan stage 2 engine", () => {
     expect(s.shenziRevealedBy).toBe("summon");
     expect(s.stories.some((x) => x.id === "huafeiFanan")).toBe(true);
     const before = { q: s.qingyu, c: s.shengchong, z: s.shenzi };
-    s = act(s, { type: "chooseStory", storyId: "huafeiFanan", optionId: "qiuHuanghou" });
+    // 求皇后庇护 is only offered through 陵容相助 now
+    expect(reduce2(s, { type: "chooseStory", storyId: "huafeiFanan", optionId: "qiuHuanghou" })).toBe(s);
+    s.stories = s.stories.filter((x) => x.id === "huafeiFanan");
+    s.extraPlays = 2;
+    const [l] = setHand(s, ["lingrongXiangzhu"]);
+    s = act(s, { type: "playCard", cardUid: l! });
     expect(s.hate).toBe(6);
-    expect(s.qingyu).toBe(before.q - 2);
-    expect(s.shengchong).toBe(before.c - 4);
-    expect(s.shenzi).toBe(Math.max(0, before.z - 2));
+    expect(s.qingyu).toBe(before.q - 3);
+    expect(s.shengchong).toBe(before.c - 1);
+    expect(s.shenzi).toBe(Math.max(0, before.z - 1));
+    expect(s.stories.find((x) => x.id === "huafeiFanan")?.story).toBeUndefined(); // no 陵容 relation yet → generic story
   });
 
   it("华妃发难 card responses each spare one resource: 温太医 keeps 身子", () => {

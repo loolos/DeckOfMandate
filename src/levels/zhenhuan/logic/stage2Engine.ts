@@ -770,7 +770,9 @@ function applyStoryOption(s: Z2State, inst: StoryInst2, option: StoryOption2, so
     return o.relation ?? 0;
   }
 
-  log(s, option.story);
+  const told = option.tierStory && tier ? option.tierStory[tier] : option.story;
+  if (option.tierStory && tier) inst.story = told;
+  log(s, told);
   if (option.distantRemark && tier === "distant") log(s, `陵容（生分）：${option.distantRemark}`);
   if (inst.id === "fakuiPregnant") {
     let loss = option.fakuiShenzi ?? 3;

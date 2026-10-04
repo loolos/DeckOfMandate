@@ -1054,6 +1054,8 @@ export type StoryOption2 = {
   /** 略缩 summary (emoji) when the generic conversion is not enough. */
   readonly compact?: string;
   readonly story: string;
+  /** 陵容 card answers: the story told depends on her 情分 at the time. */
+  readonly tierStory?: Record<LingrongTier, string>;
   readonly setHate?: number;
   readonly setRelation?: number;
   readonly relation?: number;
@@ -1482,13 +1484,23 @@ export const STORIES2: Record<StoryId2, StoryDef2> = {
       {
         id: "qiuHuanghou",
         name: "求皇后庇护",
+        card: "lingrongXiangzhu",
         effects: [
-          { resource: "qingyu", amount: -2 },
-          { resource: "shengchong", amount: -4 },
-          { resource: "shenzi", amount: -2 },
+          { resource: "qingyu", amount: -3 },
+          { resource: "shengchong", amount: -1 },
+          { resource: "shenzi", amount: -1 },
         ],
-        text: "清誉 -2、圣宠 -4、身子 -2",
-        story: "你求到了景仁宫。皇后替你挡下了最难堪的一节，又温言劝你凡事忍耐——这份人情，她是记下了。只是事情传到养心殿，皇上嫌你惹是生非，冷落了你好些日子。",
+        text: "清誉 -3、圣宠 -1、身子 -1",
+        compact: "🎶 🪷-3 👑-1 🌱-1",
+        story: "陵容去了一趟景仁宫，皇后便遣剪秋来翊坤宫说了几句话，华妃这才收了手。",
+        tierStory: {
+          close:
+            "陵容急得红了眼眶，拉着你的手说：「姐姐别怕，我去求皇后娘娘。」不多时，剪秋便来了翊坤宫，华妃这才收了手。事后你才隐约想起：陵容什么时候，和景仁宫走得这样近了？",
+          distant:
+            "陵容只说了句「我去试试」，便去了景仁宫。剪秋来翊坤宫传了皇后几句话，华妃悻悻收了手。陵容回来时神色如常，你却不知她在景仁宫说了些什么。",
+          resentful:
+            "陵容并不是为你。只是皇后与翊坤宫素来不睦，乐得借这个由头压一压华妃。剪秋来传了话，华妃收了手；陵容站在皇后身后，连看都没看你一眼。",
+        },
       },
       {
         id: "juliLizheng",
