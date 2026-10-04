@@ -332,7 +332,7 @@ export function guirenTrialProgress(s: Z2State): TrialProgress2 {
 
 /** Does this card count toward 【翊坤落幕】 right now? */
 export function finaleAccepts(s: Z2State, cardId: CardId2): boolean {
-  return s.finale != null && s.finale.played.length < s.finale.needed && (FINALE.cards as readonly CardId2[]).includes(cardId);
+  return s.finale != null && (FINALE.cards as readonly CardId2[]).includes(cardId);
 }
 
 /** Opening text follows the cards needed: 1 → full, 2 → narrow, 3 → thin. */
@@ -896,7 +896,7 @@ function resolvePlay2(s: Z2State, cardUid: string, removeStatusUid?: string): vo
   }
 
   // 5. 怨怼 陵容 with nothing to answer: 反噬
-  if (alive(s) && isLingrong && tier === "resentful" && responses.length === 0 && singles.length === 0) {
+  if (alive(s) && isLingrong && tier === "resentful" && responses.length === 0 && singles.length === 0 && !finaleAccepts(s, card.id)) {
     log(s, "怨怼的陵容反咬一口。", "bad");
     applyDeltas2(s, LINGRONG_BACKLASH, "陵容反噬");
   }
@@ -915,9 +915,10 @@ function resolvePlay2(s: Z2State, cardUid: string, removeStatusUid?: string): vo
 
   if (alive(s) && finaleAccepts(s, card.id)) {
     const f = s.finale!;
+    const first = !f.played.includes(card.id);
     f.played.push(card.id);
-    log(s, `【${FINALE.name}】${FINALE.cardStory[card.id] ?? ""}（${f.played.length}/${f.needed}）`, "good");
-    if (f.played.length >= f.needed) log(s, finaleDoneStory(s.evidence.length), "good");
+    log(s, `【${FINALE.name}】${first ? FINALE.cardStory[card.id] ?? "" : ""}（解牌 ${f.played.length}/${f.needed}）`, "good");
+    if (f.played.length === f.needed) log(s, finaleDoneStory(s.evidence.length), "good");
   }
 
   if (alive(s) && relationDelta !== 0) changeRelation(s, relationDelta, "陵容");

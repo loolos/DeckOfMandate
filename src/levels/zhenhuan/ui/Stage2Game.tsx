@@ -347,7 +347,7 @@ function FinaleCard({ state, fold, dispatch }: { state: Z2State; fold: Fold; dis
         剧情
       </Tag>
       <span className={styles.muted}>
-        {f.played.length}/{f.needed}
+        解牌 {f.played.length}/{f.needed}
       </span>
     </span>
   );
@@ -359,7 +359,7 @@ function FinaleCard({ state, fold, dispatch }: { state: Z2State; fold: Fold; dis
           {done ? " 🆗" : ""}
           {tags}
         </div>
-        <div className={styles.compactSummary}>{done ? "✅ 华妃已倒" : `🃏×${f.needed - f.played.length} ❌ 失败`}</div>
+        <div className={styles.compactSummary}>{`🃏 ${f.played.length}/${f.needed}`}{done ? " ✅" : " ❌失败"}</div>
       </FoldBox>
     );
   }
@@ -375,13 +375,13 @@ function FinaleCard({ state, fold, dispatch }: { state: Z2State; fold: Fold; dis
       </div>
       {done ? <ResolvedBanner icon="👑" label="大局已定" detail={finaleDoneStory(state.evidence.length)} /> : null}
       <p className={styles.flavor}>{FINALE.flavor[tier]}</p>
-      {f.played.map((id, i) => (
-        <p key={`${id}-${i}`} className={styles.rule}>
+      {[...new Set(f.played)].map((id) => (
+        <p key={id} className={styles.rule}>
           {CARDS2[id].emoji} {FINALE.cardStory[id]}
         </p>
       ))}
       <p className={styles.rule}>
-        <span className={styles.ruleLabel}>扳倒华妃：</span>本回合打出 <strong>{f.needed}</strong> 张牌（罪证越多，需要的越少；陵容相助不算）。回合末仍未凑够即关卡失败。
+        <span className={styles.ruleLabel}>扳倒华妃：</span>本回合打出 <strong>{f.needed}</strong> 张解牌（罪证越多，需要的越少；多打也行，每种牌各有一段剧情）。回合末仍未凑够即关卡失败。
       </p>
       <p className={styles.rule}>
         <span className={styles.ruleLabel}>可用牌：</span>

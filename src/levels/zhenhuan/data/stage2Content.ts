@@ -161,8 +161,8 @@ export const FINALE = {
     narrow: "年家倒了，你手里已攒下不少罪证，可要一举扳倒华妃，还得在御前多费些心力。",
     thin: "年家虽倒，你手里几乎没有华妃的把柄。想在今日扳倒她，只能拼尽全力一搏。",
   },
-  /** Every card but 陵容相助 can be thrown in; each tells its part. */
-  cards: ["jinyanShenxing", "yirongZhengsu", "shoulongRenxin", "jingguanQibian", "meizhuangXiangzhu", "wenTaiyiZhenzhi"] as const,
+  /** Every card can be thrown in (more than needed is fine); each distinct card tells its part. */
+  cards: ["jinyanShenxing", "yirongZhengsu", "shoulongRenxin", "jingguanQibian", "meizhuangXiangzhu", "wenTaiyiZhenzhi", "lingrongXiangzhu"] as const,
   cardStory: {
     jinyanShenxing: "你在御前一桩桩陈说翊坤宫的罪状，字字有据，不急不躁。",
     yirongZhengsu: "你素服跪在养心殿外，仪态端庄，皇上终于肯召你进去说话。",
@@ -170,6 +170,7 @@ export const FINALE = {
     jingguanQibian: "你按兵不动，只等华妃自乱阵脚，在御前失了分寸。",
     meizhuangXiangzhu: "眉庄托人递来一封亲笔书信，替你作证。",
     wenTaiyiZhenzhi: "温实初呈上当年的脉案，与华妃的罪状一一对上。",
+    lingrongXiangzhu: "陵容在御前唱了一支曲子，又似是无意地提起了翊坤宫的旧事。",
   } as Partial<Record<string, string>>,
   doneStory: {
     full: "皇上将罪证掷在华妃面前，良久无言，终于下旨：年氏降为答应，打入冷宫。",

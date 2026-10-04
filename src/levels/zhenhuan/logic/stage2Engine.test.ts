@@ -880,7 +880,10 @@ describe("zhenhuan stage 2 engine", () => {
     expect(at30(5, ["jinyanShenxing", "shoulongRenxin"]).victory).toBe("full");
     expect(at30(4, ["jinyanShenxing", "shoulongRenxin"]).victory).toBe("narrow");
     expect(at30(2, ["jinyanShenxing", "shoulongRenxin", "jingguanQibian"]).victory).toBe("narrow");
-    expect(at30(7, ["lingrongXiangzhu"]).outcome).toBe("lost");
+    expect(at30(7, ["lingrongXiangzhu"]).victory).toBe("full"); // 陵容 counts too
+    const extra = at30(7, ["jinyanShenxing", "jinyanShenxing", "shoulongRenxin"]); // more than needed is fine
+    expect(extra.finale?.played).toHaveLength(3);
+    expect(extra.victory).toBe("full");
   });
 
   it("replay reproduces a run exactly", () => {
