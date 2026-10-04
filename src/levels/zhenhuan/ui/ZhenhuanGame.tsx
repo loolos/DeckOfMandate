@@ -195,8 +195,8 @@ function EventCard({ state, inst, fold, dispatch }: { state: ZhState; inst: Even
           {inst.resolved
             ? eventResolvedCompact(inst)
             : isOpp
-              ? `处理：${compactEffect(def.resolvedText)}`
-              : `未处理：${compactEffect(def.unresolvedText)}`}
+              ? `✅ ${compactEffect(def.resolvedText)}`
+              : `❌ ${compactEffect(def.unresolvedText)}`}
         </div>
       </FoldBox>
     );
@@ -258,7 +258,7 @@ function StoryCard({ state, dispatch, fold }: { state: ZhState; dispatch: Dispat
         <div className={styles.compactSummary}>
           {chosenOption
             ? `📝 ${chosenOption.card ? CARDS[chosenOption.card].emoji : chosenOption.name} ${compactEffect(chosenOption.text)}`
-            : `选 1 个基础选项或从手牌打出对应牌（不处理按默认「${defaultOption.name}」）`}
+            : `⏳ 默认「${defaultOption.name}」`}
         </div>
       </FoldBox>
     );

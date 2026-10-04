@@ -185,8 +185,8 @@ function EventCard({ state, inst, fold, dispatch }: { state: Z2State; inst: Even
           {inst.resolved
             ? `${isOpp ? "✅" : "🛡️"} ${inst.resolvedBy ? CARDS2[inst.resolvedBy].emoji : ""}`
             : isOpp
-              ? `处理：${compactEffect2(def.resolvedText)}`
-              : `未处理：${compactEffect2(inst.burning ? "圣宠 -2" : def.unresolvedText)}`}
+              ? `✅ ${def.resolvedCompact ?? compactEffect2(def.resolvedText)}`
+              : `❌ ${inst.burning ? "👑-2 🤒×2" : (def.unresolvedCompact ?? compactEffect2(def.unresolvedText))}${def.kind === "huafei" ? ` ｜ ⚔️ ${def.resolvedCompact ?? compactEffect2(def.resolvedText)}` : ""}`}
         </div>
       </FoldBox>
     );
@@ -260,10 +260,10 @@ function StoryCard({ state, inst, dispatch, fold }: { state: Z2State; inst: Stor
         </div>
         <div className={styles.compactSummary}>
           {chosenOption
-            ? `📝 ${inst.viaCard ? CARDS2[inst.viaCard].emoji : chosenOption.name} ${compactEffect2(resultText)}`
+            ? `📝 ${inst.viaCard ? CARDS2[inst.viaCard].emoji : chosenOption.name} ${inst.result ? compactEffect2(inst.result) : (chosenOption.compact ?? compactEffect2(resultText))}`
             : blocked
-              ? "皇上在翊坤宫，须先化解欢宜香浓"
-              : `选基础选项或打出对应牌（默认「${defaultOption.name}」）`}
+              ? "🌺 先应对欢宜香浓"
+              : `⏳ 默认「${defaultOption.name}」`}
         </div>
       </FoldBox>
     );
@@ -353,7 +353,7 @@ function TrialCard({ state, fold, dispatch }: { state: Z2State; fold: Fold; disp
           {tags}
         </div>
         <div className={styles.compactSummary}>
-          {mark(p.shengchong)} 👑{state.shengchong}/{GUIREN_TRIAL.minShengchong} · {mark(p.qingyu)} 🪷{state.qingyu}/{GUIREN_TRIAL.minQingyu} · {mark(p.summoned)} 侍寝
+          {mark(p.shengchong)} 👑{state.shengchong}/{GUIREN_TRIAL.minShengchong} · {mark(p.qingyu)} 🪷{state.qingyu}/{GUIREN_TRIAL.minQingyu} · {mark(p.summoned)} 🌙
         </div>
       </FoldBox>
     );
@@ -401,6 +401,12 @@ function NoticeCard({ emoji, name, text, fold }: { emoji: string; name: string; 
       )}
     </FoldBox>
   );
+}
+
+function cardCompact(state: Z2State, card: CardInst2): string {
+  if (isXibieCard(state, card.id)) return XIBIE[card.id as keyof typeof XIBIE].compact;
+  const def = CARDS2[card.id];
+  return def.rulesCompact ?? def.rulesText.map(compactEffect2).join(" ");
 }
 
 function cardRules(state: Z2State, card: CardInst2): string[] {
@@ -478,7 +484,7 @@ function HandCard({ state, card, dispatch, fold }: { state: Z2State; card: CardI
           {def.emoji} {def.name}
           {tags}
         </div>
-        <div className={styles.compactSummary}>{isLingrong ? "效果视情分" : cardRules(state, card).map(compactEffect2).join(" ")}</div>
+        <div className={styles.compactSummary}>{cardCompact(state, card)}</div>
         {notes}
       </FoldBox>
     );
