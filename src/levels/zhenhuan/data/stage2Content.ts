@@ -813,9 +813,9 @@ type TierTable = Record<LingrongTier, LingrongOutcome>;
 
 export const LINGRONG_EVENT: Partial<Record<EventId2, TierTable>> = {
   huanghouShangshi: {
-    close: { resolves: true, effects: [{ resource: "shengchong", amount: 1 }], relation: 1, story: "陵容陪你一同去景仁宫，皇后见你们姐妹和睦，赏了你一对玉镯。" },
-    distant: { resolves: true, effects: [], relation: 1, story: "赏赐全落在了陵容身上。「姐姐如今是皇后跟前的红人了。」她笑着说。" },
-    resentful: { resolves: false, relation: 1, story: "皇后的赏赐落到了陵容头上。她从景仁宫出来，再没往碎玉轩看一眼。" },
+    close: { resolves: true, effects: [{ resource: "shengchong", amount: 1 }], relation: 1, story: "陵容陪你一同去景仁宫，皇后见你们姐妹和睦，赏了你一对玉镯。回来的路上，陵容挽着你的胳膊，说这镯子最衬姐姐。" },
+    distant: { resolves: true, effects: [], relation: 1, story: "赏赐全落在了陵容身上。「姐姐如今是皇后跟前的红人了。」她笑着说，临走却把一支珠花塞进你手里：「这个，妹妹替姐姐留着的。」" },
+    resentful: { resolves: false, relation: 1, story: "皇后的赏赐落到了陵容头上。她从景仁宫出来，在碎玉轩门口站了好一会儿，终究还是进来坐了坐。" },
   },
   jingxinTiaoyang: {
     close: { resolves: true, effects: [{ resource: "qingyu", amount: 1 }, { resource: "shenzi", amount: 1 }], story: "陵容亲手制了安神香送来，你一夜好眠。" },
@@ -823,24 +823,24 @@ export const LINGRONG_EVENT: Partial<Record<EventId2, TierTable>> = {
     resentful: { resolves: true, effects: [{ resource: "qingyu", amount: 1 }, { resource: "shenzi", amount: 1 }], story: "陵容送来的安神香气味清冽，你倒也睡得安稳。" },
   },
   baohuadianQifu: {
-    close: { resolves: true, effects: [{ resource: "qingyu", amount: 1 }, { resource: "shenzi", amount: 1 }], relation: 1, story: "你与陵容并肩跪在佛前，她替你多磕了三个头。" },
-    distant: { resolves: true, effects: [{ resource: "shenzi", amount: 1 }], relation: 1, story: "「姐姐求子心切，妹妹自然陪着。」陵容陪你上了一炷香。" },
+    close: { resolves: true, effects: [{ resource: "qingyu", amount: 1 }, { resource: "shenzi", amount: 1 }], relation: 1, story: "你与陵容并肩跪在佛前，她替你多磕了三个头。起身时，她悄悄握了握你的手。" },
+    distant: { resolves: true, effects: [{ resource: "shenzi", amount: 1 }], relation: 1, story: "「姐姐求子心切，妹妹自然陪着。」陵容陪你上了一炷香，回去的路上，话比来时多了些。" },
     resentful: { resolves: true, effects: [], relation: 1, story: "佛前青烟袅袅，陵容一言不发，临走时却替你掸了掸衣上的香灰。" },
   },
   liPinJingmeng: {
-    close: { resolves: true, evidence: true, relation: 1, story: "陵容学着福子的声音在丽嫔窗下哭了半宿。丽嫔吓破了胆，把华妃害死福子的事全说了。" },
+    close: { resolves: true, evidence: true, relation: 1, story: "陵容学着福子的声音在丽嫔窗下哭了半宿。丽嫔吓破了胆，把华妃害死福子的事全说了。事后陵容抿嘴笑：「也只有姐姐，敢叫我做这样的事。」" },
     distant: { resolves: true, evidence: true, story: "陵容肯帮这个忙，却撇嘴道：「这种装神弄鬼的事，也只有姐姐想得出来。」丽嫔终究吐了实话。" },
-    resentful: { resolves: false, relation: 1, effects: [{ resource: "hate", amount: 1 }], story: "消息不知怎么走漏到了翊坤宫，丽嫔那边一下子没了动静。" },
+    resentful: { resolves: false, relation: 1, effects: [{ resource: "hate", amount: 1 }], story: "消息不知怎么走漏到了翊坤宫，丽嫔那边一下子没了动静。陵容低着头来见你，绞着帕子说是自己嘴不严。" },
   },
   supeishengToufeng: {
     close: { resolves: true, evidence: true, story: "陵容在御前唱曲时留了心，回来把听见的话一五一十告诉了你：年家在外头卖官。" },
     distant: { resolves: true, evidence: true, story: "「姐姐身边的人，倒是什么都打听得到。」陵容替你把话递到了，苏公公终于松了口。" },
-    resentful: { resolves: false, relation: 1, effects: [{ resource: "hate", amount: 1 }], story: "陵容把你打听年家的事透给了别人，翊坤宫那边立刻警觉起来。" },
+    resentful: { resolves: false, relation: 1, effects: [{ resource: "hate", amount: 1 }], story: "陵容把你打听年家的事透给了别人，翊坤宫那边立刻警觉起来。过了两日，她托人送来一碟你爱吃的点心，什么也没说。" },
   },
   gongzhongLiuyan: {
-    close: { resolves: true, relation: 1, story: "陵容在各宫替你辟谣：「姐姐的为人，我最清楚。」" },
-    distant: { resolves: true, relation: 1, story: "「姐姐何必在意这些闲话，清者自清嘛。」陵容嘴上这么说，倒也替你分辩了几句。" },
-    resentful: { resolves: false, relation: 1, aggravate: true, story: "陵容在别人跟前添油加醋，流言越传越凶。" },
+    close: { resolves: true, relation: 1, story: "陵容在各宫替你辟谣：「姐姐的为人，我最清楚。」说这话时，她的声音比平日都响亮些。" },
+    distant: { resolves: true, relation: 1, story: "「姐姐何必在意这些闲话，清者自清嘛。」陵容嘴上这么说，倒也替你分辩了几句，走前还回头看了你一眼。" },
+    resentful: { resolves: false, relation: 1, aggravate: true, story: "陵容在别人跟前添油加醋，流言越传越凶。可到了夜里，宝鹊又悄悄送来一盏安神汤，说是她家小主吩咐的。" },
   },
   neiwufuDiaonan: {
     close: { resolves: true, extraDraw: 1, story: "陵容出身寒微，最懂怎么跟内务府打交道，没两日便替你把份例要了回来。" },
@@ -853,14 +853,14 @@ export const LINGRONG_EVENT: Partial<Record<EventId2, TierTable>> = {
     resentful: { resolves: true, shuhenjiao: true, story: "陵容上前替你圆了场，低头时嘴角却像是笑了一下。她说回头送药来。" },
   },
   kekouFenli: {
-    close: { resolves: true, relation: 1, story: "陵容把自己的份例分了一半送来：「姐姐别嫌弃。」" },
+    close: { resolves: true, relation: 1, story: "陵容把自己的份例分了一半送来：「姐姐别嫌弃。咱们姐妹，原该如此。」" },
     distant: { resolves: true, story: "「我一个答应的份例，哪比得上姐姐的。」陵容嘴上这么说，还是送了些炭来。" },
-    resentful: { resolves: false, relation: 1, story: "陵容推说自己也不够用，一样东西也没送来。" },
+    resentful: { resolves: false, relation: 1, story: "陵容推说自己也不够用，一样东西也没送来。第二日清早，碎玉轩门口却多了一小篓炭，没留话。" },
   },
   huanyixiangZhuanchong: {
     close: { resolves: true, story: "陵容在御花园唱曲，把皇上从翊坤宫引了过来，又借故走开，留你陪驾。" },
     distant: { resolves: true, story: "陵容的歌声把皇上引了过来。「姐姐这回可欠妹妹一个人情。」" },
-    resentful: { resolves: false, relation: 1, effects: [{ resource: "shengchong", amount: -2 }], story: "陵容趁机自己去御前献唱，皇上当晚留在了她那里。" },
+    resentful: { resolves: false, relation: 1, effects: [{ resource: "shengchong", amount: -2 }], story: "陵容趁机自己去御前献唱，皇上当晚留在了她那里。次日她来请安，眼圈红红的，只说了一句「姐姐别怪我」。" },
   },
 };
 
@@ -1373,8 +1373,8 @@ export const STORIES2: Record<StoryId2, StoryDef2> = {
 /** 陵容 as a card response to stories (召幸 / 罚跪): tier outcomes. */
 export const LINGRONG_SUMMON: Record<LingrongTier, { story: string; result: "success" | "stolen" | "lost"; relation?: number; effects?: readonly Delta2[] }> = {
   close: { result: "success", story: "陵容一早来替你梳妆，又教了你一支新曲。皇上留你到天明。" },
-  distant: { result: "stolen", relation: 1, story: "陵容截下了这次召幸，换她去侍寝。「姐姐福气好，也该分妹妹一些。」" },
-  resentful: { result: "lost", relation: 1, effects: [{ resource: "shengchong", amount: -1 }], story: "陵容在半路截走了召幸，皇上那夜宿在了她那里。" },
+  distant: { result: "stolen", relation: 1, story: "陵容截下了这次召幸，换她去侍寝。「姐姐福气好，也该分妹妹一些。」第二日她来道谢，笑得比平日真了些。" },
+  resentful: { result: "lost", relation: 1, effects: [{ resource: "shengchong", amount: -1 }], story: "陵容在半路截走了召幸，皇上那夜宿在了她那里。过后见了你，她竟有几分心虚，难得软语说了几句体己话。" },
 };
 
 /** 陵容 on 甄嬛's promotions (关系 -2): shown in the log and the promotion notice. */
