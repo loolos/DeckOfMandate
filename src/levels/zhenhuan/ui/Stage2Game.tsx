@@ -622,10 +622,6 @@ function Statuses({ state, dispatch }: { state: Z2State; dispatch: Dispatch }) {
                     <span className={styles.ruleLabel}>机制：</span>
                     {def.effectText}
                   </p>
-                  <p className={styles.rule}>
-                    <span className={styles.ruleLabel}>来源：</span>
-                    {def.source}
-                  </p>
                 </div>
               ) : null}
             </div>
@@ -935,7 +931,7 @@ export function Stage2Game({ state, dispatch, runCode, showRules, onShowRules, o
       {notice === "hate" ? (
         <Notice title="🔥 华妃恨意" onClose={() => setNotice(null)}>
           <p>
-            今日要去翊坤宫请安，新出现了一项数值：<strong>🔥 华妃恨意</strong>（0–10），表示华妃有多忌恨你。你在翊坤宫的应对，决定它的初始值。
+            你新晋常在，得了皇上几分青眼，这便入了华妃的眼。今日要去翊坤宫请安，新出现了一项数值：<strong>🔥 华妃恨意</strong>（0–10），表示华妃有多忌恨你。你在翊坤宫的应对，决定它的初始值。
           </p>
           <p>恨意越高，每回合出现的华妃事件越多、越狠：恨意 3 起开始出现，5、7 时解锁更狠的事件；恨意到 10，华妃当场发难。</p>
           <p className={styles.muted}>侍寝、晋封、有孕、宠冠六宫会让她更恨你；失宠、称病避宠、让她出气、小产会让她消气。</p>

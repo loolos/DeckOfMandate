@@ -599,10 +599,6 @@ function Statuses({ state, dispatch }: { state: ZhState; dispatch: Dispatch }) {
                       {def.effectText}从获得后的下一回合开始生效。
                       {def.tag === "negative" ? "可被【温太医相助】移除。" : ""}
                     </p>
-                    <p className={styles.rule}>
-                      <span className={styles.ruleLabel}>来源：</span>
-                      {def.source}
-                    </p>
                   </div>
                 ) : null}
               </div>
