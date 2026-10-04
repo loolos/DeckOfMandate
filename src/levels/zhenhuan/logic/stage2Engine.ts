@@ -947,7 +947,6 @@ function makeRoomForSummon(s: Z2State): void {
   const id = s.opportunity.id as OpportunityId2;
   s.opportunityPool = [id, ...s.opportunityPool];
   s.opportunity = null;
-  log(s, `本回合事件太多，凤鸾承恩顶掉了机会事件【${EVENTS2[id].name}】（放回机会牌池最上面）。`);
 }
 
 function beginTurn2(s: Z2State, turn: number): void {
