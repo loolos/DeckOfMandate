@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
-import { FoldBox, LogView, Pile, ResolvedBanner, ScrollRow, activateOnKey, countBy, isTypingTarget, type Fold } from "./common";
+import { CardArt, FoldBox, LogView, Pile, ResolvedBanner, ScrollRow, activateOnKey, countBy, isTypingTarget, type Fold } from "./common";
 import { RunCodePanel } from "../../../components/RunCodePanel";
 import { useSmallScreen } from "../../../logic/useSmallScreen";
 import {
@@ -40,6 +40,7 @@ import {
   type ZhState,
 } from "../logic/engine";
 import { encodeRunCode } from "../logic/persistence";
+import { cardArtUrl, eventArtUrl } from "./art";
 import { CompactModeToggle } from "./CompactModeToggle";
 import { RulesSummary } from "./RulesSummary";
 import { compactEffect, expandedEffect } from "./effectText";
@@ -211,6 +212,7 @@ function EventCard({ state, inst, fold, dispatch }: { state: ZhState; inst: Even
         </span>
         {kindTag}
       </div>
+      <CardArt src={eventArtUrl(inst.id)} emoji={def.emoji} />
       {inst.resolved ? (
         <ResolvedBanner
           icon={isOpp ? "✅" : "🛡️"}
@@ -465,6 +467,7 @@ function HandCard({
         </span>
         {trialTag}
       </div>
+      <CardArt src={cardArtUrl(card.id)} emoji={def.emoji} />
       <p className={styles.flavor}>{def.flavor}</p>
       {def.rulesText.map((line) => (
         <p key={line} className={styles.rule}>

@@ -60,8 +60,9 @@ import {
   type Z2Action,
   type Z2State,
 } from "../logic/stage2Engine";
+import { cardArtUrl, eventArtUrl } from "./art";
 import { CompactModeToggle } from "./CompactModeToggle";
-import { FoldBox, LogView, Pile, ResolvedBanner, ScrollRow, TagChip, activateOnKey, countBy, isTypingTarget, type Fold } from "./common";
+import { CardArt, FoldBox, LogView, Pile, ResolvedBanner, ScrollRow, TagChip, activateOnKey, countBy, isTypingTarget, type Fold } from "./common";
 import { compactEffect2, expandedEffect2 } from "./effectText2";
 import styles from "./zhenhuan.module.css";
 
@@ -207,6 +208,7 @@ function EventCard({ state, inst, fold, dispatch }: { state: Z2State; inst: Even
         </span>
         {tags}
       </div>
+      <CardArt src={eventArtUrl(inst.id)} emoji={def.emoji} />
       {inst.resolved ? (
         <ResolvedBanner icon={isOpp ? "✅" : "🛡️"} label={isOpp ? "已把握" : def.kind === "huafei" ? "已应对" : "已化解"} detail={resolvedDetail(inst)} story={story ?? lingrongStory} />
       ) : null}
@@ -571,6 +573,7 @@ function HandCard({ state, card, dispatch, fold }: { state: Z2State; card: CardI
         </span>
         {tags}
       </div>
+      <CardArt src={cardArtUrl(card.id)} emoji={def.emoji} />
       <p className={styles.flavor}>{def.flavor}</p>
       {cardRules(state, card).map((line) => (
         <p key={line} className={styles.rule}>

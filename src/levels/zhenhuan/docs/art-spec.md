@@ -29,7 +29,7 @@ src/levels/zhenhuan/assets/
 
 - id 大小写须与 `data/content.ts` / `data/stage2Content.ts` 中完全一致。
 - 两关共用的事件 id（如 `huanghouShangshi`、`gongzhongLiuyan`）共用同一张图。
-- 将有单元测试校验：`cards/`、`events/` 下的每个文件名都必须是已存在的 id，防止拼错后静默不显示。
+- 单元测试 `ui/art.test.ts` 校验 `cards/`、`events/`、`backdrops/` 下的每个文件名都必须是已存在的 id（或 `stage1` / `stage2`），防止拼错后静默不显示。
 
 ## 3. 构图要求
 
@@ -50,11 +50,13 @@ src/levels/zhenhuan/assets/
 
 ## 4. 界面显示规则
 
-- **只在非略缩模式显示配图**；略缩模式与手机端保持现有的紧凑样式，不显示图片（与太阳王战役一致）。
+实现：`ui/art.ts`（按文件名查图）、`ui/common.tsx` 的 `CardArt` / `Backdrop`、样式在 `zhenhuan.module.css` 的 `.cardArt` / `.backdrop`。
+
+- **展开的卡显示配图，收起的略缩卡不显示**：桌面端卡牌默认展开，所以都有图；略缩模式（含手机端）下收起的卡保持现有紧凑样式，点开展开后才显示图片（与太阳王战役一致）。
 - 手牌（`HandCard`）与事件（`EventCard`，两关的 `ZhenhuanGame.tsx` / `Stage2Game.tsx` 都适用）在卡头下方插入 4:3 配图框。
-- **缺图时显示占位框**：同样 4:3，淡色底 + 居中的大号 emoji（取卡牌 / 事件已有的 `emoji` 字段），保证有图无图的卡片高度一致，配图可以逐张补齐。
-- 图片使用 `loading="lazy"` 与 `decoding="async"`，`alt` 为卡名 / 事件名。
-- 有背景的界面，面板改为半透明 + `backdrop-filter` 毛玻璃，并检查浅色 / 深色主题下的文字对比度。
+- **缺图时显示占位框**：同样 4:3，深色渐变底 + 居中的大号 emoji（取卡牌 / 事件已有的 `emoji` 字段），保证有图无图的卡片高度一致，配图可以逐张补齐。
+- 图片使用 `loading="lazy"` 与 `decoding="async"`；卡名已在卡头显示，图片按装饰图处理（`alt=""`）。
+- 背景固定在视口上（页面滚动时不拉伸），上方叠一层深色渐变；卡片、数值等面板保持不透明，不受背景影响。缺背景图时沿用原来的纯色背景。
 - 剧情卡、晋封考验、惜别卡本期不配图，仍为纯文字卡。
 
 ## 5. 清单

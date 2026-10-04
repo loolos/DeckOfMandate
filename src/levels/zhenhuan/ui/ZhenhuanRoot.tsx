@@ -15,6 +15,8 @@ import {
   type Session,
 } from "../logic/session";
 import { newStage2, reduce2, type Z2Action } from "../logic/stage2Engine";
+import { backdropUrl } from "./art";
+import { Backdrop } from "./common";
 import { CompactModeToggle } from "./CompactModeToggle";
 import { RulesSummary } from "./RulesSummary";
 import { Stage2Game, Stage2Rules } from "./Stage2Game";
@@ -74,6 +76,7 @@ export function ZhenhuanRoot() {
     const st = session.state;
     return (
       <div className={styles.root}>
+        <Backdrop src={backdropUrl(1)} />
         <ZhenhuanGame
           state={st}
           dispatch={dispatch1}
@@ -91,6 +94,7 @@ export function ZhenhuanRoot() {
   if (session?.stage === 2) {
     return (
       <div className={styles.root}>
+        <Backdrop src={backdropUrl(2)} />
         <Stage2Game
           state={session.state}
           dispatch={dispatch2}
@@ -111,6 +115,7 @@ export function ZhenhuanRoot() {
 
   return (
     <div className={styles.root}>
+      <Backdrop src={backdropUrl(1)} />
       <div className={styles.menuScreen}>
         <div className={styles.menuPanel} role="dialog" aria-labelledby="zh-menu-title">
           <h1 id="zh-menu-title" className={styles.menuTitle}>
