@@ -850,20 +850,31 @@ describe("zhenhuan stage 2 engine", () => {
     expect(resentful.shengchong).toBe(7); // 截走 -1, no 反噬 on top
   });
 
-  it("第 30 回合末按罪证结算：≤ 2 失败，3–4 险胜，≥ 5 完胜", () => {
-    const base = newStage2(20, null);
-    const at30 = (n: number) => {
-      const s = structuredClone(base);
-      s.turn = 30;
+  it("翊坤落幕 (turn 30): 1–3 cards by evidence; not enough cards → lost", () => {
+    const at30 = (n: number, cards: CardId2[]) => {
+      let s = newStage2(20, null);
+      s.turn = 29;
       s.rank = "guiren";
+      s.qingyu = 10;
+      s.shengchong = 10;
+      s.stories = [];
+      s.crisis = null;
+      s.huafei = [];
+      s.evidence = (["yuyingerYiyan", "liuweiqingYaofang", "fuziZhisi", "maiguanYujue", "kekouZhangce"] as const).slice(0, n);
+      s = act(s, { type: "endTurn" });
+      expect(s.turn).toBe(30);
+      expect(s.finale?.needed).toBe(n >= 5 ? 1 : n >= 3 ? 2 : 3);
       s.stories = [];
       onlyEvents(s, {});
-      s.evidence = (["yuyingerYiyan", "liuweiqingYaofang", "fuziZhisi", "maiguanYujue", "kekouZhangce"] as const).slice(0, n);
+      s.extraPlays = 5;
+      for (const uid of setHand(s, cards)) s = act(s, { type: "playCard", cardUid: uid });
       return reduce2(s, { type: "endTurn" });
     };
-    expect(at30(2).outcome).toBe("lost");
-    expect(at30(3).victory).toBe("narrow");
-    expect(at30(5).victory).toBe("full");
+    expect(at30(5, ["jinyanShenxing"]).victory).toBe("full");
+    expect(at30(3, ["jinyanShenxing"]).outcome).toBe("lost");
+    expect(at30(3, ["jinyanShenxing", "shoulongRenxin"]).victory).toBe("narrow");
+    expect(at30(1, ["jinyanShenxing", "shoulongRenxin", "jingguanQibian"]).victory).toBe("narrow");
+    expect(at30(5, ["lingrongXiangzhu"]).outcome).toBe("lost");
   });
 
   it("replay reproduces a run exactly", () => {

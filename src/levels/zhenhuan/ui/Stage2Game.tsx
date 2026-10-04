@@ -22,6 +22,7 @@ import {
   XIBIE,
   hateTierLabel,
   HATE_REVEAL_TURN,
+  FINALE,
   huafeiDrawPlan,
   type CardId2,
   type EventId2,
@@ -31,6 +32,8 @@ import {
   blockedByChezhou,
   blockedByStatus,
   summonUnwell,
+  finaleAccepts,
+  finaleTier,
   canEndTurn2,
   canPlayCard,
   endingLines,
@@ -330,6 +333,67 @@ function StoryCard({ state, inst, dispatch, fold }: { state: Z2State; inst: Stor
   );
 }
 
+function FinaleCard({ state, fold, dispatch }: { state: Z2State; fold: Fold; dispatch: Dispatch }) {
+  const f = state.finale;
+  if (!f) return null;
+  const done = f.played.length >= f.needed;
+  const tier = finaleTier(state.evidence.length);
+  const handIds = new Set(done ? [] : state.hand.map((c) => c.id));
+  const className = [styles.card, styles.cardStory, done && styles.cardReady].filter(Boolean).join(" ");
+  const tags = (
+    <span className={styles.tagGroup}>
+      <Tag tag="story" tone={styles.kindStory} dispatch={dispatch}>
+        剧情
+      </Tag>
+      <span className={styles.muted}>
+        {f.played.length}/{f.needed}
+      </span>
+    </span>
+  );
+  if (fold.compact && !fold.expanded) {
+    return (
+      <FoldBox fold={fold} className={className}>
+        <div className={styles.compactTitle}>
+          {FINALE.emoji} {FINALE.name}
+          {done ? " 🆗" : ""}
+          {tags}
+        </div>
+        <div className={styles.compactSummary}>{done ? "✅ 华妃已倒" : `🃏×${f.needed - f.played.length} ❌ 失败`}</div>
+      </FoldBox>
+    );
+  }
+  return (
+    <FoldBox fold={fold} className={className}>
+      <div className={styles.cardHead}>
+        <span className={styles.cardName}>
+          <span className={styles.cardEmoji}>{FINALE.emoji}</span>
+          {FINALE.name}
+          {done ? " 🆗" : null}
+        </span>
+        {tags}
+      </div>
+      {done ? <ResolvedBanner icon="👑" label="大局已定" detail={FINALE.doneStory[tier]} /> : null}
+      <p className={styles.flavor}>{FINALE.flavor[tier]}</p>
+      {f.played.map((id, i) => (
+        <p key={`${id}-${i}`} className={styles.rule}>
+          {CARDS2[id].emoji} {FINALE.cardStory[id]}
+        </p>
+      ))}
+      <p className={styles.rule}>
+        <span className={styles.ruleLabel}>扳倒华妃：</span>本回合打出 <strong>{f.needed}</strong> 张牌（罪证越多，需要的越少；陵容相助不算）。回合末仍未凑够即关卡失败。
+      </p>
+      <p className={styles.rule}>
+        <span className={styles.ruleLabel}>可用牌：</span>
+        {FINALE.cards.map((id) => (
+          <span key={id} className={[styles.matchChip, handIds.has(id) && styles.matchChipInHand].filter(Boolean).join(" ")}>
+            {CARDS2[id].emoji} {CARDS2[id].name}
+          </span>
+        ))}
+      </p>
+    </FoldBox>
+  );
+}
+
 function TrialCard({ state, fold, dispatch }: { state: Z2State; fold: Fold; dispatch: Dispatch }) {
   if (!state.trial.active) return null;
   const p = guirenTrialProgress(state);
@@ -476,6 +540,7 @@ function HandCard({ state, card, dispatch, fold }: { state: Z2State; card: CardI
   const answers = [
     ...responses.map((r) => `${STORIES2[r.story.id].name}·${r.option.name}`),
     ...events.map((e) => EVENTS2[e.id].name + (EVENTS2[e.id].double && !CARDS2[card.id].matches.includes(e.id) ? "（双牌）" : "")),
+    ...(finaleAccepts(state, card.id) ? [FINALE.name] : []),
   ];
   if (fold.compact && !fold.expanded && !isPending) {
     return (
@@ -656,6 +721,9 @@ function endTurnHints(state: Z2State): string[] {
   if (state.pending) hints.push("请先选择要移除的负面状态，或取消温太医相助。");
   const left = playsLeft2(state);
   if (left > 0 && state.hand.length > 0) hints.push(`还可出 ${left} 张牌。`);
+  if (state.finale && state.finale.played.length < state.finale.needed) {
+    hints.push(`【${FINALE.name}】还差 ${state.finale.needed - state.finale.played.length} 张牌：回合末不够就会失败！`);
+  }
   for (const inst of openStories(state)) {
     const def = STORIES2[inst.id];
     const option = def.options.find((o) => o.id === def.defaultOptionId)!;
@@ -750,6 +818,7 @@ function boardDone(state: Z2State): boolean[] {
   const done = [state.opportunity, state.crisis, ...state.huafei].filter((e) => e != null).map((e) => e.resolved);
   for (const st of state.stories) done.push(st.chosenOptionId != null);
   if (state.trial.active) done.push(guirenTrialProgress(state).all);
+  if (state.finale) done.push(state.finale.played.length >= state.finale.needed);
   return done;
 }
 
@@ -891,6 +960,7 @@ export function Stage2Game({ state, dispatch, runCode, showRules, onShowRules, o
         {state.stories.map((inst) => (
           <StoryCard key={inst.id} state={state} inst={inst} dispatch={dispatch} fold={fold(`story-${inst.id}`)} />
         ))}
+        <FinaleCard state={state} fold={fold("finale")} dispatch={dispatch} />
         <TrialCard state={state} fold={fold("trial")} dispatch={dispatch} />
         {state.opportunity ? <EventCard state={state} inst={state.opportunity} fold={fold(state.opportunity.uid)} dispatch={dispatch} /> : null}
         {state.crisis ? <EventCard state={state} inst={state.crisis} fold={fold(state.crisis.uid)} dispatch={dispatch} /> : null}

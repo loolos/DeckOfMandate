@@ -146,6 +146,37 @@ export const EVIDENCE: Record<EvidenceId, EvidenceDef> = {
 
 export const EVIDENCE_THRESHOLDS = { narrowWin: 3, fullWin: 5 };
 
+/** 第 30 回合 the closing event: how many cards it takes depends on the evidence gathered. */
+export const FINALE = {
+  name: "翊坤落幕",
+  emoji: "👑",
+  /** Cards needed: ≥ 5 evidence → 1; 3–4 → 2; ≤ 2 → 3. */
+  needed(evidence: number): number {
+    return evidence >= EVIDENCE_THRESHOLDS.fullWin ? 1 : evidence >= EVIDENCE_THRESHOLDS.narrowWin ? 2 : 3;
+  },
+  flavor: {
+    full: "年家已倒，你手里的罪状一桩桩、一件件，足够让翊坤宫再也翻不了身。只差最后一步。",
+    narrow: "年家倒了，你手里的罪证却还单薄。要扳倒华妃，还得在御前多费些心力。",
+    thin: "年家虽倒，你手里几乎没有华妃的把柄。想在今日扳倒她，只能拼尽全力一搏。",
+  },
+  /** Every card but 陵容相助 can be thrown in; each tells its part. */
+  cards: ["jinyanShenxing", "yirongZhengsu", "shoulongRenxin", "jingguanQibian", "meizhuangXiangzhu", "wenTaiyiZhenzhi"] as const,
+  cardStory: {
+    jinyanShenxing: "你在御前一桩桩陈说翊坤宫的罪状，字字有据，不急不躁。",
+    yirongZhengsu: "你素服跪在养心殿外，仪态端庄，皇上终于肯召你进去说话。",
+    shoulongRenxin: "当年受过翊坤宫欺凌的宫人一个接一个站了出来。",
+    jingguanQibian: "你按兵不动，只等华妃自乱阵脚，在御前失了分寸。",
+    meizhuangXiangzhu: "眉庄托人递来一封亲笔书信，替你作证。",
+    wenTaiyiZhenzhi: "温实初呈上当年的脉案，与华妃的罪状一一对上。",
+  } as Partial<Record<string, string>>,
+  doneStory: {
+    full: "皇上将罪证掷在华妃面前，良久无言，终于下旨：年氏降为答应，打入冷宫。",
+    narrow: "皇上沉吟良久，收回了华妃协理六宫之权，命她在翊坤宫闭门思过。",
+    thin: "证据虽薄，你却把能说的话都说尽了。皇上终于动了怒，收回了华妃协理六宫之权。",
+  },
+  failStory: "你没能在御前把话说透。皇上念及旧情，华妃复起，翊坤宫的灯又亮了。",
+};
+
 // ---------------------------------------------------------------- cards
 
 export type CardId2 = "yirongZhengsu" | "jinyanShenxing" | "wenTaiyiZhenzhi" | "shoulongRenxin" | "jingguanQibian" | "meizhuangXiangzhu" | "lingrongXiangzhu";

@@ -11,6 +11,7 @@ import {
   EVENTS2,
   EVIDENCE,
   EVIDENCE_THRESHOLDS,
+  FINALE,
   FAKUI_TURN,
   FIXED_STORY_TURNS,
   GUIREN_TRIAL,
@@ -164,6 +165,8 @@ export type Z2State = {
   outcome: Z2Outcome;
   lossReason: string | null;
   victory: "narrow" | "full" | null;
+  /** 第 30 回合【翊坤落幕】: cards needed and cards played toward it. */
+  finale: { needed: number; played: CardId2[] } | null;
   log: LogEntry[];
   actions: Z2Action[];
   turnStartActionCount: number;
@@ -325,6 +328,15 @@ export function guirenTrialProgress(s: Z2State): TrialProgress2 {
   const qingyu = s.qingyu >= GUIREN_TRIAL.minQingyu;
   const summoned = s.trial.summoned;
   return { shengchong, qingyu, summoned, all: shengchong && qingyu && summoned };
+}
+
+/** Does this card count toward 【翊坤落幕】 right now? */
+export function finaleAccepts(s: Z2State, cardId: CardId2): boolean {
+  return s.finale != null && s.finale.played.length < s.finale.needed && (FINALE.cards as readonly CardId2[]).includes(cardId);
+}
+
+export function finaleTier(evidence: number): "full" | "narrow" | "thin" {
+  return evidence >= EVIDENCE_THRESHOLDS.fullWin ? "full" : evidence >= EVIDENCE_THRESHOLDS.narrowWin ? "narrow" : "thin";
 }
 
 export function canEndTurn2(s: Z2State): boolean {
@@ -893,6 +905,13 @@ function resolvePlay2(s: Z2State, cardUid: string, removeStatusUid?: string): vo
     else log(s, "温太医相助：没有可移除的负面状态。");
   }
 
+  if (alive(s) && finaleAccepts(s, card.id)) {
+    const f = s.finale!;
+    f.played.push(card.id);
+    log(s, `【${FINALE.name}】${FINALE.cardStory[card.id] ?? ""}（${f.played.length}/${f.needed}）`, "good");
+    if (f.played.length >= f.needed) log(s, FINALE.doneStory[finaleTier(s.evidence.length)], "good");
+  }
+
   if (alive(s) && relationDelta !== 0) changeRelation(s, relationDelta, "陵容");
 
   if (xibie) {
@@ -971,6 +990,11 @@ function beginTurn2(s: Z2State, turn: number): void {
   if (turn === FAKUI_TURN) {
     s.fakuiHarsh = s.hate >= 6;
     openStory(s, s.pregnant ? "fakuiPregnant" : "fakuiPlain");
+  }
+  if (turn === STAGE2.totalTurns) {
+    const needed = FINALE.needed(s.evidence.length);
+    s.finale = { needed, played: [] };
+    log(s, `剧情事件：【${FINALE.name}】——${FINALE.flavor[finaleTier(s.evidence.length)]}本回合须打出 ${needed} 张牌才能扳倒华妃。`);
   }
   if (turn === GUIREN_TRIAL.firstTurn && s.rank === "changzai") {
     s.trial = { active: true, summoned: false };
@@ -1166,11 +1190,13 @@ function endTurn2(s: Z2State): void {
     log(s, `【${EVENTS2[late].name}】洗入机会池。`);
   }
 
-  // 16. 扳倒华妃
+  // 16. 翊坤落幕: the cards decide; the evidence decides how many it took and how it ends
   if (s.turn >= STAGE2.totalTurns) {
     const n = s.evidence.length;
-    if (n < EVIDENCE_THRESHOLDS.narrowWin) {
-      lose(s, `罪证只有 ${n} 条，扳不倒华妃`);
+    const f = s.finale;
+    if (!f || f.played.length < f.needed) {
+      log(s, FINALE.failStory, "bad");
+      lose(s, "没能在最后一回合扳倒华妃");
       return;
     }
     s.outcome = "won";
@@ -1247,6 +1273,7 @@ export function newStage2(seed: number, carry: Carry | null): Z2State {
     outcome: "playing",
     lossReason: null,
     victory: null,
+    finale: null,
     log: [],
     actions: [],
     turnStartActionCount: 0,
@@ -1329,6 +1356,10 @@ export function replay2(seed: number, carry: Carry | null, actions: readonly Z2A
 /** Ending lines for the outcome screen (§12.10). */
 export function endingLines(s: Z2State): string[] {
   const lines: string[] = [];
+  if (s.finale) {
+    const done = s.finale.played.length >= s.finale.needed;
+    lines.push(done ? FINALE.doneStory[finaleTier(s.evidence.length)] : FINALE.failStory);
+  }
   for (const id of s.evidence) lines.push(EVIDENCE[id].ending);
   lines.push(s.rank === "pin" ? "你以嫔位立于六宫之中。" : `你如今是${RANKS[s.rank].name}。`);
   if (s.miscarriages > 0) lines.push("那个没能保住的孩子，成了你心里一道过不去的坎。");
