@@ -109,8 +109,7 @@ src/levels/zhenhuan/assets/
 | `backdrops/stage1.webp` | 第一关对局 + 开始菜单 |
 | `backdrops/stage2.webp` | 第二关对局 |
 
-## 6. 待定
+## 6. 出图
 
-- 原图来源（自绘 / 约稿 / AI 生成）与授权。
-- 统一画风、色调与提示词模板。
-- 两张背景各自的场景主题。
+- 用 ChatGPT 逐张生成，风格设定、每张图的 prompt 与短编号（C01–C08、E01–E23、B1–B2）见 [art-prompts.md](./art-prompts.md)。
+- 选定的原图按短编号命名放进 `art-inbox/`，导入时改名为游戏 id、裁切并压缩到本文第 2 节的位置。
