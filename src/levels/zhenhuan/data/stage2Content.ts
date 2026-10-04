@@ -1062,13 +1062,13 @@ export const LINGRONG_EVENT: Partial<Record<EventId2, TierTable>> = {
     resentful: { resolves: false, relation: 1, story: "陵容只说没瞧见什么。过了几日，她却托人捎来一句：「碎玉轩的门，夜里该落锁了。」" },
   },
   kekouFenli: {
-    close: { resolves: true, relation: 1, effects: [{ resource: "qingyu", amount: -1 }], story: "陵容把自己的份例分了一半送来：「姐姐别嫌弃。咱们姐妹，原该如此。」只是内务府那边，到底还是记了你一笔。" },
-    distant: { resolves: true, effects: [{ resource: "qingyu", amount: -1 }], story: "「我一个答应的份例，哪比得上姐姐的。」陵容嘴上这么说，还是送了些炭来，只是不够撑到月底。" },
+    close: { resolves: true, relation: -1, effects: [{ resource: "qingyu", amount: -1 }], story: "陵容把自己的份例分了一半送来：「姐姐别嫌弃。咱们姐妹，原该如此。」那几日延禧宫的炭盆却早早熄了，宝鹊说她家小主夜里冻得睡不着。内务府那边，到底还是记了你一笔。" },
+    distant: { resolves: true, relation: -1, effects: [{ resource: "qingyu", amount: -1 }], story: "「我一个答应的份例，哪比得上姐姐的。」陵容嘴上这么说，还是送了些炭来，放下便走了。你后来才听说，那是她攒了一冬没舍得用的。" },
     resentful: { resolves: false, relation: 1, story: "陵容推说自己也不够用，一样东西也没送来。第二日清早，碎玉轩门口却多了一小篓炭，没留话。" },
   },
   huanyixiangZhuanchong: {
-    close: { resolves: true, effects: [{ resource: "hate", amount: 1 }], story: "陵容在御花园唱曲，把皇上从翊坤宫引了过来，又借故走开，留你陪驾。" },
-    distant: { resolves: true, effects: [{ resource: "hate", amount: 1 }], story: "陵容的歌声把皇上引了过来。「姐姐这回可欠妹妹一个人情。」" },
+    close: { resolves: true, relation: -1, effects: [{ resource: "hate", amount: 1 }], story: "陵容在御花园唱了一支新曲，把皇上从翊坤宫引了过来，又借故走开，留你陪驾。回宫的路上她一直低着头，过了许久才轻声说：「姐姐好福气。」" },
+    distant: { resolves: true, relation: -1, effects: [{ resource: "hate", amount: 1 }], story: "陵容的歌声把皇上引了过来，皇上却只随口问了句是谁在唱，便携了你的手走了。「姐姐这回可欠妹妹一个人情。」她笑着说，笑意却没到眼底。" },
     resentful: { resolves: false, relation: 1, effects: [{ resource: "shengchong", amount: -2 }], story: "陵容趁机自己去御前献唱，皇上当晚留在了她那里。次日她来请安，眼圈红红的，只说了一句「姐姐别怪我」。" },
   },
 };
