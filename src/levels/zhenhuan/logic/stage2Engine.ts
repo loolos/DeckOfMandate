@@ -295,18 +295,23 @@ export function matchedEvents2(s: Z2State, cardId: CardId2): EventInst2[] {
   return boardEvents(s).filter((e) => cardAffectsEvent(e, cardId));
 }
 
+/** 联袂 works at most once per turn, whichever 陵容 it came from. */
+function lianmeiAvailable(s: Z2State): boolean {
+  return tierOf(s) === "close" && s.lianmeiSpent.length === 0;
+}
+
 /** 陵容 whose 联袂 can make the card at `index` free. */
 function lianmeiSourceFor(s: Z2State, index: number): CardInst2 | null {
-  if (tierOf(s) !== "close") return null;
+  if (!lianmeiAvailable(s)) return null;
   for (const j of [index - 1, index + 1]) {
     const c = s.hand[j];
-    if (c && c.id === "lingrongXiangzhu" && !s.lianmeiSpent.includes(c.uid)) return c;
+    if (c && c.id === "lingrongXiangzhu") return c;
   }
   return null;
 }
 
 export function lianmeiLit(s: Z2State, card: CardInst2): boolean {
-  return card.id === "lingrongXiangzhu" && tierOf(s) === "close" && !s.lianmeiSpent.includes(card.uid);
+  return card.id === "lingrongXiangzhu" && lianmeiAvailable(s);
 }
 
 export function isFreeByLianmei(s: Z2State, cardUid: string): boolean {
