@@ -511,6 +511,58 @@ describe("zhenhuan stage 2 engine", () => {
     expect(t.statuses.some((x) => x.id === "baoyangZaishen")).toBe(true);
   });
 
+  it("年氏倾颓 (turn 24) changes hate; an owed 曹贵人 brings 琴默陈情 once", () => {
+    const toNian = (seed: number, owed: boolean) => {
+      let s = newStage2(seed, null);
+      s.rank = "guiren";
+      s.turn = 23;
+      s.qingyu = 10;
+      s.shengchong = 10;
+      s.hate = 4;
+      s.caoOwed = owed;
+      s.stories = [];
+      s.crisis = null;
+      s.huafei = [];
+      s = act(s, { type: "endTurn" });
+      return s;
+    };
+    let s = toNian(27, true);
+    expect(s.turn).toBe(24);
+    expect(s.stories.some((x) => x.id === "nianShiQingtui")).toBe(true);
+    const h = s.hate;
+    s = act(s, { type: "chooseStory", storyId: "nianShiQingtui", optionId: "luojingXiashi" });
+    expect(s.hate).toBe(h + 2);
+    expect(s.evidence.includes("caoguirenGaofa")).toBe(false);
+    s.crisis = null;
+    s.huafei = [];
+    s = act(s, { type: "endTurn" });
+    expect(s.opportunity?.id).toBe("qinmoChenqing");
+    s.stories = [];
+    const [r] = setHand(s, ["shoulongRenxin"]);
+    s = act(s, { type: "playCard", cardUid: r! });
+    expect(s.evidence.includes("caoguirenGaofa")).toBe(true);
+
+    // unresolved: gone for good
+    let t = toNian(28, true);
+    t.crisis = null;
+    t.huafei = [];
+    t = act(t, { type: "endTurn" });
+    expect(t.opportunity?.id).toBe("qinmoChenqing");
+    t.stories = [];
+    t.crisis = null;
+    t.huafei = [];
+    setHand(t, []);
+    t = act(t, { type: "endTurn" });
+    expect([...t.opportunityPool, ...t.opportunityUsed, t.opportunity?.id].includes("qinmoChenqing")).toBe(false);
+
+    // not owed: never comes
+    let u = toNian(29, false);
+    u.crisis = null;
+    u.huafei = [];
+    u = act(u, { type: "endTurn" });
+    expect([...u.opportunityPool, u.opportunity?.id].includes("qinmoChenqing")).toBe(false);
+  });
+
   it("ending lines cover the pregnancy outcome", () => {
     const s = newStage2(16, null);
     expect(endingLines(s).some((l) => l.includes("始终没有动静"))).toBe(true);

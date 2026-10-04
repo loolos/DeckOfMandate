@@ -182,7 +182,7 @@ function fromStage1(id: Exclude<CardId2, "lingrongXiangzhu">, overrides: Partial
 export const CARDS2: Record<CardId2, CardDef2> = {
   yirongZhengsu: fromStage1("yirongZhengsu", { matches: ["huanghouShangshi", "liyiShiwu"] }),
   jinyanShenxing: fromStage1("jinyanShenxing", {
-    matches: ["huanghouShangshi", "taihouChuixun", "baohuadianQifu", "gongzhongLiuyan", "yikungongLiGuiju"],
+    matches: ["huanghouShangshi", "taihouChuixun", "baohuadianQifu", "gongzhongLiuyan", "yikungongLiGuiju", "qinmoChenqing"],
   }),
   wenTaiyiZhenzhi: fromStage1("wenTaiyiZhenzhi", {
     base: [{ resource: "shenzi", amount: 1 }],
@@ -190,7 +190,7 @@ export const CARDS2: Record<CardId2, CardDef2> = {
     rulesText: ["移除 1 个【负面】状态；身子 +1。"],
   }),
   shoulongRenxin: fromStage1("shoulongRenxin", {
-    matches: ["supeishengToufeng", "liPinJingmeng", "wenyiBaoyang", "neiwufuDiaonan", "hanliangZhiwu", "kekouFenli", "shanshiYouyi"],
+    matches: ["supeishengToufeng", "liPinJingmeng", "wenyiBaoyang", "qinmoChenqing", "neiwufuDiaonan", "hanliangZhiwu", "kekouFenli", "shanshiYouyi"],
   }),
   jingguanQibian: fromStage1("jingguanQibian", { matches: ["jingxinTiaoyang", "hanliangZhiwu"] }),
   meizhuangXiangzhu: fromStage1("meizhuangXiangzhu", { matches: ["taihouChuixun", "gongzhongLiuyan", "neiwufuDiaonan"] }),
@@ -398,7 +398,8 @@ export type OpportunityId2 =
   | "supeishengToufeng"
   | "liPinJingmeng"
   | "wenyiBaoyang"
-  | "qingmaiBaoxi";
+  | "qingmaiBaoxi"
+  | "qinmoChenqing";
 export type CrisisId2 = "gongzhongLiuyan" | "neiwufuDiaonan" | "liyiShiwu" | "hanliangZhiwu";
 export type HuafeiId = "yikungongLiGuiju" | "kekouFenli" | "shanshiYouyi" | "yizhangHong" | "huanyixiangZhuanchong";
 export type EventId2 = OpportunityId2 | CrisisId2 | HuafeiId;
@@ -569,6 +570,23 @@ export const EVENTS2: Record<EventId2, EventDef2> = {
       wenTaiyiZhenzhi: "温实初诊了又诊，才敢跪下道喜。消息传到养心殿，皇上当即下旨晋你为嫔。",
       shoulongRenxin: "你早早打点了太医院，来请脉的太医一句也不敢含糊。消息传到养心殿，皇上当即下旨晋你为嫔。",
       jinyanShenxing: "你沉住气，等太医确诊了才让人去报喜。皇上大喜，当即下旨晋你为嫔。",
+    },
+  },
+  qinmoChenqing: {
+    id: "qinmoChenqing",
+    kind: "opportunity",
+    name: "琴默陈情",
+    emoji: "🍵",
+    flavor: "年家倒了，曹贵人连夜来了碎玉轩。她屏退左右，说要还你当日照看温宜的人情。",
+    reward: [],
+    penalty: [],
+    evidence: { id: "caoguirenGaofa", cards: ["shoulongRenxin", "jinyanShenxing"] },
+    resolvedText: "可能搜集到华妃的罪证",
+    unresolvedText: "曹贵人等不到你的回音，此事作罢（不会再出现）",
+    note: "只出现一次。",
+    resolvedStory: {
+      shoulongRenxin: "你让槿汐守着门，听曹贵人把翊坤宫这些年的事一桩桩说了出来，又悄悄录成了供词。",
+      jinyanShenxing: "你只静静听着，一句也不多问。曹贵人说完，自己把供词按了手印递了过来。",
     },
   },
   gongzhongLiuyan: {
@@ -873,6 +891,7 @@ export type StoryId2 =
   | "duanfeiJiushi"
   | "zhaoxing"
   | "caoGuirenLaifang"
+  | "nianShiQingtui"
   | "huafeiFanan";
 
 export type StoryOption2 = {
@@ -920,6 +939,7 @@ export const FIXED_STORY_TURNS: Partial<Record<number, StoryId2>> = {
   8: "jiaYunFengbo",
   14: "yuanmingyuan",
   20: "duanfeiJiushi",
+  24: "nianShiQingtui",
 };
 export const FAKUI_TURN = 17;
 /** 华妃恨意 appears (and is explained) when 初谒翊坤 begins. */
@@ -1218,6 +1238,48 @@ export const STORIES2: Record<StoryId2, StoryDef2> = {
       },
     ],
   },
+  nianShiQingtui: {
+    id: "nianShiQingtui",
+    name: "年氏倾颓",
+    emoji: "⛓️",
+    flavor: "年羹尧获罪下狱，翊坤宫失了靠山。宫里的风向变了，人人都在看你怎么走这一步。",
+    note: "你的态度会改变华妃的恨意。",
+    defaultOptionId: "geanGuanhuo",
+    options: [
+      { id: "geanGuanhuo", name: "隔岸观火", effects: [], text: "无变化", story: "你闭门不出，翊坤宫的事一概不问。" },
+      {
+        id: "luojingXiashi",
+        name: "落井下石",
+        effects: [
+          { resource: "hate", amount: 2 },
+          { resource: "shengchong", amount: 1 },
+        ],
+        text: "恨意 +2、圣宠 +1",
+        story: "你在皇上跟前提了几句年家的旧事。皇上点了点头，翊坤宫那边却砸碎了一屋子的瓷器。",
+      },
+      {
+        id: "xuezhongSongtan",
+        name: "雪中送炭",
+        effects: [
+          { resource: "hate", amount: -2 },
+          { resource: "shengchong", amount: -1 },
+        ],
+        text: "恨意 -2、圣宠 -1",
+        story: "你派人给翊坤宫送了些点心。华妃没说什么，皇上听说了，却有些不悦。",
+      },
+      {
+        id: "mingzheBaoshen",
+        name: "明哲保身",
+        card: "jinyanShenxing",
+        effects: [
+          { resource: "hate", amount: -1 },
+          { resource: "qingyu", amount: 1 },
+        ],
+        text: "恨意 -1、清誉 +1",
+        story: "你闭口不谈年家，只在太后跟前尽孝。两边都挑不出你的错处。",
+      },
+    ],
+  },
   caoGuirenLaifang: {
     id: "caoGuirenLaifang",
     name: "琴默叩门",
@@ -1313,10 +1375,6 @@ export const LINGRONG_SUMMON: Record<LingrongTier, { story: string; result: "suc
   close: { result: "success", story: "陵容一早来替你梳妆，又教了你一支新曲。皇上留你到天明。" },
   distant: { result: "stolen", relation: 1, story: "陵容截下了这次召幸，换她去侍寝。「姐姐福气好，也该分妹妹一些。」" },
   resentful: { result: "lost", relation: 1, effects: [{ resource: "shengchong", amount: -1 }], story: "陵容在半路截走了召幸，皇上那夜宿在了她那里。" },
-};
-
-export const NOTICES = {
-  nianGengyao: { emoji: "⛓️", name: "年氏倾颓", text: "年羹尧获罪下狱，翊坤宫失了靠山。宫里的风向，变了。" },
 };
 
 /** 陵容 on 甄嬛's promotions (关系 -2): shown in the log and the promotion notice. */

@@ -25,7 +25,6 @@ import {
   LINGRONG_PROMOTION_TEXT,
   LINGRONG_SUMMON,
   NIAN_TURN,
-  NOTICES,
   OPPORTUNITY2_POOL,
   RANKS,
   RESOURCE2_LABEL,
@@ -493,6 +492,7 @@ function becomePregnant(s: Z2State, source: string): void {
 }
 
 const PIN_EVENT = "qingmaiBaoxi" as const;
+const CAO_EVENT = "qinmoChenqing" as const;
 
 function promoteToPin(s: Z2State): void {
   if (s.rank !== "guiren" || !s.pregnant) return;
@@ -933,14 +933,6 @@ function beginTurn2(s: Z2State, turn: number): void {
     s.fakuiHarsh = s.hate >= 6;
     openStory(s, s.pregnant ? "fakuiPregnant" : "fakuiPlain");
   }
-  if (turn === NIAN_TURN) {
-    s.notices.push(NOTICES.nianGengyao);
-    log(s, NOTICES.nianGengyao.text);
-    if (s.caoOwed) {
-      log(s, "曹贵人眼见年家倒台，出面告发华妃。", "good");
-      gainEvidence(s, "caoguirenGaofa");
-    }
-  }
   if (turn === GUIREN_TRIAL.firstTurn && s.rank === "changzai") {
     s.trial = { active: true, summoned: false };
     log(s, `剧情事件：【${GUIREN_TRIAL.name}】开始（第 ${GUIREN_TRIAL.firstTurn}—${GUIREN_TRIAL.lastTurn} 回合）`);
@@ -1044,7 +1036,9 @@ function endTurn2(s: Z2State): void {
   if (!alive(s)) return;
 
   // 12. events leave
-  if (s.opportunity?.id === PIN_EVENT) {
+  if (s.opportunity?.id === CAO_EVENT) {
+    // 琴默陈情 comes once only, resolved or not
+  } else if (s.opportunity?.id === PIN_EVENT) {
     // not confirmed yet: shuffled back into the remaining pool while still pregnant
     if (!s.opportunity.resolved && s.pregnant && s.rank === "guiren") {
       const [rng, shuffled] = shuffle(s.rng, [...s.opportunityPool, PIN_EVENT]);
@@ -1111,6 +1105,10 @@ function endTurn2(s: Z2State): void {
     // into the discard pile, so they arrive with the next reshuffle instead of in one clump
     s.discard.push(...added);
     log(s, `${LINGRONG_COPIES} 张【陵容相助】加入弃牌堆，下次洗牌后才会抽到。`);
+  }
+  if (s.turn === NIAN_TURN && s.caoOwed) {
+    s.opportunityPool = [CAO_EVENT, ...s.opportunityPool];
+    log(s, "曹贵人眼见年家倒台，托人递话说要来碎玉轩一趟：【琴默陈情】加入机会牌池。", "good");
   }
   const late = LATE_OPPORTUNITIES[s.turn];
   if (late) {
