@@ -210,7 +210,13 @@ export function playLimit2(s: Z2State): number {
 
 /** 抱恙在身: a status in effect this turn forbids this card. */
 export function blockedByStatus(s: Z2State, cardId: CardId2): boolean {
-  return activeStatuses(s).some((st) => STATUSES2[st.id].blocksCards?.includes(cardId));
+  return blockingStatusName(s, cardId) != null;
+}
+
+/** Name of the status in effect that forbids this card (抱恙在身 / 噤若寒蝉), if any. */
+export function blockingStatusName(s: Z2State, cardId: CardId2): string | null {
+  const st = activeStatuses(s).find((x) => STATUSES2[x.id].blocksCards?.includes(cardId));
+  return st ? STATUSES2[st.id].name : null;
 }
 
 /** 抱恙在身 / 卧床静养 in effect: no 侍寝 (召幸 can only be declined or missed). Returns the status name. */
@@ -684,7 +690,7 @@ function verb(kind: string): string {
 
 function applyResponsePenalty(s: Z2State, cost: ResponsePenalty, source: string): void {
   applyDeltas2(s, cost.effects, source);
-  if (cost.status && alive(s)) addStatus2(s, cost.status);
+  if (cost.status && alive(s)) addStatus2(s, cost.status, cost.statusTurns);
 }
 
 function eventStoryFor(ev: EventInst2, card: CardId2): string | undefined {

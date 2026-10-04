@@ -339,7 +339,8 @@ export type StatusId2 =
   | "baoyangZaishen"
   | "bimenSiguo"
   | "jinghongWu"
-  | "zhushiTuotie";
+  | "zhushiTuotie"
+  | "jinruoHanchan";
 
 export type StatusDef2 = {
   readonly id: StatusId2;
@@ -480,6 +481,18 @@ export const STATUSES2: Record<StatusId2, StatusDef2> = {
     flavor: "宫里的琐碎事槿汐都替你料理妥当了，你只管腾出手来应付要紧的。",
     source: "打出【槿汐相助】",
   },
+  jinruoHanchan: {
+    id: "jinruoHanchan",
+    name: "噤若寒蝉",
+    emoji: "🍂",
+    tag: "negative",
+    duration: 2,
+    drawModifier: 0,
+    blocksCards: ["shoulongRenxin", "jinxiXiangzhu"],
+    effectText: "持续期间不能打出【收拢人心】和【槿汐相助】。一丈红未应对时持续 2 回合，只应对了一半时持续 1 回合。多个实例分别计时。",
+    flavor: "宫人们亲眼见了一丈红，一个个噤若寒蝉，谁也不敢再替你出头。",
+    source: "华妃事件【一丈红】未应对或只应对了一半",
+  },
   shenhuaiLongyi: {
     id: "shenhuaiLongyi",
     name: "身怀龙裔",
@@ -519,7 +532,7 @@ export type DoubleRule =
   | { readonly kind: "anyTwo"; readonly cards: readonly CardId2[] }
   | { readonly kind: "both"; readonly cards: readonly [CardId2, CardId2] };
 
-export type ResponsePenalty = { readonly effects: readonly Delta2[]; readonly status?: StatusId2 };
+export type ResponsePenalty = { readonly effects: readonly Delta2[]; readonly status?: StatusId2; /** Overrides the status's own duration. */ readonly statusTurns?: number };
 
 export type EventDef2 = {
   readonly id: EventId2;
@@ -902,24 +915,19 @@ export const EVENTS2: Record<EventId2, EventDef2> = {
     emoji: "🩸",
     flavor: "华妃又要拿人立威。周宁海带着人闯进碎玉轩，把你宫里的人拖到了翊坤宫外。",
     reward: [],
-    penalty: [
-      { resource: "qingyu", amount: -2 },
-      { resource: "shengchong", amount: -1 },
-    ],
+    penalty: [{ resource: "qingyu", amount: -2 }],
+    penaltyStatus: "jinruoHanchan",
+    penaltyStatusTurns: 2,
     unresolvedHate: -1,
     unlockHate: 5,
     double: { kind: "anyTwo", cards: ["jinyanShenxing", "yirongZhengsu", "shoulongRenxin"] },
-    partialPenalty: {
-      effects: [
-        { resource: "qingyu", amount: -1 },
-        { resource: "shengchong", amount: -1 },
-      ],
-    },
+    partialPenalty: { effects: [{ resource: "qingyu", amount: -1 }], status: "jinruoHanchan", statusTurns: 1 },
     doublePenalty: { effects: [{ resource: "hate", amount: 1 }] },
     evidence: { id: "lanyongSixing", cards: ["shoulongRenxin"] },
-    resolvedCompact: "✌️🔥+1 · ☝️🪷-1 👑-1",
-    resolvedText: "打出 2 张：只恨意 +1（两张中含收拢人心，多次应对后可能搜集到华妃的罪证）；只打出 1 张：回合末清誉 -1、圣宠 -1",
-    unresolvedText: "清誉 -2、圣宠 -1；出气：恨意 -1",
+    resolvedCompact: "✌️🔥+1 · ☝️🪷-1 🍂×1",
+    unresolvedCompact: "🪷-2 🍂×2 🔥-1",
+    resolvedText: "打出 2 张：只恨意 +1（两张中含收拢人心，多次应对后可能搜集到华妃的罪证）；只打出 1 张：回合末清誉 -1、获得【噤若寒蝉】（1 回合）",
+    unresolvedText: "清誉 -2、获得【噤若寒蝉】（2 回合）；出气：恨意 -1",
     note: "双牌：同一回合打出谨言慎行、仪容整肃、收拢人心中任意 2 张。",
     resolvedStory: {
       jinyanShenxing: "你跪在翊坤宫外替宫人求情，句句恭顺，华妃寻不到再发作的由头。",
