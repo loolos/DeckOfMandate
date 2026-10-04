@@ -1448,13 +1448,15 @@ export const STORIES2: Record<StoryId2, StoryDef2> = {
       {
         id: "qiuHuanghou",
         name: "求皇后庇护",
+        card: "lingrongXiangzhu",
         effects: [
-          { resource: "qingyu", amount: -2 },
-          { resource: "shengchong", amount: -4 },
-          { resource: "shenzi", amount: -2 },
+          { resource: "qingyu", amount: -1 },
+          { resource: "shengchong", amount: -3 },
+          { resource: "shenzi", amount: -1 },
         ],
-        text: "清誉 -2、圣宠 -4、身子 -2",
-        story: "你求到了景仁宫。皇后替你挡下了最难堪的一节，又温言劝你凡事忍耐——这份人情，她是记下了。只是事情传到养心殿，皇上嫌你惹是生非，冷落了你好些日子。",
+        text: "清誉 -1、圣宠 -3、身子 -1",
+        compact: "🎶 🪷-1 👑-3 🌱-1",
+        story: "陵容听说了，悄悄去了一趟景仁宫。不多时，皇后便遣剪秋来翊坤宫说了几句话，华妃这才收了手。事后你才隐约想起：陵容什么时候，和景仁宫走得这样近了？",
       },
       {
         id: "juliLizheng",

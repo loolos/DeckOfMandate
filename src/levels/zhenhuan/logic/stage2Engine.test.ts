@@ -839,11 +839,16 @@ describe("zhenhuan stage 2 engine", () => {
     expect(s.shenziRevealedBy).toBe("summon");
     expect(s.stories.some((x) => x.id === "huafeiFanan")).toBe(true);
     const before = { q: s.qingyu, c: s.shengchong, z: s.shenzi };
-    s = act(s, { type: "chooseStory", storyId: "huafeiFanan", optionId: "qiuHuanghou" });
+    // 求皇后庇护 is only offered through 陵容相助 now
+    expect(reduce2(s, { type: "chooseStory", storyId: "huafeiFanan", optionId: "qiuHuanghou" })).toBe(s);
+    s.stories = s.stories.filter((x) => x.id === "huafeiFanan");
+    s.extraPlays = 2;
+    const [l] = setHand(s, ["lingrongXiangzhu"]);
+    s = act(s, { type: "playCard", cardUid: l! });
     expect(s.hate).toBe(6);
-    expect(s.qingyu).toBe(before.q - 2);
-    expect(s.shengchong).toBe(before.c - 4);
-    expect(s.shenzi).toBe(Math.max(0, before.z - 2));
+    expect(s.qingyu).toBe(before.q - 1);
+    expect(s.shengchong).toBe(before.c - 3);
+    expect(s.shenzi).toBe(Math.max(0, before.z - 1));
   });
 
   it("华妃发难 card responses each spare one resource: 温太医 keeps 身子", () => {
