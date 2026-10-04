@@ -1049,7 +1049,7 @@ export function Stage2Game({ state, dispatch, runCode, showRules, onShowRules, o
         <Notice title="🔥 华妃恨意 · 🗂️ 罪证" onClose={() => setNotice(null)}>
           <p>你新晋常在，入了华妃的眼。今日去翊坤宫请安，你的应对决定她的初始恨意。</p>
           <p>
-            <strong>🔥 华妃恨意</strong>（0–10）越高，华妃事件越多越狠，到 10 她当场发难。侍寝、晋封、有孕会让她更恨你；失宠、避宠、让她出气、小产会让她消气。
+            <strong>🔥 华妃恨意</strong>（0–10）越高，华妃事件越多越狠，到 10 她当场发难。侍寝、晋封、有孕（身怀龙裔期间每回合）会让她更恨你；失宠、避宠、让她出气、小产会让她消气。
           </p>
           <p>
             <strong>🗂️ 搜集华妃罪证</strong>：从今日起留心华妃的罪状。罪证越多，第 30 回合扳倒华妃越容易；只有 1 条或更少则必败。

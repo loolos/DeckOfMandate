@@ -946,6 +946,11 @@ function resolvePlay2(s: Z2State, cardUid: string, removeStatusUid?: string): vo
 // ---------------------------------------------------------------- turn flow
 
 function drawHuafei(s: Z2State): void {
+  // 翊坤落幕: 华妃 has no hand left to play on the last turn (延烧 ones die out too)
+  if (s.turn >= STAGE2.totalTurns) {
+    s.huafei = [];
+    return;
+  }
   const plan = huafeiDrawPlan(s.hate);
   let n = plan.fixed;
   if (plan.chance > 0 && roll(s) < plan.chance) n++;
@@ -1002,6 +1007,7 @@ function beginTurn2(s: Z2State, turn: number): void {
   if (turn > 1) {
     if (s.shengchong <= 4) applyDelta2(s, { resource: "hate", amount: -1 }, "失宠，华妃懒得管你");
     else if (s.shengchong >= rankCap(s)) applyDelta2(s, { resource: "hate", amount: 1 }, "宠冠六宫");
+    if (s.pregnant) applyDelta2(s, { resource: "hate", amount: 1 }, "身怀龙裔，华妃如鲠在喉");
   }
   checkFanan(s);
 

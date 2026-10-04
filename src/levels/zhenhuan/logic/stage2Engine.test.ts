@@ -700,6 +700,21 @@ describe("zhenhuan stage 2 engine", () => {
     expect(s.miscarriageCost).toEqual({ shenzi: -3, qingyu: -1, shengchong: -1, hate: -2 });
   });
 
+  it("身怀龙裔: 华妃恨意 +1 at every turn start", () => {
+    let s = newStage2(38, null);
+    s.rank = "guiren";
+    s.turn = 12;
+    s.pregnant = true;
+    s.statuses.push({ uid: "p", id: "shenhuaiLongyi", appliesFromTurn: 1, remaining: 0 });
+    s.hate = 3;
+    s.shengchong = 8;
+    s.qingyu = 8;
+    s.stories = [];
+    onlyEvents(s, {});
+    s = act(s, { type: "endTurn" });
+    expect(s.hate).toBe(4);
+  });
+
   it("ending lines cover the pregnancy outcome", () => {
     const s = newStage2(16, null);
     expect(endingLines(s).some((l) => l.includes("始终没有动静"))).toBe(true);
@@ -876,12 +891,14 @@ describe("zhenhuan stage 2 engine", () => {
       s.stories = [];
       s.crisis = null;
       s.huafei = [];
+      s.hate = 9;
       s.evidence = ALL.slice(0, n);
       return act(s, { type: "endTurn" });
     };
     const at30 = (n: number, cards: CardId2[]) => {
       let s = to30(n);
       expect(s.turn).toBe(30);
+      expect(s.huafei).toHaveLength(0); // no 华妃 events on the last turn
       expect(s.finale?.needed).toBe(n >= 7 ? 1 : n >= 4 ? 2 : 3);
       s.stories = [];
       onlyEvents(s, {});

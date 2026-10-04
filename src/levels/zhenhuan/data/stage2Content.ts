@@ -433,7 +433,7 @@ export const STATUSES2: Record<StatusId2, StatusDef2> = {
     permanent: true,
     unremovable: true,
     drawModifier: 0,
-    effectText: "不再出现召幸；伤胎类事件未化解时直接小产；身子降到 0 时立即小产。持续到小产或关卡结束。",
+    effectText: "每回合开始时华妃恨意 +1；不再出现召幸；伤胎类事件未化解时直接小产；身子降到 0 时立即小产。持续到小产或关卡结束。",
     flavor: "太医跪地道喜：小主有喜了。",
     source: "喜脉",
   },
