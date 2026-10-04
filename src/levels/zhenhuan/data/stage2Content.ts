@@ -847,7 +847,7 @@ export const EVENTS2: Record<EventId2, EventDef2> = {
     kind: "huafei",
     name: "一丈红",
     emoji: "🩸",
-    flavor: "华妃又要拿人立威，这回被拖到翊坤宫外的，是你宫里的人。",
+    flavor: "华妃又要拿人立威。周宁海带着人闯进碎玉轩，把你宫里的人拖到了翊坤宫外。",
     reward: [],
     penalty: [
       { resource: "qingyu", amount: -2 },
@@ -871,7 +871,7 @@ export const EVENTS2: Record<EventId2, EventDef2> = {
     resolvedStory: {
       jinyanShenxing: "你跪在翊坤宫外替宫人求情，句句恭顺，华妃寻不到再发作的由头。",
       yirongZhengsu: "你衣冠整齐地赶来，当众请罪，把罪责都揽在自己身上。",
-      shoulongRenxin: "平日受过你恩惠的宫人一个个站出来作证，一丈红终究没有落下。",
+      shoulongRenxin: "平日受过你恩惠的宫人一个个站出来作证，周宁海举着板子，终究没敢落下去。",
     },
   },
   huanyixiangZhuanchong: {
@@ -1317,7 +1317,7 @@ export const STORIES2: Record<StoryId2, StoryDef2> = {
     id: "fakuiPlain",
     name: "翊坤长跪",
     emoji: "☀️",
-    flavor: "华妃借故罚你跪于翊坤宫外的烈日下。",
+    flavor: "华妃借故罚你跪于翊坤宫外的烈日下，周宁海搬了张凳子坐在廊下盯着。",
     note: "罚跪开始时恨意 ≥ 6，清誉再 -1。",
     defaultOptionId: "lingfa",
     options: [
@@ -1346,7 +1346,7 @@ export const STORIES2: Record<StoryId2, StoryDef2> = {
     id: "fakuiPregnant",
     name: "翊坤长跪",
     emoji: "☀️",
-    flavor: "华妃借故罚你跪于翊坤宫外的烈日下。你腹中隐隐作痛。",
+    flavor: "华妃借故罚你跪于翊坤宫外的烈日下，周宁海守在一旁，谁也不许近前。你腹中隐隐作痛。",
     note: "有孕时必定小产（温太医留方也挡不住）；所选的牌决定身子伤得多重。罚跪开始时恨意 ≥ 6，身子再 -1；有温太医留方，身子少扣 1。",
     defaultOptionId: "yingcheng",
     options: [
