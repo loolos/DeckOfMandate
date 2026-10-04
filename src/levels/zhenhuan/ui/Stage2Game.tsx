@@ -622,10 +622,6 @@ function Statuses({ state, dispatch }: { state: Z2State; dispatch: Dispatch }) {
                     <span className={styles.ruleLabel}>机制：</span>
                     {def.effectText}
                   </p>
-                  <p className={styles.rule}>
-                    <span className={styles.ruleLabel}>来源：</span>
-                    {def.source}
-                  </p>
                 </div>
               ) : null}
             </div>
