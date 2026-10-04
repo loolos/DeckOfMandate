@@ -633,6 +633,19 @@ describe("zhenhuan stage 2 engine", () => {
     expect(at(10)).toBe(true);
   });
 
+  it("伤胎 events: 抱恙在身 only when not pregnant; a 小产 does not add it", () => {
+    let s = newStage2(34, null);
+    s.pregnant = true;
+    s.statuses.push({ uid: "p", id: "shenhuaiLongyi", appliesFromTurn: 1, remaining: 0 });
+    s.shenzi = 5;
+    s.stories = [];
+    onlyEvents(s, { crisis: "hanliangZhiwu" });
+    setHand(s, []);
+    s = act(s, { type: "endTurn" });
+    expect(s.miscarriages).toBe(1);
+    expect(s.statuses.some((x) => x.id === "baoyangZaishen")).toBe(false);
+  });
+
   it("ending lines cover the pregnancy outcome", () => {
     const s = newStage2(16, null);
     expect(endingLines(s).some((l) => l.includes("始终没有动静"))).toBe(true);
