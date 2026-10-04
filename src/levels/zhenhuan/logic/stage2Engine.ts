@@ -815,7 +815,7 @@ function applyStoryOption(s: Z2State, inst: StoryInst2, option: StoryOption2, so
     log(s, `陵容对你的情分：${TIER_LABEL[lingrongTier(s.relation)]}。`);
   }
   if (option.status) addStatus2(s, option.status);
-  relationDelta += option.relation ?? 0;
+  relationDelta += (option.relation ?? 0) + (tier ? (option.tierRelation?.[tier] ?? 0) : 0);
   if (option.evidence) gainEvidence(s, option.evidence);
   if (option.exit) {
     s.xibie = option.exit;

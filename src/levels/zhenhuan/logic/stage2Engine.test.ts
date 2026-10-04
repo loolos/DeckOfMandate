@@ -987,6 +987,26 @@ describe("zhenhuan stage 2 engine", () => {
     expect(seen.none).toBeGreaterThan(0);
   });
 
+  it("华妃发难 · 求皇后庇护: 陵容 亲厚 / 生分 costs 情分 -1, 怨怼 unchanged", () => {
+    for (const [start, after] of [
+      [3, 2],
+      [0, -1],
+      [-3, -3],
+    ] as const) {
+      let s = newStage2(41, null);
+      s.relation = start;
+      s.qingyu = 9;
+      s.shengchong = 9;
+      s.shenzi = 3;
+      onlyEvents(s, {});
+      openStory(s, "huafeiFanan");
+      const [l] = setHand(s, ["lingrongXiangzhu"]);
+      s = act(s, { type: "playCard", cardUid: l! });
+      expect(s.stories[0]!.chosenOptionId, `@${start}`).toBe("qiuHuanghou");
+      expect(s.relation, `@${start}`).toBe(after);
+    }
+  });
+
   it("陵容 answering 欢宜香浓 / 克扣份例 costs 情分 -1; a 怨怼 no-show still warms +1", () => {
     for (const id of ["huanyixiangZhuanchong", "kekouFenli"] as const) {
       for (const [start, after, resolved] of [

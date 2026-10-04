@@ -1133,6 +1133,8 @@ export type StoryOption2 = {
   readonly story: string;
   /** 陵容 card answers: the story told depends on her 情分 at the time. */
   readonly tierStory?: Record<LingrongTier, string>;
+  /** 陵容 card answers: 情分 change by her tier at the time (on top of `relation`). */
+  readonly tierRelation?: Partial<Record<LingrongTier, number>>;
   readonly setHate?: number;
   readonly setRelation?: number;
   readonly relation?: number;
@@ -1597,12 +1599,13 @@ export const STORIES2: Record<StoryId2, StoryDef2> = {
         story: "陵容去了一趟景仁宫。剪秋随即来养心殿传了皇后的话：后宫之事，自有中宫料理。皇上顺势把事情交给了皇后，华妃这才收了手。",
         tierStory: {
           close:
-            "陵容急得红了眼眶，拉着你的手说：「姐姐别怕，我去求皇后娘娘。」不多时，剪秋便来养心殿传了皇后的话，皇上顺势把事情交给了中宫，华妃这才收了手。事后你才隐约想起：陵容什么时候，和景仁宫走得这样近了？",
+            "陵容急得红了眼眶，拉着你的手说：「姐姐别怕，我去求皇后娘娘。」不多时，剪秋便来养心殿传了皇后的话，皇上顺势把事情交给了中宫，华妃这才收了手。陵容回来时裙上沾着灰，想是在景仁宫跪了许久，只笑说不碍事。你这才留意到，她在皇后跟前，原来已经说得上话了。",
           distant:
-            "陵容只说了句「我去试试」，便去了景仁宫。剪秋来养心殿传了皇后几句话，皇上便把事情交给了中宫，华妃悻悻收了手。陵容回来时神色如常，你却不知她在景仁宫说了些什么。",
+            "陵容只说了句「我去试试」，便去了景仁宫。剪秋来养心殿传了皇后几句话，皇上便把事情交给了中宫，华妃悻悻收了手。陵容回来时神色如常，只淡淡道：「妹妹在皇后跟前欠下的这份人情，姐姐记着便是。」",
           resentful:
             "陵容并不是为你。只是皇后与翊坤宫素来不睦，乐得借这个由头压一压华妃。剪秋来养心殿传了话，皇上把事情交给了中宫，华妃收了手；陵容站在皇后身后，连看都没看你一眼。",
         },
+        tierRelation: { close: -1, distant: -1 },
       },
       {
         id: "juliLizheng",
