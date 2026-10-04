@@ -289,7 +289,7 @@ function StoryCard({ state, inst, dispatch, fold }: { state: Z2State; inst: Stor
       <p className={styles.flavor}>{def.flavor}</p>
       {def.note ? <p className={styles.rule}>{def.note}</p> : null}
       {blocked ? <p className={styles.endHint}>皇上在翊坤宫，须先化解【欢宜香浓】才能处理召幸。</p> : null}
-      {inst.id === "zhaoxing" && chosen == null && summonUnwell(state) ? <p className={styles.endHint}>抱恙在身，不能侍寝：只能称病避宠或错过。</p> : null}
+      {inst.id === "zhaoxing" && chosen == null && summonUnwell(state) ? <p className={styles.endHint}>{summonUnwell(state)}，不能侍寝：只能称病避宠或错过。</p> : null}
       {storyBasicOptions2(def).map((option) => (
         <div key={option.id} className={[styles.option, chosen === option.id && styles.optionChosen].filter(Boolean).join(" ")}>
           <span>

@@ -674,6 +674,17 @@ describe("zhenhuan stage 2 engine", () => {
     expect(calm.opportunity).not.toBeNull();
   });
 
+  it("卧床静养 also rules out 侍寝: 召幸 has no card answers", () => {
+    const s = newStage2(36, null);
+    withStatus(s, "wochuangJingyang");
+    s.stories = [{ id: "zhaoxing", chosenOptionId: null }];
+    onlyEvents(s, {});
+    setHand(s, ["yirongZhengsu"]);
+    expect(storyResponsesFor(s, "yirongZhengsu")).toHaveLength(0);
+    const t = act(s, { type: "chooseStory", storyId: "zhaoxing", optionId: "chengbingBichong" });
+    expect(t.stories[0]!.chosenOptionId).toBe("chengbingBichong");
+  });
+
   it("ending lines cover the pregnancy outcome", () => {
     const s = newStage2(16, null);
     expect(endingLines(s).some((l) => l.includes("始终没有动静"))).toBe(true);

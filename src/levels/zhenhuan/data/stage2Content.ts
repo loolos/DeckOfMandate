@@ -291,8 +291,10 @@ export type StatusDef2 = {
   readonly playCap?: number;
   /** Each active instance lowers the play limit by 1 (never below 1); instances stack. */
   readonly playPenalty?: number;
-  /** Cards that cannot be played while it applies (抱恙在身); also no 侍寝. */
+  /** Cards that cannot be played while it applies (抱恙在身). */
   readonly blocksCards?: readonly CardId2[];
+  /** No 侍寝 while it applies: 召幸 can only be declined or missed. */
+  readonly noSummon?: boolean;
   readonly effectText: string;
   readonly flavor: string;
   readonly source: string;
@@ -330,7 +332,8 @@ export const STATUSES2: Record<StatusId2, StatusDef2> = {
     unremovable: true,
     drawModifier: 0,
     playCap: 1,
-    effectText: "未来 2 回合，每回合最多打出 1 张牌（静观其变的出牌数 +1 与陵容的联袂仍然有效）；结束时身子恢复为 1。不可移除。",
+    noSummon: true,
+    effectText: "未来 2 回合，每回合最多打出 1 张牌（静观其变的出牌数 +1 与陵容的联袂仍然有效），也不能侍寝（召幸只能称病避宠或错过）；结束时身子恢复为 1。不可移除。",
     flavor: "身子已亏空到了极处，太医嘱咐须得卧床好生将养。",
     source: "身子降到 0",
   },
@@ -366,6 +369,7 @@ export const STATUSES2: Record<StatusId2, StatusDef2> = {
     duration: 2,
     drawModifier: 0,
     blocksCards: ["yirongZhengsu", "jinyanShenxing"],
+    noSummon: true,
     effectText: "未来 2 回合，不能打出【仪容整肃】和【谨言慎行】，也不能侍寝（召幸只能称病避宠或错过）。多个实例分别计时。",
     flavor: "身子一阵阵发虚，连起身梳妆都勉强。",
     source: "华妃的暗手、罚跪等",
