@@ -588,6 +588,7 @@ function summonSuccess(s: Z2State, source: string): void {
     s.trial.summoned = true;
     log(s, "晋封考验：侍寝条件达成。", "good");
   }
+  applyDelta2(s, { resource: "shengchong", amount: 1 }, "侍寝");
   applyDelta2(s, { resource: "hate", amount: 1 }, "侍寝");
   if (!alive(s) || s.pregnant || (s.rank !== "guiren" && s.rank !== "pin")) return;
   const chance = Math.min(1, s.shenzi / SHENZI.divisor);
@@ -690,6 +691,8 @@ function resolveEventByCard(s: Z2State, ev: EventInst2, card: CardId2, doubleRew
   if (cost && alive(s)) applyResponsePenalty(s, cost, `${def.name}（应对的代价）`);
   if (def.kind === "opportunity") {
     applyDeltas2(s, def.reward, def.name);
+    const bonus = def.cardBonus?.[card];
+    if (bonus && alive(s)) applyDeltas2(s, bonus, `${def.name}（${CARDS2[card].name}）`);
     if (doubleReward && def.reward.length > 0 && alive(s)) {
       ev.rewardDoubled = true;
       applyDeltas2(s, def.reward, "眉庄相助联动：奖励翻倍");

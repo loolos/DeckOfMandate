@@ -472,6 +472,8 @@ export type EventDef2 = {
   readonly emoji: string;
   readonly flavor: string;
   readonly reward: readonly Delta2[];
+  /** Extra reward when this particular card takes the opportunity. */
+  readonly cardBonus?: Partial<Record<CardId2, readonly Delta2[]>>;
   readonly penalty: readonly Delta2[];
   readonly penaltyStatus?: StatusId2;
   /** 伤胎类 (§7.2). */
@@ -528,11 +530,13 @@ export const EVENTS2: Record<EventId2, EventDef2> = {
     emoji: "🪭",
     flavor: "寿康宫请你过去说说话。",
     reward: [{ resource: "qingyu", amount: 1 }],
+    cardBonus: { jinyanShenxing: [{ resource: "shengchong", amount: 1 }] },
     penalty: [],
-    resolvedText: "清誉 +1",
+    resolvedText: "清誉 +1（谨言慎行把握时另加圣宠 +1）",
+    resolvedCompact: "🪷+1 · 🤐👑+1",
     unresolvedText: "无额外效果，事件消失",
     resolvedStory: {
-      jinyanShenxing: "太后问你读过什么书，你答得谦逊稳妥。太后捻着佛珠，说这孩子沉静。",
+      jinyanShenxing: "太后问你读过什么书，你答得谦逊稳妥。太后捻着佛珠，说这孩子沉静，转头便在皇上跟前夸了你几句。",
       meizhuangXiangzhu: "眉庄姐姐陪你一同前去，你们一唱一和，太后听得开怀，赏了你们一人一串佛珠。",
     },
   },
@@ -833,16 +837,16 @@ export const EVENTS2: Record<EventId2, EventDef2> = {
     emoji: "🌺",
     flavor: "皇上连日宿在翊坤宫，满宫都闻得见欢宜香的味道。",
     reward: [],
-    penalty: [{ resource: "shengchong", amount: -2 }],
+    penalty: [{ resource: "shengchong", amount: -1 }],
     unresolvedHate: -1,
     blocksSummon: true,
     unlockHate: 7,
     double: { kind: "both", cards: ["yirongZhengsu", "jingguanQibian"] },
     doublePenalty: { effects: [{ resource: "hate", amount: 1 }] },
     resolvedCompact: "🌙✓ 🔥+1",
-    unresolvedCompact: "🌙✗ 👑-2 🔥-1",
+    unresolvedCompact: "🌙✗ 👑-1 🔥-1",
     resolvedText: "召幸恢复可处理；只恨意 +1（把皇上从翊坤宫拉了回来）",
-    unresolvedText: "本回合召幸作废、圣宠 -2；出气：恨意 -1",
+    unresolvedText: "本回合召幸作废、圣宠 -1；出气：恨意 -1",
     note: "只在有召幸的回合出现。陵容相助单张，或同一回合打出仪容整肃 + 静观其变。在场时召幸不能处理。",
     resolvedStory: {
       yirongZhengsu: "你盛装在御花园赏花，又沉得住气不争不抢。皇上终于想起了碎玉轩。",
@@ -1334,7 +1338,7 @@ export const STORIES2: Record<StoryId2, StoryDef2> = {
     name: "凤鸾承恩",
     emoji: "🌙",
     flavor: "敬事房的公公来报：今夜皇上翻了你的绿头牌。",
-    note: "打出仪容整肃 / 谨言慎行即侍寝成功（恨意 +1；贵人以后按身子判定喜脉）；打出陵容相助，效果视情分而定。不处理则错过。欢宜香浓在场时须先化解它。",
+    note: "打出仪容整肃 / 谨言慎行即侍寝成功（圣宠 +1、恨意 +1；贵人以后按身子判定喜脉）；打出陵容相助，效果视情分而定。不处理则错过。欢宜香浓在场时须先化解它。",
     defaultOptionId: "cuoguo",
     options: [
       { id: "cuoguo", name: "错过", hidden: true, effects: [], text: "无效果", story: "这一夜就这样过去了。" },
@@ -1450,7 +1454,7 @@ export const STORIES2: Record<StoryId2, StoryDef2> = {
           { resource: "shenzi", amount: -2 },
         ],
         text: "清誉 -2、圣宠 -4、身子 -2",
-        story: "你求到了景仁宫，皇后替你挡下了最难堪的一节，皇上却嫌你惹是生非，也记下了这份人情。",
+        story: "你求到了景仁宫。皇后替你挡下了最难堪的一节，又温言劝你凡事忍耐——这份人情，她是记下了。只是事情传到养心殿，皇上嫌你惹是生非，冷落了你好些日子。",
       },
       {
         id: "juliLizheng",

@@ -734,6 +734,28 @@ describe("zhenhuan stage 2 engine", () => {
     expect(resentful.shengchong).toBe(7);
   });
 
+  it("圣宠 helpers: 侍寝 +1; 谨言慎行 on 太后垂询 +1; 欢宜香浓 unanswered only -1", () => {
+    let s = newStage2(39, null);
+    s.shengchong = 6;
+    s.hate = 0;
+    s.stories = [{ id: "zhaoxing", chosenOptionId: null }];
+    onlyEvents(s, { opportunity: "taihouChuixun" });
+    s.extraPlays = 2;
+    const [y, j] = setHand(s, ["yirongZhengsu", "jinyanShenxing"]);
+    s = act(s, { type: "playCard", cardUid: y! }); // 仪容整肃 +1, 侍寝 +1
+    expect(s.shengchong).toBe(8);
+    s = act(s, { type: "playCard", cardUid: j! }); // 太后垂询 via 谨言慎行: +1
+    expect(s.shengchong).toBe(9);
+
+    let t = newStage2(40, null);
+    t.shengchong = 6;
+    t.stories = [];
+    onlyEvents(t, { huafei: ["huanyixiangZhuanchong"] });
+    setHand(t, []);
+    t = act(t, { type: "endTurn" });
+    expect(t.shengchong).toBe(5);
+  });
+
   it("ending lines cover the pregnancy outcome", () => {
     const s = newStage2(16, null);
     expect(endingLines(s).some((l) => l.includes("始终没有动静"))).toBe(true);
