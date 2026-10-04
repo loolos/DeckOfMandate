@@ -298,7 +298,7 @@ export const STATUSES: Record<StatusId, StatusDef> = {
     endStory: "闲话终于传进了养心殿：余答应连字都认不全，除夕夜那句“逆风如解意”怎会是她念的？皇上心里已经明白，那夜的人不是她。",
     effectText: "未来 2 回合，每回合开始时圣宠 +1。",
     flavor: "得了赏的宫人们在各宫、御前有意无意地提起：那位余答应，连字都认不全呢。",
-    source: "第 4 回合【倚梅园】时从手牌打出【收拢人心】（宫人透底）",
+    source: "第 4 回合【倚梅园】时从手牌打出【恩赏结心】（宫人透底）",
   },
   ermuLingtong: {
     id: "ermuLingtong",
@@ -309,7 +309,7 @@ export const STATUSES: Record<StatusId, StatusDef> = {
     drawModifier: 1,
     effectText: "未来 2 回合，每回合抓牌数 +1。多个实例分别计时、效果叠加。",
     flavor: "赏下去的银子换来了几双眼睛，各宫的动静渐渐传到你耳边。",
-    source: "打出【收拢人心】",
+    source: "打出【恩赏结心】",
   },
   baoyangZaishen: {
     id: "baoyangZaishen",
@@ -338,7 +338,7 @@ export type CardDef = {
   readonly base: readonly ResourceDelta[];
   /** Base-effect card draw (静观其变). */
   readonly baseDraw: number;
-  /** Status gained as part of the base effect (收拢人心). */
+  /** Status gained as part of the base effect (恩赏结心). */
   readonly baseStatus?: StatusId;
   readonly matches: readonly EventId[];
   /** Full mechanic text shown on the card. */
@@ -378,7 +378,7 @@ export const CARDS: Record<CardId, CardDef> = {
   },
   shoulongRenxin: {
     id: "shoulongRenxin",
-    name: "收拢人心",
+    name: "恩赏结心",
     emoji: "🤝",
     flavor: "赏下去的银子，总会换回些什么。",
     base: [],

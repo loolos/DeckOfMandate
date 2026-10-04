@@ -901,7 +901,7 @@ function resolvePlay2(s: Z2State, cardUid: string, removeStatusUid?: string): vo
     if (isLingrong && tier) relationDelta += resolveEventByLingrong(s, ev, tier);
     else resolveEventByCard(s, ev, card.id, card.id === "meizhuangXiangzhu");
     if (alive(s) && card.id === "shoulongRenxin" && ev.id === "neiwufuDiaonan") {
-      log(s, "收拢人心联动：额外抽 1 张牌。", "good");
+      log(s, "恩赏结心联动：额外抽 1 张牌。", "good");
       drawCards2(s, 1);
     }
   }

@@ -230,7 +230,7 @@ describe("zhenhuan stage 2 engine", () => {
     expect(summonBlocked(s)).toBe(false);
   });
 
-  it("一丈红: two of the set in one turn resolve it; 收拢人心 among them twice gives 滥用私刑", () => {
+  it("一丈红: two of the set in one turn resolve it; 恩赏结心 among them twice gives 滥用私刑", () => {
     const answer = (s: Z2State) => {
       s.stories = [];
       s.extraPlays = 3;
@@ -590,7 +590,7 @@ describe("zhenhuan stage 2 engine", () => {
     s = act(s, { type: "endTurn" });
     expect(s.hate).toBeLessThanOrEqual(5);
 
-    // 膳食有异 + 收拢人心 → only 圣宠 -1, no 伤胎 / 抱恙
+    // 膳食有异 + 恩赏结心 → only 圣宠 -1, no 伤胎 / 抱恙
     let t = newStage2(31, null);
     t.stories = [];
     t.shengchong = 8;

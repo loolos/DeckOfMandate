@@ -349,7 +349,7 @@ function resolvePlay(
   // 4. linkage
   if (s.outcome === "playing") {
     if (card.id === "shoulongRenxin" && crisis?.id === "neiwufuDiaonan") {
-      log(s, "收拢人心联动：额外抽 1 张牌。", "good");
+      log(s, "恩赏结心联动：额外抽 1 张牌。", "good");
       drawCards(s, 1);
     }
     if (card.id === "meizhuangXiangzhu" && opp) {
@@ -572,7 +572,7 @@ export function newGame(seed: number): ZhState {
   log(s, "—— 第 1 回合 ——");
   setEvent(s, "opportunity", OPENING.opportunity);
   setEvent(s, "crisis", OPENING.crisis);
-  log(s, "开局固定手牌：收拢人心、仪容整肃、静观其变。");
+  log(s, "开局固定手牌：恩赏结心、仪容整肃、静观其变。");
   return s;
 }
 

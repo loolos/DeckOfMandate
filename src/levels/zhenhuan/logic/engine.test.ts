@@ -184,7 +184,7 @@ describe("zhenhuan engine", () => {
     expect(s.qingyu).toBe(2);
   });
 
-  it("收拢人心 draws when it resolves 内务府刁难; 眉庄相助 doubles opportunity rewards", () => {
+  it("恩赏结心 draws when it resolves 内务府刁难; 眉庄相助 doubles opportunity rewards", () => {
     let s = newGame(9);
     s.crisis = { uid: "x", id: "neiwufuDiaonan", resolved: false };
     const handBefore = s.hand.length;
@@ -360,7 +360,7 @@ describe("zhenhuan engine", () => {
     expect(t.shengchong).toBe(2); // no-card options carry a small cost
   });
 
-  it("收拢人心: base effect is 耳目灵通 (draw +1 for the next 2 turns), not 圣宠", () => {
+  it("恩赏结心: base effect is 耳目灵通 (draw +1 for the next 2 turns), not 圣宠", () => {
     let s = newGame(5);
     const before = s.shengchong;
     s = act(s, { type: "playCard", cardUid: uidOf(s, "shoulongRenxin") });
@@ -372,7 +372,7 @@ describe("zhenhuan engine", () => {
     expect(s.statuses.some((x) => x.id === "ermuLingtong")).toBe(false);
   });
 
-  it("倚梅园: 收拢人心 grants 宫人吹风 (圣宠 +1 for 2 turns) on top of its own 耳目灵通", () => {
+  it("倚梅园: 恩赏结心 grants 宫人吹风 (圣宠 +1 for 2 turns) on top of its own 耳目灵通", () => {
     let s = advanceTo(newGame(13), 4);
     expect(s.story?.id).toBe("yimeiYuan");
     s = act(s, { type: "playCard", cardUid: giveCard(s, "shoulongRenxin") });
