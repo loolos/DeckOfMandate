@@ -715,6 +715,25 @@ describe("zhenhuan stage 2 engine", () => {
     expect(s.hate).toBe(4);
   });
 
+  it("陵容 played with nothing to answer: 情分 +1 (怨怼 still 反噬)", () => {
+    const run = (relation: number) => {
+      let s = newStage2(41, null);
+      s.relation = relation;
+      s.shengchong = 8;
+      s.stories = [];
+      onlyEvents(s, {});
+      const [l] = setHand(s, ["lingrongXiangzhu"]);
+      s = act(s, { type: "playCard", cardUid: l! });
+      return s;
+    };
+    const distant = run(0);
+    expect(distant.relation).toBe(1);
+    expect(distant.shengchong).toBe(8);
+    const resentful = run(-3);
+    expect(resentful.relation).toBe(-2);
+    expect(resentful.shengchong).toBe(7);
+  });
+
   it("圣宠 helpers: 侍寝 +1; 谨言慎行 on 太后垂询 +1; 欢宜香浓 unanswered only -1", () => {
     let s = newStage2(39, null);
     s.shengchong = 6;

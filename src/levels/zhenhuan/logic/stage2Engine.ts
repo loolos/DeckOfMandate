@@ -20,6 +20,7 @@ import {
   LATE_OPPORTUNITIES,
   LINGRONG,
   LINGRONG_BACKLASH,
+  LINGRONG_IDLE_TEXT,
   LINGRONG_COPIES,
   LINGRONG_EVENT,
   LINGRONG_NEGLECT_TEXT,
@@ -907,10 +908,14 @@ function resolvePlay2(s: Z2State, cardUid: string, removeStatusUid?: string): vo
     else log(s, `【${EVENTS2[ev.id].name}】双牌进度 1/2${d.kind === "both" ? `（还需${d.cards.filter((c) => c !== card.id).map((c) => `【${CARDS2[c].name}】`).join("")}）` : ""}。`);
   }
 
-  // 5. 怨怼 陵容 with nothing to answer: 反噬
-  if (alive(s) && isLingrong && tier === "resentful" && responses.length === 0 && singles.length === 0 && !finaleAccepts(s, card.id)) {
-    log(s, "怨怼的陵容反咬一口。", "bad");
-    applyDeltas2(s, LINGRONG_BACKLASH, "陵容反噬");
+  // 5. 陵容 with nothing to answer: just her company, 情分 +1 (a 怨怼 one still bites: 反噬)
+  if (alive(s) && isLingrong && tier && responses.length === 0 && singles.length === 0 && !finaleAccepts(s, card.id)) {
+    log(s, LINGRONG_IDLE_TEXT[tier], tier === "resentful" ? "bad" : "good");
+    if (tier === "resentful") {
+      log(s, "怨怼的陵容反咬一口。", "bad");
+      applyDeltas2(s, LINGRONG_BACKLASH, "陵容反噬");
+    }
+    relationDelta += 1;
   }
 
   // 6. extra effects

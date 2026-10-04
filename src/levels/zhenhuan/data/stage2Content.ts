@@ -974,6 +974,13 @@ export const LINGRONG_EVENT: Partial<Record<EventId2, TierTable>> = {
 /** 怨怼 陵容 played without matching anything (§5.3). */
 export const LINGRONG_BACKLASH: readonly Delta2[] = [{ resource: "shengchong", amount: -1 }];
 
+/** 陵容 played with nothing on the table for her: just keeping her company, 情分 +1. */
+export const LINGRONG_IDLE_TEXT: Record<LingrongTier, string> = {
+  close: "你留陵容在碎玉轩喝茶，两人说了半日体己话。临走时她拉着你的袖子，说下回再来。",
+  distant: "你请陵容过来坐坐。她起初拘谨得很，后来也说了几句心里话。",
+  resentful: "你请陵容过来坐坐，她句句带刺。可临出门时，她回头看了你一眼。",
+};
+
 export const LINGRONG_NEGLECT_TEXT = {
   drop: "陵容在廊下等了半日，终究没等到姐姐召她，悻悻回了宫。",
   floor: "陵容又白等了一日，眼里的光淡了些。",
