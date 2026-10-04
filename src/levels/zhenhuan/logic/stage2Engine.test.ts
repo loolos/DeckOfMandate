@@ -646,6 +646,30 @@ describe("zhenhuan stage 2 engine", () => {
     expect(s.statuses.some((x) => x.id === "baoyangZaishen")).toBe(false);
   });
 
+  it("凤鸾承恩 on a crowded turn (≥ 4 other events) pushes out the opportunity event", () => {
+    const next = (hate: number) => {
+      let s = newStage2(35, null);
+      s.rank = "guiren";
+      s.turn = 12;
+      s.hate = hate;
+      s.qingyu = 10;
+      s.shengchong = 10;
+      s.summonLast = null;
+      s.caoTriggered = true;
+      s.stories = [];
+      s.crisis = null;
+      s.huafei = [];
+      s = act(s, { type: "endTurn" });
+      expect(s.stories.some((x) => x.id === "zhaoxing")).toBe(true);
+      return s;
+    };
+    const crowded = next(9); // 机会 + 危机 + 2 华妃 = 4
+    expect(crowded.huafei).toHaveLength(2);
+    expect(crowded.opportunity).toBeNull();
+    const calm = next(0); // 机会 + 危机 only
+    expect(calm.opportunity).not.toBeNull();
+  });
+
   it("ending lines cover the pregnancy outcome", () => {
     const s = newStage2(16, null);
     expect(endingLines(s).some((l) => l.includes("始终没有动静"))).toBe(true);

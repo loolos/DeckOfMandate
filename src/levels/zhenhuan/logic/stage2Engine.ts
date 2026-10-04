@@ -498,6 +498,8 @@ const PIN_EVENT = "qingmaiBaoxi" as const;
 /** 华妃事件 evidence: the second qualifying answer turns the clues into evidence. */
 const HUAFEI_EVIDENCE_CLUES = 2;
 const CAO_EVENT = "qinmoChenqing" as const;
+/** With this many other events (贵人考验 not counted), 凤鸾承恩 takes the opportunity event's place. */
+const SUMMON_CROWD_LIMIT = 4;
 /** 琴默叩门 never comes before this turn. */
 const CAO_VISIT_MIN_TURN = 10;
 
@@ -937,6 +939,17 @@ function checkSummon(s: Z2State): void {
   openStory(s, "zhaoxing");
 }
 
+/** Too crowded a turn: 凤鸾承恩 pushes the opportunity event back to the top of its pool. */
+function makeRoomForSummon(s: Z2State): void {
+  if (!s.opportunity || !s.stories.some((st) => st.id === "zhaoxing")) return;
+  const others = s.stories.filter((st) => st.id !== "zhaoxing").length + (s.opportunity ? 1 : 0) + (s.crisis ? 1 : 0) + s.huafei.length;
+  if (others < SUMMON_CROWD_LIMIT) return;
+  const id = s.opportunity.id as OpportunityId2;
+  s.opportunityPool = [id, ...s.opportunityPool];
+  s.opportunity = null;
+  log(s, `本回合事件太多，凤鸾承恩顶掉了机会事件【${EVENTS2[id].name}】（放回机会牌池最上面）。`);
+}
+
 function beginTurn2(s: Z2State, turn: number): void {
   s.turn = turn;
   s.turnRank = s.rank;
@@ -980,6 +993,7 @@ function beginTurn2(s: Z2State, turn: number): void {
   }
   checkSummon(s);
   drawHuafei(s);
+  makeRoomForSummon(s);
 
   // 依依: 陵容 kept from last turn take up this turn's draws.
   const kept = s.hand.length;
