@@ -665,7 +665,7 @@ export const EVENTS2: Record<EventId2, EventDef2> = {
   songzhiKuisi: {
     id: "songzhiKuisi",
     kind: "huafei",
-    name: "颂芝窥伺",
+    name: "隔墙有耳",
     emoji: "👁️",
     flavor: "碎玉轩里有小宫女收了颂芝的好处，你屋里的一举一动，翊坤宫都知道了。",
     reward: [],
