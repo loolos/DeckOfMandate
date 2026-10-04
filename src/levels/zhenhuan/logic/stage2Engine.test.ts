@@ -274,7 +274,7 @@ describe("zhenhuan stage 2 engine", () => {
     expect(s.huafei).toHaveLength(1);
   });
 
-  it("圆明园 card response: 必定有孕; 贵人 → 嫔, 恨意 +5, relation -2", () => {
+  it("圆明园 card response: 必定有孕; 贵人 waits for 请脉报喜 (two cards) before 嫔", () => {
     let s = newStage2(12, null);
     s.rank = "guiren";
     s.relation = 3;
@@ -284,10 +284,56 @@ describe("zhenhuan stage 2 engine", () => {
     const [y] = setHand(s, ["yirongZhengsu"]);
     s = act(s, { type: "playCard", cardUid: y! });
     expect(s.pregnant).toBe(true);
-    expect(s.rank).toBe("pin");
+    expect(s.rank).toBe("guiren");
     expect(s.hate).toBe(5);
+    expect(s.opportunityPool[0]).toBe("qingmaiBaoxi");
+    // next turn it is on the board; one card is not enough
+    s.crisis = null;
+    s.huafei = [];
+    s.stories = [];
+    s = act(s, { type: "endTurn" });
+    expect(s.opportunity?.id).toBe("qingmaiBaoxi");
+    s.stories = [];
+    s.crisis = null;
+    s.huafei = [];
+    s.extraPlays = 5;
+    const [w, j] = setHand(s, ["wenTaiyiZhenzhi", "jinyanShenxing"]);
+    s = act(s, { type: "playCard", cardUid: w! });
+    expect(s.rank).toBe("guiren");
+    s = act(s, { type: "playCard", cardUid: j! });
+    expect(s.rank).toBe("pin");
     expect(s.relation).toBe(1);
-    expect(s.turnRank).toBe("changzai"); // plays follow the turn-start rank until next turn
+  });
+
+  it("请脉报喜 unresolved goes back into the pool; a miscarriage removes it", () => {
+    let s = newStage2(25, null);
+    s.rank = "guiren";
+    openStory(s, "yuanmingyuan");
+    onlyEvents(s, {});
+    const [y] = setHand(s, ["yirongZhengsu"]);
+    s = act(s, { type: "playCard", cardUid: y! });
+    s.crisis = null;
+    s.huafei = [];
+    s.stories = [];
+    s = act(s, { type: "endTurn" });
+    expect(s.opportunity?.id).toBe("qingmaiBaoxi");
+    s.crisis = null;
+    s.huafei = [];
+    s.stories = [];
+    setHand(s, []);
+    s = act(s, { type: "endTurn" });
+    expect(s.rank).toBe("guiren");
+    const inPool = (x: Z2State) => [...x.opportunityPool, x.opportunity?.id].includes("qingmaiBaoxi");
+    expect(inPool(s)).toBe(true);
+    // 伤胎 while pregnant → 小产 → gone
+    s.stories = [];
+    s.huafei = [];
+    s.crisis = ev(s, "hanliangZhiwu");
+    setHand(s, []);
+    s = act(s, { type: "endTurn" });
+    expect(s.pregnant).toBe(false);
+    expect(inPool(s)).toBe(false);
+    expect(s.opportunityUsed.includes("qingmaiBaoxi")).toBe(false);
   });
 
   it("罚跪 while pregnant: forced miscarriage; harsh +1, 留方 -1", () => {

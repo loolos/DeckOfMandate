@@ -397,7 +397,8 @@ export type OpportunityId2 =
   | "baohuadianQifu"
   | "supeishengToufeng"
   | "liPinJingmeng"
-  | "wenyiBaoyang";
+  | "wenyiBaoyang"
+  | "qingmaiBaoxi";
 export type CrisisId2 = "gongzhongLiuyan" | "neiwufuDiaonan" | "liyiShiwu" | "hanliangZhiwu";
 export type HuafeiId = "yikungongLiGuiju" | "kekouFenli" | "shanshiYouyi" | "yizhangHong" | "huanyixiangZhuanchong";
 export type EventId2 = OpportunityId2 | CrisisId2 | HuafeiId;
@@ -550,6 +551,24 @@ export const EVENTS2: Record<EventId2, EventDef2> = {
     resolvedStory: {
       wenTaiyiZhenzhi: "温实初连夜进宫，几服药下去公主便退了热。曹贵人抱着女儿，对你深深一拜。",
       shoulongRenxin: "你托人悄悄请来民间的名医，又替曹贵人瞒住了消息。公主好转，曹贵人记下了这份情。",
+    },
+  },
+  qingmaiBaoxi: {
+    id: "qingmaiBaoxi",
+    kind: "opportunity",
+    name: "请脉报喜",
+    emoji: "💗",
+    flavor: "你近来总是懒懒的，闻不得油腥。太医院派了人来请脉。",
+    reward: [],
+    penalty: [],
+    double: { kind: "anyTwo", cards: ["wenTaiyiZhenzhi", "shoulongRenxin", "jinyanShenxing"] },
+    resolvedText: "太医确诊喜脉，晋为嫔",
+    unresolvedText: "这回没能确诊：洗回机会牌池，下次再来",
+    note: "身怀龙裔的贵人才会出现。同一回合打出温太医相助、收拢人心、谨言慎行中任意 2 张才算确诊；小产后此事件随之消失。",
+    resolvedStory: {
+      wenTaiyiZhenzhi: "温实初诊了又诊，才敢跪下道喜。消息传到养心殿，皇上当即下旨晋你为嫔。",
+      shoulongRenxin: "你早早打点了太医院，来请脉的太医一句也不敢含糊。消息传到养心殿，皇上当即下旨晋你为嫔。",
+      jinyanShenxing: "你沉住气，等太医确诊了才让人去报喜。皇上大喜，当即下旨晋你为嫔。",
     },
   },
   gongzhongLiuyan: {

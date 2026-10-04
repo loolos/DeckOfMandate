@@ -452,6 +452,7 @@ function miscarry(s: Z2State, shenziLoss: number, cause: string): void {
   removeStatusById(s, "shenhuaiLongyi");
   s.miscarriages++;
   s.summonLast = null;
+  dropPinEvent(s);
   log(s, `小产（${cause}）：失去【身怀龙裔】。`, "bad");
   applyDeltas2(
     s,
@@ -479,14 +480,33 @@ function becomePregnant(s: Z2State, source: string): void {
   s.pregnancies++;
   revealShenzi(s);
   s.statuses.push({ uid: `s${s.nextUid++}`, id: "shenhuaiLongyi", appliesFromTurn: s.turn, remaining: 0 });
-  log(s, `💗 ${source}：太医诊出喜脉，获得【身怀龙裔】！`, "good");
+  log(s, `💗 ${source}：有了喜脉，获得【身怀龙裔】！`, "good");
   if (s.rank === "guiren") {
-    s.rank = "pin";
-    const r = RANKS.pin;
-    log(s, `有孕晋封为【${r.name}】：清誉 / 圣宠上限 ${r.cap}；下回合起每回合抓 ${r.draw} 打 ${r.plays}。`, "good");
-    lingrongOnPromotion(s);
+    // 晋嫔 waits for the 请脉报喜 opportunity: on top of the pool, so it comes next turn
+    s.opportunityPool = [PIN_EVENT, ...s.opportunityPool.filter((id) => id !== PIN_EVENT)];
+    log(s, "【请脉报喜】加入机会牌池：太医确诊后才能晋为嫔。", "good");
   }
   applyDelta2(s, { resource: "hate", amount: 3 }, "喜脉");
+}
+
+const PIN_EVENT = "qingmaiBaoxi" as const;
+
+function promoteToPin(s: Z2State): void {
+  if (s.rank !== "guiren" || !s.pregnant) return;
+  s.rank = "pin";
+  const r = RANKS.pin;
+  log(s, `有孕晋封为【${r.name}】：清誉 / 圣宠上限 ${r.cap}；下回合起每回合抓 ${r.draw} 打 ${r.plays}。`, "good");
+  lingrongOnPromotion(s);
+}
+
+/** 小产: the pending 请脉报喜 leaves the pool (and the board). */
+function dropPinEvent(s: Z2State): void {
+  const had = s.opportunityPool.includes(PIN_EVENT) || s.opportunityUsed.includes(PIN_EVENT) || (s.opportunity?.id === PIN_EVENT && !s.opportunity.resolved);
+  if (!had) return;
+  s.opportunityPool = s.opportunityPool.filter((id) => id !== PIN_EVENT);
+  s.opportunityUsed = s.opportunityUsed.filter((id) => id !== PIN_EVENT);
+  if (s.opportunity?.id === PIN_EVENT && !s.opportunity.resolved) s.opportunity = null;
+  log(s, "【请脉报喜】随之从机会牌池移除。");
 }
 
 /** 伤胎: 留方 absorbs it; otherwise 身子 -1, or a miscarriage when pregnant. */
@@ -628,6 +648,7 @@ function resolveEventByCard(s: Z2State, ev: EventInst2, card: CardId2, doubleRew
       gainEvidence(s, evidence.id);
     }
   }
+  if (ev.id === PIN_EVENT && alive(s)) promoteToPin(s);
   if (ev.id === "wenyiBaoyang" && alive(s)) {
     s.caoOwed = true;
     log(s, "曹贵人欠下了你的人情。", "good");
@@ -1021,7 +1042,15 @@ function endTurn2(s: Z2State): void {
   if (!alive(s)) return;
 
   // 12. events leave
-  if (s.opportunity && !retiredOpportunity(s, s.opportunity)) s.opportunityUsed.push(s.opportunity.id as OpportunityId2);
+  if (s.opportunity?.id === PIN_EVENT) {
+    // not confirmed yet: shuffled back into the remaining pool while still pregnant
+    if (!s.opportunity.resolved && s.pregnant && s.rank === "guiren") {
+      const [rng, shuffled] = shuffle(s.rng, [...s.opportunityPool, PIN_EVENT]);
+      s.rng = rng;
+      s.opportunityPool = shuffled;
+      log(s, "【请脉报喜】没能确诊，洗回机会牌池。");
+    }
+  } else if (s.opportunity && !retiredOpportunity(s, s.opportunity)) s.opportunityUsed.push(s.opportunity.id as OpportunityId2);
   if (s.crisis) s.crisisUsed.push(s.crisis.id as CrisisId2);
   s.opportunity = null;
   s.crisis = null;
