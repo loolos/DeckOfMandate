@@ -5,6 +5,7 @@ import {
   canPlayCard,
   endingLines,
   isFreeByLianmei,
+  lianmeiLit,
   newStage2,
   playLimit2,
   reduce2,
@@ -149,6 +150,21 @@ describe("zhenhuan stage 2 engine", () => {
     expect(isFreeByLianmei(t, b!)).toBe(false);
     t = act(t, { type: "playCard", cardUid: b! });
     expect(t.playsUsed).toBe(1);
+  });
+
+  it("联袂: at most once per turn — after one use every 陵容's 联袂 goes dim", () => {
+    const s = newStage2(3, null);
+    s.relation = 3;
+    s.stories = [];
+    onlyEvents(s, {});
+    const [a, l1, , l2, d] = setHand(s, ["yirongZhengsu", "lingrongXiangzhu", "jingguanQibian", "lingrongXiangzhu", "jinyanShenxing"]);
+    const lit = (st: Z2State) => [l1, l2].map((uid) => lianmeiLit(st, st.hand.find((c) => c.uid === uid)!));
+    expect(lit(s)).toEqual([true, true]);
+    expect(isFreeByLianmei(s, d!)).toBe(true);
+    const t = act(s, { type: "playCard", cardUid: a! });
+    expect(t.playsUsed).toBe(0);
+    expect(lit(t)).toEqual([false, false]);
+    expect(isFreeByLianmei(t, d!)).toBe(false);
   });
 
   it("掣肘: a 怨怼 陵容 blocks its neighbours but not itself; playing her lifts it", () => {
