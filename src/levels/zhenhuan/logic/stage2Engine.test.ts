@@ -488,16 +488,18 @@ describe("zhenhuan stage 2 engine", () => {
     expect(playLimit2(s)).toBe(2);
   });
 
-  it("槿汐相助: 诸事妥帖 gives +1 play next turn only; she answers 克扣份例 for 圣宠 -1", () => {
+  it("槿汐相助: 诸事妥帖 gives +1 play next turn only; she answers 克扣份例 for 清誉 -1", () => {
     let s = newStage2(24, null);
     expect([...s.drawPile, ...s.hand].filter((c) => c.id === "jinxiXiangzhu")).toHaveLength(2);
     s.stories = [];
     onlyEvents(s, { huafei: ["kekouFenli"] });
-    const sc = s.shengchong;
+    const [qy, sc] = [s.qingyu, s.shengchong];
     const [j] = setHand(s, ["jinxiXiangzhu"]);
     s = act(s, { type: "playCard", cardUid: j! });
     expect(s.huafei[0]!.resolved).toBe(true);
-    expect(s.shengchong).toBe(sc - 1);
+    expect(s.qingyu).toBe(qy - 1);
+    expect(s.shengchong).toBe(sc);
+    expect(CARDS2.jinxiXiangzhu.matches).not.toContain("liyiShiwu");
     expect(playLimit2(s)).toBe(2);
     s = act(s, { type: "endTurn" });
     expect(playLimit2(s)).toBe(3);
@@ -983,6 +985,25 @@ describe("zhenhuan stage 2 engine", () => {
     expect(seen.harm).toBeGreaterThan(0);
     expect(seen.heal).toBeGreaterThan(0);
     expect(seen.none).toBeGreaterThan(0);
+  });
+
+  it("陵容 answering 欢宜香浓 / 克扣份例 costs 情分 -1; a 怨怼 no-show still warms +1", () => {
+    for (const id of ["huanyixiangZhuanchong", "kekouFenli"] as const) {
+      for (const [start, after, resolved] of [
+        [3, 2, true],
+        [0, -1, true],
+        [-3, -2, false],
+      ] as const) {
+        let s = newStage2(40, null);
+        s.relation = start;
+        s.stories = [];
+        onlyEvents(s, { huafei: [id] });
+        const [l] = setHand(s, ["lingrongXiangzhu"]);
+        s = act(s, { type: "playCard", cardUid: l! });
+        expect(s.huafei[0]!.resolved, `${id} @${start}`).toBe(resolved);
+        expect(s.relation, `${id} @${start}`).toBe(after);
+      }
+    }
   });
 
   it("恨意 10 opens 华妃发难; resolving it drops hate to 6", () => {
