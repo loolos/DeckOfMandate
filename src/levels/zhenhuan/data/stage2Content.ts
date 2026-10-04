@@ -280,7 +280,7 @@ export const CARDS2: Record<CardId2, CardDef2> = {
     base: [],
     baseDraw: 0,
     baseStatus: "zhushiTuotie",
-    matches: ["neiwufuDiaonan", "kekouFenli", "shanshiYouyi", "songzhiKuisi", "yikungongLiGuiju", "liyiShiwu", "gongzhongLiuyan"],
+    matches: ["neiwufuDiaonan", "kekouFenli", "shanshiYouyi", "songzhiKuisi", "yikungongLiGuiju", "gongzhongLiuyan"],
     rulesText: ["获得【诸事妥帖】：下回合出牌数 +1。"],
     rulesCompact: "🗝️ 下回合🀄+1",
   },
@@ -797,7 +797,6 @@ export const EVENTS2: Record<EventId2, EventDef2> = {
     resolvedStory: {
       yirongZhengsu: "你当即整好衣饰、从容请罪，礼数周全得挑不出错处，那点狼狈也就没人再提。",
       wenTaiyiZhenzhi: "温实初替你出了一张脉案，说你那几日头晕乏力。众人这才知道你是抱病强撑。",
-      jinxiXiangzhu: "槿汐上前一步扶住你，替你理好衣襟，又从容替你告了罪。众人只当是地滑，没人再多说什么。",
     },
   },
   hanliangZhiwu: {
@@ -858,16 +857,16 @@ export const EVENTS2: Record<EventId2, EventDef2> = {
     unlockHate: 3,
     evidence: { id: "kekouZhangce", cards: ["shoulongRenxin"] },
     responsePenalty: {
-      shoulongRenxin: { effects: [{ resource: "shengchong", amount: -1 }] },
-      jinxiXiangzhu: { effects: [{ resource: "shengchong", amount: -1 }] },
+      shoulongRenxin: { effects: [{ resource: "qingyu", amount: -1 }] },
+      jinxiXiangzhu: { effects: [{ resource: "qingyu", amount: -1 }] },
     },
-    resolvedCompact: "🤝👑-1 🗂️×2？ · 🏮👑-1 · 🎶👑-1",
+    resolvedCompact: "🤝🪷-1 🗂️×2？ · 🏮🪷-1 · 🎶🪷-1",
     unresolvedCompact: "👑-1 🪷-1 ⏳→👑-2 🤒×2",
-    resolvedText: "收拢人心：只圣宠 -1，多次应对后可能搜集到华妃的罪证；槿汐相助：只圣宠 -1；陵容相助：视情分而定",
+    resolvedText: "收拢人心：只清誉 -1，多次应对后可能搜集到华妃的罪证；槿汐相助：只清誉 -1；陵容相助：视情分而定",
     unresolvedText: "延烧：圣宠 -1、清誉 -1，事件留到下回合；下回合仍未应对：圣宠 -2、获得【抱恙在身】后离场",
     resolvedStory: {
       shoulongRenxin: "你让小允子拿银子去内务府，顺手抄出了一本账册：各宫被克扣的份例，笔笔都记着翊坤宫的吩咐。",
-      jinxiXiangzhu: "槿汐去内务府走了一趟，几句软中带硬的话，炭火吃食总算补回来大半。只是皇上听说碎玉轩为份例跟内务府争执，有些不快。",
+      jinxiXiangzhu: "槿汐去内务府走了一趟，几句软中带硬的话，炭火吃食总算补回来大半。只是宫里都在传，碎玉轩为了几篓炭跟内务府斤斤计较。",
     },
   },
   shanshiYouyi: {
@@ -1063,13 +1062,13 @@ export const LINGRONG_EVENT: Partial<Record<EventId2, TierTable>> = {
     resentful: { resolves: false, relation: 1, story: "陵容只说没瞧见什么。过了几日，她却托人捎来一句：「碎玉轩的门，夜里该落锁了。」" },
   },
   kekouFenli: {
-    close: { resolves: true, relation: 1, effects: [{ resource: "shengchong", amount: -1 }], story: "陵容把自己的份例分了一半送来：「姐姐别嫌弃。咱们姐妹，原该如此。」只是内务府那边，到底还是记了你一笔。" },
-    distant: { resolves: true, effects: [{ resource: "shengchong", amount: -1 }], story: "「我一个答应的份例，哪比得上姐姐的。」陵容嘴上这么说，还是送了些炭来，只是不够撑到月底。" },
+    close: { resolves: true, relation: -1, effects: [{ resource: "qingyu", amount: -1 }], story: "陵容把自己的份例分了一半送来：「姐姐别嫌弃。咱们姐妹，原该如此。」那几日延禧宫的炭盆却早早熄了，宝鹊说她家小主夜里冻得睡不着。内务府那边，到底还是记了你一笔。" },
+    distant: { resolves: true, relation: -1, effects: [{ resource: "qingyu", amount: -1 }], story: "「我一个答应的份例，哪比得上姐姐的。」陵容嘴上这么说，还是送了些炭来，放下便走了。你后来才听说，那是她攒了一冬没舍得用的。" },
     resentful: { resolves: false, relation: 1, story: "陵容推说自己也不够用，一样东西也没送来。第二日清早，碎玉轩门口却多了一小篓炭，没留话。" },
   },
   huanyixiangZhuanchong: {
-    close: { resolves: true, effects: [{ resource: "hate", amount: 1 }], story: "陵容在御花园唱曲，把皇上从翊坤宫引了过来，又借故走开，留你陪驾。" },
-    distant: { resolves: true, effects: [{ resource: "hate", amount: 1 }], story: "陵容的歌声把皇上引了过来。「姐姐这回可欠妹妹一个人情。」" },
+    close: { resolves: true, relation: -1, effects: [{ resource: "hate", amount: 1 }], story: "陵容在御花园唱了一支新曲，把皇上从翊坤宫引了过来，又借故走开，留你陪驾。回宫的路上她一直低着头，过了许久才轻声说：「姐姐好福气。」" },
+    distant: { resolves: true, relation: -1, effects: [{ resource: "hate", amount: 1 }], story: "陵容的歌声把皇上引了过来，皇上却只随口问了句是谁在唱，便携了你的手走了。「姐姐这回可欠妹妹一个人情。」她笑着说，笑意却没到眼底。" },
     resentful: { resolves: false, relation: 1, effects: [{ resource: "shengchong", amount: -2 }], story: "陵容趁机自己去御前献唱，皇上当晚留在了她那里。次日她来请安，眼圈红红的，只说了一句「姐姐别怪我」。" },
   },
 };
@@ -1559,7 +1558,8 @@ export const STORIES2: Record<StoryId2, StoryDef2> = {
     id: "huafeiFanan",
     name: "华妃发难",
     emoji: "💥",
-    flavor: "华妃忍无可忍，要拿你开刀。",
+    flavor:
+      "年羹尧在西北又打了胜仗，华妃风头正盛。她在养心殿里哭诉了大半日，说碎玉轩那位恃宠生娇、目无尊上，屡屡冲撞翊坤宫，非要皇上严惩不可。皇上念着年家的军功，只得传你过去问话。华妃坐在一旁，眼里尽是得意。",
     note: "华妃动了真怒：清誉、圣宠、身子都要大伤，不同的应对只能在某一项上少伤一些。处理后恨意回落到 6。",
     defaultOptionId: "renfa",
     options: [
@@ -1573,7 +1573,7 @@ export const STORIES2: Record<StoryId2, StoryDef2> = {
         ],
         status: "bimenSiguo",
         text: "清誉 -3、圣宠 -3、身子 -2；闭门思过",
-        story: "你跪在翊坤宫外认罚，华妃当众数落了你半日，又罚你在烈日下抄经。回宫时你已站不稳。",
+        story: "你没有辩一句，只叩首认罪。皇上看了华妃一眼，到底还是下了旨：罚你在翊坤宫外跪抄经文，回宫后闭门思过。华妃立在廊下看了半日，你回宫时已站不稳。",
       },
       {
         id: "qiuHuanghou",
@@ -1586,14 +1586,14 @@ export const STORIES2: Record<StoryId2, StoryDef2> = {
         ],
         text: "清誉 -3、圣宠 -1、身子 -1",
         compact: "🎶 🪷-3 👑-1 🌱-1",
-        story: "陵容去了一趟景仁宫，皇后便遣剪秋来翊坤宫说了几句话，华妃这才收了手。",
+        story: "陵容去了一趟景仁宫。剪秋随即来养心殿传了皇后的话：后宫之事，自有中宫料理。皇上顺势把事情交给了皇后，华妃这才收了手。",
         tierStory: {
           close:
-            "陵容急得红了眼眶，拉着你的手说：「姐姐别怕，我去求皇后娘娘。」不多时，剪秋便来了翊坤宫，华妃这才收了手。事后你才隐约想起：陵容什么时候，和景仁宫走得这样近了？",
+            "陵容急得红了眼眶，拉着你的手说：「姐姐别怕，我去求皇后娘娘。」不多时，剪秋便来养心殿传了皇后的话，皇上顺势把事情交给了中宫，华妃这才收了手。事后你才隐约想起：陵容什么时候，和景仁宫走得这样近了？",
           distant:
-            "陵容只说了句「我去试试」，便去了景仁宫。剪秋来翊坤宫传了皇后几句话，华妃悻悻收了手。陵容回来时神色如常，你却不知她在景仁宫说了些什么。",
+            "陵容只说了句「我去试试」，便去了景仁宫。剪秋来养心殿传了皇后几句话，皇上便把事情交给了中宫，华妃悻悻收了手。陵容回来时神色如常，你却不知她在景仁宫说了些什么。",
           resentful:
-            "陵容并不是为你。只是皇后与翊坤宫素来不睦，乐得借这个由头压一压华妃。剪秋来传了话，华妃收了手；陵容站在皇后身后，连看都没看你一眼。",
+            "陵容并不是为你。只是皇后与翊坤宫素来不睦，乐得借这个由头压一压华妃。剪秋来养心殿传了话，皇上把事情交给了中宫，华妃收了手；陵容站在皇后身后，连看都没看你一眼。",
         },
       },
       {
@@ -1606,7 +1606,7 @@ export const STORIES2: Record<StoryId2, StoryDef2> = {
           { resource: "shenzi", amount: -2 },
         ],
         text: "清誉 -1、圣宠 -3、身子 -2",
-        story: "你不卑不亢，一条一条驳回去，保住了体面；华妃气得摔了茶盏，转头便在皇上跟前告了你一状。",
+        story: "你在御前不卑不亢，把华妃指的错处一条一条驳了回去，保住了体面。华妃气得当场摔了茶盏；皇上被你当着她的面顶撞，脸色难看得很，拂袖而去。",
       },
       {
         id: "lihuaDaiyu",
@@ -1618,7 +1618,7 @@ export const STORIES2: Record<StoryId2, StoryDef2> = {
           { resource: "shenzi", amount: -2 },
         ],
         text: "清誉 -3、圣宠 -1、身子 -2",
-        story: "你素衣散发，跪在养心殿外哭了一场。皇上心软，免了大半责罚，阖宫却都说你狐媚惑主。",
+        story: "你素衣散发，跪在养心殿外哭了一场，只说自己年轻不懂事，惹娘娘动了气。皇上心软，免了大半责罚；华妃却恨得咬牙，阖宫都说你狐媚惑主。",
       },
       {
         id: "jizhenBaoshen",
@@ -1629,7 +1629,7 @@ export const STORIES2: Record<StoryId2, StoryDef2> = {
           { resource: "shengchong", amount: -3 },
         ],
         text: "清誉 -3、圣宠 -3（身子不扣）",
-        story: "温实初连夜赶来施针，护住了你的身子；可华妃那边的责罚，一样也没少。",
+        story: "你在御前听着华妃一桩桩数落，忽然一阵晕眩。温实初连夜赶来施针，护住了你的身子；可皇上金口已开，该罚的一样也没少。",
       },
     ],
   },
