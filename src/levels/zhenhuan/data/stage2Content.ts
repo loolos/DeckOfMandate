@@ -703,7 +703,7 @@ export const EVENTS2: Record<EventId2, EventDef2> = {
     unlockHate: 3,
     evidence: { id: "kekouZhangce", cards: ["shoulongRenxin"] },
     responsePenalty: { shoulongRenxin: { effects: [{ resource: "shengchong", amount: -1 }] } },
-    resolvedText: "收拢人心：只圣宠 -1，可能搜集到华妃的罪证；陵容相助：视情分而定",
+    resolvedText: "收拢人心：只圣宠 -1，多次应对后可能搜集到华妃的罪证；陵容相助：视情分而定",
     unresolvedText: "延烧：圣宠 -1、清誉 -1，事件留到下回合；下回合仍未应对：圣宠 -2、获得【抱恙在身】后离场",
     resolvedStory: {
       shoulongRenxin: "你让小允子拿银子去内务府，顺手抄出了一本账册：各宫被克扣的份例，笔笔都记着翊坤宫的吩咐。",
@@ -753,7 +753,7 @@ export const EVENTS2: Record<EventId2, EventDef2> = {
     },
     doublePenalty: { effects: [{ resource: "qingyu", amount: -1 }] },
     evidence: { id: "lanyongSixing", cards: ["shoulongRenxin"] },
-    resolvedText: "打出 2 张：只清誉 -1（两张中含收拢人心，可能搜集到华妃的罪证）；只打出 1 张：回合末清誉 -1、圣宠 -1",
+    resolvedText: "打出 2 张：只清誉 -1（两张中含收拢人心，多次应对后可能搜集到华妃的罪证）；只打出 1 张：回合末清誉 -1、圣宠 -1",
     unresolvedText: "清誉 -2、圣宠 -1；出气：恨意 -1",
     note: "双牌：同一回合打出谨言慎行、仪容整肃、收拢人心中任意 2 张。",
     resolvedStory: {

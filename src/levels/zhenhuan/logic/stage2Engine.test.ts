@@ -230,16 +230,24 @@ describe("zhenhuan stage 2 engine", () => {
     expect(summonBlocked(s)).toBe(false);
   });
 
-  it("一丈红: two of the set in one turn resolve it; 收拢人心 among them gives 滥用私刑", () => {
-    let s = newStage2(9, null);
-    s.stories = [];
-    s.extraPlays = 1;
-    onlyEvents(s, { huafei: ["yizhangHong"] });
-    const [a, b] = setHand(s, ["shoulongRenxin", "jinyanShenxing"]);
-    s = act(s, { type: "playCard", cardUid: a! });
-    expect(s.huafei[0]!.resolved).toBe(false);
-    s = act(s, { type: "playCard", cardUid: b! });
-    expect(s.huafei[0]!.resolved).toBe(true);
+  it("一丈红: two of the set in one turn resolve it; 收拢人心 among them twice gives 滥用私刑", () => {
+    const answer = (s: Z2State) => {
+      s.stories = [];
+      s.extraPlays = 3;
+      onlyEvents(s, { huafei: ["yizhangHong"] });
+      const [a, b] = setHand(s, ["shoulongRenxin", "jinyanShenxing"]);
+      s = act(s, { type: "playCard", cardUid: a! });
+      expect(s.huafei[0]!.resolved).toBe(false);
+      s = act(s, { type: "playCard", cardUid: b! });
+      expect(s.huafei[0]!.resolved).toBe(true);
+      return s;
+    };
+    let s = answer(newStage2(9, null));
+    expect(s.evidence).not.toContain("lanyongSixing"); // first time: only a clue
+    expect(s.evidenceClues.lanyongSixing).toBe(1);
+    s.qingyu = 8;
+    s.shengchong = 8;
+    s = answer(s);
     expect(s.evidence).toContain("lanyongSixing");
   });
 

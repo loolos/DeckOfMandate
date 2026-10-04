@@ -12,7 +12,7 @@ export function compactEffect2(text: string): string {
       return st ? (st.permanent ? st.emoji : `${st.emoji}×${st.duration}`) : m;
     })
     .replace(/得到罪证【(.+?)】/g, "🗂️$1")
-    .replace(/可能搜集到华妃的罪证/g, "🗂️？")
+    .replace(/(多次应对后)?可能搜集到华妃的罪证/g, (_m, many?: string) => (many ? "🗂️×2？" : "🗂️？"))
     .replace(/本回合最多出牌数 ([+-]\d+)(（.*?）)?/g, "🀄$1")
     .replace(/抽 (\d+) 张牌/g, "🎴+$1")
     .replace(/抓牌 ([+-]\d+)/g, "🎴$1")

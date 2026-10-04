@@ -153,6 +153,8 @@ export type Z2State = {
   /** 陵容 uids whose 联袂 was used this turn. */
   lianmeiSpent: string[];
   evidence: EvidenceId[];
+  /** 华妃事件 evidence needs two qualifying answers: how many so far, per evidence. */
+  evidenceClues: Partial<Record<EvidenceId, number>>;
   shuhenjiaoHarm: number;
   statuses: StatusInst2[];
   playsUsed: number;
@@ -493,6 +495,8 @@ function becomePregnant(s: Z2State, source: string): void {
 }
 
 const PIN_EVENT = "qingmaiBaoxi" as const;
+/** 华妃事件 evidence: the second qualifying answer turns the clues into evidence. */
+const HUAFEI_EVIDENCE_CLUES = 2;
 const CAO_EVENT = "qinmoChenqing" as const;
 
 function promoteToPin(s: Z2State): void {
@@ -659,9 +663,16 @@ function resolveEventByCard(s: Z2State, ev: EventInst2, card: CardId2, doubleRew
   const evidence = def.evidence;
   if (evidence && alive(s)) {
     const via = def.double ? (ev.progress ?? []) : [card];
-    if (via.some((c) => evidence.cards.includes(c))) {
-      ev.evidence = evidence.id;
-      gainEvidence(s, evidence.id);
+    if (via.some((c) => evidence.cards.includes(c)) && !s.evidence.includes(evidence.id)) {
+      // 华妃事件 come back again and again: the first time only leaves a clue
+      const clues = (s.evidenceClues[evidence.id] ?? 0) + 1;
+      s.evidenceClues[evidence.id] = clues;
+      if (def.kind === "huafei" && clues < HUAFEI_EVIDENCE_CLUES) {
+        log(s, "你记下了些蛛丝马迹，只是还不足以成为罪证。", "info");
+      } else {
+        ev.evidence = evidence.id;
+        gainEvidence(s, evidence.id);
+      }
     }
   }
   if (ev.id === PIN_EVENT && alive(s)) promoteToPin(s);
@@ -1208,6 +1219,7 @@ export function newStage2(seed: number, carry: Carry | null): Z2State {
     fakuiHarsh: false,
     lianmeiSpent: [],
     evidence: [],
+    evidenceClues: {},
     shuhenjiaoHarm: 0,
     statuses: [],
     playsUsed: 0,
