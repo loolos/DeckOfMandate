@@ -482,8 +482,8 @@ function becomePregnant(s: Z2State, source: string): void {
   s.statuses.push({ uid: `s${s.nextUid++}`, id: "shenhuaiLongyi", appliesFromTurn: s.turn, remaining: 0 });
   log(s, `💗 ${source}：有了喜脉，获得【身怀龙裔】！`, "good");
   if (s.rank === "guiren") {
-    // 晋嫔 waits for the 请脉报喜 opportunity: on top of the pool, so it comes next turn
-    s.opportunityPool = [PIN_EVENT, ...s.opportunityPool.filter((id) => id !== PIN_EVENT)];
+    // 晋嫔 waits for the 请脉报喜 opportunity, put at the bottom of the pool
+    s.opportunityPool = [...s.opportunityPool.filter((id) => id !== PIN_EVENT), PIN_EVENT];
     log(s, "【请脉报喜】加入机会牌池：太医确诊后才能晋为嫔。", "good");
   }
   applyDelta2(s, { resource: "hate", amount: 3 }, "喜脉");

@@ -286,8 +286,9 @@ describe("zhenhuan stage 2 engine", () => {
     expect(s.pregnant).toBe(true);
     expect(s.rank).toBe("guiren");
     expect(s.hate).toBe(5);
-    expect(s.opportunityPool[0]).toBe("qingmaiBaoxi");
-    // next turn it is on the board; one card is not enough
+    expect(s.opportunityPool[s.opportunityPool.length - 1]).toBe("qingmaiBaoxi");
+    // once the rest of the pool is used up it comes; one card is not enough
+    s.opportunityPool = ["qingmaiBaoxi"];
     s.crisis = null;
     s.huafei = [];
     s.stories = [];
@@ -312,6 +313,7 @@ describe("zhenhuan stage 2 engine", () => {
     onlyEvents(s, {});
     const [y] = setHand(s, ["yirongZhengsu"]);
     s = act(s, { type: "playCard", cardUid: y! });
+    s.opportunityPool = ["qingmaiBaoxi"];
     s.crisis = null;
     s.huafei = [];
     s.stories = [];
