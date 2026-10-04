@@ -638,7 +638,7 @@ describe("zhenhuan stage 2 engine", () => {
     expect(t.shenzi).toBe(3);
     expect(t.statuses.some((x) => x.id === "baoyangZaishen")).toBe(false);
 
-    // 一丈红: one card → 清誉 -1、圣宠 -1 at end of turn, no 出气
+    // 一丈红: one card → 清誉 -1、噤若寒蝉 1 回合 at end of turn, no 出气
     let u = newStage2(32, null);
     u.stories = [];
     u.qingyu = 8;
@@ -652,7 +652,30 @@ describe("zhenhuan stage 2 engine", () => {
     u.crisis = null;
     u = act(u, { type: "endTurn" });
     expect(u.qingyu).toBe(q - 1);
-    expect(u.shengchong).toBe(c - 1);
+    expect(u.shengchong).toBe(c);
+    expect(u.hate).toBe(6);
+    expect(u.statuses.filter((x) => x.id === "jinruoHanchan").map((x) => x.remaining)).toEqual([1]);
+  });
+
+  it("一丈红 unresolved: 清誉 -2、噤若寒蝉 2 回合 (no 收拢人心 / 槿汐相助)、出气", () => {
+    let s = newStage2(34, null);
+    s.stories = [];
+    s.qingyu = 8;
+    s.shengchong = 8;
+    s.hate = 6;
+    onlyEvents(s, { huafei: ["yizhangHong"] });
+    setHand(s, []);
+    s = act(s, { type: "endTurn" });
+    expect(s.qingyu).toBe(6);
+    expect(s.shengchong).toBe(8);
+    expect(s.hate).toBe(5);
+    expect(s.statuses.filter((x) => x.id === "jinruoHanchan").map((x) => x.remaining)).toEqual([2]);
+    s.stories = [];
+    onlyEvents(s, { crisis: "neiwufuDiaonan" });
+    const [r, j, y] = setHand(s, ["shoulongRenxin", "jinxiXiangzhu", "yirongZhengsu"]);
+    expect(canPlayCard(s, r!)).toBe(false);
+    expect(canPlayCard(s, j!)).toBe(false);
+    expect(canPlayCard(s, y!)).toBe(true);
   });
 
   it("琴默叩门 comes only from turn 10, once 恨意 > 5", () => {
@@ -978,6 +1001,26 @@ describe("zhenhuan stage 2 engine", () => {
     expect(seen.harm).toBeGreaterThan(0);
     expect(seen.heal).toBeGreaterThan(0);
     expect(seen.none).toBeGreaterThan(0);
+  });
+
+  it("华妃发难 · 求皇后庇护: 陵容 亲厚 / 生分 costs 情分 -1, 怨怼 unchanged", () => {
+    for (const [start, after] of [
+      [3, 2],
+      [0, -1],
+      [-3, -3],
+    ] as const) {
+      let s = newStage2(41, null);
+      s.relation = start;
+      s.qingyu = 9;
+      s.shengchong = 9;
+      s.shenzi = 3;
+      onlyEvents(s, {});
+      openStory(s, "huafeiFanan");
+      const [l] = setHand(s, ["lingrongXiangzhu"]);
+      s = act(s, { type: "playCard", cardUid: l! });
+      expect(s.stories[0]!.chosenOptionId, `@${start}`).toBe("qiuHuanghou");
+      expect(s.relation, `@${start}`).toBe(after);
+    }
   });
 
   it("陵容 answering 欢宜香浓 / 克扣份例 costs 情分 -1; a 怨怼 no-show still warms +1", () => {
