@@ -139,6 +139,7 @@ function resolvedDetail(inst: EventInst2): string {
   const by = inst.resolvedBy ? `由【${CARDS2[inst.resolvedBy].name}】` : "";
   const tier = inst.lingrong ? `（陵容·${TIER_LABEL[inst.lingrong]}）` : "";
   const ev = inst.evidence ? `；得到罪证【${EVIDENCE[inst.evidence].name}】` : "";
+  if (def.kind === "huafei") return `${by}应对${tier}，只付出了应对的代价${ev}。`;
   if (def.kind !== "opportunity") return `${by}化解${tier}，回合末不受惩罚${ev}。`;
   return `${by}把握${tier}${inst.rewardDoubled ? "（眉庄相助：奖励翻倍）" : ""}${ev}。`;
 }
@@ -202,16 +203,16 @@ function EventCard({ state, inst, fold, dispatch }: { state: Z2State; inst: Even
         {tags}
       </div>
       {inst.resolved ? (
-        <ResolvedBanner icon={isOpp ? "✅" : "🛡️"} label={isOpp ? "已把握" : "已化解"} detail={resolvedDetail(inst)} story={story ?? lingrongStory} />
+        <ResolvedBanner icon={isOpp ? "✅" : "🛡️"} label={isOpp ? "已把握" : def.kind === "huafei" ? "已应对" : "已化解"} detail={resolvedDetail(inst)} story={story ?? lingrongStory} />
       ) : null}
       {!inst.resolved && inst.lingrongFailed ? <p className={styles.endHint}>陵容失效：{lingrongStory}</p> : null}
       <p className={styles.flavor}>{def.flavor}</p>
       <p className={styles.rule}>
-        <span className={styles.ruleLabel}>处理：</span>
+        <span className={styles.ruleLabel}>{def.kind === "huafei" ? "应对（仍有代价）：" : "处理："}</span>
         {expandedEffect2(def.resolvedText)}
       </p>
       <p className={styles.rule}>
-        <span className={styles.ruleLabel}>未处理（回合末）：</span>
+        <span className={styles.ruleLabel}>{def.kind === "huafei" ? "不应对（回合末）：" : "未处理（回合末）："}</span>
         {expandedEffect2(inst.burning ? "延烧未止：圣宠 -2 后离场" : def.unresolvedText)}
       </p>
       {def.note ? <p className={styles.rule}>{def.note}</p> : null}
@@ -236,6 +237,8 @@ function StoryCard({ state, inst, dispatch, fold }: { state: Z2State; inst: Stor
   const def = STORIES2[inst.id];
   const chosen = inst.chosenOptionId;
   const blocked = inst.id === "zhaoxing" && summonBlocked(state);
+  // 抱恙在身: no 侍寝, so the card answers are hidden until it is removed
+  const cardResponses = inst.id === "zhaoxing" && chosen == null && summonUnwell(state) ? [] : storyCardResponses2(def);
   const locked = chosen != null || state.pending != null || state.outcome !== "playing" || blocked;
   const chosenOption = chosen ? def.options.find((o) => o.id === chosen) : undefined;
   const defaultOption = def.options.find((o) => o.id === def.defaultOptionId)!;
@@ -303,12 +306,12 @@ function StoryCard({ state, inst, dispatch, fold }: { state: Z2State; inst: Stor
           </button>
         </div>
       ))}
-      {storyCardResponses2(def).length > 0 ? (
+      {cardResponses.length > 0 ? (
         <p className={styles.rule}>
           <span className={styles.ruleLabel}>可由手牌打出解决：</span>
         </p>
       ) : null}
-      {storyCardResponses2(def).map((option) => {
+      {cardResponses.map((option) => {
         const inHand = state.hand.some((c) => c.id === option.card);
         const lingrongNote = option.card === "lingrongXiangzhu" && tier ? `（当前情分：${TIER_EMOJI[tier]}${TIER_LABEL[tier]}）` : "";
         return (
@@ -388,7 +391,14 @@ function NoticeCard({ emoji, name, text, fold }: { emoji: string; name: string; 
           {name}
         </span>
       </div>
-      {fold.compact && !fold.expanded ? <div className={styles.compactSummary}>剧情</div> : <p className={styles.flavor}>{text}</p>}
+      {fold.compact && !fold.expanded ? (
+        <div className={styles.compactSummary}>剧情 · 无需处理</div>
+      ) : (
+        <>
+          <p className={styles.flavor}>{text}</p>
+          <p className={styles.muted}>仅为剧情交代，没有选项、不影响数值，无需处理。</p>
+        </>
+      )}
     </FoldBox>
   );
 }
@@ -534,6 +544,8 @@ function Statuses({ state, dispatch }: { state: Z2State; dispatch: Dispatch }) {
     <div className={styles.statusRow}>
       <span className={styles.muted}>状态：</span>
       <ScrollRow className={styles.statuses}>
+        {state.turn < HATE_REVEAL_TURN && state.statuses.length === 0 ? <span className={styles.muted}>无</span> : null}
+        {state.turn >= HATE_REVEAL_TURN ? (
         <div
           className={[styles.status, styles.statusPositive, evidenceOpen && styles.statusExpanded].filter(Boolean).join(" ")}
           role="button"
@@ -569,6 +581,7 @@ function Statuses({ state, dispatch }: { state: Z2State; dispatch: Dispatch }) {
             </div>
           ) : null}
         </div>
+        ) : null}
         {state.statuses.map((st) => {
           const def = STATUSES2[st.id];
           const notYet = !def.permanent && st.appliesFromTurn > state.turn;
@@ -712,7 +725,7 @@ export function Stage2Rules() {
         🎶<strong>陵容相助</strong>的效果取决于你与她的情分：亲厚时她身边的牌可以联袂免费打出；生分时会依依留在手里（留几张，下回合就少抓几张）；怨怼时会掣肘身边的牌。
       </li>
       <li>
-        🌱<strong>身子</strong>决定能否有孕（贵人以后，侍寝后按身子 ÷ 5 判定）。有孕即晋嫔，但伤胎事件和翊坤长跪都可能让你小产。
+        🌱<strong>身子</strong>决定能否有孕（贵人以后，侍寝后按身子 ÷ 5 判定）。贵人有孕后，机会事件【请脉报喜】会出现，同一回合打出两张相关的牌请太医确诊，才能晋为嫔；伤胎事件和翊坤长跪都可能让你小产。
       </li>
       <li>
         一路搜集 🗂️<strong>华妃罪证</strong>（都要打出特定的牌才能拿到）。第 30 回合末：不足 3 条关卡失败；3–4 条险胜；5 条以上完胜。
@@ -742,17 +755,18 @@ export function Stage2Game({ state, dispatch, runCode, showRules, onShowRules, o
   const tier = tierOf(state);
 
   // One-off notices during play (not when loading a save): promotion and 身子 appearing.
-  const [notice, setNotice] = useState<"guiren" | "pin" | "shenzi" | "hate" | null>(null);
-  const prev = useRef({ rank: state.rank, shenzi: state.shenziRevealed, turn: state.turn, seed: state.seed });
+  const [notice, setNotice] = useState<"guiren" | "pin" | "shenzi" | "hate" | "miscarriage" | null>(null);
+  const prev = useRef({ rank: state.rank, shenzi: state.shenziRevealed, turn: state.turn, seed: state.seed, miscarriages: state.miscarriages });
   useEffect(() => {
     const p = prev.current;
     const sameRun = p.seed === state.seed && state.actions.length > 0;
     if (sameRun && state.outcome === "playing") {
-      if (state.rank !== p.rank && (state.rank === "guiren" || state.rank === "pin")) setNotice(state.rank);
+      if (p.miscarriages === 0 && state.miscarriages > 0) setNotice("miscarriage"); // first time only
+      else if (state.rank !== p.rank && (state.rank === "guiren" || state.rank === "pin")) setNotice(state.rank);
       else if (state.shenziRevealed && !p.shenzi) setNotice("shenzi");
       else if (p.turn < HATE_REVEAL_TURN && state.turn >= HATE_REVEAL_TURN) setNotice("hate");
     }
-    prev.current = { rank: state.rank, shenzi: state.shenziRevealed, turn: state.turn, seed: state.seed };
+    prev.current = { rank: state.rank, shenzi: state.shenziRevealed, turn: state.turn, seed: state.seed, miscarriages: state.miscarriages };
   }, [state]);
 
   const endTurnReady = canEndTurn2(state) && !showRules && notice == null;
@@ -928,13 +942,30 @@ export function Stage2Game({ state, dispatch, runCode, showRules, onShowRules, o
           </p>
         </Notice>
       ) : null}
-      {notice === "hate" ? (
-        <Notice title="🔥 华妃恨意" onClose={() => setNotice(null)}>
+      {notice === "miscarriage" ? (
+        <Notice title="🥀 小产" onClose={() => setNotice(null)}>
           <p>
-            你新晋常在，得了皇上几分青眼，这便入了华妃的眼。今日要去翊坤宫请安，新出现了一项数值：<strong>🔥 华妃恨意</strong>（0–10），表示华妃有多忌恨你。你在翊坤宫的应对，决定它的初始值。
+            {state.miscarriageCause === "翊坤长跪"
+              ? "烈日下跪了这许久，腹中一阵绞痛。太医赶到时，孩子已经保不住了。"
+              : state.miscarriageCause === "身子亏空"
+                ? "身子亏空到了极处，再也护不住腹中的孩子。太医跪在榻前，只说了一句「小主节哀」。"
+                : `「${state.miscarriageCause ?? "暗手"}」伤了胎气。太医跪在榻前，只说了一句「小主节哀」。`}
           </p>
-          <p>恨意越高，每回合出现的华妃事件越多、越狠：恨意 3 起开始出现，5、7 时解锁更狠的事件；恨意到 10，华妃当场发难。</p>
-          <p className={styles.muted}>侍寝、晋封、有孕、宠冠六宫会让她更恨你；失宠、称病避宠、让她出气、小产会让她消气。</p>
+          <p>
+            失去了【身怀龙裔】；身子大伤，清誉、圣宠也跟着下降。位分不降，华妃的恨意倒是消了些。身子若亏空到 0，还得卧床静养。
+          </p>
+          <p className={styles.muted}>召幸会重新出现。要再有身孕，只能等下一次侍寝了。</p>
+        </Notice>
+      ) : null}
+      {notice === "hate" ? (
+        <Notice title="🔥 华妃恨意 · 🗂️ 罪证" onClose={() => setNotice(null)}>
+          <p>你新晋常在，入了华妃的眼。今日去翊坤宫请安，你的应对决定她的初始恨意。</p>
+          <p>
+            <strong>🔥 华妃恨意</strong>（0–10）越高，华妃事件越多越狠，到 10 她当场发难。侍寝、晋封、有孕会让她更恨你；失宠、避宠、让她出气、小产会让她消气。
+          </p>
+          <p>
+            <strong>🗂️ 搜集华妃罪证</strong>：从今日起留心华妃的罪状。第 30 回合末，罪证不足 3 条则失败，3–4 条险胜，5 条以上完胜。
+          </p>
         </Notice>
       ) : null}
       {notice === "shenzi" ? (
