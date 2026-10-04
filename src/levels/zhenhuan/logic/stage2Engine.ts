@@ -506,7 +506,7 @@ function becomePregnant(s: Z2State, source: string): void {
   s.pregnancies++;
   revealShenzi(s);
   s.statuses.push({ uid: `s${s.nextUid++}`, id: "shenhuaiLongyi", appliesFromTurn: s.turn, remaining: 0 });
-  log(s, `💗 ${source}：有了喜脉，获得【身怀龙裔】！`, "good");
+  log(s, `💗 ${source}：你有了身孕，获得【身怀龙裔】！`, "good");
   if (s.rank === "guiren") {
     // 晋嫔 waits for the 请脉报喜 opportunity, put at the bottom of the pool
     s.opportunityPool = [...s.opportunityPool.filter((id) => id !== PIN_EVENT), PIN_EVENT];

@@ -296,7 +296,7 @@ describe("zhenhuan stage 2 engine", () => {
     s = act(s, { type: "playCard", cardUid: y! });
     expect(s.pregnant).toBe(true);
     expect(s.rank).toBe("guiren");
-    expect(s.hate).toBe(5);
+    expect(s.hate).toBe(6); // 月下相伴 +3, 有孕 +3
     expect(s.opportunityPool[s.opportunityPool.length - 1]).toBe("qingmaiBaoxi");
     // once the rest of the pool is used up it comes; one card is not enough
     s.opportunityPool = ["qingmaiBaoxi"];
