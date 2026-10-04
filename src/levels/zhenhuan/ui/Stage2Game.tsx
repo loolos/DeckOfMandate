@@ -544,6 +544,8 @@ function Statuses({ state, dispatch }: { state: Z2State; dispatch: Dispatch }) {
     <div className={styles.statusRow}>
       <span className={styles.muted}>状态：</span>
       <ScrollRow className={styles.statuses}>
+        {state.turn < HATE_REVEAL_TURN && state.statuses.length === 0 ? <span className={styles.muted}>无</span> : null}
+        {state.turn >= HATE_REVEAL_TURN ? (
         <div
           className={[styles.status, styles.statusPositive, evidenceOpen && styles.statusExpanded].filter(Boolean).join(" ")}
           role="button"
@@ -579,6 +581,7 @@ function Statuses({ state, dispatch }: { state: Z2State; dispatch: Dispatch }) {
             </div>
           ) : null}
         </div>
+        ) : null}
         {state.statuses.map((st) => {
           const def = STATUSES2[st.id];
           const notYet = !def.permanent && st.appliesFromTurn > state.turn;
@@ -955,12 +958,14 @@ export function Stage2Game({ state, dispatch, runCode, showRules, onShowRules, o
         </Notice>
       ) : null}
       {notice === "hate" ? (
-        <Notice title="🔥 华妃恨意" onClose={() => setNotice(null)}>
+        <Notice title="🔥 华妃恨意 · 🗂️ 罪证" onClose={() => setNotice(null)}>
+          <p>你新晋常在，入了华妃的眼。今日去翊坤宫请安，你的应对决定她的初始恨意。</p>
           <p>
-            你新晋常在，得了皇上几分青眼，这便入了华妃的眼。今日要去翊坤宫请安，新出现了一项数值：<strong>🔥 华妃恨意</strong>（0–10），表示华妃有多忌恨你。你在翊坤宫的应对，决定它的初始值。
+            <strong>🔥 华妃恨意</strong>（0–10）越高，华妃事件越多越狠，到 10 她当场发难。侍寝、晋封、有孕会让她更恨你；失宠、避宠、让她出气、小产会让她消气。
           </p>
-          <p>恨意越高，每回合出现的华妃事件越多、越狠：恨意 3 起开始出现，5、7 时解锁更狠的事件；恨意到 10，华妃当场发难。</p>
-          <p className={styles.muted}>侍寝、晋封、有孕、宠冠六宫会让她更恨你；失宠、称病避宠、让她出气、小产会让她消气。</p>
+          <p>
+            <strong>🗂️ 搜集华妃罪证</strong>：从今日起留心华妃的罪状。第 30 回合末，罪证不足 3 条则失败，3–4 条险胜，5 条以上完胜。
+          </p>
         </Notice>
       ) : null}
       {notice === "shenzi" ? (
