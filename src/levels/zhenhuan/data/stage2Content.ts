@@ -913,7 +913,7 @@ export const STORIES2: Record<StoryId2, StoryDef2> = {
     id: "chuQingan",
     name: "初谒翊坤",
     emoji: "🏯",
-    flavor: "新人初到翊坤宫请安，华妃斜倚在榻上，有意给个下马威。",
+    flavor: "你新晋常在，在皇上跟前露了脸，终于入了华妃的眼。这日去翊坤宫请安，华妃斜倚在榻上，有意给你个下马威。",
     note: "你的应对决定华妃恨意的初始值。恭顺低头、出言顶撞须打出特定手牌。",
     defaultOptionId: "bubeiBukang",
     options: [
