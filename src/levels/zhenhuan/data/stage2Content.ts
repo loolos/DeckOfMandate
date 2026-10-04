@@ -751,9 +751,9 @@ export const EVENTS2: Record<EventId2, EventDef2> = {
         { resource: "shengchong", amount: -1 },
       ],
     },
-    doublePenalty: { effects: [{ resource: "qingyu", amount: -1 }] },
+    doublePenalty: { effects: [{ resource: "hate", amount: 1 }] },
     evidence: { id: "lanyongSixing", cards: ["shoulongRenxin"] },
-    resolvedText: "打出 2 张：只清誉 -1（两张中含收拢人心，多次应对后可能搜集到华妃的罪证）；只打出 1 张：回合末清誉 -1、圣宠 -1",
+    resolvedText: "打出 2 张：只恨意 +1（两张中含收拢人心，多次应对后可能搜集到华妃的罪证）；只打出 1 张：回合末清誉 -1、圣宠 -1",
     unresolvedText: "清誉 -2、圣宠 -1；出气：恨意 -1",
     note: "双牌：同一回合打出谨言慎行、仪容整肃、收拢人心中任意 2 张。",
     resolvedStory: {

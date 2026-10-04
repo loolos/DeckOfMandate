@@ -242,7 +242,10 @@ describe("zhenhuan stage 2 engine", () => {
       expect(s.huafei[0]!.resolved).toBe(true);
       return s;
     };
-    let s = answer(newStage2(9, null));
+    const fresh = newStage2(9, null);
+    fresh.hate = 5;
+    let s = answer(fresh);
+    expect(s.hate).toBe(6); // fully answered: only 恨意 +1
     expect(s.evidence).not.toContain("lanyongSixing"); // first time: only a clue
     expect(s.evidenceClues.lanyongSixing).toBe(1);
     s.qingyu = 8;
