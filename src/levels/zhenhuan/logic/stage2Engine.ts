@@ -946,6 +946,11 @@ function resolvePlay2(s: Z2State, cardUid: string, removeStatusUid?: string): vo
 // ---------------------------------------------------------------- turn flow
 
 function drawHuafei(s: Z2State): void {
+  // 翊坤落幕: 华妃 has no hand left to play on the last turn (延烧 ones die out too)
+  if (s.turn >= STAGE2.totalTurns) {
+    s.huafei = [];
+    return;
+  }
   const plan = huafeiDrawPlan(s.hate);
   let n = plan.fixed;
   if (plan.chance > 0 && roll(s) < plan.chance) n++;

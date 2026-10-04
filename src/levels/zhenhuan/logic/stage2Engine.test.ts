@@ -891,12 +891,14 @@ describe("zhenhuan stage 2 engine", () => {
       s.stories = [];
       s.crisis = null;
       s.huafei = [];
+      s.hate = 9;
       s.evidence = ALL.slice(0, n);
       return act(s, { type: "endTurn" });
     };
     const at30 = (n: number, cards: CardId2[]) => {
       let s = to30(n);
       expect(s.turn).toBe(30);
+      expect(s.huafei).toHaveLength(0); // no 华妃 events on the last turn
       expect(s.finale?.needed).toBe(n >= 7 ? 1 : n >= 4 ? 2 : 3);
       s.stories = [];
       onlyEvents(s, {});
