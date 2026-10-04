@@ -915,7 +915,7 @@ export const LINGRONG_EVENT: Partial<Record<EventId2, TierTable>> = {
   hanliangZhiwu: {
     close: { resolves: true, relation: 1, story: "陵容抢先端走了那碗冰果：「姐姐身子要紧，这个我替姐姐吃了。」" },
     distant: { resolves: true, story: "「姐姐如今金贵，连口凉的都吃不得了。」陵容嘴上打趣，还是把冰果端走了。" },
-    resentful: { resolves: false, relation: 1, story: "陵容看了那碗冰果一眼，什么也没说。等你吃下了，她才低声说了句「姐姐仔细身子」。" },
+    resentful: { resolves: true, effects: [{ resource: "qingyu", amount: -1 }], story: "陵容当着众人的面把冰果打翻了，说姐姐身子弱、碰不得凉的。东西是没吃成，宫里却都说你娇气。" },
   },
   kekouFenli: {
     close: { resolves: true, relation: 1, effects: [{ resource: "shengchong", amount: -1 }], story: "陵容把自己的份例分了一半送来：「姐姐别嫌弃。咱们姐妹，原该如此。」只是内务府那边，到底还是记了你一笔。" },
