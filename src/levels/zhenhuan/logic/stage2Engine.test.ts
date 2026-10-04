@@ -860,8 +860,8 @@ describe("zhenhuan stage 2 engine", () => {
     const [l] = setHand(s, ["lingrongXiangzhu"]);
     s = act(s, { type: "playCard", cardUid: l! });
     expect(s.hate).toBe(6);
-    expect(s.qingyu).toBe(before.q - 1);
-    expect(s.shengchong).toBe(before.c - 3);
+    expect(s.qingyu).toBe(before.q - 3);
+    expect(s.shengchong).toBe(before.c - 1);
     expect(s.shenzi).toBe(Math.max(0, before.z - 1));
     expect(s.stories.find((x) => x.id === "huafeiFanan")?.story).toBeUndefined(); // no 陵容 relation yet → generic story
   });

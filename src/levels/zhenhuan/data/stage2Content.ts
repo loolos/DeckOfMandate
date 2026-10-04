@@ -1452,12 +1452,12 @@ export const STORIES2: Record<StoryId2, StoryDef2> = {
         name: "求皇后庇护",
         card: "lingrongXiangzhu",
         effects: [
-          { resource: "qingyu", amount: -1 },
-          { resource: "shengchong", amount: -3 },
+          { resource: "qingyu", amount: -3 },
+          { resource: "shengchong", amount: -1 },
           { resource: "shenzi", amount: -1 },
         ],
-        text: "清誉 -1、圣宠 -3、身子 -1",
-        compact: "🎶 🪷-1 👑-3 🌱-1",
+        text: "清誉 -3、圣宠 -1、身子 -1",
+        compact: "🎶 🪷-3 👑-1 🌱-1",
         story: "陵容去了一趟景仁宫，皇后便遣剪秋来翊坤宫说了几句话，华妃这才收了手。",
         tierStory: {
           close:
