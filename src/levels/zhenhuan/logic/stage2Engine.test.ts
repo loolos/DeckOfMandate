@@ -296,7 +296,7 @@ describe("zhenhuan stage 2 engine", () => {
     s = act(s, { type: "playCard", cardUid: y! });
     expect(s.pregnant).toBe(true);
     expect(s.rank).toBe("guiren");
-    expect(s.hate).toBe(5);
+    expect(s.hate).toBe(6); // 月下相伴 +3, 有孕 +3
     expect(s.opportunityPool[s.opportunityPool.length - 1]).toBe("qingmaiBaoxi");
     // once the rest of the pool is used up it comes; one card is not enough
     s.opportunityPool = ["qingmaiBaoxi"];
@@ -683,6 +683,21 @@ describe("zhenhuan stage 2 engine", () => {
     expect(storyResponsesFor(s, "yirongZhengsu")).toHaveLength(0);
     const t = act(s, { type: "chooseStory", storyId: "zhaoxing", optionId: "chengbingBichong" });
     expect(t.stories[0]!.chosenOptionId).toBe("chengbingBichong");
+  });
+
+  it("小产 records what it actually cost (for the notice)", () => {
+    let s = newStage2(37, null);
+    s.pregnant = true;
+    s.statuses.push({ uid: "p", id: "shenhuaiLongyi", appliesFromTurn: 1, remaining: 0 });
+    s.shenzi = 5;
+    s.qingyu = 6;
+    s.shengchong = 6;
+    s.hate = 2;
+    s.stories = [];
+    onlyEvents(s, { crisis: "hanliangZhiwu" });
+    setHand(s, []);
+    s = act(s, { type: "endTurn" });
+    expect(s.miscarriageCost).toEqual({ shenzi: -3, qingyu: -1, shengchong: -1, hate: -2 });
   });
 
   it("ending lines cover the pregnancy outcome", () => {

@@ -144,6 +144,8 @@ export type Z2State = {
   miscarriages: number;
   /** What caused the latest 小产 (for the notice). */
   miscarriageCause: string | null;
+  /** What the latest 小产 actually cost (after caps), for the notice. */
+  miscarriageCost: { shenzi: number; qingyu: number; shengchong: number; hate: number } | null;
   /** Turn of the last 召幸; null = next turn at the threshold summons right away. */
   summonLast: number | null;
   caoTriggered: boolean;
@@ -480,6 +482,7 @@ function miscarry(s: Z2State, shenziLoss: number, cause: string): void {
   s.summonLast = null;
   dropPinEvent(s);
   log(s, `小产（${cause}）：失去【身怀龙裔】。`, "bad");
+  const before = { shenzi: s.shenzi, qingyu: s.qingyu, shengchong: s.shengchong, hate: s.hate };
   applyDeltas2(
     s,
     [
@@ -490,6 +493,12 @@ function miscarry(s: Z2State, shenziLoss: number, cause: string): void {
     ],
     "小产",
   );
+  s.miscarriageCost = {
+    shenzi: s.shenzi - before.shenzi,
+    qingyu: s.qingyu - before.qingyu,
+    shengchong: s.shengchong - before.shengchong,
+    hate: s.hate - before.hate,
+  };
 }
 
 /** 晋封 (贵人 / 有孕晋嫔): 陵容 feels left behind. */
@@ -506,7 +515,7 @@ function becomePregnant(s: Z2State, source: string): void {
   s.pregnancies++;
   revealShenzi(s);
   s.statuses.push({ uid: `s${s.nextUid++}`, id: "shenhuaiLongyi", appliesFromTurn: s.turn, remaining: 0 });
-  log(s, `💗 ${source}：有了喜脉，获得【身怀龙裔】！`, "good");
+  log(s, `💗 ${source}：你有了身孕，获得【身怀龙裔】！`, "good");
   if (s.rank === "guiren") {
     // 晋嫔 waits for the 请脉报喜 opportunity, put at the bottom of the pool
     s.opportunityPool = [...s.opportunityPool.filter((id) => id !== PIN_EVENT), PIN_EVENT];
@@ -1272,6 +1281,7 @@ export function newStage2(seed: number, carry: Carry | null): Z2State {
     pregnancies: 0,
     miscarriages: 0,
     miscarriageCause: null,
+    miscarriageCost: null,
     summonLast: null,
     caoTriggered: false,
     caoBefriended: false,
