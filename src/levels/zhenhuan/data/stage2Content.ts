@@ -676,17 +676,16 @@ export const EVENTS2: Record<EventId2, EventDef2> = {
     responsePenalty: {
       shoulongRenxin: { effects: [{ resource: "qingyu", amount: -1 }] },
       jingguanQibian: { effects: [{ resource: "hate", amount: 1 }] },
-      meizhuangXiangzhu: { effects: [{ resource: "qingyu", amount: -1 }] },
     },
-    resolvedText: "收拢人心：只清誉 -1；静观其变：只恨意 +1；眉庄相助：只清誉 -1；陵容相助：视情分而定",
-    resolvedCompact: "🤝🪷-1 · 🍵🔥+1 · 👭🪷-1 · 🎶",
+    resolvedText: "收拢人心：只清誉 -1；静观其变：只恨意 +1；眉庄相助：完美化解，没有代价；陵容相助：视情分而定",
+    resolvedCompact: "🤝🪷-1 · 🍵🔥+1 · 👭✨ · 🎶",
     unresolvedText: "清誉 -1、获得【流言缠身】（2 回合）",
     unresolvedCompact: "🪷-1 🗯️×2",
     note: "不论恨意高低都可能抽到（恨意 ≥ 3 才会出现华妃事件）。",
     resolvedStory: {
       shoulongRenxin: "槿汐不动声色地查了几日，揪出了那个收了好处的小宫女。打发走时动静不小，宫里都说碎玉轩的主子刻薄。",
       jingguanQibian: "你只当不知，故意让那小宫女听见几句假话。翊坤宫扑了个空，华妃气得摔了茶盏。",
-      meizhuangXiangzhu: "眉庄帮你一个个盘问宫人，内鬼是揪出来了，只是闹得两宫皆知，旁人都说碎玉轩待下太严。",
+      meizhuangXiangzhu: "眉庄不动声色地把那小宫女调去了自己宫里当差，碎玉轩清净了，翊坤宫也挑不出半点错处。",
     },
   },
   gongzhongLiuyan: {

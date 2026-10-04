@@ -775,6 +775,17 @@ describe("zhenhuan stage 2 engine", () => {
     t = act(t, { type: "playCard", cardUid: j! });
     expect(t.huafei[0]!.resolved).toBe(true);
     expect(t.hate).toBe(3);
+
+    let u = newStage2(45, null);
+    u.qingyu = 8;
+    u.shengchong = 8;
+    u.hate = 2;
+    u.stories = [];
+    onlyEvents(u, { huafei: ["songzhiKuisi"] });
+    const [m] = setHand(u, ["meizhuangXiangzhu"]);
+    u = act(u, { type: "playCard", cardUid: m! });
+    expect(u.huafei[0]!.resolved).toBe(true);
+    expect([u.qingyu, u.shengchong, u.hate]).toEqual([9, 8, 2]); // only 眉庄相助's own 清誉 +1
   });
 
   it("ending lines cover the pregnancy outcome", () => {
