@@ -478,7 +478,7 @@ function HandCard({ state, card, dispatch, fold }: { state: Z2State; card: CardI
           {def.emoji} {def.name}
           {tags}
         </div>
-        <div className={styles.compactSummary}>{cardRules(state, card).map(compactEffect2).join(" ")}</div>
+        <div className={styles.compactSummary}>{isLingrong ? "效果视情分" : cardRules(state, card).map(compactEffect2).join(" ")}</div>
         {notes}
       </FoldBox>
     );
