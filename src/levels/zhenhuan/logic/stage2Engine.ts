@@ -1002,6 +1002,7 @@ function beginTurn2(s: Z2State, turn: number): void {
   if (turn > 1) {
     if (s.shengchong <= 4) applyDelta2(s, { resource: "hate", amount: -1 }, "失宠，华妃懒得管你");
     else if (s.shengchong >= rankCap(s)) applyDelta2(s, { resource: "hate", amount: 1 }, "宠冠六宫");
+    if (s.pregnant) applyDelta2(s, { resource: "hate", amount: 1 }, "身怀龙裔，华妃如鲠在喉");
   }
   checkFanan(s);
 
