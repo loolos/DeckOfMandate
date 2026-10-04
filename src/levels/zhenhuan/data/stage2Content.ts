@@ -312,7 +312,8 @@ export type StatusId2 =
   | "wentaiyiLiufang"
   | "shenhuaiLongyi"
   | "baoyangZaishen"
-  | "bimenSiguo";
+  | "bimenSiguo"
+  | "jinghongWu";
 
 export type StatusDef2 = {
   readonly id: StatusId2;
@@ -334,6 +335,8 @@ export type StatusDef2 = {
   readonly blocksCards?: readonly CardId2[];
   /** No 侍寝 while it applies: 召幸 can only be declined or missed. */
   readonly noSummon?: boolean;
+  /** Applied at the start of every turn it is in effect. */
+  readonly turnStart?: readonly Delta2[];
   readonly effectText: string;
   readonly flavor: string;
   readonly source: string;
@@ -424,6 +427,18 @@ export const STATUSES2: Record<StatusId2, StatusDef2> = {
     effectText: "未来 2 回合，每回合出牌上限 -1（最低 1 张）。多个实例分别计时、效果叠加。",
     flavor: "碎玉轩的宫门半掩，往来的人一日少过一日。",
     source: "翊坤立威、莺儿伏罪·求情、华妃发难·认罚",
+  },
+  jinghongWu: {
+    id: "jinghongWu",
+    name: "惊鸿舞",
+    emoji: "💃",
+    tag: "positive",
+    duration: 3,
+    drawModifier: 0,
+    turnStart: [{ resource: "shengchong", amount: 1 }],
+    effectText: "未来 3 回合，每回合开始时圣宠 +1。",
+    flavor: "一舞惊鸿，皇上的目光再也没从你身上移开。",
+    source: "贵人考验期间，同一回合打出眉庄相助与陵容相助（陵容怨怼时不肯帮忙）",
   },
   shenhuaiLongyi: {
     id: "shenhuaiLongyi",
@@ -1094,6 +1109,10 @@ export const FIXED_STORY_TURNS: Partial<Record<number, StoryId2>> = {
   24: "nianShiQingtui",
 };
 export const FAKUI_TURN = 17;
+
+/** 贵人考验: 眉庄 dresses you, 陵容 sings — once per run. */
+export const JINGHONG_STORY =
+  "眉庄连夜替你赶制了舞衣，陵容在一旁清唱伴曲。你在御前跳了一支惊鸿舞，满殿寂静，皇上看得出了神。";
 /** 华妃恨意 appears (and is explained) when 初谒翊坤 begins. */
 export const HATE_REVEAL_TURN = 3;
 /** Opportunity events shuffled into the pool at the end of a given turn. */

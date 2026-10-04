@@ -13,6 +13,7 @@ import {
   EVIDENCE_THRESHOLDS,
   FINALE,
   FAKUI_TURN,
+  JINGHONG_STORY,
   FIXED_STORY_TURNS,
   GUIREN_TRIAL,
   HATE,
@@ -140,6 +141,8 @@ export type Z2State = {
   stories: StoryInst2[];
   notices: Notice[];
   trial: { active: boolean; summoned: boolean };
+  /** 惊鸿舞: 眉庄 / 陵容 played this turn during the 贵人考验; done once it has happened. */
+  jinghong: { meizhuang: boolean; lingrong: boolean; done: boolean };
   pregnant: boolean;
   pregnancies: number;
   miscarriages: number;
@@ -934,6 +937,16 @@ function resolvePlay2(s: Z2State, cardUid: string, removeStatusUid?: string): vo
     else log(s, "温太医相助：没有可移除的负面状态。");
   }
 
+  if (alive(s) && s.trial.active && !s.jinghong.done) {
+    if (card.id === "meizhuangXiangzhu") s.jinghong.meizhuang = true;
+    if (isLingrong && tier && tier !== "resentful") s.jinghong.lingrong = true;
+    if (s.jinghong.meizhuang && s.jinghong.lingrong) {
+      s.jinghong.done = true;
+      log(s, `💃 ${JINGHONG_STORY}`, "good");
+      addStatus2(s, "jinghongWu");
+    }
+  }
+
   if (alive(s) && finaleAccepts(s, card.id)) {
     const f = s.finale!;
     const first = !f.played.includes(card.id);
@@ -1014,8 +1027,14 @@ function beginTurn2(s: Z2State, turn: number): void {
   s.drawnThisTurn = 0;
   s.lianmeiSpent = [];
   s.notices = [];
+  s.jinghong.meizhuang = false;
+  s.jinghong.lingrong = false;
   log(s, `—— 第 ${turn} 回合 ——`);
 
+  for (const st of activeStatuses(s)) {
+    const effects = STATUSES2[st.id].turnStart;
+    if (effects && alive(s)) applyDeltas2(s, effects, STATUSES2[st.id].name);
+  }
   if (turn > 1) {
     if (s.shengchong <= 4) applyDelta2(s, { resource: "hate", amount: -1 }, "失宠，华妃懒得管你");
     else if (s.shengchong >= rankCap(s)) applyDelta2(s, { resource: "hate", amount: 1 }, "宠冠六宫");
@@ -1295,6 +1314,7 @@ export function newStage2(seed: number, carry: Carry | null): Z2State {
     stories: [],
     notices: [],
     trial: { active: false, summoned: false },
+    jinghong: { meizhuang: false, lingrong: false, done: false },
     pregnant: false,
     pregnancies: 0,
     miscarriages: 0,

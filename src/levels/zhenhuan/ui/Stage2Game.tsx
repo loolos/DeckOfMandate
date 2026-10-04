@@ -441,6 +441,12 @@ function TrialCard({ state, fold, dispatch }: { state: Z2State; fold: Fold; disp
         {mark(p.qingyu)} 🪷清誉 ≥ {GUIREN_TRIAL.minQingyu}（当前 {state.qingyu}）
       </p>
       <p className={styles.rule}>
+        💃 <strong>惊鸿舞</strong>：
+        {state.jinghong.done
+          ? "已献舞，未来 3 回合每回合圣宠 +1。"
+          : `同一回合打出 👭眉庄相助 与 🎶陵容相助（陵容怨怼时不肯帮忙），获得【惊鸿舞】：未来 3 回合每回合圣宠 +1（仅一次）。${state.jinghong.meizhuang || state.jinghong.lingrong ? `本回合已打出：${state.jinghong.meizhuang ? "👭" : ""}${state.jinghong.lingrong ? "🎶" : ""}` : ""}`}
+      </p>
+      <p className={styles.rule}>
         每回合<strong>回合末</strong>判定，三项全部满足即晋为贵人；第 {GUIREN_TRIAL.lastTurn} 回合末仍未满足则失败。
       </p>
     </FoldBox>
