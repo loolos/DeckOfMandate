@@ -575,7 +575,7 @@ describe("zhenhuan stage 2 engine", () => {
   });
 
   it("华妃事件 always cost something: each answering card swaps the full penalty for one lighter one", () => {
-    // 翊坤立威 + 眉庄相助 → only 闭门思过, no 清誉 loss, no 激怒
+    // 翊坤立威 + 眉庄相助 → only 恨意 +1, no 清誉 loss, no 闭门思过
     let s = newStage2(30, null);
     s.stories = [];
     s.hate = 4;
@@ -585,7 +585,8 @@ describe("zhenhuan stage 2 engine", () => {
     s = act(s, { type: "playCard", cardUid: m! });
     expect(s.huafei[0]!.resolved).toBe(true);
     expect(s.qingyu).toBe(9); // 眉庄相助's own 清誉 +1
-    expect(s.statuses.some((x) => x.id === "bimenSiguo")).toBe(true);
+    expect(s.hate).toBe(5);
+    expect(s.statuses.some((x) => x.id === "bimenSiguo")).toBe(false);
     s = act(s, { type: "endTurn" });
     expect(s.hate).toBeLessThanOrEqual(5);
 
