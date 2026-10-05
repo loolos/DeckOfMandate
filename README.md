@@ -8,33 +8,11 @@ A single-player, turn-based strategy card game that runs entirely in the browser
 
 ### The Sun King (`sunking`)
 
-Govern France as Louis XIV. You manage **Treasury / Funding / Power / Legitimacy**, resolve procedural and scripted events, and race each chapter's objectives before your mandate collapses.
+Govern France as Louis XIV across three chapters (1661–1720), managing Treasury, Funding, Power and Legitimacy while resolving scripted events and chasing each chapter's objectives. Chapters can be played in sequence or on their own. Available in English, Chinese and French.
 
-| Chapter | Id | Span | Turns |
-| --- | --- | --- | --- |
-| The Rising Sun | `firstMandate` | 1661–1675 | 15 |
-| Long Shadows at Noon | `secondMandate` | 1676–1700 | 25 |
-| Waning Sun, Vacant Crown | `thirdMandate` | 1701–1720 (Spanish Succession) | 20 |
+### Empresses in the Palace (`zhenhuan`)
 
-Chapters can be played in sequence (carrying state forward) or started on their own. Available in English, Chinese and French.
-
-### Empresses in the Palace (甄嬛传, `zhenhuan`)
-
-A palace-intrigue campaign based on the Chinese TV drama. The UI and in-game text are Chinese only. You play Zhen Huan (甄嬛), rising through the ranks of the imperial harem. Everything is drawn with emoji. There are no resources to spend; you survive on two meters, **🪷 Reputation** (清誉) and **👑 Imperial Favour** (圣宠). If either drops to 0, you lose on the spot.
-
-Your rank sets how many cards you draw and play each turn, and caps both meters. Each turn brings an opportunity event and a crisis event, plus fixed or conditional story events. Each card answers specific events. Statuses such as Slandered, Ill and Confined carry over between turns.
-
-**Stage 1** (15 turns): start as a Low-ranking Concubine (答应). You have to pass the promotion trial on turns 10–12 to become a Frequent Attendant (常在), then hold on until turn 15. Story beats include the Plum Garden (倚梅园) and the Apricot Blossom Rain (杏花微雨).
-
-**Stage 2 · The Domineering Consort Hua (华妃跋扈)** (30 turns): start as a Frequent Attendant, keeping Reputation / Favour from stage 1 (or 8 / 8 when started from the menu). New systems:
-
-- **🔥 Consort Hua's Hatred** (0–10). It appears at the first visit to Yikun Palace on turn 3. The higher it is, the more and harsher Consort Hua events you face. These events are never free: leave them alone and you take the full set of penalties, or answer with a matching card and pay one lighter cost instead. At 10, she lashes out.
-- **🎶 An Lingrong.** Her cards change with your hidden bond: *close* lets a neighbouring card be played free, *distant* makes her linger in hand, and *resentful* blocks her neighbours. Tasks she helps with can carry hidden costs, such as the scar-removing ointment.
-- **🌱 Health, summons and pregnancy.** Pass the Noble Lady (贵人) trial (turns 5–9). After that, being summoned to the emperor's bed can lead to pregnancy, and the physician's pulse check confirms it and promotes you to Consort (嫔). The kneeling punishment at Yikun Palace on turn 17 and harmful events can end in miscarriage.
-- **🕯️ Parting.** At the false-pregnancy scandal on turn 8, either Shen Meizhuang or Dr. Wen leaves you, and only one last card of theirs stays in your deck.
-- **🗂️ Evidence against Consort Hua.** Evidence comes from specific cards on specific events. Its source stays hidden until you collect it. On turn 30, the final showdown needs 1–3 cards to bring her down, and the more evidence you hold, the fewer cards it takes.
-
-Both stages save automatically and share **run codes** (`ZH1-` / `ZH2-`) that replay a run exactly, from stage 1 through stage 2.
+A palace-intrigue campaign based on the Chinese TV drama *Empresses in the Palace* (甄嬛传). Rise through the imperial harem across two stages, balancing Reputation and Imperial Favour while answering events with the right cards. Chinese only. Runs save automatically and can be replayed from a shareable run code.
 
 ## Run locally
 
