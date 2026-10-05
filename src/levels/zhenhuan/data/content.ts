@@ -217,6 +217,8 @@ export const EVENTS: Record<EventId, EventDef> = {
     resolvedStory: {
       meizhuangXiangzhu:
         "眉庄姐姐来碎玉轩说话，随手抖开你明日要穿的宫装，一眼看出腰身的缝线被人挑断了。她连夜叫自己宫里的绣娘缝好，又记下那晚进过衣房的人。你们心照不宣，暂且按下不发。",
+      shoulongRenxin:
+        "你赏了衣房的宫人几两银子，她们一五一十说出那晚谁进过衣房、谁碰过那身宫装。你连夜换了针线，又把这些名字都记在心里。",
     },
   },
 };
@@ -386,7 +388,7 @@ export const CARDS: Record<CardId, CardDef> = {
     base: [],
     baseDraw: 0,
     baseStatus: "ermuLingtong",
-    matches: ["neiwufuDiaonan", "yuDayingZhengchong"],
+    matches: ["neiwufuDiaonan", "yuDayingZhengchong", "anzhongXiaban"],
     rulesText: ["获得【耳目灵通】：未来 2 回合每回合抓牌 +1。", "联动：用它解决【内务府刁难】时，额外抽 1 张牌。"],
   },
   jingguanQibian: {
