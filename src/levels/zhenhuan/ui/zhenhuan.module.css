@@ -40,6 +40,11 @@
   background: linear-gradient(180deg, rgba(26, 16, 19, 0.55), rgba(26, 16, 19, 0.8));
 }
 
+/* Start menu: same light dimming as the Sun King menu (Game.tsx START_MENU_BACKDROP_STYLE). */
+.backdropMenu::after {
+  background: linear-gradient(rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.45));
+}
+
 .page {
   max-width: min(1280px, 96vw);
   margin: 0 auto;

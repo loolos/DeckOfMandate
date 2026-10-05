@@ -217,9 +217,18 @@ export function CardArt({ src, emoji }: { src: string | null; emoji: string }) {
   );
 }
 
-/** Full-screen chapter backdrop behind `.root` (renders nothing until the picture exists). */
-export function Backdrop({ src }: { src: string | null }) {
-  return src ? <div className={styles.backdrop} style={{ backgroundImage: `url(${src})` }} aria-hidden="true" /> : null;
+/**
+ * Full-screen chapter backdrop behind `.root` (renders nothing until the picture exists).
+ * The start menu gets the light Sun King-style dimming; a run gets a deeper one so the cards stay readable.
+ */
+export function Backdrop({ src, variant = "play" }: { src: string | null; variant?: "menu" | "play" }) {
+  return src ? (
+    <div
+      className={[styles.backdrop, variant === "menu" && styles.backdropMenu].filter(Boolean).join(" ")}
+      style={{ backgroundImage: `url(${src})` }}
+      aria-hidden="true"
+    />
+  ) : null;
 }
 
 /** Resolved banner: distinct mark per event kind, plus which card handled it. */

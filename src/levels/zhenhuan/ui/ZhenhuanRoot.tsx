@@ -115,7 +115,7 @@ export function ZhenhuanRoot() {
 
   return (
     <div className={styles.root}>
-      <Backdrop src={backdropUrl(1)} />
+      <Backdrop src={backdropUrl(1)} variant="menu" />
       <div className={styles.menuScreen}>
         <div className={styles.menuPanel} role="dialog" aria-labelledby="zh-menu-title">
           <h1 id="zh-menu-title" className={styles.menuTitle}>
