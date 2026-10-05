@@ -1296,7 +1296,7 @@ export const STORIES2: Record<StoryId2, StoryDef2> = {
   },
   jiaYunFengbo: {
     id: "jiaYunFengbo",
-    name: "假孕风波",
+    name: "菊残霜冷",
     emoji: "⚖️",
     flavor: "眉庄有孕本是喜事，却是华妃串通太医刘畏卿设下的局：药物推迟月信，宫女茯苓被收买。",
     note: "眉庄与温太医，终究要有一人离你远去。退场一方的牌会带上【惜别】标签：下次抓到时只留一张，这是最后一次相助。",
