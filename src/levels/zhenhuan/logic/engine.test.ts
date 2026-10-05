@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { CardId, StatusId } from "../data/content";
-import { CARDS, EVENTS, STATUSES, STORIES } from "../data/content";
+import { CARDS, EVENTS, RANKS, STATUSES, STORIES } from "../data/content";
 import {
   drawCountForTurn,
   newGame,
@@ -79,7 +79,7 @@ describe("zhenhuan engine", () => {
   it("one card resolves both matching events for one play", () => {
     let s = newGame(1);
     s = act(s, { type: "playCard", cardUid: uidOf(s, "yirongZhengsu") });
-    expect(s.shengchong).toBe(4); // 2 + base 1 + 皇后赏识 1
+    expect(s.shengchong).toBe(4); // 2 + base 1 + 中宫垂青 1
     expect(s.opportunity?.resolved).toBe(true);
     expect(s.crisis?.resolved).toBe(true);
     expect(s.playsUsed).toBe(1);
@@ -252,18 +252,21 @@ describe("zhenhuan engine", () => {
     expect(s.envyUsed).toContain("shichongErjiao");
   });
 
-  it("暗中下绊 → 抱恙在身 blocks 仪容整肃 / 谨言慎行 from next turn; 温太医相助 removes it", () => {
+  it("暗中下绊 → 清誉 -1 and 失仪蒙羞 (blocks 仪容整肃, draw -1 for 4 turns); 温太医相助 removes it", () => {
     let s = newGame(25);
     s.crisis!.resolved = true;
     s.envy = { uid: "e", id: "anzhongXiaban", resolved: false };
+    const qingyuBefore = s.qingyu;
     s = act(s, { type: "endTurn" });
-    expect(s.statuses.map((x) => x.id)).toEqual(["baoyangZaishen"]);
+    expect(s.qingyu).toBe(qingyuBefore - 1);
+    expect(s.statuses.map((x) => x.id)).toEqual(["shiyiMengxiu"]);
+    expect(s.statuses[0]!.remaining).toBe(4);
+    expect(drawCountForTurn(s, s.turn)).toBe(RANKS[s.rank].draw - 1);
 
     const blocked = giveCard(s, "yirongZhengsu");
-    const blocked2 = giveCard(s, "jinyanShenxing");
     expect(reduce(s, { type: "playCard", cardUid: blocked })).toBe(s);
-    expect(reduce(s, { type: "playCard", cardUid: blocked2 })).toBe(s);
-    s.extraPlays = 1;
+    s.extraPlays = 2;
+    s = act(s, { type: "playCard", cardUid: giveCard(s, "jinyanShenxing") }); // not blocked
     s = act(s, { type: "playCard", cardUid: giveCard(s, "wenTaiyiZhenzhi") });
     expect(s.statuses).toHaveLength(0);
     s = act(s, { type: "playCard", cardUid: blocked });

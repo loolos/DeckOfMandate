@@ -60,8 +60,9 @@ import {
   type Z2Action,
   type Z2State,
 } from "../logic/stage2Engine";
+import { cardArtUrl, eventArtUrl, specialArtUrl, storyArtUrl } from "./art";
 import { CompactModeToggle } from "./CompactModeToggle";
-import { FoldBox, LogView, Pile, ResolvedBanner, ScrollRow, TagChip, activateOnKey, countBy, isTypingTarget, type Fold } from "./common";
+import { CardArt, FoldBox, LogView, Pile, ResolvedBanner, ScrollRow, TagChip, activateOnKey, countBy, isTypingTarget, type Fold } from "./common";
 import { compactEffect2, expandedEffect2 } from "./effectText2";
 import styles from "./zhenhuan.module.css";
 
@@ -207,6 +208,7 @@ function EventCard({ state, inst, fold, dispatch }: { state: Z2State; inst: Even
         </span>
         {tags}
       </div>
+      <CardArt src={eventArtUrl(inst.id)} emoji={def.emoji} />
       {inst.resolved ? (
         <ResolvedBanner icon={isOpp ? "✅" : "🛡️"} label={isOpp ? "已把握" : def.kind === "huafei" ? "已应对" : "已化解"} detail={resolvedDetail(inst)} story={story ?? lingrongStory} />
       ) : null}
@@ -283,6 +285,7 @@ function StoryCard({ state, inst, dispatch, fold }: { state: Z2State; inst: Stor
         </span>
         {tag}
       </div>
+      <CardArt src={storyArtUrl(inst.id)} emoji={def.emoji} />
       {chosenOption ? (
         <ResolvedBanner
           icon="📝"
@@ -374,6 +377,7 @@ function FinaleCard({ state, fold, dispatch }: { state: Z2State; fold: Fold; dis
         </span>
         {tags}
       </div>
+      <CardArt src={specialArtUrl("finale")} emoji={FINALE.emoji} />
       {done ? <ResolvedBanner icon="👑" label="大局已定" detail={finaleDoneStory(state.evidence.length)} /> : null}
       <p className={styles.flavor}>{FINALE.flavor[tier]}</p>
       {f.stories.map((line) => (
@@ -433,6 +437,7 @@ function TrialCard({ state, fold, dispatch }: { state: Z2State; fold: Fold; disp
         </span>
         {tags}
       </div>
+      <CardArt src={specialArtUrl("guirenTrial")} emoji={GUIREN_TRIAL.emoji} />
       {p.all ? <ResolvedBanner icon="🏮" label="条件已满足" detail="保持到回合末即可晋为贵人。" /> : null}
       <p className={styles.flavor}>{GUIREN_TRIAL.flavor}</p>
       <p className={styles.check}>
@@ -571,6 +576,7 @@ function HandCard({ state, card, dispatch, fold }: { state: Z2State; card: CardI
         </span>
         {tags}
       </div>
+      <CardArt src={cardArtUrl(card.id)} emoji={def.emoji} />
       <p className={styles.flavor}>{def.flavor}</p>
       {cardRules(state, card).map((line) => (
         <p key={line} className={styles.rule}>

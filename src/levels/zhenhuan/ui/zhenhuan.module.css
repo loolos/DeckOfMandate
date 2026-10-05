@@ -18,6 +18,31 @@
     radial-gradient(ellipse at top, rgba(194, 71, 79, 0.18), transparent 60%),
     var(--zh-bg);
   color: var(--zh-text);
+  /* keeps the fixed backdrop (z-index -1) above this background and below the content */
+  isolation: isolate;
+}
+
+/* Chapter backdrop: pinned to the viewport so tall pages don't stretch it; darkened for legibility. */
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  pointer-events: none;
+}
+
+.backdrop::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(26, 16, 19, 0.55), rgba(26, 16, 19, 0.8));
+}
+
+/* Start menu: same light dimming as the Sun King menu (Game.tsx START_MENU_BACKDROP_STYLE). */
+.backdropMenu::after {
+  background: linear-gradient(rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.45));
 }
 
 .page {
@@ -383,6 +408,32 @@
 .cardEmoji {
   font-size: 1.4rem;
   margin-right: 0.3rem;
+}
+
+/* Card art (docs/art-spec.md): fixed 4:3 frame, emoji placeholder until the picture exists. */
+.cardArt {
+  aspect-ratio: 4 / 3;
+  width: 100%;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--zh-border);
+  background: radial-gradient(ellipse at center, var(--zh-panel-2), var(--zh-bg));
+}
+
+.cardArt img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.cardArtPlaceholder {
+  display: grid;
+  place-items: center;
+  height: 100%;
+  font-size: 3rem;
+  opacity: 0.55;
+  user-select: none;
 }
 
 .cardKind {

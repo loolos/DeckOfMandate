@@ -201,6 +201,36 @@ export function FoldBox({
   );
 }
 
+/**
+ * 4:3 picture under a hand / event card's header (docs/art-spec.md). Until the art exists it shows
+ * a placeholder with the card's emoji, so cards keep the same height either way.
+ */
+export function CardArt({ src, emoji }: { src: string | null; emoji: string }) {
+  return (
+    <div className={styles.cardArt} aria-hidden="true">
+      {src ? (
+        <img src={src} alt="" loading="lazy" decoding="async" draggable={false} />
+      ) : (
+        <span className={styles.cardArtPlaceholder}>{emoji}</span>
+      )}
+    </div>
+  );
+}
+
+/**
+ * Full-screen chapter backdrop behind `.root` (renders nothing until the picture exists).
+ * The start menu gets the light Sun King-style dimming; a run gets a deeper one so the cards stay readable.
+ */
+export function Backdrop({ src, variant = "play" }: { src: string | null; variant?: "menu" | "play" }) {
+  return src ? (
+    <div
+      className={[styles.backdrop, variant === "menu" && styles.backdropMenu].filter(Boolean).join(" ")}
+      style={{ backgroundImage: `url(${src})` }}
+      aria-hidden="true"
+    />
+  ) : null;
+}
+
 /** Resolved banner: distinct mark per event kind, plus which card handled it. */
 export function ResolvedBanner({ icon, label, detail, story }: { icon: string; label: string; detail: string; story?: string }) {
   return (

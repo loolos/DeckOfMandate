@@ -68,7 +68,7 @@ export const EVENTS: Record<EventId, EventDef> = {
   huanghouShangshi: {
     id: "huanghouShangshi",
     kind: "opportunity",
-    name: "皇后赏识",
+    name: "中宫垂青",
     emoji: "🏮",
     flavor: "景仁宫晨省，新入宫的小主们按位分站在最末。皇后娘娘的目光扫过来，在你身上停了一停。",
     reward: [{ resource: "shengchong", amount: 1 }],
@@ -206,15 +206,15 @@ export const EVENTS: Record<EventId, EventDef> = {
     kind: "envy",
     name: "暗中下绊",
     emoji: "🪤",
-    flavor: "送来的吃食里，似乎多了些不该有的东西。",
+    flavor: "你明日赴宴要穿的那身宫装，夜里似乎被人动过。",
     reward: [],
-    penalty: [],
-    penaltyStatus: "baoyangZaishen",
+    penalty: [{ resource: "qingyu", amount: -1 }],
+    penaltyStatus: "shiyiMengxiu",
     resolvedText: "移除事件，不产生负面状态",
-    unresolvedText: "获得状态【抱恙在身】",
+    unresolvedText: "清誉 -1、获得状态【失仪蒙羞】",
     resolvedStory: {
       meizhuangXiangzhu:
-        "眉庄姐姐尝出那碗燕窝的味道不对，悄悄拦了下来，又叫人顺藤摸瓜查到送膳的小太监。你们心照不宣，暂且按下不发。",
+        "眉庄姐姐来碎玉轩说话，随手抖开你明日要穿的宫装，一眼看出腰身的缝线被人挑断了。她连夜叫自己宫里的绣娘缝好，又记下那晚进过衣房的人。你们心照不宣，暂且按下不发。",
     },
   },
 };
@@ -248,7 +248,7 @@ export const ENVY_TRIGGER = { firstTurn: 6, minShengchong: 5, interval: 2 };
 
 // ---------------------------------------------------------------- statuses
 
-export type StatusId = "liuyanChanshen" | "gongrenChuifeng" | "ermuLingtong" | "baoyangZaishen";
+export type StatusId = "liuyanChanshen" | "gongrenChuifeng" | "ermuLingtong" | "shiyiMengxiu";
 export type StatusTag = "negative" | "positive";
 
 export const STATUS_TAG_LABEL: Record<StatusTag, string> = { negative: "负面", positive: "正面" };
@@ -311,16 +311,16 @@ export const STATUSES: Record<StatusId, StatusDef> = {
     flavor: "赏下去的银子换来了几双眼睛，各宫的动静渐渐传到你耳边。",
     source: "打出【收拢人心】",
   },
-  baoyangZaishen: {
-    id: "baoyangZaishen",
-    name: "抱恙在身",
-    emoji: "🥀",
+  shiyiMengxiu: {
+    id: "shiyiMengxiu",
+    name: "失仪蒙羞",
+    emoji: "🧵",
     tag: "negative",
-    duration: 3,
-    drawModifier: 0,
-    blocksCards: ["yirongZhengsu", "jinyanShenxing"],
-    effectText: "未来 3 回合，不能打出【仪容整肃】和【谨言慎行】。",
-    flavor: "身子一阵阵发虚，连起身梳妆都勉强。",
+    duration: 4,
+    drawModifier: -1,
+    blocksCards: ["yirongZhengsu"],
+    effectText: "未来 4 回合，不能打出【仪容整肃】，每回合抓牌数 -1。",
+    flavor: "赴宴时宫装腰身当众绽开，满座哗然。之后好些日子你闭门少出，既没心思妆扮，各宫的消息也传得少了。",
     source: "回合末未处理的嫉妒事件【暗中下绊】",
   },
 };
