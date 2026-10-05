@@ -29,6 +29,7 @@ import {
   type EventId2,
   type TagId2,
 } from "../data/stage2Content";
+import { CAMPAIGN_TITLE } from "../data/content";
 import {
   blockedByChezhou,
   blockingStatusName,
@@ -883,7 +884,7 @@ export function Stage2Game({ state, dispatch, runCode, showRules, onShowRules, o
     <div className={[styles.page, compact && styles.compact].filter(Boolean).join(" ")}>
       <header className={styles.header}>
         <div>
-          <h1 className={styles.title}>甄嬛传 · {STAGE2.title}</h1>
+          <h1 className={styles.title}>{CAMPAIGN_TITLE} · {STAGE2.title}</h1>
           <div className={styles.headerMeta}>
             <span className={`${styles.badge} ${styles.badgeGold}`}>
               第 {state.turn} / {STAGE2.totalTurns} 回合

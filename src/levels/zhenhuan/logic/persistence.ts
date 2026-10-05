@@ -1,7 +1,8 @@
 /**
- * 甄嬛传 autosave + run codes. Both store only seed + action list and rebuild the state with
+ * 紫禁云深·甄嬛 autosave + run codes. Both store only seed + action list and rebuild the state with
  * `replay`, so a save or code always reproduces the exact run. Kept separate from Sun King saves.
  */
+import { CAMPAIGN_TITLE } from "../data/content";
 import { replay, type ZhAction, type ZhState } from "./engine";
 
 const SAVE_KEY = "deck-of-mandate.zhenhuan.save.v1";
@@ -65,7 +66,7 @@ export function encodeRunCode(state: ZhState): string {
 
 export function decodeRunCode(code: string): { ok: true; state: ZhState } | { ok: false; error: string } {
   const trimmed = code.trim();
-  if (!trimmed.startsWith(RUN_CODE_PREFIX)) return { ok: false, error: "不是甄嬛传战役的对局码" };
+  if (!trimmed.startsWith(RUN_CODE_PREFIX)) return { ok: false, error: `不是${CAMPAIGN_TITLE}战役的对局码` };
   try {
     const [seedText, ...rest] = fromBase64Url(trimmed.slice(RUN_CODE_PREFIX.length)).split(" ").filter(Boolean);
     const seed = Number(seedText);

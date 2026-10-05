@@ -7,6 +7,7 @@ import {
   CHAPTER,
   ENVY_TRIGGER,
   EVENT_KIND_LABEL,
+  CAMPAIGN_TITLE,
   EVENTS,
   PROMOTION_TRIAL,
   RANKS,
@@ -756,7 +757,7 @@ export function ZhenhuanGame({ state, dispatch, showRules, onShowRules, onRestar
     <div className={[styles.page, compact && styles.compact].filter(Boolean).join(" ")}>
       <header className={styles.header}>
         <div>
-          <h1 className={styles.title}>甄嬛传 · {CHAPTER.title}</h1>
+          <h1 className={styles.title}>{CAMPAIGN_TITLE} · {CHAPTER.title}</h1>
           <div className={styles.headerMeta}>
             <span className={`${styles.badge} ${styles.badgeGold}`}>
               第 {state.turn} / {CHAPTER.totalTurns} 回合
