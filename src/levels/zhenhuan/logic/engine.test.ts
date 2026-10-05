@@ -79,7 +79,7 @@ describe("zhenhuan engine", () => {
   it("one card resolves both matching events for one play", () => {
     let s = newGame(1);
     s = act(s, { type: "playCard", cardUid: uidOf(s, "yirongZhengsu") });
-    expect(s.shengchong).toBe(4); // 2 + base 1 + 皇后赏识 1
+    expect(s.shengchong).toBe(4); // 2 + base 1 + 中宫垂青 1
     expect(s.opportunity?.resolved).toBe(true);
     expect(s.crisis?.resolved).toBe(true);
     expect(s.playsUsed).toBe(1);

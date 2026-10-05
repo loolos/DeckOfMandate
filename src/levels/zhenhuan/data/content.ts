@@ -68,7 +68,7 @@ export const EVENTS: Record<EventId, EventDef> = {
   huanghouShangshi: {
     id: "huanghouShangshi",
     kind: "opportunity",
-    name: "皇后赏识",
+    name: "中宫垂青",
     emoji: "🏮",
     flavor: "景仁宫晨省，新入宫的小主们按位分站在最末。皇后娘娘的目光扫过来，在你身上停了一停。",
     reward: [{ resource: "shengchong", amount: 1 }],

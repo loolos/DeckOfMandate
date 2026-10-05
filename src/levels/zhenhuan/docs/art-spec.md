@@ -84,7 +84,7 @@ src/levels/zhenhuan/assets/
 
 | id | 名称 | 类别 | 出现关卡 |
 |---|---|---|---|
-| `huanghouShangshi` | 🏮 皇后赏识（第二关名为「中宫垂青」） | 机会 | 一、二 |
+| `huanghouShangshi` | 🏮 中宫垂青 | 机会 | 一、二 |
 | `taihouChuixun` | 🪭 太后垂询 | 机会 | 一、二 |
 | `wenTaiyiQingmai` | 🩺 温太医请脉 | 机会 | 一 |
 | `jingxinTiaoyang` | 🌿 静心调养 | 机会 | 二 |
