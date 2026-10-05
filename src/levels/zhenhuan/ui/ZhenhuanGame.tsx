@@ -40,7 +40,7 @@ import {
   type ZhState,
 } from "../logic/engine";
 import { encodeRunCode } from "../logic/persistence";
-import { cardArtUrl, eventArtUrl, storyArtUrl } from "./art";
+import { cardArtUrl, eventArtUrl, specialArtUrl, storyArtUrl } from "./art";
 import { CompactModeToggle } from "./CompactModeToggle";
 import { RulesSummary } from "./RulesSummary";
 import { compactEffect, expandedEffect } from "./effectText";
@@ -375,6 +375,7 @@ function TrialCard({ state, fold, dispatch }: { state: ZhState; fold: Fold; disp
         </span>
         <span className={styles.tagGroup}>{trialTags}</span>
       </div>
+      <CardArt src={specialArtUrl("promotionTrial")} emoji={PROMOTION_TRIAL.emoji} />
       {p.all ? (
         <ResolvedBanner icon="🏮" label="条件已满足" detail="保持到回合末（危机惩罚结算之后）即可晋封为常在。" />
       ) : null}

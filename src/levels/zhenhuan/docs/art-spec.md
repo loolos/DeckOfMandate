@@ -8,7 +8,7 @@
 |---|---|---|---|---|
 | 手牌配图 | **4:3**（横） | 1024 × 768 | WebP，≤ 100 KiB | 8 |
 | 事件配图 | **4:3**（横） | 1024 × 768 | WebP，≤ 100 KiB | 23 |
-| 剧情配图 | **4:3**（横） | 1024 × 768 | WebP，≤ 100 KiB | 13（14 个剧情事件，两个「翊坤长跪」共用一张） |
+| 剧情配图 | **4:3**（横） | 1024 × 768 | WebP，≤ 100 KiB | 16（14 个剧情事件，两个「翊坤长跪」共用一张；另有两个晋封考验和终局） |
 | 关卡背景 | **16:9**（横） | 1920 × 1080 | WebP，≤ 300 KiB | 2（第一关、第二关各一张） |
 
 - 原图分辨率不低于交付尺寸（手牌 / 事件建议 ≥ 1600 × 1200，背景建议 ≥ 2560 × 1440），比例必须与上表一致；比例不对的原图先裁好再压缩，不要靠拉伸。
@@ -25,6 +25,7 @@ src/levels/zhenhuan/assets/
   cards/<CardId2>.webp        手牌，如 cards/yirongZhengsu.webp
   events/<EventId2>.webp      事件，如 events/yizhangHong.webp
   stories/<StoryId2>.webp     剧情，如 stories/yimeiYuan.webp
+  stories/promotionTrial.webp 第一关晋封考验（另有 guirenTrial、finale）
   backdrops/stage1.webp       第一关背景（同时用作开始菜单背景）
   backdrops/stage2.webp       第二关背景
 ```
@@ -60,7 +61,8 @@ src/levels/zhenhuan/assets/
 - 图片使用 `loading="lazy"` 与 `decoding="async"`；卡名已在卡头显示，图片按装饰图处理（`alt=""`）。
 - 背景固定在视口上（页面滚动时不拉伸），上方叠一层深色渐变；卡片、数值等面板保持不透明，不受背景影响。缺背景图时沿用原来的纯色背景。
 - 剧情卡同样在卡头下方显示 4:3 配图框；`fakuiPregnant`（有孕版翊坤长跪）沿用 `fakuiPlain` 的图，见 `ui/art.ts` 的 `STORY_ART_ALIAS`。
-- 晋封考验、惜别卡、终局卡本期不配图，仍为纯文字卡。
+- 晋封考验（两关）与终局「翊坤落幕」也显示配图框，文件名用固定键 `promotionTrial` / `guirenTrial` / `finale`（`ui/art.ts` 的 `SPECIAL_ART_KEYS`）。
+- 惜别版的眉庄相助、温太医相助沿用原卡配图，不单独出图。
 
 ## 5. 清单
 
@@ -105,7 +107,7 @@ src/levels/zhenhuan/assets/
 | `yizhangHong` | 🩸 一丈红 | 华妃 | 二 |
 | `huanyixiangZhuanchong` | 🌺 欢宜香浓 | 华妃 | 二 |
 
-### 剧情（13）
+### 剧情与考验（16）
 
 | id | 名称 | 关卡 |
 |---|---|---|
@@ -122,6 +124,9 @@ src/levels/zhenhuan/assets/
 | `nianShiQingtui` | ⛓️ 年氏倾颓 | 二 |
 | `caoGuirenLaifang` | 🍵 琴默叩门 | 二 |
 | `huafeiFanan` | 💥 华妃发难 | 二 |
+| `promotionTrial` | 📜 晋封考验 | 一 |
+| `guirenTrial` | 🏮 晋封考验：贵人 | 二 |
+| `finale` | 👑 翊坤落幕 | 二 |
 
 ### 背景（2）
 
@@ -132,5 +137,5 @@ src/levels/zhenhuan/assets/
 
 ## 6. 出图
 
-- 用 ChatGPT 逐张生成，风格设定、每张图的 prompt 与短编号（C01–C08、E01–E23、S01–S13、B1–B2）见 [art-prompts.md](./art-prompts.md)。
+- 用 ChatGPT 逐张生成，风格设定、每张图的 prompt 与短编号（C01–C08、E01–E23、S01–S16、B1–B2）见 [art-prompts.md](./art-prompts.md)。
 - 选定的原图按短编号命名放进 `art-inbox/`，导入时改名为游戏 id、裁切并压缩到本文第 2 节的位置。

@@ -60,7 +60,7 @@ import {
   type Z2Action,
   type Z2State,
 } from "../logic/stage2Engine";
-import { cardArtUrl, eventArtUrl, storyArtUrl } from "./art";
+import { cardArtUrl, eventArtUrl, specialArtUrl, storyArtUrl } from "./art";
 import { CompactModeToggle } from "./CompactModeToggle";
 import { CardArt, FoldBox, LogView, Pile, ResolvedBanner, ScrollRow, TagChip, activateOnKey, countBy, isTypingTarget, type Fold } from "./common";
 import { compactEffect2, expandedEffect2 } from "./effectText2";
@@ -377,6 +377,7 @@ function FinaleCard({ state, fold, dispatch }: { state: Z2State; fold: Fold; dis
         </span>
         {tags}
       </div>
+      <CardArt src={specialArtUrl("finale")} emoji={FINALE.emoji} />
       {done ? <ResolvedBanner icon="👑" label="大局已定" detail={finaleDoneStory(state.evidence.length)} /> : null}
       <p className={styles.flavor}>{FINALE.flavor[tier]}</p>
       {f.stories.map((line) => (
@@ -436,6 +437,7 @@ function TrialCard({ state, fold, dispatch }: { state: Z2State; fold: Fold; disp
         </span>
         {tags}
       </div>
+      <CardArt src={specialArtUrl("guirenTrial")} emoji={GUIREN_TRIAL.emoji} />
       {p.all ? <ResolvedBanner icon="🏮" label="条件已满足" detail="保持到回合末即可晋为贵人。" /> : null}
       <p className={styles.flavor}>{GUIREN_TRIAL.flavor}</p>
       <p className={styles.check}>

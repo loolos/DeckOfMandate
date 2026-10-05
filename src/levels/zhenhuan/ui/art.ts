@@ -32,6 +32,14 @@ export function storyArtUrl(id: StoryId | StoryId2): string | null {
   return STORY_ART.get(STORY_ART_ALIAS[id] ?? id) ?? null;
 }
 
+/** Story-area cards that have no id of their own (晋封考验 ×2, 翊坤落幕); files live in `assets/stories/`. */
+export const SPECIAL_ART_KEYS = ["promotionTrial", "guirenTrial", "finale"] as const;
+export type SpecialArtKey = (typeof SPECIAL_ART_KEYS)[number];
+
+export function specialArtUrl(key: SpecialArtKey): string | null {
+  return STORY_ART.get(key) ?? null;
+}
+
 /** The start menu uses the 第一关 backdrop. */
 export function backdropUrl(stage: 1 | 2): string | null {
   return BACKDROPS.get(`stage${stage}`) ?? null;
