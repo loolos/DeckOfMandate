@@ -381,7 +381,7 @@ export const STATUSES2: Record<StatusId2, StatusDef2> = {
     drawModifier: -1,
     effectText: "未来 3 回合，每回合抓牌数 -1。多个实例分别计时、效果叠加。",
     flavor: "宫里的闲话越传越离谱，连走动见人都要多几分小心。",
-    source: "回合末未处理的危机事件【宫中流言】",
+    source: "回合末未处理的危机事件【蜚语盈廊】",
   },
   ermuLingtong: {
     id: "ermuLingtong",
@@ -761,7 +761,7 @@ export const EVENTS2: Record<EventId2, EventDef2> = {
   gongzhongLiuyan: {
     id: "gongzhongLiuyan",
     kind: "crisis",
-    name: "宫中流言",
+    name: "蜚语盈廊",
     emoji: "🗣️",
     flavor: "各宫私下议论纷纷，矛头隐隐指向你。",
     reward: [],
@@ -894,16 +894,16 @@ export const EVENTS2: Record<EventId2, EventDef2> = {
     penaltyStatus: "baoyangZaishen",
     unlockHate: 5,
     responsePenalty: {
-      wenTaiyiZhenzhi: { effects: [{ resource: "shenzi", amount: -1 }] },
+      wenTaiyiZhenzhi: { effects: [{ resource: "qingyu", amount: -1 }] },
       shoulongRenxin: { effects: [{ resource: "shengchong", amount: -1 }] },
       jinxiXiangzhu: { effects: [{ resource: "hate", amount: 1 }] },
     },
-    resolvedCompact: "💊🌱-1 · 🤝👑-1 · 🏮🔥+1",
+    resolvedCompact: "💊🪷-1 · 🤝👑-1 · 🏮🔥+1",
     unresolvedCompact: "⚠️ 🌱-1",
-    resolvedText: "温太医相助：只身子 -1；收拢人心：只圣宠 -1；槿汐相助：只恨意 +1",
+    resolvedText: "温太医相助：只清誉 -1；收拢人心：只圣宠 -1；槿汐相助：只恨意 +1",
     unresolvedText: "伤胎：有孕前身子 -1、获得【抱恙在身】；有孕后直接小产；另外身子 -1",
     resolvedStory: {
-      wenTaiyiZhenzhi: "温实初验过汤水，脸色一沉：里头加了活血的东西。你只抿了一口便觉不适，好在发现得早。",
+      wenTaiyiZhenzhi: "温实初验过汤水，脸色一沉：里头加了活血的东西。你滴水未沾，可太医深夜出入碎玉轩的事传了出去，宫里都说你疑神疑鬼。",
       shoulongRenxin: "御膳房里收过你赏钱的小太监悄悄递话：今日的汤，别喝。你把这事闹到了御前，皇上却嫌你小题大做。",
       jinxiXiangzhu: "槿汐先尝了一口便放下了碗，悄悄把汤倒进了花盆。第二日那盆花就枯了。翊坤宫听说碎玉轩没上当，又记了你一笔。",
     },
@@ -1011,7 +1011,7 @@ export type LingrongOutcome = {
   readonly extraDraw?: number;
   readonly evidence?: boolean;
   readonly shuhenjiao?: boolean;
-  /** 宫中流言 怨怼: two 流言缠身 at end of turn. */
+  /** 蜚语盈廊 怨怼: two 流言缠身 at end of turn. */
   readonly aggravate?: boolean;
   readonly story: string;
 };
@@ -1296,7 +1296,7 @@ export const STORIES2: Record<StoryId2, StoryDef2> = {
   },
   jiaYunFengbo: {
     id: "jiaYunFengbo",
-    name: "假孕风波",
+    name: "菊残霜冷",
     emoji: "⚖️",
     flavor: "眉庄有孕本是喜事，却是华妃串通太医刘畏卿设下的局：药物推迟月信，宫女茯苓被收买。",
     note: "眉庄与温太医，终究要有一人离你远去。退场一方的牌会带上【惜别】标签：下次抓到时只留一张，这是最后一次相助。",

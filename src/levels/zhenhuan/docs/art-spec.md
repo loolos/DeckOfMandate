@@ -86,7 +86,7 @@ src/levels/zhenhuan/assets/
 |---|---|---|---|
 | `huanghouShangshi` | 🏮 中宫垂青 | 机会 | 一、二 |
 | `taihouChuixun` | 🪭 太后垂询 | 机会 | 一、二 |
-| `wenTaiyiQingmai` | 🩺 温太医请脉 | 机会 | 一 |
+| `wenTaiyiQingmai` | 🩺 太医请脉 | 机会 | 一 |
 | `jingxinTiaoyang` | 🌿 静心调养 | 机会 | 二 |
 | `baohuadianQifu` | 🙏 宝华祈福 | 机会 | 二 |
 | `supeishengToufeng` | 🗝️ 御前密语 | 机会 | 二 |
@@ -94,7 +94,7 @@ src/levels/zhenhuan/assets/
 | `wenyiBaoyang` | 🤒 温宜抱恙 | 机会 | 二 |
 | `qingmaiBaoxi` | 💗 请脉报喜 | 机会 | 二 |
 | `qinmoChenqing` | 🍵 琴默陈情 | 机会 | 二 |
-| `gongzhongLiuyan` | 🗣️ 宫中流言 | 危机 | 一、二 |
+| `gongzhongLiuyan` | 🗣️ 蜚语盈廊 | 危机 | 一、二 |
 | `neiwufuDiaonan` | 📦 内务府刁难 | 危机 | 一、二 |
 | `liyiShiwu` | 🎎 礼仪失误 | 危机 | 一、二 |
 | `hanliangZhiwu` | 🧊 寒凉之物 | 危机 | 二 |
@@ -112,12 +112,12 @@ src/levels/zhenhuan/assets/
 
 | id | 名称 | 关卡 |
 |---|---|---|
-| `yimeiYuan` | ❄️ 倚梅园 | 一 |
+| `yimeiYuan` | ❄️ 逆风解意 | 一 |
 | `xinghuaWeiyu` | 🌸 杏花微雨 | 一 |
 | `chuQingan` | 🏯 初谒翊坤 | 二 |
 | `lingrongTuihui` | 🌙 凤鸾空返 | 二 |
 | `yuyingerShishi` | 🥀 莺儿伏罪 | 二 |
-| `jiaYunFengbo` | ⚖️ 假孕风波 | 二 |
+| `jiaYunFengbo` | ⚖️ 菊残霜冷 | 二 |
 | `yuanmingyuan` | 🏞️ 圆明伴驾 | 二 |
 | `fakuiPlain` | ☀️ 翊坤长跪（`fakuiPregnant` 共用） | 二 |
 | `duanfeiJiushi` | 🌸 端妃旧事 | 二 |

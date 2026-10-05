@@ -64,7 +64,7 @@ import {
 import { cardArtUrl, eventArtUrl, specialArtUrl, storyArtUrl } from "./art";
 import { CompactModeToggle } from "./CompactModeToggle";
 import { CardArt, FoldBox, LogView, Pile, ResolvedBanner, ScrollRow, TagChip, activateOnKey, countBy, isTypingTarget, type Fold } from "./common";
-import { compactEffect2, expandedEffect2 } from "./effectText2";
+import { compactEffect2, expandedEffect2, statusBrief2 } from "./effectText2";
 import styles from "./zhenhuan.module.css";
 
 type Dispatch = (a: Z2Action) => void;
@@ -644,10 +644,13 @@ function Statuses({ state, dispatch }: { state: Z2State; dispatch: Dispatch }) {
           onKeyDown={(e) => activateOnKey(e, () => toggle("evidence"))}
         >
           <div className={styles.statusLine}>
-            <span>🗂️ 搜集华妃罪证（{state.evidence.length}）</span>
+            <span>
+              🗂️<span className={styles.statusFull}> 搜集华妃罪证（{state.evidence.length}）</span>
+              <span className={styles.statusBrief}>×{state.evidence.length}</span>
+            </span>
             <button
               type="button"
-              className={`${styles.tag} ${styles.tagButton}`}
+              className={`${styles.tag} ${styles.tagButton} ${styles.statusFull}`}
               onClick={(e) => {
                 e.stopPropagation();
                 dispatch({ type: "explainTag", tag: "evidence" });
@@ -688,11 +691,16 @@ function Statuses({ state, dispatch }: { state: Z2State; dispatch: Dispatch }) {
             >
               <div className={styles.statusLine}>
                 <span>
-                  {def.emoji} {def.name}
+                  {def.emoji}
+                  <span className={styles.statusFull}> {def.name}</span>
+                </span>
+                <span className={styles.statusBrief}>
+                  {statusBrief2(def)}
+                  {def.permanent ? "" : ` ⏳${st.remaining}`}
                 </span>
                 <button
                   type="button"
-                  className={`${styles.tag} ${styles.tagButton}`}
+                  className={`${styles.tag} ${styles.tagButton} ${styles.statusFull}`}
                   onClick={(e) => {
                     e.stopPropagation();
                     dispatch({ type: "explainTag", tag: def.tag });
@@ -701,7 +709,7 @@ function Statuses({ state, dispatch }: { state: Z2State; dispatch: Dispatch }) {
                   {def.tag === "negative" ? "负面" : "正面"}
                   {def.unremovable ? "·不可移除" : ""}
                 </button>
-                <span className={styles.muted}>
+                <span className={`${styles.muted} ${styles.statusFull}`}>
                   {def.permanent ? "触发 / 结束前一直保留" : notYet ? `下回合起生效，共 ${st.remaining} 回合` : `剩余 ${st.remaining} 回合`}
                 </span>
                 {removable.has(st.uid) ? (

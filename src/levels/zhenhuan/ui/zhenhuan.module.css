@@ -378,7 +378,7 @@
 }
 
 .events > * {
-  width: 250px;
+  width: 300px;
 }
 
 .card {
@@ -598,7 +598,7 @@
 /* ---------------------------------------------------------------- hand */
 
 .hand > * {
-  width: 210px;
+  width: 252px;
 }
 
 .handCard {
@@ -788,9 +788,32 @@
 }
 
 .compact .events > *,
-.compact .hand > *,
-.compact .status {
+.compact .hand > * {
   width: var(--zh-compact-col);
+}
+
+/* Collapsed statuses shrink to emoji + effect + turns; name and tag return on expand. */
+.statusBrief {
+  display: none;
+}
+
+.compact .status:not(.statusExpanded) {
+  width: auto;
+  padding: 0.25rem 0.45rem;
+}
+
+.compact .status:not(.statusExpanded) .statusFull {
+  display: none;
+}
+
+.compact .status:not(.statusExpanded) .statusBrief {
+  display: inline;
+  white-space: nowrap;
+}
+
+.compact .status:not(.statusExpanded) .statusLine {
+  flex-wrap: nowrap;
+  gap: 0.3rem;
 }
 
 .compact .status.statusExpanded {
