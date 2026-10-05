@@ -94,7 +94,7 @@ src/levels/zhenhuan/assets/
 | `wenyiBaoyang` | 🤒 温宜抱恙 | 机会 | 二 |
 | `qingmaiBaoxi` | 💗 请脉报喜 | 机会 | 二 |
 | `qinmoChenqing` | 🍵 琴默陈情 | 机会 | 二 |
-| `gongzhongLiuyan` | 🗣️ 宫中流言 | 危机 | 一、二 |
+| `gongzhongLiuyan` | 🗣️ 蜚语盈廊 | 危机 | 一、二 |
 | `neiwufuDiaonan` | 📦 内务府刁难 | 危机 | 一、二 |
 | `liyiShiwu` | 🎎 礼仪失误 | 危机 | 一、二 |
 | `hanliangZhiwu` | 🧊 寒凉之物 | 危机 | 二 |

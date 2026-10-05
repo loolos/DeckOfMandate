@@ -117,7 +117,7 @@ export const EVENTS: Record<EventId, EventDef> = {
   gongzhongLiuyan: {
     id: "gongzhongLiuyan",
     kind: "crisis",
-    name: "宫中流言",
+    name: "蜚语盈廊",
     emoji: "🗣️",
     flavor: "各宫私下议论纷纷，矛头隐隐指向你。",
     reward: [],
@@ -287,7 +287,7 @@ export const STATUSES: Record<StatusId, StatusDef> = {
     drawModifier: -1,
     effectText: "未来 3 回合，每回合抓牌数 -1。多个实例分别计时、效果叠加。",
     flavor: "宫里的闲话越传越离谱，连走动见人都要多几分小心。",
-    source: "回合末未处理的危机事件【宫中流言】",
+    source: "回合末未处理的危机事件【蜚语盈廊】",
   },
   gongrenChuifeng: {
     id: "gongrenChuifeng",

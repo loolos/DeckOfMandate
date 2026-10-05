@@ -82,7 +82,7 @@ export type EventInst2 = {
   lingrong?: LingrongTier;
   /** 陵容 played on it but 失效. */
   lingrongFailed?: boolean;
-  /** 宫中流言 made worse by a 怨怼 陵容. */
+  /** 蜚语盈廊 made worse by a 怨怼 陵容. */
   aggravated?: boolean;
   evidence?: EvidenceId;
 };

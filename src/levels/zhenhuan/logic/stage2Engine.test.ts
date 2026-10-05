@@ -201,7 +201,7 @@ describe("zhenhuan stage 2 engine", () => {
     expect(s.relation).toBe(-1);
   });
 
-  it("陵容 by tier on 宫中流言: 怨怼 失效 and doubles 流言缠身", () => {
+  it("陵容 by tier on 蜚语盈廊: 怨怼 失效 and doubles 流言缠身", () => {
     let s = newStage2(6, null);
     s.relation = -3;
     s.stories = [];
