@@ -112,7 +112,7 @@ src/levels/zhenhuan/assets/
 
 | id | 名称 | 关卡 |
 |---|---|---|
-| `yimeiYuan` | ❄️ 倚梅园 | 一 |
+| `yimeiYuan` | ❄️ 逆风解意 | 一 |
 | `xinghuaWeiyu` | 🌸 杏花微雨 | 一 |
 | `chuQingan` | 🏯 初谒翊坤 | 二 |
 | `lingrongTuihui` | 🌙 凤鸾空返 | 二 |

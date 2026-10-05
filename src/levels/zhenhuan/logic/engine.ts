@@ -91,6 +91,8 @@ export type ZhState = {
   /** Turn the current ≥ 5 streak last drew a 嫉妒事件; null when the streak is broken. */
   envyLastTurn: number | null;
   story: { id: StoryId; chosenOptionId: string | null } | null;
+  /** Option chosen for each finished story event (kept for the victory recap). */
+  storyChoices: Partial<Record<StoryId, string>>;
   trial: { active: boolean; keyCardPlayed: boolean };
   promoted: boolean;
   statuses: StatusInst[];
@@ -317,6 +319,7 @@ function resolvePlay(
   // 1. story option (if this card answers the open story), then the card's own base effect
   if (option && story) {
     s.story = { id: story.id, chosenOptionId: option.id };
+    s.storyChoices[story.id] = option.id;
     log(s, option.story);
     applyDeltas(s, option.effects, `${story.name}·${option.name}`);
     if (option.gainStatus && s.outcome === "playing") addStatus(s, option.gainStatus);
@@ -377,6 +380,7 @@ function resolvePlay(
 
 function applyStoryBasicOption(s: ZhState, story: StoryDef, option: StoryOptionDef, source: string): void {
   s.story = { id: story.id, chosenOptionId: option.id };
+  s.storyChoices[story.id] = option.id;
   log(s, source);
   log(s, option.story);
   applyDeltas(s, option.effects, `${story.name}·${option.name}`);
@@ -555,6 +559,7 @@ export function newGame(seed: number): ZhState {
     envy: null,
     envyLastTurn: null,
     story: null,
+    storyChoices: {},
     trial: { active: false, keyCardPlayed: false },
     promoted: false,
     statuses: [],
@@ -649,4 +654,12 @@ export function replay(seed: number, actions: readonly ZhAction[]): ZhState {
     s = next;
   }
   return s;
+}
+
+/** One-line victory recap of how 逆风解意 and 杏花微雨 were handled. */
+export function victoryRecap(s: ZhState): string {
+  const clause = (id: StoryId) => STORIES[id].options.find((o) => o.id === s.storyChoices[id])?.recap;
+  const yimei = clause("yimeiYuan");
+  const xinghua = clause("xinghuaWeiyu");
+  return [yimei && `倚梅园一事，你${yimei}`, xinghua && `杏花微雨中，你${xinghua}`].filter(Boolean).join("；") + "。";
 }

@@ -300,7 +300,7 @@ export const STATUSES: Record<StatusId, StatusDef> = {
     endStory: "闲话终于传进了养心殿：余答应连字都认不全，除夕夜那句“逆风如解意”怎会是她念的？皇上心里已经明白，那夜的人不是她。",
     effectText: "未来 2 回合，每回合开始时圣宠 +1。",
     flavor: "得了赏的宫人们在各宫、御前有意无意地提起：那位余答应，连字都认不全呢。",
-    source: "第 4 回合【倚梅园】时从手牌打出【收拢人心】（宫人透底）",
+    source: "第 4 回合【逆风解意】时从手牌打出【收拢人心】（宫人透底）",
   },
   ermuLingtong: {
     id: "ermuLingtong",
@@ -453,6 +453,8 @@ export type StoryOptionDef = {
   readonly story: string;
   /** Hidden follow-up line logged after the effects (no mechanical effect). */
   readonly epilogue?: string;
+  /** Short clause summarising this choice in the 第一关 victory recap. */
+  readonly recap: string;
 };
 
 export type StoryDef = {
@@ -469,7 +471,7 @@ export const STORIES: Record<StoryId, StoryDef> = {
   yimeiYuan: {
     id: "yimeiYuan",
     turn: 4,
-    name: "倚梅园",
+    name: "逆风解意",
     emoji: "❄️",
     flavor:
       "除夕夜你在倚梅园许愿，念了一句“逆风如解意，容易莫摧残”。如今宫里都在传，皇上寻到了那夜念诗的人，是宫女余莺儿，已被封为答应。",
@@ -477,6 +479,7 @@ export const STORIES: Record<StoryId, StoryDef> = {
     options: [
       {
         id: "yinrenBuyan",
+        recap: "隐忍未言",
         name: "隐忍不言",
         effects: [{ resource: "shengchong", amount: -1 }],
         text: "圣宠 -1",
@@ -484,6 +487,7 @@ export const STORIES: Record<StoryId, StoryDef> = {
       },
       {
         id: "dangzhongShuopo",
+        recap: "当众说破却无凭无据",
         name: "当众说破",
         effects: [{ resource: "qingyu", amount: -1 }],
         text: "清誉 -1",
@@ -491,6 +495,7 @@ export const STORIES: Record<StoryId, StoryDef> = {
       },
       {
         id: "jiemeiChafang",
+        recap: "托眉庄姐姐查访留了后手",
         name: "姐妹查访",
         card: "meizhuangXiangzhu",
         effects: [{ resource: "qingyu", amount: 1 }],
@@ -499,6 +504,7 @@ export const STORIES: Record<StoryId, StoryDef> = {
       },
       {
         id: "gongrenToudi",
+        recap: "借宫人悄悄吹了风",
         name: "宫人透底",
         card: "shoulongRenxin",
         effects: [],
@@ -518,6 +524,7 @@ export const STORIES: Record<StoryId, StoryDef> = {
     options: [
       {
         id: "bixianGaotui",
+        recap: "守礼避嫌告退",
         name: "避嫌告退",
         effects: [{ resource: "shengchong", amount: -1 }],
         text: "圣宠 -1",
@@ -525,6 +532,7 @@ export const STORIES: Record<StoryId, StoryDef> = {
       },
       {
         id: "yuWangyeChangtan",
+        recap: "与王爷畅谈惹了闲话",
         name: "与王爷畅谈",
         effects: [{ resource: "qingyu", amount: -1 }],
         text: "清誉 -1",
@@ -532,6 +540,7 @@ export const STORIES: Record<StoryId, StoryDef> = {
       },
       {
         id: "yishiXianghe",
+        recap: "以诗相和得了圣心",
         name: "以诗相和",
         card: "jinyanShenxing",
         effects: [{ resource: "shengchong", amount: 1 }, { resource: "qingyu", amount: 1 }],
@@ -541,6 +550,7 @@ export const STORIES: Record<StoryId, StoryDef> = {
       },
       {
         id: "kanpoBushuopo",
+        recap: "看破不说破，进退有度",
         name: "看破不说破",
         card: "jingguanQibian",
         effects: [{ resource: "qingyu", amount: 2 }],

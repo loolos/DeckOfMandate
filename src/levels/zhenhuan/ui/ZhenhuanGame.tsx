@@ -39,6 +39,7 @@ import {
   type EventInst,
   type ZhAction,
   type ZhState,
+  victoryRecap,
 } from "../logic/engine";
 import { encodeRunCode } from "../logic/persistence";
 import { cardArtUrl, eventArtUrl, specialArtUrl, storyArtUrl } from "./art";
@@ -652,7 +653,10 @@ function OutcomeModal({
       <div className={styles.modal}>
         <h2 id="zh-outcome-title">{won ? "🎉 第一关胜利" : "🥀 功亏一篑"}</h2>
         {won ? (
-          <p>你从答应晋为常在，在这深宫里站稳了第一步。可翊坤宫的华妃，已经注意到了你。</p>
+          <>
+            <p>{victoryRecap(state)}</p>
+            <p>你从答应晋为常在，在这深宫里站稳了第一步。可翊坤宫的华妃，已经注意到了你。</p>
+          </>
         ) : (
           <p>
             {state.lossReason}。紫禁城里一步走错，便再难回头。

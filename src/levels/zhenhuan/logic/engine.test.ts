@@ -375,7 +375,7 @@ describe("zhenhuan engine", () => {
     expect(s.statuses.some((x) => x.id === "ermuLingtong")).toBe(false);
   });
 
-  it("倚梅园: 收拢人心 grants 宫人吹风 (圣宠 +1 for 2 turns) on top of its own 耳目灵通", () => {
+  it("逆风解意: 收拢人心 grants 宫人吹风 (圣宠 +1 for 2 turns) on top of its own 耳目灵通", () => {
     let s = advanceTo(newGame(13), 4);
     expect(s.story?.id).toBe("yimeiYuan");
     s = act(s, { type: "playCard", cardUid: giveCard(s, "shoulongRenxin") });
