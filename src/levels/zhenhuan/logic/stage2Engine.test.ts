@@ -1091,13 +1091,12 @@ describe("zhenhuan stage 2 engine", () => {
     s = act(s, { type: "playCard", cardUid: l! });
     expect(s.hate).toBe(6);
     expect(s.qingyu).toBe(before.q);
-    expect(s.shengchong).toBe(before.c); // only 闭门思过
-    expect(s.statuses.some((x) => x.id === "bimenSiguo")).toBe(true);
-    expect(s.shenzi).toBe(before.z);
+    expect(s.shengchong).toBe(before.c - 1);
+    expect(s.shenzi).toBe(Math.max(0, before.z - 2));
     expect(s.stories.find((x) => x.id === "huafeiFanan")?.story).toBeUndefined(); // no 陵容 relation yet → generic story
   });
 
-  it("殿前风雨 card responses land only one of 清誉 / 圣宠 / 闭门思过: 温太医 → 圣宠 -2 only", () => {
+  it("殿前风雨 温太医 costs 清誉 -1 / 圣宠 -1 and spares 身子", () => {
     let s = newStage2(21, null);
     onlyEvents(s, {});
     s.qingyu = 8;
@@ -1106,8 +1105,8 @@ describe("zhenhuan stage 2 engine", () => {
     s.stories = [{ id: "huafeiFanan", chosenOptionId: null }];
     const [w] = setHand(s, ["wenTaiyiZhenzhi"]);
     s = act(s, { type: "playCard", cardUid: w! });
-    expect(s.qingyu).toBe(8);
-    expect(s.shengchong).toBe(6);
+    expect(s.qingyu).toBe(7);
+    expect(s.shengchong).toBe(7);
     expect(s.shenzi).toBe(4); // not hit, plus 温太医's own 身子 +1
   });
 
