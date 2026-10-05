@@ -1599,10 +1599,11 @@ export const STORIES2: Record<StoryId2, StoryDef2> = {
         name: "认罚",
         effects: [
           { resource: "qingyu", amount: -2 },
-          { resource: "shengchong", amount: -2 },
+          { resource: "shengchong", amount: -1 },
+          { resource: "shenzi", amount: -2 },
         ],
         status: "bimenSiguo",
-        text: "清誉 -2、圣宠 -2；闭门思过",
+        text: "清誉 -2、圣宠 -1、身子 -2；闭门思过",
         story: "你没有辩一句，只叩首认罪。皇上看了华妃一眼，到底还是下了旨：罚你在翊坤宫外跪抄经文，回宫后闭门思过。华妃立在廊下看了半日，你回宫时已站不稳。",
       },
       {
