@@ -8,11 +8,13 @@ A single-player, turn-based strategy card game that runs entirely in the browser
 
 ### The Sun King (`sunking`)
 
+In-game name: *Versailles Corona · The Sun King* (凡尔赛日冕·太阳王 / Couronne de Versailles · Le Roi-Soleil).
+
 Govern France as Louis XIV across three chapters (1661–1720), managing Treasury, Funding, Power and Legitimacy while resolving scripted events and chasing each chapter's objectives. Chapters can be played in sequence or on their own. Available in English, Chinese and French.
 
 ### Empresses in the Palace (`zhenhuan`)
 
-A palace-intrigue campaign based on the Chinese TV drama *Empresses in the Palace* (甄嬛传). Rise through the imperial harem across two stages, balancing Reputation and Imperial Favour while answering events with the right cards. Chinese only. Runs save automatically and can be replayed from a shareable run code.
+In-game name: 紫禁云深·甄嬛. A palace-intrigue campaign based on the Chinese TV drama *Empresses in the Palace* (甄嬛传). Rise through the imperial harem across two stages, balancing Reputation and Imperial Favour while answering events with the right cards. Chinese only. Runs save automatically and can be replayed from a shareable run code.
 
 ## Run locally
 

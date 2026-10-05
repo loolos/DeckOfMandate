@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { CampaignSwitcher } from "../../../components/CampaignSwitcher";
 import { RunCodePanel } from "../../../components/RunCodePanel";
-import { CHAPTER } from "../data/content";
+import { CAMPAIGN_TITLE, CHAPTER } from "../data/content";
 import { STAGE2 } from "../data/stage2Content";
 import { newGame, reduce, type ZhAction } from "../logic/engine";
 import {
@@ -119,7 +119,7 @@ export function ZhenhuanRoot() {
       <div className={styles.menuScreen}>
         <div className={styles.menuPanel} role="dialog" aria-labelledby="zh-menu-title">
           <h1 id="zh-menu-title" className={styles.menuTitle}>
-            甄嬛传
+            {CAMPAIGN_TITLE}
           </h1>
           <CampaignSwitcher labelClassName={styles.menuLabel} selectClassName={styles.menuInput} />
           <CompactModeToggle />

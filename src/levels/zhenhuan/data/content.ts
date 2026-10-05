@@ -612,6 +612,9 @@ export const PROMOTION_TRIAL = {
   promoteTo: "changzai" as RankId,
 };
 
+/** Campaign display name (picker, start menu, screen titles). */
+export const CAMPAIGN_TITLE = "紫禁云深·甄嬛";
+
 export const CHAPTER = {
   title: "第一关 · 初入宫闱",
   totalTurns: 15,
