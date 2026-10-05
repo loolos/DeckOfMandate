@@ -124,7 +124,7 @@ src/levels/zhenhuan/assets/
 | `zhaoxing` | 🌙 凤鸾承恩 | 二 |
 | `nianShiQingtui` | ⛓️ 年氏倾颓 | 二 |
 | `caoGuirenLaifang` | 🍵 琴默叩门 | 二 |
-| `huafeiFanan` | 💥 华妃发难 | 二 |
+| `huafeiFanan` | 💥 殿前风雨 | 二 |
 | `promotionTrial` | 📜 晋封考验 | 一 |
 | `guirenTrial` | 🏮 晋封考验：贵人 | 二 |
 | `finale` | 👑 翊坤落幕 | 二 |

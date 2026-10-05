@@ -859,7 +859,7 @@ describe("zhenhuan stage 2 engine", () => {
     expect([u.qingyu, u.shengchong, u.hate]).toEqual([9, 8, 2]); // only 眉庄相助's own 清誉 +1
   });
 
-  it("华妃发难·求皇后庇护 via 陵容: story follows her 情分", () => {
+  it("殿前风雨·求皇后庇护 via 陵容: story follows her 情分", () => {
     const run = (relation: number) => {
       let s = newStage2(42, null);
       s.relation = relation;
@@ -1033,7 +1033,7 @@ describe("zhenhuan stage 2 engine", () => {
     }
   });
 
-  it("华妃发难 · 求皇后庇护: 陵容 亲厚 / 生分 costs 情分 -1, 怨怼 unchanged", () => {
+  it("殿前风雨 · 求皇后庇护: 陵容 亲厚 / 生分 costs 情分 -1, 怨怼 unchanged", () => {
     for (const [start, after] of [
       [3, 2],
       [0, -1],
@@ -1072,7 +1072,7 @@ describe("zhenhuan stage 2 engine", () => {
     }
   });
 
-  it("恨意 10 opens 华妃发难; resolving it drops hate to 6", () => {
+  it("恨意 10 opens 殿前风雨; resolving it drops hate to 6", () => {
     let s = newStage2(18, null);
     s.stories = [];
     onlyEvents(s, {});
@@ -1090,13 +1090,13 @@ describe("zhenhuan stage 2 engine", () => {
     const [l] = setHand(s, ["lingrongXiangzhu"]);
     s = act(s, { type: "playCard", cardUid: l! });
     expect(s.hate).toBe(6);
-    expect(s.qingyu).toBe(before.q - 3);
+    expect(s.qingyu).toBe(before.q);
     expect(s.shengchong).toBe(before.c - 1);
-    expect(s.shenzi).toBe(Math.max(0, before.z - 1));
+    expect(s.shenzi).toBe(Math.max(0, before.z - 2));
     expect(s.stories.find((x) => x.id === "huafeiFanan")?.story).toBeUndefined(); // no 陵容 relation yet → generic story
   });
 
-  it("华妃发难 card responses each spare one resource: 温太医 keeps 身子", () => {
+  it("殿前风雨 温太医 costs 清誉 -1 / 圣宠 -1 and spares 身子", () => {
     let s = newStage2(21, null);
     onlyEvents(s, {});
     s.qingyu = 8;
@@ -1105,8 +1105,8 @@ describe("zhenhuan stage 2 engine", () => {
     s.stories = [{ id: "huafeiFanan", chosenOptionId: null }];
     const [w] = setHand(s, ["wenTaiyiZhenzhi"]);
     s = act(s, { type: "playCard", cardUid: w! });
-    expect(s.qingyu).toBe(5);
-    expect(s.shengchong).toBe(5);
+    expect(s.qingyu).toBe(7);
+    expect(s.shengchong).toBe(7);
     expect(s.shenzi).toBe(4); // not hit, plus 温太医's own 身子 +1
   });
 
