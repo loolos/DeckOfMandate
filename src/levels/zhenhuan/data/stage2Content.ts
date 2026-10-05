@@ -894,13 +894,13 @@ export const EVENTS2: Record<EventId2, EventDef2> = {
     penaltyStatus: "baoyangZaishen",
     unlockHate: 5,
     responsePenalty: {
-      wenTaiyiZhenzhi: { effects: [{ resource: "shenzi", amount: -1 }] },
+      wenTaiyiZhenzhi: { effects: [{ resource: "qingyu", amount: -1 }] },
       shoulongRenxin: { effects: [{ resource: "shengchong", amount: -1 }] },
       jinxiXiangzhu: { effects: [{ resource: "hate", amount: 1 }] },
     },
-    resolvedCompact: "💊🌱-1 · 🤝👑-1 · 🏮🔥+1",
+    resolvedCompact: "💊🪷-1 · 🤝👑-1 · 🏮🔥+1",
     unresolvedCompact: "⚠️ 🌱-1",
-    resolvedText: "温太医相助：只身子 -1；收拢人心：只圣宠 -1；槿汐相助：只恨意 +1",
+    resolvedText: "温太医相助：只清誉 -1；收拢人心：只圣宠 -1；槿汐相助：只恨意 +1",
     unresolvedText: "伤胎：有孕前身子 -1、获得【抱恙在身】；有孕后直接小产；另外身子 -1",
     resolvedStory: {
       wenTaiyiZhenzhi: "温实初验过汤水，脸色一沉：里头加了活血的东西。你只抿了一口便觉不适，好在发现得早。",

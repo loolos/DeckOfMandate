@@ -638,6 +638,18 @@ describe("zhenhuan stage 2 engine", () => {
     expect(t.shenzi).toBe(3);
     expect(t.statuses.some((x) => x.id === "baoyangZaishen")).toBe(false);
 
+    // 膳食有异 + 温太医相助 → only 清誉 -1 (身子 untouched)
+    let w = newStage2(33, null);
+    w.stories = [];
+    w.qingyu = 8;
+    w.shenzi = 3;
+    onlyEvents(w, { huafei: ["shanshiYouyi"] });
+    const [d] = setHand(w, ["wenTaiyiZhenzhi"]);
+    w = act(w, { type: "playCard", cardUid: d! });
+    expect(w.qingyu).toBe(7);
+    expect(w.shenzi).toBe(4); // only 温太医相助's own base 身子 +1; no 伤胎 / 身子 penalty
+    expect(w.statuses.some((x) => x.id === "baoyangZaishen")).toBe(false);
+
     // 一丈红: one card → 清誉 -1、噤若寒蝉 1 回合 at end of turn, no 出气
     let u = newStage2(32, null);
     u.stories = [];
