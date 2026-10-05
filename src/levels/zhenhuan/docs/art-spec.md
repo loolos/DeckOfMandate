@@ -92,7 +92,7 @@ src/levels/zhenhuan/assets/
 | `neiwufuDiaonan` | 📦 内务府刁难 | 危机 | 一、二 |
 | `liyiShiwu` | 🎎 礼仪失误 | 危机 | 一、二 |
 | `hanliangZhiwu` | 🧊 寒凉之物 | 危机 | 二 |
-| `yuDayingZhengchong` | 🎶 余答应争宠 | 嫉妒 | 一 |
+| `yuDayingZhengchong` | 🎶 梅影争春 | 嫉妒 | 一 |
 | `shichongErjiao` | 💍 恃宠而骄 | 嫉妒 | 一 |
 | `anzhongXiaban` | 🪤 暗中下绊 | 嫉妒 | 一 |
 | `songzhiKuisi` | 👁️ 隔墙有耳 | 华妃 | 二 |
