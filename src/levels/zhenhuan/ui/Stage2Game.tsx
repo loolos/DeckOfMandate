@@ -447,6 +447,9 @@ function TrialCard({ state, fold, dispatch }: { state: Z2State; fold: Fold; disp
       <p className={styles.check}>
         {mark(p.qingyu)} 🪷清誉 ≥ {GUIREN_TRIAL.minQingyu}（当前 {state.qingyu}）
       </p>
+      <p className={styles.check}>
+        {mark(p.summoned)} 🌙考验期间须侍寝成功一次（{p.summoned ? "已达成" : "尚未达成"}）
+      </p>
       <p className={styles.rule}>
         💃 <strong>惊鸿舞</strong>：
         {state.jinghong.done
