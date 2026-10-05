@@ -199,6 +199,8 @@ export const EVENTS: Record<EventId, EventDef> = {
     resolvedStory: {
       jinyanShenxing:
         "你把皇上的赏赐分送给各宫姐妹，见了谁都谦让三分。背后说你轻狂的人，渐渐也找不出话来。",
+      meizhuangXiangzhu:
+        "眉庄姐姐当着众人的面笑说：「妹妹得宠是她的福气，更是她的本分，倒叫你们眼红了。」又把你素日谦让的事一桩桩说给各宫听。说你轻狂的人，一时都讪讪地住了口。",
     },
   },
   anzhongXiaban: {
@@ -404,7 +406,7 @@ export const CARDS: Record<CardId, CardDef> = {
     flavor: "眉姐姐总会站在你这边。",
     base: [{ resource: "qingyu", amount: 1 }],
     baseDraw: 0,
-    matches: ["taihouChuixun", "gongzhongLiuyan", "neiwufuDiaonan", "anzhongXiaban"],
+    matches: ["taihouChuixun", "gongzhongLiuyan", "neiwufuDiaonan", "shichongErjiao", "anzhongXiaban"],
     rulesText: ["清誉 +1。", "联动：它解决的机会事件，事件奖励翻倍（自身基础效果不翻倍）。"],
   },
 };
