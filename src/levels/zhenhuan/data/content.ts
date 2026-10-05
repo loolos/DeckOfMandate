@@ -128,6 +128,8 @@ export const EVENTS: Record<EventId, EventDef> = {
     resolvedStory: {
       jinyanShenxing:
         "你闭门不出，见了谁都只说些天气花草。流言找不到新的把柄，传了几日便自己散了。",
+      shoulongRenxin:
+        "你让流朱带着银子在各宫走动，凡是嚼舌根的小宫女都得了赏，嘴自然就严了。那些闲话没了传的人，不出几日便无人再提。",
       meizhuangXiangzhu:
         "眉庄姐姐在各宫走动时替你分说清楚，又寻出了最先嚼舌根的那个宫女，交给管事姑姑处置。流言一夜之间便没了声息。",
     },
@@ -388,7 +390,7 @@ export const CARDS: Record<CardId, CardDef> = {
     base: [],
     baseDraw: 0,
     baseStatus: "ermuLingtong",
-    matches: ["neiwufuDiaonan", "yuDayingZhengchong", "anzhongXiaban"],
+    matches: ["gongzhongLiuyan", "neiwufuDiaonan", "yuDayingZhengchong", "anzhongXiaban"],
     rulesText: ["获得【耳目灵通】：未来 2 回合每回合抓牌 +1。", "联动：用它解决【内务府刁难】时，额外抽 1 张牌。"],
   },
   jingguanQibian: {
