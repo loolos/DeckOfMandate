@@ -102,9 +102,9 @@ export const EVENTS: Record<EventId, EventDef> = {
   wenTaiyiQingmai: {
     id: "wenTaiyiQingmai",
     kind: "opportunity",
-    name: "温太医请脉",
+    name: "太医请脉",
     emoji: "🩺",
-    flavor: "温实初照例前来请平安脉。",
+    flavor: "太医照例前来请平安脉。",
     reward: [{ resource: "qingyu", amount: 1 }],
     penalty: [],
     resolvedText: "清誉 +1",
