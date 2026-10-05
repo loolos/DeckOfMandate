@@ -45,7 +45,7 @@ import { encodeRunCode } from "../logic/persistence";
 import { cardArtUrl, eventArtUrl, specialArtUrl, storyArtUrl } from "./art";
 import { CompactModeToggle } from "./CompactModeToggle";
 import { RulesSummary } from "./RulesSummary";
-import { compactEffect, expandedEffect } from "./effectText";
+import { compactEffect, expandedEffect, statusBrief } from "./effectText";
 import styles from "./zhenhuan.module.css";
 
 type Props = {
@@ -564,11 +564,15 @@ function Statuses({ state, dispatch }: { state: ZhState; dispatch: Dispatch }) {
               >
                 <div className={styles.statusLine}>
                   <span>
-                    {def.emoji} {def.name}
+                    {def.emoji}
+                    <span className={styles.statusFull}> {def.name}</span>
+                  </span>
+                  <span className={styles.statusBrief}>
+                    {statusBrief(def)} · {st.remaining}回合
                   </span>
                   <button
                     type="button"
-                    className={`${styles.tag} ${styles.tagButton}`}
+                    className={`${styles.tag} ${styles.tagButton} ${styles.statusFull}`}
                     title="点击在日志中查看说明"
                     onClick={(e) => {
                       e.stopPropagation();
@@ -577,7 +581,7 @@ function Statuses({ state, dispatch }: { state: ZhState; dispatch: Dispatch }) {
                   >
                     {STATUS_TAG_LABEL[def.tag]}
                   </button>
-                  <span className={styles.muted}>
+                  <span className={`${styles.muted} ${styles.statusFull}`}>
                     {def.blocksCards
                       ? `不能打出${def.blocksCards.map((id) => CARDS[id].name).join("、")}`
                       : def.perTurn
