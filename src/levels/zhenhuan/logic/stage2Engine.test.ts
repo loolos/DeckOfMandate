@@ -1090,13 +1090,14 @@ describe("zhenhuan stage 2 engine", () => {
     const [l] = setHand(s, ["lingrongXiangzhu"]);
     s = act(s, { type: "playCard", cardUid: l! });
     expect(s.hate).toBe(6);
-    expect(s.qingyu).toBe(before.q - 3);
-    expect(s.shengchong).toBe(before.c - 1);
+    expect(s.qingyu).toBe(before.q);
+    expect(s.shengchong).toBe(before.c); // only 闭门思过
+    expect(s.statuses.some((x) => x.id === "bimenSiguo")).toBe(true);
     expect(s.shenzi).toBe(before.z);
     expect(s.stories.find((x) => x.id === "huafeiFanan")?.story).toBeUndefined(); // no 陵容 relation yet → generic story
   });
 
-  it("风雨满楼 card responses each spare one resource: 温太医 keeps 身子", () => {
+  it("风雨满楼 card responses land only one of 清誉 / 圣宠 / 闭门思过: 温太医 → 圣宠 -2 only", () => {
     let s = newStage2(21, null);
     onlyEvents(s, {});
     s.qingyu = 8;
@@ -1105,8 +1106,8 @@ describe("zhenhuan stage 2 engine", () => {
     s.stories = [{ id: "huafeiFanan", chosenOptionId: null }];
     const [w] = setHand(s, ["wenTaiyiZhenzhi"]);
     s = act(s, { type: "playCard", cardUid: w! });
-    expect(s.qingyu).toBe(5);
-    expect(s.shengchong).toBe(5);
+    expect(s.qingyu).toBe(8);
+    expect(s.shengchong).toBe(6);
     expect(s.shenzi).toBe(4); // not hit, plus 温太医's own 身子 +1
   });
 
