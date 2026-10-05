@@ -455,7 +455,7 @@ export const STATUSES2: Record<StatusId2, StatusDef2> = {
     playPenalty: 1,
     effectText: "未来 2 回合，每回合出牌上限 -1（最低 1 张）。多个实例分别计时、效果叠加。",
     flavor: "碎玉轩的宫门半掩，往来的人一日少过一日。",
-    source: "翊坤立威、莺儿伏罪·求情、风雨满楼·认罚",
+    source: "翊坤立威、莺儿伏罪·求情、殿前风雨·认罚",
   },
   jinghongWu: {
     id: "jinghongWu",
@@ -1587,7 +1587,7 @@ export const STORIES2: Record<StoryId2, StoryDef2> = {
   },
   huafeiFanan: {
     id: "huafeiFanan",
-    name: "风雨满楼",
+    name: "殿前风雨",
     emoji: "💥",
     flavor:
       "年羹尧在西北又打了胜仗，华妃风头正盛。她在养心殿里哭诉了大半日，说碎玉轩那位恃宠生娇、目无尊上，屡屡冲撞翊坤宫，非要皇上严惩不可。皇上念着年家的军功，只得传你过去问话。华妃坐在一旁，眼里尽是得意。",

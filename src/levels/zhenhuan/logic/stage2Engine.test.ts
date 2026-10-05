@@ -859,7 +859,7 @@ describe("zhenhuan stage 2 engine", () => {
     expect([u.qingyu, u.shengchong, u.hate]).toEqual([9, 8, 2]); // only 眉庄相助's own 清誉 +1
   });
 
-  it("风雨满楼·求皇后庇护 via 陵容: story follows her 情分", () => {
+  it("殿前风雨·求皇后庇护 via 陵容: story follows her 情分", () => {
     const run = (relation: number) => {
       let s = newStage2(42, null);
       s.relation = relation;
@@ -1033,7 +1033,7 @@ describe("zhenhuan stage 2 engine", () => {
     }
   });
 
-  it("风雨满楼 · 求皇后庇护: 陵容 亲厚 / 生分 costs 情分 -1, 怨怼 unchanged", () => {
+  it("殿前风雨 · 求皇后庇护: 陵容 亲厚 / 生分 costs 情分 -1, 怨怼 unchanged", () => {
     for (const [start, after] of [
       [3, 2],
       [0, -1],
@@ -1072,7 +1072,7 @@ describe("zhenhuan stage 2 engine", () => {
     }
   });
 
-  it("恨意 10 opens 风雨满楼; resolving it drops hate to 6", () => {
+  it("恨意 10 opens 殿前风雨; resolving it drops hate to 6", () => {
     let s = newStage2(18, null);
     s.stories = [];
     onlyEvents(s, {});
@@ -1097,7 +1097,7 @@ describe("zhenhuan stage 2 engine", () => {
     expect(s.stories.find((x) => x.id === "huafeiFanan")?.story).toBeUndefined(); // no 陵容 relation yet → generic story
   });
 
-  it("风雨满楼 card responses land only one of 清誉 / 圣宠 / 闭门思过: 温太医 → 圣宠 -2 only", () => {
+  it("殿前风雨 card responses land only one of 清誉 / 圣宠 / 闭门思过: 温太医 → 圣宠 -2 only", () => {
     let s = newStage2(21, null);
     onlyEvents(s, {});
     s.qingyu = 8;
