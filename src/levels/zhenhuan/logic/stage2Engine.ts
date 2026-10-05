@@ -821,7 +821,7 @@ function applyStoryOption(s: Z2State, inst: StoryInst2, option: StoryOption2, so
   }
   if (option.status) addStatus2(s, option.status);
   relationDelta += (option.relation ?? 0) + (tier ? (option.tierRelation?.[tier] ?? 0) : 0);
-  if (option.evidence) gainEvidence(s, option.evidence);
+  if (option.evidence && (!option.evidenceTiers || (tier != null && option.evidenceTiers.includes(tier)))) gainEvidence(s, option.evidence);
   if (option.exit) {
     s.xibie = option.exit;
     log(s, `${XIBIE[option.exit].who}将要离你远去：【${CARDS2[option.exit].name}】带上【惜别】标签。下次抓到时，其余的同名牌离场，只留这一张。`, "bad");

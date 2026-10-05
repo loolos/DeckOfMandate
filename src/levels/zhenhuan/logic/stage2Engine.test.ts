@@ -1015,6 +1015,24 @@ describe("zhenhuan stage 2 engine", () => {
     expect(seen.none).toBeGreaterThan(0);
   });
 
+  it("莺儿伏罪 · 陵容探视: 亲厚 / 生分 gets 余莺儿遗言, 怨怼 comes back empty-handed", () => {
+    for (const [start, gets] of [
+      [3, true],
+      [0, true],
+      [-3, false],
+    ] as const) {
+      let s = newStage2(41, null);
+      s.relation = start;
+      s.evidence = [];
+      onlyEvents(s, {});
+      openStory(s, "yuyingerShishi");
+      const [l] = setHand(s, ["lingrongXiangzhu"]);
+      s = act(s, { type: "playCard", cardUid: l! });
+      expect(s.stories[0]!.chosenOptionId, `@${start}`).toBe("lingrongTanshi");
+      expect(s.evidence.includes("yuyingerYiyan"), `@${start}`).toBe(gets);
+    }
+  });
+
   it("华妃发难 · 求皇后庇护: 陵容 亲厚 / 生分 costs 情分 -1, 怨怼 unchanged", () => {
     for (const [start, after] of [
       [3, 2],

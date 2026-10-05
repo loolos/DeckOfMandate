@@ -1139,6 +1139,8 @@ export type StoryOption2 = {
   readonly setRelation?: number;
   readonly relation?: number;
   readonly evidence?: EvidenceId;
+  /** 陵容 card answers: only these tiers actually come away with the `evidence` (default: any). */
+  readonly evidenceTiers?: readonly LingrongTier[];
   readonly exit?: DepartingCard;
   readonly pregnancy?: boolean;
   readonly summon?: "success" | "avoid";
@@ -1291,6 +1293,25 @@ export const STORIES2: Record<StoryId2, StoryDef2> = {
         evidence: "yuyingerYiyan",
         text: "可能搜集到华妃的罪证",
         story: "你打点狱卒，见了余莺儿最后一面。她惨笑着说，当初是华妃许她荣华，教她冒认倚梅园之功。",
+      },
+      {
+        id: "lingrongTanshi",
+        name: "陵容探视",
+        card: "lingrongXiangzhu",
+        effects: [],
+        evidence: "yuyingerYiyan",
+        evidenceTiers: ["close", "distant"],
+        text: "视情分，可能搜集到华妃的罪证",
+        compact: "🎶 🗂️视情分",
+        story: "陵容替你去了一趟狱中。",
+        tierStory: {
+          close:
+            "陵容说：「姐姐不必去那种地方，妹妹替你去。」她去了大半日，回来时脸色发白，指尖冰凉，只低声道：「她都说了。姐姐别问妹妹是怎么问出来的。」说罢便岔开了话头。",
+          distant:
+            "陵容淡淡应了一声，到底还是去了。回来时神色如常，袖口却洇着一点暗色。她把余莺儿的话原样转述，末了只道：「人到了那个地步，什么都肯说的。」",
+          resentful:
+            "陵容去了，回来时却只摇了摇头，说余莺儿咬紧牙关，什么也不肯说。你看着她，竟觉得那双眼睛里藏着话，却一句也不肯与你讲。",
+        },
       },
     ],
   },
