@@ -455,7 +455,7 @@ export const STATUSES2: Record<StatusId2, StatusDef2> = {
     playPenalty: 1,
     effectText: "未来 2 回合，每回合出牌上限 -1（最低 1 张）。多个实例分别计时、效果叠加。",
     flavor: "碎玉轩的宫门半掩，往来的人一日少过一日。",
-    source: "翊坤立威、莺儿伏罪·求情、华妃发难·认罚",
+    source: "翊坤立威、莺儿伏罪·求情、风雨满楼·认罚",
   },
   jinghongWu: {
     id: "jinghongWu",
@@ -1587,11 +1587,11 @@ export const STORIES2: Record<StoryId2, StoryDef2> = {
   },
   huafeiFanan: {
     id: "huafeiFanan",
-    name: "华妃发难",
+    name: "风雨满楼",
     emoji: "💥",
     flavor:
       "年羹尧在西北又打了胜仗，华妃风头正盛。她在养心殿里哭诉了大半日，说碎玉轩那位恃宠生娇、目无尊上，屡屡冲撞翊坤宫，非要皇上严惩不可。皇上念着年家的军功，只得传你过去问话。华妃坐在一旁，眼里尽是得意。",
-    note: "华妃动了真怒：清誉、圣宠、身子都要大伤，不同的应对只能在某一项上少伤一些。处理后恨意回落到 6。",
+    note: "华妃动了真怒：清誉、圣宠都要大伤，身子也要受些累；不同的应对只能在某一项上少伤一些。处理后恨意回落到 6。",
     defaultOptionId: "renfa",
     options: [
       {
@@ -1600,10 +1600,10 @@ export const STORIES2: Record<StoryId2, StoryDef2> = {
         effects: [
           { resource: "qingyu", amount: -3 },
           { resource: "shengchong", amount: -3 },
-          { resource: "shenzi", amount: -2 },
+          { resource: "shenzi", amount: -1 },
         ],
         status: "bimenSiguo",
-        text: "清誉 -3、圣宠 -3、身子 -2；闭门思过",
+        text: "清誉 -3、圣宠 -3、身子 -1；闭门思过",
         story: "你没有辩一句，只叩首认罪。皇上看了华妃一眼，到底还是下了旨：罚你在翊坤宫外跪抄经文，回宫后闭门思过。华妃立在廊下看了半日，你回宫时已站不稳。",
       },
       {
@@ -1613,10 +1613,9 @@ export const STORIES2: Record<StoryId2, StoryDef2> = {
         effects: [
           { resource: "qingyu", amount: -3 },
           { resource: "shengchong", amount: -1 },
-          { resource: "shenzi", amount: -1 },
         ],
-        text: "清誉 -3、圣宠 -1、身子 -1",
-        compact: "🎶 🪷-3 👑-1 🌱-1",
+        text: "清誉 -3、圣宠 -1（身子不扣）",
+        compact: "🎶 🪷-3 👑-1",
         story: "陵容去了一趟景仁宫。剪秋随即来养心殿传了皇后的话：后宫之事，自有中宫料理。皇上顺势把事情交给了皇后，华妃这才收了手。",
         tierStory: {
           close:
@@ -1635,9 +1634,9 @@ export const STORIES2: Record<StoryId2, StoryDef2> = {
         effects: [
           { resource: "qingyu", amount: -1 },
           { resource: "shengchong", amount: -3 },
-          { resource: "shenzi", amount: -2 },
+          { resource: "shenzi", amount: -1 },
         ],
-        text: "清誉 -1、圣宠 -3、身子 -2",
+        text: "清誉 -1、圣宠 -3、身子 -1",
         story: "你在御前不卑不亢，把华妃指的错处一条一条驳了回去，保住了体面。华妃气得当场摔了茶盏；皇上被你当着她的面顶撞，脸色难看得很，拂袖而去。",
       },
       {
@@ -1647,9 +1646,9 @@ export const STORIES2: Record<StoryId2, StoryDef2> = {
         effects: [
           { resource: "qingyu", amount: -3 },
           { resource: "shengchong", amount: -1 },
-          { resource: "shenzi", amount: -2 },
+          { resource: "shenzi", amount: -1 },
         ],
-        text: "清誉 -3、圣宠 -1、身子 -2",
+        text: "清誉 -3、圣宠 -1、身子 -1",
         story: "你素衣散发，跪在养心殿外哭了一场，只说自己年轻不懂事，惹娘娘动了气。皇上心软，免了大半责罚；华妃却恨得咬牙，阖宫都说你狐媚惑主。",
       },
       {
