@@ -1,8 +1,8 @@
 import { readdirSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
-import { CARDS, EVENTS } from "../data/content";
-import { CARDS2, EVENTS2 } from "../data/stage2Content";
+import { CARDS, EVENTS, STORIES } from "../data/content";
+import { CARDS2, EVENTS2, STORIES2 } from "../data/stage2Content";
 import { indexByBasename } from "./art";
 
 /** Art files that aren't named after a real id would silently never show (docs/art-spec.md §2). */
@@ -19,6 +19,10 @@ describe("zhenhuan art files", () => {
 
   it("event art is named <EventId>.webp", () => {
     expect(strayFiles("events", [...Object.keys(EVENTS), ...Object.keys(EVENTS2)])).toEqual([]);
+  });
+
+  it("story art is named <StoryId>.webp", () => {
+    expect(strayFiles("stories", [...Object.keys(STORIES), ...Object.keys(STORIES2)])).toEqual([]);
   });
 
   it("backdrops are stage1.webp / stage2.webp", () => {

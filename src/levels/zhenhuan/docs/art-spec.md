@@ -8,6 +8,7 @@
 |---|---|---|---|---|
 | 手牌配图 | **4:3**（横） | 1024 × 768 | WebP，≤ 100 KiB | 8 |
 | 事件配图 | **4:3**（横） | 1024 × 768 | WebP，≤ 100 KiB | 23 |
+| 剧情配图 | **4:3**（横） | 1024 × 768 | WebP，≤ 100 KiB | 13（14 个剧情事件，两个「翊坤长跪」共用一张） |
 | 关卡背景 | **16:9**（横） | 1920 × 1080 | WebP，≤ 300 KiB | 2（第一关、第二关各一张） |
 
 - 原图分辨率不低于交付尺寸（手牌 / 事件建议 ≥ 1600 × 1200，背景建议 ≥ 2560 × 1440），比例必须与上表一致；比例不对的原图先裁好再压缩，不要靠拉伸。
@@ -23,13 +24,14 @@
 src/levels/zhenhuan/assets/
   cards/<CardId2>.webp        手牌，如 cards/yirongZhengsu.webp
   events/<EventId2>.webp      事件，如 events/yizhangHong.webp
+  stories/<StoryId2>.webp     剧情，如 stories/yimeiYuan.webp
   backdrops/stage1.webp       第一关背景（同时用作开始菜单背景）
   backdrops/stage2.webp       第二关背景
 ```
 
 - id 大小写须与 `data/content.ts` / `data/stage2Content.ts` 中完全一致。
 - 两关共用的事件 id（如 `huanghouShangshi`、`gongzhongLiuyan`）共用同一张图。
-- 单元测试 `ui/art.test.ts` 校验 `cards/`、`events/`、`backdrops/` 下的每个文件名都必须是已存在的 id（或 `stage1` / `stage2`），防止拼错后静默不显示。
+- 单元测试 `ui/art.test.ts` 校验 `cards/`、`events/`、`stories/`、`backdrops/` 下的每个文件名都必须是已存在的 id（或 `stage1` / `stage2`），防止拼错后静默不显示。
 
 ## 3. 构图要求
 
@@ -57,7 +59,8 @@ src/levels/zhenhuan/assets/
 - **缺图时显示占位框**：同样 4:3，深色渐变底 + 居中的大号 emoji（取卡牌 / 事件已有的 `emoji` 字段），保证有图无图的卡片高度一致，配图可以逐张补齐。
 - 图片使用 `loading="lazy"` 与 `decoding="async"`；卡名已在卡头显示，图片按装饰图处理（`alt=""`）。
 - 背景固定在视口上（页面滚动时不拉伸），上方叠一层深色渐变；卡片、数值等面板保持不透明，不受背景影响。缺背景图时沿用原来的纯色背景。
-- 剧情卡、晋封考验、惜别卡本期不配图，仍为纯文字卡。
+- 剧情卡同样在卡头下方显示 4:3 配图框；`fakuiPregnant`（有孕版翊坤长跪）沿用 `fakuiPlain` 的图，见 `ui/art.ts` 的 `STORY_ART_ALIAS`。
+- 晋封考验、惜别卡、终局卡本期不配图，仍为纯文字卡。
 
 ## 5. 清单
 
@@ -102,6 +105,24 @@ src/levels/zhenhuan/assets/
 | `yizhangHong` | 🩸 一丈红 | 华妃 | 二 |
 | `huanyixiangZhuanchong` | 🌺 欢宜香浓 | 华妃 | 二 |
 
+### 剧情（13）
+
+| id | 名称 | 关卡 |
+|---|---|---|
+| `yimeiYuan` | ❄️ 倚梅园 | 一 |
+| `xinghuaWeiyu` | 🌸 杏花微雨 | 一 |
+| `chuQingan` | 🏯 初谒翊坤 | 二 |
+| `lingrongTuihui` | 🌙 凤鸾空返 | 二 |
+| `yuyingerShishi` | 🥀 莺儿伏罪 | 二 |
+| `jiaYunFengbo` | ⚖️ 假孕风波 | 二 |
+| `yuanmingyuan` | 🏞️ 圆明伴驾 | 二 |
+| `fakuiPlain` | ☀️ 翊坤长跪（`fakuiPregnant` 共用） | 二 |
+| `duanfeiJiushi` | 🌸 端妃旧事 | 二 |
+| `zhaoxing` | 🌙 凤鸾承恩 | 二 |
+| `nianShiQingtui` | ⛓️ 年氏倾颓 | 二 |
+| `caoGuirenLaifang` | 🍵 琴默叩门 | 二 |
+| `huafeiFanan` | 💥 华妃发难 | 二 |
+
 ### 背景（2）
 
 | 文件 | 用途 |
@@ -111,5 +132,5 @@ src/levels/zhenhuan/assets/
 
 ## 6. 出图
 
-- 用 ChatGPT 逐张生成，风格设定、每张图的 prompt 与短编号（C01–C08、E01–E23、B1–B2）见 [art-prompts.md](./art-prompts.md)。
+- 用 ChatGPT 逐张生成，风格设定、每张图的 prompt 与短编号（C01–C08、E01–E23、S01–S13、B1–B2）见 [art-prompts.md](./art-prompts.md)。
 - 选定的原图按短编号命名放进 `art-inbox/`，导入时改名为游戏 id、裁切并压缩到本文第 2 节的位置。

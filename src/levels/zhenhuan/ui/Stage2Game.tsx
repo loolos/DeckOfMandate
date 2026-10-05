@@ -60,7 +60,7 @@ import {
   type Z2Action,
   type Z2State,
 } from "../logic/stage2Engine";
-import { cardArtUrl, eventArtUrl } from "./art";
+import { cardArtUrl, eventArtUrl, storyArtUrl } from "./art";
 import { CompactModeToggle } from "./CompactModeToggle";
 import { CardArt, FoldBox, LogView, Pile, ResolvedBanner, ScrollRow, TagChip, activateOnKey, countBy, isTypingTarget, type Fold } from "./common";
 import { compactEffect2, expandedEffect2 } from "./effectText2";
@@ -285,6 +285,7 @@ function StoryCard({ state, inst, dispatch, fold }: { state: Z2State; inst: Stor
         </span>
         {tag}
       </div>
+      <CardArt src={storyArtUrl(inst.id)} emoji={def.emoji} />
       {chosenOption ? (
         <ResolvedBanner
           icon="📝"

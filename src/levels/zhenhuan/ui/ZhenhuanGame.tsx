@@ -40,7 +40,7 @@ import {
   type ZhState,
 } from "../logic/engine";
 import { encodeRunCode } from "../logic/persistence";
-import { cardArtUrl, eventArtUrl } from "./art";
+import { cardArtUrl, eventArtUrl, storyArtUrl } from "./art";
 import { CompactModeToggle } from "./CompactModeToggle";
 import { RulesSummary } from "./RulesSummary";
 import { compactEffect, expandedEffect } from "./effectText";
@@ -277,6 +277,7 @@ function StoryCard({ state, dispatch, fold }: { state: ZhState; dispatch: Dispat
           剧情
         </TagButton>
       </div>
+      <CardArt src={storyArtUrl(state.story.id)} emoji={story.emoji} />
       {chosenOption ? (
         <ResolvedBanner
           icon="📝"
