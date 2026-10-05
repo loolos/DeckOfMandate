@@ -696,7 +696,7 @@ function Statuses({ state, dispatch }: { state: Z2State; dispatch: Dispatch }) {
                 </span>
                 <span className={styles.statusBrief}>
                   {statusBrief2(def)}
-                  {def.permanent ? "" : ` · ${st.remaining}回合`}
+                  {def.permanent ? "" : ` ⏳${st.remaining}`}
                 </span>
                 <button
                   type="button"

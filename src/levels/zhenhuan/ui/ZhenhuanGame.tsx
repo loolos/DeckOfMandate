@@ -568,7 +568,7 @@ function Statuses({ state, dispatch }: { state: ZhState; dispatch: Dispatch }) {
                     <span className={styles.statusFull}> {def.name}</span>
                   </span>
                   <span className={styles.statusBrief}>
-                    {statusBrief(def)} · {st.remaining}回合
+                    {statusBrief(def)} ⏳{st.remaining}
                   </span>
                   <button
                     type="button"
