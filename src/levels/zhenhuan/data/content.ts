@@ -172,7 +172,7 @@ export const EVENTS: Record<EventId, EventDef> = {
   yuDayingZhengchong: {
     id: "yuDayingZhengchong",
     kind: "envy",
-    name: "余答应争宠",
+    name: "梅影争春",
     emoji: "🎶",
     flavor: "倚梅园里的歌声又响起来了，余答应想把皇上的心思拉回去。",
     reward: [],

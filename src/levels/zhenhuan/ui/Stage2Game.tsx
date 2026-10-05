@@ -810,10 +810,7 @@ export function Stage2Rules() {
         本关会有<strong>晋封贵人的考验</strong>，须在考验期间成功侍寝才能通过。
       </li>
       <li>
-        🎶<strong>安陵容</strong>会以【陵容相助】进入你的牌库，效果随你与她的情分而变。
-      </li>
-      <li>
-        🌱<strong>身子</strong>决定能否有孕。贵人有孕后可借【请脉报喜】晋为嫔，但也要提防小产。
+        🎶<strong>安陵容</strong>很快就会加入。
       </li>
     </ul>
   );
@@ -1069,7 +1066,7 @@ export function Stage2Game({ state, dispatch, runCode, showRules, onShowRules, o
             <strong>🔥 华妃恨意</strong>（0–10）越高，华妃事件越多越狠，到 10 她当场发难。侍寝、晋封、有孕（身怀龙裔期间每回合）会让她更恨你；失宠、避宠、让她出气、小产会让她消气。
           </p>
           <p>
-            <strong>🗂️ 搜集华妃罪证</strong>：从今日起留心华妃的罪状。罪证越多，第 30 回合扳倒华妃越容易；只有 1 条或更少则必败。
+            <strong>🗂️ 搜集华妃罪证</strong>：从今日起，留心华妃的种种罪状。
           </p>
         </Notice>
       ) : null}
