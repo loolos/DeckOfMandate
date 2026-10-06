@@ -141,8 +141,8 @@ export const EVIDENCE: Record<EvidenceId, EvidenceDef> = {
     id: "caoguirenGaofa",
     emoji: "🍵",
     name: "曹贵人告发",
-    line: "曹贵人为温宜计，倒戈告发华妃的种种罪状",
-    ending: "最懂华妃的曹贵人反戈一击，桩桩件件说得清清楚楚。",
+    line: "曹贵人为温宜计，私下吐露华妃的种种罪状，答应到时在御前作证",
+    ending: "曹琴默也站了出来，跪在御前指控华妃，桩桩件件说得清清楚楚。最懂华妃的人反戈一击，华妃再无从抵赖。",
   },
 };
 
@@ -742,8 +742,8 @@ export const EVENTS2: Record<EventId2, EventDef2> = {
     unresolvedText: "曹贵人等不到你的回音，此事作罢（不会再出现）",
     note: "只出现一次。",
     resolvedStory: {
-      shoulongRenxin: "你让槿汐守着门，听曹贵人把翊坤宫这些年的事一桩桩说了出来，又悄悄录成了供词。",
-      jinyanShenxing: "你只静静听着，一句也不多问。曹贵人说完，自己把供词按了手印递了过来。",
+      shoulongRenxin: "你让槿汐守着门，听曹贵人把翊坤宫这些年的事一桩桩说了出来。临走时她说，若到了御前，她肯站出来作证。",
+      jinyanShenxing: "你只静静听着，一句也不多问。曹贵人说完，叹了口气：「为了温宜，到时我自会在皇上跟前把话说清楚。」",
     },
   },
   songzhiKuisi: {
