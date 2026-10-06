@@ -1462,6 +1462,15 @@ export const STORIES2: Record<StoryId2, StoryDef2> = {
         story: "槿汐早在你膝下垫了一层软布，又一刻不停地替你打扇。你跪满了时辰，起身时仍是端端正正，没在人前失了体面。",
       },
       {
+        id: "feibaoHuangshangPlain",
+        name: "宫人飞报皇上",
+        card: "shoulongRenxin",
+        effects: [{ resource: "shenzi", amount: -2 }, { resource: "shengchong", amount: 1 }],
+        status: "baoyangZaishen",
+        text: "身子 -2；圣宠 +1（免去清誉 -1）；抱恙在身",
+        story: "小允子拼死跑去养心殿报信，皇上赶到时你已经跪了许久。他当场免了余下的时辰，亲自扶你起身，又斥了周宁海几句。你膝上虽疼，这份心疼却记在了他心里。",
+      },
+      {
         id: "huTiTangyao",
         name: "备下护体汤药",
         card: "wenTaiyiZhenzhi",

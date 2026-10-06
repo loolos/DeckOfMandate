@@ -443,6 +443,21 @@ describe("zhenhuan stage 2 engine", () => {
     expect(j.shenzi).toBe(2); // 槿汐护膝: 身子 -1
     expect(j.qingyu).toBe(8);
     expect(j.statuses.some((x) => x.id === "baoyangZaishen")).toBe(true);
+
+    let k = newStage2(15, null);
+    k.shenzi = 3;
+    k.qingyu = 8;
+    k.shengchong = 6;
+    k.fakuiHarsh = false;
+    openStory(k, "fakuiPlain");
+    onlyEvents(k, {});
+    const [r] = setHand(k, ["shoulongRenxin"]);
+    k = act(k, { type: "playCard", cardUid: r! });
+    expect(k.stories[0]!.chosenOptionId).toBe("feibaoHuangshangPlain");
+    expect(k.shenzi).toBe(1); // 身子 -2
+    expect(k.qingyu).toBe(8); // no 清誉 loss
+    expect(k.shengchong).toBe(7); // 圣宠 +1
+    expect(k.statuses.some((x) => x.id === "baoyangZaishen")).toBe(true);
   });
 
   it("怨怼 陵容 that 失效 still nudges the relation up by 1", () => {
