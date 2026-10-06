@@ -1089,3 +1089,21 @@
     transform: none;
   }
 }
+
+/* 非略缩模式 · 大屏横屏：内容从最左边开始铺开，事件卡与手牌卡加宽。 */
+@media (min-width: 1400px) and (orientation: landscape) {
+  .page:not(.compact) {
+    max-width: none;
+    margin: 0;
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+
+  .page:not(.compact) .events > * {
+    width: 380px;
+  }
+
+  .page:not(.compact) .hand > * {
+    width: 330px;
+  }
+}
