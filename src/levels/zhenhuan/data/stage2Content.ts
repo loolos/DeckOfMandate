@@ -146,7 +146,12 @@ export const EVIDENCE: Record<EvidenceId, EvidenceDef> = {
   },
 };
 
-export const EVIDENCE_THRESHOLDS = { fullWin: 5 };
+export const EVIDENCE_THRESHOLDS = {
+  fullWin: 5,
+  /** 完美结局: ≥ this many evidence, ≥ `perfectCards` 解牌 on 第 30 回合, one of them the 惜别 card. */
+  perfect: 7,
+  perfectCards: 3,
+};
 
 /** 第 30 回合 the closing event: how many cards it takes depends on the evidence gathered. */
 export const FINALE = {
@@ -183,6 +188,9 @@ export const FINALE = {
     narrow: "皇上沉吟良久，收回了华妃协理六宫之权，命她在翊坤宫闭门思过。",
     thin: "证据虽薄，你却把能说的话都说尽了。皇上终于动了怒，收回了华妃协理六宫之权。",
   },
+  /** 完美结局 (§11.3): the 惜别 card stands beside you one last time, and the 欢宜香 secret comes out. */
+  perfectStory:
+    "那位即将远去的故人，在御前为你说了最后一次话，字字都落在要紧处。华妃还想抵赖，皇上却抬手止住了她，沉默良久，缓缓开口：「欢宜香里掺了什么，朕比谁都清楚。」满殿的人都变了脸色。他说，那香是他默许她用了这么多年的；他忌惮年家，也不愿再看见年家的血脉承继宫闱。华妃如遭雷击，跌坐在地。皇上看着你，目光复杂，只道了一句：「这些年，委屈你们了。」旨意随即颁下：华妃褫夺封号，打入冷宫，年氏一门尽数削权。你立于殿中，回头望去，故人眼中含泪带笑。这一程你们并肩走到了最后，也走得最漂亮。",
   failStory: "你没能在御前把话说透。皇上念及旧情，华妃复起，翊坤宫的灯又亮了。",
   hopelessStory: "年家倒了，你手里却几乎拿不出华妃的一条罪状。皇上念及旧情，华妃复起，翊坤宫的灯又亮了。",
 };

@@ -466,6 +466,25 @@ describe("zhenhuan stage 2 engine", () => {
     expect(last.stories.some((x) => x.id === "zhaoxing")).toBe(false);
   });
 
+  it("凤鸾承恩 never appears on the 菊残霜冷 turn (turn 8), but comes back the next turn", () => {
+    const at = (turn: number) => {
+      const s = newStage2(48, null);
+      s.rank = "guiren";
+      s.turn = turn - 1;
+      s.shengchong = 12;
+      s.qingyu = 12;
+      s.hate = 3;
+      s.stories = [];
+      s.summonLast = null;
+      return act(s, { type: "endTurn" });
+    };
+    const t8 = at(8);
+    expect(t8.turn).toBe(8);
+    expect(t8.stories.some((x) => x.id === "jiaYunFengbo")).toBe(true);
+    expect(t8.stories.some((x) => x.id === "zhaoxing")).toBe(false);
+    expect(at(9).stories.some((x) => x.id === "zhaoxing")).toBe(true);
+  });
+
   it("宝华祈福: 温太医相助 gives only 身子 (no 清誉)", () => {
     let s = newStage2(43, null);
     s.stories = [];
@@ -1324,6 +1343,39 @@ describe("zhenhuan stage 2 engine", () => {
     const extra = at30(7, ["jinyanShenxing", "jinyanShenxing", "shoulongRenxin"]); // more than needed is fine
     expect(extra.finale?.played).toHaveLength(3);
     expect(extra.victory).toBe("full");
+  });
+
+  it("完美结局: ≥ 7 evidence, ≥ 3 解牌 on 第 30 回合, one of them the 惜别 card", () => {
+    const ALL = ["yuyingerYiyan", "liuweiqingYaofang", "fuziZhisi", "maiguanYujue", "kekouZhangce", "lanyongSixing", "duanfeiHonghua", "caoguirenGaofa"] as const;
+    const finish = (n: number, cards: CardId2[], xibie: "meizhuangXiangzhu" | "wenTaiyiZhenzhi" | null) => {
+      let s = newStage2(20, null);
+      s.turn = 29;
+      s.rank = "guiren";
+      s.qingyu = 10;
+      s.shengchong = 10;
+      s.stories = [];
+      s.crisis = null;
+      s.huafei = [];
+      s.hate = 9;
+      s.evidence = ALL.slice(0, n);
+      s.xibie = xibie;
+      s = act(s, { type: "endTurn" });
+      expect(s.turn).toBe(30);
+      s.stories = [];
+      onlyEvents(s, {});
+      s.extraPlays = 5;
+      for (const uid of setHand(s, cards)) s = act(s, { type: "playCard", cardUid: uid });
+      return reduce2(s, { type: "endTurn" });
+    };
+    const three: CardId2[] = ["meizhuangXiangzhu", "jinyanShenxing", "shoulongRenxin"];
+    expect(finish(7, three, "meizhuangXiangzhu").victory).toBe("perfect");
+    expect(finish(7, ["wenTaiyiZhenzhi", "jinyanShenxing", "shoulongRenxin"], "wenTaiyiZhenzhi").victory).toBe("perfect");
+    expect(finish(6, three, "meizhuangXiangzhu").victory).toBe("full"); // too little evidence
+    expect(finish(7, three.slice(0, 2), "meizhuangXiangzhu").victory).toBe("full"); // only 2 cards
+    expect(finish(7, ["jinyanShenxing", "shoulongRenxin", "jinxiXiangzhu"], "meizhuangXiangzhu").victory).toBe("full"); // 惜别 card not played
+    expect(finish(7, three, null).victory).toBe("full"); // no 惜别 at all
+    const p = finish(7, three, "meizhuangXiangzhu");
+    expect(endingLines(p).some((l) => l.includes("欢宜香"))).toBe(true);
   });
 
   it("replay reproduces a run exactly", () => {
