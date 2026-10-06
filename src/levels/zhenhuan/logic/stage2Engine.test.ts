@@ -447,6 +447,25 @@ describe("zhenhuan stage 2 engine", () => {
     expect(last.stories.some((x) => x.id === "huafeiFanan")).toBe(false);
   });
 
+  it("凤鸾承恩 never appears on the last turn", () => {
+    const run = (turn: number) => {
+      const s = newStage2(50, null);
+      s.rank = "pin";
+      s.turn = turn - 1;
+      s.hate = 3;
+      s.stories = [];
+      s.summonLast = null;
+      s.evidence = ["yuyingerYiyan", "liuweiqingYaofang", "fuziZhisi", "maiguanYujue", "kekouZhangce", "lanyongSixing", "duanfeiHonghua"];
+      s.qingyu = 12;
+      s.shengchong = 14;
+      return act(s, { type: "endTurn" });
+    };
+    expect(run(12).stories.some((x) => x.id === "zhaoxing")).toBe(true);
+    const last = run(30);
+    expect(last.turn).toBe(30);
+    expect(last.stories.some((x) => x.id === "zhaoxing")).toBe(false);
+  });
+
   it("宝华祈福: 温太医相助 gives only 身子 (no 清誉)", () => {
     let s = newStage2(43, null);
     s.stories = [];
