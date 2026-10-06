@@ -173,13 +173,72 @@ export const FINALE = {
   cardStory: {
     jinyanShenxing: "你跪在御前，一字一句道：「臣妾不敢妄言，只求皇上明察。年氏一门的所作所为，桩桩件件都有人证物证。」",
     shoulongRenxin: "小允子领着一众宫人跪了一地，叩首道：「奴婢们人微言轻，可翊坤宫这些年做下的事，奴婢们都亲眼见过。」",
-    meizhuangXiangzhu: "眉庄挺直了背，朗声道：「皇上，臣妾当日假孕失宠，正是翊坤宫一手设下的局。臣妾禁足存菊堂时，连炭火都被克扣了去。」",
+    meizhuangXiangzhu: "眉庄挺直了背，朗声道：「皇上，臣妾与她自幼相识，她的为人臣妾最清楚。翊坤宫这些年处处与碎玉轩为难，阖宫有目共睹。」",
     jinxiXiangzhu: "槿汐跪在殿下，不疾不徐地道：「奴婢在宫里伺候了大半辈子，翊坤宫这些年的手段，奴婢一桩一桩都记着。」",
-    wenTaiyiZhenzhi: "温实初捧着脉案跪下：「微臣愿以项上人头担保，这些方子皆出自翊坤宫授意，绝无半字虚言。」",
+    wenTaiyiZhenzhi: "温实初捧着脉案跪下：「碎玉轩这些年的脉案都在此处，哪一回病是怎么落下的，写得明明白白。微臣愿以项上人头担保，绝无半字虚言。」",
   } as Partial<Record<string, string>>,
-  /** 眉庄's line when 温太医 left instead (菊残霜冷): she was cleared and never 禁足. */
-  meizhuangClearedStory:
-    "眉庄挺直了背，朗声道：「皇上，当日臣妾有孕一事，正是翊坤宫串通刘畏卿设下的局，臣妾险些百口莫辩。若非有人仗义执言，臣妾今日也站不到这里。」",
+  /**
+   * `cardStory` above is each card's default line, used when nothing is left for it to speak to;
+   * it names no particular evidence, so it never repeats what another testimony said.
+   *
+   * Each 解牌 testifies to one particular evidence: the first on its list that you hold and nobody
+   * has spoken to yet this 翊坤落幕 (so the testimonies differ); `cardStory` / `lingrongStory` is the
+   * fallback. 陵容's entries are only her words; `lingrongManner` sets them in her tone.
+   */
+  witnessStory: {
+    jinyanShenxing: [
+      ["yuyingerYiyan", "你跪在御前，一字一句道：「当年倚梅园那句诗，原是臣妾所念。余氏临死前已说了实话：是翊坤宫许她荣华，教她冒认。」"],
+      ["maiguanYujue", "你跪在御前，一字一句道：「年氏一门在外卖官鬻爵，进项有几成送进了翊坤宫，御前的人都看在眼里。臣妾不敢妄言，只求皇上明察。」"],
+      ["fuziZhisi", "你跪在御前，一字一句道：「福子不过一个宫女，好端端地沉在了井里。丽嫔娘娘夜夜惊梦，心里有鬼的人，夜里是睡不安稳的。」"],
+      ["lanyongSixing", "你跪在御前，一字一句道：「夏常在不过一时言语冲撞，便在翊坤宫外受了一丈红，落得终身残废。这等私刑，宫规里哪一条许过？」"],
+      ["duanfeiHonghua", "你跪在御前，一字一句道：「端妃娘娘这些年缠绵病榻、终身无出，皆因当年翊坤宫送去的那碗红花。臣妾不敢妄言，只求皇上明察。」"],
+    ],
+    meizhuangXiangzhu: [
+      ["liuweiqingYaofang", "眉庄挺直了背，朗声道：「皇上，臣妾当日假孕失宠，正是翊坤宫串通刘畏卿一手设下的局。臣妾至今想起，仍觉心寒。」"],
+      ["kekouZhangce", "眉庄挺直了背，朗声道：「臣妾禁足存菊堂时，连炭火都被克扣了去。内务府的人亲口说，是翊坤宫的意思。」"],
+      ["lanyongSixing", "眉庄挺直了背，朗声道：「一丈红那日，臣妾也在。夏常在年轻不懂事，可罪不至此，华妃却连一句求情的话都不许人说。」"],
+      ["yuyingerYiyan", "眉庄挺直了背，朗声道：「余氏冒认倚梅园之功，背后若无人撑腰，她一个宫女哪来这样的胆子？」"],
+    ],
+    wenTaiyiZhenzhi: [
+      ["liuweiqingYaofang", "温实初捧着脉案跪下：「刘畏卿开给沈小主的方子，微臣一味一味验过，皆是推迟月信之药。微臣愿以项上人头担保，此事出自翊坤宫授意。」"],
+      ["duanfeiHonghua", "温实初捧着脉案跪下：「微臣替端妃娘娘诊过脉，娘娘的病根，是多年前一碗红花落下的。脉案在此，绝无半字虚言。」"],
+      ["kekouZhangce", "温实初捧着脉案跪下：「那年冬天碎玉轩断了炭火，小主受寒抱恙，脉案上都有记档。内务府克扣份例，是翊坤宫的吩咐。」"],
+    ],
+    shoulongRenxin: [
+      ["lanyongSixing", "小允子领着一众宫人跪了一地，叩首道：「那年翊坤宫外的一丈红，奴才们都在场。夏小主是怎么被打成那样的，奴才们亲眼看着，至今夜里还会惊醒。」"],
+      ["fuziZhisi", "小允子领着一众宫人跪了一地，叩首道：「福子姑娘出事那夜，有人瞧见翊坤宫的人往井边去过。奴才们人微言轻，这话憋了这些年，今日不敢不说。」"],
+      ["kekouZhangce", "小允子领着一众宫人跪了一地，叩首道：「奴才们年年去内务府领东西，哪一宫少了炭、少了米，又是谁吩咐扣下的，奴才们心里都有数。」"],
+      ["yuyingerYiyan", "小允子领着一众宫人跪了一地，叩首道：「余答应临去前在狱里说的话，看守的公公也听见了：倚梅园那夜的功劳，是翊坤宫教她冒认的。」"],
+      ["maiguanYujue", "小允子领着一众宫人跪了一地，叩首道：「年府往翊坤宫送东西，走的都是西华门。奴才们替人抬过那些箱子，沉得很。」"],
+    ],
+    jinxiXiangzhu: [
+      ["maiguanYujue", "槿汐跪在殿下，不疾不徐地道：「奴婢在宫里伺候了大半辈子，各处的老人都有往来。年大将军卖官的银子，有几成进了翊坤宫，宫里的老人心里都有本账。」"],
+      ["duanfeiHonghua", "槿汐跪在殿下，不疾不徐地道：「端妃娘娘当年那碗红花，是翊坤宫的人亲手端去的。那时奴婢已在宫里当差，宫里的老人都知道，只是这些年没人敢说。」"],
+      ["kekouZhangce", "槿汐跪在殿下，不疾不徐地道：「内务府这些年的旧账，奴婢一笔一笔对过。哪一宫的份例被扣下、扣下后去了哪里，都记着翊坤宫的吩咐。」"],
+      ["fuziZhisi", "槿汐跪在殿下，不疾不徐地道：「福子那孩子是奴婢看着进宫的，好端端的，怎么就没了？那几日翊坤宫的人在井边进出，奴婢都记着。」"],
+      ["yuyingerYiyan", "槿汐跪在殿下，不疾不徐地道：「余答应当年不过是倚梅园一个宫女，凭什么一夜之间就成了主子？背后替她铺路的是谁，奴婢看得清清楚楚。」"],
+      ["lanyongSixing", "槿汐跪在殿下，不疾不徐地道：「宫规里从没有一丈红这一条。翊坤宫私设刑罚，打残了夏小主，奴婢当日就在宫道上。」"],
+    ],
+    lingrongXiangzhu: [
+      ["fuziZhisi", "「丽嫔娘娘惊梦时，喊的都是福子的名字。福子是怎么死的，丽嫔心里最清楚，翊坤宫也最清楚。」"],
+      ["yuyingerYiyan", "「余答应在狱中说的话，臣妾也听说了：倚梅园那夜的功劳，是翊坤宫教她冒认的。」"],
+      ["lanyongSixing", "「臣妾初入宫时，夏常在也曾当众羞辱过臣妾。可她后来落得那般下场，臣妾想起来，至今夜里都睡不着。」"],
+      ["kekouZhangce", "「臣妾份例微薄，最知道少一篓炭是什么滋味。翊坤宫一句话，内务府便把各宫的东西扣下了。」"],
+    ],
+  } as Partial<Record<CardId2, readonly (readonly [EvidenceId, string])[]>>,
+  /** 陵容's tone (by 情分) before her evidence line. */
+  lingrongManner: {
+    close: "陵容握着你的手，轻声道：「姐姐受的委屈，妹妹都记着。」到了御前，她低眉顺眼地补了一句：",
+    distant: "陵容低着头，声音细细的：",
+    resentful: "陵容不是为你，她自己也恨透了翊坤宫。她在御前只淡淡一句，却比谁都狠：",
+  } as Record<LingrongTier, string>,
+  /** 眉庄's evidence lines when 温太医 left instead (菊残霜冷): she was cleared and never 禁足. */
+  meizhuangClearedWitness: {
+    liuweiqingYaofang:
+      "眉庄挺直了背，朗声道：「皇上，当日臣妾有孕一事，正是翊坤宫串通刘畏卿设下的局，臣妾险些百口莫辩。若非有人仗义执言，臣妾今日也站不到这里。」",
+    kekouZhangce:
+      "眉庄挺直了背，朗声道：「华妃协理六宫这些年，各宫的份例说扣便扣，内务府只看翊坤宫的脸色。臣妾宫里便被扣过不止一回。」",
+  } as Partial<Record<EvidenceId, string>>,
   /** 陵容 is no friend of 华妃 whatever she thinks of you; only her manner differs. */
   lingrongStory: {
     close: "陵容握着你的手，轻声道：「姐姐受的委屈，妹妹都记着。」到了御前，她低眉顺眼地补了一句：「臣妾也曾见翊坤宫的人，往碎玉轩送过不干净的东西。」",

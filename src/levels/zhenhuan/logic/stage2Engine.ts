@@ -173,7 +173,15 @@ export type Z2State = {
   lossReason: string | null;
   victory: "narrow" | "full" | "perfect" | null;
   /** 第 30 回合【翊坤落幕】: cards needed and cards played toward it. */
-  finale: { needed: number; played: CardId2[]; stories: string[]; /** The 惜别 card was among the 解牌 played. */ xibie?: boolean } | null;
+  finale: {
+    needed: number;
+    played: CardId2[];
+    stories: string[];
+    /** The 惜别 card was among the 解牌 played. */
+    xibie?: boolean;
+    /** Evidence the testimonies so far have spoken to (收拢人心 / 槿汐 pick a different one). */
+    cited?: EvidenceId[];
+  } | null;
   log: LogEntry[];
   actions: Z2Action[];
   turnStartActionCount: number;
@@ -626,6 +634,24 @@ function checkFanan(s: Z2State): void {
   openStory(s, "huafeiFanan");
 }
 
+function cite(f: NonNullable<Z2State["finale"]>, id: EvidenceId): void {
+  f.cited = [...(f.cited ?? []), id];
+}
+
+/** A 解牌's line at 翊坤落幕: testify to an evidence you hold that no one has spoken to yet. */
+function finaleStory(s: Z2State, card: CardId2, tier: LingrongTier | null): string {
+  const f = s.finale!;
+  const cleared = card === "meizhuangXiangzhu" && s.xibie === "wenTaiyiZhenzhi";
+  const pick = (FINALE.witnessStory[card] ?? []).find(([id]) => s.evidence.includes(id) && !(f.cited ?? []).includes(id));
+  if (pick) {
+    cite(f, pick[0]);
+    const line = (cleared ? FINALE.meizhuangClearedWitness[pick[0]] : undefined) ?? pick[1];
+    return tier ? FINALE.lingrongManner[tier] + line : line;
+  }
+  if (tier) return FINALE.lingrongStory[tier];
+  return FINALE.cardStory[card] ?? "";
+}
+
 function openStory(s: Z2State, id: StoryId2): void {
   s.stories.push({ id, chosenOptionId: null });
   log(s, `剧情事件：【${STORIES2[id].name}】`);
@@ -973,13 +999,7 @@ function resolvePlay2(s: Z2State, cardUid: string, removeStatusUid?: string): vo
     const first = !f.played.includes(card.id);
     f.played.push(card.id);
     if (xibie) f.xibie = true;
-    const story = !first
-      ? ""
-      : isLingrong
-        ? FINALE.lingrongStory[tier ?? "distant"]
-        : card.id === "meizhuangXiangzhu" && s.xibie === "wenTaiyiZhenzhi"
-          ? FINALE.meizhuangClearedStory
-          : (FINALE.cardStory[card.id] ?? "");
+    const story = first ? finaleStory(s, card.id, isLingrong ? (tier ?? "distant") : null) : "";
     if (story) f.stories.push(`${def.emoji} ${story}`);
     log(s, `【${FINALE.name}】${story}（解牌 ${f.played.length}/${f.needed}）`, "good");
     if (f.played.length === f.needed) log(s, finaleDoneStory(s.evidence.length), "good");
