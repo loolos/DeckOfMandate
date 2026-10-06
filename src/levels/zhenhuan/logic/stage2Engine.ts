@@ -638,14 +638,18 @@ function cite(f: NonNullable<Z2State["finale"]>, id: EvidenceId): void {
   f.cited = [...(f.cited ?? []), id];
 }
 
-/** 收拢人心 / 槿汐相助 at 翊坤落幕: testify to an evidence you hold that no one has spoken to yet. */
-function finaleWitnessStory(s: Z2State, card: CardId2): string | undefined {
-  if (card !== "shoulongRenxin" && card !== "jinxiXiangzhu") return undefined;
+/** A 解牌's line at 翊坤落幕: testify to an evidence you hold that no one has spoken to yet. */
+function finaleStory(s: Z2State, card: CardId2, tier: LingrongTier | null): string {
   const f = s.finale!;
-  const pick = FINALE.witnessStory[card].find(([id]) => s.evidence.includes(id) && !(f.cited ?? []).includes(id));
-  if (!pick) return undefined;
-  cite(f, pick[0]);
-  return pick[1];
+  const cleared = card === "meizhuangXiangzhu" && s.xibie === "wenTaiyiZhenzhi";
+  const pick = (FINALE.witnessStory[card] ?? []).find(([id]) => s.evidence.includes(id) && !(f.cited ?? []).includes(id));
+  if (pick) {
+    cite(f, pick[0]);
+    const line = (cleared ? FINALE.meizhuangClearedWitness[pick[0]] : undefined) ?? pick[1];
+    return tier ? FINALE.lingrongManner[tier] + line : line;
+  }
+  if (tier) return FINALE.lingrongStory[tier];
+  return cleared ? FINALE.meizhuangClearedStory : (FINALE.cardStory[card] ?? "");
 }
 
 function openStory(s: Z2State, id: StoryId2): void {
@@ -995,14 +999,7 @@ function resolvePlay2(s: Z2State, cardUid: string, removeStatusUid?: string): vo
     const first = !f.played.includes(card.id);
     f.played.push(card.id);
     if (xibie) f.xibie = true;
-    const story = !first
-      ? ""
-      : isLingrong
-        ? FINALE.lingrongStory[tier ?? "distant"]
-        : card.id === "meizhuangXiangzhu" && s.xibie === "wenTaiyiZhenzhi"
-          ? FINALE.meizhuangClearedStory
-          : (finaleWitnessStory(s, card.id) ?? FINALE.cardStory[card.id] ?? "");
-    if (first) for (const id of FINALE.citedByCard[card.id] ?? []) cite(f, id);
+    const story = first ? finaleStory(s, card.id, isLingrong ? (tier ?? "distant") : null) : "";
     if (story) f.stories.push(`${def.emoji} ${story}`);
     log(s, `【${FINALE.name}】${story}（解牌 ${f.played.length}/${f.needed}）`, "good");
     if (f.played.length === f.needed) log(s, finaleDoneStory(s.evidence.length), "good");

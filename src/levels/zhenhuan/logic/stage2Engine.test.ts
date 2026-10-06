@@ -1439,8 +1439,8 @@ describe("zhenhuan stage 2 engine", () => {
     expect(endingLines(p).some((l) => l.includes("欢宜香"))).toBe(true);
   });
 
-  it("翊坤落幕: 收拢人心 and 槿汐相助 testify to different evidence you hold", () => {
-    const play = (evidence: EvidenceId[], cards: CardId2[]) => {
+  it("翊坤落幕: every 解牌 testifies to a different evidence you hold", () => {
+    const play = (evidence: EvidenceId[], cards: CardId2[], xibie: "meizhuangXiangzhu" | "wenTaiyiZhenzhi" | null = null, relation = 0) => {
       let s = newStage2(20, null);
       s.turn = 29;
       s.rank = "guiren";
@@ -1451,21 +1451,35 @@ describe("zhenhuan stage 2 engine", () => {
       s.huafei = [];
       s.hate = 9;
       s.evidence = evidence;
+      s.xibie = xibie;
+      s.relation = relation;
       s = act(s, { type: "endTurn" });
       s.stories = [];
       onlyEvents(s, {});
-      s.extraPlays = 5;
+      s.extraPlays = 6;
       for (const uid of setHand(s, cards)) s = act(s, { type: "playCard", cardUid: uid });
       return s.finale!;
     };
-    // both would rather speak to 克扣账册; whoever goes second picks another one
+    // 槿汐 and 收拢人心 both prefer 克扣账册 here; whoever goes second picks another one
     const f = play(["kekouZhangce", "fuziZhisi", "liuweiqingYaofang"], ["jinxiXiangzhu", "shoulongRenxin"]);
     expect(f.cited).toEqual(["kekouZhangce", "fuziZhisi"]);
     expect(f.stories[0]).toContain("内务府");
     expect(f.stories[1]).toContain("福子");
-    // 眉庄 already spoke to 克扣 → 槿汐 falls back to her general line
-    const g = play(["kekouZhangce", "liuweiqingYaofang"], ["meizhuangXiangzhu", "jinxiXiangzhu"]);
-    expect(g.stories[1]).toContain(FINALE.cardStory.jinxiXiangzhu!);
+    // 眉庄 and 温太医 both lead with 刘畏卿药方 — the second one moves on
+    const g = play(["liuweiqingYaofang", "duanfeiHonghua"], ["meizhuangXiangzhu", "wenTaiyiZhenzhi"]);
+    expect(g.cited).toEqual(["liuweiqingYaofang", "duanfeiHonghua"]);
+    // nothing left to speak to → the general line
+    const h = play(["liuweiqingYaofang", "caoguirenGaofa"], ["wenTaiyiZhenzhi", "jinxiXiangzhu"]);
+    expect(h.stories[1]).toContain(FINALE.cardStory.jinxiXiangzhu!);
+    // 温太医 left: 眉庄 was cleared, so no 禁足 / 假孕失宠 in her words
+    const m = play(["liuweiqingYaofang", "kekouZhangce"], ["meizhuangXiangzhu", "jinyanShenxing"], "wenTaiyiZhenzhi");
+    expect(m.stories[0]).not.toContain("假孕失宠");
+    const k = play(["kekouZhangce", "caoguirenGaofa"], ["meizhuangXiangzhu"], "wenTaiyiZhenzhi"); // ≤ 1 evidence would lose outright
+    expect(k.stories[0]).not.toContain("存菊堂");
+    // 陵容 keeps her tone and speaks to her own evidence
+    const l = play(["fuziZhisi", "lanyongSixing"], ["shoulongRenxin", "lingrongXiangzhu"], null, 3);
+    expect(l.cited).toEqual(["lanyongSixing", "fuziZhisi"]);
+    expect(l.stories[1]).toContain(FINALE.lingrongManner.close);
   });
 
   it("replay reproduces a run exactly", () => {
