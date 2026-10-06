@@ -410,6 +410,25 @@ describe("zhenhuan stage 2 engine", () => {
     expect(s.relation).toBe(-2);
   });
 
+  it("御前密语: 槿汐相助 resolves it and brings 卖官鬻爵; 陵容相助 cannot", () => {
+    let s = newStage2(42, null);
+    s.stories = [];
+    s.evidence = [];
+    onlyEvents(s, { opportunity: "supeishengToufeng" });
+    const [j] = setHand(s, ["jinxiXiangzhu"]);
+    s = act(s, { type: "playCard", cardUid: j! });
+    expect(s.opportunity?.resolved).toBe(true);
+    expect(s.evidence).toContain("maiguanYujue");
+
+    let t = newStage2(42, null);
+    t.stories = [];
+    onlyEvents(t, { opportunity: "supeishengToufeng" });
+    const [l] = setHand(t, ["lingrongXiangzhu"]);
+    t = act(t, { type: "playCard", cardUid: l! });
+    expect(t.opportunity?.resolved).toBe(false);
+    expect(t.evidence).not.toContain("maiguanYujue");
+  });
+
   it("御前密语 joins the opportunity pool only after turn 10", () => {
     let s = newStage2(18, null);
     s.rank = "guiren"; // skip the 贵人考验
