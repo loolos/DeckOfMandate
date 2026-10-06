@@ -423,6 +423,19 @@ describe("zhenhuan stage 2 engine", () => {
     expect(s.shenzi).toBe(4); // event +1, 温太医相助's own +1
   });
 
+  it("静心调养: 静观其变 gives 身子 +2 and no 清誉", () => {
+    let s = newStage2(47, null);
+    s.stories = [];
+    s.qingyu = 5;
+    s.shenzi = 2;
+    onlyEvents(s, { opportunity: "jingxinTiaoyang" });
+    const [q] = setHand(s, ["jingguanQibian"]);
+    s = act(s, { type: "playCard", cardUid: q! });
+    expect(s.opportunity?.resolved).toBe(true);
+    expect(s.qingyu).toBe(5);
+    expect(s.shenzi).toBe(4);
+  });
+
   it("莺儿伏罪 / 圆明伴驾 / 翊坤长跪: the new 谨言慎行 / 温太医相助 options", () => {
     let a = newStage2(44, null);
     a.qingyu = 5;

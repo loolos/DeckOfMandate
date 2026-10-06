@@ -624,7 +624,8 @@ export const EVENTS2: Record<EventId2, EventDef2> = {
       { resource: "shenzi", amount: 1 },
     ],
     penalty: [],
-    resolvedText: "清誉 +1、身子 +1",
+    cardReward: { jingguanQibian: [{ resource: "shenzi", amount: 2 }] },
+    resolvedText: "清誉 +1、身子 +1（静观其变解决时改为身子 +2，不加清誉）",
     unresolvedText: "无额外效果，事件消失",
     resolvedStory: {
       jingguanQibian: "你闭门焚香，抄了几卷经。外头的风风雨雨一概不理，气色倒一日好过一日。",
