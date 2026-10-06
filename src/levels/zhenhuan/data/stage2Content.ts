@@ -177,6 +177,32 @@ export const FINALE = {
     jinxiXiangzhu: "槿汐跪在殿下，不疾不徐地道：「奴婢在宫里伺候了大半辈子，翊坤宫这些年的手段，奴婢一桩一桩都记着。」",
     wenTaiyiZhenzhi: "温实初捧着脉案跪下：「微臣愿以项上人头担保，这些方子皆出自翊坤宫授意，绝无半字虚言。」",
   } as Partial<Record<string, string>>,
+  /**
+   * 收拢人心 / 槿汐相助 testify to one particular evidence each: the first on their list that
+   * you hold and nobody has spoken to yet this 翊坤落幕; `cardStory` is the fallback.
+   */
+  witnessStory: {
+    shoulongRenxin: [
+      ["lanyongSixing", "小允子领着一众宫人跪了一地，叩首道：「那年翊坤宫外的一丈红，奴才们都在场。夏小主是怎么被打成那样的，奴才们亲眼看着，至今夜里还会惊醒。」"],
+      ["fuziZhisi", "小允子领着一众宫人跪了一地，叩首道：「福子姑娘出事那夜，有人瞧见翊坤宫的人往井边去过。奴才们人微言轻，这话憋了这些年，今日不敢不说。」"],
+      ["kekouZhangce", "小允子领着一众宫人跪了一地，叩首道：「奴才们年年去内务府领东西，哪一宫少了炭、少了米，又是谁吩咐扣下的，奴才们心里都有数。」"],
+      ["yuyingerYiyan", "小允子领着一众宫人跪了一地，叩首道：「余答应临去前在狱里说的话，看守的公公也听见了：倚梅园那夜的功劳，是翊坤宫教她冒认的。」"],
+      ["maiguanYujue", "小允子领着一众宫人跪了一地，叩首道：「年府往翊坤宫送东西，走的都是西华门。奴才们替人抬过那些箱子，沉得很。」"],
+    ],
+    jinxiXiangzhu: [
+      ["maiguanYujue", "槿汐跪在殿下，不疾不徐地道：「奴婢在宫里伺候了大半辈子，各处的老人都有往来。年大将军卖官的银子，有几成进了翊坤宫，宫里的老人心里都有本账。」"],
+      ["duanfeiHonghua", "槿汐跪在殿下，不疾不徐地道：「端妃娘娘当年那碗红花，是翊坤宫的人亲手端去的。那时奴婢已在宫里当差，宫里的老人都知道，只是这些年没人敢说。」"],
+      ["kekouZhangce", "槿汐跪在殿下，不疾不徐地道：「内务府这些年的旧账，奴婢一笔一笔对过。哪一宫的份例被扣下、扣下后去了哪里，都记着翊坤宫的吩咐。」"],
+      ["fuziZhisi", "槿汐跪在殿下，不疾不徐地道：「福子那孩子是奴婢看着进宫的，好端端的，怎么就没了？那几日翊坤宫的人在井边进出，奴婢都记着。」"],
+      ["yuyingerYiyan", "槿汐跪在殿下，不疾不徐地道：「余答应当年不过是倚梅园一个宫女，凭什么一夜之间就成了主子？背后替她铺路的是谁，奴婢看得清清楚楚。」"],
+      ["lanyongSixing", "槿汐跪在殿下，不疾不徐地道：「宫规里从没有一丈红这一条。翊坤宫私设刑罚，打残了夏小主，奴婢当日就在宫道上。」"],
+    ],
+  } as Record<"shoulongRenxin" | "jinxiXiangzhu", readonly (readonly [EvidenceId, string])[]>,
+  /** Evidence the other witnesses' lines already speak to, so 收拢人心 / 槿汐 pick something else. */
+  citedByCard: {
+    meizhuangXiangzhu: ["liuweiqingYaofang", "kekouZhangce"],
+    wenTaiyiZhenzhi: ["liuweiqingYaofang"],
+  } as Partial<Record<string, readonly EvidenceId[]>>,
   /** 眉庄's line when 温太医 left instead (菊残霜冷): she was cleared and never 禁足. */
   meizhuangClearedStory:
     "眉庄挺直了背，朗声道：「皇上，当日臣妾有孕一事，正是翊坤宫串通刘畏卿设下的局，臣妾险些百口莫辩。若非有人仗义执言，臣妾今日也站不到这里。」",

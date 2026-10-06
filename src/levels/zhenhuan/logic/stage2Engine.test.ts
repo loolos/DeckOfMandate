@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { CARDS2, EVENTS2, LINGRONG_EVENT, STORIES2, type CardId2, type EventId2, type StatusId2, type StoryId2 } from "../data/stage2Content";
+import { CARDS2, EVENTS2, FINALE, LINGRONG_EVENT, STORIES2, type CardId2, type EventId2, type EvidenceId, type StatusId2, type StoryId2 } from "../data/stage2Content";
 import {
   blockedByChezhou,
   canPlayCard,
@@ -1437,6 +1437,35 @@ describe("zhenhuan stage 2 engine", () => {
     expect(finish(7, three, null).victory).toBe("full"); // no 惜别 at all
     const p = finish(7, three, "meizhuangXiangzhu");
     expect(endingLines(p).some((l) => l.includes("欢宜香"))).toBe(true);
+  });
+
+  it("翊坤落幕: 收拢人心 and 槿汐相助 testify to different evidence you hold", () => {
+    const play = (evidence: EvidenceId[], cards: CardId2[]) => {
+      let s = newStage2(20, null);
+      s.turn = 29;
+      s.rank = "guiren";
+      s.qingyu = 10;
+      s.shengchong = 10;
+      s.stories = [];
+      s.crisis = null;
+      s.huafei = [];
+      s.hate = 9;
+      s.evidence = evidence;
+      s = act(s, { type: "endTurn" });
+      s.stories = [];
+      onlyEvents(s, {});
+      s.extraPlays = 5;
+      for (const uid of setHand(s, cards)) s = act(s, { type: "playCard", cardUid: uid });
+      return s.finale!;
+    };
+    // both would rather speak to 克扣账册; whoever goes second picks another one
+    const f = play(["kekouZhangce", "fuziZhisi", "liuweiqingYaofang"], ["jinxiXiangzhu", "shoulongRenxin"]);
+    expect(f.cited).toEqual(["kekouZhangce", "fuziZhisi"]);
+    expect(f.stories[0]).toContain("内务府");
+    expect(f.stories[1]).toContain("福子");
+    // 眉庄 already spoke to 克扣 → 槿汐 falls back to her general line
+    const g = play(["kekouZhangce", "liuweiqingYaofang"], ["meizhuangXiangzhu", "jinxiXiangzhu"]);
+    expect(g.stories[1]).toContain(FINALE.cardStory.jinxiXiangzhu!);
   });
 
   it("replay reproduces a run exactly", () => {
