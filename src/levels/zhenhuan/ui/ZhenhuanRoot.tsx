@@ -23,6 +23,9 @@ import { Stage2Game, Stage2Rules } from "./Stage2Game";
 import { ZhenhuanGame } from "./ZhenhuanGame";
 import styles from "./zhenhuan.module.css";
 
+/** Same pacing as the Sun King level intro: backdrop alone first, then the panel fades in. */
+const INTRO_DELAY_MS = 1000;
+
 function randomSeed(): number {
   return Math.floor(Math.random() * 2_147_483_647) + 1;
 }
@@ -30,6 +33,9 @@ function randomSeed(): number {
 export function ZhenhuanRoot() {
   const [session, setSession] = useState<Session | null>(null);
   const [showRules, setShowRules] = useState(false);
+  /** A level has just started: only the backdrop shows until the delay passes. */
+  const [introPending, setIntroPending] = useState(false);
+  const [introFade, setIntroFade] = useState(false);
   const [saved, setSaved] = useState<Session | null>(() => loadSession());
   const [seedText, setSeedText] = useState("");
 
@@ -54,9 +60,26 @@ export function ZhenhuanRoot() {
 
   const runCode = useMemo(() => (session ? encodeSessionCode(session) : ""), [session]);
 
+  useEffect(() => {
+    if (!introPending) return;
+    const id = window.setTimeout(() => {
+      setIntroPending(false);
+      setIntroFade(true);
+      setShowRules(true);
+    }, INTRO_DELAY_MS);
+    return () => window.clearTimeout(id);
+  }, [introPending]);
+
   const open = (next: Session, rules: boolean) => {
     setSession(next);
-    setShowRules(rules);
+    setShowRules(false);
+    setIntroPending(rules);
+    setIntroFade(false);
+  };
+
+  const onShowRules = (show: boolean) => {
+    setShowRules(show);
+    if (!show) setIntroFade(false);
   };
 
   const loadCode = (raw: string): { ok: true } | { ok: false; error: string } => {
@@ -70,6 +93,8 @@ export function ZhenhuanRoot() {
     setSaved(loadSession());
     setSession(null);
     setShowRules(false);
+    setIntroPending(false);
+    setIntroFade(false);
   };
 
   if (session?.stage === 1) {
@@ -77,16 +102,20 @@ export function ZhenhuanRoot() {
     return (
       <div className={styles.root}>
         <Backdrop src={backdropUrl(1)} />
-        <ZhenhuanGame
-          state={st}
-          dispatch={dispatch1}
-          showRules={showRules}
-          onShowRules={setShowRules}
-          onRestart={() => open({ stage: 1, state: newGame(randomSeed()) }, true)}
-          onMenu={backToMenu}
-          onLoadCode={loadCode}
-          onNextStage={st.outcome === "won" ? () => open(continueToStage2(st, randomSeed()), true) : undefined}
-        />
+        {introPending ? null : (
+          <div className={introFade ? styles.introFade : undefined}>
+            <ZhenhuanGame
+              state={st}
+              dispatch={dispatch1}
+              showRules={showRules}
+              onShowRules={onShowRules}
+              onRestart={() => open({ stage: 1, state: newGame(randomSeed()) }, true)}
+              onMenu={backToMenu}
+              onLoadCode={loadCode}
+              onNextStage={st.outcome === "won" ? () => open(continueToStage2(st, randomSeed()), true) : undefined}
+            />
+          </div>
+        )}
       </div>
     );
   }
@@ -95,20 +124,24 @@ export function ZhenhuanRoot() {
     return (
       <div className={styles.root}>
         <Backdrop src={backdropUrl(2)} />
-        <Stage2Game
-          state={session.state}
-          dispatch={dispatch2}
-          runCode={runCode}
-          showRules={showRules}
-          onShowRules={setShowRules}
-          onRestart={() => {
-            // Same carry-over (and 第一关 record) as this run, new seed.
-            const seed = randomSeed();
-            open({ stage: 2, state: newStage2(seed, session.state.carry), stage1: session.stage1 }, true);
-          }}
-          onMenu={backToMenu}
-          onLoadCode={loadCode}
-        />
+        {introPending ? null : (
+          <div className={introFade ? styles.introFade : undefined}>
+            <Stage2Game
+              state={session.state}
+              dispatch={dispatch2}
+              runCode={runCode}
+              showRules={showRules}
+              onShowRules={onShowRules}
+              onRestart={() => {
+                // Same carry-over (and 第一关 record) as this run, new seed.
+                const seed = randomSeed();
+                open({ stage: 2, state: newStage2(seed, session.state.carry), stage1: session.stage1 }, true);
+              }}
+              onMenu={backToMenu}
+              onLoadCode={loadCode}
+            />
+          </div>
+        )}
       </div>
     );
   }

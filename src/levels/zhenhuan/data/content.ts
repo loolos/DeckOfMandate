@@ -141,9 +141,9 @@ export const EVENTS: Record<EventId, EventDef> = {
     emoji: "📦",
     flavor: "这个月的份例迟迟没有送来。",
     reward: [],
-    penalty: [{ resource: "shengchong", amount: -1 }],
+    penalty: [{ resource: "qingyu", amount: -1 }],
     resolvedText: "移除事件",
-    unresolvedText: "圣宠 -1",
+    unresolvedText: "清誉 -1",
     resolvedStory: {
       shoulongRenxin:
         "你让小允子拿了银子去内务府打点，那管事太监掂了掂分量，当天下午份例便一样不少地送到了碎玉轩，还多添了两篓银炭。",

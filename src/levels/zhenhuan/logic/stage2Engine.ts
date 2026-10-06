@@ -713,12 +713,13 @@ function resolveEventByCard(s: Z2State, ev: EventInst2, card: CardId2, doubleRew
   const cost = def.double ? def.doublePenalty : def.responsePenalty?.[card];
   if (cost && alive(s)) applyResponsePenalty(s, cost, `${def.name}（应对的代价）`);
   if (def.kind === "opportunity") {
-    applyDeltas2(s, def.reward, def.name);
+    const reward = def.cardReward?.[card] ?? def.reward;
+    applyDeltas2(s, reward, def.name);
     const bonus = def.cardBonus?.[card];
     if (bonus && alive(s)) applyDeltas2(s, bonus, `${def.name}（${CARDS2[card].name}）`);
-    if (doubleReward && def.reward.length > 0 && alive(s)) {
+    if (doubleReward && reward.length > 0 && alive(s)) {
       ev.rewardDoubled = true;
-      applyDeltas2(s, def.reward, "眉庄相助联动：奖励翻倍");
+      applyDeltas2(s, reward, "眉庄相助联动：奖励翻倍");
     }
   }
   const evidence = def.evidence;
@@ -1076,7 +1077,7 @@ function beginTurn2(s: Z2State, turn: number): void {
   }
   if (turn === GUIREN_TRIAL.firstTurn && s.rank === "changzai") {
     s.trial = { active: true, summoned: false };
-    log(s, `剧情事件：【${GUIREN_TRIAL.name}】开始（第 ${GUIREN_TRIAL.firstTurn}—${GUIREN_TRIAL.lastTurn} 回合）`);
+    log(s, `剧情事件：【${GUIREN_TRIAL.name}】开始（第 ${GUIREN_TRIAL.firstTurn}—${GUIREN_TRIAL.lastTurn} 回合）：需圣宠 ≥ ${GUIREN_TRIAL.minShengchong}、清誉 ≥ ${GUIREN_TRIAL.minQingyu}，且考验期间至少侍寝成功一次。`);
   }
   if (!s.caoTriggered && s.hate > 5 && turn >= CAO_VISIT_MIN_TURN) {
     s.caoTriggered = true;

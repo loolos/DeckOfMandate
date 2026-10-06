@@ -33,7 +33,7 @@ export const STAGE2 = {
 export const GUIREN_TRIAL = {
   name: "晋封考验：贵人",
   emoji: "🏮",
-  flavor: "宫里要晋一批位分，皇上也问起了碎玉轩。能不能更进一步，就看这几日。",
+  flavor: "宫里要晋一批位分，皇上也问起了碎玉轩。能不能更进一步，就看这几日：圣宠与清誉都要够分量，更要有一回承恩侍寝，让皇上亲眼看一看你。",
   firstTurn: 5,
   lastTurn: 9,
   minShengchong: 9,
@@ -237,7 +237,7 @@ export const CARDS2: Record<CardId2, CardDef2> = {
   }),
   wenTaiyiZhenzhi: fromStage1("wenTaiyiZhenzhi", {
     base: [{ resource: "shenzi", amount: 1 }],
-    matches: ["jingxinTiaoyang", "liyiShiwu", "hanliangZhiwu", "shanshiYouyi", "wenyiBaoyang"],
+    matches: ["jingxinTiaoyang", "baohuadianQifu", "liyiShiwu", "hanliangZhiwu", "shanshiYouyi", "wenyiBaoyang"],
     rulesText: ["移除 1 个【负面】状态；身子 +1。"],
     rulesCompact: "🧹负面 🌱+1",
   }),
@@ -542,6 +542,8 @@ export type EventDef2 = {
   readonly reward: readonly Delta2[];
   /** Extra reward when this particular card takes the opportunity. */
   readonly cardBonus?: Partial<Record<CardId2, readonly Delta2[]>>;
+  /** Replaces `reward` when this particular card takes the opportunity. */
+  readonly cardReward?: Partial<Record<CardId2, readonly Delta2[]>>;
   readonly penalty: readonly Delta2[];
   readonly penaltyStatus?: StatusId2;
   /** Overrides the status's own duration when it comes from this event. */
@@ -621,7 +623,8 @@ export const EVENTS2: Record<EventId2, EventDef2> = {
       { resource: "shenzi", amount: 1 },
     ],
     penalty: [],
-    resolvedText: "清誉 +1、身子 +1",
+    cardReward: { jingguanQibian: [{ resource: "shenzi", amount: 2 }] },
+    resolvedText: "清誉 +1、身子 +1（静观其变解决时改为身子 +2，不加清誉）",
     unresolvedText: "无额外效果，事件消失",
     resolvedStory: {
       jingguanQibian: "你闭门焚香，抄了几卷经。外头的风风雨雨一概不理，气色倒一日好过一日。",
@@ -639,9 +642,11 @@ export const EVENTS2: Record<EventId2, EventDef2> = {
       { resource: "shenzi", amount: 1 },
     ],
     penalty: [],
-    resolvedText: "清誉 +1、身子 +1",
+    cardReward: { wenTaiyiZhenzhi: [{ resource: "shenzi", amount: 1 }] },
+    resolvedText: "清誉 +1、身子 +1（温太医相助解决时只得身子 +1）",
     unresolvedText: "无额外效果，事件消失",
     resolvedStory: {
+      wenTaiyiZhenzhi: "温实初陪你去宝华殿上香，又替你把了平安脉，叮嘱你少思少虑。你在佛前静坐了半日，只觉得身子轻快了许多。",
       jinyanShenxing: "你跪在佛前，心中默念的不过是家人平安、自身康健。太后听说你虔诚，夸了一句。",
     },
   },
@@ -783,9 +788,9 @@ export const EVENTS2: Record<EventId2, EventDef2> = {
     emoji: "📦",
     flavor: "这个月的份例迟迟没有送来。",
     reward: [],
-    penalty: [{ resource: "shengchong", amount: -1 }],
+    penalty: [{ resource: "qingyu", amount: -1 }],
     resolvedText: "移除事件",
-    unresolvedText: "圣宠 -1",
+    unresolvedText: "清誉 -1",
     note: "用收拢人心解决时额外抽 1 张。",
     resolvedStory: {
       shoulongRenxin: "小允子拿了银子去内务府打点，当天下午份例便一样不少地送到了碎玉轩。",
@@ -1047,7 +1052,7 @@ export const LINGRONG_EVENT: Partial<Record<EventId2, TierTable>> = {
   neiwufuDiaonan: {
     close: { resolves: true, extraDraw: 1, story: "陵容出身寒微，最懂怎么跟内务府打交道，没两日便替你把份例要了回来。" },
     distant: { resolves: true, story: "「妹妹出身寒微，跟奴才们打交道倒是在行。」份例总算补齐了。" },
-    resentful: { resolves: true, effects: [{ resource: "shengchong", amount: -1 }], story: "陵容出面去要份例，却把事情闹得人尽皆知，倒显得你斤斤计较。" },
+    resentful: { resolves: true, effects: [{ resource: "qingyu", amount: -1 }], story: "陵容出面去要份例，却把事情闹得人尽皆知，倒显得你斤斤计较。" },
   },
   liyiShiwu: {
     close: { resolves: true, shuhenjiao: true, story: "陵容扶你起来，替你整好衣裳，又说回头送药来。" },
@@ -1281,6 +1286,14 @@ export const STORIES2: Record<StoryId2, StoryDef2> = {
       { id: "bujiu", name: "不救", effects: [{ resource: "qingyu", amount: -1 }], text: "清誉 -1", story: "你没有替她说一句话。旁人说你心狠。" },
       { id: "qiuqing", name: "求情", effects: [{ resource: "shengchong", amount: -1 }], status: "bimenSiguo", text: "圣宠 -1；闭门思过", story: "你替她求了情，皇上皱眉，说你太过心软。" },
       {
+        id: "jiansuZhai",
+        name: "递一碗素斋",
+        card: "jinyanShenxing",
+        effects: [{ resource: "qingyu", amount: 1 }],
+        text: "清誉 +1",
+        story: "你不求情，也不落井下石，只托人给她递了一碗素斋。宫里人都说你心善，却又不越本分。",
+      },
+      {
         id: "yuzhongTanshi",
         name: "狱中探视",
         card: "shoulongRenxin",
@@ -1389,6 +1402,18 @@ export const STORIES2: Record<StoryId2, StoryDef2> = {
         story: "月下荷风，你盛装相伴，皇上一连几夜都留宿在碧桐书院。这般招摇，翊坤宫那边怕是早已记恨上了。",
       },
       {
+        id: "tiaoyangShengti",
+        name: "调养圣体",
+        card: "wenTaiyiZhenzhi",
+        effects: [
+          { resource: "shenzi", amount: 1 },
+          { resource: "hate", amount: 1 },
+        ],
+        text: "身子 +1；恨意 +1",
+        compact: "🌱+1 🔥+1",
+        story: "你请温实初为皇上和自己调了几剂温补的方子，说是夏日消暑。皇上用着舒心，你也气色渐好；只是这份体贴传到翊坤宫，华妃又添了几分不快。",
+      },
+      {
         id: "qinshiXianghe",
         name: "琴诗相和",
         card: "jinyanShenxing",
@@ -1427,6 +1452,14 @@ export const STORIES2: Record<StoryId2, StoryDef2> = {
         status: "baoyangZaishen",
         text: "身子 -1（免去清誉 -1）；抱恙在身",
         story: "槿汐早在你膝下垫了一层软布，又一刻不停地替你打扇。你跪满了时辰，起身时仍是端端正正，没在人前失了体面。",
+      },
+      {
+        id: "huTiTangyao",
+        name: "备下护体汤药",
+        card: "wenTaiyiZhenzhi",
+        effects: [{ resource: "qingyu", amount: -1 }],
+        text: "清誉 -1（免去身子 -1，且不抱恙）",
+        story: "温实初早早备下了护体的汤药，让流朱在你临跪前灌下。你跪满了时辰，膝上虽疼，身子却没有大碍。",
       },
       {
         id: "lingrongSongyao",
@@ -1594,10 +1627,11 @@ export const STORIES2: Record<StoryId2, StoryDef2> = {
         name: "认罚",
         effects: [
           { resource: "qingyu", amount: -2 },
-          { resource: "shengchong", amount: -2 },
+          { resource: "shengchong", amount: -1 },
+          { resource: "shenzi", amount: -2 },
         ],
         status: "bimenSiguo",
-        text: "清誉 -2、圣宠 -2；闭门思过",
+        text: "清誉 -2、圣宠 -1、身子 -2；闭门思过",
         story: "你没有辩一句，只叩首认罪。皇上看了华妃一眼，到底还是下了旨：罚你在翊坤宫外跪抄经文，回宫后闭门思过。华妃立在廊下看了半日，你回宫时已站不稳。",
       },
       {
@@ -1704,7 +1738,7 @@ export const TAG2_INFO: Record<TagId2, { label: string; lore: string; rules: str
     lore: "命运的关口，如约而至。",
     rules: "可以选一个基础选项（不占出牌），或从手牌打出卡面所列的牌（占 1 次出牌，另加该牌效果）。不处理就结束回合时，按默认选项处理。",
   },
-  trial: { label: "持续", lore: "这一批晋封的名单，就看这几日的表现。", rules: "贵人考验持续第 5—9 回合，召幸（侍寝）也从考验开始后才出现。每回合末判定：圣宠 ≥ 9、清誉 ≥ 9，且考验期间侍寝成功过，即晋为贵人；第 9 回合末仍未满足则失败。" },
+  trial: { label: "持续", lore: "这一批晋封的名单，就看这几日的表现。", rules: "贵人考验持续第 5—9 回合，召幸（侍寝）也从考验开始后才出现。每回合末判定：圣宠 ≥ 9、清誉 ≥ 9，且考验期间至少侍寝成功一次（缺一不可），即晋为贵人；第 9 回合末仍未满足则失败。" },
   negative: { label: "负面", lore: "缠身的麻烦，一时半刻甩不掉。", rules: "持续性的不利状态。温太医相助可移除 1 个（标“不可移除”的除外）。" },
   positive: { label: "正面", lore: "占得的先机，要趁早用上。", rules: "持续性的有利状态。" },
   lianmei: {
