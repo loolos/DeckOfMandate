@@ -410,6 +410,53 @@ describe("zhenhuan stage 2 engine", () => {
     expect(s.relation).toBe(-2);
   });
 
+  it("宝华祈福: 温太医相助 gives only 身子 (no 清誉)", () => {
+    let s = newStage2(43, null);
+    s.stories = [];
+    s.qingyu = 5;
+    s.shenzi = 2;
+    onlyEvents(s, { opportunity: "baohuadianQifu" });
+    const [w] = setHand(s, ["wenTaiyiZhenzhi"]);
+    s = act(s, { type: "playCard", cardUid: w! });
+    expect(s.opportunity?.resolved).toBe(true);
+    expect(s.qingyu).toBe(5);
+    expect(s.shenzi).toBe(4); // event +1, 温太医相助's own +1
+  });
+
+  it("莺儿伏罪 / 圆明伴驾 / 翊坤长跪: the new 谨言慎行 / 温太医相助 options", () => {
+    let a = newStage2(44, null);
+    a.qingyu = 5;
+    onlyEvents(a, {});
+    openStory(a, "yuyingerShishi");
+    const [j] = setHand(a, ["jinyanShenxing"]);
+    a = act(a, { type: "playCard", cardUid: j! });
+    expect(a.stories[0]!.chosenOptionId).toBe("jiansuZhai");
+    expect(a.qingyu).toBe(7); // option +1, 谨言慎行's own +1
+
+    let b = newStage2(45, null);
+    b.shenzi = 2;
+    b.hate = 3;
+    onlyEvents(b, {});
+    openStory(b, "yuanmingyuan");
+    const [w] = setHand(b, ["wenTaiyiZhenzhi"]);
+    b = act(b, { type: "playCard", cardUid: w! });
+    expect(b.stories[0]!.chosenOptionId).toBe("tiaoyangShengti");
+    expect(b.shenzi).toBe(4);
+    expect(b.pregnant).toBe(false);
+
+    let c = newStage2(46, null);
+    c.shenzi = 3;
+    c.qingyu = 6;
+    onlyEvents(c, {});
+    openStory(c, "fakuiPlain");
+    const [w2] = setHand(c, ["wenTaiyiZhenzhi"]);
+    c = act(c, { type: "playCard", cardUid: w2! });
+    expect(c.stories[0]!.chosenOptionId).toBe("huTiTangyao");
+    expect(c.qingyu).toBe(5);
+    expect(c.shenzi).toBe(4); // 温太医相助's own +1, no 身子 -1
+    expect(c.statuses.some((x) => x.id === "baoyangZaishen")).toBe(false);
+  });
+
   it("御前密语 joins the opportunity pool only after turn 10", () => {
     let s = newStage2(18, null);
     s.rank = "guiren"; // skip the 贵人考验
