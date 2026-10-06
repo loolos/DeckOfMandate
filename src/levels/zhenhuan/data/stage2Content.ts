@@ -21,7 +21,7 @@ export const SHENZI = { start: 2, max: 6, /** 喜脉概率 = 身子 ÷ divisor�
 export const HATE = { max: 10, fananResetTo: 6 };
 
 export const STAGE2 = {
-  title: "第二关 · 华妃跋扈",
+  title: "第二关 · 翊坤风雨",
   totalTurns: 30,
   startRank: "changzai" as RankId,
   /** 从主菜单单独开始第二关时的清誉 / 圣宠。 */
