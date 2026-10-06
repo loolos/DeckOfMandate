@@ -260,7 +260,6 @@ export const CARDS2: Record<CardId2, CardDef2> = {
       "jingxinTiaoyang",
       "baohuadianQifu",
       "liPinJingmeng",
-      "supeishengToufeng",
       "gongzhongLiuyan",
       "neiwufuDiaonan",
       "liyiShiwu",
@@ -280,7 +279,7 @@ export const CARDS2: Record<CardId2, CardDef2> = {
     base: [],
     baseDraw: 0,
     baseStatus: "zhushiTuotie",
-    matches: ["neiwufuDiaonan", "kekouFenli", "shanshiYouyi", "songzhiKuisi", "yikungongLiGuiju", "gongzhongLiuyan"],
+    matches: ["supeishengToufeng", "neiwufuDiaonan", "kekouFenli", "shanshiYouyi", "songzhiKuisi", "yikungongLiGuiju", "gongzhongLiuyan"],
     rulesText: ["获得【诸事妥帖】：下回合出牌数 +1。"],
     rulesCompact: "🗝️ 下回合🀄+1",
   },
@@ -659,11 +658,12 @@ export const EVENTS2: Record<EventId2, EventDef2> = {
     flavor: "槿汐与御前的苏公公是旧识，这日回来，神色有些异样。",
     reward: [],
     penalty: [],
-    evidence: { id: "maiguanYujue", cards: ["shoulongRenxin", "lingrongXiangzhu"] },
+    evidence: { id: "maiguanYujue", cards: ["shoulongRenxin", "jinxiXiangzhu"] },
     resolvedText: "可能搜集到华妃的罪证",
     unresolvedText: "无额外效果，事件消失（之后还会出现）",
     resolvedStory: {
       shoulongRenxin: "你让槿汐备了厚礼去谢苏公公。他私下说了一句：年大将军在外头卖官，翊坤宫那位也没少替兄长打点。",
+      jinxiXiangzhu: "槿汐亲自去见了苏公公，不过寒暄了几句旧话。临走时他压低声音提了一句：年大将军在外头卖官，翊坤宫那位也没少替兄长打点。",
     },
   },
   liPinJingmeng: {
@@ -1043,11 +1043,6 @@ export const LINGRONG_EVENT: Partial<Record<EventId2, TierTable>> = {
     close: { resolves: true, evidence: true, relation: 1, story: "陵容学着福子的声音在丽嫔窗下哭了半宿。丽嫔吓破了胆，把华妃害死福子的事全说了。事后陵容抿嘴笑：「也只有姐姐，敢叫我做这样的事。」" },
     distant: { resolves: true, evidence: true, story: "陵容肯帮这个忙，却撇嘴道：「这种装神弄鬼的事，也只有姐姐想得出来。」丽嫔终究吐了实话。" },
     resentful: { resolves: false, relation: 1, effects: [{ resource: "hate", amount: 1 }], story: "消息不知怎么走漏到了翊坤宫，丽嫔那边一下子没了动静。陵容低着头来见你，绞着帕子说是自己嘴不严。" },
-  },
-  supeishengToufeng: {
-    close: { resolves: true, evidence: true, story: "陵容在御前唱曲时留了心，回来把听见的话一五一十告诉了你：年家在外头卖官。" },
-    distant: { resolves: true, evidence: true, story: "「姐姐身边的人，倒是什么都打听得到。」陵容替你把话递到了，苏公公终于松了口。" },
-    resentful: { resolves: false, relation: 1, effects: [{ resource: "hate", amount: 1 }], story: "陵容把你打听年家的事透给了别人，翊坤宫那边立刻警觉起来。过了两日，她托人送来一碟你爱吃的点心，什么也没说。" },
   },
   gongzhongLiuyan: {
     close: { resolves: true, relation: 1, story: "陵容在各宫替你辟谣：「姐姐的为人，我最清楚。」说这话时，她的声音比平日都响亮些。" },
