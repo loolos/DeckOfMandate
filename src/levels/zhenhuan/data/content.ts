@@ -156,7 +156,7 @@ export const EVENTS: Record<EventId, EventDef> = {
     kind: "crisis",
     name: "礼仪失误",
     emoji: "🎎",
-    flavor: "请安时的一个小差错，被有心人看在眼里。",
+    flavor: "请安时脚下一滑跌了一跤，失了仪态，被有心人看在眼里。",
     reward: [],
     penalty: [
       { resource: "qingyu", amount: -1 },

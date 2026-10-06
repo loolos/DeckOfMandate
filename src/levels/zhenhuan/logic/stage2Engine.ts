@@ -973,7 +973,13 @@ function resolvePlay2(s: Z2State, cardUid: string, removeStatusUid?: string): vo
     const first = !f.played.includes(card.id);
     f.played.push(card.id);
     if (xibie) f.xibie = true;
-    const story = !first ? "" : isLingrong ? FINALE.lingrongStory[tier ?? "distant"] : (FINALE.cardStory[card.id] ?? "");
+    const story = !first
+      ? ""
+      : isLingrong
+        ? FINALE.lingrongStory[tier ?? "distant"]
+        : card.id === "meizhuangXiangzhu" && s.xibie === "wenTaiyiZhenzhi"
+          ? FINALE.meizhuangClearedStory
+          : (FINALE.cardStory[card.id] ?? "");
     if (story) f.stories.push(`${def.emoji} ${story}`);
     log(s, `【${FINALE.name}】${story}（解牌 ${f.played.length}/${f.needed}）`, "good");
     if (f.played.length === f.needed) log(s, finaleDoneStory(s.evidence.length), "good");

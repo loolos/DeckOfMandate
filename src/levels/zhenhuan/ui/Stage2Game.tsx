@@ -17,6 +17,7 @@ import {
   STAGE2,
   STATUSES2,
   STORIES2,
+  storyFlavor2,
   TIER_EMOJI,
   TIER_LABEL,
   XIBIE,
@@ -253,9 +254,16 @@ function StoryCard({ state, inst, dispatch, fold }: { state: Z2State; inst: Stor
   const tier = tierOf(state);
   const className = [styles.card, styles.cardStory, chosen && styles.cardResolved].filter(Boolean).join(" ");
   const tag = (
-    <Tag tag="story" tone={styles.kindStory} dispatch={dispatch}>
-      剧情
-    </Tag>
+    <span className={styles.tagGroup}>
+      {inst.id === "huafeiFanan" ? (
+        <Tag tag="huafei" tone={styles.kindEnvy} dispatch={dispatch}>
+          {EVENT_KIND2_LABEL.huafei}
+        </Tag>
+      ) : null}
+      <Tag tag="story" tone={styles.kindStory} dispatch={dispatch}>
+        剧情
+      </Tag>
+    </span>
   );
   const resultText = inst.result ?? (chosenOption ? chosenOption.text : "");
   if (fold.compact && !fold.expanded) {
@@ -295,7 +303,7 @@ function StoryCard({ state, inst, dispatch, fold }: { state: Z2State; inst: Stor
           story={inst.story ?? chosenOption.story}
         />
       ) : null}
-      <p className={styles.flavor}>{def.flavor}</p>
+      <p className={styles.flavor}>{storyFlavor2(def, state.turn)}</p>
       {def.note ? <p className={styles.rule}>{def.note}</p> : null}
       {blocked ? <p className={styles.endHint}>皇上在翊坤宫，须先化解【欢宜香浓】才能处理召幸。</p> : null}
       {inst.id === "zhaoxing" && chosen == null && summonUnwell(state) ? <p className={styles.endHint}>{summonUnwell(state)}，不能侍寝：只能称病避宠或错过。</p> : null}
