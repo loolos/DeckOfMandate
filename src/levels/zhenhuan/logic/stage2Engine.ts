@@ -171,9 +171,9 @@ export type Z2State = {
   pending: { cardUid: string } | null;
   outcome: Z2Outcome;
   lossReason: string | null;
-  victory: "narrow" | "full" | null;
+  victory: "narrow" | "full" | "perfect" | null;
   /** 第 30 回合【翊坤落幕】: cards needed and cards played toward it. */
-  finale: { needed: number; played: CardId2[]; stories: string[] } | null;
+  finale: { needed: number; played: CardId2[]; stories: string[]; /** The 惜别 card was among the 解牌 played. */ xibie?: boolean } | null;
   log: LogEntry[];
   actions: Z2Action[];
   turnStartActionCount: number;
@@ -970,6 +970,7 @@ function resolvePlay2(s: Z2State, cardUid: string, removeStatusUid?: string): vo
     const f = s.finale!;
     const first = !f.played.includes(card.id);
     f.played.push(card.id);
+    if (xibie) f.xibie = true;
     const story = !first ? "" : isLingrong ? FINALE.lingrongStory[tier ?? "distant"] : (FINALE.cardStory[card.id] ?? "");
     if (story) f.stories.push(`${def.emoji} ${story}`);
     log(s, `【${FINALE.name}】${story}（解牌 ${f.played.length}/${f.needed}）`, "good");
@@ -1279,8 +1280,10 @@ function endTurn2(s: Z2State): void {
       return;
     }
     s.outcome = "won";
-    s.victory = n >= EVIDENCE_THRESHOLDS.fullWin ? "full" : "narrow";
-    log(s, s.victory === "full" ? `罪证 ${n} 条，华妃降为答应，打入冷宫：完胜！` : `罪证 ${n} 条，华妃被收回协理六宫之权：险胜！`, "good");
+    const perfect = n >= EVIDENCE_THRESHOLDS.perfect && f.played.length >= EVIDENCE_THRESHOLDS.perfectCards && f.xibie === true;
+    s.victory = perfect ? "perfect" : n >= EVIDENCE_THRESHOLDS.fullWin ? "full" : "narrow";
+    if (perfect) log(s, `罪证 ${n} 条，惜别之人在御前最后一次相助，欢宜香的内情大白：完美结局！`, "good");
+    else log(s, s.victory === "full" ? `罪证 ${n} 条，华妃降为答应，打入冷宫：完胜！` : `罪证 ${n} 条，华妃被收回协理六宫之权：险胜！`, "good");
     return;
   }
 
@@ -1441,6 +1444,7 @@ export function endingLines(s: Z2State): string[] {
   if (s.finale) {
     const done = s.finale.played.length >= s.finale.needed;
     lines.push(done ? finaleDoneStory(s.evidence.length) : FINALE.failStory);
+    if (s.victory === "perfect") lines.push(FINALE.perfectStory);
   }
   for (const id of s.evidence) lines.push(EVIDENCE[id].ending);
   lines.push(s.rank === "pin" ? "你以嫔位立于六宫之中。" : `你如今是${RANKS[s.rank].name}。`);

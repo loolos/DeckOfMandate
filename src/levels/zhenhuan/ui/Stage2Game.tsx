@@ -777,7 +777,7 @@ function OutcomeModal({ state, onRestart, onMenu }: { state: Z2State; onRestart:
   return (
     <div className={styles.overlay} role="dialog" aria-modal="true" aria-labelledby="zh2-outcome-title">
       <div className={styles.modal}>
-        <h2 id="zh2-outcome-title">{won ? (state.victory === "full" ? "🎉 完胜：华妃打入冷宫" : "🎉 险胜：华妃失势") : "🥀 功亏一篑"}</h2>
+        <h2 id="zh2-outcome-title">{won ? (state.victory === "perfect" ? "🌟 完美结局：真相大白" : state.victory === "full" ? "🎉 完胜：华妃打入冷宫" : "🎉 险胜：华妃失势") : "🥀 功亏一篑"}</h2>
         {won ? null : <p>{state.lossReason}。</p>}
         {state.turn >= STAGE2.totalTurns || won ? endingLines(state).map((line) => <p key={line}>{line}</p>) : null}
         <p className={styles.muted}>
