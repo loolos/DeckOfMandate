@@ -429,6 +429,24 @@ describe("zhenhuan stage 2 engine", () => {
     expect(t.evidence).not.toContain("maiguanYujue");
   });
 
+  it("殿前风雨 never opens on the last turn, even at 恨意 10", () => {
+    const run = (turn: number) => {
+      const s = newStage2(49, null);
+      s.rank = "pin";
+      s.turn = turn - 1;
+      s.hate = 10;
+      s.stories = [];
+      s.evidence = ["yuyingerYiyan", "liuweiqingYaofang", "fuziZhisi", "maiguanYujue", "kekouZhangce", "lanyongSixing", "duanfeiHonghua"];
+      s.qingyu = 12;
+      s.shengchong = 12;
+      return act(s, { type: "endTurn" });
+    };
+    expect(run(12).stories.some((x) => x.id === "huafeiFanan")).toBe(true);
+    const last = run(30);
+    expect(last.turn).toBe(30);
+    expect(last.stories.some((x) => x.id === "huafeiFanan")).toBe(false);
+  });
+
   it("宝华祈福: 温太医相助 gives only 身子 (no 清誉)", () => {
     let s = newStage2(43, null);
     s.stories = [];

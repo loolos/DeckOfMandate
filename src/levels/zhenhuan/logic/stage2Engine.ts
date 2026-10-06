@@ -620,7 +620,8 @@ function summonSuccess(s: Z2State, source: string): void {
 }
 
 function checkFanan(s: Z2State): void {
-  if (!alive(s) || s.hate < HATE.max) return;
+  // 翊坤落幕 (the last turn): 华妃 has nothing left to throw, so 殿前风雨 never opens then
+  if (!alive(s) || s.hate < HATE.max || s.turn >= STAGE2.totalTurns) return;
   if (s.stories.some((st) => st.id === "huafeiFanan" && st.chosenOptionId == null)) return;
   openStory(s, "huafeiFanan");
 }
