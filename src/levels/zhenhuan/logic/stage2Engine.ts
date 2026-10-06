@@ -798,13 +798,14 @@ function applyStoryOption(s: Z2State, inst: StoryInst2, option: StoryOption2, so
   log(s, told);
   if (option.distantRemark && tier === "distant") log(s, `陵容（生分）：${option.distantRemark}`);
   if (inst.id === "fakuiPregnant") {
-    let loss = option.fakuiShenzi ?? 3;
+    let loss = option.fakuiShenzi ?? 2;
     if (s.fakuiHarsh) loss++;
     if (removeStatusById(s, "wentaiyiLiufang")) {
       loss = Math.max(0, loss - 1);
       log(s, "【温太医留方】保住了你的身子：身子少扣 1。", "good");
     }
     miscarry(s, loss, "翊坤长跪");
+    if (alive(s)) applyDeltas2(s, option.effects, `${def.name}·${option.name}`);
   } else if (inst.id === "fakuiPlain") {
     applyDeltas2(s, option.effects, `${def.name}·${option.name}`);
     if (s.fakuiHarsh) applyDelta2(s, { resource: "qingyu", amount: -1 }, "华妃恨意正盛，罚得更重");

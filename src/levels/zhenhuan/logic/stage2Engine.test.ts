@@ -384,6 +384,38 @@ describe("zhenhuan stage 2 engine", () => {
     expect(s.statuses.some((x) => x.id === "wentaiyiLiufang")).toBe(false);
   });
 
+  it("罚跪（有孕）: 小产身子 -2 固定；默认 清誉 -2，暗中留心 抱恙在身，槿汐 / 陵容 清誉 -1", () => {
+    const run = (hand: CardId2 | null) => {
+      let s = newStage2(14, null);
+      s.pregnant = true;
+      s.statuses.push({ uid: "p", id: "shenhuaiLongyi", appliesFromTurn: 1, remaining: 0 });
+      s.shenzi = 6;
+      s.qingyu = 8;
+      s.shengchong = 8;
+      s.hate = 7;
+      s.fakuiHarsh = false;
+      onlyEvents(s, {});
+      openStory(s, "fakuiPregnant");
+      if (hand) {
+        const [c] = setHand(s, [hand]);
+        s = act(s, { type: "playCard", cardUid: c! });
+      } else {
+        s = act(s, { type: "chooseStory", storyId: "fakuiPregnant", optionId: "yingcheng" });
+      }
+      expect(s.pregnant).toBe(false);
+      return s;
+    };
+    const def = run(null);
+    expect(def.shenzi).toBe(4);
+    expect(def.qingyu).toBe(8 - 1 - 2); // 小产 -1, 硬撑 -2
+    expect(def.statuses.some((x) => x.id === "bimenSiguo")).toBe(false);
+    const liuxin = run("jingguanQibian");
+    expect(liuxin.qingyu).toBe(7);
+    expect(liuxin.statuses.some((x) => x.id === "baoyangZaishen")).toBe(true);
+    expect(run("jinxiXiangzhu").qingyu).toBe(6); // 小产 -1, 槿汐 -1
+    expect(run("wenTaiyiZhenzhi").qingyu).toBe(7);
+  });
+
   it("罚跪（未有孕）陵容送药: 免身子 -1；生分时多一句风凉话", () => {
     let s = newStage2(15, null);
     s.relation = 0;
