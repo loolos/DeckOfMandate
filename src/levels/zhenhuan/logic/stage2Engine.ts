@@ -1076,7 +1076,7 @@ function beginTurn2(s: Z2State, turn: number): void {
   }
   if (turn === GUIREN_TRIAL.firstTurn && s.rank === "changzai") {
     s.trial = { active: true, summoned: false };
-    log(s, `剧情事件：【${GUIREN_TRIAL.name}】开始（第 ${GUIREN_TRIAL.firstTurn}—${GUIREN_TRIAL.lastTurn} 回合）`);
+    log(s, `剧情事件：【${GUIREN_TRIAL.name}】开始（第 ${GUIREN_TRIAL.firstTurn}—${GUIREN_TRIAL.lastTurn} 回合）：需圣宠 ≥ ${GUIREN_TRIAL.minShengchong}、清誉 ≥ ${GUIREN_TRIAL.minQingyu}，且考验期间至少侍寝成功一次。`);
   }
   if (!s.caoTriggered && s.hate > 5 && turn >= CAO_VISIT_MIN_TURN) {
     s.caoTriggered = true;

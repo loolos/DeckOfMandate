@@ -33,7 +33,7 @@ export const STAGE2 = {
 export const GUIREN_TRIAL = {
   name: "晋封考验：贵人",
   emoji: "🏮",
-  flavor: "宫里要晋一批位分，皇上也问起了碎玉轩。能不能更进一步，就看这几日。",
+  flavor: "宫里要晋一批位分，皇上也问起了碎玉轩。能不能更进一步，就看这几日：圣宠与清誉都要够分量，更要有一回承恩侍寝，让皇上亲眼看一看你。",
   firstTurn: 5,
   lastTurn: 9,
   minShengchong: 9,
@@ -1599,10 +1599,11 @@ export const STORIES2: Record<StoryId2, StoryDef2> = {
         name: "认罚",
         effects: [
           { resource: "qingyu", amount: -2 },
-          { resource: "shengchong", amount: -2 },
+          { resource: "shengchong", amount: -1 },
+          { resource: "shenzi", amount: -2 },
         ],
         status: "bimenSiguo",
-        text: "清誉 -2、圣宠 -2；闭门思过",
+        text: "清誉 -2、圣宠 -1、身子 -2；闭门思过",
         story: "你没有辩一句，只叩首认罪。皇上看了华妃一眼，到底还是下了旨：罚你在翊坤宫外跪抄经文，回宫后闭门思过。华妃立在廊下看了半日，你回宫时已站不稳。",
       },
       {
@@ -1709,7 +1710,7 @@ export const TAG2_INFO: Record<TagId2, { label: string; lore: string; rules: str
     lore: "命运的关口，如约而至。",
     rules: "可以选一个基础选项（不占出牌），或从手牌打出卡面所列的牌（占 1 次出牌，另加该牌效果）。不处理就结束回合时，按默认选项处理。",
   },
-  trial: { label: "持续", lore: "这一批晋封的名单，就看这几日的表现。", rules: "贵人考验持续第 5—9 回合，召幸（侍寝）也从考验开始后才出现。每回合末判定：圣宠 ≥ 9、清誉 ≥ 9，且考验期间侍寝成功过，即晋为贵人；第 9 回合末仍未满足则失败。" },
+  trial: { label: "持续", lore: "这一批晋封的名单，就看这几日的表现。", rules: "贵人考验持续第 5—9 回合，召幸（侍寝）也从考验开始后才出现。每回合末判定：圣宠 ≥ 9、清誉 ≥ 9，且考验期间至少侍寝成功一次（缺一不可），即晋为贵人；第 9 回合末仍未满足则失败。" },
   negative: { label: "负面", lore: "缠身的麻烦，一时半刻甩不掉。", rules: "持续性的不利状态。温太医相助可移除 1 个（标“不可移除”的除外）。" },
   positive: { label: "正面", lore: "占得的先机，要趁早用上。", rules: "持续性的有利状态。" },
   lianmei: {
