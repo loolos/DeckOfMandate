@@ -429,6 +429,25 @@ describe("zhenhuan stage 2 engine", () => {
     expect(t.evidence).not.toContain("maiguanYujue");
   });
 
+  it("凤鸾承恩 never appears on the 菊残霜冷 turn (turn 8), but comes back the next turn", () => {
+    const at = (turn: number) => {
+      const s = newStage2(48, null);
+      s.rank = "guiren";
+      s.turn = turn - 1;
+      s.shengchong = 12;
+      s.qingyu = 12;
+      s.hate = 3;
+      s.stories = [];
+      s.summonLast = null;
+      return act(s, { type: "endTurn" });
+    };
+    const t8 = at(8);
+    expect(t8.turn).toBe(8);
+    expect(t8.stories.some((x) => x.id === "jiaYunFengbo")).toBe(true);
+    expect(t8.stories.some((x) => x.id === "zhaoxing")).toBe(false);
+    expect(at(9).stories.some((x) => x.id === "zhaoxing")).toBe(true);
+  });
+
   it("宝华祈福: 温太医相助 gives only 身子 (no 清誉)", () => {
     let s = newStage2(43, null);
     s.stories = [];

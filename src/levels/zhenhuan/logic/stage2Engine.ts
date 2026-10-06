@@ -1013,8 +1013,8 @@ function drawHuafei(s: Z2State): void {
 }
 
 function checkSummon(s: Z2State): void {
-  // 召幸 starts once the 贵人考验 has begun; none on the 罚跪 turn (it never interrupts the interval count).
-  if (s.pregnant || s.turn < GUIREN_TRIAL.firstTurn || s.turn === FAKUI_TURN) return;
+  // 召幸 starts once the 贵人考验 has begun; none on the 罚跪 turn or the 菊残霜冷 turn (neither interrupts the interval count).
+  if (s.pregnant || s.turn < GUIREN_TRIAL.firstTurn || s.turn === FAKUI_TURN || FIXED_STORY_TURNS[s.turn] === "jiaYunFengbo") return;
   const inGarden = s.turn >= YUANMINGYUAN_TURNS.first && s.turn <= YUANMINGYUAN_TURNS.last;
   const threshold = SUMMON_THRESHOLD[s.rank];
   if (!inGarden) {
