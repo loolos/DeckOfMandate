@@ -618,6 +618,28 @@ describe("zhenhuan stage 2 engine", () => {
     expect(has(s)).toBe(true);
   });
 
+  it("no 召幸 on the 圆明伴驾 turn (14), every turn after it in the garden (15, 16)", () => {
+    const s = newStage2(19, null);
+    s.rank = "guiren";
+    s.shengchong = 14;
+    s.summonLast = null;
+    s.stories = [];
+    s.turn = 13;
+    s.qingyu = 10;
+    s.crisis = null;
+    s.huafei = [];
+    const t = act(s, { type: "endTurn" });
+    expect(t.turn).toBe(14);
+    expect(t.stories.some((x) => x.id === "yuanmingyuan")).toBe(true);
+    expect(t.stories.some((x) => x.id === "zhaoxing")).toBe(false);
+    t.huafei = [];
+    t.crisis = null;
+    const u = act(t, { type: "endTurn" });
+    expect(u.turn).toBe(15);
+    expect(u.pregnant).toBe(false); // 安分随侍 by default
+    expect(u.stories.some((x) => x.id === "zhaoxing")).toBe(true);
+  });
+
   it("no 召幸 on the 罚跪 turn (17)", () => {
     const s = newStage2(19, null);
     s.rank = "guiren";
