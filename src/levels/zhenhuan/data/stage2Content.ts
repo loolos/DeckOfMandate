@@ -783,9 +783,9 @@ export const EVENTS2: Record<EventId2, EventDef2> = {
     emoji: "📦",
     flavor: "这个月的份例迟迟没有送来。",
     reward: [],
-    penalty: [{ resource: "shengchong", amount: -1 }],
+    penalty: [{ resource: "qingyu", amount: -1 }],
     resolvedText: "移除事件",
-    unresolvedText: "圣宠 -1",
+    unresolvedText: "清誉 -1",
     note: "用收拢人心解决时额外抽 1 张。",
     resolvedStory: {
       shoulongRenxin: "小允子拿了银子去内务府打点，当天下午份例便一样不少地送到了碎玉轩。",
@@ -1052,7 +1052,7 @@ export const LINGRONG_EVENT: Partial<Record<EventId2, TierTable>> = {
   neiwufuDiaonan: {
     close: { resolves: true, extraDraw: 1, story: "陵容出身寒微，最懂怎么跟内务府打交道，没两日便替你把份例要了回来。" },
     distant: { resolves: true, story: "「妹妹出身寒微，跟奴才们打交道倒是在行。」份例总算补齐了。" },
-    resentful: { resolves: true, effects: [{ resource: "shengchong", amount: -1 }], story: "陵容出面去要份例，却把事情闹得人尽皆知，倒显得你斤斤计较。" },
+    resentful: { resolves: true, effects: [{ resource: "qingyu", amount: -1 }], story: "陵容出面去要份例，却把事情闹得人尽皆知，倒显得你斤斤计较。" },
   },
   liyiShiwu: {
     close: { resolves: true, shuhenjiao: true, story: "陵容扶你起来，替你整好衣裳，又说回头送药来。" },
