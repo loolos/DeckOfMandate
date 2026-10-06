@@ -173,11 +173,14 @@ export const FINALE = {
   cardStory: {
     jinyanShenxing: "你跪在御前，一字一句道：「臣妾不敢妄言，只求皇上明察。年氏一门的所作所为，桩桩件件都有人证物证。」",
     shoulongRenxin: "小允子领着一众宫人跪了一地，叩首道：「奴婢们人微言轻，可翊坤宫这些年做下的事，奴婢们都亲眼见过。」",
-    meizhuangXiangzhu: "眉庄挺直了背，朗声道：「皇上，臣妾当日假孕失宠，正是翊坤宫一手设下的局。臣妾禁足存菊堂时，连炭火都被克扣了去。」",
+    meizhuangXiangzhu: "眉庄挺直了背，朗声道：「皇上，臣妾与她自幼相识，她的为人臣妾最清楚。翊坤宫这些年处处与碎玉轩为难，阖宫有目共睹。」",
     jinxiXiangzhu: "槿汐跪在殿下，不疾不徐地道：「奴婢在宫里伺候了大半辈子，翊坤宫这些年的手段，奴婢一桩一桩都记着。」",
-    wenTaiyiZhenzhi: "温实初捧着脉案跪下：「微臣愿以项上人头担保，这些方子皆出自翊坤宫授意，绝无半字虚言。」",
+    wenTaiyiZhenzhi: "温实初捧着脉案跪下：「碎玉轩这些年的脉案都在此处，哪一回病是怎么落下的，写得明明白白。微臣愿以项上人头担保，绝无半字虚言。」",
   } as Partial<Record<string, string>>,
   /**
+   * `cardStory` above is each card's default line, used when nothing is left for it to speak to;
+   * it names no particular evidence, so it never repeats what another testimony said.
+   *
    * Each 解牌 testifies to one particular evidence: the first on its list that you hold and nobody
    * has spoken to yet this 翊坤落幕 (so the testimonies differ); `cardStory` / `lingrongStory` is the
    * fallback. 陵容's entries are only her words; `lingrongManner` sets them in her tone.
@@ -236,9 +239,6 @@ export const FINALE = {
     kekouZhangce:
       "眉庄挺直了背，朗声道：「华妃协理六宫这些年，各宫的份例说扣便扣，内务府只看翊坤宫的脸色。臣妾宫里便被扣过不止一回。」",
   } as Partial<Record<EvidenceId, string>>,
-  /** 眉庄's line when 温太医 left instead (菊残霜冷): she was cleared and never 禁足. */
-  meizhuangClearedStory:
-    "眉庄挺直了背，朗声道：「皇上，当日臣妾有孕一事，正是翊坤宫串通刘畏卿设下的局，臣妾险些百口莫辩。若非有人仗义执言，臣妾今日也站不到这里。」",
   /** 陵容 is no friend of 华妃 whatever she thinks of you; only her manner differs. */
   lingrongStory: {
     close: "陵容握着你的手，轻声道：「姐姐受的委屈，妹妹都记着。」到了御前，她低眉顺眼地补了一句：「臣妾也曾见翊坤宫的人，往碎玉轩送过不干净的东西。」",

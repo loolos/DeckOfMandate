@@ -1471,6 +1471,12 @@ describe("zhenhuan stage 2 engine", () => {
     // nothing left to speak to → the general line
     const h = play(["liuweiqingYaofang", "caoguirenGaofa"], ["wenTaiyiZhenzhi", "jinxiXiangzhu"]);
     expect(h.stories[1]).toContain(FINALE.cardStory.jinxiXiangzhu!);
+    // the default lines name no evidence, so they never repeat someone else's
+    const d = play(["liuweiqingYaofang", "caoguirenGaofa"], ["wenTaiyiZhenzhi", "meizhuangXiangzhu", "lingrongXiangzhu"], null, 3);
+    expect(d.cited).toEqual(["liuweiqingYaofang"]);
+    expect(d.stories[1]).toContain(FINALE.cardStory.meizhuangXiangzhu!);
+    expect(d.stories[1]).not.toContain("假孕");
+    expect(d.stories[2]).toContain(FINALE.lingrongStory.close);
     // 温太医 left: 眉庄 was cleared, so no 禁足 / 假孕失宠 in her words
     const m = play(["liuweiqingYaofang", "kekouZhangce"], ["meizhuangXiangzhu", "jinyanShenxing"], "wenTaiyiZhenzhi");
     expect(m.stories[0]).not.toContain("假孕失宠");

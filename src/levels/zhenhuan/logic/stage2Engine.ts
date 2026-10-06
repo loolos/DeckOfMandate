@@ -649,7 +649,7 @@ function finaleStory(s: Z2State, card: CardId2, tier: LingrongTier | null): stri
     return tier ? FINALE.lingrongManner[tier] + line : line;
   }
   if (tier) return FINALE.lingrongStory[tier];
-  return cleared ? FINALE.meizhuangClearedStory : (FINALE.cardStory[card] ?? "");
+  return FINALE.cardStory[card] ?? "";
 }
 
 function openStory(s: Z2State, id: StoryId2): void {
