@@ -99,7 +99,7 @@ export const EVIDENCE: Record<EvidenceId, EvidenceDef> = {
     id: "liuweiqingYaofang",
     emoji: "💊",
     name: "刘畏卿药方",
-    line: "华妃指使太医刘畏卿用药推迟月信，令眉庄假孕失宠",
+    line: "华妃指使太医刘畏卿用药推迟月信，设局诬眉庄假孕争宠",
     ending: "刘畏卿的药方一摆上御案，眉庄假孕一案便真相大白。",
   },
   fuziZhisi: {
@@ -120,7 +120,7 @@ export const EVIDENCE: Record<EvidenceId, EvidenceDef> = {
     id: "kekouZhangce",
     emoji: "📒",
     name: "克扣账册",
-    line: "内务府的账册记下了华妃克扣各宫、尤其是存菊堂份例的明细",
+    line: "内务府的账册记下了华妃授意克扣各宫份例的明细",
     ending: "内务府的旧账册翻出来，各宫被克扣的份例一桩桩都有记档。",
   },
   lanyongSixing: {
@@ -177,6 +177,9 @@ export const FINALE = {
     jinxiXiangzhu: "槿汐跪在殿下，不疾不徐地道：「奴婢在宫里伺候了大半辈子，翊坤宫这些年的手段，奴婢一桩一桩都记着。」",
     wenTaiyiZhenzhi: "温实初捧着脉案跪下：「微臣愿以项上人头担保，这些方子皆出自翊坤宫授意，绝无半字虚言。」",
   } as Partial<Record<string, string>>,
+  /** 眉庄's line when 温太医 left instead (菊残霜冷): she was cleared and never 禁足. */
+  meizhuangClearedStory:
+    "眉庄挺直了背，朗声道：「皇上，当日臣妾有孕一事，正是翊坤宫串通刘畏卿设下的局，臣妾险些百口莫辩。若非有人仗义执言，臣妾今日也站不到这里。」",
   /** 陵容 is no friend of 华妃 whatever she thinks of you; only her manner differs. */
   lingrongStory: {
     close: "陵容握着你的手，轻声道：「姐姐受的委屈，妹妹都记着。」到了御前，她低眉顺眼地补了一句：「臣妾也曾见翊坤宫的人，往碎玉轩送过不干净的东西。」",
@@ -702,7 +705,7 @@ export const EVENTS2: Record<EventId2, EventDef2> = {
     unresolvedText: "无额外效果，事件消失（之后还会出现）",
     resolvedStory: {
       wenTaiyiZhenzhi: "温实初连夜进宫，几服药下去公主便退了热。曹贵人抱着女儿，对你深深一拜。",
-      shoulongRenxin: "你托人悄悄请来民间的名医，又替曹贵人瞒住了消息。公主好转，曹贵人记下了这份情。",
+      shoulongRenxin: "你托人悄悄请了相熟的太医连夜来看，又替曹贵人瞒住了消息。公主好转，曹贵人记下了这份情。",
     },
   },
   qingmaiBaoxi: {
@@ -891,7 +894,7 @@ export const EVENTS2: Record<EventId2, EventDef2> = {
     resolvedText: "收拢人心：只清誉 -1，多次应对后可能搜集到华妃的罪证；槿汐相助：只清誉 -1；陵容相助：视情分而定",
     unresolvedText: "延烧：圣宠 -1、清誉 -1，事件留到下回合；下回合仍未应对：圣宠 -2、获得【抱恙在身】后离场",
     resolvedStory: {
-      shoulongRenxin: "你让小允子拿银子去内务府，顺手抄出了一本账册：各宫被克扣的份例，笔笔都记着翊坤宫的吩咐。",
+      shoulongRenxin: "你让小允子拿银子去内务府打点，炭火吃食总算补了回来。他回来悄悄说，账上好几笔份例的去向，都记着翊坤宫的吩咐。",
       jinxiXiangzhu: "槿汐去内务府走了一趟，几句软中带硬的话，炭火吃食总算补回来大半。只是宫里都在传，碎玉轩为了几篓炭跟内务府斤斤计较。",
     },
   },
@@ -918,7 +921,7 @@ export const EVENTS2: Record<EventId2, EventDef2> = {
     resolvedStory: {
       wenTaiyiZhenzhi: "温实初验过汤水，脸色一沉：里头加了活血的东西。你滴水未沾，可太医深夜出入碎玉轩的事传了出去，宫里都说你疑神疑鬼。",
       shoulongRenxin: "御膳房里收过你赏钱的小太监悄悄递话：今日的汤，别喝。你把这事闹到了御前，皇上却嫌你小题大做。",
-      jinxiXiangzhu: "槿汐先尝了一口便放下了碗，悄悄把汤倒进了花盆。第二日那盆花就枯了。翊坤宫听说碎玉轩没上当，又记了你一笔。",
+      jinxiXiangzhu: "槿汐端起碗闻了闻，眉头一皱：汤里有一股红花的味道。她悄悄把汤倒了，换上一碗清粥。翊坤宫听说碎玉轩没上当，又记了你一笔。",
     },
   },
   yizhangHong: {
@@ -967,8 +970,8 @@ export const EVENTS2: Record<EventId2, EventDef2> = {
     unresolvedText: "本回合召幸作废、圣宠 -1；出气：恨意 -1",
     note: "只在有召幸的回合出现。陵容相助单张，或同一回合打出仪容整肃 + 静观其变。在场时召幸不能处理。",
     resolvedStory: {
-      yirongZhengsu: "你盛装在御花园赏花，又沉得住气不争不抢。皇上终于想起了碎玉轩。",
-      jingguanQibian: "你沉得住气，不争不抢，只在皇上必经的路上赏花。皇上终于想起了碎玉轩。",
+      yirongZhengsu: "你盛装去了御花园，恰在皇上回养心殿的路上折了一枝新开的海棠。皇上远远瞧见，驻足看了许久，终于想起了碎玉轩。",
+      jingguanQibian: "你按兵不动，等皇上在翊坤宫住了几日，才托人在御前递了一句：碎玉轩的海棠开了。皇上终于想起了碎玉轩。",
     },
   },
 };
@@ -1171,7 +1174,14 @@ export type StoryDef2 = {
   readonly options: readonly StoryOption2[];
   /** Rule line shown under the flavor. */
   readonly note?: string;
+  /** Replaces `flavor` from 年氏倾颓 (第 NIAN_TURN 回合) on, once 年家 has fallen. */
+  readonly lateFlavor?: string;
 };
+
+/** The flavor a story shows on this turn (年家 rises and falls mid-stage). */
+export function storyFlavor2(def: StoryDef2, turn: number): string {
+  return def.lateFlavor && turn >= NIAN_TURN ? def.lateFlavor : def.flavor;
+}
 
 export const FIXED_STORY_TURNS: Partial<Record<number, StoryId2>> = {
   3: "chuQingan",
@@ -1241,10 +1251,10 @@ export const STORIES2: Record<StoryId2, StoryDef2> = {
       {
         id: "dengmenKuanwei",
         name: "登门宽慰",
-        effects: [{ resource: "shengchong", amount: -1 }],
+        effects: [{ resource: "qingyu", amount: -1 }],
         setRelation: 2,
-        text: "陵容：亲厚；圣宠 -1",
-        story: "你亲自去看她，陪她说了好一会儿话，却被华妃宫里的人瞧见了。",
+        text: "陵容：亲厚；清誉 -1",
+        story: "你亲自去看她，陪她说了好一会儿话。宫里正拿她当笑柄，见你与她走得近，连你也一并议论上了。",
       },
       {
         id: "jiemeiTongqu",
@@ -1268,10 +1278,10 @@ export const STORIES2: Record<StoryId2, StoryDef2> = {
         id: "zengtaYishi",
         name: "赠她衣饰",
         card: "yirongZhengsu",
-        effects: [{ resource: "shengchong", amount: 1 }],
+        effects: [{ resource: "qingyu", amount: 1 }],
         setRelation: 0,
-        text: "陵容：生分；圣宠 +1",
-        story: "你把自己的衣裳首饰送给她。她低头道谢，心里却更自卑了。",
+        text: "陵容：生分；清誉 +1",
+        story: "你把自己的衣裳首饰送给她，宫里都说你待姐妹大方。她低头道谢，心里却更自卑了。",
       },
       {
         id: "dadianJingshifang",
@@ -1395,7 +1405,7 @@ export const STORIES2: Record<StoryId2, StoryDef2> = {
     note: "第 14—16 回合每回合都出现召幸（有孕后不再出现）；3 回合后翊坤长跪。",
     defaultOptionId: "anfenSuishi",
     options: [
-      { id: "anfenSuishi", name: "安分随侍", effects: [{ resource: "hate", amount: 2 }], text: "恨意 +2", story: "你安分随侍，不争不抢。" },
+      { id: "anfenSuishi", name: "安分随侍", effects: [], text: "无变化", story: "你安分随侍，不争不抢。" },
       {
         id: "yuexiaXiangban",
         name: "月下相伴",
@@ -1499,9 +1509,9 @@ export const STORIES2: Record<StoryId2, StoryDef2> = {
     defaultOptionId: "yingcheng",
     options: [
       { id: "yingcheng", name: "硬撑到底", effects: [{ resource: "qingyu", amount: -2 }], fakuiShenzi: 2, text: "小产；身子 -2；清誉 -2", story: "你咬牙跪到最后，起身时裙下已是一片殷红。" },
-      { id: "jizhaoTaiyi", name: "急召太医", card: "wenTaiyiZhenzhi", effects: [], fakuiShenzi: 2, text: "小产；身子 -2", story: "温实初冒死闯进翊坤宫，孩子终究没能保住，但他保住了你。" },
+      { id: "jizhaoTaiyi", name: "急召太医", card: "wenTaiyiZhenzhi", effects: [], fakuiShenzi: 2, text: "小产；身子 -2", story: "温实初冒死闯到翊坤宫外，孩子终究没能保住，但他保住了你。" },
       { id: "feibaoHuangshang", name: "宫人飞报皇上", card: "shoulongRenxin", effects: [{ resource: "shengchong", amount: 1 }], fakuiShenzi: 2, text: "小产；身子 -2；圣宠 +1", story: "小允子拼死跑去养心殿报信，皇上赶到时，一切已经晚了。" },
-      { id: "anzhongLiuxin", name: "暗中留心", card: "jingguanQibian", effects: [], fakuiShenzi: 2, status: "baoyangZaishen", text: "小产；身子 -2；抱恙在身", story: "你早有防备，备了参片含在口中，总算撑住了一口气。" },
+      { id: "anzhongLiuxin", name: "暗中留心", card: "jingguanQibian", effects: [], fakuiShenzi: 2, status: "baoyangZaishen", text: "小产；身子 -2；抱恙在身", story: "你早有防备，备了参片含在口中，总算撑住了一口气，孩子却终究没能保住。" },
       { id: "jinxiHuchi", name: "槿汐护持", card: "jinxiXiangzhu", effects: [{ resource: "qingyu", amount: -1 }], fakuiShenzi: 2, text: "小产；身子 -2；清誉 -1", story: "槿汐一直跪在你身侧扶着你。你倒下时，是她一把将你抱住，一路喊着太医。" },
       {
         id: "lingrongSongyao",
@@ -1512,7 +1522,7 @@ export const STORIES2: Record<StoryId2, StoryDef2> = {
         shuhenjiao: true,
         distantRemark: "「跪了这半日，姐姐何苦与华妃硬碰。」",
         text: "小产；身子 -2；清誉 -1；舒痕胶",
-        story: "陵容连夜送来舒痕胶替你敷上，说擦了便不会落疤。",
+        story: "孩子终究没能保住。陵容守在你榻前陪你哭了一场，夜里又送来舒痕胶，说膝上的伤擦了便不会落疤。",
       },
     ],
   },
@@ -1611,7 +1621,7 @@ export const STORIES2: Record<StoryId2, StoryDef2> = {
     id: "caoGuirenLaifang",
     name: "琴默叩门",
     emoji: "🍵",
-    flavor: "曹贵人看出华妃已难收场，开始为女儿温宜给自己留后路。她提着一盒点心，来碎玉轩坐坐。",
+    flavor: "曹贵人心思活络，想替女儿温宜多留一条路。她提着一盒点心，来碎玉轩坐坐。",
     defaultOptionId: "wanjuShuyuan",
     options: [
       { id: "wanjuShuyuan", name: "婉拒疏远", effects: [], text: "曹贵人线结束", story: "你客客气气地送走了她。曹贵人笑意不减，眼底却冷了。" },
@@ -1634,6 +1644,8 @@ export const STORIES2: Record<StoryId2, StoryDef2> = {
     emoji: "💥",
     flavor:
       "年羹尧在西北又打了胜仗，华妃风头正盛。她在养心殿里哭诉了大半日，说碎玉轩那位恃宠生娇、目无尊上，屡屡冲撞翊坤宫，非要皇上严惩不可。皇上念着年家的军功，只得传你过去问话。华妃坐在一旁，眼里尽是得意。",
+    lateFlavor:
+      "年家虽倒，华妃余威仍在，困兽犹斗。她在养心殿里哭诉了大半日，说碎玉轩那位落井下石、目无尊上，非要皇上严惩不可。皇上念着多年旧情，只得传你过去问话。华妃坐在一旁，眼里尽是怨毒。",
     note: "华妃动了真怒：不同的应对付出不同的代价，有的伤名声，有的失圣眷，有的要闭门思过，有的累及身子。处理后恨意回落到 6。",
     defaultOptionId: "renfa",
     options: [
@@ -1659,14 +1671,14 @@ export const STORIES2: Record<StoryId2, StoryDef2> = {
         ],
         text: "圣宠 -1、身子 -2",
         compact: "🎶 👑-1 🌱-2",
-        story: "陵容去了一趟景仁宫。剪秋随即来养心殿传了皇后的话：后宫之事，自有中宫料理。皇上顺势把事情交给了皇后，华妃这才收了手。",
+        story: "陵容去了一趟景仁宫。剪秋随即来养心殿传了皇后的话：后宫之事，自有中宫料理。皇上顺势把事情交给了皇后，华妃这才收了手。你在养心殿里站着听了大半日数落，回宫时已是头重脚轻。",
         tierStory: {
           close:
-            "陵容急得红了眼眶，拉着你的手说：「姐姐别怕，我去求皇后娘娘。」不多时，剪秋便来养心殿传了皇后的话，皇上顺势把事情交给了中宫，华妃这才收了手。陵容回来时裙上沾着灰，想是在景仁宫跪了许久，只笑说不碍事。你这才留意到，她在皇后跟前，原来已经说得上话了。",
+            "陵容急得红了眼眶，拉着你的手说：「姐姐别怕，我去求皇后娘娘。」不多时，剪秋便来养心殿传了皇后的话，皇上顺势把事情交给了中宫，华妃这才收了手。陵容回来时裙上沾着灰，想是在景仁宫跪了许久，只笑说不碍事。你这才留意到，她在皇后跟前，原来已经说得上话了。你在养心殿里站着听了大半日数落，回宫时已是头重脚轻。",
           distant:
-            "陵容只说了句「我去试试」，便去了景仁宫。剪秋来养心殿传了皇后几句话，皇上便把事情交给了中宫，华妃悻悻收了手。陵容回来时神色如常，只淡淡道：「妹妹在皇后跟前欠下的这份人情，姐姐记着便是。」",
+            "陵容只说了句「我去试试」，便去了景仁宫。剪秋来养心殿传了皇后几句话，皇上便把事情交给了中宫，华妃悻悻收了手。陵容回来时神色如常，只淡淡道：「妹妹在皇后跟前欠下的这份人情，姐姐记着便是。」你在养心殿里站着听了大半日数落，回宫时已是头重脚轻。",
           resentful:
-            "陵容并不是为你。只是皇后与翊坤宫素来不睦，乐得借这个由头压一压华妃。剪秋来养心殿传了话，皇上把事情交给了中宫，华妃收了手；陵容站在皇后身后，连看都没看你一眼。",
+            "陵容并不是为你。只是皇后与翊坤宫素来不睦，乐得借这个由头压一压华妃。剪秋来养心殿传了话，皇上把事情交给了中宫，华妃收了手；陵容站在皇后身后，连看都没看你一眼。你在养心殿里站着听了大半日数落，回宫时已是头重脚轻。",
         },
         tierRelation: { close: -1, distant: -1 },
       },
