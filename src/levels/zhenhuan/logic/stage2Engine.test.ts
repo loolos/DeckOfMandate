@@ -428,7 +428,20 @@ describe("zhenhuan stage 2 engine", () => {
     s = act(s, { type: "playCard", cardUid: l! });
     expect(s.qingyu).toBe(7);
     expect(s.shenzi).toBe(1);
+    expect(s.statuses.some((x) => x.id === "baoyangZaishen")).toBe(false); // 陵容送药 does not leave you 抱恙
     expect(s.log.some((e) => e.text.includes("何苦与华妃硬碰"))).toBe(true);
+
+    let j = newStage2(15, null);
+    j.shenzi = 3;
+    j.qingyu = 8;
+    j.fakuiHarsh = false;
+    openStory(j, "fakuiPlain");
+    onlyEvents(j, {});
+    const [h] = setHand(j, ["jinxiXiangzhu"]);
+    j = act(j, { type: "playCard", cardUid: h! });
+    expect(j.shenzi).toBe(2); // 槿汐护膝: 身子 -1
+    expect(j.qingyu).toBe(8);
+    expect(j.statuses.some((x) => x.id === "baoyangZaishen")).toBe(true);
   });
 
   it("怨怼 陵容 that 失效 still nudges the relation up by 1", () => {
