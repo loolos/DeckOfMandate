@@ -253,9 +253,16 @@ function StoryCard({ state, inst, dispatch, fold }: { state: Z2State; inst: Stor
   const tier = tierOf(state);
   const className = [styles.card, styles.cardStory, chosen && styles.cardResolved].filter(Boolean).join(" ");
   const tag = (
-    <Tag tag="story" tone={styles.kindStory} dispatch={dispatch}>
-      剧情
-    </Tag>
+    <span className={styles.tagGroup}>
+      {inst.id === "huafeiFanan" ? (
+        <Tag tag="huafei" tone={styles.kindEnvy} dispatch={dispatch}>
+          {EVENT_KIND2_LABEL.huafei}
+        </Tag>
+      ) : null}
+      <Tag tag="story" tone={styles.kindStory} dispatch={dispatch}>
+        剧情
+      </Tag>
+    </span>
   );
   const resultText = inst.result ?? (chosenOption ? chosenOption.text : "");
   if (fold.compact && !fold.expanded) {
