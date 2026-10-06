@@ -416,7 +416,7 @@ describe("zhenhuan stage 2 engine", () => {
     expect(run("wenTaiyiZhenzhi").qingyu).toBe(7);
   });
 
-  it("罚跪（未有孕）陵容送药: 免身子 -1；生分时多一句风凉话", () => {
+  it("罚跪（未有孕）陵容送药: 身子 -2、清誉 -1 照扣；生分时多一句风凉话", () => {
     let s = newStage2(15, null);
     s.relation = 0;
     s.shenzi = 3;
@@ -427,7 +427,7 @@ describe("zhenhuan stage 2 engine", () => {
     const [l] = setHand(s, ["lingrongXiangzhu"]);
     s = act(s, { type: "playCard", cardUid: l! });
     expect(s.qingyu).toBe(7);
-    expect(s.shenzi).toBeGreaterThanOrEqual(2);
+    expect(s.shenzi).toBe(1);
     expect(s.log.some((e) => e.text.includes("何苦与华妃硬碰"))).toBe(true);
   });
 
