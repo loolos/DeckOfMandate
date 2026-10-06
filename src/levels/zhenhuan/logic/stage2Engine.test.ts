@@ -414,6 +414,7 @@ describe("zhenhuan stage 2 engine", () => {
     expect(liuxin.statuses.some((x) => x.id === "baoyangZaishen")).toBe(true);
     expect(run("jinxiXiangzhu").qingyu).toBe(6); // 小产 -1, 槿汐 -1
     expect(run("wenTaiyiZhenzhi").qingyu).toBe(7);
+    expect(run("shoulongRenxin").shengchong).toBe(8); // 小产 -1, 飞报皇上 +1
   });
 
   it("罚跪（未有孕）陵容送药: 身子 -2、清誉 -1 照扣；生分时多一句风凉话", () => {

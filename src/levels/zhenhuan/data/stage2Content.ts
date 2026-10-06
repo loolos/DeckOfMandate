@@ -1491,7 +1491,7 @@ export const STORIES2: Record<StoryId2, StoryDef2> = {
     options: [
       { id: "yingcheng", name: "硬撑到底", effects: [{ resource: "qingyu", amount: -2 }], fakuiShenzi: 2, text: "小产；身子 -2；清誉 -2", story: "你咬牙跪到最后，起身时裙下已是一片殷红。" },
       { id: "jizhaoTaiyi", name: "急召太医", card: "wenTaiyiZhenzhi", effects: [], fakuiShenzi: 2, text: "小产；身子 -2", story: "温实初冒死闯进翊坤宫，孩子终究没能保住，但他保住了你。" },
-      { id: "feibaoHuangshang", name: "宫人飞报皇上", card: "shoulongRenxin", effects: [], fakuiShenzi: 2, text: "小产；身子 -2", story: "小允子拼死跑去养心殿报信，皇上赶到时，一切已经晚了。" },
+      { id: "feibaoHuangshang", name: "宫人飞报皇上", card: "shoulongRenxin", effects: [{ resource: "shengchong", amount: 1 }], fakuiShenzi: 2, text: "小产；身子 -2；圣宠 +1", story: "小允子拼死跑去养心殿报信，皇上赶到时，一切已经晚了。" },
       { id: "anzhongLiuxin", name: "暗中留心", card: "jingguanQibian", effects: [], fakuiShenzi: 2, status: "baoyangZaishen", text: "小产；身子 -2；抱恙在身", story: "你早有防备，备了参片含在口中，总算撑住了一口气。" },
       { id: "jinxiHuchi", name: "槿汐护持", card: "jinxiXiangzhu", effects: [{ resource: "qingyu", amount: -1 }], fakuiShenzi: 2, text: "小产；身子 -2；清誉 -1", story: "槿汐一直跪在你身侧扶着你。你倒下时，是她一把将你抱住，一路喊着太医。" },
       {
