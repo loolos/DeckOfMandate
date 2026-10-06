@@ -149,7 +149,7 @@ export const EVIDENCE: Record<EvidenceId, EvidenceDef> = {
 export const EVIDENCE_THRESHOLDS = {
   fullWin: 5,
   /** 完美结局: ≥ this many evidence, ≥ `perfectCards` 解牌 on 第 30 回合, one of them the 惜别 card. */
-  perfect: 6,
+  perfect: 7,
   perfectCards: 3,
 };
 

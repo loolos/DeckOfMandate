@@ -1289,7 +1289,7 @@ describe("zhenhuan stage 2 engine", () => {
     expect(extra.victory).toBe("full");
   });
 
-  it("完美结局: ≥ 6 evidence, ≥ 3 解牌 on 第 30 回合, one of them the 惜别 card", () => {
+  it("完美结局: ≥ 7 evidence, ≥ 3 解牌 on 第 30 回合, one of them the 惜别 card", () => {
     const ALL = ["yuyingerYiyan", "liuweiqingYaofang", "fuziZhisi", "maiguanYujue", "kekouZhangce", "lanyongSixing", "duanfeiHonghua", "caoguirenGaofa"] as const;
     const finish = (n: number, cards: CardId2[], xibie: "meizhuangXiangzhu" | "wenTaiyiZhenzhi" | null) => {
       let s = newStage2(20, null);
@@ -1312,13 +1312,13 @@ describe("zhenhuan stage 2 engine", () => {
       return reduce2(s, { type: "endTurn" });
     };
     const three: CardId2[] = ["meizhuangXiangzhu", "jinyanShenxing", "shoulongRenxin"];
-    expect(finish(6, three, "meizhuangXiangzhu").victory).toBe("perfect");
-    expect(finish(6, ["wenTaiyiZhenzhi", "jinyanShenxing", "shoulongRenxin"], "wenTaiyiZhenzhi").victory).toBe("perfect");
-    expect(finish(5, three, "meizhuangXiangzhu").victory).toBe("full"); // too little evidence
-    expect(finish(6, three.slice(0, 2), "meizhuangXiangzhu").victory).toBe("full"); // only 2 cards
-    expect(finish(6, ["jinyanShenxing", "shoulongRenxin", "jinxiXiangzhu"], "meizhuangXiangzhu").victory).toBe("full"); // 惜别 card not played
-    expect(finish(6, three, null).victory).toBe("full"); // no 惜别 at all
-    const p = finish(6, three, "meizhuangXiangzhu");
+    expect(finish(7, three, "meizhuangXiangzhu").victory).toBe("perfect");
+    expect(finish(7, ["wenTaiyiZhenzhi", "jinyanShenxing", "shoulongRenxin"], "wenTaiyiZhenzhi").victory).toBe("perfect");
+    expect(finish(6, three, "meizhuangXiangzhu").victory).toBe("full"); // too little evidence
+    expect(finish(7, three.slice(0, 2), "meizhuangXiangzhu").victory).toBe("full"); // only 2 cards
+    expect(finish(7, ["jinyanShenxing", "shoulongRenxin", "jinxiXiangzhu"], "meizhuangXiangzhu").victory).toBe("full"); // 惜别 card not played
+    expect(finish(7, three, null).victory).toBe("full"); // no 惜别 at all
+    const p = finish(7, three, "meizhuangXiangzhu");
     expect(endingLines(p).some((l) => l.includes("欢宜香"))).toBe(true);
   });
 
