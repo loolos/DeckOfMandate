@@ -384,7 +384,40 @@ describe("zhenhuan stage 2 engine", () => {
     expect(s.statuses.some((x) => x.id === "wentaiyiLiufang")).toBe(false);
   });
 
-  it("罚跪（未有孕）陵容送药: 免身子 -1；生分时多一句风凉话", () => {
+  it("罚跪（有孕）: 小产身子 -2 固定；默认 清誉 -2，暗中留心 抱恙在身，槿汐 / 陵容 清誉 -1", () => {
+    const run = (hand: CardId2 | null) => {
+      let s = newStage2(14, null);
+      s.pregnant = true;
+      s.statuses.push({ uid: "p", id: "shenhuaiLongyi", appliesFromTurn: 1, remaining: 0 });
+      s.shenzi = 6;
+      s.qingyu = 8;
+      s.shengchong = 8;
+      s.hate = 7;
+      s.fakuiHarsh = false;
+      onlyEvents(s, {});
+      openStory(s, "fakuiPregnant");
+      if (hand) {
+        const [c] = setHand(s, [hand]);
+        s = act(s, { type: "playCard", cardUid: c! });
+      } else {
+        s = act(s, { type: "chooseStory", storyId: "fakuiPregnant", optionId: "yingcheng" });
+      }
+      expect(s.pregnant).toBe(false);
+      return s;
+    };
+    const def = run(null);
+    expect(def.shenzi).toBe(4);
+    expect(def.qingyu).toBe(8 - 1 - 2); // 小产 -1, 硬撑 -2
+    expect(def.statuses.some((x) => x.id === "bimenSiguo")).toBe(false);
+    const liuxin = run("jingguanQibian");
+    expect(liuxin.qingyu).toBe(7);
+    expect(liuxin.statuses.some((x) => x.id === "baoyangZaishen")).toBe(true);
+    expect(run("jinxiXiangzhu").qingyu).toBe(6); // 小产 -1, 槿汐 -1
+    expect(run("wenTaiyiZhenzhi").qingyu).toBe(7);
+    expect(run("shoulongRenxin").shengchong).toBe(8); // 小产 -1, 飞报皇上 +1
+  });
+
+  it("罚跪（未有孕）陵容送药: 身子 -2、清誉 -1 照扣；生分时多一句风凉话", () => {
     let s = newStage2(15, null);
     s.relation = 0;
     s.shenzi = 3;
@@ -395,8 +428,36 @@ describe("zhenhuan stage 2 engine", () => {
     const [l] = setHand(s, ["lingrongXiangzhu"]);
     s = act(s, { type: "playCard", cardUid: l! });
     expect(s.qingyu).toBe(7);
-    expect(s.shenzi).toBeGreaterThanOrEqual(2);
+    expect(s.shenzi).toBe(1);
+    expect(s.statuses.some((x) => x.id === "baoyangZaishen")).toBe(false); // 陵容送药 does not leave you 抱恙
     expect(s.log.some((e) => e.text.includes("何苦与华妃硬碰"))).toBe(true);
+
+    let j = newStage2(15, null);
+    j.shenzi = 3;
+    j.qingyu = 8;
+    j.fakuiHarsh = false;
+    openStory(j, "fakuiPlain");
+    onlyEvents(j, {});
+    const [h] = setHand(j, ["jinxiXiangzhu"]);
+    j = act(j, { type: "playCard", cardUid: h! });
+    expect(j.shenzi).toBe(2); // 槿汐护膝: 身子 -1
+    expect(j.qingyu).toBe(8);
+    expect(j.statuses.some((x) => x.id === "baoyangZaishen")).toBe(true);
+
+    let k = newStage2(15, null);
+    k.shenzi = 3;
+    k.qingyu = 8;
+    k.shengchong = 6;
+    k.fakuiHarsh = false;
+    openStory(k, "fakuiPlain");
+    onlyEvents(k, {});
+    const [r] = setHand(k, ["shoulongRenxin"]);
+    k = act(k, { type: "playCard", cardUid: r! });
+    expect(k.stories[0]!.chosenOptionId).toBe("feibaoHuangshangPlain");
+    expect(k.shenzi).toBe(1); // 身子 -2
+    expect(k.qingyu).toBe(8); // no 清誉 loss
+    expect(k.shengchong).toBe(7); // 圣宠 +1
+    expect(k.statuses.some((x) => x.id === "baoyangZaishen")).toBe(true);
   });
 
   it("怨怼 陵容 that 失效 still nudges the relation up by 1", () => {
