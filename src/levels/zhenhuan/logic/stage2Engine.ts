@@ -1042,12 +1042,14 @@ function drawHuafei(s: Z2State): void {
 }
 
 function checkSummon(s: Z2State): void {
-  // 召幸 starts once the 贵人考验 has begun; none on the 罚跪 turn, the 菊残霜冷 turn or the last turn (none interrupts the interval count).
+  // 召幸 starts once the 贵人考验 has begun; none on the 罚跪 turn, the 菊残霜冷 turn, the 圆明伴驾 turn
+  // (that story is itself the 召幸 of the day) or the last turn (none interrupts the interval count).
   if (
     s.pregnant ||
     s.turn < GUIREN_TRIAL.firstTurn ||
     s.turn === FAKUI_TURN ||
     FIXED_STORY_TURNS[s.turn] === "jiaYunFengbo" ||
+    FIXED_STORY_TURNS[s.turn] === "yuanmingyuan" ||
     s.turn >= STAGE2.totalTurns
   )
     return;
