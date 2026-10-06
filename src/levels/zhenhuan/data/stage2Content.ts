@@ -237,7 +237,7 @@ export const CARDS2: Record<CardId2, CardDef2> = {
   }),
   wenTaiyiZhenzhi: fromStage1("wenTaiyiZhenzhi", {
     base: [{ resource: "shenzi", amount: 1 }],
-    matches: ["jingxinTiaoyang", "liyiShiwu", "hanliangZhiwu", "shanshiYouyi", "wenyiBaoyang"],
+    matches: ["jingxinTiaoyang", "baohuadianQifu", "liyiShiwu", "hanliangZhiwu", "shanshiYouyi", "wenyiBaoyang"],
     rulesText: ["移除 1 个【负面】状态；身子 +1。"],
     rulesCompact: "🧹负面 🌱+1",
   }),
@@ -543,6 +543,8 @@ export type EventDef2 = {
   readonly reward: readonly Delta2[];
   /** Extra reward when this particular card takes the opportunity. */
   readonly cardBonus?: Partial<Record<CardId2, readonly Delta2[]>>;
+  /** Replaces `reward` when this particular card takes the opportunity. */
+  readonly cardReward?: Partial<Record<CardId2, readonly Delta2[]>>;
   readonly penalty: readonly Delta2[];
   readonly penaltyStatus?: StatusId2;
   /** Overrides the status's own duration when it comes from this event. */
@@ -622,7 +624,8 @@ export const EVENTS2: Record<EventId2, EventDef2> = {
       { resource: "shenzi", amount: 1 },
     ],
     penalty: [],
-    resolvedText: "清誉 +1、身子 +1",
+    cardReward: { jingguanQibian: [{ resource: "shenzi", amount: 2 }] },
+    resolvedText: "清誉 +1、身子 +1（静观其变解决时改为身子 +2，不加清誉）",
     unresolvedText: "无额外效果，事件消失",
     resolvedStory: {
       jingguanQibian: "你闭门焚香，抄了几卷经。外头的风风雨雨一概不理，气色倒一日好过一日。",
@@ -640,9 +643,11 @@ export const EVENTS2: Record<EventId2, EventDef2> = {
       { resource: "shenzi", amount: 1 },
     ],
     penalty: [],
-    resolvedText: "清誉 +1、身子 +1",
+    cardReward: { wenTaiyiZhenzhi: [{ resource: "shenzi", amount: 1 }] },
+    resolvedText: "清誉 +1、身子 +1（温太医相助解决时只得身子 +1）",
     unresolvedText: "无额外效果，事件消失",
     resolvedStory: {
+      wenTaiyiZhenzhi: "温实初陪你去宝华殿上香，又替你把了平安脉，叮嘱你少思少虑。你在佛前静坐了半日，只觉得身子轻快了许多。",
       jinyanShenxing: "你跪在佛前，心中默念的不过是家人平安、自身康健。太后听说你虔诚，夸了一句。",
     },
   },
@@ -1286,6 +1291,14 @@ export const STORIES2: Record<StoryId2, StoryDef2> = {
       { id: "bujiu", name: "不救", effects: [{ resource: "qingyu", amount: -1 }], text: "清誉 -1", story: "你没有替她说一句话。旁人说你心狠。" },
       { id: "qiuqing", name: "求情", effects: [{ resource: "shengchong", amount: -1 }], status: "bimenSiguo", text: "圣宠 -1；闭门思过", story: "你替她求了情，皇上皱眉，说你太过心软。" },
       {
+        id: "jiansuZhai",
+        name: "递一碗素斋",
+        card: "jinyanShenxing",
+        effects: [{ resource: "qingyu", amount: 1 }],
+        text: "清誉 +1",
+        story: "你不求情，也不落井下石，只托人给她递了一碗素斋。宫里人都说你心善，却又不越本分。",
+      },
+      {
         id: "yuzhongTanshi",
         name: "狱中探视",
         card: "shoulongRenxin",
@@ -1394,6 +1407,18 @@ export const STORIES2: Record<StoryId2, StoryDef2> = {
         story: "月下荷风，你盛装相伴，皇上一连几夜都留宿在碧桐书院。这般招摇，翊坤宫那边怕是早已记恨上了。",
       },
       {
+        id: "tiaoyangShengti",
+        name: "调养圣体",
+        card: "wenTaiyiZhenzhi",
+        effects: [
+          { resource: "shenzi", amount: 1 },
+          { resource: "hate", amount: 1 },
+        ],
+        text: "身子 +1；恨意 +1",
+        compact: "🌱+1 🔥+1",
+        story: "你请温实初为皇上和自己调了几剂温补的方子，说是夏日消暑。皇上用着舒心，你也气色渐好；只是这份体贴传到翊坤宫，华妃又添了几分不快。",
+      },
+      {
         id: "qinshiXianghe",
         name: "琴诗相和",
         card: "jinyanShenxing",
@@ -1432,6 +1457,14 @@ export const STORIES2: Record<StoryId2, StoryDef2> = {
         status: "baoyangZaishen",
         text: "身子 -1（免去清誉 -1）；抱恙在身",
         story: "槿汐早在你膝下垫了一层软布，又一刻不停地替你打扇。你跪满了时辰，起身时仍是端端正正，没在人前失了体面。",
+      },
+      {
+        id: "huTiTangyao",
+        name: "备下护体汤药",
+        card: "wenTaiyiZhenzhi",
+        effects: [{ resource: "qingyu", amount: -1 }],
+        text: "清誉 -1（免去身子 -1，且不抱恙）",
+        story: "温实初早早备下了护体的汤药，让流朱在你临跪前灌下。你跪满了时辰，膝上虽疼，身子却没有大碍。",
       },
       {
         id: "lingrongSongyao",

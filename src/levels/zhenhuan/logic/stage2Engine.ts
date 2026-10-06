@@ -713,12 +713,13 @@ function resolveEventByCard(s: Z2State, ev: EventInst2, card: CardId2, doubleRew
   const cost = def.double ? def.doublePenalty : def.responsePenalty?.[card];
   if (cost && alive(s)) applyResponsePenalty(s, cost, `${def.name}（应对的代价）`);
   if (def.kind === "opportunity") {
-    applyDeltas2(s, def.reward, def.name);
+    const reward = def.cardReward?.[card] ?? def.reward;
+    applyDeltas2(s, reward, def.name);
     const bonus = def.cardBonus?.[card];
     if (bonus && alive(s)) applyDeltas2(s, bonus, `${def.name}（${CARDS2[card].name}）`);
-    if (doubleReward && def.reward.length > 0 && alive(s)) {
+    if (doubleReward && reward.length > 0 && alive(s)) {
       ev.rewardDoubled = true;
-      applyDeltas2(s, def.reward, "眉庄相助联动：奖励翻倍");
+      applyDeltas2(s, reward, "眉庄相助联动：奖励翻倍");
     }
   }
   const evidence = def.evidence;
