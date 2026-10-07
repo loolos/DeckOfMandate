@@ -250,7 +250,7 @@
   color: var(--zh-gold);
 }
 
-/* Top strip: resources, play counter and piles in one sideways row; statuses share the line when it fits. */
+/* Top strip: resources, play counter and piles in one sideways row; statuses always on their own line below it. */
 .topStrip {
   display: flex;
   flex-wrap: wrap;
@@ -267,7 +267,7 @@
 }
 
 .topStrip > .statusRow {
-  flex: 1 1 280px;
+  flex: 1 1 100%;
   min-width: 0;
   margin-bottom: 0;
 }
