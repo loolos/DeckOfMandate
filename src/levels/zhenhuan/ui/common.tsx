@@ -58,7 +58,10 @@ export function Pile({ icon, label, count, children }: { icon: string; label: st
   );
 }
 
-/** Resource / counter chip for the top strip; in 略缩模式 only the emoji and number stay visible. */
+/**
+ * Resource / counter tile for the top strip: label, hint, number and meter on the desktop layout;
+ * in 略缩模式 only the emoji and number stay visible.
+ */
 export function StatChip({
   icon,
   label,
@@ -81,6 +84,7 @@ export function StatChip({
       <div className={styles.chipLine}>
         <span aria-hidden="true">{icon}</span>
         <span className={styles.chipLabel}>{label}</span>
+        {hint ? <span className={styles.chipHint}>{hint}</span> : null}
         <span className={[styles.chipValue, danger && styles.statDanger].filter(Boolean).join(" ")}>
           {value}
           {max != null ? <span className={styles.chipMax}>/{max}</span> : null}
@@ -99,7 +103,8 @@ export type HeaderBadge = { text: string; brief?: string; gold?: boolean };
 
 /**
  * Page header. Desktop: one line of title, turn / rank badges and the buttons. 略缩模式: stage title,
- * turn and rank name on one line; rank details, the 略缩模式 switch, rules and menu sit behind ⋯.
+ * turn and rank name on one line; rank details, rules and menu sit behind ⋯. The 略缩模式 switch is
+ * always the last thing on the line.
  */
 export function GameHeader({
   compact,
@@ -141,6 +146,7 @@ export function GameHeader({
           </span>
         ))}
         <HeaderMenu rankLine={`位分：${rankName}（${rankDetail}）`} onRules={onRules} onMenu={onMenu} />
+        <CompactModeToggle />
       </header>
     );
   }
@@ -163,13 +169,13 @@ export function GameHeader({
         ))}
       </div>
       <div className={styles.headerMeta}>
-        <CompactModeToggle />
         <button type="button" className={styles.btn} onClick={onRules}>
           规则说明
         </button>
         <button type="button" className={styles.btn} onClick={onMenu}>
           主菜单
         </button>
+        <CompactModeToggle />
       </div>
     </header>
   );
@@ -207,7 +213,6 @@ function HeaderMenu({ rankLine, onRules, onMenu }: { rankLine: string; onRules: 
       {open ? (
         <div className={styles.headerMenuPanel}>
           <p className={styles.muted}>{rankLine}</p>
-          <CompactModeToggle />
           <button
             type="button"
             className={styles.btn}
@@ -311,7 +316,7 @@ export function isTypingTarget(target: EventTarget | null): boolean {
 /**
  * Card container. In 略缩模式 the whole card toggles collapsed/expanded with a single click
  * (clicks on its own buttons don't toggle). With `onDouble` (hand cards) the toggle waits a
- * moment so a double-click plays the card instead. An expanded card opens as a bottom sheet over
+ * moment so a double-click plays the card instead. An expanded card opens as a centered panel over
  * the page (a same-size placeholder keeps its slot in the row), so the page itself never grows;
  * tapping outside it or pressing Escape folds it again.
  */
