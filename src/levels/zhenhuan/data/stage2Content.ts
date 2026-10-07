@@ -1296,9 +1296,9 @@ export const FIXED_STORY_TURNS: Partial<Record<number, StoryId2>> = {
 };
 export const FAKUI_TURN = 17;
 
-/** 贵人考验: 眉庄 dresses you, 陵容 sings — once per run. */
+/** 贵人考验: 眉庄 plays the qin, 陵容 sings, you dance — once per run. */
 export const JINGHONG_STORY =
-  "眉庄连夜替你赶制了舞衣，陵容在一旁清唱伴曲。你在御前跳了一支惊鸿舞，满殿寂静，皇上看得出了神。";
+  "眉庄抚琴，陵容清歌，你在御前跳了一支惊鸿舞。琴声歌声里衣袂翩跹，满殿寂静，皇上看得出了神。";
 /** 华妃恨意 appears (and is explained) when 初谒翊坤 begins. */
 export const HATE_REVEAL_TURN = 3;
 /** Opportunity events shuffled into the pool at the end of a given turn. */
