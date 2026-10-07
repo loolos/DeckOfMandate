@@ -182,8 +182,8 @@ export function ZhenhuanRoot() {
           </select>
           <p className={styles.menuHint}>
             {menuStage === 1
-              ? `${CHAPTER.title}：从答应起步，在晋封考验中晋为常在，并坚持到第 ${CHAPTER.totalTurns} 回合。通关后可接着进入${STAGE2.title}。`
-              : `${STAGE2.title}：直接开局（清誉 / 圣宠 ${STAGE2.standaloneQingyu}）。`}
+              ? `${CHAPTER.title}：甄嬛初入紫禁城，以答应之位小心立足。倚梅园除夕的诗句被宫女余莺儿冒认，杏花微雨中又偶遇一位自称果郡王的男子；宫中晋封在即，她要在流言与刁难中站稳脚跟。`
+              : `${STAGE2.title}：晋为常在后，甄嬛渐得圣宠，也入了华妃的眼。陵容侍寝受辱、眉庄假孕遭陷、圆明园伴驾、翊坤宫外烈日长跪……她一边在风雨中护住自己与身边人，一边暗中搜集罪证，只待年氏倾颓之时扳倒华妃。`}
           </p>
           <label className={styles.menuLabel} htmlFor="zh-seed">
             随机种子（可选）
