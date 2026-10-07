@@ -378,9 +378,9 @@ export const CARDS2: Record<CardId2, CardDef2> = {
       "songzhiKuisi",
     ],
     rulesText: [
-      "本身没有效果；能解决带 🎶 的事件，效果视你与陵容的情分（亲厚 / 生分 / 怨怼）而定。",
-      "冷落：回合结束时若手牌中仍有陵容相助（不论几张），陵容会与你生分些（每回合至多一次，不会因此降入怨怼）。",
-      "叙话：眼下若无她可出力之事，打出便是请她过来坐坐、说几句体己话，陵容会与你亲近些（若已心生怨怼，她难免在皇上跟前略有微词）。",
+      "能解决带 🎶 的事件；她肯出几分力，要看你素日待她如何。",
+      "冷落：回合末仍留在手中、未曾召她，她便与你疏远几分。",
+      "叙话：无事相托时打出，便是请她过来坐坐、说几句体己话，她会与你亲近些；若她心中已存怨意，难免在皇上跟前说几句闲话（圣宠 -1）。",
     ],
     rulesCompact: "🎶视情分",
   },
@@ -1296,9 +1296,9 @@ export const FIXED_STORY_TURNS: Partial<Record<number, StoryId2>> = {
 };
 export const FAKUI_TURN = 17;
 
-/** 贵人考验: 眉庄 dresses you, 陵容 sings — once per run. */
+/** 贵人考验: 眉庄 plays the qin, 陵容 sings, you dance — once per run. */
 export const JINGHONG_STORY =
-  "眉庄连夜替你赶制了舞衣，陵容在一旁清唱伴曲。你在御前跳了一支惊鸿舞，满殿寂静，皇上看得出了神。";
+  "眉庄抚琴，陵容清歌，你在御前跳了一支惊鸿舞。琴声歌声里衣袂翩跹，满殿寂静，皇上看得出了神。";
 /** 华妃恨意 appears (and is explained) when 初谒翊坤 begins. */
 export const HATE_REVEAL_TURN = 3;
 /** Opportunity events shuffled into the pool at the end of a given turn. */
