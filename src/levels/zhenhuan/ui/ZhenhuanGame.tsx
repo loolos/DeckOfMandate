@@ -767,6 +767,7 @@ export function ZhenhuanGame({ state, dispatch, showRules, onShowRules, onRestar
         rankDetail={`抓 ${rank.draw} · 打 ${rank.plays} · 上限 ${rank.cap}`}
         badges={state.promoted ? [{ text: "已晋封", gold: true }] : []}
         onRules={() => onShowRules(true)}
+        onRestart={onRestart}
         onMenu={onMenu}
       />
 

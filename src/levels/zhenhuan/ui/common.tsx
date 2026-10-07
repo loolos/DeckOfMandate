@@ -103,7 +103,7 @@ export type HeaderBadge = { text: string; brief?: string; gold?: boolean };
 
 /**
  * Page header. Desktop: one line of title, turn / rank badges and the buttons. 略缩模式: stage title,
- * turn and rank name on one line; rank details, rules and menu sit behind ⋯. The 略缩模式 switch is
+ * turn and rank name on one line; rank details, rules, restart and menu sit behind ⋯. The 略缩模式 switch is
  * always the last thing on the line.
  */
 export function GameHeader({
@@ -116,6 +116,7 @@ export function GameHeader({
   rankDetail,
   badges = [],
   onRules,
+  onRestart,
   onMenu,
 }: {
   compact: boolean;
@@ -127,6 +128,7 @@ export function GameHeader({
   rankDetail: string;
   badges?: readonly HeaderBadge[];
   onRules: () => void;
+  onRestart: () => void;
   onMenu: () => void;
 }) {
   const badgeClass = (b: HeaderBadge) => (b.gold ? `${styles.badge} ${styles.badgeGold}` : styles.badge);
@@ -145,7 +147,7 @@ export function GameHeader({
             {b.brief ?? b.text}
           </span>
         ))}
-        <HeaderMenu rankLine={`位分：${rankName}（${rankDetail}）`} onRules={onRules} onMenu={onMenu} />
+        <HeaderMenu rankLine={`位分：${rankName}（${rankDetail}）`} onRules={onRules} onRestart={onRestart} onMenu={onMenu} />
         <CompactModeToggle />
       </header>
     );
@@ -172,6 +174,9 @@ export function GameHeader({
         <button type="button" className={styles.btn} onClick={onRules}>
           规则说明
         </button>
+        <button type="button" className={styles.btn} onClick={() => confirmRestart(onRestart)}>
+          重新开始
+        </button>
         <button type="button" className={styles.btn} onClick={onMenu}>
           主菜单
         </button>
@@ -181,7 +186,22 @@ export function GameHeader({
   );
 }
 
-function HeaderMenu({ rankLine, onRules, onMenu }: { rankLine: string; onRules: () => void; onMenu: () => void }) {
+/** Restarting throws the current run away, so ask first. */
+function confirmRestart(onRestart: () => void) {
+  if (window.confirm("重新开始本关？当前进度将丢失。")) onRestart();
+}
+
+function HeaderMenu({
+  rankLine,
+  onRules,
+  onRestart,
+  onMenu,
+}: {
+  rankLine: string;
+  onRules: () => void;
+  onRestart: () => void;
+  onMenu: () => void;
+}) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -222,6 +242,16 @@ function HeaderMenu({ rankLine, onRules, onMenu }: { rankLine: string; onRules: 
             }}
           >
             规则说明
+          </button>
+          <button
+            type="button"
+            className={styles.btn}
+            onClick={() => {
+              setOpen(false);
+              confirmRestart(onRestart);
+            }}
+          >
+            重新开始
           </button>
           <button
             type="button"

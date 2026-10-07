@@ -1,7 +1,7 @@
 import { useSmallScreenToggle } from "../../../logic/useSmallScreen";
 import styles from "./zhenhuan.module.css";
 
-/** Same 略缩模式 preference as the Sun King campaign (phones start with it on; it can be switched off). */
+/** Same 略缩模式 preference as the Sun King campaign (off by default on every device). */
 export function CompactModeToggle() {
   const [on, setOn] = useSmallScreenToggle();
   return (

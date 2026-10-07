@@ -893,6 +893,7 @@ export function Stage2Game({ state, dispatch, runCode, showRules, onShowRules, o
         rankDetail={`抓 ${rank.draw} · 打 ${rank.plays} · 上限 ${rankCap(state)}`}
         badges={state.pregnant ? [{ text: "👶 身怀龙裔", brief: "👶", gold: true }] : []}
         onRules={() => onShowRules(true)}
+        onRestart={onRestart}
         onMenu={onMenu}
       />
 
