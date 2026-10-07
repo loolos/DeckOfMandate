@@ -52,8 +52,20 @@ function useTilePopover() {
   return { props, popover };
 }
 
-/** Pile tile; hover / focus shows what is inside. */
-export function Pile({ icon, label, count, children }: { icon: string; label: string; count: number; children: ReactNode }) {
+/** Pile tile; hover / focus shows what is inside, after the event tag's story and rules for an event pool. */
+export function Pile({
+  icon,
+  label,
+  count,
+  tag,
+  children,
+}: {
+  icon: string;
+  label: string;
+  count: number;
+  tag?: { readonly lore: string; readonly rules: string };
+  children: ReactNode;
+}) {
   const { props, popover } = useTilePopover();
   return (
     <div className={`${styles.chip} ${styles.pile}`} {...props}>
@@ -62,7 +74,20 @@ export function Pile({ icon, label, count, children }: { icon: string; label: st
         <span className={styles.chipLabel}>{label}</span>
         <span className={styles.chipValue}>{count}</span>
       </div>
-      {popover(children)}
+      {popover(
+        <>
+          {tag ? (
+            <>
+              <p className={styles.popoverTitle}>
+                {icon} {label}
+              </p>
+              <p className={styles.popoverLore}>{tag.lore}</p>
+              <p className={styles.popoverTagRules}>{tag.rules}</p>
+            </>
+          ) : null}
+          {children}
+        </>,
+      )}
     </div>
   );
 }

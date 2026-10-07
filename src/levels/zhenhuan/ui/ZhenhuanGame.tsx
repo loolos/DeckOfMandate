@@ -10,12 +10,14 @@ import {
   CAMPAIGN_TITLE,
   EVENTS,
   PROMOTION_TRIAL,
+  PLAYS_INFO,
   RANKS,
   RESOURCE_EMOJI,
   RESOURCE_INFO,
   RESOURCE_LABEL,
   STATUSES,
   STATUS_TAG_LABEL,
+  TAG_INFO,
   type CardId,
   type EventDef,
   type EventId,
@@ -778,7 +780,7 @@ export function ZhenhuanGame({ state, dispatch, showRules, onShowRules, onRestar
           <ResourceStat state={state} resource="qingyu" />
           <ResourceStat state={state} resource="shengchong" />
           <span className={styles.stripDivider} aria-hidden="true" />
-          <StatChip icon="🀄" label="本回合出牌" value={state.playsUsed} max={playLimit(state)} meter={false} />
+          <StatChip icon="🀄" label="本回合出牌" info={PLAYS_INFO} value={state.playsUsed} max={playLimit(state)} meter={false} />
           <PileGroup compact={compact}>
             <Pile icon="🎴" label="抽牌堆" count={state.drawPile.length}>
               <p className={styles.popoverTitle}>抽牌堆剩余（顺序未知）</p>
@@ -788,19 +790,19 @@ export function ZhenhuanGame({ state, dispatch, showRules, onShowRules, onRestar
               <p className={styles.popoverTitle}>弃牌堆</p>
               <CardCountList ids={state.discard.map((c) => c.id)} empty="空" />
             </Pile>
-            <Pile icon="🌸" label="机会牌池" count={state.opportunityPool.length}>
+            <Pile icon="🌸" label="机会牌池" tag={TAG_INFO.opportunity} count={state.opportunityPool.length}>
               <p className={styles.popoverTitle}>剩余机会事件</p>
               <EventCountList ids={state.opportunityPool} empty="已抽完，下次将把已用事件重新洗匀。" />
               <p className={styles.popoverTitle}>本轮已出现</p>
               <EventCountList ids={state.opportunity ? [...usedOpp, state.opportunity.id] : usedOpp} empty="无" />
             </Pile>
-            <Pile icon="⚡" label="危机牌池" count={state.crisisPool.length}>
+            <Pile icon="⚡" label="危机牌池" tag={TAG_INFO.crisis} count={state.crisisPool.length}>
               <p className={styles.popoverTitle}>剩余危机事件</p>
               <EventCountList ids={state.crisisPool} empty="已抽完，下次将把已用事件重新洗匀。" />
               <p className={styles.popoverTitle}>本轮已出现</p>
               <EventCountList ids={state.crisis ? [...usedCrisis, state.crisis.id] : usedCrisis} empty="无" />
             </Pile>
-            <Pile icon="👀" label="嫉妒牌池" count={state.envyPool.length}>
+            <Pile icon="👀" label="嫉妒牌池" tag={TAG_INFO.envy} count={state.envyPool.length}>
               <p className={styles.popoverTitle}>
                 第 {ENVY_TRIGGER.firstTurn} 回合起，回合开始时圣宠 ≥ {ENVY_TRIGGER.minShengchong}：首次必出，之后每隔一回合出现一次
               </p>
