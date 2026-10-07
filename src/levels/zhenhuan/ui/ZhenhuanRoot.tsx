@@ -24,6 +24,8 @@ import styles from "./zhenhuan.module.css";
 
 /** Same pacing as the Sun King level intro: backdrop alone first, then the panel fades in. */
 const INTRO_DELAY_MS = 1000;
+/** Start menu: backdrop alone first (same pacing as Sun King), then the panel fades in. */
+const MENU_DELAY_MS = 2000;
 
 function randomSeed(): number {
   return Math.floor(Math.random() * 2_147_483_647) + 1;
@@ -37,6 +39,7 @@ export function ZhenhuanRoot() {
   const [introFade, setIntroFade] = useState(false);
   const [saved, setSaved] = useState<Session | null>(() => loadSession());
   const [seedText, setSeedText] = useState("");
+  const [menuVisible, setMenuVisible] = useState(false);
   const [menuStage, setMenuStage] = useState<1 | 2>(1);
 
   const seedTrimmed = seedText.trim();
@@ -69,6 +72,14 @@ export function ZhenhuanRoot() {
     }, INTRO_DELAY_MS);
     return () => window.clearTimeout(id);
   }, [introPending]);
+
+  const onMenuScreen = session === null;
+  useEffect(() => {
+    if (!onMenuScreen) return;
+    setMenuVisible(false);
+    const id = window.setTimeout(() => setMenuVisible(true), MENU_DELAY_MS);
+    return () => window.clearTimeout(id);
+  }, [onMenuScreen]);
 
   const open = (next: Session, rules: boolean) => {
     setSession(next);
@@ -149,8 +160,9 @@ export function ZhenhuanRoot() {
   return (
     <div className={styles.root}>
       <Backdrop src={backdropUrl(1)} variant="menu" />
-      <div className={styles.menuScreen}>
-        <div className={styles.menuPanel} role="dialog" aria-labelledby="zh-menu-title">
+      <div className={styles.menuScreen} aria-busy={!menuVisible}>
+        {menuVisible ? (
+        <div className={`${styles.menuPanel} ${styles.introFade}`} role="dialog" aria-labelledby="zh-menu-title">
           <h1 id="zh-menu-title" className={styles.menuTitle}>
             {CAMPAIGN_TITLE}
           </h1>
@@ -203,6 +215,7 @@ export function ZhenhuanRoot() {
           ) : null}
           <RunCodePanel variant="startMenu" code="" onLoad={loadCode} />
         </div>
+        ) : null}
       </div>
     </div>
   );
