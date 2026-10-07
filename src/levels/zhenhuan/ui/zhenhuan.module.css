@@ -1263,9 +1263,10 @@
   }
 }
 
+/* `backwards` (not `forwards`): a lingering transform would make this wrapper the containing block of the
+   position: fixed overlays inside it, so dialogs would center on the whole page instead of the screen. */
 .introFade {
-  opacity: 0;
-  animation: introFadeIn 2s ease-out forwards;
+  animation: introFadeIn 2s ease-out backwards;
 }
 
 @media (prefers-reduced-motion: reduce) {
