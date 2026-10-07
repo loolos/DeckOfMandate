@@ -165,8 +165,8 @@ export function ZhenhuanRoot() {
             value={menuStage}
             onChange={(e) => setMenuStage(e.target.value === "2" ? 2 : 1)}
           >
-            <option value={1}>第一关 · {CHAPTER.title}</option>
-            <option value={2}>第二关 · {STAGE2.title}</option>
+            <option value={1}>{CHAPTER.title}</option>
+            <option value={2}>{STAGE2.title}</option>
           </select>
           <p className={styles.menuHint}>
             {menuStage === 1
