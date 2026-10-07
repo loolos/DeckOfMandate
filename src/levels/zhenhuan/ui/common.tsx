@@ -229,63 +229,108 @@ export function GameHeader({
   onMenu: () => void;
 }) {
   const badgeClass = (b: HeaderBadge) => (b.gold ? `${styles.badge} ${styles.badgeGold}` : styles.badge);
+  const [asking, setAsking] = useState(false);
+  const askRestart = () => setAsking(true);
+  const confirmModal = asking ? (
+    <RestartConfirm
+      onCancel={() => setAsking(false)}
+      onConfirm={() => {
+        setAsking(false);
+        onRestart();
+      }}
+    />
+  ) : null;
   if (compact) {
     return (
-      <header className={`${styles.header} ${styles.headerCompact}`}>
-        <h1 className={styles.title}>{stageTitle}</h1>
-        <span className={`${styles.badge} ${styles.badgeGold}`} title={`第 ${turn} / ${totalTurns} 回合`}>
-          {turn}/{totalTurns}
-        </span>
-        <span className={styles.badge} title={`位分：${rankName}（${rankDetail}）`}>
-          {rankName}
-        </span>
-        {badges.map((b) => (
-          <span key={b.text} className={badgeClass(b)} title={b.text}>
-            {b.brief ?? b.text}
+      <>
+        <header className={`${styles.header} ${styles.headerCompact}`}>
+          <h1 className={styles.title}>{stageTitle}</h1>
+          <span className={`${styles.badge} ${styles.badgeGold}`} title={`第 ${turn} / ${totalTurns} 回合`}>
+            {turn}/{totalTurns}
           </span>
-        ))}
-        <HeaderMenu rankLine={`位分：${rankName}（${rankDetail}）`} onRules={onRules} onRestart={onRestart} onMenu={onMenu} />
-        <CompactModeToggle />
-      </header>
+          <span className={styles.badge} title={`位分：${rankName}（${rankDetail}）`}>
+            {rankName}
+          </span>
+          {badges.map((b) => (
+            <span key={b.text} className={badgeClass(b)} title={b.text}>
+              {b.brief ?? b.text}
+            </span>
+          ))}
+          <HeaderMenu rankLine={`位分：${rankName}（${rankDetail}）`} onRules={onRules} onRestart={askRestart} onMenu={onMenu} />
+          <CompactModeToggle />
+        </header>
+        {confirmModal}
+      </>
     );
   }
   return (
-    <header className={styles.header}>
-      <div className={styles.headerMain}>
-        <h1 className={styles.title}>
-          {campaignTitle} · {stageTitle}
-        </h1>
-        <span className={`${styles.badge} ${styles.badgeGold}`}>
-          第 {turn} / {totalTurns} 回合
-        </span>
-        <span className={styles.badge}>
-          位分：{rankName}（{rankDetail}）
-        </span>
-        {badges.map((b) => (
-          <span key={b.text} className={badgeClass(b)}>
-            {b.text}
+    <>
+      <header className={styles.header}>
+        <div className={styles.headerMain}>
+          <h1 className={styles.title}>
+            {campaignTitle} · {stageTitle}
+          </h1>
+          <span className={`${styles.badge} ${styles.badgeGold}`}>
+            第 {turn} / {totalTurns} 回合
           </span>
-        ))}
-      </div>
-      <div className={styles.headerMeta}>
-        <button type="button" className={styles.btn} onClick={onRules}>
-          规则说明
-        </button>
-        <button type="button" className={styles.btn} onClick={() => confirmRestart(onRestart)}>
-          重新开始
-        </button>
-        <button type="button" className={styles.btn} onClick={onMenu}>
-          主菜单
-        </button>
-        <CompactModeToggle />
-      </div>
-    </header>
+          <span className={styles.badge}>
+            位分：{rankName}（{rankDetail}）
+          </span>
+          {badges.map((b) => (
+            <span key={b.text} className={badgeClass(b)}>
+              {b.text}
+            </span>
+          ))}
+        </div>
+        <div className={styles.headerMeta}>
+          <button type="button" className={styles.btn} onClick={onRules}>
+            规则说明
+          </button>
+          <button type="button" className={styles.btn} onClick={askRestart}>
+            重新开始
+          </button>
+          <button type="button" className={styles.btn} onClick={onMenu}>
+            主菜单
+          </button>
+          <CompactModeToggle />
+        </div>
+      </header>
+      {confirmModal}
+    </>
   );
 }
 
-/** Restarting throws the current run away, so ask first. */
-function confirmRestart(onRestart: () => void) {
-  if (window.confirm("重新开始本关？当前进度将丢失。")) onRestart();
+/**
+ * Restarting throws the current run away, so ask first. An in-page dialog rather than `window.confirm`,
+ * which embedded pages and some mobile browsers block (it then silently answers "cancel").
+ */
+function RestartConfirm({ onCancel, onConfirm }: { onCancel: () => void; onConfirm: () => void }) {
+  return (
+    <div
+      className={styles.overlay}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="zh-restart-title"
+      // keep Space / Escape here: Space would otherwise end the turn underneath
+      onKeyDown={(e) => {
+        e.stopPropagation();
+        if (e.key === "Escape") onCancel();
+      }}
+    >
+      <div className={styles.modal}>
+        <h2 id="zh-restart-title">重新开始本关？</h2>
+        <p>当前进度将丢失，并换一个新的随机种子重新开局。</p>
+        <div className={styles.modalActions}>
+          <button type="button" className={styles.btn} onClick={onCancel} autoFocus>
+            取消
+          </button>
+          <button type="button" className={`${styles.btn} ${styles.btnPrimary}`} onClick={onConfirm}>
+            重新开始
+          </button>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 function HeaderMenu({
@@ -345,7 +390,7 @@ function HeaderMenu({
             className={styles.btn}
             onClick={() => {
               setOpen(false);
-              confirmRestart(onRestart);
+              onRestart();
             }}
           >
             重新开始
