@@ -338,7 +338,10 @@ export const CARDS2: Record<CardId2, CardDef2> = {
       "huanyixiangZhuanchong",
       "songzhiKuisi",
     ],
-    rulesText: ["本身没有效果；能解决带 🎶 的事件，效果视你与陵容的情分（亲厚 / 生分 / 怨怼）而定。"],
+    rulesText: [
+      "本身没有效果；能解决带 🎶 的事件，效果视你与陵容的情分（亲厚 / 生分 / 怨怼）而定。",
+      "冷落：回合结束时若手牌中仍有陵容相助（不论几张），陵容会与你生分些（每回合至多一次，不会因此降入怨怼）。",
+    ],
     rulesCompact: "🎶视情分",
   },
   jinxiXiangzhu: {
