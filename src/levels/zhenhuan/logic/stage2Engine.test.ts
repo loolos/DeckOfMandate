@@ -179,7 +179,7 @@ describe("zhenhuan stage 2 engine", () => {
     expect(canPlayCard(s, a!)).toBe(false);
     const before = s.shengchong;
     const t = act(s, { type: "playCard", cardUid: l! });
-    expect(t.shengchong).toBe(before - 1); // 反噬
+    expect(t.shengchong).toBe(before - 1); // 微词
     expect(blockedByChezhou(t, a!)).toBe(false);
   });
 
@@ -1004,7 +1004,7 @@ describe("zhenhuan stage 2 engine", () => {
     expect(s.hate).toBe(4);
   });
 
-  it("陵容 played with nothing to answer: 情分 +1 (怨怼 still 反噬)", () => {
+  it("陵容 played with nothing to answer: 情分 +1 (怨怼 still 微词)", () => {
     const run = (relation: number) => {
       let s = newStage2(41, null);
       s.relation = relation;
@@ -1386,7 +1386,7 @@ describe("zhenhuan stage 2 engine", () => {
     expect(distant.relation).toBe(1);
     const resentful = run(-3);
     expect(resentful.trial.summoned).toBe(false);
-    expect(resentful.shengchong).toBe(7); // 截走 -1, no 反噬 on top
+    expect(resentful.shengchong).toBe(7); // 截走 -1, no 微词 on top
   });
 
   it("翊坤落幕 (turn 30): ≤ 1 evidence loses at once; 2–3 → 3 cards, 4–6 → 2, ≥ 7 → 1", () => {
