@@ -89,7 +89,7 @@ describe("zhenhuan engine", () => {
     // no plays left
     expect(reduce(s, { type: "playCard", cardUid: uidOf(s, "shoulongRenxin") })).toBe(s);
     s = act(s, { type: "endTurn" });
-    expect(s.qingyu).toBe(2); // 礼仪失误 resolved → no penalty
+    expect(s.qingyu).toBe(2); // 莲步微蹶 resolved → no penalty
     expect(s.turn).toBe(2);
     expect(totalCards(s)).toBe(12);
   });
@@ -429,7 +429,7 @@ describe("zhenhuan engine", () => {
     }
   });
 
-  it("温太医相助 resolves 礼仪失误 (and still removes a negative status)", () => {
+  it("温太医相助 resolves 莲步微蹶 (and still removes a negative status)", () => {
     let s = newGame(9);
     expect(s.crisis?.id).toBe("liyiShiwu");
     s.statuses.push({ uid: "neg", id: "liuyanChanshen", appliesFromTurn: 1, remaining: 2 });
