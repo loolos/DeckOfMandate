@@ -63,8 +63,7 @@ import {
   type Z2State,
 } from "../logic/stage2Engine";
 import { cardArtUrl, eventArtUrl, specialArtUrl, storyArtUrl } from "./art";
-import { CompactModeToggle } from "./CompactModeToggle";
-import { CardArt, FoldBox, LogView, Pile, ResolvedBanner, ScrollRow, TagChip, activateOnKey, countBy, isTypingTarget, type Fold } from "./common";
+import { CardArt, FoldBox, GameHeader, LogView, Pile, ResolvedBanner, ScrollRow, StatChip, TagChip, activateOnKey, countBy, isTypingTarget, type Fold } from "./common";
 import { compactEffect2, expandedEffect2, statusBrief2 } from "./effectText2";
 import styles from "./zhenhuan.module.css";
 
@@ -86,23 +85,6 @@ function Tag({ tag, tone, dispatch, dim, children }: { tag: TagId2; tone?: strin
     <TagChip tone={[tone, dim && styles.tagDim].filter(Boolean).join(" ")} onExplain={() => dispatch({ type: "explainTag", tag })}>
       {children}
     </TagChip>
-  );
-}
-
-function Stat({ label, value, max, hint, danger }: { label: string; value: number; max: number; hint?: string; danger?: boolean }) {
-  return (
-    <div className={styles.stat}>
-      <div className={styles.statLabel}>
-        {label}
-        {hint ? <span className={styles.statHint}>{hint}</span> : null}
-      </div>
-      <div className={[styles.statValue, danger && styles.statDanger].filter(Boolean).join(" ")}>
-        {value} / {max}
-      </div>
-      <div className={styles.meter}>
-        <div className={styles.meterFill} style={{ width: `${Math.max(0, Math.min(1, value / max)) * 100}%` }} />
-      </div>
-    </div>
   );
 }
 
@@ -901,85 +883,66 @@ export function Stage2Game({ state, dispatch, runCode, showRules, onShowRules, o
 
   return (
     <div className={[styles.page, compact && styles.compact].filter(Boolean).join(" ")}>
-      <header className={styles.header}>
-        <div>
-          <h1 className={styles.title}>{CAMPAIGN_TITLE} · {STAGE2.title}</h1>
-          <div className={styles.headerMeta}>
-            <span className={`${styles.badge} ${styles.badgeGold}`}>
-              第 {state.turn} / {STAGE2.totalTurns} 回合
-            </span>
-            <span className={styles.badge}>
-              位分：{RANKS[state.rank].name}（抓 {rank.draw} · 打 {rank.plays} · 上限 {rankCap(state)}）
-            </span>
-            {state.pregnant ? <span className={`${styles.badge} ${styles.badgeGold}`}>👶 身怀龙裔</span> : null}
-          </div>
-        </div>
-        <div className={styles.headerMeta}>
-          <CompactModeToggle />
-          <button type="button" className={styles.btn} onClick={() => onShowRules(true)}>
-            规则说明
-          </button>
-          <button type="button" className={styles.btn} onClick={onMenu}>
-            主菜单
-          </button>
-        </div>
-      </header>
+      <GameHeader
+        compact={compact}
+        campaignTitle={CAMPAIGN_TITLE}
+        stageTitle={STAGE2.title}
+        turn={state.turn}
+        totalTurns={STAGE2.totalTurns}
+        rankName={RANKS[state.rank].name}
+        rankDetail={`抓 ${rank.draw} · 打 ${rank.plays} · 上限 ${rankCap(state)}`}
+        badges={state.pregnant ? [{ text: "👶 身怀龙裔", brief: "👶", gold: true }] : []}
+        onRules={() => onShowRules(true)}
+        onMenu={onMenu}
+      />
 
-      <ScrollRow className={`${styles.bar} ${styles.resources}`}>
-        <Stat label="🪷 清誉" hint="（归 0 即失败）" value={state.qingyu} max={rankCap(state)} danger={state.qingyu <= 1} />
-        <Stat label="👑 圣宠" hint="（归 0 即失败）" value={state.shengchong} max={rankCap(state)} danger={state.shengchong <= 1} />
-        {state.shenziRevealed ? <Stat label="🌱 身子" value={state.shenzi} max={SHENZI.max} danger={state.shenzi <= 1} /> : null}
-        {hateShown ? <Stat label={`🔥 华妃恨意 · ${hateTierLabel(state.hate)}`} value={state.hate} max={HATE.max} danger={state.hate >= 9} /> : null}
-      </ScrollRow>
-
-      <ScrollRow className={`${styles.bar} ${styles.piles}`}>
-        <div className={styles.stat}>
-          <div className={styles.statLabel}>
-            <span className={styles.pileIcon}>🀄 </span>本回合出牌
-          </div>
-          <div className={styles.statValue}>
-            {state.playsUsed} / {playLimit2(state)}
-          </div>
-        </div>
-        <Pile icon="🎴" label="抽牌堆" count={state.drawPile.length}>
-          <p className={styles.popoverTitle}>抽牌堆剩余（顺序未知）</p>
-          <CardList ids={state.drawPile.map((c) => c.id)} empty="已空，需要时将弃牌堆洗回。" />
-        </Pile>
-        <Pile icon="🗑️" label="弃牌堆" count={state.discard.length}>
-          <p className={styles.popoverTitle}>弃牌堆</p>
-          <CardList ids={state.discard.map((c) => c.id)} empty="空" />
-        </Pile>
-        {state.departed.length > 0 ? (
-          <Pile icon="🕯️" label="已离场" count={state.departed.length}>
-            <p className={styles.popoverTitle}>已离场</p>
-            <CardList ids={state.departed.map((c) => c.id)} empty="无" />
+      <div className={styles.topStrip}>
+        <ScrollRow className={styles.stats}>
+          <StatChip icon="🪷" label="清誉" hint="（归 0 即失败）" value={state.qingyu} max={rankCap(state)} danger={state.qingyu <= 1} />
+          <StatChip icon="👑" label="圣宠" hint="（归 0 即失败）" value={state.shengchong} max={rankCap(state)} danger={state.shengchong <= 1} />
+          {state.shenziRevealed ? <StatChip icon="🌱" label="身子" value={state.shenzi} max={SHENZI.max} danger={state.shenzi <= 1} /> : null}
+          {hateShown ? <StatChip icon="🔥" label={`华妃恨意 · ${hateTierLabel(state.hate)}`} value={state.hate} max={HATE.max} danger={state.hate >= 9} /> : null}
+          <span className={styles.stripDivider} aria-hidden="true" />
+          <StatChip icon="🀄" label="本回合出牌" value={state.playsUsed} max={playLimit2(state)} meter={false} />
+          <Pile icon="🎴" label="抽牌堆" count={state.drawPile.length}>
+            <p className={styles.popoverTitle}>抽牌堆剩余（顺序未知）</p>
+            <CardList ids={state.drawPile.map((c) => c.id)} empty="已空，需要时将弃牌堆洗回。" />
           </Pile>
-        ) : null}
-        <Pile icon="🌸" label="机会牌池" count={state.opportunityPool.length}>
-          <p className={styles.popoverTitle}>剩余机会事件</p>
-          <EventList ids={state.opportunityPool} empty="已抽完，下次将把已用事件重新洗匀。" />
-          <p className={styles.popoverTitle}>本轮已出现</p>
-          <EventList ids={state.opportunity ? [...state.opportunityUsed, state.opportunity.id] : state.opportunityUsed} empty="无" />
-        </Pile>
-        <Pile icon="⚡" label="危机牌池" count={state.crisisPool.length}>
-          <p className={styles.popoverTitle}>剩余危机事件</p>
-          <EventList ids={state.crisisPool} empty="已抽完，下次将把已用事件重新洗匀。" />
-          <p className={styles.popoverTitle}>本轮已出现</p>
-          <EventList ids={state.crisis ? [...state.crisisUsed, state.crisis.id] : state.crisisUsed} empty="无" />
-        </Pile>
-        {hateShown ? (
-        <Pile icon="🏯" label="华妃事件" count={unlocked.length}>
-          <p className={styles.popoverTitle}>
-            恨意 {state.hate}：每回合 {plan.fixed} 张{plan.chance > 0 ? `，再 ${plan.chance * 100}% 加 1 张` : ""}（按回合开始时计算）
-          </p>
-          <p className={styles.popoverTitle}>已解锁</p>
-          <EventList ids={unlocked} empty="恨意不足 3，暂无华妃事件。" />
-          {unlocked.includes("huanyixiangZhuanchong") ? <p className={styles.muted}>【欢宜香浓】只在有召幸的回合出现。</p> : null}
-        </Pile>
-        ) : null}
-      </ScrollRow>
-
-      <Statuses state={state} dispatch={dispatch} />
+          <Pile icon="🗑️" label="弃牌堆" count={state.discard.length}>
+            <p className={styles.popoverTitle}>弃牌堆</p>
+            <CardList ids={state.discard.map((c) => c.id)} empty="空" />
+          </Pile>
+          {state.departed.length > 0 ? (
+            <Pile icon="🕯️" label="已离场" count={state.departed.length}>
+              <p className={styles.popoverTitle}>已离场</p>
+              <CardList ids={state.departed.map((c) => c.id)} empty="无" />
+            </Pile>
+          ) : null}
+          <Pile icon="🌸" label="机会牌池" count={state.opportunityPool.length}>
+            <p className={styles.popoverTitle}>剩余机会事件</p>
+            <EventList ids={state.opportunityPool} empty="已抽完，下次将把已用事件重新洗匀。" />
+            <p className={styles.popoverTitle}>本轮已出现</p>
+            <EventList ids={state.opportunity ? [...state.opportunityUsed, state.opportunity.id] : state.opportunityUsed} empty="无" />
+          </Pile>
+          <Pile icon="⚡" label="危机牌池" count={state.crisisPool.length}>
+            <p className={styles.popoverTitle}>剩余危机事件</p>
+            <EventList ids={state.crisisPool} empty="已抽完，下次将把已用事件重新洗匀。" />
+            <p className={styles.popoverTitle}>本轮已出现</p>
+            <EventList ids={state.crisis ? [...state.crisisUsed, state.crisis.id] : state.crisisUsed} empty="无" />
+          </Pile>
+          {hateShown ? (
+            <Pile icon="🏯" label="华妃事件" count={unlocked.length}>
+              <p className={styles.popoverTitle}>
+                恨意 {state.hate}：每回合 {plan.fixed} 张{plan.chance > 0 ? `，再 ${plan.chance * 100}% 加 1 张` : ""}（按回合开始时计算）
+              </p>
+              <p className={styles.popoverTitle}>已解锁</p>
+              <EventList ids={unlocked} empty="恨意不足 3，暂无华妃事件。" />
+              {unlocked.includes("huanyixiangZhuanchong") ? <p className={styles.muted}>【欢宜香浓】只在有召幸的回合出现。</p> : null}
+            </Pile>
+          ) : null}
+        </ScrollRow>
+        <Statuses state={state} dispatch={dispatch} />
+      </div>
 
       <h2 className={styles.sectionTitle}>
         本回合事件 <span title="未解决 / 事件总数">{eventCount.unresolved}/{eventCount.total}</span>

@@ -146,16 +146,80 @@
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 0.75rem;
-  padding-bottom: 0.75rem;
+  gap: 0.5rem 0.75rem;
+  padding-bottom: 0.5rem;
   border-bottom: 1px solid var(--zh-border);
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.headerMain {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem 0.6rem;
+  min-width: 0;
 }
 
 .title {
   margin: 0;
-  font-size: 1.3rem;
+  font-size: 1.15rem;
   color: var(--zh-gold);
+}
+
+/* 略缩模式: one line — stage title (ellipsized), turn, rank, ⋯ menu. */
+.headerCompact {
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  gap: 0.35rem;
+}
+
+.headerCompact .title {
+  flex: 0 1 auto;
+  min-width: 0;
+  font-size: 1rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.headerCompact .badge {
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
+.headerMenu {
+  position: relative;
+  flex: 0 0 auto;
+  margin-left: auto;
+}
+
+.headerMenu .menuButton {
+  padding: 0.15rem 0.6rem;
+  font-size: 1.1rem;
+  line-height: 1.2;
+}
+
+.headerMenuPanel {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  z-index: 30;
+  width: max-content;
+  max-width: calc(100vw - 24px);
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.5rem;
+  background: #120b0d;
+  border: 1px solid var(--zh-gold);
+  border-radius: 10px;
+  padding: 0.6rem 0.75rem;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
+}
+
+.headerMenuPanel p {
+  margin: 0;
+  font-size: 0.82rem;
 }
 
 .headerMeta {
@@ -181,32 +245,104 @@
   color: var(--zh-gold);
 }
 
-.bar {
+/* Top strip: resources, play counter and piles in one sideways row; statuses share the line when it fits. */
+.topStrip {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.6rem;
-  margin-bottom: 0.75rem;
+  align-items: flex-start;
+  gap: 0.4rem 1rem;
+  margin-bottom: 0.5rem;
 }
 
-.stat {
+.topStrip > .stats {
+  flex: 0 1 auto;
+  min-width: 0;
+  gap: 0.4rem;
+  padding-bottom: 0.25rem;
+}
+
+.topStrip > .statusRow {
+  flex: 1 1 280px;
+  min-width: 0;
+  margin-bottom: 0;
+}
+
+.chip {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.2rem;
+  min-height: 2.4rem;
   background: var(--zh-panel);
   border: 1px solid var(--zh-border);
-  border-radius: 10px;
-  padding: 0.5rem 0.75rem;
+  border-radius: 8px;
+  padding: 0.25rem 0.55rem;
 }
 
-.statLabel {
+.chipLine {
+  display: flex;
+  align-items: baseline;
+  gap: 0.3rem;
+  white-space: nowrap;
+}
+
+.chipLabel {
   font-size: 0.8rem;
   color: var(--zh-muted);
 }
 
-.statValue {
-  font-size: 1.3rem;
+.chipValue {
+  font-size: 1.05rem;
   font-weight: 700;
 }
 
 .statDanger {
   color: var(--zh-red);
+}
+
+.chipMax {
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--zh-muted);
+}
+
+.statChip {
+  min-width: 120px;
+}
+
+.statChip .meter {
+  height: 3px;
+  margin-top: 0;
+}
+
+.stripDivider {
+  align-self: stretch;
+  width: 1px;
+  margin: 0.2rem 0.15rem;
+  background: var(--zh-border);
+}
+
+/* 略缩模式: emoji + number only (labels stay for screen readers and hover titles). */
+.compact .chipLabel {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.compact .chip {
+  min-height: 2.1rem;
+  padding: 0.2rem 0.45rem;
+}
+
+.compact .statChip {
+  min-width: 64px;
+}
+
+.compact .chipValue {
+  font-size: 0.95rem;
 }
 
 .meter {
@@ -224,49 +360,17 @@
 
 /* hover popovers for piles */
 
-/* Resources, and the play counter plus piles, each share one width and scroll sideways like events/hand/statuses. */
-.page .resources > *,
-.page .piles > * {
-  flex: 0 0 auto;
-}
-
-.page .resources > * {
-  width: 180px;
-}
-
-.page.compact .resources > * {
-  width: 132px;
-}
-
-.page .piles > * {
-  width: 112px;
-}
-
-.page.compact .piles > * {
-  width: 104px;
-}
-
-.piles .statLabel {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
 .pile {
   position: relative;
-  background: var(--zh-panel);
-  border: 1px dashed var(--zh-border);
-  border-radius: 10px;
-  padding: 0.45rem 0.75rem;
+  border-style: dashed;
   cursor: help;
   outline: none;
 }
 
-/* Selected / hovered: a thicker border in the same color (gold is reserved for "matches"). */
+/* Selected / hovered: a 1px ring in the border color reads as a thicker border (gold is reserved for "matches"). */
 .pile:hover,
 .pile:focus-visible {
-  border-width: 2px;
-  padding: calc(0.45rem - 1px) calc(0.75rem - 1px);
+  box-shadow: 0 0 0 1px var(--zh-border);
 }
 
 .popover {
@@ -824,20 +928,6 @@
   width: min(320px, 85vw);
 }
 
-.compact .bar {
-  gap: 0.4rem;
-  margin-bottom: 0.5rem;
-}
-
-.compact .stat,
-.compact .pile {
-  padding: 0.3rem 0.55rem;
-}
-
-.compact .statValue {
-  font-size: 1.05rem;
-}
-
 .compact .log {
   max-height: 150px;
 }
@@ -905,6 +995,61 @@
   box-shadow: 0 0 0 1px var(--zh-edge);
 }
 
+/* 略缩模式 expanded card: a bottom sheet over the page; the slot it left keeps the row from shifting. */
+.foldSlot {
+  min-height: 3.5rem;
+  border: 1px dashed var(--zh-border);
+  border-radius: 12px;
+  opacity: 0.6;
+}
+
+.sheetLayer {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 16px 10px max(10px, env(safe-area-inset-bottom, 0px));
+  background: rgba(0, 0, 0, 0.55);
+  cursor: default;
+  animation: sheetFade 0.15s ease-out;
+}
+
+.compact .scrollRow > .sheetLayer {
+  width: auto;
+  scroll-snap-align: none;
+}
+
+.compact .sheet {
+  width: min(440px, 100%);
+  max-height: 85vh;
+  max-height: 85dvh;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.55);
+  animation: sheetUp 0.18s ease-out;
+}
+
+.compact .sheet:focus-visible {
+  box-shadow:
+    0 0 0 1px var(--zh-edge),
+    0 -10px 40px rgba(0, 0, 0, 0.55);
+}
+
+@keyframes sheetFade {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes sheetUp {
+  from {
+    transform: translateY(1.5rem);
+    opacity: 0;
+  }
+}
+
 .playableByDouble {
   user-select: none;
 }
@@ -950,55 +1095,9 @@
     font-size: 0.78rem;
   }
 
-  .page .bar {
+  .topStrip {
     gap: 0.35rem;
-    margin-bottom: 0.45rem;
-  }
-
-  .page .stat {
-    padding: 0.3rem 0.5rem;
-  }
-
-  .page .pile {
-    padding: 0.25rem 0.3rem;
-  }
-
-  /* four resources stay well inside a phone width */
-  .page.compact .resources > * {
-    width: 76px;
-  }
-
-  .page.compact .piles > * {
-    width: 72px;
-  }
-
-  .piles .stat {
-    padding: 0.25rem 0.3rem;
-  }
-
-  .statLabel {
-    font-size: 0.68rem;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  .piles .statLabel {
-    font-size: 0.62rem;
-  }
-
-  .statHint,
-  .pileIcon {
-    display: none;
-  }
-
-  .page .statValue {
-    font-size: 0.95rem;
-  }
-
-  .meter {
-    height: 4px;
-    margin-top: 0.2rem;
+    margin-bottom: 0.4rem;
   }
 
   .page .sectionTitle {
@@ -1087,6 +1186,11 @@
     animation: none;
     opacity: 1;
     transform: none;
+  }
+
+  .sheetLayer,
+  .compact .sheet {
+    animation: none;
   }
 }
 

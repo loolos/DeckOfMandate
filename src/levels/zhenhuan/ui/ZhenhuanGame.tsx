@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
-import { CardArt, FoldBox, LogView, Pile, ResolvedBanner, ScrollRow, activateOnKey, countBy, isTypingTarget, type Fold } from "./common";
+import { CardArt, FoldBox, GameHeader, LogView, Pile, ResolvedBanner, ScrollRow, StatChip, activateOnKey, countBy, isTypingTarget, type Fold } from "./common";
 import { RunCodePanel } from "../../../components/RunCodePanel";
 import { useSmallScreen } from "../../../logic/useSmallScreen";
 import {
@@ -43,7 +43,6 @@ import {
 } from "../logic/engine";
 import { encodeRunCode } from "../logic/persistence";
 import { cardArtUrl, eventArtUrl, specialArtUrl, storyArtUrl } from "./art";
-import { CompactModeToggle } from "./CompactModeToggle";
 import { RulesSummary } from "./RulesSummary";
 import { compactEffect, expandedEffect, statusBrief } from "./effectText";
 import styles from "./zhenhuan.module.css";
@@ -89,20 +88,15 @@ function EventCountList({ ids, empty }: { ids: readonly EventId[]; empty: string
 
 function ResourceStat({ state, resource }: { state: ZhState; resource: Resource }) {
   const value = state[resource];
-  const max = cap(state);
   return (
-    <div className={styles.stat}>
-      <div className={styles.statLabel}>
-        {RESOURCE_EMOJI[resource]} {RESOURCE_LABEL[resource]}
-        <span className={styles.statHint}>（归 0 即失败）</span>
-      </div>
-      <div className={[styles.statValue, value <= 1 && styles.statDanger].filter(Boolean).join(" ")}>
-        {value} / {max}
-      </div>
-      <div className={styles.meter}>
-        <div className={styles.meterFill} style={{ width: `${(value / max) * 100}%` }} />
-      </div>
-    </div>
+    <StatChip
+      icon={RESOURCE_EMOJI[resource]}
+      label={RESOURCE_LABEL[resource]}
+      hint="（归 0 即失败）"
+      value={value}
+      max={cap(state)}
+      danger={value <= 1}
+    />
   );
 }
 
@@ -763,76 +757,57 @@ export function ZhenhuanGame({ state, dispatch, showRules, onShowRules, onRestar
 
   return (
     <div className={[styles.page, compact && styles.compact].filter(Boolean).join(" ")}>
-      <header className={styles.header}>
-        <div>
-          <h1 className={styles.title}>{CAMPAIGN_TITLE} · {CHAPTER.title}</h1>
-          <div className={styles.headerMeta}>
-            <span className={`${styles.badge} ${styles.badgeGold}`}>
-              第 {state.turn} / {CHAPTER.totalTurns} 回合
-            </span>
-            <span className={styles.badge}>
-              位分：{rank.name}（抓 {rank.draw} · 打 {rank.plays} · 上限 {rank.cap}）
-            </span>
-            {state.promoted ? <span className={`${styles.badge} ${styles.badgeGold}`}>已晋封</span> : null}
-          </div>
-        </div>
-        <div className={styles.headerMeta}>
-          <CompactModeToggle />
-          <button type="button" className={styles.btn} onClick={() => onShowRules(true)}>
-            规则说明
-          </button>
-          <button type="button" className={styles.btn} onClick={onMenu}>
-            主菜单
-          </button>
-        </div>
-      </header>
+      <GameHeader
+        compact={compact}
+        campaignTitle={CAMPAIGN_TITLE}
+        stageTitle={CHAPTER.title}
+        turn={state.turn}
+        totalTurns={CHAPTER.totalTurns}
+        rankName={rank.name}
+        rankDetail={`抓 ${rank.draw} · 打 ${rank.plays} · 上限 ${rank.cap}`}
+        badges={state.promoted ? [{ text: "已晋封", gold: true }] : []}
+        onRules={() => onShowRules(true)}
+        onMenu={onMenu}
+      />
 
-      <ScrollRow className={`${styles.bar} ${styles.resources}`}>
-        <ResourceStat state={state} resource="qingyu" />
-        <ResourceStat state={state} resource="shengchong" />
-      </ScrollRow>
-
-      <ScrollRow className={`${styles.bar} ${styles.piles}`}>
-        <div className={styles.stat}>
-          <div className={styles.statLabel}>
-            <span className={styles.pileIcon}>🀄 </span>本回合出牌
-          </div>
-          <div className={styles.statValue}>
-            {state.playsUsed} / {playLimit(state)}
-          </div>
-        </div>
-        <Pile icon="🎴" label="抽牌堆" count={state.drawPile.length}>
-          <p className={styles.popoverTitle}>抽牌堆剩余（顺序未知）</p>
-          <CardCountList ids={state.drawPile.map((c) => c.id)} empty="已空，需要时将弃牌堆洗回。" />
-        </Pile>
-        <Pile icon="🗑️" label="弃牌堆" count={state.discard.length}>
-          <p className={styles.popoverTitle}>弃牌堆</p>
-          <CardCountList ids={state.discard.map((c) => c.id)} empty="空" />
-        </Pile>
-        <Pile icon="🌸" label="机会牌池" count={state.opportunityPool.length}>
-          <p className={styles.popoverTitle}>剩余机会事件</p>
-          <EventCountList ids={state.opportunityPool} empty="已抽完，下次将把已用事件重新洗匀。" />
-          <p className={styles.popoverTitle}>本轮已出现</p>
-          <EventCountList ids={state.opportunity ? [...usedOpp, state.opportunity.id] : usedOpp} empty="无" />
-        </Pile>
-        <Pile icon="⚡" label="危机牌池" count={state.crisisPool.length}>
-          <p className={styles.popoverTitle}>剩余危机事件</p>
-          <EventCountList ids={state.crisisPool} empty="已抽完，下次将把已用事件重新洗匀。" />
-          <p className={styles.popoverTitle}>本轮已出现</p>
-          <EventCountList ids={state.crisis ? [...usedCrisis, state.crisis.id] : usedCrisis} empty="无" />
-        </Pile>
-        <Pile icon="👀" label="嫉妒牌池" count={state.envyPool.length}>
-          <p className={styles.popoverTitle}>
-            第 {ENVY_TRIGGER.firstTurn} 回合起，回合开始时圣宠 ≥ {ENVY_TRIGGER.minShengchong}：首次必出，之后每隔一回合出现一次
-          </p>
-          <p className={styles.popoverTitle}>剩余嫉妒事件</p>
-          <EventCountList ids={state.envyPool} empty="已抽完，下次将把已用事件重新洗匀。" />
-          <p className={styles.popoverTitle}>本轮已出现</p>
-          <EventCountList ids={state.envy ? [...usedEnvy, state.envy.id] : usedEnvy} empty="无" />
-        </Pile>
-      </ScrollRow>
-
-      <Statuses state={state} dispatch={dispatch} />
+      <div className={styles.topStrip}>
+        <ScrollRow className={styles.stats}>
+          <ResourceStat state={state} resource="qingyu" />
+          <ResourceStat state={state} resource="shengchong" />
+          <span className={styles.stripDivider} aria-hidden="true" />
+          <StatChip icon="🀄" label="本回合出牌" value={state.playsUsed} max={playLimit(state)} meter={false} />
+          <Pile icon="🎴" label="抽牌堆" count={state.drawPile.length}>
+            <p className={styles.popoverTitle}>抽牌堆剩余（顺序未知）</p>
+            <CardCountList ids={state.drawPile.map((c) => c.id)} empty="已空，需要时将弃牌堆洗回。" />
+          </Pile>
+          <Pile icon="🗑️" label="弃牌堆" count={state.discard.length}>
+            <p className={styles.popoverTitle}>弃牌堆</p>
+            <CardCountList ids={state.discard.map((c) => c.id)} empty="空" />
+          </Pile>
+          <Pile icon="🌸" label="机会牌池" count={state.opportunityPool.length}>
+            <p className={styles.popoverTitle}>剩余机会事件</p>
+            <EventCountList ids={state.opportunityPool} empty="已抽完，下次将把已用事件重新洗匀。" />
+            <p className={styles.popoverTitle}>本轮已出现</p>
+            <EventCountList ids={state.opportunity ? [...usedOpp, state.opportunity.id] : usedOpp} empty="无" />
+          </Pile>
+          <Pile icon="⚡" label="危机牌池" count={state.crisisPool.length}>
+            <p className={styles.popoverTitle}>剩余危机事件</p>
+            <EventCountList ids={state.crisisPool} empty="已抽完，下次将把已用事件重新洗匀。" />
+            <p className={styles.popoverTitle}>本轮已出现</p>
+            <EventCountList ids={state.crisis ? [...usedCrisis, state.crisis.id] : usedCrisis} empty="无" />
+          </Pile>
+          <Pile icon="👀" label="嫉妒牌池" count={state.envyPool.length}>
+            <p className={styles.popoverTitle}>
+              第 {ENVY_TRIGGER.firstTurn} 回合起，回合开始时圣宠 ≥ {ENVY_TRIGGER.minShengchong}：首次必出，之后每隔一回合出现一次
+            </p>
+            <p className={styles.popoverTitle}>剩余嫉妒事件</p>
+            <EventCountList ids={state.envyPool} empty="已抽完，下次将把已用事件重新洗匀。" />
+            <p className={styles.popoverTitle}>本轮已出现</p>
+            <EventCountList ids={state.envy ? [...usedEnvy, state.envy.id] : usedEnvy} empty="无" />
+          </Pile>
+        </ScrollRow>
+        <Statuses state={state} dispatch={dispatch} />
+      </div>
 
       <h2 className={styles.sectionTitle}>
         本回合事件 <span title="未解决 / 事件总数">{eventCount.unresolved}/{eventCount.total}</span>

@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, type KeyboardEvent, type ReactNode } from "react";
+import { CompactModeToggle } from "./CompactModeToggle";
 import styles from "./zhenhuan.module.css";
 
 /** UI pieces shared by the 第一关 and 第二关 screens. */
@@ -34,7 +35,7 @@ export function Pile({ icon, label, count, children }: { icon: string; label: st
   return (
     <div
       ref={ref}
-      className={styles.pile}
+      className={`${styles.chip} ${styles.pile}`}
       tabIndex={0}
       onMouseEnter={show}
       onMouseLeave={() => {
@@ -43,14 +44,190 @@ export function Pile({ icon, label, count, children }: { icon: string; label: st
       onFocus={show}
       onBlur={() => setPos(null)}
     >
-      <div className={styles.statLabel}>
-        <span className={styles.pileIcon}>{icon} </span>
-        {label}
+      <div className={styles.chipLine}>
+        <span aria-hidden="true">{icon}</span>
+        <span className={styles.chipLabel}>{label}</span>
+        <span className={styles.chipValue}>{count}</span>
       </div>
-      <div className={styles.statValue}>{count}</div>
       {pos ? (
         <div className={styles.popover} role="tooltip" style={pos}>
           {children}
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+/** Resource / counter chip for the top strip; in 略缩模式 only the emoji and number stay visible. */
+export function StatChip({
+  icon,
+  label,
+  value,
+  max,
+  hint,
+  danger,
+  meter = max != null,
+}: {
+  icon: string;
+  label: string;
+  value: number;
+  max?: number;
+  hint?: string;
+  danger?: boolean;
+  meter?: boolean;
+}) {
+  return (
+    <div className={`${styles.chip} ${meter ? styles.statChip : ""}`} title={hint ? `${label}${hint}` : label}>
+      <div className={styles.chipLine}>
+        <span aria-hidden="true">{icon}</span>
+        <span className={styles.chipLabel}>{label}</span>
+        <span className={[styles.chipValue, danger && styles.statDanger].filter(Boolean).join(" ")}>
+          {value}
+          {max != null ? <span className={styles.chipMax}>/{max}</span> : null}
+        </span>
+      </div>
+      {meter && max != null ? (
+        <div className={styles.meter}>
+          <div className={styles.meterFill} style={{ width: `${Math.max(0, Math.min(1, value / max)) * 100}%` }} />
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+export type HeaderBadge = { text: string; brief?: string; gold?: boolean };
+
+/**
+ * Page header. Desktop: one line of title, turn / rank badges and the buttons. 略缩模式: stage title,
+ * turn and rank name on one line; rank details, the 略缩模式 switch, rules and menu sit behind ⋯.
+ */
+export function GameHeader({
+  compact,
+  campaignTitle,
+  stageTitle,
+  turn,
+  totalTurns,
+  rankName,
+  rankDetail,
+  badges = [],
+  onRules,
+  onMenu,
+}: {
+  compact: boolean;
+  campaignTitle: string;
+  stageTitle: string;
+  turn: number;
+  totalTurns: number;
+  rankName: string;
+  rankDetail: string;
+  badges?: readonly HeaderBadge[];
+  onRules: () => void;
+  onMenu: () => void;
+}) {
+  const badgeClass = (b: HeaderBadge) => (b.gold ? `${styles.badge} ${styles.badgeGold}` : styles.badge);
+  if (compact) {
+    return (
+      <header className={`${styles.header} ${styles.headerCompact}`}>
+        <h1 className={styles.title}>{stageTitle}</h1>
+        <span className={`${styles.badge} ${styles.badgeGold}`} title={`第 ${turn} / ${totalTurns} 回合`}>
+          {turn}/{totalTurns}
+        </span>
+        <span className={styles.badge} title={`位分：${rankName}（${rankDetail}）`}>
+          {rankName}
+        </span>
+        {badges.map((b) => (
+          <span key={b.text} className={badgeClass(b)} title={b.text}>
+            {b.brief ?? b.text}
+          </span>
+        ))}
+        <HeaderMenu rankLine={`位分：${rankName}（${rankDetail}）`} onRules={onRules} onMenu={onMenu} />
+      </header>
+    );
+  }
+  return (
+    <header className={styles.header}>
+      <div className={styles.headerMain}>
+        <h1 className={styles.title}>
+          {campaignTitle} · {stageTitle}
+        </h1>
+        <span className={`${styles.badge} ${styles.badgeGold}`}>
+          第 {turn} / {totalTurns} 回合
+        </span>
+        <span className={styles.badge}>
+          位分：{rankName}（{rankDetail}）
+        </span>
+        {badges.map((b) => (
+          <span key={b.text} className={badgeClass(b)}>
+            {b.text}
+          </span>
+        ))}
+      </div>
+      <div className={styles.headerMeta}>
+        <CompactModeToggle />
+        <button type="button" className={styles.btn} onClick={onRules}>
+          规则说明
+        </button>
+        <button type="button" className={styles.btn} onClick={onMenu}>
+          主菜单
+        </button>
+      </div>
+    </header>
+  );
+}
+
+function HeaderMenu({ rankLine, onRules, onMenu }: { rankLine: string; onRules: () => void; onMenu: () => void }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!open) return;
+    const onDown = (e: PointerEvent) => {
+      if (!ref.current?.contains(e.target as Node)) setOpen(false);
+    };
+    const onKey = (e: globalThis.KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    document.addEventListener("pointerdown", onDown);
+    window.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("pointerdown", onDown);
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [open]);
+  return (
+    <div className={styles.headerMenu} ref={ref}>
+      <button
+        type="button"
+        className={`${styles.btn} ${styles.menuButton}`}
+        aria-label="菜单"
+        aria-expanded={open}
+        onClick={() => setOpen((o) => !o)}
+      >
+        ⋯
+      </button>
+      {open ? (
+        <div className={styles.headerMenuPanel}>
+          <p className={styles.muted}>{rankLine}</p>
+          <CompactModeToggle />
+          <button
+            type="button"
+            className={styles.btn}
+            onClick={() => {
+              setOpen(false);
+              onRules();
+            }}
+          >
+            规则说明
+          </button>
+          <button
+            type="button"
+            className={styles.btn}
+            onClick={() => {
+              setOpen(false);
+              onMenu();
+            }}
+          >
+            主菜单
+          </button>
         </div>
       ) : null}
     </div>
@@ -134,7 +311,9 @@ export function isTypingTarget(target: EventTarget | null): boolean {
 /**
  * Card container. In 略缩模式 the whole card toggles collapsed/expanded with a single click
  * (clicks on its own buttons don't toggle). With `onDouble` (hand cards) the toggle waits a
- * moment so a double-click plays the card instead.
+ * moment so a double-click plays the card instead. An expanded card opens as a bottom sheet over
+ * the page (a same-size placeholder keeps its slot in the row), so the page itself never grows;
+ * tapping outside it or pressing Escape folds it again.
  */
 export function FoldBox({
   fold,
@@ -148,6 +327,20 @@ export function FoldBox({
   children: ReactNode;
 }) {
   const timer = useRef<number | null>(null);
+  const box = useRef<HTMLDivElement>(null);
+  const slot = useRef<{ width: number; height: number } | null>(null);
+  const toggleRef = useRef(fold.onToggle);
+  toggleRef.current = fold.onToggle;
+  const sheetOpen = fold.compact && fold.expanded;
+  useEffect(() => {
+    if (!sheetOpen) return;
+    box.current?.focus({ preventScroll: true });
+    const onKey = (e: globalThis.KeyboardEvent) => {
+      if (e.key === "Escape") toggleRef.current();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [sheetOpen]);
   if (!fold.compact) {
     // Desktop layout: double-click a hand card to play it (same as the Sun King campaign).
     return (
@@ -169,22 +362,31 @@ export function FoldBox({
     if (timer.current !== null) window.clearTimeout(timer.current);
     timer.current = null;
   };
-  return (
+  const toggle = () => {
+    if (!fold.expanded && box.current) {
+      const r = box.current.getBoundingClientRect();
+      slot.current = { width: r.width, height: r.height };
+    }
+    fold.onToggle();
+  };
+  const card = (
     <div
-      className={`${className} ${fold.expanded ? styles.expandedCard : styles.compactCard}`}
-      role="button"
+      ref={box}
+      className={`${className} ${fold.expanded ? `${styles.expandedCard} ${styles.sheet}` : styles.compactCard}`}
+      role={fold.expanded ? "dialog" : "button"}
+      aria-modal={fold.expanded || undefined}
       tabIndex={0}
-      aria-expanded={fold.expanded}
+      aria-expanded={fold.expanded ? undefined : false}
       onClick={(e) => {
         if ((e.target as HTMLElement).closest(INTERACTIVE)) return;
         if (!onDouble) {
-          fold.onToggle();
+          toggle();
           return;
         }
         clearTimer();
         timer.current = window.setTimeout(() => {
           timer.current = null;
-          fold.onToggle();
+          toggle();
         }, 220);
       }}
       onDoubleClick={(e) => {
@@ -193,11 +395,27 @@ export function FoldBox({
         onDouble();
       }}
       onKeyDown={(e) => {
-        if (e.target === e.currentTarget) activateOnKey(e, fold.onToggle);
+        if (e.target === e.currentTarget) activateOnKey(e, toggle);
       }}
     >
       {children}
     </div>
+  );
+  if (!fold.expanded) return card;
+  return (
+    <>
+      <div className={styles.foldSlot} style={slot.current ?? undefined} aria-hidden="true" />
+      <div
+        className={styles.sheetLayer}
+        // keep the row underneath from treating presses in the sheet as a drag
+        onPointerDown={(e) => e.stopPropagation()}
+        onClick={(e) => {
+          if (e.target === e.currentTarget) fold.onToggle();
+        }}
+      >
+        {card}
+      </div>
+    </>
   );
 }
 
