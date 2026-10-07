@@ -388,17 +388,41 @@
   display: none;
 }
 
+/* 略缩模式: small tiles so the resources and the play counter fit one phone-width row. */
+.compact .topStrip > .stats {
+  gap: 0.25rem;
+}
+
 .compact .chip {
-  min-height: 2.1rem;
-  padding: 0.2rem 0.45rem;
+  min-height: 1.9rem;
+  padding: 0.15rem 0.25rem;
+  border-radius: 7px;
+  gap: 0.12rem;
+}
+
+.compact .chipLine {
+  gap: 0.1rem;
+  font-size: 0.74rem;
 }
 
 .compact .statChip {
-  min-width: 64px;
+  min-width: 0;
 }
 
 .compact .chipValue {
-  font-size: 0.95rem;
+  font-size: 0.76rem;
+}
+
+.compact .chipMax {
+  font-size: 0.62rem;
+}
+
+.compact .statChip .meter {
+  height: 2px;
+}
+
+.compact .stripDivider {
+  margin: 0.2rem 0;
 }
 
 .meter {
