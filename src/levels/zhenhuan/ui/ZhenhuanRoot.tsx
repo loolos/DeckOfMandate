@@ -18,13 +18,14 @@ import { newStage2, reduce2, type Z2Action } from "../logic/stage2Engine";
 import { backdropUrl } from "./art";
 import { Backdrop } from "./common";
 import { CompactModeToggle } from "./CompactModeToggle";
-import { RulesSummary } from "./RulesSummary";
-import { Stage2Game, Stage2Rules } from "./Stage2Game";
+import { Stage2Game } from "./Stage2Game";
 import { ZhenhuanGame } from "./ZhenhuanGame";
 import styles from "./zhenhuan.module.css";
 
 /** Same pacing as the Sun King level intro: backdrop alone first, then the panel fades in. */
 const INTRO_DELAY_MS = 1000;
+/** Start menu: backdrop alone first (same pacing as Sun King), then the panel fades in. */
+const MENU_DELAY_MS = 2000;
 
 function randomSeed(): number {
   return Math.floor(Math.random() * 2_147_483_647) + 1;
@@ -38,6 +39,8 @@ export function ZhenhuanRoot() {
   const [introFade, setIntroFade] = useState(false);
   const [saved, setSaved] = useState<Session | null>(() => loadSession());
   const [seedText, setSeedText] = useState("");
+  const [menuVisible, setMenuVisible] = useState(false);
+  const [menuStage, setMenuStage] = useState<1 | 2>(1);
 
   const seedTrimmed = seedText.trim();
   const seedInvalid = seedTrimmed !== "" && !Number.isInteger(Number(seedTrimmed));
@@ -69,6 +72,14 @@ export function ZhenhuanRoot() {
     }, INTRO_DELAY_MS);
     return () => window.clearTimeout(id);
   }, [introPending]);
+
+  const onMenuScreen = session === null;
+  useEffect(() => {
+    if (!onMenuScreen) return;
+    setMenuVisible(false);
+    const id = window.setTimeout(() => setMenuVisible(true), MENU_DELAY_MS);
+    return () => window.clearTimeout(id);
+  }, [onMenuScreen]);
 
   const open = (next: Session, rules: boolean) => {
     setSession(next);
@@ -149,24 +160,31 @@ export function ZhenhuanRoot() {
   return (
     <div className={styles.root}>
       <Backdrop src={backdropUrl(1)} variant="menu" />
-      <div className={styles.menuScreen}>
-        <div className={styles.menuPanel} role="dialog" aria-labelledby="zh-menu-title">
+      <div className={styles.menuScreen} aria-busy={!menuVisible}>
+        {menuVisible ? (
+        <div className={`${styles.menuPanel} ${styles.introFade}`} role="dialog" aria-labelledby="zh-menu-title">
           <h1 id="zh-menu-title" className={styles.menuTitle}>
             {CAMPAIGN_TITLE}
           </h1>
           <CampaignSwitcher labelClassName={styles.menuLabel} selectClassName={styles.menuInput} />
           <CompactModeToggle />
+          <label className={styles.menuLabel} htmlFor="zh-level">
+            选择关卡
+          </label>
+          <select
+            id="zh-level"
+            className={styles.menuInput}
+            value={menuStage}
+            onChange={(e) => setMenuStage(e.target.value === "2" ? 2 : 1)}
+          >
+            <option value={1}>{CHAPTER.title}</option>
+            <option value={2}>{STAGE2.title}</option>
+          </select>
           <p className={styles.menuHint}>
-            {CHAPTER.title}：从答应起步，在晋封考验中晋为常在，并坚持到第 {CHAPTER.totalTurns} 回合。通关后可接着进入{STAGE2.title}。
+            {menuStage === 1
+              ? `${CHAPTER.title}：从答应起步，在晋封考验中晋为常在，并坚持到第 ${CHAPTER.totalTurns} 回合。通关后可接着进入${STAGE2.title}。`
+              : `${STAGE2.title}：直接开局（清誉 / 圣宠 ${STAGE2.standaloneQingyu}）。`}
           </p>
-          <details>
-            <summary className={styles.muted}>规则概要 · 第一关</summary>
-            <RulesSummary />
-          </details>
-          <details>
-            <summary className={styles.muted}>规则概要 · 第二关</summary>
-            <Stage2Rules />
-          </details>
           <label className={styles.menuLabel} htmlFor="zh-seed">
             随机种子（可选）
           </label>
@@ -184,12 +202,11 @@ export function ZhenhuanRoot() {
             type="button"
             className={`${styles.btn} ${styles.btnPrimary}`}
             disabled={seedInvalid}
-            onClick={() => open({ stage: 1, state: newGame(chosenSeed()) }, true)}
+            onClick={() =>
+              open(menuStage === 1 ? { stage: 1, state: newGame(chosenSeed()) } : startStage2Standalone(chosenSeed()), true)
+            }
           >
-            开始新对局（第一关）
-          </button>
-          <button type="button" className={styles.btn} disabled={seedInvalid} onClick={() => open(startStage2Standalone(chosenSeed()), true)}>
-            直接开始第二关（清誉 / 圣宠 {STAGE2.standaloneQingyu}）
+            开始关卡
           </button>
           {saved ? (
             <button type="button" className={styles.btn} onClick={() => open(saved, false)}>
@@ -198,6 +215,7 @@ export function ZhenhuanRoot() {
           ) : null}
           <RunCodePanel variant="startMenu" code="" onLoad={loadCode} />
         </div>
+        ) : null}
       </div>
     </div>
   );
