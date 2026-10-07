@@ -1108,6 +1108,15 @@
   scroll-snap-align: none;
 }
 
+/* The expanded card is fully opaque: no dimming for a card that can't be played or is already resolved. */
+.compact .sheet,
+.compact .sheet .rule,
+.compact .sheet .flavor,
+.compact .sheet .option,
+.compact .sheet .cardKind {
+  opacity: 1;
+}
+
 .compact .sheet {
   width: min(440px, 100%);
   max-height: 85vh;
@@ -1133,7 +1142,6 @@
 @keyframes sheetIn {
   from {
     transform: scale(0.96);
-    opacity: 0;
   }
 }
 
