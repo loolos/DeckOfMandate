@@ -11,10 +11,11 @@ export function countBy<T extends string>(ids: readonly T[]): [T, number][] {
 }
 
 /**
- * Pile tile with a hover/focus popover. The popover is `position: fixed` (placed from the tile's
- * rect) so the sideways-scrolling pile row cannot clip it; it closes when anything scrolls.
+ * Hover / focus popover for a tile (tap focuses it on touch screens). The popover is
+ * `position: fixed` (placed from the tile's rect) so the sideways-scrolling strip cannot clip it;
+ * it closes when anything scrolls.
  */
-export function Pile({ icon, label, count, children }: { icon: string; label: string; count: number; children: ReactNode }) {
+function useTilePopover() {
   const ref = useRef<HTMLDivElement>(null);
   const [pos, setPos] = useState<{ top: number; left: number } | null>(null);
   const show = () => {
@@ -32,35 +33,44 @@ export function Pile({ icon, label, count, children }: { icon: string; label: st
       window.removeEventListener("resize", hide);
     };
   }, [pos]);
+  const props = {
+    ref,
+    tabIndex: 0,
+    onMouseEnter: show,
+    onMouseLeave: () => {
+      if (document.activeElement !== ref.current) setPos(null);
+    },
+    onFocus: show,
+    onBlur: () => setPos(null),
+  };
+  const popover = (children: ReactNode) =>
+    pos ? (
+      <div className={styles.popover} role="tooltip" style={pos}>
+        {children}
+      </div>
+    ) : null;
+  return { props, popover };
+}
+
+/** Pile tile; hover / focus shows what is inside. */
+export function Pile({ icon, label, count, children }: { icon: string; label: string; count: number; children: ReactNode }) {
+  const { props, popover } = useTilePopover();
   return (
-    <div
-      ref={ref}
-      className={`${styles.chip} ${styles.pile}`}
-      tabIndex={0}
-      onMouseEnter={show}
-      onMouseLeave={() => {
-        if (document.activeElement !== ref.current) setPos(null);
-      }}
-      onFocus={show}
-      onBlur={() => setPos(null)}
-    >
+    <div className={`${styles.chip} ${styles.pile}`} {...props}>
       <div className={styles.chipLine}>
         <span aria-hidden="true">{icon}</span>
         <span className={styles.chipLabel}>{label}</span>
         <span className={styles.chipValue}>{count}</span>
       </div>
-      {pos ? (
-        <div className={styles.popover} role="tooltip" style={pos}>
-          {children}
-        </div>
-      ) : null}
+      {popover(children)}
     </div>
   );
 }
 
 /**
  * Resource / counter tile for the top strip: label, hint, number and meter on the desktop layout;
- * in 略缩模式 only the emoji and number stay visible.
+ * in 略缩模式 only the emoji and number stay visible. With `info`, hovering or tapping the tile
+ * shows its story line and mechanic notes.
  */
 export function StatChip({
   icon,
@@ -70,6 +80,7 @@ export function StatChip({
   hint,
   danger,
   meter = max != null,
+  info,
 }: {
   icon: string;
   label: string;
@@ -78,9 +89,11 @@ export function StatChip({
   hint?: string;
   danger?: boolean;
   meter?: boolean;
+  info?: { readonly lore: string; readonly rules: readonly string[] };
 }) {
-  return (
-    <div className={`${styles.chip} ${meter ? styles.statChip : ""}`} title={hint ? `${label}${hint}` : label}>
+  const { props, popover } = useTilePopover();
+  const body = (
+    <>
       <div className={styles.chipLine}>
         <span aria-hidden="true">{icon}</span>
         <span className={styles.chipLabel}>{label}</span>
@@ -95,6 +108,33 @@ export function StatChip({
           <div className={styles.meterFill} style={{ width: `${Math.max(0, Math.min(1, value / max)) * 100}%` }} />
         </div>
       ) : null}
+    </>
+  );
+  const className = [styles.chip, meter && styles.statChip, info && styles.infoChip].filter(Boolean).join(" ");
+  if (!info) {
+    return (
+      <div className={className} title={hint ? `${label}${hint}` : label}>
+        {body}
+      </div>
+    );
+  }
+  return (
+    <div className={className} {...props}>
+      {body}
+      {popover(
+        <>
+          <p className={styles.popoverTitle}>
+            {icon} {label}
+            {hint ?? ""}
+          </p>
+          <p className={styles.popoverLore}>{info.lore}</p>
+          <ul className={styles.popoverRules}>
+            {info.rules.map((r) => (
+              <li key={r}>{r}</li>
+            ))}
+          </ul>
+        </>,
+      )}
     </div>
   );
 }

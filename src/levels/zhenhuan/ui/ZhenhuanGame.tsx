@@ -12,6 +12,7 @@ import {
   PROMOTION_TRIAL,
   RANKS,
   RESOURCE_EMOJI,
+  RESOURCE_INFO,
   RESOURCE_LABEL,
   STATUSES,
   STATUS_TAG_LABEL,
@@ -93,6 +94,7 @@ function ResourceStat({ state, resource }: { state: ZhState; resource: Resource 
       icon={RESOURCE_EMOJI[resource]}
       label={RESOURCE_LABEL[resource]}
       hint="（归 0 即失败）"
+      info={RESOURCE_INFO[resource]}
       value={value}
       max={cap(state)}
       danger={value <= 1}

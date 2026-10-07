@@ -12,6 +12,7 @@ import {
   HUAFEI_EVENTS,
   LINGRONG_EVENT,
   RANKS,
+  RESOURCE_INFO2,
   SHENZI,
   LINGRONG_PROMOTION_TEXT,
   STAGE2,
@@ -899,10 +900,10 @@ export function Stage2Game({ state, dispatch, runCode, showRules, onShowRules, o
 
       <div className={styles.topStrip}>
         <ScrollRow className={styles.stats}>
-          <StatChip icon="🪷" label="清誉" hint="（归 0 即失败）" value={state.qingyu} max={rankCap(state)} danger={state.qingyu <= 1} />
-          <StatChip icon="👑" label="圣宠" hint="（归 0 即失败）" value={state.shengchong} max={rankCap(state)} danger={state.shengchong <= 1} />
-          {state.shenziRevealed ? <StatChip icon="🌱" label="身子" value={state.shenzi} max={SHENZI.max} danger={state.shenzi <= 1} /> : null}
-          {hateShown ? <StatChip icon="🔥" label={`华妃恨意 · ${hateTierLabel(state.hate)}`} value={state.hate} max={HATE.max} danger={state.hate >= 9} /> : null}
+          <StatChip icon="🪷" label="清誉" hint="（归 0 即失败）" info={RESOURCE_INFO2.qingyu} value={state.qingyu} max={rankCap(state)} danger={state.qingyu <= 1} />
+          <StatChip icon="👑" label="圣宠" hint="（归 0 即失败）" info={RESOURCE_INFO2.shengchong} value={state.shengchong} max={rankCap(state)} danger={state.shengchong <= 1} />
+          {state.shenziRevealed ? <StatChip icon="🌱" label="身子" info={RESOURCE_INFO2.shenzi} value={state.shenzi} max={SHENZI.max} danger={state.shenzi <= 1} /> : null}
+          {hateShown ? <StatChip icon="🔥" label={`华妃恨意 · ${hateTierLabel(state.hate)}`} info={RESOURCE_INFO2.hate} value={state.hate} max={HATE.max} danger={state.hate >= 9} /> : null}
           <span className={styles.stripDivider} aria-hidden="true" />
           <StatChip icon="🀄" label="本回合出牌" value={state.playsUsed} max={playLimit2(state)} meter={false} />
           <Pile icon="🎴" label="抽牌堆" count={state.drawPile.length}>

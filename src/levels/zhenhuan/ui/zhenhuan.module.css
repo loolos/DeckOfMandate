@@ -433,6 +433,31 @@
   margin: 0.2rem 0;
 }
 
+.popoverLore {
+  margin: 0.2rem 0 0.4rem;
+  font-style: italic;
+  color: var(--zh-muted);
+}
+
+.popoverRules {
+  margin: 0;
+  padding-left: 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+/* Resource tiles with notes: same hover / focus ring as the piles. */
+.infoChip {
+  cursor: help;
+  outline: none;
+}
+
+.infoChip:hover,
+.infoChip:focus-visible {
+  box-shadow: 0 0 0 1px var(--zh-border);
+}
+
 .popoverList {
   list-style: none;
   margin: 0;

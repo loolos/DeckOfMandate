@@ -8,6 +8,29 @@ export type Resource = "qingyu" | "shengchong";
 export const RESOURCE_LABEL: Record<Resource, string> = { qingyu: "清誉", shengchong: "圣宠" };
 export const RESOURCE_EMOJI: Record<Resource, string> = { qingyu: "🪷", shengchong: "👑" };
 
+/** Story line and mechanic notes shown on a resource tile (hover / tap). */
+export type ResourceInfo = { readonly lore: string; readonly rules: readonly string[] };
+
+export const RESOURCE_INFO: Record<Resource, ResourceInfo> = {
+  qingyu: {
+    lore: "宫里人人都盯着你的言行。名声一坏，再得宠也立不住脚。",
+    rules: [
+      "降到 0 立即失败。",
+      "不能超过当前位分的上限（答应 8、常在 10），超出的部分作废。",
+      "晋封考验（第 10–12 回合）要求回合末清誉 ≥ 5。",
+    ],
+  },
+  shengchong: {
+    lore: "皇上的恩宠，是你在后宫里最要紧的依仗，也最招人眼红。",
+    rules: [
+      "降到 0 立即失败。",
+      "不能超过当前位分的上限（答应 8、常在 10），超出的部分作废。",
+      "晋封考验（第 10–12 回合）要求回合末圣宠 ≥ 6。",
+      "第 6 回合起，回合开始时圣宠 ≥ 5 会招来嫉妒事件：首次必出，之后每隔一回合出现一次。",
+    ],
+  },
+};
+
 /** One step of an effect list; lists resolve in order and each step is checked for defeat. */
 export type ResourceDelta = { readonly resource: Resource; readonly amount: number };
 
