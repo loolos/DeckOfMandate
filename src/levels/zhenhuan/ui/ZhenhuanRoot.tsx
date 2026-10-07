@@ -182,8 +182,8 @@ export function ZhenhuanRoot() {
           </select>
           <p className={styles.menuHint}>
             {menuStage === 1
-              ? `${CHAPTER.title}：从答应起步，在晋封考验中晋为常在，并坚持到第 ${CHAPTER.totalTurns} 回合。通关后可接着进入${STAGE2.title}。`
-              : `${STAGE2.title}：直接开局（清誉 / 圣宠 ${STAGE2.standaloneQingyu}）。`}
+              ? `${CHAPTER.title}：甄嬛初入宫门，位分低微，宫里的一切规矩、人心与风波，都要她一一去面对。`
+              : `${STAGE2.title}：甄嬛渐得圣宠，也入了宠冠六宫的华妃的眼。翊坤宫的锋芒，从此冲着她而来。`}
           </p>
           <label className={styles.menuLabel} htmlFor="zh-seed">
             随机种子（可选）
