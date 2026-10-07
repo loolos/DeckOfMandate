@@ -352,6 +352,21 @@
   margin-top: 0.15rem;
 }
 
+.pileToggle {
+  font: inherit;
+  color: var(--zh-text);
+  cursor: pointer;
+}
+
+.pileToggle[aria-expanded="true"] {
+  border-color: var(--zh-gold);
+}
+
+.pileToggleText {
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+
 .stripDivider {
   align-self: stretch;
   width: 1px;

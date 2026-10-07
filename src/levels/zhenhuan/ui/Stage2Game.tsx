@@ -64,7 +64,7 @@ import {
   type Z2State,
 } from "../logic/stage2Engine";
 import { cardArtUrl, eventArtUrl, specialArtUrl, storyArtUrl } from "./art";
-import { CardArt, FoldBox, GameHeader, LogView, Pile, ResolvedBanner, ScrollRow, StatChip, TagChip, activateOnKey, countBy, isTypingTarget, type Fold } from "./common";
+import { CardArt, FoldBox, GameHeader, LogView, Pile, PileGroup, ResolvedBanner, ScrollRow, StatChip, TagChip, activateOnKey, countBy, isTypingTarget, type Fold } from "./common";
 import { compactEffect2, expandedEffect2, statusBrief2 } from "./effectText2";
 import styles from "./zhenhuan.module.css";
 
@@ -906,42 +906,44 @@ export function Stage2Game({ state, dispatch, runCode, showRules, onShowRules, o
           {hateShown ? <StatChip icon="🔥" label={`华妃恨意 · ${hateTierLabel(state.hate)}`} info={RESOURCE_INFO2.hate} value={state.hate} max={HATE.max} danger={state.hate >= 9} /> : null}
           <span className={styles.stripDivider} aria-hidden="true" />
           <StatChip icon="🀄" label="本回合出牌" value={state.playsUsed} max={playLimit2(state)} meter={false} />
-          <Pile icon="🎴" label="抽牌堆" count={state.drawPile.length}>
-            <p className={styles.popoverTitle}>抽牌堆剩余（顺序未知）</p>
-            <CardList ids={state.drawPile.map((c) => c.id)} empty="已空，需要时将弃牌堆洗回。" />
-          </Pile>
-          <Pile icon="🗑️" label="弃牌堆" count={state.discard.length}>
-            <p className={styles.popoverTitle}>弃牌堆</p>
-            <CardList ids={state.discard.map((c) => c.id)} empty="空" />
-          </Pile>
-          {state.departed.length > 0 ? (
-            <Pile icon="🕯️" label="已离场" count={state.departed.length}>
-              <p className={styles.popoverTitle}>已离场</p>
-              <CardList ids={state.departed.map((c) => c.id)} empty="无" />
+          <PileGroup compact={compact}>
+            <Pile icon="🎴" label="抽牌堆" count={state.drawPile.length}>
+              <p className={styles.popoverTitle}>抽牌堆剩余（顺序未知）</p>
+              <CardList ids={state.drawPile.map((c) => c.id)} empty="已空，需要时将弃牌堆洗回。" />
             </Pile>
-          ) : null}
-          <Pile icon="🌸" label="机会牌池" count={state.opportunityPool.length}>
-            <p className={styles.popoverTitle}>剩余机会事件</p>
-            <EventList ids={state.opportunityPool} empty="已抽完，下次将把已用事件重新洗匀。" />
-            <p className={styles.popoverTitle}>本轮已出现</p>
-            <EventList ids={state.opportunity ? [...state.opportunityUsed, state.opportunity.id] : state.opportunityUsed} empty="无" />
-          </Pile>
-          <Pile icon="⚡" label="危机牌池" count={state.crisisPool.length}>
-            <p className={styles.popoverTitle}>剩余危机事件</p>
-            <EventList ids={state.crisisPool} empty="已抽完，下次将把已用事件重新洗匀。" />
-            <p className={styles.popoverTitle}>本轮已出现</p>
-            <EventList ids={state.crisis ? [...state.crisisUsed, state.crisis.id] : state.crisisUsed} empty="无" />
-          </Pile>
-          {hateShown ? (
-            <Pile icon="🏯" label="华妃事件" count={unlocked.length}>
-              <p className={styles.popoverTitle}>
-                恨意 {state.hate}：每回合 {plan.fixed} 张{plan.chance > 0 ? `，再 ${plan.chance * 100}% 加 1 张` : ""}（按回合开始时计算）
-              </p>
-              <p className={styles.popoverTitle}>已解锁</p>
-              <EventList ids={unlocked} empty="恨意不足 3，暂无华妃事件。" />
-              {unlocked.includes("huanyixiangZhuanchong") ? <p className={styles.muted}>【欢宜香浓】只在有召幸的回合出现。</p> : null}
+            <Pile icon="🗑️" label="弃牌堆" count={state.discard.length}>
+              <p className={styles.popoverTitle}>弃牌堆</p>
+              <CardList ids={state.discard.map((c) => c.id)} empty="空" />
             </Pile>
-          ) : null}
+            {state.departed.length > 0 ? (
+              <Pile icon="🕯️" label="已离场" count={state.departed.length}>
+                <p className={styles.popoverTitle}>已离场</p>
+                <CardList ids={state.departed.map((c) => c.id)} empty="无" />
+              </Pile>
+            ) : null}
+            <Pile icon="🌸" label="机会牌池" count={state.opportunityPool.length}>
+              <p className={styles.popoverTitle}>剩余机会事件</p>
+              <EventList ids={state.opportunityPool} empty="已抽完，下次将把已用事件重新洗匀。" />
+              <p className={styles.popoverTitle}>本轮已出现</p>
+              <EventList ids={state.opportunity ? [...state.opportunityUsed, state.opportunity.id] : state.opportunityUsed} empty="无" />
+            </Pile>
+            <Pile icon="⚡" label="危机牌池" count={state.crisisPool.length}>
+              <p className={styles.popoverTitle}>剩余危机事件</p>
+              <EventList ids={state.crisisPool} empty="已抽完，下次将把已用事件重新洗匀。" />
+              <p className={styles.popoverTitle}>本轮已出现</p>
+              <EventList ids={state.crisis ? [...state.crisisUsed, state.crisis.id] : state.crisisUsed} empty="无" />
+            </Pile>
+            {hateShown ? (
+              <Pile icon="🏯" label="华妃事件" count={unlocked.length}>
+                <p className={styles.popoverTitle}>
+                  恨意 {state.hate}：每回合 {plan.fixed} 张{plan.chance > 0 ? `，再 ${plan.chance * 100}% 加 1 张` : ""}（按回合开始时计算）
+                </p>
+                <p className={styles.popoverTitle}>已解锁</p>
+                <EventList ids={unlocked} empty="恨意不足 3，暂无华妃事件。" />
+                {unlocked.includes("huanyixiangZhuanchong") ? <p className={styles.muted}>【欢宜香浓】只在有召幸的回合出现。</p> : null}
+              </Pile>
+            ) : null}
+          </PileGroup>
         </ScrollRow>
         <Statuses state={state} dispatch={dispatch} />
       </div>

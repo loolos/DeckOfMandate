@@ -68,6 +68,38 @@ export function Pile({ icon, label, count, children }: { icon: string; label: st
 }
 
 /**
+ * Draw / discard piles and event pools. On the desktop layout they always show; in 略缩模式 they
+ * fold behind one 牌堆 chip so the strip shows only the resources until the player taps it.
+ */
+export function PileGroup({ compact, children }: { compact: boolean; children: ReactNode }) {
+  const [open, setOpen] = useState(false);
+  const toggle = useRef<HTMLButtonElement>(null);
+  useEffect(() => {
+    // bring the piles that just appeared into view (they sit to the right of the resources)
+    if (open) toggle.current?.scrollIntoView({ block: "nearest", inline: "start", behavior: "smooth" });
+  }, [open]);
+  if (!compact) return <>{children}</>;
+  return (
+    <>
+      <button
+        ref={toggle}
+        type="button"
+        className={`${styles.chip} ${styles.pileToggle}`}
+        aria-expanded={open}
+        title={open ? "收起牌堆与事件牌池" : "展开牌堆与事件牌池"}
+        onClick={() => setOpen((o) => !o)}
+      >
+        <span className={styles.chipLine}>
+          <span aria-hidden="true">🗂️</span>
+          <span className={styles.pileToggleText}>牌堆 {open ? "◂" : "▸"}</span>
+        </span>
+      </button>
+      {open ? children : null}
+    </>
+  );
+}
+
+/**
  * Resource / counter tile for the top strip: label, hint, number and meter on the desktop layout;
  * in 略缩模式 only the emoji and number stay visible. With `info`, hovering or tapping the tile
  * shows its story line and mechanic notes.
