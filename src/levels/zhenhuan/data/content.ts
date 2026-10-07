@@ -8,6 +8,26 @@ export type Resource = "qingyu" | "shengchong";
 export const RESOURCE_LABEL: Record<Resource, string> = { qingyu: "清誉", shengchong: "圣宠" };
 export const RESOURCE_EMOJI: Record<Resource, string> = { qingyu: "🪷", shengchong: "👑" };
 
+/** Story line and mechanic notes shown on a resource tile (hover / tap). */
+export type ResourceInfo = { readonly lore: string; readonly rules: readonly string[] };
+
+export const RESOURCE_INFO: Record<Resource, ResourceInfo> = {
+  qingyu: {
+    lore: "宫里人人都盯着你的言行。名声一坏，再得宠也立不住脚。",
+    rules: ["降到 0 立即失败。", "上限随位分提高（答应 8、常在 10）。"],
+  },
+  shengchong: {
+    lore: "皇上的恩宠，是你在后宫里最要紧的依仗，也最招人眼红。",
+    rules: ["降到 0 立即失败。", "上限随位分提高（答应 8、常在 10）。", "第 6 回合起圣宠 ≥ 5 会招来嫉妒事件。"],
+  },
+};
+
+/** Notes for the 本回合出牌 tile. */
+export const PLAYS_INFO: ResourceInfo = {
+  lore: "一日里能办的事有限，先办哪件、留哪件，全凭你拿主意。",
+  rules: ["每回合最多打出的手牌数，由位分决定（答应 1、常在 2）。", "【静观其变】可让本回合多出 1 张。", "回合结束时手牌全部弃置。"],
+};
+
 /** One step of an effect list; lists resolve in order and each step is checked for defeat. */
 export type ResourceDelta = { readonly resource: Resource; readonly amount: number };
 

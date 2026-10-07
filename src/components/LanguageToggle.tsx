@@ -1,11 +1,11 @@
 import { useI18n } from "../locales";
-import { useForcedSmallScreenMode } from "../logic/useSmallScreen";
+import { useSmallScreenToggle } from "../logic/useSmallScreen";
 import styles from "../app/Game.module.css";
 import { useId } from "react";
 
 export function LanguageToggle() {
   const { locale, setLocale, t } = useI18n();
-  const [forcedSmallScreen, setForcedSmallScreen] = useForcedSmallScreenMode();
+  const [smallScreen, setSmallScreen] = useSmallScreenToggle();
   const languageSelectId = useId();
   return (
     <div className={styles.langToggle}>
@@ -38,8 +38,8 @@ export function LanguageToggle() {
       <label className={styles.smallScreenModeToggle}>
         <input
           type="checkbox"
-          checked={forcedSmallScreen}
-          onChange={(e) => setForcedSmallScreen(e.target.checked)}
+          checked={smallScreen}
+          onChange={(e) => setSmallScreen(e.target.checked)}
         />
         <span>{t("ui.smallScreenMode")}</span>
       </label>

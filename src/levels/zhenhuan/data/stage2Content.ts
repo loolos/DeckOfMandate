@@ -3,7 +3,7 @@
  * Card names, emoji and base flavor are shared with 第一关 (`./content`); everything that differs in
  * 第二关 (matches, 温太医 身子 bonus, 陵容相助, events, stories) lives here.
  */
-import { CARDS as STAGE1_CARDS, RANKS, type RankId } from "./content";
+import { CARDS as STAGE1_CARDS, RANKS, type RankId, type ResourceInfo } from "./content";
 
 export { RANKS, type RankId };
 
@@ -39,6 +39,50 @@ export const GUIREN_TRIAL = {
   minShengchong: 9,
   minQingyu: 9,
   promoteTo: "guiren" as RankId,
+};
+
+/** Story line and mechanic notes shown on a resource tile (hover / tap); keep in sync with design-stage2.md. */
+export const RESOURCE_INFO2: Record<Resource2, ResourceInfo> = {
+  qingyu: {
+    lore: "宫里人人都盯着你的言行。名声一坏，再得宠也立不住脚。",
+    rules: ["降到 0 立即失败。", "上限随位分提高（常在 10、贵人 14、嫔 18）。"],
+  },
+  shengchong: {
+    lore: "皇上的恩宠，是你在后宫里最要紧的依仗，也最招华妃的眼。",
+    rules: [
+      "降到 0 立即失败。上限同清誉。",
+      "达到召幸门槛（常在 6、贵人 / 嫔 8）才有召幸，越高召幸越勤。",
+      "到上限时华妃恨意 +1，≤ 4 时 -1（回合开始时判定）。",
+    ],
+  },
+  shenzi: {
+    lore: "关系到能否怀上龙裔，以及能否平安生产。",
+    rules: [
+      "范围 0–6，不随位分变化。",
+      "侍寝成功后按「身子 ÷ 5」判定能否有喜，身子 ≥ 5 必定有孕。",
+      "降到 0 时须卧床静养两回合（之后恢复为 1）；有孕时降到 0 即小产。",
+      "温太医相助、静心调养、宝华祈福可以补身子；伤胎类危机、罚跪会伤身子。",
+    ],
+  },
+  hate: {
+    lore: "你入了华妃的眼。她恨你越深，翊坤宫的手段就来得越密、越狠。",
+    rules: [
+      "范围 0–10，每回合开始时按当时的恨意决定华妃事件的数量和种类。",
+      "到 10 时华妃当场发难，触发【殿前风雨】。",
+      "侍寝、晋封、喜脉、身怀龙裔（每回合）、圣宠到上限会让她更恨你。",
+      "失宠（圣宠 ≤ 4）、称病避宠、让她出了气、小产会让她消气。",
+    ],
+  },
+};
+
+/** Notes for the 本回合出牌 tile. */
+export const PLAYS_INFO2: ResourceInfo = {
+  lore: "一日里能办的事有限，先办哪件、留哪件，全凭你拿主意。",
+  rules: [
+    "每回合最多打出的手牌数，由位分决定（常在 2、贵人 2、嫔 3）。",
+    "【静观其变】本回合 +1；【槿汐相助】的【诸事妥帖】下回合 +1；陵容的联袂可让邻牌不占名额。",
+    "【卧床静养】期间每回合最多 1 张。",
+  ],
 };
 
 /** 召幸 thresholds by rank (§10.1). No 召幸 before the 贵人考验 begins (第 5 回合). */
