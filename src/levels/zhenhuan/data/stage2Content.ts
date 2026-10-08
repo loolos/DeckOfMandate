@@ -1322,7 +1322,8 @@ export const FIXED_STORY_TURNS: Partial<Record<number, StoryId2>> = {
 export const FAKUI_TURN = 17;
 
 /** 贵人考验: 眉庄 writes the music, 陵容 sings, you dance — once per run. */
-export const JINGHONG_STORY = "眉庄谱曲，陵容清歌，你在御前跳了一支惊鸿舞。";
+export const JINGHONG_STORY =
+  "眉庄谱了新曲，陵容一遍遍试唱，你们三人关起门来排了好几日，说说笑笑，亲密得仿佛还是刚入宫时的样子。到了御前，陵容清歌婉转，你踏着眉庄的曲子跳了一支惊鸿舞，衣袂翩跹，满殿寂静。一曲终了，皇上久久没有出声，半晌才抚掌笑道：「朕竟不知，你们姐妹还藏着这样的本事。」当晚的赏赐流水般送进了碎玉轩，皇上看你的目光，也与往日不同了。";
 /**
  * 闲月阁 (once per run): with 隔墙有耳 on the board, play 槿汐相助, 眉庄相助 and 收拢人心 in the same turn
  * to unmask 浣碧 — a false lead sends 华妃 storming into 闲月阁 for nothing.
