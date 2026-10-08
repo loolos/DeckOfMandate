@@ -451,7 +451,7 @@ export type StatusId2 =
   | "baoyangZaishen"
   | "bimenSiguo"
   | "jinghongWu"
-  | "xianyuege"
+  | "huafeiShouchi"
   | "zhushiTuotie"
   | "jinruoHanchan";
 
@@ -584,9 +584,9 @@ export const STATUSES2: Record<StatusId2, StatusDef2> = {
     flavor: "一舞惊鸿，皇上的目光再也没从你身上移开。",
     source: "贵人考验期间打出过眉庄相助与陵容相助（陵容怨怼时不肯帮忙）",
   },
-  xianyuege: {
-    id: "xianyuege",
-    name: "闲月阁",
+  huafeiShouchi: {
+    id: "huafeiShouchi",
+    name: "华妃受斥",
     emoji: "🪤",
     tag: "positive",
     duration: 3,
@@ -594,7 +594,7 @@ export const STATUSES2: Record<StatusId2, StatusDef2> = {
     hateCap: 6,
     effectText: "本回合起至未来 3 回合，华妃恨意最多为 6（获得时高于 6 的立即降到 6）。",
     flavor: "华妃深夜搜宫扑了个空，反被皇上斥责轻率跋扈，这些日子收敛了不少。",
-    source: "【隔墙有耳】在场时，同一回合打出槿汐相助、眉庄相助与收拢人心（整局一次）",
+    source: "闲月阁：【隔墙有耳】在场时，同一回合打出槿汐相助、眉庄相助与收拢人心（整局一次）",
   },
   zhushiTuotie: {
     id: "zhushiTuotie",
@@ -1322,18 +1322,13 @@ export const XIANYUEGE = {
   event: "songzhiKuisi" as HuafeiId,
   cards: ["jinxiXiangzhu", "meizhuangXiangzhu", "shoulongRenxin"] as readonly CardId2[],
   hint: "本回合同时打出这三张牌，可揪出碎玉轩真正的内鬼：",
-  log: "闲月阁：你放出假消息，浣碧果然去曹贵人处报信；华妃带人闯进闲月阁扑了个空，反被皇上斥责。浣碧跪着认了错，从此一心向你。",
-  /** Popup paragraphs; the second one depends on whether 眉庄 is under 禁足 (she left at 菊残霜冷). */
-  story: (meizhuangConfined: boolean): string[] => [
-    "那个往翊坤宫跑的小宫女不过是明面上的。你心里另有一个疑影，却一句也没问，只让槿汐替你给曹贵人送去一份厚礼，里头有一盒极名贵的蜜合香。",
-    meizhuangConfined
-      ? "这日你特意叮嘱浣碧：「今晚我要去闲月阁看眉庄姐姐，你留在宫里，哪儿也不许去。」眉庄奉旨禁足，私下探望便是抗旨。这样要紧的事，你只说给了她一个人听。"
-      : "这日你特意叮嘱浣碧：「今晚我要悄悄去闲月阁见眉庄姐姐，有要紧的事商量，你留在宫里，哪儿也不许去。」这话，你只说给了她一个人听。",
-    "槿汐替你换了宫女的衣裳，小允子早早守在了后门。你前脚刚走，浣碧便从后门溜了出去，一路去了曹贵人宫里。",
-    "当夜华妃带着人闯进闲月阁，翻箱倒柜，只见眉庄独自在灯下抄经，哪里有你的影子。皇上闻讯赶来，你随后从容而至，礼数周全，原来根本不曾踏进闲月阁半步。华妃无凭无据深夜搜宫，皇上沉了脸，斥她轻率跋扈。",
-    "浣碧回来时，身上带着一股蜜合香的味道。你屏退众人，只问她华妃怎么会知道得这样准。她咬着唇不肯认，直到你说出那股香味的来处。",
-    "你没有发落她。你说，你一直知道她是谁的女儿，也从没想过让她一辈子做奴婢，将来总要替她谋一个体面的身份、一门好亲事。浣碧跪在地上哭了许久。从那以后，碎玉轩的话再没传出去过。",
-  ],
+  log: "闲月阁：你只对浣碧放了假消息，华妃果然带人闯进闲月阁扑了个空，反被皇上斥责。浣碧认了错，从此一心向你。",
+  /** Popup paragraphs: the false lead, 华妃 storming 闲月阁 for nothing, 浣碧 owning up. */
+  story: [
+    "碎玉轩里的一举一动，翊坤宫总能知道得一清二楚。那个往外跑的小宫女不过是明面上的，你心里另有一个疑影。这日你只对浣碧一人说：「今晚我要去闲月阁看眉庄姐姐，你留在宫里，哪儿也不许去。」眉庄奉旨禁足，私下探望便是抗旨。槿汐替你换了宫女的衣裳，小允子早早守在后门。你前脚刚走，浣碧便从后门溜了出去。",
+    "当夜华妃带着人闯进闲月阁，翻箱倒柜，只见眉庄独自在灯下抄经，哪里有你的影子。皇上闻讯赶来，你随后从容而至，原来根本不曾踏进闲月阁半步。华妃无凭无据深夜搜宫，皇上沉了脸，斥她轻率跋扈。原本有意让她重掌协理六宫之权，这下也暂且搁置了。",
+    "回到碎玉轩，你屏退众人，只问浣碧华妃怎么会知道得这样准。她咬着唇不肯认，你却没有发落她。你说，你一直知道她是谁的女儿，也从没想过让她一辈子做奴婢，将来总要替她谋一个体面的身份、一门好亲事。浣碧跪在地上哭了许久，终于认了错。从那以后，碎玉轩的话再没传出去过。",
+  ] as readonly string[],
 };
 /** 华妃恨意 appears (and is explained) when 初谒翊坤 begins. */
 export const HATE_REVEAL_TURN = 3;

@@ -1040,10 +1040,10 @@ export function Stage2Game({ state, dispatch, runCode, showRules, onShowRules, o
       ) : null}
       {notice === "xianyuege" ? (
         <Notice title="🪤 闲月阁" onClose={() => setNotice(null)}>
-          {XIANYUEGE.story(state.xibie === "meizhuangXiangzhu").map((para) => (
+          {XIANYUEGE.story.map((para) => (
             <p key={para}>{para}</p>
           ))}
-          <p className={styles.muted}>获得【🪤闲月阁】：{STATUSES2.xianyuege.effectText}整局只会发生一次。</p>
+          <p className={styles.muted}>获得【🪤华妃受斥】：{STATUSES2.huafeiShouchi.effectText}整局只会发生一次。</p>
         </Notice>
       ) : null}
       {notice === "miscarriage" ? (
