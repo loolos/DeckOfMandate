@@ -379,7 +379,7 @@ export const CARDS2: Record<CardId2, CardDef2> = {
     ],
     rulesText: [
       "能解决带 🎶 的事件；她肯出几分力，要看你素日待她如何。",
-      "冷落：回合末仍留在手中、未曾召她，她便与你疏远几分。",
+      "冷落：回合末她仍留在手中，小主始终无暇见她，她便与你疏远几分。",
       "叙话：无事相托时打出，便是请她过来坐坐、说几句体己话，她会与你亲近些；若她心中已存怨意，难免在皇上跟前说几句闲话（圣宠 -1）。",
     ],
     rulesCompact: "🎶视情分",
@@ -1184,11 +1184,11 @@ export const LINGRONG_EVENT: Partial<Record<EventId2, TierTable>> = {
   },
   kekouFenli: {
     close: { resolves: true, relation: -1, effects: [{ resource: "qingyu", amount: -1 }], story: "陵容把自己的份例分了一半送来：「姐姐别嫌弃。咱们姐妹，原该如此。」那几日延禧宫的炭盆却早早熄了，宝鹊说她家小主夜里冻得睡不着。内务府那边，到底还是记了你一笔。" },
-    distant: { resolves: true, relation: -1, effects: [{ resource: "qingyu", amount: -1 }], story: "「我一个答应的份例，哪比得上姐姐的。」陵容嘴上这么说，还是送了些炭来，放下便走了。你后来才听说，那是她攒了一冬没舍得用的。" },
+    distant: { resolves: true, relation: -1, effects: [{ resource: "qingyu", amount: -1 }], story: "「我一个答应的份例，哪比得上姐姐的。」陵容嘴上这么说，还是送了些炭来，放下便走了。你后来才听说，那是她攒了一冬没舍得用的。你心里一酸，却也听出她那句话里的自卑，她走得很快，像是怕你看见她的神色。" },
     resentful: { resolves: false, relation: 1, story: "陵容推说自己也不够用，一样东西也没送来。第二日清早，碎玉轩门口却多了一小篓炭，没留话。" },
   },
   huanyixiangZhuanchong: {
-    close: { resolves: true, relation: -1, effects: [{ resource: "hate", amount: 1 }], story: "陵容在御花园唱了一支新曲，把皇上从翊坤宫引了过来，又借故走开，留你陪驾。回宫的路上她一直低着头，过了许久才轻声说：「姐姐好福气。」" },
+    close: { resolves: true, relation: -1, effects: [{ resource: "hate", amount: 1 }], story: "陵容在御花园唱了一支新曲，把皇上从翊坤宫引了过来，又借故走开，留你陪驾。回宫的路上她一直低着头，过了许久才轻声说：「姐姐好福气。」她笑着，笑意里却有一瞬黯然。" },
     distant: { resolves: true, relation: -1, effects: [{ resource: "hate", amount: 1 }], story: "陵容的歌声把皇上引了过来，皇上却只随口问了句是谁在唱，便携了你的手走了。「姐姐这回可欠妹妹一个人情。」她笑着说，笑意却没到眼底。" },
     resentful: { resolves: false, relation: 1, effects: [{ resource: "shengchong", amount: -2 }], story: "陵容趁机自己去御前献唱，皇上当晚留在了她那里。次日她来请安，眼圈红红的，只说了一句「姐姐别怪我」。" },
   },
@@ -1201,12 +1201,12 @@ export const LINGRONG_BACKLASH: readonly Delta2[] = [{ resource: "shengchong", a
 export const LINGRONG_IDLE_TEXT: Record<LingrongTier, string> = {
   close: "你留陵容在碎玉轩喝茶，两人说了半日体己话。临走时她拉着你的袖子，说下回再来。",
   distant: "你请陵容过来坐坐。她起初拘谨得很，后来也说了几句心里话。",
-  resentful: "你请陵容过来坐坐，她句句带刺。可临出门时，她回头看了你一眼。",
+  resentful: "你请陵容过来坐坐，她句句带刺，话里话外透着几分不甘。可坐得久了，语气也松了些，临出门时回头看了你一眼。",
 };
 
 export const LINGRONG_NEGLECT_TEXT = {
-  drop: "陵容在廊下等了半日，终究没等到姐姐召她，悻悻回了宫。",
-  floor: "陵容又白等了一日，眼里的光淡了些。",
+  drop: "陵容来碎玉轩候了半日，宫人说小主正忙着，她没能见上一面，悻悻回了宫。",
+  floor: "陵容又扑了个空，听说小主还在忙，眼里的光淡了些。",
 };
 
 export const SHUHENJIAO_TEXT = {
@@ -1369,12 +1369,12 @@ export const STORIES2: Record<StoryId2, StoryDef2> = {
       },
       {
         id: "jiaotaGuiju",
-        name: "教她规矩",
+        name: "陪她温习",
         card: "jinyanShenxing",
         effects: [{ resource: "qingyu", amount: 1 }],
         setRelation: 2,
         text: "陵容：亲厚；清誉 +1",
-        story: "你细细教她侍寝时的规矩，劝她宽心。",
+        story: "你陪她把侍寝那日的礼数一桩桩理了一遍，不说教，只陪她把心里的怯放下。",
       },
       {
         id: "zengtaYishi",
@@ -1776,7 +1776,7 @@ export const STORIES2: Record<StoryId2, StoryDef2> = {
         story: "陵容去了一趟景仁宫。剪秋随即来养心殿传了皇后的话：后宫之事，自有中宫料理。皇上顺势把事情交给了皇后，华妃这才收了手。你在养心殿里站着听了大半日数落，回宫时已是头重脚轻。",
         tierStory: {
           close:
-            "陵容急得红了眼眶，拉着你的手说：「姐姐别怕，我去求皇后娘娘。」不多时，剪秋便来养心殿传了皇后的话，皇上顺势把事情交给了中宫，华妃这才收了手。陵容回来时裙上沾着灰，想是在景仁宫跪了许久，只笑说不碍事。你这才留意到，她在皇后跟前，原来已经说得上话了。你在养心殿里站着听了大半日数落，回宫时已是头重脚轻。",
+            "陵容急得红了眼眶，拉着你的手说：「姐姐别怕，我去求皇后娘娘。」不多时，剪秋便来养心殿传了皇后的话，皇上顺势把事情交给了中宫，华妃这才收了手。陵容回来时裙上沾着灰，想是在景仁宫跪了许久，只笑说不碍事。你这才留意到，她在皇后跟前，原来已经说得上话了。她这份情，你记下了，只是自此你们之间，多了一层说不出口的分寸。你在养心殿里站着听了大半日数落，回宫时已是头重脚轻。",
           distant:
             "陵容只说了句「我去试试」，便去了景仁宫。剪秋来养心殿传了皇后几句话，皇上便把事情交给了中宫，华妃悻悻收了手。陵容回来时神色如常，只淡淡道：「妹妹在皇后跟前欠下的这份人情，姐姐记着便是。」你在养心殿里站着听了大半日数落，回宫时已是头重脚轻。",
           resentful:
@@ -1822,7 +1822,7 @@ export const STORIES2: Record<StoryId2, StoryDef2> = {
 /** 陵容 as a card response to stories (召幸 / 罚跪): tier outcomes. */
 export const LINGRONG_SUMMON: Record<LingrongTier, { story: string; result: "success" | "stolen" | "lost"; relation?: number; effects?: readonly Delta2[] }> = {
   close: { result: "success", story: "陵容一早来替你梳妆，又教了你一支新曲。皇上留你到天明。" },
-  distant: { result: "stolen", relation: 1, story: "陵容截下了这次召幸，换她去侍寝。「姐姐福气好，也该分妹妹一些。」第二日她来道谢，笑得比平日真了些。" },
+  distant: { result: "stolen", relation: 1, story: "陵容截下了这次召幸，换她去侍寝。「姐姐福气好，也该分妹妹一些。」第二日她来请安，笑意里有几分不自在，说话也比平日软了些。" },
   resentful: { result: "lost", relation: 1, effects: [{ resource: "shengchong", amount: -1 }], story: "陵容在半路截走了召幸，皇上那夜宿在了她那里。过后见了你，她竟有几分心虚，难得软语说了几句体己话。" },
 };
 

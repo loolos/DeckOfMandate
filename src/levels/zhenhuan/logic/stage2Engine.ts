@@ -966,7 +966,7 @@ function resolvePlay2(s: Z2State, cardUid: string, removeStatusUid?: string): vo
   if (alive(s) && isLingrong && tier && responses.length === 0 && singles.length === 0 && !finaleAccepts(s, card.id)) {
     log(s, LINGRONG_IDLE_TEXT[tier], tier === "resentful" ? "bad" : "good");
     if (tier === "resentful") {
-      log(s, "怨怼的陵容在皇上跟前略有微词。", "bad");
+      log(s, "话虽说开了几分，怨怼的陵容出门后仍在皇上跟前略有微词。", "bad");
       applyDeltas2(s, LINGRONG_BACKLASH, "陵容微词");
     }
     relationDelta += 1;
