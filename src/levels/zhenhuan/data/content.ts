@@ -174,9 +174,9 @@ export const EVENTS: Record<EventId, EventDef> = {
   liyiShiwu: {
     id: "liyiShiwu",
     kind: "crisis",
-    name: "礼仪失误",
+    name: "仪态微瑕",
     emoji: "🎎",
-    flavor: "请安时脚下一滑跌了一跤，失了仪态，被有心人看在眼里。",
+    flavor: "请安时一时失仪，在众人面前露了怯，被有心人看在眼里。",
     reward: [],
     penalty: [
       { resource: "qingyu", amount: -1 },

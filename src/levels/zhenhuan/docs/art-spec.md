@@ -97,7 +97,7 @@ src/levels/zhenhuan/assets/
 | `qinmoChenqing` | 🍵 琴默陈情 | 机会 | 二 |
 | `gongzhongLiuyan` | 🗣️ 蜚语盈廊 | 危机 | 一、二 |
 | `neiwufuDiaonan` | 📦 内务府刁难 | 危机 | 一、二 |
-| `liyiShiwu` | 🎎 礼仪失误 | 危机 | 一、二 |
+| `liyiShiwu` | 🎎 仪态微瑕 | 危机 | 一、二 |
 | `hanliangZhiwu` | 🧊 寒凉之物 | 危机 | 二 |
 | `yuDayingZhengchong` | 🎶 梅影争春 | 嫉妒 | 一 |
 | `shichongErjiao` | 💍 恃宠而骄 | 嫉妒 | 一 |
