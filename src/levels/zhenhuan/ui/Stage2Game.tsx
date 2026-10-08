@@ -898,6 +898,7 @@ export function Stage2Game({ state, dispatch, runCode, showRules, onShowRules, o
   const hateShown = state.turn >= HATE_REVEAL_TURN;
   const plan = huafeiDrawPlan(state.hate);
   const unlocked = HUAFEI_EVENTS.filter((id) => state.hate >= (EVENTS2[id].unlockHate ?? 0));
+  const huafeiLeft = (state.huafeiPool ?? HUAFEI_EVENTS).filter((id) => unlocked.includes(id));
 
   return (
     <div className={[styles.page, compact && styles.compact].filter(Boolean).join(" ")}>
@@ -951,12 +952,14 @@ export function Stage2Game({ state, dispatch, runCode, showRules, onShowRules, o
               <EventList ids={state.crisis ? [...state.crisisUsed, state.crisis.id] : state.crisisUsed} empty="无" />
             </Pile>
             {hateShown ? (
-              <Pile icon="🏯" label="华妃事件" tag={TAG2_INFO.huafei} count={unlocked.length}>
+              <Pile icon="🏯" label="华妃事件" tag={TAG2_INFO.huafei} count={huafeiLeft.length}>
                 <p className={styles.popoverTitle}>
-                  恨意 {state.hate}：每回合 {plan.fixed} 张{plan.chance > 0 ? `，再 ${plan.chance * 100}% 加 1 张` : ""}（按回合开始时计算）
+                  恨意 {state.hate}：每回合 {plan.fixed} 张{plan.chance > 0 ? `，再 ${plan.chance * 100}% 加 1 张` : ""}（按回合开始时计算；延烧中的不占名额）
                 </p>
-                <p className={styles.popoverTitle}>已解锁</p>
-                <EventList ids={unlocked} empty="恨意不足 3，暂无华妃事件。" />
+                <p className={styles.popoverTitle}>已解锁、本轮还没出现</p>
+                <EventList ids={huafeiLeft} empty={unlocked.length === 0 ? "恨意不足 3，暂无华妃事件。" : "已轮过一遍，下次将把已出现的重新洗匀。"} />
+                <p className={styles.popoverTitle}>本轮已出现</p>
+                <EventList ids={state.huafeiUsed} empty="无" />
                 {unlocked.includes("huanyixiangZhuanchong") ? <p className={styles.muted}>【欢宜香浓】只在有召幸的回合出现。</p> : null}
               </Pile>
             ) : null}

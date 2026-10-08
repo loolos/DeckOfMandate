@@ -138,6 +138,9 @@ export type Z2State = {
   opportunityPool: OpportunityId2[];
   opportunityUsed: OpportunityId2[];
   crisisPool: CrisisId2[];
+  /** 华妃事件 deck: null until the first 华妃事件 is drawn (then shuffled); refilled from `huafeiUsed` once nothing drawable is left. */
+  huafeiPool: HuafeiId[] | null;
+  huafeiUsed: HuafeiId[];
   crisisUsed: CrisisId2[];
   opportunity: EventInst2 | null;
   crisis: EventInst2 | null;
@@ -1065,16 +1068,47 @@ function drawHuafei(s: Z2State): void {
   if (plan.chance > 0 && roll(s) < plan.chance) n++;
   // 欢宜香浓 (截宠) only shows up on a turn that has a 召幸 to steal.
   const summonTonight = s.stories.some((st) => st.id === "zhaoxing");
-  const unlocked = HUAFEI_EVENTS.filter((id) => s.hate >= (EVENTS2[id].unlockHate ?? 0) && (summonTonight || !EVENTS2[id].blocksSummon));
+  // A 延烧 one kept from last turn takes no slot: `n` only counts new draws.
+  const drawable = (id: HuafeiId, drawn: HuafeiId[]) =>
+    s.hate >= (EVENTS2[id].unlockHate ?? 0) && (summonTonight || !EVENTS2[id].blocksSummon) && !drawn.includes(id);
   const drawn: HuafeiId[] = [];
   for (let i = 0; i < n; i++) {
-    const options = unlocked.filter((id) => !drawn.includes(id));
-    if (options.length === 0) break;
-    const id = options[Math.floor(roll(s) * options.length)]!;
+    const id = drawFromHuafeiPool(s, (x) => drawable(x, drawn));
+    if (!id) break;
     drawn.push(id);
     s.huafei.push(newEvent(s, id));
     log(s, `华妃事件：【${EVENTS2[id].name}】`, "bad");
   }
+}
+
+/**
+ * 华妃事件 are dealt like the other pools: the first drawable one from the top of a shuffled deck.
+ * Locked ones (恨意 too low, or 欢宜香浓 with no 召幸) wait in the deck; once nothing drawable is
+ * left, the used ones are shuffled back in.
+ */
+function drawFromHuafeiPool(s: Z2State, drawable: (id: HuafeiId) => boolean): HuafeiId | null {
+  const take = (): HuafeiId | null => {
+    const pool = s.huafeiPool!;
+    const i = pool.findIndex(drawable);
+    if (i < 0) return null;
+    const [id] = pool.splice(i, 1);
+    s.huafeiUsed.push(id!);
+    return id!;
+  };
+  if (s.huafeiPool == null) {
+    const [rng, shuffled] = shuffle(s.rng, [...HUAFEI_EVENTS]);
+    s.rng = rng;
+    s.huafeiPool = shuffled;
+    s.huafeiUsed = [];
+  }
+  const first = take();
+  if (first || !s.huafeiUsed.some(drawable)) return first;
+  const [rng, shuffled] = shuffle(s.rng, s.huafeiUsed);
+  s.rng = rng;
+  s.huafeiPool = [...s.huafeiPool, ...shuffled];
+  s.huafeiUsed = [];
+  log(s, "华妃事件已轮过一遍，已出现的事件重新洗匀。");
+  return take();
 }
 
 function checkSummon(s: Z2State): void {
@@ -1402,6 +1436,8 @@ export function newStage2(seed: number, carry: Carry | null): Z2State {
     opportunityUsed: [],
     crisisPool,
     crisisUsed: [],
+    huafeiPool: null,
+    huafeiUsed: [],
     opportunity: null,
     crisis: null,
     huafei: [],
