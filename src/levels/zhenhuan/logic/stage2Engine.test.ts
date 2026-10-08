@@ -1206,23 +1206,29 @@ describe("zhenhuan stage 2 engine", () => {
     expect(u.xianyuege.played).toEqual([]);
   });
 
-  it("蜚语盈廊 by 眉庄相助: she walks the palaces herself before 菊残霜冷, sends word from 闲月阁 after", () => {
-    const run = (xibie: Z2State["xibie"]) => {
-      let s = newStage2(52, null);
-      s.stories = [];
-      s.xibie = xibie;
-      onlyEvents(s, { crisis: "gongzhongLiuyan" });
-      const [m] = setHand(s, ["meizhuangXiangzhu"]);
-      s = act(s, { type: "playCard", cardUid: m! });
-      return s.crisis!;
-    };
-    const before = run(null);
-    expect(before.resolved).toBe(true);
-    expect(before.story).toBe(EVENTS2.gongzhongLiuyan.resolvedStory.meizhuangXiangzhu);
-    for (const who of ["meizhuangXiangzhu", "wenTaiyiZhenzhi"] as const) {
-      const after = run(who);
-      expect(after.resolved).toBe(true);
-      expect(after.story).toBe(EVENTS2.gongzhongLiuyan.confinedStory!.meizhuangXiangzhu);
+  it("眉庄相助's event lines switch to the 禁足 version after 菊残霜冷, whoever left", () => {
+    const withConfined = (Object.keys(EVENTS2) as EventId2[]).filter((id) => EVENTS2[id].confinedStory?.meizhuangXiangzhu);
+    expect(withConfined.sort()).toEqual(["gongzhongLiuyan", "neiwufuDiaonan", "songzhiKuisi", "taihouChuixun", "yikungongLiGuiju"]);
+    for (const id of withConfined) {
+      const run = (xibie: Z2State["xibie"]) => {
+        let s = newStage2(52, null);
+        s.stories = [];
+        s.xibie = xibie;
+        s.hate = 3;
+        const kind = EVENTS2[id].kind;
+        onlyEvents(s, kind === "opportunity" ? { opportunity: id } : kind === "crisis" ? { crisis: id } : { huafei: [id] });
+        const [m] = setHand(s, ["meizhuangXiangzhu"]);
+        s = act(s, { type: "playCard", cardUid: m! });
+        return [s.opportunity, s.crisis, ...s.huafei].find((e) => e?.id === id)!;
+      };
+      const before = run(null);
+      expect(before.resolved, id).toBe(true);
+      expect(before.story, id).toBe(EVENTS2[id].resolvedStory.meizhuangXiangzhu);
+      for (const who of ["meizhuangXiangzhu", "wenTaiyiZhenzhi"] as const) {
+        const after = run(who);
+        expect(after.resolved, id).toBe(true);
+        expect(after.story, id).toBe(EVENTS2[id].confinedStory!.meizhuangXiangzhu);
+      }
     }
   });
 
