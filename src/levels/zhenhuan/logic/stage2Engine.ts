@@ -547,7 +547,7 @@ function becomePregnant(s: Z2State, source: string): void {
   if (s.rank === "guiren") {
     // 晋嫔 waits for the 请脉报喜 opportunity, put at the bottom of the pool
     s.opportunityPool = [...s.opportunityPool.filter((id) => id !== PIN_EVENT), PIN_EVENT];
-    log(s, "【请脉报喜】加入机会牌池：太医确诊后才能晋为嫔。", "good");
+    log(s, "【请脉报喜】加入机会牌池：诊脉报喜妥当后才能晋为嫔。", "good");
   }
   applyDelta2(s, { resource: "hate", amount: 3 }, "喜脉");
 }
@@ -1233,7 +1233,7 @@ function endTurn2(s: Z2State): void {
       const [rng, shuffled] = shuffle(s.rng, [...s.opportunityPool, PIN_EVENT]);
       s.rng = rng;
       s.opportunityPool = shuffled;
-      log(s, "【请脉报喜】没能确诊，洗回机会牌池。");
+      log(s, "【请脉报喜】没能稳妥报喜，洗回机会牌池。");
     }
   } else if (s.opportunity && !retiredOpportunity(s, s.opportunity)) s.opportunityUsed.push(s.opportunity.id as OpportunityId2);
   if (s.crisis) s.crisisUsed.push(s.crisis.id as CrisisId2);
