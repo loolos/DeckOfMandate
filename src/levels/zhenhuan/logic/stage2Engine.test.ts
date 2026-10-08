@@ -691,6 +691,20 @@ describe("zhenhuan stage 2 engine", () => {
     expect(s.xibieDone).toBe(false);
   });
 
+  it("惜别: playing 温太医 to answer 菊残霜冷 (查验药方) does not leave a second copy behind", () => {
+    let s = advanceTo(newStage2(20, null), 8);
+    s.stories = [];
+    const [played] = setHand(s, ["wenTaiyiZhenzhi", "wenTaiyiZhenzhi"]);
+    s.discard = s.discard.filter((c) => c.id !== "wenTaiyiZhenzhi");
+    s.drawPile = s.drawPile.filter((c) => c.id !== "wenTaiyiZhenzhi");
+    openStory(s, "jiaYunFengbo");
+    s = act(s, { type: "playCard", cardUid: played! });
+    expect(s.xibie).toBe("wenTaiyiZhenzhi");
+    const all = [...s.drawPile, ...s.hand, ...s.discard].filter((c) => c.id === "wenTaiyiZhenzhi");
+    expect(all).toHaveLength(1);
+    expect(s.departed.filter((c) => c.id === "wenTaiyiZhenzhi")).toHaveLength(1);
+  });
+
   it("欢宜香浓 only shows up on a turn with 召幸", () => {
     for (let seed = 1; seed <= 40; seed++) {
       let s = newStage2(seed, null);
