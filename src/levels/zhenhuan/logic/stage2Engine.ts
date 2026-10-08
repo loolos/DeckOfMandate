@@ -1049,6 +1049,9 @@ function resolvePlay2(s: Z2State, cardUid: string, removeStatusUid?: string): vo
   if (xibie) {
     s.departed.push(card);
     departXibie(s, xibie);
+  } else if (s.xibie === card.id && s.xibieCulled && !s.xibieDone) {
+    // this very play chose the leaving person (e.g. 查验药方): the card in flight is one of the "other copies", so it leaves too
+    s.departed.push(card);
   } else {
     s.discard.push(card);
   }
