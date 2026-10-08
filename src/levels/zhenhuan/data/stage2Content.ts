@@ -45,7 +45,7 @@ export const GUIREN_TRIAL = {
 export const RESOURCE_INFO2: Record<Resource2, ResourceInfo> = {
   qingyu: {
     lore: "宫里人人都盯着你的言行。名声一坏，再得宠也立不住脚。",
-    rules: ["降到 0 立即失败。", "上限随位分提高（常在 10、贵人 14、嫔 18）。"],
+    rules: ["降到 0 立即失败。", "上限随位分提高（常在 12、贵人 15、嫔 18）。"],
   },
   shengchong: {
     lore: "皇上的恩宠，是你在后宫里最要紧的依仗，也最招华妃的眼。",

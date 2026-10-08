@@ -99,9 +99,9 @@ describe("zhenhuan stage 2 engine", () => {
   });
 
   it("carry-over values are used and capped at the 常在 cap", () => {
-    const s = newStage2(1, { qingyu: 3, shengchong: 12 });
+    const s = newStage2(1, { qingyu: 3, shengchong: 14 });
     expect(s.qingyu).toBe(3);
-    expect(s.shengchong).toBe(10);
+    expect(s.shengchong).toBe(12);
   });
 
   it("初请安 sets the starting hate; 凤鸾空返 sets relation and puts 3 陵容 into the discard pile", () => {
