@@ -1232,6 +1232,72 @@ describe("zhenhuan stage 2 engine", () => {
     }
   });
 
+  it("华妃事件 come from a shuffled deck: locked ones wait, used ones are reshuffled once nothing drawable is left", () => {
+    const setup = (seed: number) => {
+      const s = newStage2(seed, null);
+      s.turn = 10;
+      s.hate = 5; // 1 华妃事件 a turn
+      s.shengchong = 6;
+      s.qingyu = 10;
+      s.stories = [];
+      s.caoTriggered = true;
+      onlyEvents(s, {});
+      setHand(s, []);
+      return s;
+    };
+    const fresh = (s: Z2State) => s.huafei.filter((e) => !e.burning).map((e) => e.id);
+
+    // 欢宜香浓 is locked (恨意 < 7): skipped but kept in the deck
+    let s = setup(60);
+    s.huafeiPool = ["huanyixiangZhuanchong", "songzhiKuisi", "yizhangHong"];
+    s.huafeiUsed = [];
+    s = act(s, { type: "endTurn" });
+    expect(fresh(s)).toEqual(["songzhiKuisi"]);
+    expect(s.huafeiPool).toEqual(["huanyixiangZhuanchong", "yizhangHong"]);
+    expect(s.huafeiUsed).toEqual(["songzhiKuisi"]);
+
+    // only locked ones left → the used ones are shuffled back in
+    let t = setup(61);
+    t.huafeiPool = ["huanyixiangZhuanchong"];
+    t.huafeiUsed = ["kekouFenli"];
+    t = act(t, { type: "endTurn" });
+    expect(fresh(t)).toEqual(["kekouFenli"]);
+    expect(t.log.some((e) => e.text.includes("重新洗匀"))).toBe(true);
+
+    // a full round of the 5 unlocked events before any repeats
+    let u = setup(62);
+    const seen: string[] = [];
+    for (let i = 0; i < 5; i++) {
+      u.hate = 5;
+      u.huafei = [];
+      u.stories = [];
+      u.qingyu = 10;
+      u.shengchong = 6;
+      u = act(u, { type: "endTurn" });
+      seen.push(...fresh(u));
+    }
+    expect([...seen].sort()).toEqual(["kekouFenli", "shanshiYouyi", "songzhiKuisi", "yikungongLiGuiju", "yizhangHong"]);
+  });
+
+  it("a 延烧 克扣份例 kept from last turn takes no slot of this turn's 华妃事件", () => {
+    let s = newStage2(63, null);
+    s.turn = 10;
+    s.hate = 5;
+    s.shengchong = 6;
+    s.qingyu = 10;
+    s.stories = [];
+    s.caoTriggered = true;
+    onlyEvents(s, { huafei: ["kekouFenli"] });
+    setHand(s, []);
+    s.huafeiPool = ["songzhiKuisi", "yizhangHong"];
+    s.huafeiUsed = ["kekouFenli"];
+    s = act(s, { type: "endTurn" });
+    expect(s.huafei.map((e) => [e.id, !!e.burning])).toEqual([
+      ["kekouFenli", true],
+      ["songzhiKuisi", false],
+    ]);
+  });
+
   it("ending lines cover the pregnancy outcome", () => {
     const s = newStage2(16, null);
     expect(endingLines(s).some((l) => l.includes("始终没有动静"))).toBe(true);
