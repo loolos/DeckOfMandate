@@ -1557,11 +1557,9 @@ describe("zhenhuan stage 2 engine", () => {
     expect(d.stories[1]).toContain(FINALE.cardStory.meizhuangXiangzhu!);
     expect(d.stories[1]).not.toContain("假孕");
     expect(d.stories[2]).toContain(FINALE.lingrongStory.close);
-    // 温太医 left: 眉庄 was cleared, so no 禁足 / 假孕失宠 in her words
+    // 温太医 left: 眉庄 was still 禁足, so her lines are the same
     const m = play(["liuweiqingYaofang", "kekouZhangce"], ["meizhuangXiangzhu", "jinyanShenxing"], "wenTaiyiZhenzhi");
-    expect(m.stories[0]).not.toContain("假孕失宠");
-    const k = play(["kekouZhangce", "caoguirenGaofa"], ["meizhuangXiangzhu"], "wenTaiyiZhenzhi"); // ≤ 1 evidence would lose outright
-    expect(k.stories[0]).not.toContain("存菊堂");
+    expect(m.stories[0]).toContain("假孕失宠");
     // 陵容 keeps her tone and speaks to her own evidence
     const l = play(["fuziZhisi", "lanyongSixing"], ["shoulongRenxin", "lingrongXiangzhu"], null, 3);
     expect(l.cited).toEqual(["lanyongSixing", "fuziZhisi"]);

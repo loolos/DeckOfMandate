@@ -654,12 +654,10 @@ function cite(f: NonNullable<Z2State["finale"]>, id: EvidenceId): void {
 /** A 解牌's line at 翊坤落幕: testify to an evidence you hold that no one has spoken to yet. */
 function finaleStory(s: Z2State, card: CardId2, tier: LingrongTier | null): string {
   const f = s.finale!;
-  const cleared = card === "meizhuangXiangzhu" && s.xibie === "wenTaiyiZhenzhi";
   const pick = (FINALE.witnessStory[card] ?? []).find(([id]) => s.evidence.includes(id) && !(f.cited ?? []).includes(id));
   if (pick) {
     cite(f, pick[0]);
-    const line = (cleared ? FINALE.meizhuangClearedWitness[pick[0]] : undefined) ?? pick[1];
-    return tier ? FINALE.lingrongManner[tier] + line : line;
+    return tier ? FINALE.lingrongManner[tier] + pick[1] : pick[1];
   }
   if (tier) return FINALE.lingrongStory[tier];
   return FINALE.cardStory[card] ?? "";
@@ -1517,7 +1515,7 @@ export function endingLines(s: Z2State): string[] {
   if (s.miscarriages > 0) lines.push("那个没能保住的孩子，成了你心里一道过不去的坎。");
   if (s.pregnant) lines.push(s.miscarriages > 0 ? "所幸腹中又有了龙裔，这一回安然无恙，阖宫都在等着这个孩子降生。" : "腹中的龙裔安然无恙，阖宫都在等着这个孩子降生。");
   else if (s.pregnancies === 0) lines.push("这一路走来，腹中始终没有动静。");
-  if (s.xibie) lines.push(s.xibie === "meizhuangXiangzhu" ? "存菊堂的宫门依旧紧闭，眉庄姐姐还在等一个昭雪的日子。" : "疫所的书信隔几日便到，温实初总说一切安好。");
+  if (s.xibie) lines.push(s.xibie === "meizhuangXiangzhu" ? "眉庄姐姐早已心灰意冷，闭门不出，再不过问后宫之事。" : "疫所的书信隔几日便到，温实初总说一切安好。");
   const tier = tierOf(s);
   if (tier === "close") lines.push("陵容依旧常来碎玉轩，姐妹情分一如往昔。");
   else if (tier === "distant") lines.push("陵容来得越来越少了，见面时笑意也淡了。");
