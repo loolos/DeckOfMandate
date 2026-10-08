@@ -4,6 +4,7 @@ import {
   blockedByChezhou,
   canPlayCard,
   endingLines,
+  hateCap,
   isFreeByLianmei,
   lianmeiLit,
   newStage2,
@@ -1138,6 +1139,63 @@ describe("zhenhuan stage 2 engine", () => {
     t = act(t, { type: "playCard", cardUid: l2! });
     expect(t.statuses.some((x) => x.id === "jinghongWu")).toBe(true);
     expect(t.log.some((e) => e.text.includes("惊鸿舞"))).toBe(true);
+  });
+
+  it("闲月阁: 槿汐 + 眉庄 + 收拢人心 in one turn with 隔墙有耳 on the board → 恨意 capped at 6 for 3 more turns, once per run", () => {
+    const setup = (seed: number) => {
+      const s = newStage2(seed, null);
+      s.turn = 12;
+      s.rank = "guiren";
+      s.turnRank = "guiren";
+      s.qingyu = 10;
+      s.shengchong = 10;
+      s.hate = 8;
+      s.stories = [];
+      s.extraPlays = 1;
+      onlyEvents(s, { huafei: ["songzhiKuisi"] });
+      return s;
+    };
+    let s = setup(48);
+    const [j, m, r] = setHand(s, ["jinxiXiangzhu", "meizhuangXiangzhu", "shoulongRenxin"]);
+    s = act(s, { type: "playCard", cardUid: j! });
+    s = act(s, { type: "playCard", cardUid: m! });
+    expect(s.xianyuege.done).toBe(false);
+    expect(s.xianyuege.played).toEqual(["jinxiXiangzhu", "meizhuangXiangzhu"]);
+    s = act(s, { type: "playCard", cardUid: r! });
+    expect(s.xianyuege.done).toBe(true);
+    expect(s.hate).toBe(6);
+    expect(hateCap(s)).toBe(6);
+    expect(s.statuses.find((x) => x.id === "xianyuege")?.remaining).toBe(3);
+    expect(s.log.some((e) => e.text.includes("浣碧"))).toBe(true);
+
+    // 宠冠六宫 would push it to 7: capped
+    s.shengchong = 15;
+    s.stories = [];
+    s = act(s, { type: "endTurn" });
+    expect(s.hate).toBeLessThanOrEqual(6);
+    for (let i = 0; i < 3; i++) {
+      s.stories = [];
+      s.qingyu = 10;
+      s.huafei = [];
+      s.crisis = null;
+      s = act(s, { type: "endTurn" });
+    }
+    expect(s.statuses.some((x) => x.id === "xianyuege")).toBe(false);
+    expect(hateCap(s)).toBe(10);
+
+    // no 隔墙有耳 on the board: nothing counts
+    let t = setup(49);
+    onlyEvents(t, {});
+    for (const uid of setHand(t, ["jinxiXiangzhu", "meizhuangXiangzhu", "shoulongRenxin"])) t = act(t, { type: "playCard", cardUid: uid });
+    expect(t.xianyuege.done).toBe(false);
+    expect(t.xianyuege.played).toEqual([]);
+
+    // split across turns: progress resets
+    let u = setup(50);
+    for (const uid of setHand(u, ["jinxiXiangzhu", "meizhuangXiangzhu"])) u = act(u, { type: "playCard", cardUid: uid });
+    u.stories = [];
+    u = act(u, { type: "endTurn" });
+    expect(u.xianyuege.played).toEqual([]);
   });
 
   it("ending lines cover the pregnancy outcome", () => {

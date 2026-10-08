@@ -27,6 +27,7 @@ import {
   hateTierLabel,
   HATE_REVEAL_TURN,
   JINGHONG_STORY,
+  XIANYUEGE,
   FINALE,
   huafeiDrawPlan,
   type CardId2,
@@ -210,6 +211,17 @@ function EventCard({ state, inst, fold, dispatch }: { state: Z2State; inst: Even
         {expandedEffect2(inst.burning ? "延烧未止：圣宠 -2 后离场" : def.unresolvedText)}
       </p>
       {def.note ? <p className={styles.rule}>{def.note}</p> : null}
+      {inst.id === XIANYUEGE.event && !state.xianyuege.done ? (
+        <p className={styles.rule}>
+          🕵️ {XIANYUEGE.hint}
+          {XIANYUEGE.cards.map((id) => (
+            <span key={id} className={[styles.matchChip, state.xianyuege.played.includes(id) && styles.matchChipInHand].filter(Boolean).join(" ")}>
+              {CARDS2[id].emoji} {CARDS2[id].name}
+              {state.xianyuege.played.includes(id) ? " ✓" : ""}
+            </span>
+          ))}
+        </p>
+      ) : null}
       <p className={styles.rule}>
         <span className={styles.ruleLabel}>匹配牌：</span>
         {answeringCards(inst.id).map((id) => (
@@ -701,7 +713,13 @@ function Statuses({ state, dispatch }: { state: Z2State; dispatch: Dispatch }) {
                   {def.unremovable ? "·不可移除" : ""}
                 </button>
                 <span className={`${styles.muted} ${styles.statusFull}`}>
-                  {def.permanent ? "触发 / 结束前一直保留" : notYet ? `下回合起生效，共 ${st.remaining} 回合` : `剩余 ${st.remaining} 回合`}
+                  {def.permanent
+                    ? "触发 / 结束前一直保留"
+                    : notYet
+                      ? def.hateCap != null
+                        ? `本回合起生效，另有 ${st.remaining} 回合`
+                        : `下回合起生效，共 ${st.remaining} 回合`
+                      : `剩余 ${st.remaining} 回合`}
                 </span>
                 {removable.has(st.uid) ? (
                   <button
@@ -840,19 +858,20 @@ export function Stage2Game({ state, dispatch, runCode, showRules, onShowRules, o
   const tier = tierOf(state);
 
   // One-off notices during play (not when loading a save): promotion and 身子 appearing.
-  const [notice, setNotice] = useState<"guiren" | "pin" | "shenzi" | "hate" | "miscarriage" | "jinghong" | null>(null);
-  const prev = useRef({ rank: state.rank, shenzi: state.shenziRevealed, turn: state.turn, seed: state.seed, miscarriages: state.miscarriages, jinghong: state.jinghong.done });
+  const [notice, setNotice] = useState<"guiren" | "pin" | "shenzi" | "hate" | "miscarriage" | "jinghong" | "xianyuege" | null>(null);
+  const prev = useRef({ rank: state.rank, shenzi: state.shenziRevealed, turn: state.turn, seed: state.seed, miscarriages: state.miscarriages, jinghong: state.jinghong.done, xianyuege: state.xianyuege.done });
   useEffect(() => {
     const p = prev.current;
     const sameRun = p.seed === state.seed && state.actions.length > 0;
     if (sameRun && state.outcome === "playing") {
       if (p.miscarriages === 0 && state.miscarriages > 0) setNotice("miscarriage"); // first time only
       else if (!p.jinghong && state.jinghong.done) setNotice("jinghong");
+      else if (!p.xianyuege && state.xianyuege.done) setNotice("xianyuege");
       else if (state.rank !== p.rank && (state.rank === "guiren" || state.rank === "pin")) setNotice(state.rank);
       else if (state.shenziRevealed && !p.shenzi) setNotice("shenzi");
       else if (p.turn < HATE_REVEAL_TURN && state.turn >= HATE_REVEAL_TURN) setNotice("hate");
     }
-    prev.current = { rank: state.rank, shenzi: state.shenziRevealed, turn: state.turn, seed: state.seed, miscarriages: state.miscarriages, jinghong: state.jinghong.done };
+    prev.current = { rank: state.rank, shenzi: state.shenziRevealed, turn: state.turn, seed: state.seed, miscarriages: state.miscarriages, jinghong: state.jinghong.done, xianyuege: state.xianyuege.done };
   }, [state]);
 
   const endTurnReady = canEndTurn2(state) && !showRules && notice == null;
@@ -1017,6 +1036,14 @@ export function Stage2Game({ state, dispatch, runCode, showRules, onShowRules, o
         <Notice title="💃 惊鸿舞" onClose={() => setNotice(null)}>
           <p>{JINGHONG_STORY}</p>
           <p className={styles.muted}>获得【💃惊鸿舞】：未来 3 回合，每回合开始时圣宠 +1。这是额外的奖励，不影响晋封考验本身。</p>
+        </Notice>
+      ) : null}
+      {notice === "xianyuege" ? (
+        <Notice title="🪤 闲月阁" onClose={() => setNotice(null)}>
+          {XIANYUEGE.story(state.xibie === "meizhuangXiangzhu").map((para) => (
+            <p key={para}>{para}</p>
+          ))}
+          <p className={styles.muted}>获得【🪤闲月阁】：{STATUSES2.xianyuege.effectText}整局只会发生一次。</p>
         </Notice>
       ) : null}
       {notice === "miscarriage" ? (

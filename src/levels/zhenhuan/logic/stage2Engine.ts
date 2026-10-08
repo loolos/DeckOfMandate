@@ -14,6 +14,7 @@ import {
   FINALE,
   FAKUI_TURN,
   JINGHONG_STORY,
+  XIANYUEGE,
   FIXED_STORY_TURNS,
   GUIREN_TRIAL,
   HATE,
@@ -144,6 +145,8 @@ export type Z2State = {
   trial: { active: boolean; summoned: boolean };
   /** 惊鸿舞 (a bonus, not part of the promotion): 眉庄 / 陵容 played at any point of the 贵人考验; done once it happened. */
   jinghong: { meizhuang: boolean; lingrong: boolean; done: boolean };
+  /** 闲月阁 (once per run): which of its three cards were played this turn with 隔墙有耳 on the board. */
+  xianyuege: { played: CardId2[]; done: boolean };
   pregnant: boolean;
   pregnancies: number;
   miscarriages: number;
@@ -414,14 +417,24 @@ function revealShenzi(s: Z2State, by: "summon" | "other" = "other"): void {
   log(s, `🌱 ${why}【身子】：关系到能否怀上龙裔，以及能否平安生产。当前身子 ${s.shenzi} / ${SHENZI.max}。`, "info");
 }
 
+/** The lowest 恨意 cap among the statuses held (闲月阁 binds from the turn it is gained); 10 otherwise. */
+export function hateCap(s: Z2State): number {
+  return Math.min(HATE.max, ...s.statuses.map((st) => STATUSES2[st.id].hateCap ?? HATE.max));
+}
+
 function applyDelta2(s: Z2State, d: Delta2, source: string): void {
   if (!alive(s) || d.amount === 0) return;
   const label = RESOURCE2_LABEL[d.resource];
   if (d.resource === "hate") {
-    const next = Math.max(0, Math.min(HATE.max, s.hate + d.amount));
-    if (next === s.hate) return;
+    const cap = hateCap(s);
+    const next = Math.max(0, Math.min(Math.max(cap, s.hate), s.hate + d.amount));
+    if (next === s.hate) {
+      if (d.amount > 0 && cap < HATE.max) log(s, `${source}：华妃恨意已到 ${cap}，闲月阁之后她不敢再造次。`, "good");
+      return;
+    }
+    const capped = d.amount > 0 && cap < HATE.max && next - s.hate < d.amount ? `（闲月阁：最多 ${cap}）` : "";
     s.hate = next;
-    log(s, `${source}：华妃恨意 ${d.amount > 0 ? "+" : ""}${d.amount} → ${next}`, d.amount > 0 ? "bad" : "good");
+    log(s, `${source}：华妃恨意 ${d.amount > 0 ? "+" : ""}${d.amount}${capped} → ${next}`, d.amount > 0 ? "bad" : "good");
     return;
   }
   if (d.resource === "shenzi") {
@@ -994,6 +1007,20 @@ function resolvePlay2(s: Z2State, cardUid: string, removeStatusUid?: string): vo
     }
   }
 
+  if (alive(s) && !s.xianyuege.done && XIANYUEGE.cards.includes(card.id) && s.huafei.some((e) => e.id === XIANYUEGE.event)) {
+    if (!s.xianyuege.played.includes(card.id)) s.xianyuege.played = [...s.xianyuege.played, card.id];
+    if (XIANYUEGE.cards.every((c) => s.xianyuege.played.includes(c))) {
+      s.xianyuege.done = true;
+      log(s, `🪤 ${XIANYUEGE.log}`, "good");
+      addStatus2(s, "xianyuege");
+      const cap = hateCap(s);
+      if (s.hate > cap) {
+        s.hate = cap;
+        log(s, `华妃被皇上斥责：恨意降到 ${cap}。`, "good");
+      }
+    }
+  }
+
   if (alive(s) && finaleAccepts(s, card.id)) {
     const f = s.finale!;
     const first = !f.played.includes(card.id);
@@ -1083,6 +1110,7 @@ function beginTurn2(s: Z2State, turn: number): void {
   s.extraPlays = 0;
   s.drawnThisTurn = 0;
   s.lianmeiSpent = [];
+  s.xianyuege.played = [];
   s.notices = [];
   log(s, `—— 第 ${turn} 回合 ——`);
 
@@ -1372,6 +1400,7 @@ export function newStage2(seed: number, carry: Carry | null): Z2State {
     notices: [],
     trial: { active: false, summoned: false },
     jinghong: { meizhuang: false, lingrong: false, done: false },
+    xianyuege: { played: [], done: false },
     pregnant: false,
     pregnancies: 0,
     miscarriages: 0,
