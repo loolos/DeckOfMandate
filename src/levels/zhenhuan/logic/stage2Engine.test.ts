@@ -1206,6 +1206,26 @@ describe("zhenhuan stage 2 engine", () => {
     expect(u.xianyuege.played).toEqual([]);
   });
 
+  it("蜚语盈廊 by 眉庄相助: she walks the palaces herself before 菊残霜冷, sends word from 闲月阁 after", () => {
+    const run = (xibie: Z2State["xibie"]) => {
+      let s = newStage2(52, null);
+      s.stories = [];
+      s.xibie = xibie;
+      onlyEvents(s, { crisis: "gongzhongLiuyan" });
+      const [m] = setHand(s, ["meizhuangXiangzhu"]);
+      s = act(s, { type: "playCard", cardUid: m! });
+      return s.crisis!;
+    };
+    const before = run(null);
+    expect(before.resolved).toBe(true);
+    expect(before.story).toBe(EVENTS2.gongzhongLiuyan.resolvedStory.meizhuangXiangzhu);
+    for (const who of ["meizhuangXiangzhu", "wenTaiyiZhenzhi"] as const) {
+      const after = run(who);
+      expect(after.resolved).toBe(true);
+      expect(after.story).toBe(EVENTS2.gongzhongLiuyan.confinedStory!.meizhuangXiangzhu);
+    }
+  });
+
   it("ending lines cover the pregnancy outcome", () => {
     const s = newStage2(16, null);
     expect(endingLines(s).some((l) => l.includes("始终没有动静"))).toBe(true);

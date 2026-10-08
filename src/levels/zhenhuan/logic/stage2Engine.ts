@@ -86,6 +86,8 @@ export type EventInst2 = {
   /** 蜚语盈廊 made worse by a 怨怼 陵容. */
   aggravated?: boolean;
   evidence?: EvidenceId;
+  /** The resolving card's story, fixed when it was resolved (眉庄's lines change once she is 禁足). */
+  story?: string;
 };
 
 export type StoryInst2 = { readonly id: StoryId2; chosenOptionId: string | null; viaCard?: CardId2; result?: string; story?: string };
@@ -741,8 +743,9 @@ function applyResponsePenalty(s: Z2State, cost: ResponsePenalty, source: string)
   if (cost.status && alive(s)) addStatus2(s, cost.status, cost.statusTurns);
 }
 
-function eventStoryFor(ev: EventInst2, card: CardId2): string | undefined {
-  return EVENTS2[ev.id].resolvedStory[card];
+function eventStoryFor(s: Z2State, ev: EventInst2, card: CardId2): string | undefined {
+  const def = EVENTS2[ev.id];
+  return (s.xibie != null ? def.confinedStory?.[card] : undefined) ?? def.resolvedStory[card];
 }
 
 function resolveEventByCard(s: Z2State, ev: EventInst2, card: CardId2, doubleReward: boolean): void {
@@ -750,8 +753,11 @@ function resolveEventByCard(s: Z2State, ev: EventInst2, card: CardId2, doubleRew
   ev.resolved = true;
   ev.resolvedBy = card;
   log(s, `${verb(def.kind)}${EVENT_KIND2_LABEL[def.kind]}事件【${def.name}】`, "good");
-  const story = eventStoryFor(ev, card);
-  if (story) log(s, story);
+  const story = eventStoryFor(s, ev, card);
+  if (story) {
+    ev.story = story;
+    log(s, story);
+  }
   // 华妃事件 are never free: answering still costs one lighter penalty
   const cost = def.double ? def.doublePenalty : def.responsePenalty?.[card];
   if (cost && alive(s)) applyResponsePenalty(s, cost, `${def.name}（应对的代价）`);

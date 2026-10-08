@@ -696,6 +696,8 @@ export type EventDef2 = {
   readonly resolvedCompact?: string;
   readonly unresolvedCompact?: string;
   readonly resolvedStory: Partial<Record<CardId2, string>>;
+  /** Replaces `resolvedStory` once 菊残霜冷 is behind us and 眉庄 is 禁足 in 闲月阁. */
+  readonly confinedStory?: Partial<Record<CardId2, string>>;
   /** Rule note shown on the card. */
   readonly note?: string;
 };
@@ -900,6 +902,9 @@ export const EVENTS2: Record<EventId2, EventDef2> = {
       meizhuangXiangzhu: "眉庄姐姐在各宫走动时替你分说清楚，又寻出了嚼舌根的宫女。流言一夜之间没了声息。",
       shoulongRenxin: "你让小允子拿了些碎银子，在各宫的宫人间打点了一圈。收了好处的人自然换了口风，流言渐渐没人再提。",
       jinxiXiangzhu: "槿汐暗中寻到了传话的源头，把几个碎嘴的宫人敲打了一番。流言没了下文。",
+    },
+    confinedStory: {
+      meizhuangXiangzhu: "眉庄禁足在闲月阁出不来，却托采月捎了话出去，又拿出体己银子，请相熟的宫人在各宫替你打点。没过几日，那些闲话便没人再提了。",
     },
   },
   neiwufuDiaonan: {

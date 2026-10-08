@@ -166,7 +166,7 @@ function EventCard({ state, inst, fold, dispatch }: { state: Z2State; inst: Even
       ) : null}
     </span>
   );
-  const story = inst.resolved && inst.resolvedBy && inst.resolvedBy !== "lingrongXiangzhu" ? def.resolvedStory[inst.resolvedBy] : undefined;
+  const story = inst.resolved && inst.resolvedBy && inst.resolvedBy !== "lingrongXiangzhu" ? (inst.story ?? def.resolvedStory[inst.resolvedBy]) : undefined;
   const lingrongStory = inst.lingrong ? LINGRONG_EVENT[inst.id]?.[inst.lingrong]?.story : undefined;
   if (fold.compact && !fold.expanded) {
     return (
