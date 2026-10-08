@@ -110,9 +110,9 @@ describe("zhenhuan engine", () => {
 
   it("gains are capped by rank", () => {
     let s = newGame(1);
-    s.shengchong = 7;
+    s.shengchong = 8;
     s = act(s, { type: "playCard", cardUid: uidOf(s, "yirongZhengsu") });
-    expect(s.shengchong).toBe(8);
+    expect(s.shengchong).toBe(9);
   });
 
   it("静观其变 draws, adds a play, and stacks", () => {

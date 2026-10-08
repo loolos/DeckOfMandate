@@ -14,11 +14,11 @@ export type ResourceInfo = { readonly lore: string; readonly rules: readonly str
 export const RESOURCE_INFO: Record<Resource, ResourceInfo> = {
   qingyu: {
     lore: "宫里人人都盯着你的言行。名声一坏，再得宠也立不住脚。",
-    rules: ["降到 0 立即失败。", "上限随位分提高（答应 8、常在 10）。"],
+    rules: ["降到 0 立即失败。", "上限随位分提高（答应 9、常在 12）。"],
   },
   shengchong: {
     lore: "皇上的恩宠，是你在后宫里最要紧的依仗，也最招人眼红。",
-    rules: ["降到 0 立即失败。", "上限随位分提高（答应 8、常在 10）。", "第 6 回合起圣宠 ≥ 5 会招来嫉妒事件。"],
+    rules: ["降到 0 立即失败。", "上限随位分提高（答应 9、常在 12）。", "第 6 回合起圣宠 ≥ 5 会招来嫉妒事件。"],
   },
 };
 
@@ -40,16 +40,16 @@ export type RankDef = {
   readonly name: string;
   readonly draw: number;
   readonly plays: number;
-  /** Cap for both 清誉 and 圣宠. 答应 is 8 so the trial's 圣宠 ≥ 6 isn't the cap; higher ranks are provisional (design.md §2). */
+  /** Cap for both 清誉 and 圣宠. 答应 is 9 so the trial's 圣宠 ≥ 6 isn't the cap; higher ranks are provisional (design.md §2). */
   readonly cap: number;
 };
 
 export const RANKS: Record<RankId, RankDef> = {
-  daying: { id: "daying", name: "答应", draw: 3, plays: 1, cap: 8 },
-  changzai: { id: "changzai", name: "常在", draw: 3, plays: 2, cap: 10 },
-  guiren: { id: "guiren", name: "贵人", draw: 4, plays: 2, cap: 14 },
+  daying: { id: "daying", name: "答应", draw: 3, plays: 1, cap: 9 },
+  changzai: { id: "changzai", name: "常在", draw: 3, plays: 2, cap: 12 },
+  guiren: { id: "guiren", name: "贵人", draw: 4, plays: 2, cap: 15 },
   pin: { id: "pin", name: "嫔", draw: 5, plays: 3, cap: 18 },
-  fei: { id: "fei", name: "妃", draw: 6, plays: 3, cap: 22 },
+  fei: { id: "fei", name: "妃", draw: 6, plays: 3, cap: 21 },
 };
 
 // ---------------------------------------------------------------- events
