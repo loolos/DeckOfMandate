@@ -1165,7 +1165,7 @@ describe("zhenhuan stage 2 engine", () => {
     expect(s.xianyuege.done).toBe(true);
     expect(s.hate).toBe(6);
     expect(hateCap(s)).toBe(6);
-    expect(s.statuses.find((x) => x.id === "huafeiShouchi")?.remaining).toBe(3);
+    expect(s.statuses.find((x) => x.id === "jiaoyanZanlian")?.remaining).toBe(3);
     expect(s.log.some((e) => e.text.includes("浣碧"))).toBe(true);
 
     // 宠冠六宫 would push it to 7: capped
@@ -1180,7 +1180,7 @@ describe("zhenhuan stage 2 engine", () => {
       s.crisis = null;
       s = act(s, { type: "endTurn" });
     }
-    expect(s.statuses.some((x) => x.id === "huafeiShouchi")).toBe(false);
+    expect(s.statuses.some((x) => x.id === "jiaoyanZanlian")).toBe(false);
     expect(hateCap(s)).toBe(10);
 
     // no 隔墙有耳 on the board: nothing counts

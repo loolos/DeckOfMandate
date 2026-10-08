@@ -451,7 +451,7 @@ export type StatusId2 =
   | "baoyangZaishen"
   | "bimenSiguo"
   | "jinghongWu"
-  | "huafeiShouchi"
+  | "jiaoyanZanlian"
   | "zhushiTuotie"
   | "jinruoHanchan";
 
@@ -584,9 +584,9 @@ export const STATUSES2: Record<StatusId2, StatusDef2> = {
     flavor: "一舞惊鸿，皇上的目光再也没从你身上移开。",
     source: "贵人考验期间打出过眉庄相助与陵容相助（陵容怨怼时不肯帮忙）",
   },
-  huafeiShouchi: {
-    id: "huafeiShouchi",
-    name: "华妃受斥",
+  jiaoyanZanlian: {
+    id: "jiaoyanZanlian",
+    name: "骄焰暂敛",
     emoji: "🪤",
     tag: "positive",
     duration: 3,

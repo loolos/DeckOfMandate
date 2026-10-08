@@ -1043,7 +1043,7 @@ export function Stage2Game({ state, dispatch, runCode, showRules, onShowRules, o
           {XIANYUEGE.story.map((para) => (
             <p key={para}>{para}</p>
           ))}
-          <p className={styles.muted}>获得【🪤华妃受斥】：{STATUSES2.huafeiShouchi.effectText}整局只会发生一次。</p>
+          <p className={styles.muted}>获得【🪤骄焰暂敛】：{STATUSES2.jiaoyanZanlian.effectText}整局只会发生一次。</p>
         </Notice>
       ) : null}
       {notice === "miscarriage" ? (

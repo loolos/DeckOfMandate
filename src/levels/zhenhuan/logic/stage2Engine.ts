@@ -417,7 +417,7 @@ function revealShenzi(s: Z2State, by: "summon" | "other" = "other"): void {
   log(s, `🌱 ${why}【身子】：关系到能否怀上龙裔，以及能否平安生产。当前身子 ${s.shenzi} / ${SHENZI.max}。`, "info");
 }
 
-/** The lowest 恨意 cap among the statuses held (华妃受斥 binds from the turn it is gained); 10 otherwise. */
+/** The lowest 恨意 cap among the statuses held (骄焰暂敛 binds from the turn it is gained); 10 otherwise. */
 export function hateCap(s: Z2State): number {
   return Math.min(HATE.max, ...s.statuses.map((st) => STATUSES2[st.id].hateCap ?? HATE.max));
 }
@@ -432,7 +432,7 @@ function applyDelta2(s: Z2State, d: Delta2, source: string): void {
       if (d.amount > 0 && cap < HATE.max) log(s, `${source}：华妃恨意已到 ${cap}：华妃刚受了斥责，不敢再造次。`, "good");
       return;
     }
-    const capped = d.amount > 0 && cap < HATE.max && next - s.hate < d.amount ? `（华妃受斥：最多 ${cap}）` : "";
+    const capped = d.amount > 0 && cap < HATE.max && next - s.hate < d.amount ? `（骄焰暂敛：最多 ${cap}）` : "";
     s.hate = next;
     log(s, `${source}：华妃恨意 ${d.amount > 0 ? "+" : ""}${d.amount}${capped} → ${next}`, d.amount > 0 ? "bad" : "good");
     return;
@@ -1012,7 +1012,7 @@ function resolvePlay2(s: Z2State, cardUid: string, removeStatusUid?: string): vo
     if (XIANYUEGE.cards.every((c) => s.xianyuege.played.includes(c))) {
       s.xianyuege.done = true;
       log(s, `🪤 ${XIANYUEGE.log}`, "good");
-      addStatus2(s, "huafeiShouchi");
+      addStatus2(s, "jiaoyanZanlian");
       const cap = hateCap(s);
       if (s.hate > cap) {
         s.hate = cap;
