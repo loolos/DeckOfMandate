@@ -459,7 +459,7 @@ function TrialCard({ state, fold, dispatch }: { state: Z2State; fold: Fold; disp
       <p className={styles.rule}>
         💃 <strong>惊鸿舞</strong>：
         {state.jinghong.done
-          ? (state.jinghong.story ?? JINGHONG_STORY)
+          ? JINGHONG_STORY
           : `额外奖励，不影响晋封：考验期间打出过 👭眉庄相助 与 🎶陵容相助（陵容怨怼时不肯帮忙），获得【惊鸿舞】，未来 3 回合每回合圣宠 +1。${state.jinghong.meizhuang || state.jinghong.lingrong ? `已打出：${state.jinghong.meizhuang ? "👭" : ""}${state.jinghong.lingrong ? "🎶" : ""}` : ""}`}
       </p>
       <p className={styles.rule}>
@@ -1035,7 +1035,7 @@ export function Stage2Game({ state, dispatch, runCode, showRules, onShowRules, o
       ) : null}
       {notice === "jinghong" ? (
         <Notice title="💃 惊鸿舞" onClose={() => setNotice(null)}>
-          <p>{state.jinghong.story ?? JINGHONG_STORY}</p>
+          <p>{JINGHONG_STORY}</p>
           <p className={styles.muted}>获得【💃惊鸿舞】：未来 3 回合，每回合开始时圣宠 +1。这是额外的奖励，不影响晋封考验本身。</p>
         </Notice>
       ) : null}

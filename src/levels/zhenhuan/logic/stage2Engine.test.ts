@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { CARDS2, EVENTS2, FINALE, JINGHONG_STORY_CONFINED, LINGRONG_EVENT, STORIES2, type CardId2, type EventId2, type EvidenceId, type StatusId2, type StoryId2 } from "../data/stage2Content";
+import { CARDS2, EVENTS2, FINALE, LINGRONG_EVENT, STORIES2, type CardId2, type EventId2, type EvidenceId, type StatusId2, type StoryId2 } from "../data/stage2Content";
 import {
   blockedByChezhou,
   canPlayCard,
@@ -1230,21 +1230,6 @@ describe("zhenhuan stage 2 engine", () => {
         expect(after.story, id).toBe(EVENTS2[id].confinedStory!.meizhuangXiangzhu);
       }
     }
-  });
-
-  it("惊鸿舞 after 菊残霜冷: 眉庄 is 禁足, so the 禁足 version of the story", () => {
-    let s = newStage2(53, null);
-    s.turn = 9;
-    s.trial = { active: true, summoned: false };
-    s.relation = 3;
-    s.stories = [];
-    s.xibie = "wenTaiyiZhenzhi";
-    s.jinghong.meizhuang = true;
-    onlyEvents(s, {});
-    const [l] = setHand(s, ["lingrongXiangzhu"]);
-    s = act(s, { type: "playCard", cardUid: l! });
-    expect(s.jinghong.done).toBe(true);
-    expect(s.jinghong.story).toBe(JINGHONG_STORY_CONFINED);
   });
 
   it("ending lines cover the pregnancy outcome", () => {

@@ -1321,12 +1321,8 @@ export const FIXED_STORY_TURNS: Partial<Record<number, StoryId2>> = {
 };
 export const FAKUI_TURN = 17;
 
-/** 贵人考验: 眉庄 plays the qin, 陵容 sings, you dance — once per run. */
-export const JINGHONG_STORY =
-  "眉庄抚琴，陵容清歌，你在御前跳了一支惊鸿舞。琴声歌声里衣袂翩跹，满殿寂静，皇上看得出了神。";
-/** 惊鸿舞 when it happens after 菊残霜冷: 眉庄 is 禁足 and cannot be there to play. */
-export const JINGHONG_STORY_CONFINED =
-  "眉庄禁足前替你谱好了曲子。如今陵容照着曲谱清歌，你在御前跳了一支惊鸿舞，衣袂翩跹，满殿寂静，皇上看得出了神。只可惜那抚琴的人，此刻正独自坐在闲月阁里。";
+/** 贵人考验: 眉庄 writes the music, 陵容 sings, you dance — once per run. */
+export const JINGHONG_STORY = "眉庄谱曲，陵容清歌，你在御前跳了一支惊鸿舞。";
 /**
  * 闲月阁 (once per run): with 隔墙有耳 on the board, play 槿汐相助, 眉庄相助 and 收拢人心 in the same turn
  * to unmask 浣碧 — a false lead sends 华妃 storming into 闲月阁 for nothing.
