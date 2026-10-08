@@ -1152,6 +1152,7 @@ describe("zhenhuan stage 2 engine", () => {
       s.hate = 8;
       s.stories = [];
       s.extraPlays = 1;
+      s.xibie = "wenTaiyiZhenzhi";
       onlyEvents(s, { huafei: ["songzhiKuisi"] });
       return s;
     };
@@ -1189,6 +1190,13 @@ describe("zhenhuan stage 2 engine", () => {
     for (const uid of setHand(t, ["jinxiXiangzhu", "meizhuangXiangzhu", "shoulongRenxin"])) t = act(t, { type: "playCard", cardUid: uid });
     expect(t.xianyuege.done).toBe(false);
     expect(t.xianyuege.played).toEqual([]);
+
+    // before 菊残霜冷 (眉庄 not yet 禁足): nothing counts
+    let v = setup(51);
+    v.xibie = null;
+    for (const uid of setHand(v, ["jinxiXiangzhu", "meizhuangXiangzhu", "shoulongRenxin"])) v = act(v, { type: "playCard", cardUid: uid });
+    expect(v.xianyuege.done).toBe(false);
+    expect(v.xianyuege.played).toEqual([]);
 
     // split across turns: progress resets
     let u = setup(50);

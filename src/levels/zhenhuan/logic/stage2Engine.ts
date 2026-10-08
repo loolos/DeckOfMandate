@@ -382,6 +382,11 @@ export function canEndTurn2(s: Z2State): boolean {
   return s.outcome === "playing" && s.pending == null;
 }
 
+/** 闲月阁 can still happen: not yet done, and 菊残霜冷 (眉庄 禁足) is behind us. */
+export function xianyuegeOpen(s: Z2State): boolean {
+  return !s.xianyuege.done && s.xibie != null;
+}
+
 export function isXibieCard(s: Z2State, cardId: CardId2): boolean {
   return s.xibie != null && !s.xibieDone && s.xibie === cardId;
 }
@@ -1005,7 +1010,7 @@ function resolvePlay2(s: Z2State, cardUid: string, removeStatusUid?: string): vo
     }
   }
 
-  if (alive(s) && !s.xianyuege.done && XIANYUEGE.cards.includes(card.id) && s.huafei.some((e) => e.id === XIANYUEGE.event)) {
+  if (alive(s) && xianyuegeOpen(s) && XIANYUEGE.cards.includes(card.id) && s.huafei.some((e) => e.id === XIANYUEGE.event)) {
     if (!s.xianyuege.played.includes(card.id)) s.xianyuege.played = [...s.xianyuege.played, card.id];
     if (XIANYUEGE.cards.every((c) => s.xianyuege.played.includes(c))) {
       s.xianyuege.done = true;
