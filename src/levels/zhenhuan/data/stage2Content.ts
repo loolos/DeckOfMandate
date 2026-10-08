@@ -235,7 +235,7 @@ export const FINALE = {
     meizhuangXiangzhu: [
       ["liuweiqingYaofang", "眉庄挺直了背，朗声道：「皇上，臣妾当日假孕失宠，正是翊坤宫串通刘畏卿一手设下的局。臣妾至今想起，仍觉心寒。」"],
       ["kekouZhangce", "眉庄挺直了背，朗声道：「臣妾禁足闲月阁时，连炭火都被克扣了去。内务府的人亲口说，是翊坤宫的意思。」"],
-      ["lanyongSixing", "眉庄挺直了背，朗声道：「一丈红那日，臣妾也在。夏常在年轻不懂事，可罪不至此，华妃却连一句求情的话都不许人说。」"],
+      ["lanyongSixing", "眉庄挺直了背，朗声道：「一丈红的事，阖宫都知道。夏常在年轻不懂事，可罪不至此，华妃却连一句求情的话都不许人说。」"],
       ["yuyingerYiyan", "眉庄挺直了背，朗声道：「余氏冒认倚梅园之功，背后若无人撑腰，她一个宫女哪来这样的胆子？」"],
     ],
     wenTaiyiZhenzhi: [
@@ -734,6 +734,9 @@ export const EVENTS2: Record<EventId2, EventDef2> = {
       jinyanShenxing: "太后问你读过什么书，你答得谦逊稳妥。太后捻着佛珠，说这孩子沉静，转头便在皇上跟前夸了你几句。",
       meizhuangXiangzhu: "眉庄姐姐陪你一同前去，你们一唱一和，太后听得开怀，赏了你们一人一串佛珠。",
     },
+    confinedStory: {
+      meizhuangXiangzhu: "眉庄禁足出不来，托采月让你捎去她在闲月阁抄的一卷佛经。太后翻了几页，叹了句“这孩子可惜了”，赏了你一串佛珠，又让你给眉庄也带一串回去。",
+    },
   },
   jingxinTiaoyang: {
     id: "jingxinTiaoyang",
@@ -885,6 +888,9 @@ export const EVENTS2: Record<EventId2, EventDef2> = {
       jingguanQibian: "你只当不知，故意让那小宫女听见几句假话。翊坤宫扑了个空，华妃气得摔了茶盏。",
       meizhuangXiangzhu: "眉庄不动声色地把那小宫女调去了自己宫里当差，碎玉轩清净了，翊坤宫也挑不出半点错处。",
     },
+    confinedStory: {
+      meizhuangXiangzhu: "眉庄托采月寻了个由头，向内务府讨人，把那小宫女要去了闲月阁伺候。碎玉轩清净了，翊坤宫也挑不出半点错处。",
+    },
   },
   gongzhongLiuyan: {
     id: "gongzhongLiuyan",
@@ -922,6 +928,9 @@ export const EVENTS2: Record<EventId2, EventDef2> = {
       shoulongRenxin: "小允子拿了银子去内务府打点，当天下午份例便一样不少地送到了碎玉轩。",
       meizhuangXiangzhu: "眉庄姐姐把自己宫里的份例分了一半送来，又托人敲打内务府，没过两日便补齐了。",
       jinxiXiangzhu: "槿汐拿着碎玉轩的份例单子去内务府对账，一笔一笔说得清清楚楚，管事太监只得赔着笑补齐。",
+    },
+    confinedStory: {
+      meizhuangXiangzhu: "眉庄禁足后自己的份例也紧巴巴的，却仍托采月去内务府递了句话：沈家的人情，他们是记着的。没过两日，碎玉轩的份例便补齐了。",
     },
   },
   liyiShiwu: {
@@ -983,6 +992,9 @@ export const EVENTS2: Record<EventId2, EventDef2> = {
       jinyanShenxing: "你垂首听训，一句不辩，末了只说“娘娘教训得是”。华妃挑不出大错，却还是当众数落了你几句。",
       meizhuangXiangzhu: "眉庄陪你一同站了半日规矩，替你挡下了不少难听的话。华妃冷笑一声，把这笔账记在了你头上。",
       jinxiXiangzhu: "槿汐上前跪下，把错处都揽到自己身上：“是奴婢没提点好小主。”华妃罚了她半月月钱，满殿的人却都看在眼里，说碎玉轩的主子连个奴才都护不住。",
+    },
+    confinedStory: {
+      meizhuangXiangzhu: "眉庄禁足出不来，却早托人把话递到了皇后跟前。请安到一半，景仁宫便来人传你过去说话，华妃只得放你走，冷笑一声，把这笔账记在了你头上。",
     },
   },
   kekouFenli: {
@@ -1312,6 +1324,9 @@ export const FAKUI_TURN = 17;
 /** 贵人考验: 眉庄 plays the qin, 陵容 sings, you dance — once per run. */
 export const JINGHONG_STORY =
   "眉庄抚琴，陵容清歌，你在御前跳了一支惊鸿舞。琴声歌声里衣袂翩跹，满殿寂静，皇上看得出了神。";
+/** 惊鸿舞 when it happens after 菊残霜冷: 眉庄 is 禁足 and cannot be there to play. */
+export const JINGHONG_STORY_CONFINED =
+  "眉庄禁足前替你谱好了曲子。如今陵容照着曲谱清歌，你在御前跳了一支惊鸿舞，衣袂翩跹，满殿寂静，皇上看得出了神。只可惜那抚琴的人，此刻正独自坐在闲月阁里。";
 /**
  * 闲月阁 (once per run): with 隔墙有耳 on the board, play 槿汐相助, 眉庄相助 and 收拢人心 in the same turn
  * to unmask 浣碧 — a false lead sends 华妃 storming into 闲月阁 for nothing.

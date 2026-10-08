@@ -14,6 +14,7 @@ import {
   FINALE,
   FAKUI_TURN,
   JINGHONG_STORY,
+  JINGHONG_STORY_CONFINED,
   XIANYUEGE,
   FIXED_STORY_TURNS,
   GUIREN_TRIAL,
@@ -146,7 +147,7 @@ export type Z2State = {
   notices: Notice[];
   trial: { active: boolean; summoned: boolean };
   /** 惊鸿舞 (a bonus, not part of the promotion): 眉庄 / 陵容 played at any point of the 贵人考验; done once it happened. */
-  jinghong: { meizhuang: boolean; lingrong: boolean; done: boolean };
+  jinghong: { meizhuang: boolean; lingrong: boolean; done: boolean; story?: string };
   /** 闲月阁 (once per run): which of its three cards were played this turn with 隔墙有耳 on the board. */
   xianyuege: { played: CardId2[]; done: boolean };
   pregnant: boolean;
@@ -1011,7 +1012,8 @@ function resolvePlay2(s: Z2State, cardUid: string, removeStatusUid?: string): vo
     if (isLingrong && tier && tier !== "resentful") s.jinghong.lingrong = true;
     if (s.jinghong.meizhuang && s.jinghong.lingrong) {
       s.jinghong.done = true;
-      log(s, `💃 ${JINGHONG_STORY}`, "good");
+      s.jinghong.story = s.xibie != null ? JINGHONG_STORY_CONFINED : JINGHONG_STORY;
+      log(s, `💃 ${s.jinghong.story}`, "good");
       addStatus2(s, "jinghongWu");
     }
   }
