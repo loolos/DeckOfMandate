@@ -49,7 +49,7 @@ export const RANKS: Record<RankId, RankDef> = {
   changzai: { id: "changzai", name: "常在", draw: 3, plays: 2, cap: 12 },
   guiren: { id: "guiren", name: "贵人", draw: 4, plays: 2, cap: 15 },
   pin: { id: "pin", name: "嫔", draw: 5, plays: 3, cap: 18 },
-  fei: { id: "fei", name: "妃", draw: 6, plays: 3, cap: 22 },
+  fei: { id: "fei", name: "妃", draw: 6, plays: 3, cap: 21 },
 };
 
 // ---------------------------------------------------------------- events
