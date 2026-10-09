@@ -63,8 +63,7 @@ export function ZhenhuanRoot() {
     else clearSession();
   }, [session]);
 
-  const bgm = useBgm(musicMood(session));
-  const musicToggle = <MusicToggle muted={bgm.muted} onChange={bgm.setMuted} />;
+  useBgm(musicMood(session));
 
   const runCode = useMemo(() => (session ? encodeSessionCode(session) : ""), [session]);
 
@@ -117,7 +116,6 @@ export function ZhenhuanRoot() {
     const st = session.state;
     return (
       <div className={styles.root}>
-        {musicToggle}
         <Backdrop src={backdropUrl(1)} />
         {introPending ? null : (
           <div className={introFade ? styles.introFade : undefined}>
@@ -140,7 +138,6 @@ export function ZhenhuanRoot() {
   if (session?.stage === 2) {
     return (
       <div className={styles.root}>
-        {musicToggle}
         <Backdrop src={backdropUrl(2)} />
         {introPending ? null : (
           <div className={introFade ? styles.introFade : undefined}>
@@ -166,7 +163,6 @@ export function ZhenhuanRoot() {
 
   return (
     <div className={styles.root}>
-      {musicToggle}
       <Backdrop src={backdropUrl(1)} variant="menu" />
       <div className={styles.menuScreen} aria-busy={!menuVisible}>
         {menuVisible ? (
@@ -176,6 +172,7 @@ export function ZhenhuanRoot() {
           </h1>
           <CampaignSwitcher labelClassName={styles.menuLabel} selectClassName={styles.menuInput} />
           <CompactModeToggle />
+          <MusicToggle />
           <label className={styles.menuLabel} htmlFor="zh-level">
             选择关卡
           </label>

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useSyncExternalStore } from "react";
 import { musicUrl, type MusicMood } from "./music";
 import styles from "./zhenhuan.module.css";
 
@@ -54,46 +54,62 @@ function stopAll() {
   el?.pause();
 }
 
-/** Keeps `mood` as the next track to play; starts on the first user gesture if autoplay is blocked. */
-export function useBgm(mood: MusicMood): { muted: boolean; setMuted: (muted: boolean) => void } {
-  const [muted, setMutedState] = useState(readMuted);
+/** Mute preference shared by the player and every toggle on screen. */
+let muted = readMuted();
+const listeners = new Set<() => void>();
 
-  const setMuted = (next: boolean) => {
-    setMutedState(next);
-    try {
-      localStorage.setItem(MUTE_KEY, next ? "1" : "0");
-    } catch {
-      /* storage unavailable: preference just isn't remembered */
-    }
-  };
+function subscribeMuted(fn: () => void) {
+  listeners.add(fn);
+  return () => listeners.delete(fn);
+}
+
+function setMuted(next: boolean) {
+  muted = next;
+  try {
+    localStorage.setItem(MUTE_KEY, next ? "1" : "0");
+  } catch {
+    /* storage unavailable: preference just isn't remembered */
+  }
+  listeners.forEach((fn) => fn());
+}
+
+function useMuted(): boolean {
+  return useSyncExternalStore(subscribeMuted, () => muted);
+}
+
+/** Keeps `mood` as the next track to play; starts on the first user gesture if autoplay is blocked. */
+export function useBgm(mood: MusicMood) {
+  const isMuted = useMuted();
 
   useEffect(() => {
     wanted = mood;
-    if (muted) {
+    if (isMuted) {
       stopAll();
       return;
     }
     startWanted();
     window.addEventListener("pointerdown", startWanted, { once: true });
     return () => window.removeEventListener("pointerdown", startWanted);
-  }, [mood, muted]);
+  }, [mood, isMuted]);
 
   useEffect(() => stopAll, []);
-
-  return { muted, setMuted };
 }
 
-export function MusicToggle({ muted, onChange }: { muted: boolean; onChange: (muted: boolean) => void }) {
+/** 背景音乐开关 (off by default); `brief` shows only the icon, for the compact header. */
+export function MusicToggle({ brief = false }: { brief?: boolean }) {
+  const isMuted = useMuted();
+  const label = isMuted ? "开启背景音乐" : "关闭背景音乐";
   return (
     <button
       type="button"
-      className={styles.musicToggle}
-      aria-pressed={!muted}
-      aria-label={muted ? "开启背景音乐" : "关闭背景音乐"}
-      title={muted ? "开启背景音乐" : "关闭背景音乐"}
-      onClick={() => onChange(!muted)}
+      className={`${styles.btn} ${styles.musicToggle}`}
+      aria-pressed={!isMuted}
+      aria-label={label}
+      title={label}
+      onClick={() => setMuted(!isMuted)}
     >
-      {muted ? "🔇" : "🔊"}
+      {isMuted ? "🔇" : "🔊"}
+      {brief ? null : isMuted ? " 音乐：关" : " 音乐：开"}
     </button>
   );
 }

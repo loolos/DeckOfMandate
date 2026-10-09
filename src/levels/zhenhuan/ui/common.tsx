@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type KeyboardEvent, type ReactNode } from "react";
 import { CompactModeToggle } from "./CompactModeToggle";
+import { MusicToggle } from "./useBgm";
 import styles from "./zhenhuan.module.css";
 
 /** UI pieces shared by the 第一关 and 第二关 screens. */
@@ -257,6 +258,7 @@ export function GameHeader({
             </span>
           ))}
           <HeaderMenu rankLine={`位分：${rankName}（${rankDetail}）`} onRules={onRules} onRestart={askRestart} onMenu={onMenu} />
+          <MusicToggle brief />
           <CompactModeToggle />
         </header>
         {confirmModal}
@@ -292,6 +294,7 @@ export function GameHeader({
           <button type="button" className={styles.btn} onClick={onMenu}>
             主菜单
           </button>
+          <MusicToggle />
           <CompactModeToggle />
         </div>
       </header>
