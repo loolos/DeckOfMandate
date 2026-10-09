@@ -203,7 +203,7 @@ export const EVENTS: Record<EventId, EventDef> = {
     unresolvedText: "圣宠 -1",
     resolvedStory: {
       yirongZhengsu:
-        "你精心妆扮，在皇上必经的路上赏花。皇上见了你，便忘了倚梅园的歌声，当晚翻了你的绿头牌。",
+        "你精心妆扮，在皇上必经的路上赏花。皇上见了你，不由驻足留意，问起这是哪一宫的新人，倚梅园的歌声便也不再要紧了。",
       shoulongRenxin:
         "你打点了敬事房的公公，余答应递去的话总是慢了半步。她连唱了几夜，皇上却一次也没去。",
     },
