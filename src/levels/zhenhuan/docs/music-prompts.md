@@ -1,20 +1,20 @@
 # 背景音乐规格与 AI 提示词
 
 背景音乐全部用原创曲目，**不要**用《甄嬛传》原曲或其变调版（改编权仍属原作者与出品方）。
-共四种情绪，每种一段提示词，可直接贴进 AI 作曲工具。
+共五种情绪，每种一段提示词，可直接贴进 AI 作曲工具。
 
 ## 统一格式
 
-四首曲子用同一套格式，换曲时才接得上。
+五首曲子用同一套格式，换曲时才接得上。
 
 | 项目 | 规定 |
 |---|---|
-| 编号 / 文件名 | M01 `calm`、M02 `tension`、M03 `sorrow`、M04 `climax`；放进 `assets/music/`，`.mp3` / `.ogg` / `.m4a` / `.wav` 均可 |
+| 编号 / 文件名 | M01 `calm`、M02 `tension`、M03 `sorrow`、M04 `climax`、M05 `tender`；放进 `assets/music/`，`.mp3` / `.ogg` / `.m4a` / `.wav` 均可 |
 | 时长 | 每首 **30–40 秒**，不要超过 45 秒。曲子放完才换下一首，短一些，换曲才跟得上回合推进；同一阶段会重播 |
 | 开头 | **从静音起**：开头约 0.5 秒静音，再轻轻进入（淡入），不要一上来就是满强度 |
 | 结尾 | **以静音收**：最后一个音自然衰减，尾部留约 1.5 秒静音；不要突然截断，也不要循环式收尾 |
 | 编制 | 纯器乐，无人声，无歌词；古筝 / 古琴 / 笛箫 / 二胡 / 琵琶为主，可垫少量弦乐与鼓 |
-| 响度 | 四首响度接近（约 -16 LUFS），避免换曲时忽大忽小；游戏内音量固定 50% |
+| 响度 | 五首响度接近（约 -16 LUFS），避免换曲时忽大忽小；游戏内音量固定 50% |
 | 体积 | 单首 ≤ 1 MB（128 kbps mp3 即可） |
 | 版权 | 原创，不要引用《甄嬛传》原曲旋律 |
 
@@ -32,9 +32,10 @@ AI 工具往往做不到精确的静音首尾，生成后用 Audacity 修一下�
 | 1 | `calm`（初入宫门） | `calm`（凤鸾空返） |
 | 3 | | `tension`（初谒翊坤） |
 | 4 | `tension`（逆风解意） | |
-| 8 | `calm`（杏花微雨） | `sorrow`（菊残霜冷，眉庄 / 温太医退场） |
+| 8 | `tender`（杏花微雨） | `sorrow`（菊残霜冷，眉庄 / 温太医退场） |
 | 10 | `tension`（晋封考验） | `calm`（贵人之后） |
 | 13 | `calm`（尘埃落定） | |
+| 14 | | `tender`（圆明伴驾） |
 | 17 | | `sorrow`（翊坤长跪） |
 | 20 | | `tension`（端妃旧事） |
 | 24 | | `climax`（年氏倾颓，直到翊坤落幕） |
@@ -55,8 +56,9 @@ AI 工具往往做不到精确的静音首尾，生成后用 Audacity 修一下�
 | M02 | `tension` | 紧张 |
 | M03 | `sorrow` | 哀婉 |
 | M04 | `climax` | 高潮 |
+| M05 | `tender` | 柔情 |
 
-## 提示词（M01–M04）
+## 提示词（M01–M05）
 
 每段整段复制，一次生成一首。括号里是这首在游戏里什么时候放，供试听时对照。
 
@@ -89,6 +91,14 @@ Clean studio recording, warm and refined, moderate consistent loudness. Entirely
 ```text
 Original instrumental piece in ancient Chinese imperial court style, for a palace drama card game. No vocals, no lyrics, no choir. Length 30 to 40 seconds, about 35 seconds. Begins with half a second of silence, then a very soft fade-in; ends by letting the last note decay naturally into about 1.5 seconds of silence. No abrupt cut, no loop-style ending.
 Mood: dramatic climax of a palace confrontation, fateful and decisive, powerful but still elegant. Instruments: pounding taiko-style war drums, urgent guzheng runs, erhu and strings rising in intensity, a bronze gong hit at the peak. Tempo around 100 BPM, builds quickly to a peak in the last third, then resolves and fades to silence.
+Clean studio recording, warm and refined, moderate consistent loudness. Entirely original melody; do not quote or imitate any existing TV drama theme.
+```
+
+**M05 柔情**（恩宠与心动：杏花微雨、圆明伴驾）
+
+```text
+Original instrumental piece in ancient Chinese imperial court style, for a palace drama card game. No vocals, no lyrics, no choir. Length 30 to 40 seconds, about 35 seconds. Begins with half a second of silence, then a very soft fade-in; ends by letting the last note decay naturally into about 1.5 seconds of silence. No abrupt cut, no loop-style ending.
+Mood: tender and romantic, a shy first heartbeat under spring blossoms, intimate and gentle, a hint of longing. Instruments: soft pipa tremolo melody answered by a breathy xiao flute, warm guzheng harmonies, faint wind chimes. Tempo around 66 BPM, pentatonic, flowing and lyrical, gentle swells, no drums.
 Clean studio recording, warm and refined, moderate consistent loudness. Entirely original melody; do not quote or imitate any existing TV drama theme.
 ```
 

@@ -6,7 +6,7 @@ import { indexByBasename } from "./art";
  * `assets/music/<mood>.mp3` (or .ogg / .m4a / .wav) into place is all it takes;
  * a missing file means "silence for that mood".
  */
-export const MUSIC_MOODS = ["calm", "tension", "climax", "sorrow"] as const;
+export const MUSIC_MOODS = ["calm", "tension", "sorrow", "climax", "tender"] as const;
 export type MusicMood = (typeof MUSIC_MOODS)[number];
 
 const MUSIC = indexByBasename(
@@ -27,16 +27,17 @@ const MUSIC_SCHEDULE: Record<1 | 2, readonly (readonly [fromTurn: number, mood: 
   1: [
     [1, "calm"],
     [4, "tension"],
-    [8, "calm"],
+    [8, "tender"],
     [10, "tension"],
     [13, "calm"],
   ],
-  // 第二关：1 凤鸾空返；3 初谒翊坤；8 菊残霜冷（眉庄 / 温太医退场）；10 贵人之后；17 翊坤长跪；20 端妃旧事；24 年氏倾颓；30 翊坤落幕
+  // 第二关：1 凤鸾空返；3 初谒翊坤；8 菊残霜冷（眉庄 / 温太医退场）；10 贵人之后；14 圆明伴驾；17 翊坤长跪；20 端妃旧事；24 年氏倾颓；30 翊坤落幕
   2: [
     [1, "calm"],
     [3, "tension"],
     [8, "sorrow"],
     [10, "calm"],
+    [14, "tender"],
     [17, "sorrow"],
     [20, "tension"],
     [24, "climax"],
