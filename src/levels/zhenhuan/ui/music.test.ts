@@ -9,19 +9,20 @@ describe("musicMood", () => {
     expect(musicMood(null)).toBe("calm");
   });
 
-  it("stage 1 follows the turn: calm → tension → sorrow → climax", () => {
+  it("stage 1 follows its story beats", () => {
     const at = (turn: number) => musicMood({ stage: 1, state: { ...newGame(1), turn } });
-    expect([1, 3, 4, 9, 10, 12, 13, 15].map(at)).toEqual([
-      "calm", "calm", "tension", "tension", "sorrow", "sorrow", "climax", "climax",
+    expect([1, 3, 4, 7, 8, 9, 10, 12, 13, 15].map(at)).toEqual([
+      "calm", "calm", "tension", "tension", "calm", "calm", "tension", "tension", "calm", "calm",
     ]);
   });
 
-  it("stage 2 follows the turn over its 30 turns", () => {
+  it("stage 2 follows its story beats", () => {
     const s = startStage2Standalone(1);
     if (s.stage !== 2) throw new Error("expected stage 2");
     const at = (turn: number) => musicMood({ ...s, state: { ...newStage2(1, s.state.carry), turn } });
-    expect([1, 7, 8, 18, 19, 25, 26, 30].map(at)).toEqual([
-      "calm", "calm", "tension", "tension", "sorrow", "sorrow", "climax", "climax",
+    expect([1, 2, 3, 7, 8, 9, 10, 16, 17, 19, 20, 23, 24, 30].map(at)).toEqual([
+      "calm", "calm", "tension", "tension", "sorrow", "sorrow", "calm", "calm", "sorrow", "sorrow",
+      "tension", "tension", "climax", "climax",
     ]);
   });
 });

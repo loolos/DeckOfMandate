@@ -1,6 +1,4 @@
 import type { Session } from "../logic/session";
-import { CHAPTER } from "../data/content";
-import { STAGE2 } from "../data/stage2Content";
 import { indexByBasename } from "./art";
 
 /**
@@ -20,18 +18,40 @@ export function musicUrl(mood: MusicMood): string | null {
   return MUSIC.get(mood) ?? null;
 }
 
-/** Fractions of the level at which the music moves on: 日常欢快 → 紧张 → 哀婉 → 高潮. */
-const MOOD_BY_PROGRESS: readonly (readonly [upTo: number, mood: MusicMood])[] = [
-  [0.25, "calm"],
-  [0.6, "tension"],
-  [0.85, "sorrow"],
-  [1, "climax"],
-];
+/**
+ * Per-level schedule, tied to the story beats: from `fromTurn` on, the next track to start is `mood`.
+ * A level need not use every mood. Edit freely; entries must be in ascending turn order.
+ */
+const MUSIC_SCHEDULE: Record<1 | 2, readonly (readonly [fromTurn: number, mood: MusicMood])[]> = {
+  // 第一关：1 初入宫门；4 逆风解意；8 杏花微雨；10–12 晋封考验；13 起尘埃落定
+  1: [
+    [1, "calm"],
+    [4, "tension"],
+    [8, "calm"],
+    [10, "tension"],
+    [13, "calm"],
+  ],
+  // 第二关：1 凤鸾空返；3 初谒翊坤；8 菊残霜冷（眉庄 / 温太医退场）；10 贵人之后；17 翊坤长跪；20 端妃旧事；24 年氏倾颓；30 翊坤落幕
+  2: [
+    [1, "calm"],
+    [3, "tension"],
+    [8, "sorrow"],
+    [10, "calm"],
+    [17, "sorrow"],
+    [20, "tension"],
+    [24, "climax"],
+  ],
+};
 
-/** The track that fits the current turn alone (events and outcome are ignored); `null` session = start menu. */
+/**
+ * The track to start next, given the turn the game is on *when the previous track ends*
+ * (events and outcome are ignored); `null` session = start menu.
+ */
 export function musicMood(session: Session | null): MusicMood {
   if (!session) return "calm";
-  const total = session.stage === 2 ? STAGE2.totalTurns : CHAPTER.totalTurns;
-  const progress = session.state.turn / total;
-  return MOOD_BY_PROGRESS.find(([upTo]) => progress <= upTo)?.[1] ?? "climax";
+  let mood: MusicMood = "calm";
+  for (const [fromTurn, m] of MUSIC_SCHEDULE[session.stage]) {
+    if (session.state.turn >= fromTurn) mood = m;
+  }
+  return mood;
 }
