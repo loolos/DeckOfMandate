@@ -7,22 +7,25 @@
 
 - 放在 `src/levels/zhenhuan/assets/music/<情绪>.mp3`（也可用 `.ogg` / `.m4a` / `.wav`）。
 - 文件名即情绪名，缺哪个文件，那个情绪就静音，不会报错。
-- 四首都是循环曲：1.5–3 分钟，**首尾要能无缝衔接**，不要渐弱收尾；纯器乐，无人声。
-- 体积建议每首 ≤ 3 MB（128 kbps mp3 即可）。
-- 游戏内音量固定为 50%，切换时淡入淡出约 1.2 秒；右上角按钮可静音（记在本机）。
+- 每首完整播放一遍，**结尾要收得自然**（不必循环衔接）；纯器乐，无人声。建议 1.5–3 分钟，≤ 3 MB（128 kbps mp3）。
+- 游戏内音量固定为 50%；右上角按钮可静音（记在本机）。
 
-## 什么时候放哪首
+## 播放规则
 
-| 文件名 | 情绪 | 触发时机 |
-|---|---|---|
-| `calm` | 日常欢快 | 开始菜单、平常回合（没有未解的危机 / 剧情事件）、通关 |
-| `tension` | 紧张 | 有未解决的危机 / 嫉妒 / 华妃事件，晋封考验进行中 |
-| `climax` | 高潮 | 第二关第 30 回合【翊坤落幕】终局 |
-| `sorrow` | 哀婉 | 有等待选择的剧情事件、失败 |
+只看回合数，不看具体事件。进度按「当前回合 / 本关总回合」算：
+
+| 文件名 | 情绪 | 进度 | 第一关（15 回合） | 第二关（30 回合） |
+|---|---|---|---|---|
+| `calm` | 日常欢快 | ≤ 25% | 1–3 | 1–7 |
+| `tension` | 紧张 | 25%–60% | 4–9 | 8–18 |
+| `sorrow` | 哀婉 | 60%–85% | 10–12 | 19–25 |
+| `climax` | 高潮 | 85%–100% | 13–15 | 26–30 |
+
+开始菜单放 `calm`。**一首放完才会换下一首**：回合推进到新阶段时不打断正在放的曲子，等它结束后，再按那时的回合挑下一首（同一阶段就重播同一首）。
 
 ## 提示词（英文效果更稳，可直接粘贴）
 
-通用后缀：`instrumental only, no vocals, seamless loop, original composition, Chinese classical court style`
+通用后缀：`instrumental only, no vocals, original composition, Chinese classical court style`
 
 **calm 日常欢快**
 > Light, cheerful ancient Chinese court music for a bright palace afternoon. Plucked guzheng arpeggios, playful bamboo flute melody, soft pipa accents, warm and lively, around 90 BPM, pentatonic, graceful and a little mischievous.
@@ -31,7 +34,7 @@
 > Suspenseful Chinese palace intrigue. Low sustained erhu and cello, muted pizzicato guzheng plucks, restrained hand drum pulse, dissonant touches, slowly building unease around 84 BPM, whispering and hidden menace, no big climax.
 
 **climax 高潮**
-> Dramatic climax of a palace confrontation. Pounding taiko-style drums, urgent guzheng runs, erhu and strings rising in intensity, 100 BPM, fateful and decisive, powerful but still elegant, loopable ending.
+> Dramatic climax of a palace confrontation. Pounding taiko-style drums, urgent guzheng runs, erhu and strings rising in intensity, 100 BPM, fateful and decisive, powerful but still elegant, strong definite ending.
 
 **sorrow 哀婉**
 > Sorrowful and tender Chinese classical piece. Expressive solo erhu with soft guqin and slow strings, bittersweet pentatonic melody, rubato, 54 BPM, quiet grief and resignation, delicate and moving.
@@ -44,4 +47,4 @@
 - Udio / Stable Audio / ElevenLabs Music：看各自当前的商用条款。
 - 保存好每首曲子的生成记录（页面截图或导出），以备授权核查。
 
-小技巧：每种情绪多生成几条，挑首尾衔接最自然的；循环听不顺的，用 Audacity 等软件做首尾交叉淡化。
+小技巧：每种情绪多生成几条，挑结尾最自然的；结尾太突兀的，用 Audacity 等软件加一小段淡出。

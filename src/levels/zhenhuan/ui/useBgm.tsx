@@ -4,8 +4,6 @@ import styles from "./zhenhuan.module.css";
 
 const MUTE_KEY = "zhenhuan.bgm.muted";
 const VOLUME = 0.5;
-const FADE_MS = 1200;
-const FADE_STEP_MS = 50;
 
 function readMuted(): boolean {
   try {
@@ -15,52 +13,38 @@ function readMuted(): boolean {
   }
 }
 
-/** One audio element at a time; switching moods cross-fades (fade out, then fade the next one in). */
-let current: { mood: MusicMood; el: HTMLAudioElement } | null = null;
-let fadeTimer: number | undefined;
+/**
+ * One track at a time, each played through once. A mood change never interrupts the track
+ * that is playing: when it ends, the track for whatever mood is wanted *then* starts next.
+ */
+let wanted: MusicMood = "calm";
+let playing: HTMLAudioElement | null = null;
 
-function fade(el: HTMLAudioElement, to: number, done?: () => void) {
-  window.clearInterval(fadeTimer);
-  const step = ((to - el.volume) * FADE_STEP_MS) / FADE_MS;
-  fadeTimer = window.setInterval(() => {
-    const next = el.volume + step;
-    if ((step >= 0 && next >= to) || (step < 0 && next <= to)) {
-      el.volume = to;
-      window.clearInterval(fadeTimer);
-      done?.();
-    } else {
-      el.volume = Math.min(1, Math.max(0, next));
-    }
-  }, FADE_STEP_MS);
-}
-
-function stopCurrent(then: () => void) {
-  const prev = current;
-  current = null;
-  if (!prev) return then();
-  fade(prev.el, 0, () => {
-    prev.el.pause();
-    then();
+function startWanted() {
+  if (playing) return;
+  const url = musicUrl(wanted);
+  if (!url) return;
+  const el = new Audio(url);
+  el.volume = VOLUME;
+  playing = el;
+  el.addEventListener("ended", () => {
+    if (playing !== el) return;
+    playing = null;
+    startWanted();
+  });
+  // Browsers block audio before the first click; the play() rejection is expected then.
+  el.play().catch(() => {
+    if (playing === el) playing = null;
   });
 }
 
-function playMood(mood: MusicMood) {
-  if (current?.mood === mood) return;
-  stopCurrent(() => {
-    const url = musicUrl(mood);
-    if (!url) return;
-    const el = new Audio(url);
-    el.loop = true;
-    el.volume = 0;
-    current = { mood, el };
-    // Browsers block audio before the first click; the play() rejection is expected then.
-    el.play().then(() => fade(el, VOLUME)).catch(() => {
-      if (current?.el === el) current = null;
-    });
-  });
+function stopAll() {
+  const el = playing;
+  playing = null;
+  el?.pause();
 }
 
-/** Plays the track for `mood` (cross-fading on change); starts on the first user gesture if autoplay is blocked. */
+/** Keeps `mood` as the next track to play; starts on the first user gesture if autoplay is blocked. */
 export function useBgm(mood: MusicMood): { muted: boolean; setMuted: (muted: boolean) => void } {
   const [muted, setMutedState] = useState(readMuted);
 
@@ -74,17 +58,17 @@ export function useBgm(mood: MusicMood): { muted: boolean; setMuted: (muted: boo
   };
 
   useEffect(() => {
+    wanted = mood;
     if (muted) {
-      stopCurrent(() => {});
+      stopAll();
       return;
     }
-    playMood(mood);
-    const retry = () => playMood(mood);
-    window.addEventListener("pointerdown", retry, { once: true });
-    return () => window.removeEventListener("pointerdown", retry);
+    startWanted();
+    window.addEventListener("pointerdown", startWanted, { once: true });
+    return () => window.removeEventListener("pointerdown", startWanted);
   }, [mood, muted]);
 
-  useEffect(() => () => stopCurrent(() => {}), []);
+  useEffect(() => stopAll, []);
 
   return { muted, setMuted };
 }
