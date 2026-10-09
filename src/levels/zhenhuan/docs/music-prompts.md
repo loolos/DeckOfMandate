@@ -10,12 +10,12 @@
 | 项目 | 规定 |
 |---|---|
 | 编号 / 文件名 | M01 `calm`、M02 `tension`、M03 `sorrow`、M04 `climax`；放进 `assets/music/`，`.mp3` / `.ogg` / `.m4a` / `.wav` 均可 |
-| 时长 | 每首 **2 分钟左右**（1:45–2:15），不要超过 2:30。曲子放完才换下一首，太长会让回合推进后音乐迟迟不变 |
+| 时长 | 每首 **30–40 秒**，不要超过 45 秒。曲子放完才换下一首，短一些，换曲才跟得上回合推进；同一阶段会重播 |
 | 开头 | **从静音起**：开头约 0.5 秒静音，再轻轻进入（淡入），不要一上来就是满强度 |
 | 结尾 | **以静音收**：最后一个音自然衰减，尾部留约 1.5 秒静音；不要突然截断，也不要循环式收尾 |
 | 编制 | 纯器乐，无人声，无歌词；古筝 / 古琴 / 笛箫 / 二胡 / 琵琶为主，可垫少量弦乐与鼓 |
 | 响度 | 四首响度接近（约 -16 LUFS），避免换曲时忽大忽小；游戏内音量固定 50% |
-| 体积 | 单首 ≤ 3 MB（128 kbps mp3 即可） |
+| 体积 | 单首 ≤ 1 MB（128 kbps mp3 即可） |
 | 版权 | 原创，不要引用《甄嬛传》原曲旋律 |
 
 两首之间因此一定隔着一小段静音（上一首的尾 + 下一首的头，约 2 秒），像翻页一样自然，不需要做交叉淡化。
@@ -46,7 +46,7 @@ AI 工具往往做不到精确的静音首尾，生成后用 Audacity 修一下�
 每条 prompt 都由「统一开头 + 本曲描述 + 统一结尾」拼成，整段直接复制。English 效果更稳。
 
 **统一开头**（每条都带）
-> Original instrumental piece in ancient Chinese court style, no vocals, no lyrics. Duration about 2 minutes. Starts from silence with a very soft gentle fade-in, and ends by naturally decaying to silence with a long quiet tail; no abrupt cut, no loop.
+> Original instrumental piece in ancient Chinese court style, no vocals, no lyrics. Duration about 35 seconds. Starts from silence with a very soft gentle fade-in, and ends by naturally decaying to silence with a long quiet tail; no abrupt cut, no loop.
 
 **统一结尾**（每条都带）
 > Clean studio recording, warm and refined, consistent loudness, avoid copying any existing TV drama melody.
@@ -55,13 +55,13 @@ AI 工具往往做不到精确的静音首尾，生成后用 Audacity 修一下�
 > Light, cheerful palace afternoon. Plucked guzheng arpeggios, playful bamboo flute melody, soft pipa accents, warm and lively, around 90 BPM, pentatonic, graceful and a little mischievous. Steady gentle energy throughout.
 
 **M02 tension 紧张**
-> Suspenseful palace intrigue. Low sustained erhu and cello, muted pizzicato guzheng plucks, restrained hand-drum pulse, a few dissonant touches, slowly building unease around 84 BPM, whispering and hidden menace. Stays tense and restrained; no big climax.
+> Suspenseful palace intrigue. Low sustained erhu and cello, muted pizzicato guzheng plucks, restrained hand-drum pulse, a few dissonant touches, building unease around 84 BPM, whispering and hidden menace. Stays tense and restrained; no big climax.
 
 **M03 sorrow 哀婉**
 > Sorrowful and tender. Expressive solo erhu with soft guqin and slow strings, bittersweet pentatonic melody, free rubato feel, around 54 BPM, quiet grief and resignation, delicate and moving. Sparse and spacious.
 
 **M04 climax 高潮**
-> Dramatic climax of a palace confrontation. Pounding taiko-style drums, urgent guzheng runs, erhu and strings rising in intensity, around 100 BPM, fateful and decisive, powerful but still elegant. Builds steadily to a peak in the last third, then resolves and fades to silence.
+> Dramatic climax of a palace confrontation. Pounding taiko-style drums, urgent guzheng runs, erhu and strings rising in intensity, around 100 BPM, fateful and decisive, powerful but still elegant. Builds quickly to a peak in the last third, then resolves and fades to silence.
 
 ## 工具与授权
 
