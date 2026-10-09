@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ONE_SHOT_MOODS, musicUrl, type MusicMood } from "./music";
+import { musicUrl, type MusicMood } from "./music";
 import styles from "./zhenhuan.module.css";
 
 const MUTE_KEY = "zhenhuan.bgm.muted";
@@ -50,7 +50,7 @@ function playMood(mood: MusicMood) {
     const url = musicUrl(mood);
     if (!url) return;
     const el = new Audio(url);
-    el.loop = !ONE_SHOT_MOODS.has(mood);
+    el.loop = true;
     el.volume = 0;
     current = { mood, el };
     // Browsers block audio before the first click; the play() rejection is expected then.

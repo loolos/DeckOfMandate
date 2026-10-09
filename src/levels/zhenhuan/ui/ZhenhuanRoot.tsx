@@ -63,7 +63,7 @@ export function ZhenhuanRoot() {
     else clearSession();
   }, [session]);
 
-  const bgm = useBgm(introPending ? "menu" : musicMood(session));
+  const bgm = useBgm(musicMood(session));
   const musicToggle = <MusicToggle muted={bgm.muted} onChange={bgm.setMuted} />;
 
   const runCode = useMemo(() => (session ? encodeSessionCode(session) : ""), [session]);
