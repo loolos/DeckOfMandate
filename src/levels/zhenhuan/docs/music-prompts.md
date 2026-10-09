@@ -48,7 +48,7 @@ AI 工具往往做不到精确的静音首尾，生成后用 Audacity 修一下�
 2. **工具里打开「纯音乐 / Instrumental」。** 以 Suno 为例：Custom 模式，打开 Instrumental，把 prompt 贴进 Style of Music（或 Song Description），Title 填编号即可。
 3. **每首生成 3–4 条，挑一条。** 首选标准：时长在 30–40 秒内，开头和结尾是静的，结尾收得自然、重播不突兀。
 4. **时长没卡住的不用重来**：长了就在 Audacity 里截到 40 秒内，并按上面的「统一格式」补静音和淡出。
-5. **下载后按编号重命名**，例如 `M01.mp3`；交回时上传到 `art-inbox/` 或直接放进 `assets/music/` 并改成英文文件名（M01 → `calm.mp3`，见下表）。
+5. **下载后按编号重命名**，例如 `M01.mp3`，交到 `music-inbox/`（或直接发在项目对话里）。改名入库由 `npm run music:import` 完成，处理进度见 `music-inbox/README.md` 的状态表。
 
 | 编号 | 文件名 | 情绪 |
 |---|---|---|
