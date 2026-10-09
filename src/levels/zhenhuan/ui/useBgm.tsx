@@ -4,24 +4,29 @@ import styles from "./zhenhuan.module.css";
 
 const MUTE_KEY = "zhenhuan.bgm.muted";
 const VOLUME = 0.5;
+/** Silence between two tracks. */
+const GAP_MS = 3000;
 
+/** Muted unless the player has turned the music on (and that choice was remembered). */
 function readMuted(): boolean {
   try {
-    return localStorage.getItem(MUTE_KEY) === "1";
+    return localStorage.getItem(MUTE_KEY) !== "0";
   } catch {
-    return false;
+    return true;
   }
 }
 
 /**
  * One track at a time, each played through once. A mood change never interrupts the track
- * that is playing: when it ends, the track for whatever mood is wanted *then* starts next.
+ * that is playing: when it ends, ~3 s of silence follow, then the track for whatever mood is
+ * wanted *at that moment* (current level and turn) starts.
  */
 let wanted: MusicMood = "calm";
 let playing: HTMLAudioElement | null = null;
+let gapTimer: number | undefined;
 
 function startWanted() {
-  if (playing) return;
+  if (playing || gapTimer !== undefined) return;
   const url = musicUrl(wanted);
   if (!url) return;
   const el = new Audio(url);
@@ -30,7 +35,10 @@ function startWanted() {
   el.addEventListener("ended", () => {
     if (playing !== el) return;
     playing = null;
-    startWanted();
+    gapTimer = window.setTimeout(() => {
+      gapTimer = undefined;
+      startWanted();
+    }, GAP_MS);
   });
   // Browsers block audio before the first click; the play() rejection is expected then.
   el.play().catch(() => {
@@ -39,6 +47,8 @@ function startWanted() {
 }
 
 function stopAll() {
+  window.clearTimeout(gapTimer);
+  gapTimer = undefined;
   const el = playing;
   playing = null;
   el?.pause();

@@ -7,7 +7,10 @@
  *   node scripts/importMusic.mjs            import everything in the inbox, refresh the table
  *   node scripts/importMusic.mjs --status   only refresh the table
  *
- * .wav is converted to 128 kbps mp3 (needs ffmpeg); durations are read with ffprobe when present.
+ * With ffmpeg present every file is re-encoded to 128 kbps mp3 (cover art and tags dropped) with
+ * a 0.5 s fade-in and a 2 s fade-out; the game itself leaves ~3 s of silence between tracks
+ * (`--raw` copies mp3 / m4a / ogg untouched). Without ffmpeg files are copied as they are and
+ * .wav is skipped. Durations are read with ffprobe when present.
  * Spec: src/levels/zhenhuan/docs/music-prompts.md (30–40 s, ≤ 1 MB).
  */
 import { execFileSync } from "node:child_process";
@@ -28,6 +31,7 @@ const TRACKS = [
 const MAX_BYTES = 1024 * 1024;
 const MIN_SECONDS = 30;
 const MAX_SECONDS = 45;
+const RAW = process.argv.includes("--raw");
 
 function has(cmd) {
   try {
@@ -63,9 +67,10 @@ function importAll() {
       continue;
     }
     const src = path.join(INBOX, name);
-    const ext = parsed[1] === "wav" ? "mp3" : parsed[1];
+    const encode = has("ffmpeg") && (parsed[1] === "wav" || !RAW);
+    const ext = encode ? "mp3" : parsed[1];
     const dest = path.join(MUSIC_DIR, `${track[1]}.${ext}`);
-    if (parsed[1] === "wav" && !has("ffmpeg")) {
+    if (parsed[1] === "wav" && !encode) {
       notes.push(`跳过 ${name}：wav 需要 ffmpeg 转成 mp3`);
       continue;
     }
@@ -73,8 +78,11 @@ function importAll() {
       const old = path.join(MUSIC_DIR, `${track[1]}.${e}`);
       if (fs.existsSync(old)) fs.rmSync(old);
     }
-    if (parsed[1] === "wav") {
-      execFileSync("ffmpeg", ["-v", "error", "-y", "-i", src, "-codec:a", "libmp3lame", "-b:a", "128k", dest]);
+    if (encode) {
+      const len = duration(src);
+      const filters = ["afade=t=in:d=0.5"];
+      if (len != null) filters.push(`afade=t=out:st=${Math.max(0, len - 2).toFixed(2)}:d=2`);
+      execFileSync("ffmpeg", ["-v", "error", "-y", "-i", src, "-map", "0:a", "-map_metadata", "-1", "-af", filters.join(","), "-codec:a", "libmp3lame", "-b:a", "128k", dest]);
       fs.rmSync(src);
     } else {
       fs.renameSync(src, dest);
