@@ -1331,3 +1331,21 @@
     width: 330px;
   }
 }
+
+.musicToggle {
+  position: fixed;
+  top: 0.6rem;
+  right: 0.6rem;
+  z-index: 50;
+  width: 2.2rem;
+  height: 2.2rem;
+  border: 1px solid var(--zh-border);
+  border-radius: 50%;
+  background: var(--zh-panel-2);
+  color: var(--zh-text);
+  opacity: 0.85;
+}
+
+.musicToggle:hover {
+  opacity: 1;
+}

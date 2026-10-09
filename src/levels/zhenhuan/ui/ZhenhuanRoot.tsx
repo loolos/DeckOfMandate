@@ -19,6 +19,8 @@ import { backdropUrl } from "./art";
 import { Backdrop } from "./common";
 import { CompactModeToggle } from "./CompactModeToggle";
 import { Stage2Game } from "./Stage2Game";
+import { musicMood } from "./music";
+import { MusicToggle, useBgm } from "./useBgm";
 import { ZhenhuanGame } from "./ZhenhuanGame";
 import styles from "./zhenhuan.module.css";
 
@@ -60,6 +62,9 @@ export function ZhenhuanRoot() {
     if (session.state.outcome === "playing") saveSession(session);
     else clearSession();
   }, [session]);
+
+  const bgm = useBgm(introPending ? "menu" : musicMood(session));
+  const musicToggle = <MusicToggle muted={bgm.muted} onChange={bgm.setMuted} />;
 
   const runCode = useMemo(() => (session ? encodeSessionCode(session) : ""), [session]);
 
@@ -112,6 +117,7 @@ export function ZhenhuanRoot() {
     const st = session.state;
     return (
       <div className={styles.root}>
+        {musicToggle}
         <Backdrop src={backdropUrl(1)} />
         {introPending ? null : (
           <div className={introFade ? styles.introFade : undefined}>
@@ -134,6 +140,7 @@ export function ZhenhuanRoot() {
   if (session?.stage === 2) {
     return (
       <div className={styles.root}>
+        {musicToggle}
         <Backdrop src={backdropUrl(2)} />
         {introPending ? null : (
           <div className={introFade ? styles.introFade : undefined}>
@@ -159,6 +166,7 @@ export function ZhenhuanRoot() {
 
   return (
     <div className={styles.root}>
+      {musicToggle}
       <Backdrop src={backdropUrl(1)} variant="menu" />
       <div className={styles.menuScreen} aria-busy={!menuVisible}>
         {menuVisible ? (
