@@ -392,6 +392,12 @@ export function xianyuegeOpen(s: Z2State): boolean {
   return !s.xianyuege.done && s.xibie != null;
 }
 
+/** The 隔墙有耳 card only shows the 闲月阁 hint from the turn after 菊残霜冷 (cards played that turn still count). */
+export function xianyuegeHintVisible(s: Z2State): boolean {
+  const storyTurn = Number(Object.keys(FIXED_STORY_TURNS).find((t) => FIXED_STORY_TURNS[Number(t)] === "jiaYunFengbo"));
+  return xianyuegeOpen(s) && s.turn > storyTurn;
+}
+
 export function isXibieCard(s: Z2State, cardId: CardId2): boolean {
   return s.xibie != null && !s.xibieDone && s.xibie === cardId;
 }

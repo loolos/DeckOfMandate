@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { CARDS2, EVENTS2, FINALE, LINGRONG_EVENT, STORIES2, type CardId2, type EventId2, type EvidenceId, type StatusId2, type StoryId2 } from "../data/stage2Content";
 import {
+  xianyuegeHintVisible,
   blockedByChezhou,
   canPlayCard,
   endingLines,
@@ -1153,6 +1154,17 @@ describe("zhenhuan stage 2 engine", () => {
     t = act(t, { type: "playCard", cardUid: l2! });
     expect(t.statuses.some((x) => x.id === "jinghongWu")).toBe(true);
     expect(t.log.some((e) => e.text.includes("惊鸿舞"))).toBe(true);
+  });
+
+  it("闲月阁: hint hidden on the 菊残霜冷 turn itself, shown from the next turn", () => {
+    const s = newStage2(48, null);
+    s.xibie = "meizhuangXiangzhu";
+    s.turn = 8;
+    expect(xianyuegeHintVisible(s)).toBe(false);
+    s.turn = 9;
+    expect(xianyuegeHintVisible(s)).toBe(true);
+    s.xibie = null;
+    expect(xianyuegeHintVisible(s)).toBe(false);
   });
 
   it("闲月阁: 槿汐 + 眉庄 + 收拢人心 in one turn with 隔墙有耳 on the board → 恨意 capped at 6 for 3 more turns, once per run", () => {

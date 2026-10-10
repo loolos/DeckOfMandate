@@ -36,7 +36,7 @@ import {
 } from "../data/stage2Content";
 import { CAMPAIGN_TITLE } from "../data/content";
 import {
-  xianyuegeOpen,
+  xianyuegeHintVisible,
   blockedByChezhou,
   blockingStatusName,
   summonUnwell,
@@ -212,7 +212,7 @@ function EventCard({ state, inst, fold, dispatch }: { state: Z2State; inst: Even
         {expandedEffect2(inst.burning ? "延烧未止：圣宠 -2 后离场" : def.unresolvedText)}
       </p>
       {def.note ? <p className={styles.rule}>{def.note}</p> : null}
-      {inst.id === XIANYUEGE.event && xianyuegeOpen(state) ? (
+      {inst.id === XIANYUEGE.event && xianyuegeHintVisible(state) ? (
         <p className={styles.rule}>
           🕵️ {XIANYUEGE.hint}
           {XIANYUEGE.cards.map((id) => (
