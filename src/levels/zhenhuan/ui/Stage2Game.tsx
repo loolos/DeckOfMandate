@@ -791,6 +791,7 @@ function OutcomeModal({ state, onRestart, onMenu }: { state: Z2State; onRestart:
       <div className={styles.modal}>
         <h2 id="zh2-outcome-title">{won ? (state.victory === "perfect" ? "🌟 完美结局：真相大白" : state.victory === "full" ? "🎉 大胜：华妃打入冷宫" : "🎉 险胜：华妃失势") : "🥀 功亏一篑"}</h2>
         {won ? null : <p>{state.lossReason}。</p>}
+        {won || !state.lossStory ? null : <p>{state.lossStory}</p>}
         {state.turn >= STAGE2.totalTurns || won ? endingLines(state).map((line) => <p key={line}>{line}</p>) : null}
         <p className={styles.muted}>
           最终：第 {state.turn} 回合 · {RANKS[state.rank].name} · 清誉 {state.qingyu} · 圣宠 {state.shengchong} · 罪证 {state.evidence.length}

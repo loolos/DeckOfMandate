@@ -648,6 +648,17 @@ export const PROMOTION_TRIAL = {
   promoteTo: "changzai" as RankId,
 };
 
+/** 第一关失败结局的剧情文本（失败弹窗展示；甄嬛此时尚未被召幸，故圣宠只写“被忘在脑后”）。 */
+export type LossKind = "qingyu" | "shengchong" | "trial";
+export const LOSS_STORY: Record<LossKind, string> = {
+  qingyu:
+    "流言像春日的柳絮，一夜之间飘满了六宫。皇后在景仁宫里淡淡一句“规矩不严，如何服众”，便将你禁足在碎玉轩。浣碧红着眼替你关上宫门，听着外头窸窸窣窣的议论，你才明白，这深宫里的名声一旦碎了，便再没有人肯替你拾起来。",
+  shengchong:
+    "皇上早已想不起宫里还有一位姓甄的答应。内务府的份例一日薄似一日，往来的宫人也渐渐绕开了碎玉轩的门。院中的玉兰开了又落，没有人驻足多看一眼，你才知道，深宫最冷的并非风雪，而是被人遗忘。",
+  trial:
+    "晋封的册子颁下来，同批入宫的姐妹有了新的封号，名册上却始终没有你的名字。你仍是那个小小的答应，立在人群的最末，看别人谢恩。那一年的春天，终究没有开在你的枝头。",
+};
+
 /** Campaign display name (picker, start menu, screen titles). */
 export const CAMPAIGN_TITLE = "紫禁云深·甄嬛";
 

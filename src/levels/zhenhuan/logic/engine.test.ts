@@ -104,6 +104,7 @@ describe("zhenhuan engine", () => {
     t.opportunity = null;
     const after = act(t, { type: "endTurn" });
     expect(after.outcome).toBe("lost");
+    expect(after.lossStory).toBeTruthy();
     expect(after.qingyu).toBe(0);
     expect(after.shengchong).toBe(1); // stopped after the first effect hit 0
   });
@@ -445,6 +446,7 @@ describe("zhenhuan engine", () => {
     s = act(s, { type: "endTurn" });
     expect(s.outcome).toBe("lost");
     expect(s.lossReason).toContain("晋封考验");
+    expect(s.lossStory).toBeTruthy();
   });
 
   it("random playthroughs keep invariants and replay from run codes", () => {
