@@ -19,6 +19,8 @@ import { backdropUrl } from "./art";
 import { Backdrop } from "./common";
 import { CompactModeToggle } from "./CompactModeToggle";
 import { Stage2Game } from "./Stage2Game";
+import { musicMood } from "./music";
+import { MusicToggle, useBgm } from "./useBgm";
 import { ZhenhuanGame } from "./ZhenhuanGame";
 import styles from "./zhenhuan.module.css";
 
@@ -60,6 +62,8 @@ export function ZhenhuanRoot() {
     if (session.state.outcome === "playing") saveSession(session);
     else clearSession();
   }, [session]);
+
+  useBgm(musicMood(session));
 
   const runCode = useMemo(() => (session ? encodeSessionCode(session) : ""), [session]);
 
@@ -168,6 +172,7 @@ export function ZhenhuanRoot() {
           </h1>
           <CampaignSwitcher labelClassName={styles.menuLabel} selectClassName={styles.menuInput} />
           <CompactModeToggle />
+          <MusicToggle />
           <label className={styles.menuLabel} htmlFor="zh-level">
             选择关卡
           </label>

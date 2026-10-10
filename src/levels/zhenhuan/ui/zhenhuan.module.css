@@ -1331,3 +1331,12 @@
     width: 330px;
   }
 }
+
+.musicToggle {
+  white-space: nowrap;
+}
+
+.musicToggle[aria-pressed="true"] {
+  border-color: var(--zh-gold);
+  color: var(--zh-gold);
+}
