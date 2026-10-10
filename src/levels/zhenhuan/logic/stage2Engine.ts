@@ -383,7 +383,7 @@ export function finaleTier(evidence: number): "full" | "narrow" | "thin" {
   return n === 1 ? "full" : n === 2 ? "narrow" : "thin";
 }
 
-/** Closing text follows the verdict: 完胜 (≥ 5 evidence) or 险胜 (thinner with 2–3). */
+/** Closing text follows the verdict: 大胜 (≥ 5 evidence) or 险胜 (thinner with 2–3). */
 export function finaleDoneStory(evidence: number): string {
   if (evidence >= EVIDENCE_THRESHOLDS.fullWin) return FINALE.doneStory.full;
   return evidence >= 4 ? FINALE.doneStory.narrow : FINALE.doneStory.thin;
@@ -1411,7 +1411,7 @@ function endTurn2(s: Z2State): void {
     const perfect = n >= EVIDENCE_THRESHOLDS.perfect && f.played.length >= EVIDENCE_THRESHOLDS.perfectCards && f.xibie === true;
     s.victory = perfect ? "perfect" : n >= EVIDENCE_THRESHOLDS.fullWin ? "full" : "narrow";
     if (perfect) log(s, `罪证 ${n} 条，惜别之人在御前最后一次相助，欢宜香的内情大白：完美结局！`, "good");
-    else log(s, s.victory === "full" ? `罪证 ${n} 条，华妃降为答应，打入冷宫：完胜！` : `罪证 ${n} 条，华妃被收回协理六宫之权：险胜！`, "good");
+    else log(s, s.victory === "full" ? `罪证 ${n} 条，华妃降为答应，打入冷宫：大胜！` : `罪证 ${n} 条，华妃被收回协理六宫之权：险胜！`, "good");
     return;
   }
 

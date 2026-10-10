@@ -677,7 +677,7 @@ function Statuses({ state, dispatch }: { state: Z2State; dispatch: Dispatch }) {
                 </p>
               ))}
               <p className={styles.rule}>
-                第 30 回合【{FINALE.name}】：≤ 1 条直接失败；2–3 条须打出 3 张牌，4–6 条 2 张，≥ 7 条 1 张。罪证 ≥ {EVIDENCE_THRESHOLDS.fullWin} 条为完胜。
+                第 30 回合【{FINALE.name}】：≤ 1 条直接失败；2–3 条须打出 3 张牌，4–6 条 2 张，≥ 7 条 1 张。罪证 ≥ {EVIDENCE_THRESHOLDS.fullWin} 条为大胜。
               </p>
             </div>
           ) : null}
@@ -789,7 +789,7 @@ function OutcomeModal({ state, onRestart, onMenu }: { state: Z2State; onRestart:
   return (
     <div className={styles.overlay} role="dialog" aria-modal="true" aria-labelledby="zh2-outcome-title">
       <div className={styles.modal}>
-        <h2 id="zh2-outcome-title">{won ? (state.victory === "perfect" ? "🌟 完美结局：真相大白" : state.victory === "full" ? "🎉 完胜：华妃打入冷宫" : "🎉 险胜：华妃失势") : "🥀 功亏一篑"}</h2>
+        <h2 id="zh2-outcome-title">{won ? (state.victory === "perfect" ? "🌟 完美结局：真相大白" : state.victory === "full" ? "🎉 大胜：华妃打入冷宫" : "🎉 险胜：华妃失势") : "🥀 功亏一篑"}</h2>
         {won ? null : <p>{state.lossReason}。</p>}
         {state.turn >= STAGE2.totalTurns || won ? endingLines(state).map((line) => <p key={line}>{line}</p>) : null}
         <p className={styles.muted}>

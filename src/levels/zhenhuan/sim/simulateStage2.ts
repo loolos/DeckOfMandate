@@ -152,7 +152,7 @@ export function formatResult2(name: string, r: Sim2Result): string {
   const reasons = [...r.lossReasons.entries()].sort((a, b) => b[1] - a[1]).map(([k, n]) => `${k}×${n}`).join("；");
   return [
     name,
-    `  胜率 ${pct(r.wins)}（完胜 ${pct(r.full)}）· 晋贵人 ${pct(r.guiren)} · 晋嫔 ${pct(r.pin)} · 小产 ${pct(r.miscarriage)} · 平均罪证 ${(r.evidenceTotal / r.runs).toFixed(2)}`,
+    `  胜率 ${pct(r.wins)}（大胜 ${pct(r.full)}）· 晋贵人 ${pct(r.guiren)} · 晋嫔 ${pct(r.pin)} · 小产 ${pct(r.miscarriage)} · 平均罪证 ${(r.evidenceTotal / r.runs).toFixed(2)}`,
     `  失败回合 ${turns || "-"}`,
     `  失败原因 ${reasons || "-"}`,
   ].join("\n");
