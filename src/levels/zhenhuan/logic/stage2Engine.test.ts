@@ -979,6 +979,29 @@ describe("zhenhuan stage 2 engine", () => {
     expect(calm.opportunity).not.toBeNull();
   });
 
+  it("圆明伴驾 with 抱恙在身 / 卧床静养: only 安分随侍 or 温太医相助", () => {
+    for (const status of ["baoyangZaishen", "wochuangJingyang"] as const) {
+      const s = newStage2(47, null);
+      s.rank = "guiren";
+      withStatus(s, status);
+      openStory(s, "yuanmingyuan");
+      onlyEvents(s, {});
+      setHand(s, ["yirongZhengsu", "jinyanShenxing", "wenTaiyiZhenzhi"]);
+      expect(storyResponsesFor(s, "yirongZhengsu")).toHaveLength(0);
+      expect(storyResponsesFor(s, "jinyanShenxing")).toHaveLength(0);
+      expect(storyResponsesFor(s, "wenTaiyiZhenzhi").map((r) => r.option.id)).toEqual(["tiaoyangShengti"]);
+      const t = act(s, { type: "chooseStory", storyId: "yuanmingyuan", optionId: "anfenSuishi" });
+      expect(t.stories[0]!.chosenOptionId).toBe("anfenSuishi");
+    }
+    // healthy: all three card answers remain
+    const h = newStage2(48, null);
+    h.rank = "guiren";
+    openStory(h, "yuanmingyuan");
+    onlyEvents(h, {});
+    expect(storyResponsesFor(h, "yirongZhengsu")).toHaveLength(1);
+    expect(storyResponsesFor(h, "jinyanShenxing")).toHaveLength(1);
+  });
+
   it("卧床静养 also rules out 侍寝: 召幸 has no card answers", () => {
     const s = newStage2(36, null);
     withStatus(s, "wochuangJingyang");

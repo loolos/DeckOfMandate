@@ -278,6 +278,12 @@ function storyLocked(s: Z2State, inst: StoryInst2): boolean {
   return inst.id === "zhaoxing" && summonBlocked(s);
 }
 
+/** 抱恙在身 / 卧床静养 bars this option of an open story (e.g. 圆明伴驾 only allows 安分随侍 / 温太医相助). */
+export function optionBarredByUnwell(s: Z2State, storyId: StoryId2, optionId: string): boolean {
+  const allowed = STORIES2[storyId].unwellOptionIds;
+  return allowed != null && !allowed.includes(optionId) && summonUnwell(s) != null;
+}
+
 export function storyBasicOptions2(def: StoryDef2): StoryOption2[] {
   return def.options.filter((o) => !o.card && !o.hidden);
 }
@@ -293,7 +299,7 @@ export function storyResponsesFor(s: Z2State, cardId: CardId2): { story: StoryIn
     if (storyLocked(s, st)) continue;
     if (st.id === "zhaoxing" && summonUnwell(s)) continue;
     const option = STORIES2[st.id].options.find((o) => o.card === cardId);
-    if (option) out.push({ story: st, option });
+    if (option && !optionBarredByUnwell(s, st.id, option.id)) out.push({ story: st, option });
   }
   return out;
 }
@@ -1523,7 +1529,7 @@ export function reduce2(state: Z2State, action: Z2Action): Z2State {
       const inst = s.stories.find((st) => st.id === action.storyId && st.chosenOptionId == null);
       if (!inst || storyLocked(s, inst)) return state;
       const option = storyBasicOptions2(STORIES2[inst.id]).find((o) => o.id === action.optionId);
-      if (!option) return state;
+      if (!option || optionBarredByUnwell(s, inst.id, option.id)) return state;
       const delta = applyStoryOption(s, inst, option, `【${STORIES2[inst.id].name}】选择：${option.name}`, null);
       if (alive(s) && delta) changeRelation(s, delta, "陵容");
       checkFanan(s);
