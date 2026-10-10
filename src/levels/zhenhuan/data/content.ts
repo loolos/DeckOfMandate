@@ -90,16 +90,16 @@ export const EVENTS: Record<EventId, EventDef> = {
     kind: "opportunity",
     name: "中宫垂青",
     emoji: "🏮",
-    flavor: "景仁宫晨省，新入宫的小主们按位分站在最末。皇后娘娘的目光扫过来，在你身上停了一停。",
+    flavor: "景仁宫晨省，华妃又是最后一个到，满殿的人都屏着气。新入宫的小主们按位分站在最末，皇后娘娘的目光扫过来，在你身上停了一停。",
     reward: [{ resource: "shengchong", amount: 1 }],
     penalty: [],
     resolvedText: "圣宠 +1",
     unresolvedText: "无额外效果，事件消失",
     resolvedStory: {
       yirongZhengsu:
-        "你妆饰素净、行礼分毫不乱，在一众新人里格外显眼。皇后当众赏了你一支宫花，敬事房的人最会看风向，当晚就把你的绿头牌往前挪了挪。",
+        "你妆饰素净、行礼分毫不乱，在一众新人里格外显眼。皇后看了你许久，像是想起了什么旧人，随即让剪秋捧来一支宫花赏你。敬事房的人最会看风向，当晚就把你的绿头牌往前挪了挪。",
       jinyanShenxing:
-        "皇后问新人们住得惯不惯，旁人忙着诉苦讨巧，你只答“一切都好，谢娘娘挂念”。皇后说你稳重，赏了一匹缎子；消息传开，敬事房对碎玉轩也殷勤了几分。",
+        "皇后问新人们住得惯不惯，旁人忙着诉苦讨巧，华妃还在一旁阴阳怪气地插了两句。你一句不接，只答“一切都好，谢娘娘挂念”。皇后说你稳重，赏了一匹缎子；消息传开，敬事房对碎玉轩也殷勤了几分。",
     },
   },
   taihouChuixun: {
@@ -107,16 +107,16 @@ export const EVENTS: Record<EventId, EventDef> = {
     kind: "opportunity",
     name: "太后垂询",
     emoji: "🪭",
-    flavor: "寿康宫请你过去说说话。",
+    flavor: "寿康宫里檀香袅袅，太后素来礼佛，今日特意传你过去说说话。",
     reward: [{ resource: "qingyu", amount: 1 }],
     penalty: [],
     resolvedText: "清誉 +1",
     unresolvedText: "无额外效果，事件消失",
     resolvedStory: {
       jinyanShenxing:
-        "太后问你读过什么书，你答得谦逊稳妥，不卖弄一字。太后捻着佛珠，说这孩子沉静，是个有福气的。",
+        "太后问你读过什么书、家里是怎样教养的，你只提父亲平日的教诲，不提官职，也不卖弄一字。太后捻着佛珠，说这是规矩人家出来的孩子，沉静，有福气。",
       meizhuangXiangzhu:
-        "眉庄姐姐常往寿康宫抄经，早在太后跟前替你说了不少好话。这回她陪你一同前去，你们一唱一和，太后听得开怀，赏了你们一人一串佛珠。",
+        "眉庄姐姐常往寿康宫抄经，早在太后跟前替你说了不少好话。这回她陪你一同前去，顺势提起你也替她抄过经。你们一唱一和，太后听得开怀，赏了你们一人一串佛珠，还让你们把抄好的经卷留下。",
     },
   },
   wenTaiyiQingmai: {
@@ -124,14 +124,14 @@ export const EVENTS: Record<EventId, EventDef> = {
     kind: "opportunity",
     name: "太医请脉",
     emoji: "🩺",
-    flavor: "太医照例前来请平安脉。",
+    flavor: "太医照例前来请平安脉，隔着帕子诊过，始终低着头回话。",
     reward: [{ resource: "qingyu", amount: 1 }],
     penalty: [],
     resolvedText: "清誉 +1",
     unresolvedText: "无额外效果，事件消失",
     resolvedStory: {
       wenTaiyiZhenzhi:
-        "温实初细细诊过脉，开了一剂温补的方子，又低声嘱咐流朱几句饮食上的忌讳。他走后，宫人都说碎玉轩的小主身子调养得最好。",
+        "温实初搁下药箱前，先朝你行了一个比旁人更低的礼。他细细诊过脉，开的不是名贵补药，而是甄家从前用惯的家常方子，只为让你安心，又低声嘱咐流朱几句饮食上的忌讳。他走后，宫人都说碎玉轩的小主身子调养得最好。",
     },
   },
   gongzhongLiuyan: {
@@ -139,7 +139,7 @@ export const EVENTS: Record<EventId, EventDef> = {
     kind: "crisis",
     name: "蜚语盈廊",
     emoji: "🗣️",
-    flavor: "各宫私下议论纷纷，矛头隐隐指向你。",
+    flavor: "请安散后，曹贵人笑吟吟地说了一句“妹妹福气重”，话里带着刺。各宫私下议论纷纷，矛头隐隐指向你。",
     reward: [],
     penalty: [],
     penaltyStatus: "liuyanChanshen",
@@ -147,9 +147,9 @@ export const EVENTS: Record<EventId, EventDef> = {
     unresolvedText: "获得状态【流言缠身】",
     resolvedStory: {
       jinyanShenxing:
-        "你闭门不出，见了谁都只说些天气花草。流言找不到新的把柄，传了几日便自己散了。",
+        "你闭门不出，见了谁都只说些天气花草。旁人遇上这种事总忍不住辩白，反倒越描越黑；你却一字不辩，流言找不到新的把柄，传了几日便自己散了。",
       shoulongRenxin:
-        "你让流朱带着银子在各宫走动，凡是嚼舌根的小宫女都得了赏，嘴自然就严了。那些闲话没了传的人，不出几日便无人再提。",
+        "你让流朱带着银子先从景仁宫、翊坤宫门口的宫女嘴里堵起，凡是嚼舌根的小宫女都得了赏，嘴自然就严了。那些闲话没了传的人，不出几日便无人再提。",
       meizhuangXiangzhu:
         "眉庄姐姐在各宫走动时替你分说清楚，又寻出了最先嚼舌根的那个宫女，交给管事姑姑处置。流言一夜之间便没了声息。",
     },
@@ -159,16 +159,16 @@ export const EVENTS: Record<EventId, EventDef> = {
     kind: "crisis",
     name: "内务府刁难",
     emoji: "📦",
-    flavor: "这个月的份例迟迟没有送来。",
+    flavor: "这个月的份例迟迟没有送来，碎玉轩的炭盆已经见了底，连灯油都得省着点。",
     reward: [],
     penalty: [{ resource: "qingyu", amount: -1 }],
     resolvedText: "移除事件",
     unresolvedText: "清誉 -1",
     resolvedStory: {
       shoulongRenxin:
-        "你让小允子拿了银子去内务府打点，那管事太监掂了掂分量，当天下午份例便一样不少地送到了碎玉轩，还多添了两篓银炭。",
+        "你让小允子拿了银子去内务府打点。管事太监先是推说库里没有，小允子也不恼，只笑着又添了一块碎银，他才掂了掂分量改了口。当天下午份例便一样不少地送到了碎玉轩，还多添了两篓银炭。",
       meizhuangXiangzhu:
-        "眉庄姐姐听说了，直接把自己宫里的份例分了一半送来，又请沈家托人递话敲打内务府。没过两日，你的份例便补齐了。",
+        "眉庄姐姐听说了，直接把自己宫里的份例分了一半送来，炭、灯油、时令的料子一样不缺，又请沈家托人递话敲打内务府。没过两日，你的份例便补齐了。",
     },
   },
   liyiShiwu: {
@@ -213,14 +213,14 @@ export const EVENTS: Record<EventId, EventDef> = {
     kind: "envy",
     name: "恃宠而骄",
     emoji: "💍",
-    flavor: "得宠不过几日，各宫已在背后说你轻狂。",
+    flavor: "得宠不过几日，各宫已在背后说你轻狂，连夏常在被人整治的旧事都被翻出来，拿来与你相提并论。",
     reward: [],
     penalty: [{ resource: "qingyu", amount: -2 }],
     resolvedText: "移除事件",
     unresolvedText: "清誉 -2",
     resolvedStory: {
       jinyanShenxing:
-        "你把皇上的赏赐分送给各宫姐妹，见了谁都谦让三分。背后说你轻狂的人，渐渐也找不出话来。",
+        "你想起夏常在张扬惹祸的下场，把皇上的赏赐分送给各宫姐妹，见了谁都谦让三分。背后说你轻狂的人，渐渐也找不出话来。",
       meizhuangXiangzhu:
         "眉庄姐姐当着众人的面笑说：「妹妹得宠是她的福气，更是她的本分，倒叫你们眼红了。」又把你素日谦让的事一桩桩说给各宫听。说你轻狂的人，一时都讪讪地住了口。",
     },
