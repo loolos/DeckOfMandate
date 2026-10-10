@@ -1255,6 +1255,26 @@ describe("zhenhuan stage 2 engine", () => {
     expect(u.xianyuege.played).toEqual([]);
   });
 
+  it("闲月阁 on the turn 殿前风雨 is open: 华妃受罚, the 殿前风雨 is voided", () => {
+    const s0 = newStage2(52, null);
+    s0.turn = 12;
+    s0.rank = "guiren";
+    s0.turnRank = "guiren";
+    s0.qingyu = 10;
+    s0.shengchong = 10;
+    s0.hate = 10;
+    s0.stories = [];
+    s0.extraPlays = 1;
+    s0.xibie = "wenTaiyiZhenzhi";
+    onlyEvents(s0, { huafei: ["songzhiKuisi"] });
+    openStory(s0, "huafeiFanan");
+    let s = s0;
+    for (const uid of setHand(s, ["jinxiXiangzhu", "meizhuangXiangzhu", "shoulongRenxin"])) s = act(s, { type: "playCard", cardUid: uid });
+    expect(s.xianyuege.done).toBe(true);
+    expect(s.stories.some((st) => st.id === "huafeiFanan")).toBe(false);
+    expect(s.hate).toBe(6);
+  });
+
   it("眉庄相助's event lines switch to the 禁足 version after 菊残霜冷, whoever left", () => {
     const withConfined = (Object.keys(EVENTS2) as EventId2[]).filter((id) => EVENTS2[id].confinedStory?.meizhuangXiangzhu);
     expect(withConfined.sort()).toEqual(["gongzhongLiuyan", "neiwufuDiaonan", "songzhiKuisi", "taihouChuixun", "yikungongLiGuiju"]);

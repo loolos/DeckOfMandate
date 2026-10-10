@@ -1042,6 +1042,11 @@ function resolvePlay2(s: Z2State, cardUid: string, removeStatusUid?: string): vo
         s.hate = cap;
         log(s, `华妃被皇上斥责：恨意降到 ${cap}。`, "good");
       }
+      // 华妃 is punished: a 殿前风雨 already opened this turn (and not yet answered) is voided
+      if (s.stories.some((st) => st.id === "huafeiFanan" && st.chosenOptionId == null)) {
+        s.stories = s.stories.filter((st) => !(st.id === "huafeiFanan" && st.chosenOptionId == null));
+        log(s, "华妃受罚，本回合的【殿前风雨】作废。", "good");
+      }
     }
   }
 
