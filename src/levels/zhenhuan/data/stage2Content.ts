@@ -192,6 +192,17 @@ export const EVIDENCE_THRESHOLDS = {
   perfectCards: 3,
 };
 
+/** 第二关失败结局的剧情文本（清誉 / 圣宠归零、贵人考验未过；翊坤落幕两种失败另见 FINALE）。 */
+export type Loss2Kind = "qingyu" | "shengchong" | "trial";
+export const LOSS2_STORY: Record<Loss2Kind, string> = {
+  qingyu:
+    "华妃抓住了你的把柄，一道懿旨便将你的名声踩进了泥里。皇后冷眼旁观，从不出言替你分辩。往日同你亲近的人纷纷避开，碎玉轩的门前冷得连风都懒得停留。你终于明白，在这宫里，清誉是比性命更先碎的东西。",
+  shengchong:
+    "那盏为你留着的宫灯，不知从哪一夜起再没有亮过。皇上翻牌子时，目光掠过你的名字，没有半分停留。翊坤宫的歌舞声隔着宫墙传来，一声声，都在提醒你，恩宠这样东西，来时如春水，去时也无声无息。",
+  trial:
+    "晋封的旨意颁下，六宫皆有封赏，唯独不见你的名字。华妃在席间笑意盈盈，说“有些人，终究是福薄”。你低头拢了拢袖口，没有人看见你指尖在发颤。贵人的位分近在咫尺，却终究与你擦肩而过。",
+};
+
 /** 第 30 回合 the closing event: how many cards it takes depends on the evidence gathered. */
 export const FINALE = {
   name: "翊坤落幕",
