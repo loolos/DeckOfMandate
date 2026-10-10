@@ -124,14 +124,14 @@ export const EVENTS: Record<EventId, EventDef> = {
     kind: "opportunity",
     name: "太医请脉",
     emoji: "🩺",
-    flavor: "太医照例前来请平安脉。",
+    flavor: "太医照例前来请平安脉，隔着帕子诊过，始终低着头回话。",
     reward: [{ resource: "qingyu", amount: 1 }],
     penalty: [],
     resolvedText: "清誉 +1",
     unresolvedText: "无额外效果，事件消失",
     resolvedStory: {
       wenTaiyiZhenzhi:
-        "温实初细细诊过脉，开了一剂温补的方子，又低声嘱咐流朱几句饮食上的忌讳。他走后，宫人都说碎玉轩的小主身子调养得最好。",
+        "温实初搁下药箱前，先朝你行了一个比旁人更低的礼。他细细诊过脉，开的不是名贵补药，而是甄家从前用惯的家常方子，只为让你安心，又低声嘱咐流朱几句饮食上的忌讳。他走后，宫人都说碎玉轩的小主身子调养得最好。",
     },
   },
   gongzhongLiuyan: {
