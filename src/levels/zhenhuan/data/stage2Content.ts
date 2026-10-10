@@ -1301,6 +1301,8 @@ export type StoryDef2 = {
   readonly options: readonly StoryOption2[];
   /** Rule line shown under the flavor. */
   readonly note?: string;
+  /** With 抱恙在身 / 卧床静养 (a `noSummon` status) in effect, only these options may be taken (others are barred). */
+  readonly unwellOptionIds?: readonly string[];
   /** Replaces `flavor` from 年氏倾颓 (第 NIAN_TURN 回合) on, once 年家 has fallen. */
   readonly lateFlavor?: string;
 };
@@ -1545,8 +1547,9 @@ export const STORIES2: Record<StoryId2, StoryDef2> = {
     name: "圆明伴驾",
     emoji: "🏞️",
     flavor: "皇上带你住进圆明园碧桐书院，恩宠一时无两。",
-    note: "本回合不另出召幸；第 15、16 回合每回合都出现召幸（有孕后不再出现）；3 回合后翊坤长跪。",
+    note: "本回合不另出召幸；第 15、16 回合每回合都出现召幸（有孕后不再出现）；3 回合后翊坤长跪。身负【抱恙在身】或【卧床静养】时，只能安分随侍或由温太医相助。",
     defaultOptionId: "anfenSuishi",
+    unwellOptionIds: ["anfenSuishi", "tiaoyangShengti"],
     options: [
       { id: "anfenSuishi", name: "安分随侍", effects: [], text: "无变化", story: "你安分随侍，不争不抢。" },
       {

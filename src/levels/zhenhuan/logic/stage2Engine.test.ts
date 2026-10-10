@@ -979,6 +979,29 @@ describe("zhenhuan stage 2 engine", () => {
     expect(calm.opportunity).not.toBeNull();
   });
 
+  it("圆明伴驾 with 抱恙在身 / 卧床静养: only 安分随侍 or 温太医相助", () => {
+    for (const status of ["baoyangZaishen", "wochuangJingyang"] as const) {
+      const s = newStage2(47, null);
+      s.rank = "guiren";
+      withStatus(s, status);
+      openStory(s, "yuanmingyuan");
+      onlyEvents(s, {});
+      setHand(s, ["yirongZhengsu", "jinyanShenxing", "wenTaiyiZhenzhi"]);
+      expect(storyResponsesFor(s, "yirongZhengsu")).toHaveLength(0);
+      expect(storyResponsesFor(s, "jinyanShenxing")).toHaveLength(0);
+      expect(storyResponsesFor(s, "wenTaiyiZhenzhi").map((r) => r.option.id)).toEqual(["tiaoyangShengti"]);
+      const t = act(s, { type: "chooseStory", storyId: "yuanmingyuan", optionId: "anfenSuishi" });
+      expect(t.stories[0]!.chosenOptionId).toBe("anfenSuishi");
+    }
+    // healthy: all three card answers remain
+    const h = newStage2(48, null);
+    h.rank = "guiren";
+    openStory(h, "yuanmingyuan");
+    onlyEvents(h, {});
+    expect(storyResponsesFor(h, "yirongZhengsu")).toHaveLength(1);
+    expect(storyResponsesFor(h, "jinyanShenxing")).toHaveLength(1);
+  });
+
   it("卧床静养 also rules out 侍寝: 召幸 has no card answers", () => {
     const s = newStage2(36, null);
     withStatus(s, "wochuangJingyang");
@@ -1230,6 +1253,26 @@ describe("zhenhuan stage 2 engine", () => {
     u.stories = [];
     u = act(u, { type: "endTurn" });
     expect(u.xianyuege.played).toEqual([]);
+  });
+
+  it("闲月阁 on the turn 殿前风雨 is open: 华妃受罚, the 殿前风雨 is voided", () => {
+    const s0 = newStage2(52, null);
+    s0.turn = 12;
+    s0.rank = "guiren";
+    s0.turnRank = "guiren";
+    s0.qingyu = 10;
+    s0.shengchong = 10;
+    s0.hate = 10;
+    s0.stories = [];
+    s0.extraPlays = 1;
+    s0.xibie = "wenTaiyiZhenzhi";
+    onlyEvents(s0, { huafei: ["songzhiKuisi"] });
+    openStory(s0, "huafeiFanan");
+    let s = s0;
+    for (const uid of setHand(s, ["jinxiXiangzhu", "meizhuangXiangzhu", "shoulongRenxin"])) s = act(s, { type: "playCard", cardUid: uid });
+    expect(s.xianyuege.done).toBe(true);
+    expect(s.stories.some((st) => st.id === "huafeiFanan")).toBe(false);
+    expect(s.hate).toBe(6);
   });
 
   it("眉庄相助's event lines switch to the 禁足 version after 菊残霜冷, whoever left", () => {
