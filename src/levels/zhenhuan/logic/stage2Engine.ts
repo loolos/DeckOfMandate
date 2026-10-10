@@ -10,6 +10,8 @@ import {
   EVENT_KIND2_LABEL,
   EVENTS2,
   EVIDENCE,
+  LOSS2_STORY,
+  type Loss2Kind,
   EVIDENCE_THRESHOLDS,
   FINALE,
   FAKUI_TURN,
@@ -179,6 +181,8 @@ export type Z2State = {
   pending: { cardUid: string } | null;
   outcome: Z2Outcome;
   lossReason: string | null;
+  /** Story text for the defeat notice (see `LOSS2_STORY`); null for the finale losses, which use `endingLines`. */
+  lossStory: string | null;
   victory: "narrow" | "full" | "perfect" | null;
   /** 第 30 回合【翊坤落幕】: cards needed and cards played toward it. */
   finale: {
@@ -414,10 +418,11 @@ function log(s: Z2State, text: string, tone: LogTone = "info"): void {
   s.log.push({ turn: s.turn, text, tone });
 }
 
-function lose(s: Z2State, reason: string): void {
+function lose(s: Z2State, reason: string, kind?: Loss2Kind): void {
   if (s.outcome !== "playing") return;
   s.outcome = "lost";
   s.lossReason = reason;
+  s.lossStory = kind ? LOSS2_STORY[kind] : null;
   log(s, `失败：${reason}`, "bad");
 }
 
@@ -479,7 +484,7 @@ function applyDelta2(s: Z2State, d: Delta2, source: string): void {
   const next = Math.max(0, cur + d.amount);
   s[d.resource] = next;
   log(s, `${source}：${label} ${d.amount} → ${next}`, "bad");
-  if (next <= 0) lose(s, `${label}降至 0`);
+  if (next <= 0) lose(s, `${label}降至 0`, d.resource);
 }
 
 function applyDeltas2(s: Z2State, deltas: readonly Delta2[], source: string): void {
@@ -1373,7 +1378,7 @@ function endTurn2(s: Z2State): void {
       lingrongOnPromotion(s);
     } else if (s.turn >= GUIREN_TRIAL.lastTurn) {
       s.trial.active = false;
-      lose(s, `第 ${GUIREN_TRIAL.lastTurn} 回合结束时仍未晋为贵人`);
+      lose(s, `第 ${GUIREN_TRIAL.lastTurn} 回合结束时仍未晋为贵人`, "trial");
       return;
     }
   }
@@ -1487,6 +1492,7 @@ export function newStage2(seed: number, carry: Carry | null): Z2State {
     pending: null,
     outcome: "playing",
     lossReason: null,
+    lossStory: null,
     victory: null,
     finale: null,
     log: [],

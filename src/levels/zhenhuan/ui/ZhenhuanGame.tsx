@@ -660,9 +660,11 @@ function OutcomeModal({
             <p>你从答应晋为常在，在这深宫里站稳了第一步。可翊坤宫的华妃，已经注意到了你。</p>
           </>
         ) : (
-          <p>
-            {state.lossReason}。紫禁城里一步走错，便再难回头。
-          </p>
+          <>
+            <p>{state.lossReason}。</p>
+            {state.lossStory ? <p>{state.lossStory}</p> : null}
+            <p>紫禁城里一步走错，便再难回头。</p>
+          </>
         )}
         <p className={styles.muted}>
           最终：第 {state.turn} 回合 · {RANKS[state.rank].name} · 清誉 {state.qingyu} · 圣宠 {state.shengchong}
