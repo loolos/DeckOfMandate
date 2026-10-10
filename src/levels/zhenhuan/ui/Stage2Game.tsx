@@ -133,7 +133,7 @@ function answeringCards(id: EventId2): CardId2[] {
 function resolvedDetail(inst: EventInst2): string {
   const def = EVENTS2[inst.id];
   const by = inst.resolvedBy ? `由【${CARDS2[inst.resolvedBy].name}】` : "";
-  const tier = inst.lingrong ? `（陵容·${TIER_LABEL[inst.lingrong]}）` : "";
+  const tier = inst.lingrong && inst.resolvedBy === "lingrongXiangzhu" ? `（陵容·${TIER_LABEL[inst.lingrong]}）` : "";
   const ev = inst.evidence ? `；得到罪证【${EVIDENCE[inst.evidence].name}】` : "";
   if (def.kind === "huafei") return `${by}应对${tier}，只付出了应对的代价${ev}。`;
   if (def.kind !== "opportunity") return `${by}化解${tier}，回合末不受惩罚${ev}。`;
@@ -168,7 +168,7 @@ function EventCard({ state, inst, fold, dispatch }: { state: Z2State; inst: Even
     </span>
   );
   const story = inst.resolved && inst.resolvedBy && inst.resolvedBy !== "lingrongXiangzhu" ? (inst.story ?? def.resolvedStory[inst.resolvedBy]) : undefined;
-  const lingrongStory = inst.lingrong ? LINGRONG_EVENT[inst.id]?.[inst.lingrong]?.story : undefined;
+  const lingrongStory = inst.lingrong && (!inst.resolved || inst.resolvedBy === "lingrongXiangzhu") ? LINGRONG_EVENT[inst.id]?.[inst.lingrong]?.story : undefined;
   if (fold.compact && !fold.expanded) {
     return (
       <FoldBox fold={fold} className={className}>
