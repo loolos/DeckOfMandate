@@ -258,7 +258,7 @@ export const FINALE = {
       ["lanyongSixing", "小允子领着一众宫人跪了一地，叩首道：「那年翊坤宫外的一丈红，奴才们都在场。夏小主是怎么被打成那样的，奴才们亲眼看着，至今夜里还会惊醒。」"],
       ["fuziZhisi", "小允子领着一众宫人跪了一地，叩首道：「福子姑娘出事那夜，有人瞧见翊坤宫的人往井边去过。奴才们人微言轻，这话憋了这些年，今日不敢不说。」"],
       ["kekouZhangce", "小允子领着一众宫人跪了一地，叩首道：「奴才们年年去内务府领东西，哪一宫少了炭、少了米，又是谁吩咐扣下的，奴才们心里都有数。」"],
-      ["yuyingerYiyan", "小允子领着一众宫人跪了一地，叩首道：「余答应临去前在狱里说的话，看守的公公也听见了：倚梅园那夜的功劳，是翊坤宫教她冒认的。」"],
+      ["yuyingerYiyan", "小允子领着一众宫人跪了一地，叩首道：「余答应临去前在冷宫里说的话，看守的公公也听见了：倚梅园那夜的功劳，是翊坤宫教她冒认的。」"],
       ["maiguanYujue", "小允子领着一众宫人跪了一地，叩首道：「年府往翊坤宫送东西，走的都是西华门。奴才们替人抬过那些箱子，沉得很。」"],
     ],
     jinxiXiangzhu: [
@@ -271,7 +271,7 @@ export const FINALE = {
     ],
     lingrongXiangzhu: [
       ["fuziZhisi", "「丽嫔娘娘惊梦时，喊的都是福子的名字。福子是怎么死的，丽嫔心里最清楚，翊坤宫也最清楚。」"],
-      ["yuyingerYiyan", "「余答应在狱中说的话，臣妾也听说了：倚梅园那夜的功劳，是翊坤宫教她冒认的。」"],
+      ["yuyingerYiyan", "「余答应在冷宫里说的话，臣妾也听说了：倚梅园那夜的功劳，是翊坤宫教她冒认的。」"],
       ["lanyongSixing", "「臣妾初入宫时，夏常在也曾当众羞辱过臣妾。可她后来落得那般下场，臣妾想起来，至今夜里都睡不着。」"],
       ["kekouZhangce", "「臣妾份例微薄，最知道少一篓炭是什么滋味。翊坤宫一句话，内务府便把各宫的东西扣下了。」"],
     ],
@@ -1454,7 +1454,7 @@ export const STORIES2: Record<StoryId2, StoryDef2> = {
     id: "yuyingerShishi",
     name: "莺儿伏罪",
     emoji: "🥀",
-    flavor: "冒认倚梅园之功的余莺儿恃宠犯上，获罪下狱。",
+    flavor: "冒认倚梅园之功的余莺儿恃宠犯上，获罪打入冷宫。",
     defaultOptionId: "bujiu",
     options: [
       { id: "bujiu", name: "不救", effects: [{ resource: "qingyu", amount: -1 }], text: "清誉 -1", story: "你没有替她说一句话。旁人说你心狠。" },
@@ -1469,12 +1469,12 @@ export const STORIES2: Record<StoryId2, StoryDef2> = {
       },
       {
         id: "yuzhongTanshi",
-        name: "狱中探视",
+        name: "冷宫探视",
         card: "shoulongRenxin",
         effects: [],
         evidence: "yuyingerYiyan",
         text: "可能搜集到华妃的罪证",
-        story: "你打点狱卒，见了余莺儿最后一面。她惨笑着说，当初是华妃许她荣华，教她冒认倚梅园之功。",
+        story: "你打点冷宫的看守，见了余莺儿最后一面。她惨笑着说，当初是华妃许她荣华，教她冒认倚梅园之功。",
       },
       {
         id: "lingrongTanshi",
@@ -1485,7 +1485,7 @@ export const STORIES2: Record<StoryId2, StoryDef2> = {
         evidenceTiers: ["close", "distant"],
         text: "视情分，可能搜集到华妃的罪证",
         compact: "🎶 🗂️视情分",
-        story: "陵容替你去了一趟狱中。",
+        story: "陵容替你去了一趟冷宫。",
         tierStory: {
           close:
             "陵容说：「姐姐不必去那种地方，妹妹替你去。」她去了大半日，回来时脸色发白，指尖冰凉，只低声道：「她都说了。姐姐别问妹妹是怎么问出来的。」说罢便岔开了话头。",
