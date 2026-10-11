@@ -1175,7 +1175,7 @@ type TierTable = Record<LingrongTier, LingrongOutcome>;
 export const LINGRONG_EVENT: Partial<Record<EventId2, TierTable>> = {
   huanghouShangshi: {
     close: { resolves: true, effects: [{ resource: "shengchong", amount: 1 }], relation: 1, story: "陵容陪你一同去景仁宫，皇后见你们姐妹和睦，赏了你一对玉镯。回来的路上，陵容挽着你的胳膊，说这镯子最衬姐姐。" },
-    distant: { resolves: true, effects: [], relation: 1, story: "赏赐全落在了陵容身上。「姐姐如今是皇后跟前的红人了。」她笑着说，临走却把一支珠花塞进你手里：「这个，妹妹替姐姐留着的。」" },
+    distant: { resolves: true, effects: [], relation: 1, story: "陵容随你一同去了景仁宫。皇后见你们同来，温言夸了你们几句，各赏了东西，只是你们分着沾光，谁也没多得。出来时陵容笑着说：「姐姐如今是皇后跟前的红人了，妹妹也跟着沾了光。」临走又把一支珠花塞进你手里：「这个，妹妹替姐姐留着的。」这一路上，她话比来时多了些。" },
     resentful: { resolves: false, relation: 1, story: "皇后的赏赐落到了陵容头上。她从景仁宫出来，在碎玉轩门口站了好一会儿，终究还是进来坐了坐。" },
   },
   jingxinTiaoyang: {
