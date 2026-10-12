@@ -628,6 +628,10 @@ export const PROMOTION_TRIAL = {
   promoteTo: "changzai" as RankId,
 };
 
+/** 第一关晋封考验通过的剧情文本（日志与晋封弹窗展示；甄嬛尚未被召幸、安陵容亦未出场，故只写仪容言行与皇后）。 */
+export const PROMOTION_STORY =
+  "册封的旨意送进碎玉轩那日，浣碧捧着新制的常在宫装，欢喜得连手都在抖。皇后在景仁宫里端着茶，只淡淡说了句“这几日的规矩，倒是学得不错”。你叩头谢恩，起身时袖口微微一紧。位分是晋了，可这宫里盯着你的眼睛，也比从前多了一双。";
+
 /** Campaign display name (picker, start menu, screen titles). */
 export const CAMPAIGN_TITLE = "紫禁云深·甄嬛";
 

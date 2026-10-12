@@ -7,6 +7,7 @@ import {
   EVENTS2,
   EVIDENCE,
   EVIDENCE_THRESHOLDS,
+  GUIREN_PROMOTION_STORY,
   GUIREN_TRIAL,
   HATE,
   HUAFEI_EVENTS,
@@ -1026,6 +1027,7 @@ export function Stage2Game({ state, dispatch, runCode, showRules, onShowRules, o
       ) : null}
       {notice === "guiren" || notice === "pin" ? (
         <Notice title={`🏮 晋为${RANKS[notice].name}`} onClose={() => setNotice(null)}>
+          {notice === "guiren" ? <p>{GUIREN_PROMOTION_STORY}</p> : null}
           <p>恭喜小主晋为{RANKS[notice].name}！只是位分越高，华妃的眼睛就盯得越紧。</p>
           {LINGRONG_PROMOTION_TEXT[notice] && tier ? (
             <p>
