@@ -15,6 +15,7 @@ import {
   LOSS_STORY,
   OPENING,
   OPPORTUNITY_POOL,
+  PROMOTION_STORY,
   PROMOTION_TRIAL,
   RANKS,
   RESOURCE_LABEL,
@@ -491,6 +492,7 @@ function endTurn(s: ZhState): void {
       s.promoted = true;
       s.rank = PROMOTION_TRIAL.promoteTo;
       const rank = RANKS[s.rank];
+      log(s, PROMOTION_STORY, "good");
       log(
         s,
         `晋封成功！位分晋升为【${rank.name}】：每回合抓 ${rank.draw} 打 ${rank.plays}，清誉 / 圣宠上限 ${rank.cap}。坚持到第 ${CHAPTER.totalTurns} 回合结束即可通关。`,

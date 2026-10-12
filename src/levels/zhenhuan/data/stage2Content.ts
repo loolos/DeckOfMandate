@@ -41,6 +41,10 @@ export const GUIREN_TRIAL = {
   promoteTo: "guiren" as RankId,
 };
 
+/** 第二关贵人考验通过的剧情文本（日志与晋封弹窗展示）。 */
+export const GUIREN_PROMOTION_STORY =
+  "晋封的旨意颁下，碎玉轩上下跪了一地谢恩。那一夜的恩宠没有白费，皇上亲口说你“进退有度”。华妃在席间执着酒盏，笑意不达眼底。你垂眸受了贵人的册宝，只觉得那金册沉甸甸的，压着的不是荣光，而是翊坤宫更紧的目光。";
+
 /** Story line and mechanic notes shown on a resource tile (hover / tap); keep in sync with design-stage2.md. */
 export const RESOURCE_INFO2: Record<Resource2, ResourceInfo> = {
   qingyu: {

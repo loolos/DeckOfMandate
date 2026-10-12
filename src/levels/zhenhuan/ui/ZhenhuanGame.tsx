@@ -9,6 +9,7 @@ import {
   EVENT_KIND_LABEL,
   CAMPAIGN_TITLE,
   EVENTS,
+  PROMOTION_STORY,
   PROMOTION_TRIAL,
   PLAYS_INFO,
   RANKS,
@@ -694,6 +695,7 @@ function PromotionModal({ state, onClose }: { state: ZhState; onClose: () => voi
     <div className={styles.overlay} role="dialog" aria-modal="true" aria-labelledby="zh-promotion-title">
       <div className={styles.modal}>
         <h2 id="zh-promotion-title">🏮 晋封成功</h2>
+        <p>{PROMOTION_STORY}</p>
         <p>恭喜小主晋为{rank.name}！只是位分越高，盯着你的人就越多，后面还有更大的风浪。</p>
         <p>
           接下来只要撑到<strong>第 {CHAPTER.totalTurns} 回合结束</strong>，清誉与圣宠都不降到 0，即可通过第一关。

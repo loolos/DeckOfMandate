@@ -18,6 +18,7 @@ import {
   JINGHONG_STORY,
   XIANYUEGE,
   FIXED_STORY_TURNS,
+  GUIREN_PROMOTION_STORY,
   GUIREN_TRIAL,
   HATE,
   HUAFEI_EVENTS,
@@ -1373,6 +1374,7 @@ function endTurn2(s: Z2State): void {
       s.trial.active = false;
       s.rank = GUIREN_TRIAL.promoteTo;
       const r = RANKS[s.rank];
+      log(s, GUIREN_PROMOTION_STORY, "good");
       log(s, `晋封成功！位分晋升为【${r.name}】：每回合抓 ${r.draw} 打 ${r.plays}，清誉 / 圣宠上限 ${r.cap}。`, "good");
       applyDelta2(s, { resource: "hate", amount: 2 }, "晋为贵人");
       lingrongOnPromotion(s);
