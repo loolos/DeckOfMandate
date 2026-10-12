@@ -18,6 +18,8 @@ export default defineConfig({
     globals: true,
     environment: "node",
     setupFiles: ["src/test/setupLevels.ts"],
+    /** The Sun King batch simulations take 3–5 s alone (the default limit is 5 s) and more when files run in parallel. */
+    testTimeout: 30_000,
     /** Long batch scripts set these so console output is visible. */
     disableConsoleIntercept:
       process.env.VITEST_LONG_THIRD === "1" ||

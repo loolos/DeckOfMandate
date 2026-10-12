@@ -12,18 +12,23 @@ import {
   HATE,
   HUAFEI_EVENTS,
   LINGRONG_EVENT,
+  PLAYS_INFO2,
   RANKS,
+  RESOURCE_INFO2,
   SHENZI,
+  TAG2_INFO,
   LINGRONG_PROMOTION_TEXT,
   STAGE2,
   STATUSES2,
   STORIES2,
+  storyFlavor2,
   TIER_EMOJI,
   TIER_LABEL,
   XIBIE,
   hateTierLabel,
   HATE_REVEAL_TURN,
   JINGHONG_STORY,
+  XIANYUEGE,
   FINALE,
   huafeiDrawPlan,
   type CardId2,
@@ -32,6 +37,7 @@ import {
 } from "../data/stage2Content";
 import { CAMPAIGN_TITLE } from "../data/content";
 import {
+  xianyuegeHintVisible,
   blockedByChezhou,
   blockingStatusName,
   summonUnwell,
@@ -51,6 +57,7 @@ import {
   playsLeft2,
   rankCap,
   removableNegatives,
+  optionBarredByUnwell,
   storyBasicOptions2,
   storyCardResponses2,
   storyResponsesFor,
@@ -63,8 +70,7 @@ import {
   type Z2State,
 } from "../logic/stage2Engine";
 import { cardArtUrl, eventArtUrl, specialArtUrl, storyArtUrl } from "./art";
-import { CompactModeToggle } from "./CompactModeToggle";
-import { CardArt, FoldBox, LogView, Pile, ResolvedBanner, ScrollRow, TagChip, activateOnKey, countBy, isTypingTarget, type Fold } from "./common";
+import { CardArt, FoldBox, GameHeader, LogView, Pile, PileGroup, ResolvedBanner, ScrollRow, StatChip, TagChip, activateOnKey, countBy, isTypingTarget, type Fold } from "./common";
 import { compactEffect2, expandedEffect2, statusBrief2 } from "./effectText2";
 import styles from "./zhenhuan.module.css";
 
@@ -86,23 +92,6 @@ function Tag({ tag, tone, dispatch, dim, children }: { tag: TagId2; tone?: strin
     <TagChip tone={[tone, dim && styles.tagDim].filter(Boolean).join(" ")} onExplain={() => dispatch({ type: "explainTag", tag })}>
       {children}
     </TagChip>
-  );
-}
-
-function Stat({ label, value, max, hint, danger }: { label: string; value: number; max: number; hint?: string; danger?: boolean }) {
-  return (
-    <div className={styles.stat}>
-      <div className={styles.statLabel}>
-        {label}
-        {hint ? <span className={styles.statHint}>{hint}</span> : null}
-      </div>
-      <div className={[styles.statValue, danger && styles.statDanger].filter(Boolean).join(" ")}>
-        {value} / {max}
-      </div>
-      <div className={styles.meter}>
-        <div className={styles.meterFill} style={{ width: `${Math.max(0, Math.min(1, value / max)) * 100}%` }} />
-      </div>
-    </div>
   );
 }
 
@@ -145,7 +134,7 @@ function answeringCards(id: EventId2): CardId2[] {
 function resolvedDetail(inst: EventInst2): string {
   const def = EVENTS2[inst.id];
   const by = inst.resolvedBy ? `由【${CARDS2[inst.resolvedBy].name}】` : "";
-  const tier = inst.lingrong ? `（陵容·${TIER_LABEL[inst.lingrong]}）` : "";
+  const tier = inst.lingrong && inst.resolvedBy === "lingrongXiangzhu" ? `（陵容·${TIER_LABEL[inst.lingrong]}）` : "";
   const ev = inst.evidence ? `；得到罪证【${EVIDENCE[inst.evidence].name}】` : "";
   if (def.kind === "huafei") return `${by}应对${tier}，只付出了应对的代价${ev}。`;
   if (def.kind !== "opportunity") return `${by}化解${tier}，回合末不受惩罚${ev}。`;
@@ -179,8 +168,8 @@ function EventCard({ state, inst, fold, dispatch }: { state: Z2State; inst: Even
       ) : null}
     </span>
   );
-  const story = inst.resolved && inst.resolvedBy && inst.resolvedBy !== "lingrongXiangzhu" ? def.resolvedStory[inst.resolvedBy] : undefined;
-  const lingrongStory = inst.lingrong ? LINGRONG_EVENT[inst.id]?.[inst.lingrong]?.story : undefined;
+  const story = inst.resolved && inst.resolvedBy && inst.resolvedBy !== "lingrongXiangzhu" ? (inst.story ?? def.resolvedStory[inst.resolvedBy]) : undefined;
+  const lingrongStory = inst.lingrong && (!inst.resolved || inst.resolvedBy === "lingrongXiangzhu") ? LINGRONG_EVENT[inst.id]?.[inst.lingrong]?.story : undefined;
   if (fold.compact && !fold.expanded) {
     return (
       <FoldBox fold={fold} className={className}>
@@ -225,6 +214,17 @@ function EventCard({ state, inst, fold, dispatch }: { state: Z2State; inst: Even
         {expandedEffect2(inst.burning ? "延烧未止：圣宠 -2 后离场" : def.unresolvedText)}
       </p>
       {def.note ? <p className={styles.rule}>{def.note}</p> : null}
+      {inst.id === XIANYUEGE.event && xianyuegeHintVisible(state) ? (
+        <p className={styles.rule}>
+          🕵️ {XIANYUEGE.hint}
+          {XIANYUEGE.cards.map((id) => (
+            <span key={id} className={[styles.matchChip, state.xianyuege.played.includes(id) && styles.matchChipInHand].filter(Boolean).join(" ")}>
+              {CARDS2[id].emoji} {CARDS2[id].name}
+              {state.xianyuege.played.includes(id) ? " ✓" : ""}
+            </span>
+          ))}
+        </p>
+      ) : null}
       <p className={styles.rule}>
         <span className={styles.ruleLabel}>匹配牌：</span>
         {answeringCards(inst.id).map((id) => (
@@ -247,16 +247,26 @@ function StoryCard({ state, inst, dispatch, fold }: { state: Z2State; inst: Stor
   const chosen = inst.chosenOptionId;
   const blocked = inst.id === "zhaoxing" && summonBlocked(state);
   // 抱恙在身: no 侍寝, so the card answers are hidden until it is removed
-  const cardResponses = inst.id === "zhaoxing" && chosen == null && summonUnwell(state) ? [] : storyCardResponses2(def);
+  const cardResponses = (inst.id === "zhaoxing" && chosen == null && summonUnwell(state) ? [] : storyCardResponses2(def)).filter(
+    (o) => chosen != null || !optionBarredByUnwell(state, inst.id, o.id),
+  );
+  const unwellBars = chosen == null && def.unwellOptionIds != null && summonUnwell(state) != null;
   const locked = chosen != null || state.pending != null || state.outcome !== "playing" || blocked;
   const chosenOption = chosen ? def.options.find((o) => o.id === chosen) : undefined;
   const defaultOption = def.options.find((o) => o.id === def.defaultOptionId)!;
   const tier = tierOf(state);
   const className = [styles.card, styles.cardStory, chosen && styles.cardResolved].filter(Boolean).join(" ");
   const tag = (
-    <Tag tag="story" tone={styles.kindStory} dispatch={dispatch}>
-      剧情
-    </Tag>
+    <span className={styles.tagGroup}>
+      {inst.id === "huafeiFanan" ? (
+        <Tag tag="huafei" tone={styles.kindEnvy} dispatch={dispatch}>
+          {EVENT_KIND2_LABEL.huafei}
+        </Tag>
+      ) : null}
+      <Tag tag="story" tone={styles.kindStory} dispatch={dispatch}>
+        剧情
+      </Tag>
+    </span>
   );
   const resultText = inst.result ?? (chosenOption ? chosenOption.text : "");
   if (fold.compact && !fold.expanded) {
@@ -296,10 +306,11 @@ function StoryCard({ state, inst, dispatch, fold }: { state: Z2State; inst: Stor
           story={inst.story ?? chosenOption.story}
         />
       ) : null}
-      <p className={styles.flavor}>{def.flavor}</p>
+      <p className={styles.flavor}>{storyFlavor2(def, state.turn)}</p>
       {def.note ? <p className={styles.rule}>{def.note}</p> : null}
       {blocked ? <p className={styles.endHint}>皇上在翊坤宫，须先化解【欢宜香浓】才能处理召幸。</p> : null}
       {inst.id === "zhaoxing" && chosen == null && summonUnwell(state) ? <p className={styles.endHint}>{summonUnwell(state)}，不能侍寝：只能称病避宠或错过。</p> : null}
+      {unwellBars ? <p className={styles.endHint}>{summonUnwell(state)}，只能安分随侍或请温太医相助。</p> : null}
       {storyBasicOptions2(def).map((option) => (
         <div key={option.id} className={[styles.option, chosen === option.id && styles.optionChosen].filter(Boolean).join(" ")}>
           <span>
@@ -588,11 +599,6 @@ function HandCard({ state, card, dispatch, fold }: { state: Z2State; card: CardI
           {expandedEffect2(line)}
         </p>
       ))}
-      {isLingrong && tier ? (
-        <p className={styles.rule}>
-          没有可解决的事件时打出：陪她说说话，情分会近一些{tier === "resentful" ? "；但怨怼的她仍会反噬，圣宠 -1" : ""}。
-        </p>
-      ) : null}
       <p className={styles.rule}>
         <span className={styles.ruleLabel}>匹配事件：</span>
         {def.matches.length > 0
@@ -672,7 +678,7 @@ function Statuses({ state, dispatch }: { state: Z2State; dispatch: Dispatch }) {
                 </p>
               ))}
               <p className={styles.rule}>
-                第 30 回合【{FINALE.name}】：≤ 1 条直接失败；2–3 条须打出 3 张牌，4–6 条 2 张，≥ 7 条 1 张。罪证 ≥ {EVIDENCE_THRESHOLDS.fullWin} 条为完胜。
+                第 30 回合【{FINALE.name}】：≤ 1 条直接失败；2–3 条须打出 3 张牌，4–6 条 2 张，≥ 7 条 1 张。罪证 ≥ {EVIDENCE_THRESHOLDS.fullWin} 条为大胜。
               </p>
             </div>
           ) : null}
@@ -714,7 +720,13 @@ function Statuses({ state, dispatch }: { state: Z2State; dispatch: Dispatch }) {
                   {def.unremovable ? "·不可移除" : ""}
                 </button>
                 <span className={`${styles.muted} ${styles.statusFull}`}>
-                  {def.permanent ? "触发 / 结束前一直保留" : notYet ? `下回合起生效，共 ${st.remaining} 回合` : `剩余 ${st.remaining} 回合`}
+                  {def.permanent
+                    ? "触发 / 结束前一直保留"
+                    : notYet
+                      ? def.hateCap != null
+                        ? `本回合起生效，另有 ${st.remaining} 回合`
+                        : `下回合起生效，共 ${st.remaining} 回合`
+                      : `剩余 ${st.remaining} 回合`}
                 </span>
                 {removable.has(st.uid) ? (
                   <button
@@ -778,8 +790,9 @@ function OutcomeModal({ state, onRestart, onMenu }: { state: Z2State; onRestart:
   return (
     <div className={styles.overlay} role="dialog" aria-modal="true" aria-labelledby="zh2-outcome-title">
       <div className={styles.modal}>
-        <h2 id="zh2-outcome-title">{won ? (state.victory === "perfect" ? "🌟 完美结局：真相大白" : state.victory === "full" ? "🎉 完胜：华妃打入冷宫" : "🎉 险胜：华妃失势") : "🥀 功亏一篑"}</h2>
+        <h2 id="zh2-outcome-title">{won ? (state.victory === "perfect" ? "🌟 完美结局：真相大白" : state.victory === "full" ? "🎉 大胜：华妃打入冷宫" : "🎉 险胜：华妃失势") : "🥀 功亏一篑"}</h2>
         {won ? null : <p>{state.lossReason}。</p>}
+        {won || !state.lossStory ? null : <p>{state.lossStory}</p>}
         {state.turn >= STAGE2.totalTurns || won ? endingLines(state).map((line) => <p key={line}>{line}</p>) : null}
         <p className={styles.muted}>
           最终：第 {state.turn} 回合 · {RANKS[state.rank].name} · 清誉 {state.qingyu} · 圣宠 {state.shengchong} · 罪证 {state.evidence.length}
@@ -853,19 +866,20 @@ export function Stage2Game({ state, dispatch, runCode, showRules, onShowRules, o
   const tier = tierOf(state);
 
   // One-off notices during play (not when loading a save): promotion and 身子 appearing.
-  const [notice, setNotice] = useState<"guiren" | "pin" | "shenzi" | "hate" | "miscarriage" | "jinghong" | null>(null);
-  const prev = useRef({ rank: state.rank, shenzi: state.shenziRevealed, turn: state.turn, seed: state.seed, miscarriages: state.miscarriages, jinghong: state.jinghong.done });
+  const [notice, setNotice] = useState<"guiren" | "pin" | "shenzi" | "hate" | "miscarriage" | "jinghong" | "xianyuege" | null>(null);
+  const prev = useRef({ rank: state.rank, shenzi: state.shenziRevealed, turn: state.turn, seed: state.seed, miscarriages: state.miscarriages, jinghong: state.jinghong.done, xianyuege: state.xianyuege.done });
   useEffect(() => {
     const p = prev.current;
     const sameRun = p.seed === state.seed && state.actions.length > 0;
     if (sameRun && state.outcome === "playing") {
       if (p.miscarriages === 0 && state.miscarriages > 0) setNotice("miscarriage"); // first time only
       else if (!p.jinghong && state.jinghong.done) setNotice("jinghong");
+      else if (!p.xianyuege && state.xianyuege.done) setNotice("xianyuege");
       else if (state.rank !== p.rank && (state.rank === "guiren" || state.rank === "pin")) setNotice(state.rank);
       else if (state.shenziRevealed && !p.shenzi) setNotice("shenzi");
       else if (p.turn < HATE_REVEAL_TURN && state.turn >= HATE_REVEAL_TURN) setNotice("hate");
     }
-    prev.current = { rank: state.rank, shenzi: state.shenziRevealed, turn: state.turn, seed: state.seed, miscarriages: state.miscarriages, jinghong: state.jinghong.done };
+    prev.current = { rank: state.rank, shenzi: state.shenziRevealed, turn: state.turn, seed: state.seed, miscarriages: state.miscarriages, jinghong: state.jinghong.done, xianyuege: state.xianyuege.done };
   }, [state]);
 
   const endTurnReady = canEndTurn2(state) && !showRules && notice == null;
@@ -891,88 +905,75 @@ export function Stage2Game({ state, dispatch, runCode, showRules, onShowRules, o
   const hateShown = state.turn >= HATE_REVEAL_TURN;
   const plan = huafeiDrawPlan(state.hate);
   const unlocked = HUAFEI_EVENTS.filter((id) => state.hate >= (EVENTS2[id].unlockHate ?? 0));
+  const huafeiLeft = (state.huafeiPool ?? HUAFEI_EVENTS).filter((id) => unlocked.includes(id));
 
   return (
     <div className={[styles.page, compact && styles.compact].filter(Boolean).join(" ")}>
-      <header className={styles.header}>
-        <div>
-          <h1 className={styles.title}>{CAMPAIGN_TITLE} · {STAGE2.title}</h1>
-          <div className={styles.headerMeta}>
-            <span className={`${styles.badge} ${styles.badgeGold}`}>
-              第 {state.turn} / {STAGE2.totalTurns} 回合
-            </span>
-            <span className={styles.badge}>
-              位分：{RANKS[state.rank].name}（抓 {rank.draw} · 打 {rank.plays} · 上限 {rankCap(state)}）
-            </span>
-            {state.pregnant ? <span className={`${styles.badge} ${styles.badgeGold}`}>👶 身怀龙裔</span> : null}
-          </div>
-        </div>
-        <div className={styles.headerMeta}>
-          <CompactModeToggle />
-          <button type="button" className={styles.btn} onClick={() => onShowRules(true)}>
-            规则说明
-          </button>
-          <button type="button" className={styles.btn} onClick={onMenu}>
-            主菜单
-          </button>
-        </div>
-      </header>
+      <GameHeader
+        compact={compact}
+        campaignTitle={CAMPAIGN_TITLE}
+        stageTitle={STAGE2.title}
+        turn={state.turn}
+        totalTurns={STAGE2.totalTurns}
+        rankName={RANKS[state.rank].name}
+        rankDetail={`抓 ${rank.draw} · 打 ${rank.plays} · 上限 ${rankCap(state)}`}
+        badges={state.pregnant ? [{ text: "👶 身怀龙裔", brief: "👶", gold: true }] : []}
+        onRules={() => onShowRules(true)}
+        onRestart={onRestart}
+        onMenu={onMenu}
+      />
 
-      <ScrollRow className={`${styles.bar} ${styles.resources}`}>
-        <Stat label="🪷 清誉" hint="（归 0 即失败）" value={state.qingyu} max={rankCap(state)} danger={state.qingyu <= 1} />
-        <Stat label="👑 圣宠" hint="（归 0 即失败）" value={state.shengchong} max={rankCap(state)} danger={state.shengchong <= 1} />
-        {state.shenziRevealed ? <Stat label="🌱 身子" value={state.shenzi} max={SHENZI.max} danger={state.shenzi <= 1} /> : null}
-        {hateShown ? <Stat label={`🔥 华妃恨意 · ${hateTierLabel(state.hate)}`} value={state.hate} max={HATE.max} danger={state.hate >= 9} /> : null}
-      </ScrollRow>
-
-      <ScrollRow className={`${styles.bar} ${styles.piles}`}>
-        <div className={styles.stat}>
-          <div className={styles.statLabel}>
-            <span className={styles.pileIcon}>🀄 </span>本回合出牌
-          </div>
-          <div className={styles.statValue}>
-            {state.playsUsed} / {playLimit2(state)}
-          </div>
-        </div>
-        <Pile icon="🎴" label="抽牌堆" count={state.drawPile.length}>
-          <p className={styles.popoverTitle}>抽牌堆剩余（顺序未知）</p>
-          <CardList ids={state.drawPile.map((c) => c.id)} empty="已空，需要时将弃牌堆洗回。" />
-        </Pile>
-        <Pile icon="🗑️" label="弃牌堆" count={state.discard.length}>
-          <p className={styles.popoverTitle}>弃牌堆</p>
-          <CardList ids={state.discard.map((c) => c.id)} empty="空" />
-        </Pile>
-        {state.departed.length > 0 ? (
-          <Pile icon="🕯️" label="已离场" count={state.departed.length}>
-            <p className={styles.popoverTitle}>已离场</p>
-            <CardList ids={state.departed.map((c) => c.id)} empty="无" />
-          </Pile>
-        ) : null}
-        <Pile icon="🌸" label="机会牌池" count={state.opportunityPool.length}>
-          <p className={styles.popoverTitle}>剩余机会事件</p>
-          <EventList ids={state.opportunityPool} empty="已抽完，下次将把已用事件重新洗匀。" />
-          <p className={styles.popoverTitle}>本轮已出现</p>
-          <EventList ids={state.opportunity ? [...state.opportunityUsed, state.opportunity.id] : state.opportunityUsed} empty="无" />
-        </Pile>
-        <Pile icon="⚡" label="危机牌池" count={state.crisisPool.length}>
-          <p className={styles.popoverTitle}>剩余危机事件</p>
-          <EventList ids={state.crisisPool} empty="已抽完，下次将把已用事件重新洗匀。" />
-          <p className={styles.popoverTitle}>本轮已出现</p>
-          <EventList ids={state.crisis ? [...state.crisisUsed, state.crisis.id] : state.crisisUsed} empty="无" />
-        </Pile>
-        {hateShown ? (
-        <Pile icon="🏯" label="华妃事件" count={unlocked.length}>
-          <p className={styles.popoverTitle}>
-            恨意 {state.hate}：每回合 {plan.fixed} 张{plan.chance > 0 ? `，再 ${plan.chance * 100}% 加 1 张` : ""}（按回合开始时计算）
-          </p>
-          <p className={styles.popoverTitle}>已解锁</p>
-          <EventList ids={unlocked} empty="恨意不足 3，暂无华妃事件。" />
-          {unlocked.includes("huanyixiangZhuanchong") ? <p className={styles.muted}>【欢宜香浓】只在有召幸的回合出现。</p> : null}
-        </Pile>
-        ) : null}
-      </ScrollRow>
-
-      <Statuses state={state} dispatch={dispatch} />
+      <div className={styles.topStrip}>
+        <ScrollRow className={styles.stats}>
+          <StatChip icon="🪷" label="清誉" hint="（归 0 即失败）" info={RESOURCE_INFO2.qingyu} value={state.qingyu} max={rankCap(state)} danger={state.qingyu <= 1} />
+          <StatChip icon="👑" label="圣宠" hint="（归 0 即失败）" info={RESOURCE_INFO2.shengchong} value={state.shengchong} max={rankCap(state)} danger={state.shengchong <= 1} />
+          {state.shenziRevealed ? <StatChip icon="🌱" label="身子" info={RESOURCE_INFO2.shenzi} value={state.shenzi} max={SHENZI.max} danger={state.shenzi <= 1} /> : null}
+          {hateShown ? <StatChip icon="🔥" label={`华妃恨意 · ${hateTierLabel(state.hate)}`} info={RESOURCE_INFO2.hate} value={state.hate} max={HATE.max} danger={state.hate >= 9} /> : null}
+          <span className={styles.stripDivider} aria-hidden="true" />
+          <StatChip icon="🀄" label="本回合出牌" info={PLAYS_INFO2} value={state.playsUsed} max={playLimit2(state)} meter={false} />
+          <PileGroup compact={compact}>
+            <Pile icon="🎴" label="抽牌堆" count={state.drawPile.length}>
+              <p className={styles.popoverTitle}>抽牌堆剩余（顺序未知）</p>
+              <CardList ids={state.drawPile.map((c) => c.id)} empty="已空，需要时将弃牌堆洗回。" />
+            </Pile>
+            <Pile icon="🗑️" label="弃牌堆" count={state.discard.length}>
+              <p className={styles.popoverTitle}>弃牌堆</p>
+              <CardList ids={state.discard.map((c) => c.id)} empty="空" />
+            </Pile>
+            {state.departed.length > 0 ? (
+              <Pile icon="🕯️" label="已离场" count={state.departed.length}>
+                <p className={styles.popoverTitle}>已离场</p>
+                <CardList ids={state.departed.map((c) => c.id)} empty="无" />
+              </Pile>
+            ) : null}
+            <Pile icon="🌸" label="机会牌池" tag={TAG2_INFO.opportunity} count={state.opportunityPool.length}>
+              <p className={styles.popoverTitle}>剩余机会事件</p>
+              <EventList ids={state.opportunityPool} empty="已抽完，下次将把已用事件重新洗匀。" />
+              <p className={styles.popoverTitle}>本轮已出现</p>
+              <EventList ids={state.opportunity ? [...state.opportunityUsed, state.opportunity.id] : state.opportunityUsed} empty="无" />
+            </Pile>
+            <Pile icon="⚡" label="危机牌池" tag={TAG2_INFO.crisis} count={state.crisisPool.length}>
+              <p className={styles.popoverTitle}>剩余危机事件</p>
+              <EventList ids={state.crisisPool} empty="已抽完，下次将把已用事件重新洗匀。" />
+              <p className={styles.popoverTitle}>本轮已出现</p>
+              <EventList ids={state.crisis ? [...state.crisisUsed, state.crisis.id] : state.crisisUsed} empty="无" />
+            </Pile>
+            {hateShown ? (
+              <Pile icon="🏯" label="华妃事件" tag={TAG2_INFO.huafei} count={huafeiLeft.length}>
+                <p className={styles.popoverTitle}>
+                  恨意 {state.hate}：每回合 {plan.fixed} 张{plan.chance > 0 ? `，再 ${plan.chance * 100}% 加 1 张` : ""}（按回合开始时计算；延烧中的不占名额）
+                </p>
+                <p className={styles.popoverTitle}>已解锁、本轮还没出现</p>
+                <EventList ids={huafeiLeft} empty={unlocked.length === 0 ? "恨意不足 3，暂无华妃事件。" : "已轮过一遍，下次将把已出现的重新洗匀。"} />
+                <p className={styles.popoverTitle}>本轮已出现</p>
+                <EventList ids={state.huafeiUsed} empty="无" />
+                {unlocked.includes("huanyixiangZhuanchong") ? <p className={styles.muted}>【欢宜香浓】只在有召幸的回合出现。</p> : null}
+              </Pile>
+            ) : null}
+          </PileGroup>
+        </ScrollRow>
+        <Statuses state={state} dispatch={dispatch} />
+      </div>
 
       <h2 className={styles.sectionTitle}>
         本回合事件 <span title="未解决 / 事件总数">{eventCount.unresolved}/{eventCount.total}</span>
@@ -1047,6 +1048,14 @@ export function Stage2Game({ state, dispatch, runCode, showRules, onShowRules, o
         <Notice title="💃 惊鸿舞" onClose={() => setNotice(null)}>
           <p>{JINGHONG_STORY}</p>
           <p className={styles.muted}>获得【💃惊鸿舞】：未来 3 回合，每回合开始时圣宠 +1。这是额外的奖励，不影响晋封考验本身。</p>
+        </Notice>
+      ) : null}
+      {notice === "xianyuege" ? (
+        <Notice title="🪤 闲月阁" onClose={() => setNotice(null)}>
+          {XIANYUEGE.story.map((para) => (
+            <p key={para}>{para}</p>
+          ))}
+          <p className={styles.muted}>获得【🪤骄焰暂敛】：{STATUSES2.jiaoyanZanlian.effectText}整局只会发生一次。</p>
         </Notice>
       ) : null}
       {notice === "miscarriage" ? (

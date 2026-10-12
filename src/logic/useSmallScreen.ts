@@ -1,14 +1,14 @@
 import { useCallback, useEffect, useState } from "react";
 
 /**
- * Small-screen compact cards are intended for touch devices only.
- * Desktop browser zoom should change visual scale, not force mobile card thumbnails.
+ * 略缩模式 (compact cards) is off by default on every device; the player turns it on (or off again)
+ * with the toggle, and the choice is remembered.
  */
-const MOBILE_MEDIA_QUERY = "(max-width: 760px) and (hover: none), (max-width: 760px) and (pointer: coarse)";
 const FORCE_SMALL_SCREEN_STORAGE_KEY = "deckOfMandate_ui_forceSmallScreen";
 const FORCE_SMALL_SCREEN_EVENT = "deckOfMandate:forceSmallScreenChanged";
 
-function readForceSmallScreenFromStorage(): boolean {
+/** Stored as "1" when on; absent (or any other value) means off. */
+function readFromStorage(): boolean {
   if (typeof window === "undefined") return false;
   try {
     return window.localStorage.getItem(FORCE_SMALL_SCREEN_STORAGE_KEY) === "1";
@@ -17,10 +17,10 @@ function readForceSmallScreenFromStorage(): boolean {
   }
 }
 
-function writeForceSmallScreenToStorage(force: boolean): void {
+function writeToStorage(on: boolean): void {
   if (typeof window === "undefined") return;
   try {
-    if (force) {
+    if (on) {
       window.localStorage.setItem(FORCE_SMALL_SCREEN_STORAGE_KEY, "1");
     } else {
       window.localStorage.removeItem(FORCE_SMALL_SCREEN_STORAGE_KEY);
@@ -30,12 +30,13 @@ function writeForceSmallScreenToStorage(force: boolean): void {
   }
 }
 
-export function useForcedSmallScreenMode(): [boolean, (next: boolean) => void] {
-  const [forcedSmallScreen, setForcedSmallScreen] = useState(readForceSmallScreenFromStorage);
+/** The 略缩模式 switch: whether it is on right now, and a setter (shared by every toggle on the page). */
+export function useSmallScreenToggle(): [boolean, (next: boolean) => void] {
+  const [on, setOn] = useState(readFromStorage);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
-    const sync = () => setForcedSmallScreen(readForceSmallScreenFromStorage());
+    const sync = () => setOn(readFromStorage());
     const onStorage = (event: StorageEvent) => {
       if (event.key !== FORCE_SMALL_SCREEN_STORAGE_KEY) return;
       sync();
@@ -48,32 +49,17 @@ export function useForcedSmallScreenMode(): [boolean, (next: boolean) => void] {
     };
   }, []);
 
-  const updateForcedSmallScreen = useCallback((next: boolean) => {
-    writeForceSmallScreenToStorage(next);
-    setForcedSmallScreen(next);
+  const update = useCallback((next: boolean) => {
+    writeToStorage(next);
+    setOn(next);
     if (typeof window !== "undefined") {
       window.dispatchEvent(new Event(FORCE_SMALL_SCREEN_EVENT));
     }
   }, []);
 
-  return [forcedSmallScreen, updateForcedSmallScreen];
+  return [on, update];
 }
 
 export function useSmallScreen(): boolean {
-  const [forcedSmallScreen] = useForcedSmallScreenMode();
-  const [isSmallScreen, setIsSmallScreen] = useState(() => {
-    if (typeof window === "undefined") return false;
-    return window.matchMedia(MOBILE_MEDIA_QUERY).matches;
-  });
-
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    const media = window.matchMedia(MOBILE_MEDIA_QUERY);
-    const onChange = (event: MediaQueryListEvent) => setIsSmallScreen(event.matches);
-    setIsSmallScreen(media.matches);
-    media.addEventListener("change", onChange);
-    return () => media.removeEventListener("change", onChange);
-  }, []);
-
-  return forcedSmallScreen || isSmallScreen;
+  return useSmallScreenToggle()[0];
 }

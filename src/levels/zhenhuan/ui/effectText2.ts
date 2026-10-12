@@ -72,6 +72,7 @@ export function statusBrief2(def: StatusDef2): string {
   if (def.playCap) parts.push(`🀄≤${def.playCap}`);
   if (def.playPenalty) parts.push(`🀄-${def.playPenalty}`);
   if (def.playBonus) parts.push(`🀄+${def.playBonus}`);
+  if (def.hateCap != null) parts.push(`🔥≤${def.hateCap}`);
   for (const d of def.turnStart ?? []) parts.push(`${RESOURCE2_EMOJI[d.resource]}${signed2(d.amount)}`);
   if (def.noSummon) parts.push("🌙✗");
   return parts.length > 0 ? parts.join(" ") : "🛡️";

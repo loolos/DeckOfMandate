@@ -10,10 +10,13 @@ import {
   EVENT_KIND2_LABEL,
   EVENTS2,
   EVIDENCE,
+  LOSS2_STORY,
+  type Loss2Kind,
   EVIDENCE_THRESHOLDS,
   FINALE,
   FAKUI_TURN,
   JINGHONG_STORY,
+  XIANYUEGE,
   FIXED_STORY_TURNS,
   GUIREN_PROMOTION_STORY,
   GUIREN_TRIAL,
@@ -86,6 +89,8 @@ export type EventInst2 = {
   /** 蜚语盈廊 made worse by a 怨怼 陵容. */
   aggravated?: boolean;
   evidence?: EvidenceId;
+  /** The resolving card's story, fixed when it was resolved (眉庄's lines change once she is 禁足). */
+  story?: string;
 };
 
 export type StoryInst2 = { readonly id: StoryId2; chosenOptionId: string | null; viaCard?: CardId2; result?: string; story?: string };
@@ -136,6 +141,9 @@ export type Z2State = {
   opportunityPool: OpportunityId2[];
   opportunityUsed: OpportunityId2[];
   crisisPool: CrisisId2[];
+  /** 华妃事件 deck: null until the first 华妃事件 is drawn (then shuffled); refilled from `huafeiUsed` once nothing drawable is left. */
+  huafeiPool: HuafeiId[] | null;
+  huafeiUsed: HuafeiId[];
   crisisUsed: CrisisId2[];
   opportunity: EventInst2 | null;
   crisis: EventInst2 | null;
@@ -145,6 +153,8 @@ export type Z2State = {
   trial: { active: boolean; summoned: boolean };
   /** 惊鸿舞 (a bonus, not part of the promotion): 眉庄 / 陵容 played at any point of the 贵人考验; done once it happened. */
   jinghong: { meizhuang: boolean; lingrong: boolean; done: boolean };
+  /** 闲月阁 (once per run): which of its three cards were played this turn with 隔墙有耳 on the board. */
+  xianyuege: { played: CardId2[]; done: boolean };
   pregnant: boolean;
   pregnancies: number;
   miscarriages: number;
@@ -172,9 +182,19 @@ export type Z2State = {
   pending: { cardUid: string } | null;
   outcome: Z2Outcome;
   lossReason: string | null;
+  /** Story text for the defeat notice (see `LOSS2_STORY`); null for the finale losses, which use `endingLines`. */
+  lossStory: string | null;
   victory: "narrow" | "full" | "perfect" | null;
   /** 第 30 回合【翊坤落幕】: cards needed and cards played toward it. */
-  finale: { needed: number; played: CardId2[]; stories: string[]; /** The 惜别 card was among the 解牌 played. */ xibie?: boolean } | null;
+  finale: {
+    needed: number;
+    played: CardId2[];
+    stories: string[];
+    /** The 惜别 card was among the 解牌 played. */
+    xibie?: boolean;
+    /** Evidence the testimonies so far have spoken to (收拢人心 / 槿汐 pick a different one). */
+    cited?: EvidenceId[];
+  } | null;
   log: LogEntry[];
   actions: Z2Action[];
   turnStartActionCount: number;
@@ -263,6 +283,12 @@ function storyLocked(s: Z2State, inst: StoryInst2): boolean {
   return inst.id === "zhaoxing" && summonBlocked(s);
 }
 
+/** 抱恙在身 / 卧床静养 bars this option of an open story (e.g. 圆明伴驾 only allows 安分随侍 / 温太医相助). */
+export function optionBarredByUnwell(s: Z2State, storyId: StoryId2, optionId: string): boolean {
+  const allowed = STORIES2[storyId].unwellOptionIds;
+  return allowed != null && !allowed.includes(optionId) && summonUnwell(s) != null;
+}
+
 export function storyBasicOptions2(def: StoryDef2): StoryOption2[] {
   return def.options.filter((o) => !o.card && !o.hidden);
 }
@@ -278,7 +304,7 @@ export function storyResponsesFor(s: Z2State, cardId: CardId2): { story: StoryIn
     if (storyLocked(s, st)) continue;
     if (st.id === "zhaoxing" && summonUnwell(s)) continue;
     const option = STORIES2[st.id].options.find((o) => o.card === cardId);
-    if (option) out.push({ story: st, option });
+    if (option && !optionBarredByUnwell(s, st.id, option.id)) out.push({ story: st, option });
   }
   return out;
 }
@@ -362,7 +388,7 @@ export function finaleTier(evidence: number): "full" | "narrow" | "thin" {
   return n === 1 ? "full" : n === 2 ? "narrow" : "thin";
 }
 
-/** Closing text follows the verdict: 完胜 (≥ 5 evidence) or 险胜 (thinner with 2–3). */
+/** Closing text follows the verdict: 大胜 (≥ 5 evidence) or 险胜 (thinner with 2–3). */
 export function finaleDoneStory(evidence: number): string {
   if (evidence >= EVIDENCE_THRESHOLDS.fullWin) return FINALE.doneStory.full;
   return evidence >= 4 ? FINALE.doneStory.narrow : FINALE.doneStory.thin;
@@ -370,6 +396,17 @@ export function finaleDoneStory(evidence: number): string {
 
 export function canEndTurn2(s: Z2State): boolean {
   return s.outcome === "playing" && s.pending == null;
+}
+
+/** 闲月阁 can still happen: not yet done, and 菊残霜冷 (眉庄 禁足) is behind us. */
+export function xianyuegeOpen(s: Z2State): boolean {
+  return !s.xianyuege.done && s.xibie != null;
+}
+
+/** The 隔墙有耳 card only shows the 闲月阁 hint from the turn after 菊残霜冷 (cards played that turn still count). */
+export function xianyuegeHintVisible(s: Z2State): boolean {
+  const storyTurn = Number(Object.keys(FIXED_STORY_TURNS).find((t) => FIXED_STORY_TURNS[Number(t)] === "jiaYunFengbo"));
+  return xianyuegeOpen(s) && s.turn > storyTurn;
 }
 
 export function isXibieCard(s: Z2State, cardId: CardId2): boolean {
@@ -382,10 +419,11 @@ function log(s: Z2State, text: string, tone: LogTone = "info"): void {
   s.log.push({ turn: s.turn, text, tone });
 }
 
-function lose(s: Z2State, reason: string): void {
+function lose(s: Z2State, reason: string, kind?: Loss2Kind): void {
   if (s.outcome !== "playing") return;
   s.outcome = "lost";
   s.lossReason = reason;
+  s.lossStory = kind ? LOSS2_STORY[kind] : null;
   log(s, `失败：${reason}`, "bad");
 }
 
@@ -407,14 +445,24 @@ function revealShenzi(s: Z2State, by: "summon" | "other" = "other"): void {
   log(s, `🌱 ${why}【身子】：关系到能否怀上龙裔，以及能否平安生产。当前身子 ${s.shenzi} / ${SHENZI.max}。`, "info");
 }
 
+/** The lowest 恨意 cap among the statuses held (骄焰暂敛 binds from the turn it is gained); 10 otherwise. */
+export function hateCap(s: Z2State): number {
+  return Math.min(HATE.max, ...s.statuses.map((st) => STATUSES2[st.id].hateCap ?? HATE.max));
+}
+
 function applyDelta2(s: Z2State, d: Delta2, source: string): void {
   if (!alive(s) || d.amount === 0) return;
   const label = RESOURCE2_LABEL[d.resource];
   if (d.resource === "hate") {
-    const next = Math.max(0, Math.min(HATE.max, s.hate + d.amount));
-    if (next === s.hate) return;
+    const cap = hateCap(s);
+    const next = Math.max(0, Math.min(Math.max(cap, s.hate), s.hate + d.amount));
+    if (next === s.hate) {
+      if (d.amount > 0 && cap < HATE.max) log(s, `${source}：华妃恨意已到 ${cap}：华妃刚受了斥责，不敢再造次。`, "good");
+      return;
+    }
+    const capped = d.amount > 0 && cap < HATE.max && next - s.hate < d.amount ? `（骄焰暂敛：最多 ${cap}）` : "";
     s.hate = next;
-    log(s, `${source}：华妃恨意 ${d.amount > 0 ? "+" : ""}${d.amount} → ${next}`, d.amount > 0 ? "bad" : "good");
+    log(s, `${source}：华妃恨意 ${d.amount > 0 ? "+" : ""}${d.amount}${capped} → ${next}`, d.amount > 0 ? "bad" : "good");
     return;
   }
   if (d.resource === "shenzi") {
@@ -437,7 +485,7 @@ function applyDelta2(s: Z2State, d: Delta2, source: string): void {
   const next = Math.max(0, cur + d.amount);
   s[d.resource] = next;
   log(s, `${source}：${label} ${d.amount} → ${next}`, "bad");
-  if (next <= 0) lose(s, `${label}降至 0`);
+  if (next <= 0) lose(s, `${label}降至 0`, d.resource);
 }
 
 function applyDeltas2(s: Z2State, deltas: readonly Delta2[], source: string): void {
@@ -540,7 +588,7 @@ function becomePregnant(s: Z2State, source: string): void {
   if (s.rank === "guiren") {
     // 晋嫔 waits for the 请脉报喜 opportunity, put at the bottom of the pool
     s.opportunityPool = [...s.opportunityPool.filter((id) => id !== PIN_EVENT), PIN_EVENT];
-    log(s, "【请脉报喜】加入机会牌池：太医确诊后才能晋为嫔。", "good");
+    log(s, "【请脉报喜】加入机会牌池：诊脉报喜妥当后才能晋为嫔。", "good");
   }
   applyDelta2(s, { resource: "hate", amount: 3 }, "喜脉");
 }
@@ -627,6 +675,22 @@ function checkFanan(s: Z2State): void {
   openStory(s, "huafeiFanan");
 }
 
+function cite(f: NonNullable<Z2State["finale"]>, id: EvidenceId): void {
+  f.cited = [...(f.cited ?? []), id];
+}
+
+/** A 解牌's line at 翊坤落幕: testify to an evidence you hold that no one has spoken to yet. */
+function finaleStory(s: Z2State, card: CardId2, tier: LingrongTier | null): string {
+  const f = s.finale!;
+  const pick = (FINALE.witnessStory[card] ?? []).find(([id]) => s.evidence.includes(id) && !(f.cited ?? []).includes(id));
+  if (pick) {
+    cite(f, pick[0]);
+    return tier ? FINALE.lingrongManner[tier] + pick[1] : pick[1];
+  }
+  if (tier) return FINALE.lingrongStory[tier];
+  return FINALE.cardStory[card] ?? "";
+}
+
 function openStory(s: Z2State, id: StoryId2): void {
   s.stories.push({ id, chosenOptionId: null });
   log(s, `剧情事件：【${STORIES2[id].name}】`);
@@ -700,8 +764,9 @@ function applyResponsePenalty(s: Z2State, cost: ResponsePenalty, source: string)
   if (cost.status && alive(s)) addStatus2(s, cost.status, cost.statusTurns);
 }
 
-function eventStoryFor(ev: EventInst2, card: CardId2): string | undefined {
-  return EVENTS2[ev.id].resolvedStory[card];
+function eventStoryFor(s: Z2State, ev: EventInst2, card: CardId2): string | undefined {
+  const def = EVENTS2[ev.id];
+  return (s.xibie != null ? def.confinedStory?.[card] : undefined) ?? def.resolvedStory[card];
 }
 
 function resolveEventByCard(s: Z2State, ev: EventInst2, card: CardId2, doubleReward: boolean): void {
@@ -709,8 +774,11 @@ function resolveEventByCard(s: Z2State, ev: EventInst2, card: CardId2, doubleRew
   ev.resolved = true;
   ev.resolvedBy = card;
   log(s, `${verb(def.kind)}${EVENT_KIND2_LABEL[def.kind]}事件【${def.name}】`, "good");
-  const story = eventStoryFor(ev, card);
-  if (story) log(s, story);
+  const story = eventStoryFor(s, ev, card);
+  if (story) {
+    ev.story = story;
+    log(s, story);
+  }
   // 华妃事件 are never free: answering still costs one lighter penalty
   const cost = def.double ? def.doublePenalty : def.responsePenalty?.[card];
   if (cost && alive(s)) applyResponsePenalty(s, cost, `${def.name}（应对的代价）`);
@@ -937,12 +1005,12 @@ function resolvePlay2(s: Z2State, cardUid: string, removeStatusUid?: string): vo
     else log(s, `【${EVENTS2[ev.id].name}】双牌进度 1/2${d.kind === "both" ? `（还需${d.cards.filter((c) => c !== card.id).map((c) => `【${CARDS2[c].name}】`).join("")}）` : ""}。`);
   }
 
-  // 5. 陵容 with nothing to answer: just her company, 情分 +1 (a 怨怼 one still bites: 反噬)
+  // 5. 陵容 with nothing to answer: just her company, 情分 +1 (a 怨怼 one still drops a 微词 before the emperor)
   if (alive(s) && isLingrong && tier && responses.length === 0 && singles.length === 0 && !finaleAccepts(s, card.id)) {
     log(s, LINGRONG_IDLE_TEXT[tier], tier === "resentful" ? "bad" : "good");
     if (tier === "resentful") {
-      log(s, "怨怼的陵容反咬一口。", "bad");
-      applyDeltas2(s, LINGRONG_BACKLASH, "陵容反噬");
+      log(s, "话虽说开了几分，怨怼的陵容出门后仍在皇上跟前略有微词。", "bad");
+      applyDeltas2(s, LINGRONG_BACKLASH, "陵容微词");
     }
     relationDelta += 1;
   }
@@ -969,12 +1037,31 @@ function resolvePlay2(s: Z2State, cardUid: string, removeStatusUid?: string): vo
     }
   }
 
+  if (alive(s) && xianyuegeOpen(s) && XIANYUEGE.cards.includes(card.id) && s.huafei.some((e) => e.id === XIANYUEGE.event)) {
+    if (!s.xianyuege.played.includes(card.id)) s.xianyuege.played = [...s.xianyuege.played, card.id];
+    if (XIANYUEGE.cards.every((c) => s.xianyuege.played.includes(c))) {
+      s.xianyuege.done = true;
+      log(s, `🪤 ${XIANYUEGE.log}`, "good");
+      addStatus2(s, "jiaoyanZanlian");
+      const cap = hateCap(s);
+      if (s.hate > cap) {
+        s.hate = cap;
+        log(s, `华妃被皇上斥责：恨意降到 ${cap}。`, "good");
+      }
+      // 华妃 is punished: a 殿前风雨 already opened this turn (and not yet answered) is voided
+      if (s.stories.some((st) => st.id === "huafeiFanan" && st.chosenOptionId == null)) {
+        s.stories = s.stories.filter((st) => !(st.id === "huafeiFanan" && st.chosenOptionId == null));
+        log(s, "华妃受罚，本回合的【殿前风雨】作废。", "good");
+      }
+    }
+  }
+
   if (alive(s) && finaleAccepts(s, card.id)) {
     const f = s.finale!;
     const first = !f.played.includes(card.id);
     f.played.push(card.id);
     if (xibie) f.xibie = true;
-    const story = !first ? "" : isLingrong ? FINALE.lingrongStory[tier ?? "distant"] : (FINALE.cardStory[card.id] ?? "");
+    const story = first ? finaleStory(s, card.id, isLingrong ? (tier ?? "distant") : null) : "";
     if (story) f.stories.push(`${def.emoji} ${story}`);
     log(s, `【${FINALE.name}】${story}（解牌 ${f.played.length}/${f.needed}）`, "good");
     if (f.played.length === f.needed) log(s, finaleDoneStory(s.evidence.length), "good");
@@ -985,6 +1072,9 @@ function resolvePlay2(s: Z2State, cardUid: string, removeStatusUid?: string): vo
   if (xibie) {
     s.departed.push(card);
     departXibie(s, xibie);
+  } else if (s.xibie === card.id && s.xibieCulled && !s.xibieDone) {
+    // this very play chose the leaving person (e.g. 查验药方): the card in flight is one of the "other copies", so it leaves too
+    s.departed.push(card);
   } else {
     s.discard.push(card);
   }
@@ -1004,25 +1094,58 @@ function drawHuafei(s: Z2State): void {
   if (plan.chance > 0 && roll(s) < plan.chance) n++;
   // 欢宜香浓 (截宠) only shows up on a turn that has a 召幸 to steal.
   const summonTonight = s.stories.some((st) => st.id === "zhaoxing");
-  const unlocked = HUAFEI_EVENTS.filter((id) => s.hate >= (EVENTS2[id].unlockHate ?? 0) && (summonTonight || !EVENTS2[id].blocksSummon));
+  // A 延烧 one kept from last turn takes no slot: `n` only counts new draws.
+  const drawable = (id: HuafeiId, drawn: HuafeiId[]) =>
+    s.hate >= (EVENTS2[id].unlockHate ?? 0) && (summonTonight || !EVENTS2[id].blocksSummon) && !drawn.includes(id);
   const drawn: HuafeiId[] = [];
   for (let i = 0; i < n; i++) {
-    const options = unlocked.filter((id) => !drawn.includes(id));
-    if (options.length === 0) break;
-    const id = options[Math.floor(roll(s) * options.length)]!;
+    const id = drawFromHuafeiPool(s, (x) => drawable(x, drawn));
+    if (!id) break;
     drawn.push(id);
     s.huafei.push(newEvent(s, id));
     log(s, `华妃事件：【${EVENTS2[id].name}】`, "bad");
   }
 }
 
+/**
+ * 华妃事件 are dealt like the other pools: the first drawable one from the top of a shuffled deck.
+ * Locked ones (恨意 too low, or 欢宜香浓 with no 召幸) wait in the deck; once nothing drawable is
+ * left, the used ones are shuffled back in.
+ */
+function drawFromHuafeiPool(s: Z2State, drawable: (id: HuafeiId) => boolean): HuafeiId | null {
+  const take = (): HuafeiId | null => {
+    const pool = s.huafeiPool!;
+    const i = pool.findIndex(drawable);
+    if (i < 0) return null;
+    const [id] = pool.splice(i, 1);
+    s.huafeiUsed.push(id!);
+    return id!;
+  };
+  if (s.huafeiPool == null) {
+    const [rng, shuffled] = shuffle(s.rng, [...HUAFEI_EVENTS]);
+    s.rng = rng;
+    s.huafeiPool = shuffled;
+    s.huafeiUsed = [];
+  }
+  const first = take();
+  if (first || !s.huafeiUsed.some(drawable)) return first;
+  const [rng, shuffled] = shuffle(s.rng, s.huafeiUsed);
+  s.rng = rng;
+  s.huafeiPool = [...s.huafeiPool, ...shuffled];
+  s.huafeiUsed = [];
+  log(s, "华妃事件已轮过一遍，已出现的事件重新洗匀。");
+  return take();
+}
+
 function checkSummon(s: Z2State): void {
-  // 召幸 starts once the 贵人考验 has begun; none on the 罚跪 turn, the 菊残霜冷 turn or the last turn (none interrupts the interval count).
+  // 召幸 starts once the 贵人考验 has begun; none on the 罚跪 turn, the 菊残霜冷 turn, the 圆明伴驾 turn
+  // (that story is itself the 召幸 of the day) or the last turn (none interrupts the interval count).
   if (
     s.pregnant ||
     s.turn < GUIREN_TRIAL.firstTurn ||
     s.turn === FAKUI_TURN ||
     FIXED_STORY_TURNS[s.turn] === "jiaYunFengbo" ||
+    FIXED_STORY_TURNS[s.turn] === "yuanmingyuan" ||
     s.turn >= STAGE2.totalTurns
   )
     return;
@@ -1056,6 +1179,7 @@ function beginTurn2(s: Z2State, turn: number): void {
   s.extraPlays = 0;
   s.drawnThisTurn = 0;
   s.lianmeiSpent = [];
+  s.xianyuege.played = [];
   s.notices = [];
   log(s, `—— 第 ${turn} 回合 ——`);
 
@@ -1206,7 +1330,7 @@ function endTurn2(s: Z2State): void {
       const [rng, shuffled] = shuffle(s.rng, [...s.opportunityPool, PIN_EVENT]);
       s.rng = rng;
       s.opportunityPool = shuffled;
-      log(s, "【请脉报喜】没能确诊，洗回机会牌池。");
+      log(s, "【请脉报喜】没能稳妥报喜，洗回机会牌池。");
     }
   } else if (s.opportunity && !retiredOpportunity(s, s.opportunity)) s.opportunityUsed.push(s.opportunity.id as OpportunityId2);
   if (s.crisis) s.crisisUsed.push(s.crisis.id as CrisisId2);
@@ -1256,7 +1380,7 @@ function endTurn2(s: Z2State): void {
       lingrongOnPromotion(s);
     } else if (s.turn >= GUIREN_TRIAL.lastTurn) {
       s.trial.active = false;
-      lose(s, `第 ${GUIREN_TRIAL.lastTurn} 回合结束时仍未晋为贵人`);
+      lose(s, `第 ${GUIREN_TRIAL.lastTurn} 回合结束时仍未晋为贵人`, "trial");
       return;
     }
   }
@@ -1294,7 +1418,7 @@ function endTurn2(s: Z2State): void {
     const perfect = n >= EVIDENCE_THRESHOLDS.perfect && f.played.length >= EVIDENCE_THRESHOLDS.perfectCards && f.xibie === true;
     s.victory = perfect ? "perfect" : n >= EVIDENCE_THRESHOLDS.fullWin ? "full" : "narrow";
     if (perfect) log(s, `罪证 ${n} 条，惜别之人在御前最后一次相助，欢宜香的内情大白：完美结局！`, "good");
-    else log(s, s.victory === "full" ? `罪证 ${n} 条，华妃降为答应，打入冷宫：完胜！` : `罪证 ${n} 条，华妃被收回协理六宫之权：险胜！`, "good");
+    else log(s, s.victory === "full" ? `罪证 ${n} 条，华妃降为答应，打入冷宫：大胜！` : `罪证 ${n} 条，华妃被收回协理六宫之权：险胜！`, "good");
     return;
   }
 
@@ -1339,6 +1463,8 @@ export function newStage2(seed: number, carry: Carry | null): Z2State {
     opportunityUsed: [],
     crisisPool,
     crisisUsed: [],
+    huafeiPool: null,
+    huafeiUsed: [],
     opportunity: null,
     crisis: null,
     huafei: [],
@@ -1346,6 +1472,7 @@ export function newStage2(seed: number, carry: Carry | null): Z2State {
     notices: [],
     trial: { active: false, summoned: false },
     jinghong: { meizhuang: false, lingrong: false, done: false },
+    xianyuege: { played: [], done: false },
     pregnant: false,
     pregnancies: 0,
     miscarriages: 0,
@@ -1367,6 +1494,7 @@ export function newStage2(seed: number, carry: Carry | null): Z2State {
     pending: null,
     outcome: "playing",
     lossReason: null,
+    lossStory: null,
     victory: null,
     finale: null,
     log: [],
@@ -1414,7 +1542,7 @@ export function reduce2(state: Z2State, action: Z2Action): Z2State {
       const inst = s.stories.find((st) => st.id === action.storyId && st.chosenOptionId == null);
       if (!inst || storyLocked(s, inst)) return state;
       const option = storyBasicOptions2(STORIES2[inst.id]).find((o) => o.id === action.optionId);
-      if (!option) return state;
+      if (!option || optionBarredByUnwell(s, inst.id, option.id)) return state;
       const delta = applyStoryOption(s, inst, option, `【${STORIES2[inst.id].name}】选择：${option.name}`, null);
       if (alive(s) && delta) changeRelation(s, delta, "陵容");
       checkFanan(s);
@@ -1462,7 +1590,7 @@ export function endingLines(s: Z2State): string[] {
   if (s.miscarriages > 0) lines.push("那个没能保住的孩子，成了你心里一道过不去的坎。");
   if (s.pregnant) lines.push(s.miscarriages > 0 ? "所幸腹中又有了龙裔，这一回安然无恙，阖宫都在等着这个孩子降生。" : "腹中的龙裔安然无恙，阖宫都在等着这个孩子降生。");
   else if (s.pregnancies === 0) lines.push("这一路走来，腹中始终没有动静。");
-  if (s.xibie) lines.push(s.xibie === "meizhuangXiangzhu" ? "存菊堂的宫门依旧紧闭，眉庄姐姐还在等一个昭雪的日子。" : "疫所的书信隔几日便到，温实初总说一切安好。");
+  if (s.xibie) lines.push(s.xibie === "meizhuangXiangzhu" ? "眉庄姐姐早已心灰意冷，闭门不出，再不过问后宫之事。" : "疫所的书信隔几日便到，温实初总说一切安好。");
   const tier = tierOf(s);
   if (tier === "close") lines.push("陵容依旧常来碎玉轩，姐妹情分一如往昔。");
   else if (tier === "distant") lines.push("陵容来得越来越少了，见面时笑意也淡了。");

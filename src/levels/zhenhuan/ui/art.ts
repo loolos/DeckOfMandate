@@ -7,8 +7,8 @@ import type { CardId2, EventId2, StoryId2 } from "../data/stage2Content";
  */
 
 /** `../assets/cards/yizhangHong.webp` → `yizhangHong`. */
-export function indexByBasename(files: Record<string, string>): ReadonlyMap<string, string> {
-  return new Map(Object.entries(files).map(([path, url]) => [path.slice(path.lastIndexOf("/") + 1).replace(/\.webp$/, ""), url]));
+export function indexByBasename(files: Record<string, string>, ext: RegExp = /\.webp$/): ReadonlyMap<string, string> {
+  return new Map(Object.entries(files).map(([path, url]) => [path.slice(path.lastIndexOf("/") + 1).replace(ext, ""), url]));
 }
 
 const CARD_ART = indexByBasename(import.meta.glob<string>("../assets/cards/*.webp", { eager: true, import: "default" }));

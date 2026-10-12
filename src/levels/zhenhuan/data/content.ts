@@ -8,6 +8,26 @@ export type Resource = "qingyu" | "shengchong";
 export const RESOURCE_LABEL: Record<Resource, string> = { qingyu: "清誉", shengchong: "圣宠" };
 export const RESOURCE_EMOJI: Record<Resource, string> = { qingyu: "🪷", shengchong: "👑" };
 
+/** Story line and mechanic notes shown on a resource tile (hover / tap). */
+export type ResourceInfo = { readonly lore: string; readonly rules: readonly string[] };
+
+export const RESOURCE_INFO: Record<Resource, ResourceInfo> = {
+  qingyu: {
+    lore: "宫里人人都盯着你的言行。名声一坏，再得宠也立不住脚。",
+    rules: ["降到 0 立即失败。", "上限随位分提高（答应 9、常在 12）。"],
+  },
+  shengchong: {
+    lore: "皇上的恩宠，是你在后宫里最要紧的依仗，也最招人眼红。",
+    rules: ["降到 0 立即失败。", "上限随位分提高（答应 9、常在 12）。", "第 6 回合起圣宠 ≥ 5 会招来嫉妒事件。"],
+  },
+};
+
+/** Notes for the 本回合出牌 tile. */
+export const PLAYS_INFO: ResourceInfo = {
+  lore: "一日里能办的事有限，先办哪件、留哪件，全凭你拿主意。",
+  rules: ["每回合最多打出的手牌数，由位分决定（答应 1、常在 2）。", "【静观其变】可让本回合多出 1 张。", "回合结束时手牌全部弃置。"],
+};
+
 /** One step of an effect list; lists resolve in order and each step is checked for defeat. */
 export type ResourceDelta = { readonly resource: Resource; readonly amount: number };
 
@@ -20,16 +40,16 @@ export type RankDef = {
   readonly name: string;
   readonly draw: number;
   readonly plays: number;
-  /** Cap for both 清誉 and 圣宠. 答应 is 8 so the trial's 圣宠 ≥ 6 isn't the cap; higher ranks are provisional (design.md §2). */
+  /** Cap for both 清誉 and 圣宠. 答应 is 9 so the trial's 圣宠 ≥ 6 isn't the cap; higher ranks are provisional (design.md §2). */
   readonly cap: number;
 };
 
 export const RANKS: Record<RankId, RankDef> = {
-  daying: { id: "daying", name: "答应", draw: 3, plays: 1, cap: 8 },
-  changzai: { id: "changzai", name: "常在", draw: 3, plays: 2, cap: 10 },
-  guiren: { id: "guiren", name: "贵人", draw: 4, plays: 2, cap: 14 },
+  daying: { id: "daying", name: "答应", draw: 3, plays: 1, cap: 9 },
+  changzai: { id: "changzai", name: "常在", draw: 3, plays: 2, cap: 12 },
+  guiren: { id: "guiren", name: "贵人", draw: 4, plays: 2, cap: 15 },
   pin: { id: "pin", name: "嫔", draw: 5, plays: 3, cap: 18 },
-  fei: { id: "fei", name: "妃", draw: 6, plays: 3, cap: 22 },
+  fei: { id: "fei", name: "妃", draw: 6, plays: 3, cap: 21 },
 };
 
 // ---------------------------------------------------------------- events
@@ -70,16 +90,16 @@ export const EVENTS: Record<EventId, EventDef> = {
     kind: "opportunity",
     name: "中宫垂青",
     emoji: "🏮",
-    flavor: "景仁宫晨省，新入宫的小主们按位分站在最末。皇后娘娘的目光扫过来，在你身上停了一停。",
+    flavor: "景仁宫晨省，华妃又是最后一个到，满殿的人都屏着气。新入宫的小主们按位分站在最末，皇后娘娘的目光扫过来，在你身上停了一停。",
     reward: [{ resource: "shengchong", amount: 1 }],
     penalty: [],
     resolvedText: "圣宠 +1",
     unresolvedText: "无额外效果，事件消失",
     resolvedStory: {
       yirongZhengsu:
-        "你妆饰素净、行礼分毫不乱，在一众新人里格外显眼。皇后当众赏了你一支宫花，敬事房的人最会看风向，当晚就把你的绿头牌往前挪了挪。",
+        "你妆饰素净、行礼分毫不乱，在一众新人里格外显眼。皇后看了你许久，像是想起了什么旧人，随即让剪秋捧来一支宫花赏你。敬事房的人最会看风向，当晚就把你的绿头牌往前挪了挪。",
       jinyanShenxing:
-        "皇后问新人们住得惯不惯，旁人忙着诉苦讨巧，你只答“一切都好，谢娘娘挂念”。皇后说你稳重，赏了一匹缎子；消息传开，敬事房对碎玉轩也殷勤了几分。",
+        "皇后问新人们住得惯不惯，旁人忙着诉苦讨巧，华妃还在一旁阴阳怪气地插了两句。你一句不接，只答“一切都好，谢娘娘挂念”。皇后说你稳重，赏了一匹缎子；消息传开，敬事房对碎玉轩也殷勤了几分。",
     },
   },
   taihouChuixun: {
@@ -87,16 +107,16 @@ export const EVENTS: Record<EventId, EventDef> = {
     kind: "opportunity",
     name: "太后垂询",
     emoji: "🪭",
-    flavor: "寿康宫请你过去说说话。",
+    flavor: "寿康宫里檀香袅袅，太后素来礼佛，今日特意传你过去说说话。",
     reward: [{ resource: "qingyu", amount: 1 }],
     penalty: [],
     resolvedText: "清誉 +1",
     unresolvedText: "无额外效果，事件消失",
     resolvedStory: {
       jinyanShenxing:
-        "太后问你读过什么书，你答得谦逊稳妥，不卖弄一字。太后捻着佛珠，说这孩子沉静，是个有福气的。",
+        "太后问你读过什么书、家里是怎样教养的，你只提父亲平日的教诲，不提官职，也不卖弄一字。太后捻着佛珠，说这是规矩人家出来的孩子，沉静，有福气。",
       meizhuangXiangzhu:
-        "眉庄姐姐常往寿康宫抄经，早在太后跟前替你说了不少好话。这回她陪你一同前去，你们一唱一和，太后听得开怀，赏了你们一人一串佛珠。",
+        "眉庄姐姐常往寿康宫抄经，早在太后跟前替你说了不少好话。这回她陪你一同前去，顺势提起你也替她抄过经。你们一唱一和，太后听得开怀，赏了你们一人一串佛珠，还让你们把抄好的经卷留下。",
     },
   },
   wenTaiyiQingmai: {
@@ -104,14 +124,14 @@ export const EVENTS: Record<EventId, EventDef> = {
     kind: "opportunity",
     name: "太医请脉",
     emoji: "🩺",
-    flavor: "太医照例前来请平安脉。",
+    flavor: "太医照例前来请平安脉，隔着帕子诊过，始终低着头回话。",
     reward: [{ resource: "qingyu", amount: 1 }],
     penalty: [],
     resolvedText: "清誉 +1",
     unresolvedText: "无额外效果，事件消失",
     resolvedStory: {
       wenTaiyiZhenzhi:
-        "温实初细细诊过脉，开了一剂温补的方子，又低声嘱咐流朱几句饮食上的忌讳。他走后，宫人都说碎玉轩的小主身子调养得最好。",
+        "温实初搁下药箱前，先朝你行了一个比旁人更低的礼。他细细诊过脉，开的不是名贵补药，而是甄家从前用惯的家常方子，只为让你安心，又低声嘱咐流朱几句饮食上的忌讳。他走后，宫人都说碎玉轩的小主身子调养得最好。",
     },
   },
   gongzhongLiuyan: {
@@ -119,7 +139,7 @@ export const EVENTS: Record<EventId, EventDef> = {
     kind: "crisis",
     name: "蜚语盈廊",
     emoji: "🗣️",
-    flavor: "各宫私下议论纷纷，矛头隐隐指向你。",
+    flavor: "请安散后，曹贵人笑吟吟地说了一句“妹妹福气重”，话里带着刺。各宫私下议论纷纷，矛头隐隐指向你。",
     reward: [],
     penalty: [],
     penaltyStatus: "liuyanChanshen",
@@ -127,9 +147,9 @@ export const EVENTS: Record<EventId, EventDef> = {
     unresolvedText: "获得状态【流言缠身】",
     resolvedStory: {
       jinyanShenxing:
-        "你闭门不出，见了谁都只说些天气花草。流言找不到新的把柄，传了几日便自己散了。",
+        "你闭门不出，见了谁都只说些天气花草。旁人遇上这种事总忍不住辩白，反倒越描越黑；你却一字不辩，流言找不到新的把柄，传了几日便自己散了。",
       shoulongRenxin:
-        "你让流朱带着银子在各宫走动，凡是嚼舌根的小宫女都得了赏，嘴自然就严了。那些闲话没了传的人，不出几日便无人再提。",
+        "你让流朱带着银子先从景仁宫、翊坤宫门口的宫女嘴里堵起，凡是嚼舌根的小宫女都得了赏，嘴自然就严了。那些闲话没了传的人，不出几日便无人再提。",
       meizhuangXiangzhu:
         "眉庄姐姐在各宫走动时替你分说清楚，又寻出了最先嚼舌根的那个宫女，交给管事姑姑处置。流言一夜之间便没了声息。",
     },
@@ -139,24 +159,24 @@ export const EVENTS: Record<EventId, EventDef> = {
     kind: "crisis",
     name: "内务府刁难",
     emoji: "📦",
-    flavor: "这个月的份例迟迟没有送来。",
+    flavor: "这个月的份例迟迟没有送来，碎玉轩的炭盆已经见了底，连灯油都得省着点。",
     reward: [],
     penalty: [{ resource: "qingyu", amount: -1 }],
     resolvedText: "移除事件",
     unresolvedText: "清誉 -1",
     resolvedStory: {
       shoulongRenxin:
-        "你让小允子拿了银子去内务府打点，那管事太监掂了掂分量，当天下午份例便一样不少地送到了碎玉轩，还多添了两篓银炭。",
+        "你让小允子拿了银子去内务府打点。管事太监先是推说库里没有，小允子也不恼，只笑着又添了一块碎银，他才掂了掂分量改了口。当天下午份例便一样不少地送到了碎玉轩，还多添了两篓银炭。",
       meizhuangXiangzhu:
-        "眉庄姐姐听说了，直接把自己宫里的份例分了一半送来，又请沈家托人递话敲打内务府。没过两日，你的份例便补齐了。",
+        "眉庄姐姐听说了，直接把自己宫里的份例分了一半送来，炭、灯油、时令的料子一样不缺，又请沈家托人递话敲打内务府。没过两日，你的份例便补齐了。",
     },
   },
   liyiShiwu: {
     id: "liyiShiwu",
     kind: "crisis",
-    name: "礼仪失误",
+    name: "仪态微瑕",
     emoji: "🎎",
-    flavor: "请安时的一个小差错，被有心人看在眼里。",
+    flavor: "请安时一时失仪，在众人面前露了怯，被有心人看在眼里。",
     reward: [],
     penalty: [
       { resource: "qingyu", amount: -1 },
@@ -183,7 +203,7 @@ export const EVENTS: Record<EventId, EventDef> = {
     unresolvedText: "圣宠 -1",
     resolvedStory: {
       yirongZhengsu:
-        "你精心妆扮，在皇上必经的路上赏花。皇上见了你，便忘了倚梅园的歌声，当晚翻了你的绿头牌。",
+        "你精心妆扮，在皇上必经的路上赏花。皇上见了你，不由驻足留意，问起这是哪一宫的新人，倚梅园的歌声便也不再要紧了。",
       shoulongRenxin:
         "你打点了敬事房的公公，余答应递去的话总是慢了半步。她连唱了几夜，皇上却一次也没去。",
     },
@@ -193,14 +213,14 @@ export const EVENTS: Record<EventId, EventDef> = {
     kind: "envy",
     name: "恃宠而骄",
     emoji: "💍",
-    flavor: "得宠不过几日，各宫已在背后说你轻狂。",
+    flavor: "得宠不过几日，各宫已在背后说你轻狂，连夏常在被人整治的旧事都被翻出来，拿来与你相提并论。",
     reward: [],
     penalty: [{ resource: "qingyu", amount: -2 }],
     resolvedText: "移除事件",
     unresolvedText: "清誉 -2",
     resolvedStory: {
       jinyanShenxing:
-        "你把皇上的赏赐分送给各宫姐妹，见了谁都谦让三分。背后说你轻狂的人，渐渐也找不出话来。",
+        "你想起夏常在张扬惹祸的下场，把皇上的赏赐分送给各宫姐妹，见了谁都谦让三分。背后说你轻狂的人，渐渐也找不出话来。",
       meizhuangXiangzhu:
         "眉庄姐姐当着众人的面笑说：「妹妹得宠是她的福气，更是她的本分，倒叫你们眼红了。」又把你素日谦让的事一桩桩说给各宫听。说你轻狂的人，一时都讪讪地住了口。",
     },
@@ -376,7 +396,7 @@ export const CARDS: Record<CardId, CardDef> = {
     id: "wenTaiyiZhenzhi",
     name: "温太医相助",
     emoji: "💊",
-    flavor: "温实初的方子，总是最妥帖的。",
+    flavor: "温实初的方子最是妥帖，碎玉轩上下的病痛经他手皆能化解。",
     base: [],
     baseDraw: 0,
     matches: ["wenTaiyiQingmai", "liyiShiwu"],
@@ -407,7 +427,7 @@ export const CARDS: Record<CardId, CardDef> = {
     id: "meizhuangXiangzhu",
     name: "眉庄相助",
     emoji: "👭",
-    flavor: "眉姐姐总会站在你这边。",
+    flavor: "眉姐姐总会站在你这边，风浪再大，有她在便不是孤身一人。",
     base: [{ resource: "qingyu", amount: 1 }],
     baseDraw: 0,
     matches: ["taihouChuixun", "gongzhongLiuyan", "neiwufuDiaonan", "shichongErjiao", "anzhongXiaban"],
@@ -631,6 +651,17 @@ export const PROMOTION_TRIAL = {
 /** 第一关晋封考验通过的剧情文本（日志与晋封弹窗展示；甄嬛尚未被召幸、安陵容亦未出场，故只写仪容言行与皇后）。 */
 export const PROMOTION_STORY =
   "册封的旨意送进碎玉轩那日，浣碧捧着新制的常在宫装，欢喜得连手都在抖。皇后在景仁宫里端着茶，只淡淡说了句“这几日的规矩，倒是学得不错”。你叩头谢恩，起身时袖口微微一紧。位分是晋了，可这宫里盯着你的眼睛，也比从前多了一双。";
+
+/** 第一关失败结局的剧情文本（失败弹窗展示；甄嬛此时尚未被召幸，故圣宠只写“被忘在脑后”）。 */
+export type LossKind = "qingyu" | "shengchong" | "trial";
+export const LOSS_STORY: Record<LossKind, string> = {
+  qingyu:
+    "流言像春日的柳絮，一夜之间飘满了六宫。皇后在景仁宫里淡淡一句“规矩不严，如何服众”，便将你禁足在碎玉轩。浣碧红着眼替你关上宫门，听着外头窸窸窣窣的议论，你才明白，这深宫里的名声一旦碎了，便再没有人肯替你拾起来。",
+  shengchong:
+    "皇上早已想不起宫里还有这位小主。内务府的份例一日薄似一日，往来的宫人也渐渐绕开了碎玉轩的门。院中的玉兰开了又落，没有人驻足多看一眼，你才知道，深宫最冷的并非风雪，而是被人遗忘。",
+  trial:
+    "晋封的册子颁下来，同批入宫的姐妹有了新的封号，名册上却始终没有你的名字。你仍是那个小小的答应，立在人群的最末，看别人谢恩。那一年的春天，终究没有开在你的枝头。",
+};
 
 /** Campaign display name (picker, start menu, screen titles). */
 export const CAMPAIGN_TITLE = "紫禁云深·甄嬛";

@@ -12,6 +12,7 @@ import {
   ENVY_TRIGGER,
   EVENT_KIND_LABEL,
   EVENTS,
+  LOSS_STORY,
   OPENING,
   OPPORTUNITY_POOL,
   PROMOTION_STORY,
@@ -26,6 +27,7 @@ import {
   type EnvyId,
   type EventId,
   type EventKind,
+  type LossKind,
   type OpportunityId,
   type RankId,
   type ResourceDelta,
@@ -104,6 +106,8 @@ export type ZhState = {
   pending: { cardUid: string } | null;
   outcome: ZhOutcome;
   lossReason: string | null;
+  /** Story text for the defeat notice (see `LOSS_STORY`). */
+  lossStory: string | null;
   log: LogEntry[];
   actions: ZhAction[];
   /** `actions.length` at the start of the current turn (autosave point). */
@@ -192,10 +196,11 @@ function log(s: ZhState, text: string, tone: LogTone = "info"): void {
   s.log.push({ turn: s.turn, text, tone });
 }
 
-function lose(s: ZhState, reason: string): void {
+function lose(s: ZhState, reason: string, kind: LossKind): void {
   if (s.outcome !== "playing") return;
   s.outcome = "lost";
   s.lossReason = reason;
+  s.lossStory = LOSS_STORY[kind];
   log(s, `失败：${reason}`, "bad");
 }
 
@@ -213,7 +218,7 @@ function applyDelta(s: ZhState, d: ResourceDelta, source: string): void {
   const next = Math.max(0, cur + d.amount);
   s[d.resource] = next;
   log(s, `${source}：${label} ${d.amount} → ${next}`, "bad");
-  if (next <= 0) lose(s, `${label}降至 0`);
+  if (next <= 0) lose(s, `${label}降至 0`, d.resource);
 }
 
 function applyDeltas(s: ZhState, deltas: readonly ResourceDelta[], source: string): void {
@@ -495,7 +500,7 @@ function endTurn(s: ZhState): void {
       );
     } else if (s.turn >= PROMOTION_TRIAL.lastTurn) {
       s.trial.active = false;
-      lose(s, `第 ${PROMOTION_TRIAL.lastTurn} 回合结束时仍未通过晋封考验`);
+      lose(s, `第 ${PROMOTION_TRIAL.lastTurn} 回合结束时仍未通过晋封考验`, "trial");
       return;
     }
   }
@@ -571,6 +576,7 @@ export function newGame(seed: number): ZhState {
     pending: null,
     outcome: "playing",
     lossReason: null,
+    lossStory: null,
     log: [],
     actions: [],
     turnStartActionCount: 0,

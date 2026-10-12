@@ -1,9 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { CARDS2, EVENTS2, LINGRONG_EVENT, STORIES2, type CardId2, type EventId2, type StatusId2, type StoryId2 } from "../data/stage2Content";
+import { CARDS2, EVENTS2, FINALE, LINGRONG_EVENT, STORIES2, type CardId2, type EventId2, type EvidenceId, type StatusId2, type StoryId2 } from "../data/stage2Content";
 import {
+  xianyuegeHintVisible,
   blockedByChezhou,
   canPlayCard,
   endingLines,
+  hateCap,
   isFreeByLianmei,
   lianmeiLit,
   newStage2,
@@ -99,9 +101,9 @@ describe("zhenhuan stage 2 engine", () => {
   });
 
   it("carry-over values are used and capped at the 常在 cap", () => {
-    const s = newStage2(1, { qingyu: 3, shengchong: 12 });
+    const s = newStage2(1, { qingyu: 3, shengchong: 14 });
     expect(s.qingyu).toBe(3);
-    expect(s.shengchong).toBe(10);
+    expect(s.shengchong).toBe(12);
   });
 
   it("初请安 sets the starting hate; 凤鸾空返 sets relation and puts 3 陵容 into the discard pile", () => {
@@ -179,7 +181,7 @@ describe("zhenhuan stage 2 engine", () => {
     expect(canPlayCard(s, a!)).toBe(false);
     const before = s.shengchong;
     const t = act(s, { type: "playCard", cardUid: l! });
-    expect(t.shengchong).toBe(before - 1); // 反噬
+    expect(t.shengchong).toBe(before - 1); // 微词
     expect(blockedByChezhou(t, a!)).toBe(false);
   });
 
@@ -618,6 +620,28 @@ describe("zhenhuan stage 2 engine", () => {
     expect(has(s)).toBe(true);
   });
 
+  it("no 召幸 on the 圆明伴驾 turn (14), every turn after it in the garden (15, 16)", () => {
+    const s = newStage2(19, null);
+    s.rank = "guiren";
+    s.shengchong = 14;
+    s.summonLast = null;
+    s.stories = [];
+    s.turn = 13;
+    s.qingyu = 10;
+    s.crisis = null;
+    s.huafei = [];
+    const t = act(s, { type: "endTurn" });
+    expect(t.turn).toBe(14);
+    expect(t.stories.some((x) => x.id === "yuanmingyuan")).toBe(true);
+    expect(t.stories.some((x) => x.id === "zhaoxing")).toBe(false);
+    t.huafei = [];
+    t.crisis = null;
+    const u = act(t, { type: "endTurn" });
+    expect(u.turn).toBe(15);
+    expect(u.pregnant).toBe(false); // 安分随侍 by default
+    expect(u.stories.some((x) => x.id === "zhaoxing")).toBe(true);
+  });
+
   it("no 召幸 on the 罚跪 turn (17)", () => {
     const s = newStage2(19, null);
     s.rank = "guiren";
@@ -666,6 +690,20 @@ describe("zhenhuan stage 2 engine", () => {
     s = act(s, { type: "endTurn" });
     expect(all(s)).toHaveLength(1);
     expect(s.xibieDone).toBe(false);
+  });
+
+  it("惜别: playing 温太医 to answer 菊残霜冷 (查验药方) does not leave a second copy behind", () => {
+    let s = advanceTo(newStage2(20, null), 8);
+    s.stories = [];
+    const [played] = setHand(s, ["wenTaiyiZhenzhi", "wenTaiyiZhenzhi"]);
+    s.discard = s.discard.filter((c) => c.id !== "wenTaiyiZhenzhi");
+    s.drawPile = s.drawPile.filter((c) => c.id !== "wenTaiyiZhenzhi");
+    openStory(s, "jiaYunFengbo");
+    s = act(s, { type: "playCard", cardUid: played! });
+    expect(s.xibie).toBe("wenTaiyiZhenzhi");
+    const all = [...s.drawPile, ...s.hand, ...s.discard].filter((c) => c.id === "wenTaiyiZhenzhi");
+    expect(all).toHaveLength(1);
+    expect(s.departed.filter((c) => c.id === "wenTaiyiZhenzhi")).toHaveLength(1);
   });
 
   it("欢宜香浓 only shows up on a turn with 召幸", () => {
@@ -941,6 +979,29 @@ describe("zhenhuan stage 2 engine", () => {
     expect(calm.opportunity).not.toBeNull();
   });
 
+  it("圆明伴驾 with 抱恙在身 / 卧床静养: only 安分随侍 or 温太医相助", () => {
+    for (const status of ["baoyangZaishen", "wochuangJingyang"] as const) {
+      const s = newStage2(47, null);
+      s.rank = "guiren";
+      withStatus(s, status);
+      openStory(s, "yuanmingyuan");
+      onlyEvents(s, {});
+      setHand(s, ["yirongZhengsu", "jinyanShenxing", "wenTaiyiZhenzhi"]);
+      expect(storyResponsesFor(s, "yirongZhengsu")).toHaveLength(0);
+      expect(storyResponsesFor(s, "jinyanShenxing")).toHaveLength(0);
+      expect(storyResponsesFor(s, "wenTaiyiZhenzhi").map((r) => r.option.id)).toEqual(["tiaoyangShengti"]);
+      const t = act(s, { type: "chooseStory", storyId: "yuanmingyuan", optionId: "anfenSuishi" });
+      expect(t.stories[0]!.chosenOptionId).toBe("anfenSuishi");
+    }
+    // healthy: all three card answers remain
+    const h = newStage2(48, null);
+    h.rank = "guiren";
+    openStory(h, "yuanmingyuan");
+    onlyEvents(h, {});
+    expect(storyResponsesFor(h, "yirongZhengsu")).toHaveLength(1);
+    expect(storyResponsesFor(h, "jinyanShenxing")).toHaveLength(1);
+  });
+
   it("卧床静养 also rules out 侍寝: 召幸 has no card answers", () => {
     const s = newStage2(36, null);
     withStatus(s, "wochuangJingyang");
@@ -982,7 +1043,7 @@ describe("zhenhuan stage 2 engine", () => {
     expect(s.hate).toBe(4);
   });
 
-  it("陵容 played with nothing to answer: 情分 +1 (怨怼 still 反噬)", () => {
+  it("陵容 played with nothing to answer: 情分 +1 (怨怼 still 微词)", () => {
     const run = (relation: number) => {
       let s = newStage2(41, null);
       s.relation = relation;
@@ -1116,6 +1177,194 @@ describe("zhenhuan stage 2 engine", () => {
     t = act(t, { type: "playCard", cardUid: l2! });
     expect(t.statuses.some((x) => x.id === "jinghongWu")).toBe(true);
     expect(t.log.some((e) => e.text.includes("惊鸿舞"))).toBe(true);
+  });
+
+  it("闲月阁: hint hidden on the 菊残霜冷 turn itself, shown from the next turn", () => {
+    const s = newStage2(48, null);
+    s.xibie = "meizhuangXiangzhu";
+    s.turn = 8;
+    expect(xianyuegeHintVisible(s)).toBe(false);
+    s.turn = 9;
+    expect(xianyuegeHintVisible(s)).toBe(true);
+    s.xibie = null;
+    expect(xianyuegeHintVisible(s)).toBe(false);
+  });
+
+  it("闲月阁: 槿汐 + 眉庄 + 收拢人心 in one turn with 隔墙有耳 on the board → 恨意 capped at 6 for 3 more turns, once per run", () => {
+    const setup = (seed: number) => {
+      const s = newStage2(seed, null);
+      s.turn = 12;
+      s.rank = "guiren";
+      s.turnRank = "guiren";
+      s.qingyu = 10;
+      s.shengchong = 10;
+      s.hate = 8;
+      s.stories = [];
+      s.extraPlays = 1;
+      s.xibie = "wenTaiyiZhenzhi";
+      onlyEvents(s, { huafei: ["songzhiKuisi"] });
+      return s;
+    };
+    let s = setup(48);
+    const [j, m, r] = setHand(s, ["jinxiXiangzhu", "meizhuangXiangzhu", "shoulongRenxin"]);
+    s = act(s, { type: "playCard", cardUid: j! });
+    s = act(s, { type: "playCard", cardUid: m! });
+    expect(s.xianyuege.done).toBe(false);
+    expect(s.xianyuege.played).toEqual(["jinxiXiangzhu", "meizhuangXiangzhu"]);
+    s = act(s, { type: "playCard", cardUid: r! });
+    expect(s.xianyuege.done).toBe(true);
+    expect(s.hate).toBe(6);
+    expect(hateCap(s)).toBe(6);
+    expect(s.statuses.find((x) => x.id === "jiaoyanZanlian")?.remaining).toBe(3);
+    expect(s.log.some((e) => e.text.includes("浣碧"))).toBe(true);
+
+    // 宠冠六宫 would push it to 7: capped
+    s.shengchong = 15;
+    s.stories = [];
+    s = act(s, { type: "endTurn" });
+    expect(s.hate).toBeLessThanOrEqual(6);
+    for (let i = 0; i < 3; i++) {
+      s.stories = [];
+      s.qingyu = 10;
+      s.huafei = [];
+      s.crisis = null;
+      s = act(s, { type: "endTurn" });
+    }
+    expect(s.statuses.some((x) => x.id === "jiaoyanZanlian")).toBe(false);
+    expect(hateCap(s)).toBe(10);
+
+    // no 隔墙有耳 on the board: nothing counts
+    let t = setup(49);
+    onlyEvents(t, {});
+    for (const uid of setHand(t, ["jinxiXiangzhu", "meizhuangXiangzhu", "shoulongRenxin"])) t = act(t, { type: "playCard", cardUid: uid });
+    expect(t.xianyuege.done).toBe(false);
+    expect(t.xianyuege.played).toEqual([]);
+
+    // before 菊残霜冷 (眉庄 not yet 禁足): nothing counts
+    let v = setup(51);
+    v.xibie = null;
+    for (const uid of setHand(v, ["jinxiXiangzhu", "meizhuangXiangzhu", "shoulongRenxin"])) v = act(v, { type: "playCard", cardUid: uid });
+    expect(v.xianyuege.done).toBe(false);
+    expect(v.xianyuege.played).toEqual([]);
+
+    // split across turns: progress resets
+    let u = setup(50);
+    for (const uid of setHand(u, ["jinxiXiangzhu", "meizhuangXiangzhu"])) u = act(u, { type: "playCard", cardUid: uid });
+    u.stories = [];
+    u = act(u, { type: "endTurn" });
+    expect(u.xianyuege.played).toEqual([]);
+  });
+
+  it("闲月阁 on the turn 殿前风雨 is open: 华妃受罚, the 殿前风雨 is voided", () => {
+    const s0 = newStage2(52, null);
+    s0.turn = 12;
+    s0.rank = "guiren";
+    s0.turnRank = "guiren";
+    s0.qingyu = 10;
+    s0.shengchong = 10;
+    s0.hate = 10;
+    s0.stories = [];
+    s0.extraPlays = 1;
+    s0.xibie = "wenTaiyiZhenzhi";
+    onlyEvents(s0, { huafei: ["songzhiKuisi"] });
+    openStory(s0, "huafeiFanan");
+    let s = s0;
+    for (const uid of setHand(s, ["jinxiXiangzhu", "meizhuangXiangzhu", "shoulongRenxin"])) s = act(s, { type: "playCard", cardUid: uid });
+    expect(s.xianyuege.done).toBe(true);
+    expect(s.stories.some((st) => st.id === "huafeiFanan")).toBe(false);
+    expect(s.hate).toBe(6);
+  });
+
+  it("眉庄相助's event lines switch to the 禁足 version after 菊残霜冷, whoever left", () => {
+    const withConfined = (Object.keys(EVENTS2) as EventId2[]).filter((id) => EVENTS2[id].confinedStory?.meizhuangXiangzhu);
+    expect(withConfined.sort()).toEqual(["gongzhongLiuyan", "neiwufuDiaonan", "songzhiKuisi", "taihouChuixun", "yikungongLiGuiju"]);
+    for (const id of withConfined) {
+      const run = (xibie: Z2State["xibie"]) => {
+        let s = newStage2(52, null);
+        s.stories = [];
+        s.xibie = xibie;
+        s.hate = 3;
+        const kind = EVENTS2[id].kind;
+        onlyEvents(s, kind === "opportunity" ? { opportunity: id } : kind === "crisis" ? { crisis: id } : { huafei: [id] });
+        const [m] = setHand(s, ["meizhuangXiangzhu"]);
+        s = act(s, { type: "playCard", cardUid: m! });
+        return [s.opportunity, s.crisis, ...s.huafei].find((e) => e?.id === id)!;
+      };
+      const before = run(null);
+      expect(before.resolved, id).toBe(true);
+      expect(before.story, id).toBe(EVENTS2[id].resolvedStory.meizhuangXiangzhu);
+      for (const who of ["meizhuangXiangzhu", "wenTaiyiZhenzhi"] as const) {
+        const after = run(who);
+        expect(after.resolved, id).toBe(true);
+        expect(after.story, id).toBe(EVENTS2[id].confinedStory!.meizhuangXiangzhu);
+      }
+    }
+  });
+
+  it("华妃事件 come from a shuffled deck: locked ones wait, used ones are reshuffled once nothing drawable is left", () => {
+    const setup = (seed: number) => {
+      const s = newStage2(seed, null);
+      s.turn = 10;
+      s.hate = 5; // 1 华妃事件 a turn
+      s.shengchong = 6;
+      s.qingyu = 10;
+      s.stories = [];
+      s.caoTriggered = true;
+      onlyEvents(s, {});
+      setHand(s, []);
+      return s;
+    };
+    const fresh = (s: Z2State) => s.huafei.filter((e) => !e.burning).map((e) => e.id);
+
+    // 欢宜香浓 is locked (恨意 < 7): skipped but kept in the deck
+    let s = setup(60);
+    s.huafeiPool = ["huanyixiangZhuanchong", "songzhiKuisi", "yizhangHong"];
+    s.huafeiUsed = [];
+    s = act(s, { type: "endTurn" });
+    expect(fresh(s)).toEqual(["songzhiKuisi"]);
+    expect(s.huafeiPool).toEqual(["huanyixiangZhuanchong", "yizhangHong"]);
+    expect(s.huafeiUsed).toEqual(["songzhiKuisi"]);
+
+    // only locked ones left → the used ones are shuffled back in
+    let t = setup(61);
+    t.huafeiPool = ["huanyixiangZhuanchong"];
+    t.huafeiUsed = ["kekouFenli"];
+    t = act(t, { type: "endTurn" });
+    expect(fresh(t)).toEqual(["kekouFenli"]);
+    expect(t.log.some((e) => e.text.includes("重新洗匀"))).toBe(true);
+
+    // a full round of the 5 unlocked events before any repeats
+    let u = setup(62);
+    const seen: string[] = [];
+    for (let i = 0; i < 5; i++) {
+      u.hate = 5;
+      u.huafei = [];
+      u.stories = [];
+      u.qingyu = 10;
+      u.shengchong = 6;
+      u = act(u, { type: "endTurn" });
+      seen.push(...fresh(u));
+    }
+    expect([...seen].sort()).toEqual(["kekouFenli", "shanshiYouyi", "songzhiKuisi", "yikungongLiGuiju", "yizhangHong"]);
+  });
+
+  it("a 延烧 克扣份例 kept from last turn takes no slot of this turn's 华妃事件", () => {
+    let s = newStage2(63, null);
+    s.turn = 10;
+    s.hate = 5;
+    s.shengchong = 6;
+    s.qingyu = 10;
+    s.stories = [];
+    s.caoTriggered = true;
+    onlyEvents(s, { huafei: ["kekouFenli"] });
+    setHand(s, []);
+    s.huafeiPool = ["songzhiKuisi", "yizhangHong"];
+    s.huafeiUsed = ["kekouFenli"];
+    s = act(s, { type: "endTurn" });
+    expect(s.huafei.map((e) => [e.id, !!e.burning])).toEqual([
+      ["kekouFenli", true],
+      ["songzhiKuisi", false],
+    ]);
   });
 
   it("ending lines cover the pregnancy outcome", () => {
@@ -1364,7 +1613,7 @@ describe("zhenhuan stage 2 engine", () => {
     expect(distant.relation).toBe(1);
     const resentful = run(-3);
     expect(resentful.trial.summoned).toBe(false);
-    expect(resentful.shengchong).toBe(7); // 截走 -1, no 反噬 on top
+    expect(resentful.shengchong).toBe(7); // 截走 -1, no 微词 on top
   });
 
   it("翊坤落幕 (turn 30): ≤ 1 evidence loses at once; 2–3 → 3 cards, 4–6 → 2, ≥ 7 → 1", () => {
@@ -1437,6 +1686,53 @@ describe("zhenhuan stage 2 engine", () => {
     expect(finish(7, three, null).victory).toBe("full"); // no 惜别 at all
     const p = finish(7, three, "meizhuangXiangzhu");
     expect(endingLines(p).some((l) => l.includes("欢宜香"))).toBe(true);
+  });
+
+  it("翊坤落幕: every 解牌 testifies to a different evidence you hold", () => {
+    const play = (evidence: EvidenceId[], cards: CardId2[], xibie: "meizhuangXiangzhu" | "wenTaiyiZhenzhi" | null = null, relation = 0) => {
+      let s = newStage2(20, null);
+      s.turn = 29;
+      s.rank = "guiren";
+      s.qingyu = 10;
+      s.shengchong = 10;
+      s.stories = [];
+      s.crisis = null;
+      s.huafei = [];
+      s.hate = 9;
+      s.evidence = evidence;
+      s.xibie = xibie;
+      s.relation = relation;
+      s = act(s, { type: "endTurn" });
+      s.stories = [];
+      onlyEvents(s, {});
+      s.extraPlays = 6;
+      for (const uid of setHand(s, cards)) s = act(s, { type: "playCard", cardUid: uid });
+      return s.finale!;
+    };
+    // 槿汐 and 收拢人心 both prefer 克扣账册 here; whoever goes second picks another one
+    const f = play(["kekouZhangce", "fuziZhisi", "liuweiqingYaofang"], ["jinxiXiangzhu", "shoulongRenxin"]);
+    expect(f.cited).toEqual(["kekouZhangce", "fuziZhisi"]);
+    expect(f.stories[0]).toContain("内务府");
+    expect(f.stories[1]).toContain("福子");
+    // 眉庄 and 温太医 both lead with 刘畏卿药方 — the second one moves on
+    const g = play(["liuweiqingYaofang", "duanfeiHonghua"], ["meizhuangXiangzhu", "wenTaiyiZhenzhi"]);
+    expect(g.cited).toEqual(["liuweiqingYaofang", "duanfeiHonghua"]);
+    // nothing left to speak to → the general line
+    const h = play(["liuweiqingYaofang", "caoguirenGaofa"], ["wenTaiyiZhenzhi", "jinxiXiangzhu"]);
+    expect(h.stories[1]).toContain(FINALE.cardStory.jinxiXiangzhu!);
+    // the default lines name no evidence, so they never repeat someone else's
+    const d = play(["liuweiqingYaofang", "caoguirenGaofa"], ["wenTaiyiZhenzhi", "meizhuangXiangzhu", "lingrongXiangzhu"], null, 3);
+    expect(d.cited).toEqual(["liuweiqingYaofang"]);
+    expect(d.stories[1]).toContain(FINALE.cardStory.meizhuangXiangzhu!);
+    expect(d.stories[1]).not.toContain("假孕");
+    expect(d.stories[2]).toContain(FINALE.lingrongStory.close);
+    // 温太医 left: 眉庄 was still 禁足, so her lines are the same
+    const m = play(["liuweiqingYaofang", "kekouZhangce"], ["meizhuangXiangzhu", "jinyanShenxing"], "wenTaiyiZhenzhi");
+    expect(m.stories[0]).toContain("假孕失宠");
+    // 陵容 keeps her tone and speaks to her own evidence
+    const l = play(["fuziZhisi", "lanyongSixing"], ["shoulongRenxin", "lingrongXiangzhu"], null, 3);
+    expect(l.cited).toEqual(["lanyongSixing", "fuziZhisi"]);
+    expect(l.stories[1]).toContain(FINALE.lingrongManner.close);
   });
 
   it("replay reproduces a run exactly", () => {

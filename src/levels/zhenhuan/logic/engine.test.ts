@@ -89,7 +89,7 @@ describe("zhenhuan engine", () => {
     // no plays left
     expect(reduce(s, { type: "playCard", cardUid: uidOf(s, "shoulongRenxin") })).toBe(s);
     s = act(s, { type: "endTurn" });
-    expect(s.qingyu).toBe(2); // 礼仪失误 resolved → no penalty
+    expect(s.qingyu).toBe(2); // 仪态微瑕 resolved → no penalty
     expect(s.turn).toBe(2);
     expect(totalCards(s)).toBe(12);
   });
@@ -104,15 +104,16 @@ describe("zhenhuan engine", () => {
     t.opportunity = null;
     const after = act(t, { type: "endTurn" });
     expect(after.outcome).toBe("lost");
+    expect(after.lossStory).toBeTruthy();
     expect(after.qingyu).toBe(0);
     expect(after.shengchong).toBe(1); // stopped after the first effect hit 0
   });
 
   it("gains are capped by rank", () => {
     let s = newGame(1);
-    s.shengchong = 7;
+    s.shengchong = 8;
     s = act(s, { type: "playCard", cardUid: uidOf(s, "yirongZhengsu") });
-    expect(s.shengchong).toBe(8);
+    expect(s.shengchong).toBe(9);
   });
 
   it("静观其变 draws, adds a play, and stacks", () => {
@@ -429,7 +430,7 @@ describe("zhenhuan engine", () => {
     }
   });
 
-  it("温太医相助 resolves 礼仪失误 (and still removes a negative status)", () => {
+  it("温太医相助 resolves 仪态微瑕 (and still removes a negative status)", () => {
     let s = newGame(9);
     expect(s.crisis?.id).toBe("liyiShiwu");
     s.statuses.push({ uid: "neg", id: "liuyanChanshen", appliesFromTurn: 1, remaining: 2 });
@@ -445,6 +446,7 @@ describe("zhenhuan engine", () => {
     s = act(s, { type: "endTurn" });
     expect(s.outcome).toBe("lost");
     expect(s.lossReason).toContain("晋封考验");
+    expect(s.lossStory).toBeTruthy();
   });
 
   it("random playthroughs keep invariants and replay from run codes", () => {

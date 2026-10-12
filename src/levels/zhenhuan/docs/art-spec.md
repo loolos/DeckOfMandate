@@ -51,6 +51,7 @@ src/levels/zhenhuan/assets/
 - 显示方式为 `background-size: cover; background-position: center`。手机竖屏下左右会被大幅裁掉，**关键元素放在画面中央约 1/3 宽度的竖条内**。
 - 背景中央大部分会被半透明面板遮挡，适合用氛围性的场景（宫殿、庭院、室内陈设），不要把重要细节放在正中心。
 - 第一关与第二关使用不同的背景；开始菜单沿用第一关背景。
+- 第一关背景（`stage1`）在画面上方正中写游戏标题「Deck of Mandate」（两行，宽不超过画宽约 24%，下沿不低于画高 30%），是唯一带文字的配图；对局中它同样会显示，被深色渐变压暗。其余配图仍不放文字。
 
 ## 4. 界面显示规则
 
@@ -96,7 +97,7 @@ src/levels/zhenhuan/assets/
 | `qinmoChenqing` | 🍵 琴默陈情 | 机会 | 二 |
 | `gongzhongLiuyan` | 🗣️ 蜚语盈廊 | 危机 | 一、二 |
 | `neiwufuDiaonan` | 📦 内务府刁难 | 危机 | 一、二 |
-| `liyiShiwu` | 🎎 礼仪失误 | 危机 | 一、二 |
+| `liyiShiwu` | 🎎 仪态微瑕 | 危机 | 一、二 |
 | `hanliangZhiwu` | 🧊 寒凉之物 | 危机 | 二 |
 | `yuDayingZhengchong` | 🎶 梅影争春 | 嫉妒 | 一 |
 | `shichongErjiao` | 💍 恃宠而骄 | 嫉妒 | 一 |
