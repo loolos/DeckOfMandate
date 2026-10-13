@@ -1587,7 +1587,10 @@ export function endingLines(s: Z2State): string[] {
   if (s.finale) {
     const done = s.finale.played.length >= s.finale.needed;
     lines.push(done ? finaleDoneStory(s.evidence.length) : FINALE.failStory);
-    if (s.victory === "perfect") lines.push(FINALE.perfectStory);
+    if (s.victory === "perfect") {
+      const who = s.xibie === "wenTaiyiZhenzhi" ? "温太医" : "眉庄";
+      lines.push((s.xibie ? FINALE.perfectIntro[s.xibie] : "") + FINALE.perfectStory.replace("{who}", who));
+    }
   }
   for (const id of s.evidence) lines.push(EVIDENCE[id].ending);
   lines.push(s.rank === "pin" ? "你以嫔位立于六宫之中。" : `你如今是${RANKS[s.rank].name}。`);
