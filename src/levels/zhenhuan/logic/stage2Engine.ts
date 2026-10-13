@@ -240,9 +240,13 @@ export function blockingStatusName(s: Z2State, cardId: CardId2): string | null {
   return st ? STATUSES2[st.id].name : null;
 }
 
-/** 抱恙在身 / 卧床静养 in effect: no 侍寝 (召幸 can only be declined or missed). Returns the status name. */
+/**
+ * 抱恙在身 / 卧床静养 on the character: no 侍寝 (召幸 can only be declined or missed). Returns the status name.
+ * Counts a status gained earlier this very turn (e.g. 身子 hit 0 mid-turn): it is already on the status bar,
+ * so tonight's 召幸 must not be answerable even though its other effects only start next turn.
+ */
 export function summonUnwell(s: Z2State): string | null {
-  const st = activeStatuses(s).find((x) => STATUSES2[x.id].noSummon);
+  const st = s.statuses.find((x) => STATUSES2[x.id].noSummon);
   return st ? STATUSES2[st.id].name : null;
 }
 
