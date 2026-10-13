@@ -141,9 +141,9 @@ export const EVIDENCE: Record<EvidenceId, EvidenceDef> = {
   liuweiqingYaofang: {
     id: "liuweiqingYaofang",
     emoji: "💊",
-    name: "刘畏卿药方",
-    line: "华妃指使太医刘畏卿用药推迟月信，设局诬眉庄假孕争宠",
-    ending: "刘畏卿的药方一摆上御案，眉庄假孕一案便真相大白。",
+    name: "刘畚药方",
+    line: "华妃指使太医刘畚用药推迟月信，设局诬眉庄假孕争宠",
+    ending: "刘畚的药方一摆上御案，眉庄假孕一案便真相大白。",
   },
   fuziZhisi: {
     id: "fuziZhisi",
@@ -248,13 +248,13 @@ export const FINALE = {
       ["duanfeiHonghua", "你跪在御前，一字一句道：「端妃娘娘这些年缠绵病榻、终身无出，皆因当年翊坤宫送去的那碗红花。臣妾不敢妄言，只求皇上明察。」"],
     ],
     meizhuangXiangzhu: [
-      ["liuweiqingYaofang", "眉庄挺直了背，朗声道：「皇上，臣妾当日假孕失宠，正是翊坤宫串通刘畏卿一手设下的局。臣妾至今想起，仍觉心寒。」"],
+      ["liuweiqingYaofang", "眉庄挺直了背，朗声道：「皇上，臣妾当日假孕失宠，正是翊坤宫串通刘畚一手设下的局。臣妾至今想起，仍觉心寒。」"],
       ["kekouZhangce", "眉庄挺直了背，朗声道：「臣妾禁足闲月阁时，连炭火都被克扣了去。内务府的人亲口说，是翊坤宫的意思。」"],
       ["lanyongSixing", "眉庄挺直了背，朗声道：「一丈红的事，阖宫都知道。夏常在年轻不懂事，可罪不至此，华妃却连一句求情的话都不许人说。」"],
       ["yuyingerYiyan", "眉庄挺直了背，朗声道：「余氏冒认倚梅园之功，背后若无人撑腰，她一个宫女哪来这样的胆子？」"],
     ],
     wenTaiyiZhenzhi: [
-      ["liuweiqingYaofang", "温实初捧着脉案跪下：「刘畏卿开给沈小主的方子，微臣一味一味验过，皆是推迟月信之药。微臣愿以项上人头担保，此事出自翊坤宫授意。」"],
+      ["liuweiqingYaofang", "温实初捧着脉案跪下：「刘畚开给沈小主的方子，微臣一味一味验过，皆是推迟月信之药。微臣愿以项上人头担保，此事出自翊坤宫授意。」"],
       ["duanfeiHonghua", "温实初捧着脉案跪下：「微臣替端妃娘娘诊过脉，娘娘的病根，是多年前一碗红花落下的。脉案在此，绝无半字虚言。」"],
       ["kekouZhangce", "温实初捧着脉案跪下：「那年冬天碎玉轩断了炭火，小主受寒抱恙，脉案上都有记档。内务府克扣份例，是翊坤宫的吩咐。」"],
     ],
@@ -300,7 +300,7 @@ export const FINALE = {
   /** 完美结局 (§11.3): the one who left at 菊残霜冷 is cleared by 华妃's fall, returns, and speaks for you one last time; the 欢宜香 secret comes out. */
   perfectIntro: {
     meizhuangXiangzhu:
-      "眉庄回来了。当年华妃串通刘畏卿，用药推迟月信，设下假孕的局，害她失宠禁足闲月阁，从此心灰意冷。如今华妃的底细被一层层揭开，眉庄的冤屈终于得雪，她重新立在御前，为你说了最后一次话，字字都落在要紧处。",
+      "眉庄回来了。当年华妃串通刘畚，用药推迟月信，设下假孕的局，害她失宠禁足闲月阁，从此心灰意冷。如今华妃的底细被一层层揭开，眉庄的冤屈终于得雪，她重新立在御前，为你说了最后一次话，字字都落在要紧处。",
     wenTaiyiZhenzhi:
       "温实初回来了。当年华妃害眉庄假孕失宠，他出面辩白，反被咬定“妄议脉案”，贬去疫所。如今华妃的底细被一层层揭开，他的冤屈终于得雪，奉旨回宫，立在御前，为你说了最后一次话，字字都落在要紧处。",
   } as Record<DepartingCard, string>,
@@ -1511,7 +1511,7 @@ export const STORIES2: Record<StoryId2, StoryDef2> = {
     id: "jiaYunFengbo",
     name: "菊残霜冷",
     emoji: "⚖️",
-    flavor: "眉庄有孕本是喜事，却是华妃串通太医刘畏卿设下的局：药物推迟月信，宫女茯苓被收买。",
+    flavor: "眉庄有孕本是喜事，却是华妃串通太医刘畚设下的局：药物推迟月信，宫女茯苓被收买。",
     note: "眉庄与温太医，终究要有一人离你远去。退场一方的牌会带上【惜别】标签：下次抓到时只留一张，这是最后一次相助。",
     defaultOptionId: "xiushouPangguan",
     options: [
@@ -1539,7 +1539,7 @@ export const STORIES2: Record<StoryId2, StoryDef2> = {
         exit: "wenTaiyiZhenzhi",
         evidence: "liuweiqingYaofang",
         text: "温太医退场；可能搜集到华妃的罪证",
-        story: "温实初查出了刘畏卿的药方，可华妃抢先一步，眉庄仍被禁足于闲月阁，温实初反被咬定“妄议脉案”，派往疫所。药方被你收好了，眉庄也知道你们为她尽了力，心里那口气没散。",
+        story: "温实初查出了刘畚的药方，可华妃抢先一步，眉庄仍被禁足于闲月阁，温实初反被咬定“妄议脉案”，派往疫所。药方被你收好了，眉庄也知道你们为她尽了力，心里那口气没散。",
       },
       {
         id: "maitongFuling",
@@ -1549,7 +1549,7 @@ export const STORIES2: Record<StoryId2, StoryDef2> = {
         exit: "meizhuangXiangzhu",
         evidence: "liuweiqingYaofang",
         text: "眉庄退场；可能搜集到华妃的罪证",
-        story: "眉庄的假孕仍被当众揭穿，禁足于闲月阁。被你买通的茯苓供出了刘畏卿，眉庄却已心灰意冷，再不愿理会后宫之事。",
+        story: "眉庄的假孕仍被当众揭穿，禁足于闲月阁。被你买通的茯苓供出了刘畚，眉庄却已心灰意冷，再不愿理会后宫之事。",
       },
       {
         id: "jinxiAnfang",
@@ -1559,7 +1559,7 @@ export const STORIES2: Record<StoryId2, StoryDef2> = {
         exit: "meizhuangXiangzhu",
         evidence: "liuweiqingYaofang",
         text: "眉庄退场；可能搜集到华妃的罪证",
-        story: "眉庄的假孕仍被当众揭穿，禁足于闲月阁。槿汐托人在太医院打听到，刘畏卿开给眉庄的方子原是翊坤宫授意的，眉庄却已心灰意冷，再不愿理会后宫之事。",
+        story: "眉庄的假孕仍被当众揭穿，禁足于闲月阁。槿汐托人在太医院打听到，刘畚开给眉庄的方子原是翊坤宫授意的，眉庄却已心灰意冷，再不愿理会后宫之事。",
       },
     ],
   },
