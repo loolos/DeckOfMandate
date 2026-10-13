@@ -149,8 +149,8 @@ export const EVIDENCE: Record<EvidenceId, EvidenceDef> = {
     id: "fuziZhisi",
     emoji: "👻",
     name: "福子之死",
-    line: "丽嫔惊梦，供出华妃害死宫女福子、沉尸井中",
-    ending: "丽嫔疯疯癫癫的供词里，宫女福子的冤魂终于有了着落。",
+    line: "余莺儿死后，丽嫔惊梦，供出华妃害死宫女福子、沉尸井中，又供出余莺儿冷宫之死是翊坤宫灭口",
+    ending: "丽嫔疯疯癫癫的供词里，宫女福子的冤魂有了着落，余莺儿死在冷宫的真相，也一并大白。",
   },
   maiguanYujue: {
     id: "maiguanYujue",
@@ -243,7 +243,7 @@ export const FINALE = {
     jinyanShenxing: [
       ["yuyingerYiyan", "你跪在御前，一字一句道：「当年倚梅园那句诗，原是臣妾所念。余氏临死前已说了实话：是翊坤宫许她荣华，教她冒认。」"],
       ["maiguanYujue", "你跪在御前，一字一句道：「年氏一门在外卖官鬻爵，进项有几成送进了翊坤宫，御前的人都看在眼里。臣妾不敢妄言，只求皇上明察。」"],
-      ["fuziZhisi", "你跪在御前，一字一句道：「福子不过一个宫女，好端端地沉在了井里。丽嫔娘娘夜夜惊梦，心里有鬼的人，夜里是睡不安稳的。」"],
+      ["fuziZhisi", "你跪在御前，一字一句道：「福子不过一个宫女，好端端地沉在了井里。丽嫔娘娘夜夜惊梦，余答应死后更是日日惊惧，心里有鬼的人，夜里是睡不安稳的。」"],
       ["lanyongSixing", "你跪在御前，一字一句道：「夏常在不过一时言语冲撞，便在翊坤宫外受了一丈红，落得终身残废。这等私刑，宫规里哪一条许过？」"],
       ["duanfeiHonghua", "你跪在御前，一字一句道：「端妃娘娘这些年缠绵病榻、终身无出，皆因当年翊坤宫送去的那碗红花。臣妾不敢妄言，只求皇上明察。」"],
     ],
@@ -274,7 +274,7 @@ export const FINALE = {
       ["lanyongSixing", "槿汐跪在殿下，不疾不徐地道：「宫规里从没有一丈红这一条。翊坤宫私设刑罚，打残了夏小主，奴婢当日就在宫道上。」"],
     ],
     lingrongXiangzhu: [
-      ["fuziZhisi", "「丽嫔娘娘惊梦时，喊的都是福子的名字。福子是怎么死的，丽嫔心里最清楚，翊坤宫也最清楚。」"],
+      ["fuziZhisi", "「丽嫔娘娘惊梦时，喊的是福子，也是余答应。这两个人是怎么没的，丽嫔心里最清楚，翊坤宫也最清楚。」"],
       ["yuyingerYiyan", "「余答应在冷宫里说的话，臣妾也听说了：倚梅园那夜的功劳，是翊坤宫教她冒认的。」"],
       ["lanyongSixing", "「臣妾初入宫时，夏常在也曾当众羞辱过臣妾。可她后来落得那般下场，臣妾想起来，至今夜里都睡不着。」"],
       ["kekouZhangce", "「臣妾份例微薄，最知道少一篓炭是什么滋味。翊坤宫一句话，内务府便把各宫的东西扣下了。」"],
@@ -818,14 +818,14 @@ export const EVENTS2: Record<EventId2, EventDef2> = {
     kind: "opportunity",
     name: "丽嫔惊梦",
     emoji: "👻",
-    flavor: "丽嫔近来夜夜惊梦，醒来便抱着被子发抖，问什么都说不出个所以然。",
+    flavor: "自余莺儿死在冷宫，丽嫔便夜夜惊梦，醒来抱着被子发抖，只怕余氏的冤魂回来索命，问什么都说不出个所以然。",
     reward: [],
     penalty: [],
     evidence: { id: "fuziZhisi", cards: ["shoulongRenxin", "lingrongXiangzhu"] },
     resolvedText: "可能搜集到华妃的罪证",
     unresolvedText: "无额外效果，事件消失（之后还会出现）",
     resolvedStory: {
-      shoulongRenxin: "你让小允子扮作福子在丽嫔窗下哭了半宿。丽嫔吓得魂飞魄散，把华妃怎样害死福子的事全说了出来。",
+      shoulongRenxin: "你让小允子扮作福子与余莺儿的冤魂在丽嫔窗下哭了半宿。丽嫔只当是余莺儿回来索命，吓得魂飞魄散，把华妃怎样害死福子、又怎样叫人灭了余莺儿的口，全说了出来。",
     },
   },
   wenyiBaoyang: {
@@ -1199,7 +1199,7 @@ export const LINGRONG_EVENT: Partial<Record<EventId2, TierTable>> = {
     resentful: { resolves: true, effects: [], relation: 1, story: "佛前青烟袅袅，陵容一言不发，临走时却替你掸了掸衣上的香灰。" },
   },
   liPinJingmeng: {
-    close: { resolves: true, evidence: true, relation: 1, story: "陵容学着福子的声音在丽嫔窗下哭了半宿。丽嫔吓破了胆，把华妃害死福子的事全说了。事后陵容抿嘴笑：「也只有姐姐，敢叫我做这样的事。」" },
+    close: { resolves: true, evidence: true, relation: 1, story: "陵容学着福子与余莺儿的声音在丽嫔窗下哭了半宿。丽嫔只当是余莺儿索命，吓破了胆，把华妃害死福子、灭余莺儿口的事全说了。事后陵容抿嘴笑：「也只有姐姐，敢叫我做这样的事。」" },
     distant: { resolves: true, evidence: true, story: "陵容肯帮这个忙，却撇嘴道：「这种装神弄鬼的事，也只有姐姐想得出来。」丽嫔终究吐了实话。" },
     resentful: { resolves: false, relation: 1, effects: [{ resource: "hate", amount: 1 }], story: "消息不知怎么走漏到了翊坤宫，丽嫔那边一下子没了动静。陵容低着头来见你，绞着帕子说是自己嘴不严。" },
   },
