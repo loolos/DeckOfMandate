@@ -18,6 +18,7 @@ import {
   type EventInst2,
   type Z2Action,
   type Z2State,
+  summonUnwell,
 } from "./stage2Engine";
 
 function act(s: Z2State, a: Z2Action): Z2State {
@@ -1011,6 +1012,18 @@ describe("zhenhuan stage 2 engine", () => {
     expect(storyResponsesFor(s, "yirongZhengsu")).toHaveLength(0);
     const t = act(s, { type: "chooseStory", storyId: "zhaoxing", optionId: "chengbingBichong" });
     expect(t.stories[0]!.chosenOptionId).toBe("chengbingBichong");
+  });
+
+  it("身子本回合打出牌后降到 0: 卧床静养已在身，当晚召幸不能再由陵容相助应对", () => {
+    const s = newStage2(36, null);
+    s.relation = 3;
+    s.stories = [{ id: "zhaoxing", chosenOptionId: null }];
+    onlyEvents(s, {});
+    setHand(s, ["lingrongXiangzhu"]);
+    // as if 身子 hit 0 earlier this turn: the status is queued for next turn but already on the bar
+    s.statuses.push({ uid: "w", id: "wochuangJingyang", appliesFromTurn: s.turn + 1, remaining: 2 });
+    expect(summonUnwell(s)).toBe("卧床静养");
+    expect(storyResponsesFor(s, "lingrongXiangzhu")).toHaveLength(0);
   });
 
   it("小产 records what it actually cost (for the notice)", () => {
