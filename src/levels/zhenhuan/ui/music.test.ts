@@ -9,6 +9,14 @@ describe("musicMood", () => {
     expect(musicMood(null)).toBe("calm");
   });
 
+  it("victory once a level is won, never after a loss", () => {
+    expect(musicMood({ stage: 1, state: { ...newGame(1), turn: 15, outcome: "won" } })).toBe("victory");
+    expect(musicMood({ stage: 1, state: { ...newGame(1), turn: 15, outcome: "lost" } })).toBe("calm");
+    const s = startStage2Standalone(1);
+    if (s.stage !== 2) throw new Error("expected stage 2");
+    expect(musicMood({ ...s, state: { ...newStage2(1, s.state.carry), turn: 30, outcome: "won" } })).toBe("victory");
+  });
+
   it("stage 1 follows its story beats", () => {
     const at = (turn: number) => musicMood({ stage: 1, state: { ...newGame(1), turn } });
     expect([1, 3, 4, 7, 8, 9, 10, 12, 13, 15].map(at)).toEqual([

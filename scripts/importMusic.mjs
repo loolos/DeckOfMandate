@@ -1,5 +1,5 @@
 /**
- * Move AI-generated background music from music-inbox/ (M01.mp3 ...) into
+ * Move AI-generated background music from music-inbox/ (M00.mp3, M01.mp3 ...) into
  * src/levels/zhenhuan/assets/music/<mood>.<ext>, then rewrite the status table in
  * music-inbox/README.md so it shows what has been uploaded and what is in the game.
  *
@@ -22,6 +22,7 @@ const MUSIC_DIR = "src/levels/zhenhuan/assets/music";
 const README = path.join(INBOX, "README.md");
 const EXTS = ["mp3", "m4a", "ogg", "wav"];
 const TRACKS = [
+  ["M00", "victory", "过关"],
   ["M01", "calm", "日常欢快"],
   ["M02", "tension", "紧张"],
   ["M03", "sorrow", "哀婉"],
@@ -31,6 +32,8 @@ const TRACKS = [
 const MAX_BYTES = 1024 * 1024;
 const MIN_SECONDS = 30;
 const MAX_SECONDS = 45;
+/** The level-cleared track may run longer than the in-game moods. */
+const MAX_SECONDS_BY_MOOD = { victory: 90 };
 const RAW = process.argv.includes("--raw");
 
 function has(cmd) {
@@ -63,7 +66,7 @@ function importAll() {
     const parsed = parseInboxName(name);
     const track = parsed && TRACKS.find(([id]) => id === parsed[0]);
     if (!track || !EXTS.includes(parsed[1])) {
-      notes.push(`跳过 ${name}：文件名应为 M01–M05，格式 ${EXTS.join(" / ")}`);
+      notes.push(`跳过 ${name}：文件名应为 M00–M05，格式 ${EXTS.join(" / ")}`);
       continue;
     }
     const src = path.join(INBOX, name);
@@ -102,8 +105,9 @@ function statusTable() {
     const kb = Math.round(fs.statSync(full).size / 1024);
     const sec = duration(full);
     const warn = [];
+    const maxSec = MAX_SECONDS_BY_MOOD[mood] ?? MAX_SECONDS;
     if (kb * 1024 > MAX_BYTES) warn.push("超过 1 MB");
-    if (sec != null && (sec < MIN_SECONDS || sec > MAX_SECONDS)) warn.push(`时长不在 ${MIN_SECONDS}–${MAX_SECONDS} 秒`);
+    if (sec != null && (sec < MIN_SECONDS || sec > maxSec)) warn.push(`时长不在 ${MIN_SECONDS}–${maxSec} 秒`);
     const state = waiting.length ? "📥 已入库，收件箱有新版本待处理" : "✅ 已入库";
     return `| ${id} | ${label} | ${state} | \`${file}\` | ${kb} KB${sec != null ? ` · ${sec.toFixed(1)} 秒` : ""} | ${warn.join("；") || "—"} |`;
   });

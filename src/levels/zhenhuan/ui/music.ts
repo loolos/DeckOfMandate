@@ -6,7 +6,7 @@ import { indexByBasename } from "./art";
  * `assets/music/<mood>.mp3` (or .ogg / .m4a / .wav) into place is all it takes;
  * a missing file means "silence for that mood".
  */
-export const MUSIC_MOODS = ["calm", "tension", "sorrow", "climax", "tender"] as const;
+export const MUSIC_MOODS = ["victory", "calm", "tension", "sorrow", "climax", "tender"] as const;
 export type MusicMood = (typeof MUSIC_MOODS)[number];
 
 const MUSIC = indexByBasename(
@@ -46,10 +46,13 @@ const MUSIC_SCHEDULE: Record<1 | 2, readonly (readonly [fromTurn: number, mood: 
 
 /**
  * The track to start next, given the turn the game is on *when the previous track ends*
- * (events and outcome are ignored); `null` session = start menu.
+ * (events are ignored); `null` session = start menu (`calm`). Once a level is won the next track is
+ * `victory`: it only plays if the player is still on the cleared screen when the previous track
+ * ends, and it is never cut off by starting the next level.
  */
 export function musicMood(session: Session | null): MusicMood {
   if (!session) return "calm";
+  if (session.state.outcome === "won") return "victory";
   let mood: MusicMood = "calm";
   for (const [fromTurn, m] of MUSIC_SCHEDULE[session.stage]) {
     if (session.state.turn >= fromTurn) mood = m;
