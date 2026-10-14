@@ -555,7 +555,7 @@ export const STATUSES2: Record<StatusId2, StatusDef2> = {
     duration: 0,
     permanent: true,
     drawModifier: 0,
-    effectText: "抵消一次伤胎类事件的后果（有孕前不扣身子；有孕后免于小产）；翊坤长跪时不能阻止小产，但身子少扣 1。第一次适用时自动用掉。",
+    effectText: "抵消一次伤胎类事件的后果（有孕前不扣身子；有孕后免于小产）；翊坤跪阶时不能阻止小产，但身子少扣 1。第一次适用时自动用掉。",
     flavor: "茶盏底下那张方子，字迹工整，每一味药都写了用量。",
     source: "温太医相助的惜别效果「临行诊治」",
   },
@@ -1302,8 +1302,10 @@ export type StoryOption2 = {
   readonly pregnancy?: boolean;
   readonly summon?: "success" | "avoid";
   readonly caoBefriend?: boolean;
-  /** 翊坤长跪（有孕）: body loss for this option (before 恨意 / 留方 adjustments). */
+  /** 翊坤跪阶（有孕）: body loss for this option (before 恨意 / 留方 adjustments). */
   readonly fakuiShenzi?: number;
+  /** 翊坤跪阶（有孕）: text for the 小产 popup, differs per option. */
+  readonly miscarriageStory?: string;
   /** Negative status this option adds (blocked by nothing; 温太医相助 can remove it). */
   readonly status?: StatusId2;
   /** 生分的陵容打出这个卡牌应对时多说的一句风凉话。 */
@@ -1566,7 +1568,7 @@ export const STORIES2: Record<StoryId2, StoryDef2> = {
     name: "圆明伴驾",
     emoji: "🏞️",
     flavor: "皇上带你住进圆明园碧桐书院，恩宠一时无两。",
-    note: "3 回合后翊坤长跪。身负【抱恙在身】或【卧床静养】时，只能安分随侍或由温太医相助。",
+    note: "3 回合后翊坤跪阶。身负【抱恙在身】或【卧床静养】时，只能安分随侍或由温太医相助。",
     defaultOptionId: "anfenSuishi",
     unwellOptionIds: ["anfenSuishi", "tiaoyangShengti"],
     options: [
@@ -1613,7 +1615,7 @@ export const STORIES2: Record<StoryId2, StoryDef2> = {
   },
   fakuiPlain: {
     id: "fakuiPlain",
-    name: "翊坤长跪",
+    name: "翊坤跪阶",
     emoji: "☀️",
     flavor: "华妃借故罚你跪于翊坤宫外的烈日下，周宁海搬了张凳子坐在廊下盯着。",
     note: "罚跪开始时恨意 ≥ 6，清誉再 -1。",
@@ -1667,23 +1669,23 @@ export const STORIES2: Record<StoryId2, StoryDef2> = {
   },
   fakuiPregnant: {
     id: "fakuiPregnant",
-    name: "翊坤长跪",
+    name: "翊坤跪阶",
     emoji: "☀️",
     flavor: "华妃借故罚你跪于翊坤宫外的烈日下，周宁海守在一旁，谁也不许近前。你腹中隐隐作痛。",
     note: "有孕时必定小产（温太医留方也挡不住），小产本身身子 -2；所选的牌决定另外付出什么代价。罚跪开始时恨意 ≥ 6，身子再 -1；有温太医留方，身子少扣 1。",
     defaultOptionId: "yingcheng",
     options: [
-      { id: "yingcheng", name: "硬撑到底", effects: [{ resource: "qingyu", amount: -2 }], fakuiShenzi: 2, text: "小产；身子 -2；清誉 -2", story: "你咬牙跪到最后，起身时裙下已是一片殷红。" },
-      { id: "jizhaoTaiyi", name: "急召太医", card: "wenTaiyiZhenzhi", effects: [], fakuiShenzi: 2, text: "小产；身子 -2", story: "温实初冒死闯到翊坤宫外，孩子终究没能保住，但他保住了你。" },
-      { id: "feibaoHuangshang", name: "宫人飞报皇上", card: "shoulongRenxin", effects: [{ resource: "shengchong", amount: 1 }], fakuiShenzi: 2, text: "小产；身子 -2；圣宠 +1", story: "小允子拼死跑去养心殿报信，皇上赶到时，一切已经晚了。" },
-      { id: "anzhongLiuxin", name: "暗中留心", card: "jingguanQibian", effects: [], fakuiShenzi: 2, status: "baoyangZaishen", text: "小产；身子 -2；抱恙在身", story: "你早有防备，备了参片含在口中，总算撑住了一口气，孩子却终究没能保住。" },
-      { id: "jinxiHuchi", name: "槿汐护持", card: "jinxiXiangzhu", effects: [{ resource: "qingyu", amount: -1 }], fakuiShenzi: 2, text: "小产；身子 -2；清誉 -1", story: "槿汐一直跪在你身侧扶着你。你倒下时，是她一把将你抱住，一路喊着太医。" },
+      { id: "yingcheng", name: "硬撑到底", effects: [{ resource: "qingyu", amount: -2 }], fakuiShenzi: 2, miscarriageStory: "你一直跪到日影西斜，起身时眼前一黑，裙下已洇开一片殷红。周宁海站在廊下，连眼皮也没抬一下。太医赶到时，孩子早已保不住了。", text: "小产；身子 -2；清誉 -2", story: "你咬牙跪到最后，起身时裙下已是一片殷红。" },
+      { id: "jizhaoTaiyi", name: "急召太医", card: "wenTaiyiZhenzhi", effects: [], fakuiShenzi: 2, miscarriageStory: "温实初冒死闯到翊坤宫外，跪地诊脉，良久才哑声道：「小主，臣……来迟了。」孩子没能保住，他却硬是替你挡下了周宁海的呵斥，保全了你的性命。", text: "小产；身子 -2", story: "温实初冒死闯到翊坤宫外，孩子终究没能保住，但他保住了你。" },
+      { id: "feibaoHuangshang", name: "宫人飞报皇上", card: "shoulongRenxin", effects: [{ resource: "shengchong", amount: 1 }], fakuiShenzi: 2, miscarriageStory: "皇上赶到翊坤宫外时，你已倒在青砖上，裙裾尽染。他一把将你抱起，怒斥华妃，可腹中的孩子已经听不见了。「是朕来迟了。」他的声音在发抖。", text: "小产；身子 -2；圣宠 +1", story: "小允子拼死跑去养心殿报信，皇上赶到时，一切已经晚了。" },
+      { id: "anzhongLiuxin", name: "暗中留心", card: "jingguanQibian", effects: [], fakuiShenzi: 2, miscarriageStory: "你含着参片，硬是撑到了太医赶来。脉案递到眼前时，你只轻轻合了合眼：参片保得住你，却保不住它。这一口气，你记下了。", status: "baoyangZaishen", text: "小产；身子 -2；抱恙在身", story: "你早有防备，备了参片含在口中，总算撑住了一口气，孩子却终究没能保住。" },
+      { id: "jinxiHuchi", name: "槿汐护持", card: "jinxiXiangzhu", effects: [{ resource: "qingyu", amount: -1 }], fakuiShenzi: 2, miscarriageStory: "你倒下时，槿汐一把将你抱住，一面高声唤太医，一面用身子替你挡住了周遭窥探的目光。孩子没了，你伏在她肩头，终于没有在人前落一滴泪。", text: "小产；身子 -2；清誉 -1", story: "槿汐一直跪在你身侧扶着你。你倒下时，是她一把将你抱住，一路喊着太医。" },
       {
         id: "lingrongSongyao",
         name: "陵容送药",
         card: "lingrongXiangzhu",
         effects: [{ resource: "qingyu", amount: -1 }],
-        fakuiShenzi: 2,
+        fakuiShenzi: 2, miscarriageStory: "陵容守在榻前，一句话也没劝，只陪你无声地落泪。「姐姐，是妹妹无用。」她的手在袖中攥得发白，眼里却分不清是悲是怨。",
         shuhenjiao: true,
         distantRemark: "「跪了这半日，姐姐何苦与华妃硬碰。」",
         text: "小产；身子 -2；清誉 -1；舒痕胶",
