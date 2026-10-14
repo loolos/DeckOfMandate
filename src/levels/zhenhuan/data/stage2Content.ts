@@ -94,8 +94,6 @@ export function summonInterval(excess: number): number {
   return 4;
 }
 
-export const YUANMINGYUAN_TURNS = { first: 14, last: 16 };
-
 // ---------------------------------------------------------------- 陵容关系
 
 export type LingrongTier = "close" | "distant" | "resentful";
@@ -1568,7 +1566,7 @@ export const STORIES2: Record<StoryId2, StoryDef2> = {
     name: "圆明伴驾",
     emoji: "🏞️",
     flavor: "皇上带你住进圆明园碧桐书院，恩宠一时无两。",
-    note: "本回合不另出召幸；第 15、16 回合每回合都出现召幸（有孕后不再出现）；3 回合后翊坤长跪。身负【抱恙在身】或【卧床静养】时，只能安分随侍或由温太医相助。",
+    note: "3 回合后翊坤长跪。身负【抱恙在身】或【卧床静养】时，只能安分随侍或由温太医相助。",
     defaultOptionId: "anfenSuishi",
     unwellOptionIds: ["anfenSuishi", "tiaoyangShengti"],
     options: [

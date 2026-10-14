@@ -621,7 +621,7 @@ describe("zhenhuan stage 2 engine", () => {
     expect(has(s)).toBe(true);
   });
 
-  it("no 召幸 on the 圆明伴驾 turn (14), every turn after it in the garden (15, 16)", () => {
+  it("no 召幸 on the 圆明伴驾 turn (14); afterwards the usual threshold / interval rule", () => {
     const s = newStage2(19, null);
     s.rank = "guiren";
     s.shengchong = 14;
