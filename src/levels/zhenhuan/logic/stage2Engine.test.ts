@@ -1727,7 +1727,7 @@ describe("zhenhuan stage 2 engine", () => {
     expect(f.cited).toEqual(["kekouZhangce", "fuziZhisi"]);
     expect(f.stories[0]).toContain("内务府");
     expect(f.stories[1]).toContain("福子");
-    // 眉庄 and 温太医 both lead with 刘畏卿药方 — the second one moves on
+    // 眉庄 and 温太医 both lead with 刘畚药方 — the second one moves on
     const g = play(["liuweiqingYaofang", "duanfeiHonghua"], ["meizhuangXiangzhu", "wenTaiyiZhenzhi"]);
     expect(g.cited).toEqual(["liuweiqingYaofang", "duanfeiHonghua"]);
     // nothing left to speak to → the general line
