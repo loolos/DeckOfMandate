@@ -22,7 +22,7 @@ const MUSIC_DIR = "src/levels/zhenhuan/assets/music";
 const README = path.join(INBOX, "README.md");
 const EXTS = ["mp3", "m4a", "ogg", "wav"];
 const TRACKS = [
-  ["M00", "victory", "过关"],
+  ["M00", "victory", "第二关大胜 / 完美胜利"],
   ["M01", "calm", "日常欢快"],
   ["M02", "tension", "紧张"],
   ["M03", "sorrow", "哀婉"],
