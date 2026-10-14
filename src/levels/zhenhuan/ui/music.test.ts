@@ -9,12 +9,16 @@ describe("musicMood", () => {
     expect(musicMood(null)).toBe("calm");
   });
 
-  it("victory once a level is won, never after a loss", () => {
-    expect(musicMood({ stage: 1, state: { ...newGame(1), turn: 15, outcome: "won" } })).toBe("victory");
-    expect(musicMood({ stage: 1, state: { ...newGame(1), turn: 15, outcome: "lost" } })).toBe("calm");
+  it("victory only for a 第二关 win with 大胜 or 完美胜利", () => {
+    expect(musicMood({ stage: 1, state: { ...newGame(1), turn: 15, outcome: "won" } })).toBe("calm");
     const s = startStage2Standalone(1);
     if (s.stage !== 2) throw new Error("expected stage 2");
-    expect(musicMood({ ...s, state: { ...newStage2(1, s.state.carry), turn: 30, outcome: "won" } })).toBe("victory");
+    const end = (outcome: "won" | "lost", victory: "narrow" | "full" | "perfect" | null) =>
+      musicMood({ ...s, state: { ...newStage2(1, s.state.carry), turn: 30, outcome, victory } });
+    expect(end("won", "perfect")).toBe("victory");
+    expect(end("won", "full")).toBe("victory");
+    expect(end("won", "narrow")).toBe("climax");
+    expect(end("lost", null)).toBe("climax");
   });
 
   it("stage 1 follows its story beats", () => {
