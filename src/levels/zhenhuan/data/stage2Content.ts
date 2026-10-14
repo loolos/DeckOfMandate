@@ -555,7 +555,7 @@ export const STATUSES2: Record<StatusId2, StatusDef2> = {
     duration: 0,
     permanent: true,
     drawModifier: 0,
-    effectText: "抵消一次伤胎类事件的后果（有孕前不扣身子；有孕后免于小产）；翊坤跪阶时不能阻止小产，但身子少扣 1。第一次适用时自动用掉。",
+    effectText: "抵消一次伤胎类事件的后果（有孕前不扣身子；有孕后免于小产）；玉阶炎日时不能阻止小产，但身子少扣 1。第一次适用时自动用掉。",
     flavor: "茶盏底下那张方子，字迹工整，每一味药都写了用量。",
     source: "温太医相助的惜别效果「临行诊治」",
   },
@@ -1302,9 +1302,9 @@ export type StoryOption2 = {
   readonly pregnancy?: boolean;
   readonly summon?: "success" | "avoid";
   readonly caoBefriend?: boolean;
-  /** 翊坤跪阶（有孕）: body loss for this option (before 恨意 / 留方 adjustments). */
+  /** 玉阶炎日（有孕）: body loss for this option (before 恨意 / 留方 adjustments). */
   readonly fakuiShenzi?: number;
-  /** 翊坤跪阶（有孕）: text for the 小产 popup, differs per option. */
+  /** 玉阶炎日（有孕）: text for the 小产 popup, differs per option. */
   readonly miscarriageStory?: string;
   /** Negative status this option adds (blocked by nothing; 温太医相助 can remove it). */
   readonly status?: StatusId2;
@@ -1568,7 +1568,7 @@ export const STORIES2: Record<StoryId2, StoryDef2> = {
     name: "圆明伴驾",
     emoji: "🏞️",
     flavor: "皇上带你住进圆明园碧桐书院，恩宠一时无两。",
-    note: "3 回合后翊坤跪阶。身负【抱恙在身】或【卧床静养】时，只能安分随侍或由温太医相助。",
+    note: "3 回合后玉阶炎日。身负【抱恙在身】或【卧床静养】时，只能安分随侍或由温太医相助。",
     defaultOptionId: "anfenSuishi",
     unwellOptionIds: ["anfenSuishi", "tiaoyangShengti"],
     options: [
@@ -1615,7 +1615,7 @@ export const STORIES2: Record<StoryId2, StoryDef2> = {
   },
   fakuiPlain: {
     id: "fakuiPlain",
-    name: "翊坤跪阶",
+    name: "玉阶炎日",
     emoji: "☀️",
     flavor: "华妃借故罚你跪于翊坤宫外的烈日下，周宁海搬了张凳子坐在廊下盯着。",
     note: "罚跪开始时恨意 ≥ 6，清誉再 -1。",
@@ -1669,7 +1669,7 @@ export const STORIES2: Record<StoryId2, StoryDef2> = {
   },
   fakuiPregnant: {
     id: "fakuiPregnant",
-    name: "翊坤跪阶",
+    name: "玉阶炎日",
     emoji: "☀️",
     flavor: "华妃借故罚你跪于翊坤宫外的烈日下，周宁海守在一旁，谁也不许近前。你腹中隐隐作痛。",
     note: "有孕时必定小产（温太医留方也挡不住），小产本身身子 -2；所选的牌决定另外付出什么代价。罚跪开始时恨意 ≥ 6，身子再 -1；有温太医留方，身子少扣 1。",

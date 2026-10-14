@@ -159,7 +159,7 @@ export type Z2State = {
   miscarriages: number;
   /** What caused the latest 小产 (for the notice). */
   miscarriageCause: string | null;
-  /** Per-option 小产 popup text (翊坤跪阶), if any. */
+  /** Per-option 小产 popup text (玉阶炎日), if any. */
   miscarriageStory: string | null;
   /** What the latest 小产 actually cost (after caps), for the notice. */
   miscarriageCost: { shenzi: number; qingyu: number; shengchong: number; hate: number } | null;
@@ -879,7 +879,7 @@ function applyStoryOption(s: Z2State, inst: StoryInst2, option: StoryOption2, so
       loss = Math.max(0, loss - 1);
       log(s, "【温太医留方】保住了你的身子：身子少扣 1。", "good");
     }
-    miscarry(s, loss, "翊坤跪阶", option.miscarriageStory ?? null);
+    miscarry(s, loss, "玉阶炎日", option.miscarriageStory ?? null);
     if (alive(s)) applyDeltas2(s, option.effects, `${def.name}·${option.name}`);
   } else if (inst.id === "fakuiPlain") {
     applyDeltas2(s, option.effects, `${def.name}·${option.name}`);

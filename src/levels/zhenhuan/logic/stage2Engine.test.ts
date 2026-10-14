@@ -575,7 +575,7 @@ describe("zhenhuan stage 2 engine", () => {
     expect(s.shenzi).toBe(4);
   });
 
-  it("莺儿伏罪 / 圆明伴驾 / 翊坤跪阶: the new 谨言慎行 / 温太医相助 options", () => {
+  it("莺儿伏罪 / 圆明伴驾 / 玉阶炎日: the new 谨言慎行 / 温太医相助 options", () => {
     let a = newStage2(44, null);
     a.qingyu = 5;
     onlyEvents(a, {});

@@ -1061,7 +1061,7 @@ export function Stage2Game({ state, dispatch, runCode, showRules, onShowRules, o
       {notice === "miscarriage" ? (
         <Notice title="🥀 小产" onClose={() => setNotice(null)}>
           <p>
-            {state.miscarriageCause === "翊坤跪阶"
+            {state.miscarriageCause === "玉阶炎日"
               ? state.miscarriageStory ?? "烈日下跪了这许久，腹中一阵绞痛。太医赶到时，孩子已经保不住了。"
               : state.miscarriageCause === "身子亏空"
                 ? "身子亏空到了极处，再也护不住腹中的孩子。太医跪在榻前，只说了一句「小主节哀」。"

@@ -35,7 +35,7 @@
 | 10 | `tension`（晋封考验） | `calm`（贵人之后） |
 | 13 | `calm`（尘埃落定） | |
 | 14 | | `tender`（圆明伴驾） |
-| 17 | | `sorrow`（翊坤跪阶） |
+| 17 | | `sorrow`（玉阶炎日） |
 | 20 | | `tension`（端妃旧事） |
 | 24 | | `climax`（年氏倾颓，直到翊坤落幕） |
 
@@ -78,7 +78,7 @@ Mood: suspenseful palace intrigue, whispering and hidden menace, someone is watc
 Clean studio recording, warm and refined, moderate consistent loudness. Entirely original melody; do not quote or imitate any existing TV drama theme.
 ```
 
-**M03 哀婉**（失去与委屈：眉庄或温太医退场、翊坤跪阶）
+**M03 哀婉**（失去与委屈：眉庄或温太医退场、玉阶炎日）
 
 ```text
 Original instrumental piece in ancient Chinese imperial court style, for a palace drama card game. No vocals, no lyrics, no choir. Length 30 to 40 seconds, about 35 seconds. Begins with half a second of silence, then a very soft fade-in; ends by letting the last note decay naturally into about 1.5 seconds of silence. No abrupt cut, no loop-style ending.

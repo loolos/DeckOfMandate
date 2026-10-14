@@ -25,7 +25,7 @@ export function eventArtUrl(id: EventId | EventId2): string | null {
   return EVENT_ART.get(id) ?? null;
 }
 
-/** Story variants that share one picture (both 翊坤跪阶 cards use the plain one). */
+/** Story variants that share one picture (both 玉阶炎日 cards use the plain one). */
 const STORY_ART_ALIAS: Partial<Record<StoryId | StoryId2, StoryId | StoryId2>> = { fakuiPregnant: "fakuiPlain" };
 
 export function storyArtUrl(id: StoryId | StoryId2): string | null {
