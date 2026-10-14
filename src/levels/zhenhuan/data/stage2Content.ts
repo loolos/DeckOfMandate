@@ -274,7 +274,7 @@ export const FINALE = {
       ["lanyongSixing", "槿汐跪在殿下，不疾不徐地道：「宫规里从没有一丈红这一条。翊坤宫私设刑罚，打残了夏小主，奴婢当日就在宫道上。」"],
     ],
     lingrongXiangzhu: [
-      ["fuziZhisi", "「丽嫔娘娘惊梦时，喊的是福子，也是眉庄姐姐落水的那一夜。福子是怎么沉的井，眉庄是被谁推下去的，丽嫔心里最清楚，翊坤宫也最清楚。」"],
+      ["fuziZhisi", "「丽嫔娘娘惊梦时，喊的是余答应的名字，嘴里翻来覆去只说『不是我，别来找我』。福子是怎么沉的井，眉庄是被谁推下去的，丽嫔心里最清楚，翊坤宫也最清楚。」"],
       ["yuyingerYiyan", "「余答应在冷宫里说的话，臣妾也听说了：倚梅园那夜的功劳，是翊坤宫教她冒认的。」"],
       ["lanyongSixing", "「臣妾初入宫时，夏常在也曾当众羞辱过臣妾。可她后来落得那般下场，臣妾想起来，至今夜里都睡不着。」"],
       ["kekouZhangce", "「臣妾份例微薄，最知道少一篓炭是什么滋味。翊坤宫一句话，内务府便把各宫的东西扣下了。」"],
@@ -825,7 +825,7 @@ export const EVENTS2: Record<EventId2, EventDef2> = {
     resolvedText: "可能搜集到华妃的罪证",
     unresolvedText: "无额外效果，事件消失（之后还会出现）",
     resolvedStory: {
-      shoulongRenxin: "你让小允子扮作福子在丽嫔窗下哭了半宿。丽嫔只当是余莺儿回来报复，吓得魂飞魄散，把华妃怎样害死福子沉井、又怎样推眉庄落水，全说了出来。",
+      shoulongRenxin: "你让小允子扮作余莺儿的冤魂，在丽嫔窗下幽幽哭了半宿。丽嫔本就怕她死后回来报复，如今只当是她真的来了，吓得魂飞魄散，把华妃怎样害死福子沉井、又怎样推眉庄落水，全说了出来。",
     },
   },
   wenyiBaoyang: {
@@ -1199,7 +1199,7 @@ export const LINGRONG_EVENT: Partial<Record<EventId2, TierTable>> = {
     resentful: { resolves: true, effects: [], relation: 1, story: "佛前青烟袅袅，陵容一言不发，临走时却替你掸了掸衣上的香灰。" },
   },
   liPinJingmeng: {
-    close: { resolves: true, evidence: true, relation: 1, story: "陵容学着福子的声音在丽嫔窗下哭了半宿。丽嫔只当是余莺儿来报复，吓破了胆，把华妃害死福子沉井、推眉庄落水的事全说了。事后陵容抿嘴笑：「也只有姐姐，敢叫我做这样的事。」" },
+    close: { resolves: true, evidence: true, relation: 1, story: "陵容学着余莺儿生前的腔调，在丽嫔窗下幽幽哭了半宿。丽嫔本就怕她死后来报复，一听便吓破了胆，把华妃害死福子沉井、推眉庄落水的事全说了。事后陵容抿嘴笑：「也只有姐姐，敢叫我做这样的事。」" },
     distant: { resolves: true, evidence: true, story: "陵容肯帮这个忙，却撇嘴道：「这种装神弄鬼的事，也只有姐姐想得出来。」丽嫔终究吐了实话。" },
     resentful: { resolves: false, relation: 1, effects: [{ resource: "hate", amount: 1 }], story: "消息不知怎么走漏到了翊坤宫，丽嫔那边一下子没了动静。陵容低着头来见你，绞着帕子说是自己嘴不严。" },
   },
