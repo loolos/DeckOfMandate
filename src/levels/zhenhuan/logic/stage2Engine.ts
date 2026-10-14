@@ -47,7 +47,6 @@ import {
   TAG2_INFO,
   TIER_LABEL,
   XIBIE,
-  YUANMINGYUAN_TURNS,
   huafeiDrawPlan,
   lingrongTier,
   summonInterval,
@@ -1153,15 +1152,12 @@ function checkSummon(s: Z2State): void {
     s.turn >= STAGE2.totalTurns
   )
     return;
-  const inGarden = s.turn >= YUANMINGYUAN_TURNS.first && s.turn <= YUANMINGYUAN_TURNS.last;
   const threshold = SUMMON_THRESHOLD[s.rank];
-  if (!inGarden) {
-    if (threshold == null || s.shengchong < threshold) {
-      s.summonLast = null;
-      return;
-    }
-    if (s.summonLast != null && s.turn - s.summonLast < summonInterval(s.shengchong - threshold)) return;
+  if (threshold == null || s.shengchong < threshold) {
+    s.summonLast = null;
+    return;
   }
+  if (s.summonLast != null && s.turn - s.summonLast < summonInterval(s.shengchong - threshold)) return;
   s.summonLast = s.turn;
   openStory(s, "zhaoxing");
 }
