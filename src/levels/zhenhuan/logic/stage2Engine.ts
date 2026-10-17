@@ -596,7 +596,6 @@ function becomePregnant(s: Z2State, source: string): void {
     s.opportunityPool = [...s.opportunityPool.filter((id) => id !== PIN_EVENT), PIN_EVENT];
     log(s, "【请脉报喜】加入机会牌池：诊脉报喜妥当后才能晋为嫔。", "good");
   }
-  applyDelta2(s, { resource: "hate", amount: 3 }, "喜脉");
 }
 
 const PIN_EVENT = "qingmaiBaoxi" as const;
@@ -677,7 +676,7 @@ function summonSuccess(s: Z2State, source: string): void {
 function checkFanan(s: Z2State): void {
   // 翊坤落幕 (the last turn): 华妃 has nothing left to throw, so 殿前风雨 never opens then
   if (!alive(s) || s.hate < HATE.max || s.turn >= STAGE2.totalTurns) return;
-  // at most one per turn: one already answered this turn (恨意 back at 10 via 侍寝 / 喜脉) waits for the next turn
+  // at most one per turn: one already answered this turn (恨意 back at 10 via 侍寝) waits for the next turn
   if (s.stories.some((st) => st.id === "huafeiFanan")) return;
   openStory(s, "huafeiFanan");
 }

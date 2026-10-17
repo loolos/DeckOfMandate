@@ -982,8 +982,8 @@ export function Stage2Game({ state, dispatch, runCode, showRules, onShowRules, o
         {state.notices.map((n) => (
           <NoticeCard key={n.name} emoji={n.emoji} name={n.name} text={n.text} fold={fold(`notice-${n.name}`)} />
         ))}
-        {state.stories.map((inst) => (
-          <StoryCard key={inst.id} state={state} inst={inst} dispatch={dispatch} fold={fold(`story-${inst.id}`)} />
+        {state.stories.map((inst, i) => (
+          <StoryCard key={`${inst.id}-${i}`} state={state} inst={inst} dispatch={dispatch} fold={fold(`story-${inst.id}-${i}`)} />
         ))}
         <FinaleCard state={state} fold={fold("finale")} dispatch={dispatch} />
         <TrialCard state={state} fold={fold("trial")} dispatch={dispatch} />
