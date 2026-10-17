@@ -316,7 +316,7 @@ describe("zhenhuan stage 2 engine", () => {
     s = act(s, { type: "playCard", cardUid: y! });
     expect(s.pregnant).toBe(true);
     expect(s.rank).toBe("guiren");
-    expect(s.hate).toBe(6); // 月下相伴 +3, 有孕 +3
+    expect(s.hate).toBe(3); // 月下相伴 +3; 有孕 itself adds no 恨意
     expect(s.opportunityPool[s.opportunityPool.length - 1]).toBe("qingmaiBaoxi");
     // once the rest of the pool is used up it comes; one card is not enough
     s.opportunityPool = ["qingmaiBaoxi"];
@@ -1552,6 +1552,35 @@ describe("zhenhuan stage 2 engine", () => {
     expect(s.shengchong).toBe(before.c - 1);
     expect(s.shenzi).toBe(Math.max(0, before.z - 2));
     expect(s.stories.find((x) => x.id === "huafeiFanan")?.story).toBeUndefined(); // no 陵容 relation yet → generic story
+  });
+
+  it("殿前风雨 opens at most once per turn: hate climbing back to 10 after it was answered waits for next turn", () => {
+    let s = newStage2(18, null);
+    s.stories = [];
+    onlyEvents(s, {});
+    s.hate = 10;
+    s.stories = [{ id: "huafeiFanan", chosenOptionId: null }];
+    s.extraPlays = 2;
+    const [l] = setHand(s, ["lingrongXiangzhu"]);
+    s = act(s, { type: "playCard", cardUid: l! });
+    expect(s.hate).toBe(6);
+    s.hate = 10;
+    const [y] = setHand(s, ["yirongZhengsu"]);
+    s = act(s, { type: "playCard", cardUid: y! });
+    expect(s.stories.filter((x) => x.id === "huafeiFanan")).toHaveLength(1);
+  });
+
+  it("an answered 殿前风雨 never carries into the next turn", () => {
+    let s = newStage2(18, null);
+    s.stories = [{ id: "huafeiFanan", chosenOptionId: null }];
+    onlyEvents(s, {});
+    s.hate = 10;
+    s.extraPlays = 2;
+    const [l] = setHand(s, ["lingrongXiangzhu"]);
+    s = act(s, { type: "playCard", cardUid: l! });
+    expect(s.stories.find((x) => x.id === "huafeiFanan")?.chosenOptionId).not.toBeNull();
+    s = act(s, { type: "endTurn" });
+    expect(s.stories.filter((x) => x.id === "huafeiFanan" && x.chosenOptionId != null)).toHaveLength(0);
   });
 
   it("殿前风雨 温太医 costs 清誉 -1 / 圣宠 -1 and spares 身子", () => {
