@@ -1728,6 +1728,12 @@ describe("zhenhuan stage 2 engine", () => {
     expect(finish(7, three, null).victory).toBe("full"); // no 惜别 at all
     const p = finish(7, three, "meizhuangXiangzhu");
     expect(endingLines(p).some((l) => l.includes("欢宜香"))).toBe(true);
+    // 终幕打出退场者的惜别牌：不再写「从此隐退」，改用重回御前的文本
+    const lines = endingLines(p);
+    expect(lines.some((l) => l.includes("心灰意冷，闭门不出"))).toBe(false);
+    expect(lines.some((l) => l.includes("闲月阁的门重新开了"))).toBe(true);
+    expect(p.log.some((e) => e.text.includes("从此闭门不出"))).toBe(false);
+    expect(endingLines(finish(7, ["wenTaiyiZhenzhi", "jinyanShenxing", "shoulongRenxin"], "wenTaiyiZhenzhi")).some((l) => l.includes("温实初在御前作证后"))).toBe(true);
   });
 
   it("翊坤落幕: every 解牌 testifies to a different evidence you hold", () => {

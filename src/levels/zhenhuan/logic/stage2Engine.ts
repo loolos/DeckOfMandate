@@ -927,14 +927,14 @@ function applyStoryOption(s: Z2State, inst: StoryInst2, option: StoryOption2, so
   return relationDelta;
 }
 
-function departXibie(s: Z2State, who: DepartingCard): void {
+function departXibie(s: Z2State, who: DepartingCard, inFinale = false): void {
   const leaving = (c: CardInst2) => c.id === who;
   s.departed.push(...s.hand.filter(leaving), ...s.drawPile.filter(leaving), ...s.discard.filter(leaving));
   s.hand = s.hand.filter((c) => !leaving(c));
   s.drawPile = s.drawPile.filter((c) => !leaving(c));
   s.discard = s.discard.filter((c) => !leaving(c));
   s.xibieDone = true;
-  log(s, XIBIE[who].leaveStory, "bad");
+  log(s, inFinale ? XIBIE[who].finaleLeaveStory : XIBIE[who].leaveStory, inFinale ? "good" : "bad");
   log(s, `【${CARDS2[who].name}】离场。`);
 }
 
@@ -974,7 +974,7 @@ function resolvePlay2(s: Z2State, cardUid: string, removeStatusUid?: string): vo
   if (alive(s)) {
     if (xibie) {
       const x = XIBIE[xibie];
-      log(s, `惜别·${x.effectName}：${x.playStory}`, "good");
+      log(s, `惜别·${x.effectName}：${finaleAccepts(s, card.id) ? x.finalePlayStory : x.playStory}`, "good");
       if (xibie === "meizhuangXiangzhu") {
         applyDelta2(s, { resource: "qingyu", amount: 2 }, "临别相托");
         if (alive(s)) addStatus2(s, "meizhuangZhutuo");
@@ -1077,7 +1077,7 @@ function resolvePlay2(s: Z2State, cardUid: string, removeStatusUid?: string): vo
 
   if (xibie) {
     s.departed.push(card);
-    departXibie(s, xibie);
+    departXibie(s, xibie, finaleAccepts(s, card.id));
   } else if (s.xibie === card.id && s.xibieCulled && !s.xibieDone) {
     // this very play chose the leaving person (e.g. 查验药方): the card in flight is one of the "other copies", so it leaves too
     s.departed.push(card);
@@ -1597,7 +1597,8 @@ export function endingLines(s: Z2State): string[] {
   if (s.miscarriages > 0) lines.push("那个没能保住的孩子，成了你心里一道过不去的坎。");
   if (s.pregnant) lines.push(s.miscarriages > 0 ? "所幸腹中又有了龙裔，这一回安然无恙，阖宫都在等着这个孩子降生。" : "腹中的龙裔安然无恙，阖宫都在等着这个孩子降生。");
   else if (s.pregnancies === 0) lines.push("这一路走来，腹中始终没有动静。");
-  if (s.xibie) lines.push(s.xibie === "meizhuangXiangzhu" ? "眉庄姐姐早已心灰意冷，闭门不出，再不过问后宫之事。" : "疫所的书信隔几日便到，温实初总说一切安好。");
+  if (s.xibie && s.finale?.xibie) lines.push(XIBIE[s.xibie].finaleEnding);
+  else if (s.xibie) lines.push(s.xibie === "meizhuangXiangzhu" ? "眉庄姐姐早已心灰意冷，闭门不出，再不过问后宫之事。" : "疫所的书信隔几日便到，温实初总说一切安好。");
   const tier = tierOf(s);
   if (tier === "close") lines.push("陵容依旧常来碎玉轩，姐妹情分一如往昔。");
   else if (tier === "distant") lines.push("陵容来得越来越少了，见面时笑意也淡了。");

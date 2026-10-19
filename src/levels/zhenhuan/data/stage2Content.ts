@@ -413,7 +413,7 @@ export const CARDS2: Record<CardId2, CardDef2> = {
 /** Cards that leave the deck when their 惜别 card is played (§6). */
 export type DepartingCard = "meizhuangXiangzhu" | "wenTaiyiZhenzhi";
 
-export const XIBIE: Record<DepartingCard, { effectName: string; rulesText: string; compact: string; playStory: string; leaveStory: string; who: string }> = {
+export const XIBIE: Record<DepartingCard, { effectName: string; rulesText: string; compact: string; playStory: string; leaveStory: string; finalePlayStory: string; finaleLeaveStory: string; finaleEnding: string; who: string }> = {
   meizhuangXiangzhu: {
     effectName: "临别相托",
     who: "眉庄",
@@ -421,6 +421,9 @@ export const XIBIE: Record<DepartingCard, { effectName: string; rulesText: strin
     compact: "🕯️ 🪷+2 🛡️",
     playStory: "闲月阁的门落锁前，眉庄隔着门缝塞给你一方帕子：“我是倦了，往后这宫里的事，我不想再理。华妃不会就此罢手，你万事当心。”",
     leaveStory: "眉庄心灰意冷，从此闭门不出，再不过问后宫之事。",
+    finalePlayStory: "眉庄本已闭门谢客，却在这一日重新踏进了养心殿，立在你身侧：“我既已退出，原不想再沾这些事。可这一回，我不能再躲了。”",
+    finaleLeaveStory: "话说完，眉庄福了福身，退回殿侧，不再多言。她这一程，替你走到了最后。",
+    finaleEnding: "闲月阁的门重新开了。眉庄在御前说完那番话，心结也解了大半，往后虽仍不愿多理后宫之事，却不再是孤身一人。",
   },
   wenTaiyiZhenzhi: {
     effectName: "临行诊治",
@@ -429,6 +432,9 @@ export const XIBIE: Record<DepartingCard, { effectName: string; rulesText: strin
     compact: "🕯️ 🧹全部负面 🌱+2 📜",
     playStory: "临去疫所前夜，温实初最后一次替你请脉，把一张方子压在了茶盏底下。",
     leaveStory: "疫所路远，从此只有书信偶尔递进宫来。",
+    finalePlayStory: "温实初本已远在疫所，闻讯连夜赶回宫中，风尘仆仆地跪在了殿前，把脉案高高捧过头顶。",
+    finaleLeaveStory: "话说完，温实初叩首退下，仍要赶回疫所。这一回，他是亲自来替你作证的。",
+    finaleEnding: "温实初在御前作证后，又回了疫所，临行前留下一句“万事保重”。此后书信仍隔几日便到，只是字里行间，多了几分释然。",
   },
 };
 
