@@ -1596,7 +1596,8 @@ export type StoryId3 =
   | "taxueWenji"
   | "hehunGengtie"
   | "diannanZhixing"
-  | "zhoufuEHao";
+  | "zhoufuEHao"
+  | "yihuaOuyu";
 
 /** 甄远道下狱: which option, and how heavy it lands (see `xiayuCost`). */
 export type XiayuChoice = "kneel" | "taihou" | "guo" | "lingrong";
@@ -1621,7 +1622,7 @@ export type StoryOption3 = {
   readonly shenziFloor?: number;
   readonly xiayu?: XiayuChoice;
   /** Story-specific flag the engine records (桐花台 / 莫愁 / 温太医探视 / 庚帖 / 送行). */
-  readonly flag?: "li" | "di" | "lingrong" | "luofa" | "gengtie" | "songxing" | "xiangshou";
+  readonly flag?: "li" | "di" | "lingrong" | "luofa" | "gengtie" | "songxing" | "xiangshou" | "ouyu";
   readonly status?: StatusId3;
 };
 
@@ -1910,6 +1911,18 @@ export const STORIES3: Record<StoryId3, StoryDef3> = {
       { id: "jinxiPeiban", name: "槿汐陪伴", card: "jinxiXiangzhu", effects: [], text: "身子不扣", story: "槿汐什么也没说，只一遍遍替你暖着手，陪你在窗前坐到天亮。" },
       { id: "fotianJingzuo", name: "佛前静坐", card: "chanyuXiushen", effects: [sz(-1)], shenziFloor: 1, text: "身子 -1", story: "你在佛前跪了一夜，念的是往生咒，眼泪却止不住。天亮时，心里空落落的，却也静了下来。" },
       { id: "meizhuangQuanwei", name: "眉庄劝慰", card: "meizhuangXiangzhu", effects: [sz(-1)], shenziFloor: 1, removeNegatives: 1, text: "身子 -1；移除 1 个负面状态", story: "眉庄托人捎来长信，只写了一句：「人去了，你还得好好活着，才不辜负他。」" },
+    ],
+  },
+  yihuaOuyu: {
+    id: "yihuaOuyu",
+    name: "圣驾偶遇",
+    emoji: "🌸",
+    flavor: "皇上驾临甘露寺，正往佛堂这边来。你若不在佛前相见，这一回便又错过了。",
+    note: "打出【禅语修身】才算偶遇成功；没成就隔一回合再来。",
+    defaultOptionId: "cuoguo",
+    options: [
+      { id: "cuoguo", name: "错失圣驾", effects: [], text: "偶遇没成，隔一回合再来", story: "皇上在山门外立了片刻，终究没有见到你，由苏培盛扶着回了銮驾。" },
+      { id: "foqianChongfeng", name: "佛前重逢", card: "chanyuXiushen", effects: [], flag: "ouyu", text: "偶遇成功", story: "你在佛前念着经，听见身后的脚步声停了下来。皇上望着你的背影，许久，轻轻唤了一声你的名字。" },
     ],
   },
 };

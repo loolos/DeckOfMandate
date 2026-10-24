@@ -454,7 +454,7 @@ export function yihuaAccepts(s: Z3State, cardId: CardId3): boolean {
     // 落发: the extra card may be 眉庄 instead of a second 槿汐
     return cardId === YIHUA.luofaExtra && y.yinjiaNeed > 1 && !y.yinjia.includes(cardId);
   }
-  if (y.step === 2) return cardId === "chanyuXiushen" && s.turn === y.ouyuDue;
+  if (y.step === 2) return false; // 偶遇 is its own 剧情事件【圣驾偶遇】
   if (y.step === 3) return cardId === "wenTaiyiZhenzhi";
   return false;
 }
@@ -916,6 +916,9 @@ function applyStoryOption(s: Z3State, inst: StoryInst3, option: StoryOption3, so
     case "songxing":
       s.songxing = true;
       break;
+    case "ouyu":
+      if (s.yihua?.step === 2) advanceYihua(s, "chanyuXiushen");
+      break;
   }
   if (inst.id === "tonghuataiChuyu") afterTonghuatai(s);
   if (inst.id === "shanmenOuyu" || inst.id === "taxueWenji") {
@@ -1269,7 +1272,10 @@ function beginTurn3(s: Z3State, turn: number): void {
     const v = STATUSES3[st.id].veiled;
     if (v?.untilTurn === turn) log(s, `【${STATUSES3[st.id].name}】${STATUSES3[st.id].flavor}（${STATUSES3[st.id].effectText}）`, "good");
   }
-  if (s.yihua?.step === 2 && s.yihua.ouyuDue === turn) log(s, "皇上驾临甘露寺：本回合打出【禅语修身】完成偶遇。", "info");
+  if (s.yihua?.step === 2 && s.yihua.ouyuDue === turn) {
+    log(s, "皇上驾临甘露寺：本回合解决【圣驾偶遇】才算偶遇成功。", "info");
+    openStory(s, "yihuaOuyu");
+  }
 
   const fixed = FIXED_STORIES3[turn];
   if (fixed) openStory(s, fixed);

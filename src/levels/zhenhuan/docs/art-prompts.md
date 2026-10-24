@@ -85,6 +85,7 @@
 | S26 | 合婚庚帖 | 剧情 | hehunGengtie |
 | S27 | 滇南之行 | 剧情 | diannanZhixing |
 | S27b | 舟覆噩耗 | 剧情 | zhoufuEHao |
+| S27c | 圣驾偶遇 | 剧情 | yihuaOuyu |
 | S28 | 纯元故衣 | 特殊剧情 | chunyuan |
 | S29 | 景仁宫对质 | 特殊剧情 | confront |
 | S30 | 肺痨之诬 | 特殊剧情 | feilao |
