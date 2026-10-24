@@ -1003,7 +1003,14 @@ function PopupBody({ state, id }: { state: Z3State; id: PopupId }) {
         </>
       );
     case "tonghuatai":
-      return <p>{POPUP_TEXT.tonghuatai}</p>;
+      return (
+        <>
+          {POPUP_TEXT.tonghuatai.map((t) => (
+            <p key={t}>{t}</p>
+          ))}
+          <p className={styles.muted}>{POPUP_TEXT.tonghuataiRules}</p>
+        </>
+      );
     case "chunyuan": {
       const r = state.chunyuanResult ?? "fail";
       return (
