@@ -3,6 +3,7 @@ import {
   CARDS3,
   CONFRONT,
   EVENTS3,
+  FABRICATED_SECRET,
   FIXED_STORIES3,
   LINGRONG_EVENT3,
   PAIRS,
@@ -19,6 +20,7 @@ import {
 } from "../data/stage3Content";
 import {
   canPlayCard3,
+  confrontLines,
   feilaoBaseTier,
   feilaoCurrentTier,
   matchedEvents3,
@@ -306,6 +308,20 @@ describe("zhenhuan stage 3 engine", () => {
     expect(presentedSecrets(s)).toBe(4);
   });
 
+  it("对质 evidence list: 亲厚 marks two of 陵容's as withheld, 怨怼 adds the made-up one", () => {
+    const s = newStage3(1, { ...CARRY, secrets: ["shiqinNeiqing", "zhuangshenNonggui", "sitanSiqiu"] });
+    s.secrets.chuyanDingzhuang = 1;
+    s.relation = 2;
+    const close = confrontLines(s);
+    expect(close).toHaveLength(4);
+    expect(close.filter((l) => l.withheld)).toHaveLength(2);
+    expect(close.filter((l) => l.withheld).every((l) => l.lingrong)).toBe(true);
+    s.relation = -2;
+    const resentful = confrontLines(s);
+    expect(resentful.some((l) => l.withheld)).toBe(false);
+    expect(resentful.at(-1)!.line).toBe(FABRICATED_SECRET);
+  });
+
   it("甄远道下狱 cost: 父兄蒙尘 heavier, 打压祺贵人 lighter", () => {
     const s = newStage3(1, CARRY);
     expect(xiayuCost(s, "kneel")).toEqual([{ resource: "shengchong", amount: -2 }]);
@@ -321,6 +337,7 @@ describe("zhenhuan stage 3 engine", () => {
     let s = advanceTo(newStage3(4, CARRY), 10);
     expect(s.opportunity ?? s.crisis ?? s.huanghou).toBeNull();
     expect(s.confront).not.toBeNull();
+    expect(s.popups).toContain("confront");
     const need = s.confront!.needed;
     const ids = setHand(s, ["lingrongXiangzhu", ...CONFRONT.cards.slice(0, 3)]);
     s.extraPlays = 3;

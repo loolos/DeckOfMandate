@@ -2076,12 +2076,9 @@ export const LINGRONG_FAREWELL: Record<LingrongTier, string> = {
   resentful: "陵容没有来送。后来你才知道，她还在替皇后打听你的消息。",
 };
 
-/** 甄嬛心声：每条只有陵容知道的把柄。 */
-export const ZHENHUAN_REALIZE = "那件事，只有陵容知道。";
-
 // ---------------------------------------------------------------- popups (§五)
 
-export type PopupId = "opening" | "huanghou" | "tonghuatai" | "chunyuan" | "wanwan" | "exit" | "feilao" | "zhoufu" | "ximai";
+export type PopupId = "opening" | "huanghou" | "tonghuatai" | "chunyuan" | "wanwan" | "confront" | "exit" | "feilao" | "zhoufu" | "ximai";
 
 export const POPUP_TEXT = {
   opening: "翊坤宫的门关上了。华妃倒了，六宫都说碎玉轩的莞主子是头一份的恩宠。听说景仁宫也要亲自来贺。",
@@ -2125,6 +2122,17 @@ export const POPUP_TEXT = {
     "「菀菀类卿，暂排苦思，亦除却巫山非云也。」短短一行字，墨色早就旧了。你忽然想起生辰宴前那件封在库里的旧衣，想起镜子里那个陌生的自己，原来那从来不是巧合。倚梅园里那一句许愿，杏花林下那一回眸，他赐你的那个“莞”字，取的原是她的“菀”。这些年的恩宠，枕边那些温存的话，一句一句，原来都是说给另一个人听的。",
     "那一夜碎玉轩的灯一直亮着。天将明时，孩子落了地，哭声细细的，像一只刚出壳的雏鸟。皇上隔日赐了名，叫胧月。你抱着她，看窗外的天一点点亮起来，心里却有什么东西，跟着那一夜的月色一起暗了下去。",
   ] as readonly string[],
+  confrontIntro: "这些日子，你落在旁人眼里、记在旁人心里的事：",
+  confrontNone: "皇后手里什么也没有。",
+  confrontWithheld: "陵容瞒下了此事，皇后并不知道",
+  confrontDuanfei: "端妃在一旁淡淡说了一句，皇后便略过了一桩。",
+  confrontRealize: {
+    exposed:
+      "皇后说一件，你的心便沉一分。那些话，有的是夜里对着一盏孤灯说的，有的是两个人头挨着头、压低了声音说的。碎玉轩的窗纸那样薄，可听见的，从来只有一个人。你想起她替你描眉时微微发颤的手，想起她倚在你肩头唤你“姐姐”的模样。原来这些日子她一直坐在你身边，一针一线绣着荷包，也一字一句，替旁人记着你的话。",
+    withheld: "可皇后手里，终究少了几桩。那几件事她也知道，却到底没有说出去。你不知道该恨她，还是该谢她。",
+    withheldOnly: "你后来才隐约知道，陵容这些日子也替景仁宫留心着碎玉轩的一举一动。只是那几件只有她知道的事，她到底没有说出去。你不知道该恨她，还是该谢她。",
+    fabricated: "还有最后那一句，你从来没有说过。可这样的话，这宫里也只有她编得圆。",
+  },
   exitHeart:
     "出宫那日下着小雪。你没有回头看紫禁城，只想起那卷手书上的四个字。原来这些年的恩宠、枕边那些温存的话、倚梅园的那一夜，都是给另一个人的。你不恨了，只是累了。从今往后，这宫里的人和事，与你再无干系。",
   exitGate: "马车停在甘露寺山门前。静白师太上下打量你：「进了这道门，就没有什么小主娘娘了。」",
@@ -2181,6 +2189,7 @@ export type TagId3 =
   | "pair"
   | "jingbai"
   | "relic"
+  | "chengbing"
   | "yihua"
   | "doubt";
 
@@ -2208,6 +2217,7 @@ export const TAG3_INFO: Record<TagId3, { label: string; lore: string; rules: str
   },
   jingbai: { label: "静白刁难", lore: "静白师太看你不顺眼。", rules: "寺中（第 11–18 回合）的刁难没化解，静白就更嚣张；她嚣张的程度决定第 18 回合你被赶走时有多狼狈。" },
   relic: { label: "遗物", lore: "他留下的东西。", rules: "打出即焚毁，牌离场，没有别的效果。偶遇完成那回合结束时，手里每有 1 件遗物，疑点 +1（睹物生疑）。" },
+  chengbing: { label: "称病", lore: "陵容身子不适，告了假。", rules: "景仁宫对质这一回合，陵容称病没有来，她的牌打不出。" },
   yihua: {
     label: "持续",
     lore: "唯一的活路。",

@@ -1276,6 +1276,7 @@ function beginTurn3(s: Z3State, turn: number): void {
     const presented = presentedSecrets(s);
     const needed = confrontNeeded(presented) + (s.rank === "guiren" ? 1 : 0);
     s.confront = { presented, needed, played: [], stories: [] };
+    popup(s, "confront");
     log(s, `剧情事件：【${CONFRONT.name}】皇后拿出了 ${presented} 件事。本回合须打出 ${needed} 张辩白牌${s.rank === "guiren" ? "（贵人多 1 张）" : ""}。陵容称病没来，她的牌打不出。`, "bad");
   }
   if (turn === STAGE3.templeLastTurn) {
@@ -1704,20 +1705,17 @@ export function replay3(seed: number, carry: Carry3 | null, actions: readonly Z3
   return s;
 }
 
-/** The 把柄 皇后 brought out at 对质, for the outcome text (hidden before). */
-export function confrontLines(s: Z3State): { line: string; lingrong: boolean }[] {
+/** The 把柄 at 对质: what 皇后 brought out, plus the ones a 亲厚 陵容 kept back (`withheld`). */
+export function confrontLines(s: Z3State): { line: string; lingrong: boolean; withheld?: boolean }[] {
   const tier = s.exitTierLingrong ?? lingrongTier(s.relation);
   const held = (Object.keys(s.secrets) as SecretId[]).filter((id) => (s.secrets[id] ?? 0) > 0);
   // a 亲厚 陵容 kept two of hers back
   let hidden = tier === "close" ? 2 : 0;
-  const shown = held.filter((id) => {
-    if (hidden > 0 && SECRETS[id].lingrong) {
-      hidden--;
-      return false;
-    }
-    return true;
+  const lines = held.map((id) => {
+    const withheld = hidden > 0 && SECRETS[id].lingrong;
+    if (withheld) hidden--;
+    return { line: SECRETS[id].line, lingrong: SECRETS[id].lingrong, ...(withheld ? { withheld } : {}) };
   });
-  const lines = shown.map((id) => ({ line: SECRETS[id].line, lingrong: SECRETS[id].lingrong }));
   if (tier === "resentful") lines.push({ line: FABRICATED_SECRET, lingrong: true });
   return lines;
 }

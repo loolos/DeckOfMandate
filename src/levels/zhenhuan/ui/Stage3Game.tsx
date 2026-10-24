@@ -9,6 +9,7 @@ import {
   CHANGXIANGSI,
   CHUNYUAN,
   CONFRONT,
+  FABRICATED_SECRET,
   DOUBT,
   EVENT_KIND3_LABEL,
   EVENTS3,
@@ -33,7 +34,6 @@ import {
   TAG3_INFO,
   XIUXING,
   YIHUA,
-  ZHENHUAN_REALIZE,
   confrontOutcome,
   type CardId3,
   type EventId3,
@@ -52,6 +52,7 @@ import {
   endingLines3,
   feilaoAccepts,
   feilaoCurrentTier,
+  hasStatus3,
   isFreeByLianmei3,
   isRelic,
   lianmeiLit3,
@@ -715,6 +716,11 @@ function HandCard({ state, card, dispatch, fold }: { state: Z3State; card: CardI
           掣肘
         </Tag>
       ) : null}
+      {absent ? (
+        <Tag tag="chengbing" tone={styles.kindCrisis} dispatch={dispatch}>
+          称病
+        </Tag>
+      ) : null}
       {relic ? (
         <Tag tag="relic" tone={styles.kindTrial} dispatch={dispatch}>
           🕯️遗物
@@ -923,18 +929,36 @@ function Notice({ title, children, onClose, button = "知道了" }: { title: str
   );
 }
 
-function ConfrontReveal({ state }: { state: Z3State }) {
+/** 对质开始：列出所有把柄，陵容瞒下的单独标出。 */
+function ConfrontEvidence({ state }: { state: Z3State }) {
   const lines = confrontLines(state);
-  if (lines.length === 0) return <p className={styles.muted}>皇后手里什么也没有。</p>;
+  if (lines.length === 0) return <p className={styles.muted}>{POPUP_TEXT.confrontNone}</p>;
   return (
     <>
-      <p className={styles.muted}>皇后一件一件拿出来的事：</p>
+      <p className={styles.muted}>{POPUP_TEXT.confrontIntro}</p>
       {lines.map((l, i) => (
-        <p key={`${l.line}-${i}`}>
+        <p key={`${l.line}-${i}`} className={l.withheld ? styles.muted : undefined}>
           {l.line}
-          {l.lingrong ? <span className={styles.muted}> {ZHENHUAN_REALIZE}</span> : null}
+          {l.withheld ? <em>（{POPUP_TEXT.confrontWithheld}）</em> : null}
         </p>
       ))}
+      {hasStatus3(state, "duanfeiXianghu") ? <p className={styles.muted}>{POPUP_TEXT.confrontDuanfei}</p> : null}
+    </>
+  );
+}
+
+/** 对质之后：不再列证据，只写甄嬛明白过来的那一刻。 */
+function ConfrontRealize({ state }: { state: Z3State }) {
+  const lines = confrontLines(state);
+  const exposed = lines.some((l) => l.lingrong && !l.withheld);
+  const withheld = lines.some((l) => l.withheld);
+  const fabricated = lines.some((l) => l.line === FABRICATED_SECRET);
+  const text = POPUP_TEXT.confrontRealize;
+  return (
+    <>
+      {exposed ? <p>{text.exposed}</p> : withheld ? <p>{text.withheldOnly}</p> : null}
+      {exposed && withheld ? <p>{text.withheld}</p> : null}
+      {fabricated ? <p>{text.fabricated}</p> : null}
     </>
   );
 }
@@ -986,11 +1010,21 @@ function PopupBody({ state, id }: { state: Z3State; id: PopupId }) {
           ))}
         </>
       );
+    case "confront":
+      return (
+        <>
+          <p>{CONFRONT.flavor}</p>
+          <ConfrontEvidence state={state} />
+          <p className={styles.muted}>
+            本回合须打出 {state.confront?.needed ?? 0} 张辩白牌{state.rank === "guiren" ? "（贵人多 1 张）" : ""}。陵容称病没来，她的牌本回合打不出。
+          </p>
+        </>
+      );
     case "exit": {
       const exit = state.exitTier ? EXIT[state.exitTier] : null;
       return (
         <>
-          <ConfrontReveal state={state} />
+          <ConfrontRealize state={state} />
           {exit ? (
             <p>
               <strong>
@@ -1037,6 +1071,7 @@ const POPUP_TITLE: Record<PopupId, string> = {
   tonghuatai: "🎐 桐花台",
   chunyuan: "👗 纯元故衣",
   wanwan: "💔 菀菀类卿",
+  confront: "⚖️ 景仁宫对质",
   exit: "⚖️ 景仁宫对质 · 自请出宫",
   feilao: "🤒 迁居凌云峰",
   zhoufu: "🌊 舟覆噩耗",
@@ -1063,7 +1098,7 @@ function OutcomeModal({ state, onRestart, onMenu }: { state: Z3State; onRestart:
             {state.lossKind ? <p>{LOSS3_STORY[state.lossKind]}</p> : null}
             {state.lossKind === "lenggong" ? (
               <>
-                <ConfrontReveal state={state} />
+                <ConfrontRealize state={state} />
                 {tier ? <p className={styles.muted}>{LENGGONG_LINGRONG[tier]}</p> : null}
               </>
             ) : null}
