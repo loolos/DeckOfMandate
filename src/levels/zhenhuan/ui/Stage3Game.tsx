@@ -79,7 +79,7 @@ import {
 } from "../logic/stage3Engine";
 import { cardArtUrl, eventArtUrl, specialArtUrl, storyArtUrl } from "./art";
 import { CardArt, FoldBox, GameHeader, LogView, Pile, PileGroup, ResolvedBanner, ScrollRow, StatChip, TagChip, activateOnKey, countBy, isTypingTarget, type Fold } from "./common";
-import { compactEffect3, expandedEffect3, statusBrief3 } from "./effectText3";
+import { compactEffect3, expandedEffect3 } from "./effectText3";
 import styles from "./zhenhuan.module.css";
 
 type Dispatch = (a: Z3Action) => void;
@@ -833,8 +833,7 @@ function Statuses({ state, dispatch }: { state: Z3State; dispatch: Dispatch }) {
                   <span className={styles.statusFull}> {def.name}</span>
                 </span>
                 <span className={styles.statusBrief}>
-                  {statusBrief3(def)}
-                  {def.permanent ? "" : ` ⏳${st.remaining}`}
+                  {def.permanent ? "" : `⏳${st.remaining}`}
                 </span>
                 <button
                   type="button"
