@@ -145,6 +145,9 @@ function Chips({ ids, lit }: { ids: readonly CardId3[]; lit: (id: CardId3) => bo
 const KIND_TONE = { opportunity: styles.kindOpportunity, crisis: styles.kindCrisis, huanghou: styles.kindEnvy };
 const CARD_TONE = { opportunity: styles.cardOpportunity, crisis: styles.cardCrisis, huanghou: styles.cardEnvy };
 
+// 连环事件标题是「连环名·事件名」，说明里连环名已在前面，只引事件名。
+const shortEventName = (name: string) => name.split("·").pop() ?? name;
+
 function answeringCards(id: EventId3): CardId3[] {
   const def = EVENTS3[id];
   const singles = (Object.keys(CARDS3) as CardId3[]).filter((c) => CARDS3[c].matches.includes(id));
@@ -262,7 +265,7 @@ function EventCard({ state, inst, fold, dispatch }: { state: Z3State; inst: Even
       ) : null}
       {def.pair ? (
         <p className={styles.rule}>
-          🔗 {PAIRS[def.pair].name}：{isOpp ? `须先化解【${EVENTS3[PAIRS[def.pair].crisis].name}】才能把握。` : `没化解，【${EVENTS3[PAIRS[def.pair].opportunity].name}】随之作废。`}
+          🔗 {PAIRS[def.pair].name}：{isOpp ? `须先化解【${shortEventName(EVENTS3[PAIRS[def.pair].crisis].name)}】才能把握。` : `没化解，【${shortEventName(EVENTS3[PAIRS[def.pair].opportunity].name)}】随之作废。`}
           一张【{CARDS3[PAIRS[def.pair].shared].emoji}
           {CARDS3[PAIRS[def.pair].shared].name}】能一石二鸟：结交盟友并打压{RIVALS[PAIRS[def.pair].rival].name}（这张危机下次出现时自动化解一次）。
         </p>
