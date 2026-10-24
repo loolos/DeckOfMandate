@@ -153,6 +153,21 @@ describe("zhenhuan stage 3 engine", () => {
     expect(s.secrets[`enshang.${id}` as keyof typeof s.secrets]).toBe(1);
   });
 
+  it("皇后事件 played with a listed card: that card's own reward, no 把柄", () => {
+    let s = advanceTo(newStage3(5, CARRY), 3);
+    clearBoard(s);
+    s.huanghou = ev(s, "jingrenHoushang");
+    s.shenzi = 3;
+    const sc = s.shengchong;
+    const [jinxi] = setHand(s, ["jinxiXiangzhu"]);
+    s = act(s, { type: "playCard", cardUid: jinxi! });
+    expect(s.huanghou!.resolved).toBe(true);
+    expect(s.shenzi).toBe(4);
+    s = act(s, { type: "endTurn" });
+    expect(s.shengchong).toBeLessThanOrEqual(sc);
+    expect(s.secrets["enshang.jingrenHoushang" as keyof typeof s.secrets]).toBeUndefined();
+  });
+
   it("海棠春睡 (turn 3) makes a 未孕 player pregnant whatever is chosen", () => {
     let s = advanceTo(newStage3(8, { ...CARRY, pregnant: false }), 3);
     expect(s.stories.map((x) => x.id)).toContain(FIXED_STORIES3[3]);

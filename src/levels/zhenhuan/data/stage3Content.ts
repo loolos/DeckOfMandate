@@ -757,7 +757,7 @@ export type EventDef3 = {
   readonly name: string;
   readonly emoji: string;
   readonly flavor: string;
-  /** Opportunity reward; 皇后事件: what accepting (not answering) gives. */
+  /** Opportunity reward; 皇后事件: what the default (accepting) gives. */
   readonly reward: readonly Delta3[];
   readonly cardReward?: Partial<Record<CardId3, readonly Delta3[]>>;
   readonly penalty: readonly Delta3[];
@@ -1158,7 +1158,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
       jinyanShenxing: "你只说是来给端妃送药的，说完便告退。齐妃回去，什么也说不出来。",
     },
   },
-  // ---- 第一幕 · 皇后事件（恩赏：不应对即收下，暗留把柄）
+  // ---- 第一幕 · 皇后事件（恩赏：默认收下，暗留把柄；打出列出的牌换一份赏赐，不留把柄）
   jingrenHoushang: {
     id: "jingrenHoushang",
     kind: "huanghou",
@@ -1167,11 +1167,12 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     flavor: "皇后赏下几匹云锦、一支点翠步摇，说是给碎玉轩添喜。",
     reward: [sc(1)],
     penalty: NO,
-    resolvedText: "没有效果",
+    cardReward: { jinyanShenxing: [q(1)], jinxiXiangzhu: [sz(1)] },
+    resolvedText: "谨言慎行：清誉 +1；槿汐相助：身子 +1",
     unresolvedText: "圣宠 +1",
     resolvedStory: {
-      jinyanShenxing: "你说嫔妾福薄，受不起这样的厚赏，只收下了一匹素缎。皇后笑着说你太过谨慎。",
-      jinxiXiangzhu: "槿汐替你回了话，说小主如今有孕，不宜穿戴这样鲜亮的颜色，东西原样送了回去。",
+      jinyanShenxing: "你说嫔妾福薄，受不起这样的厚赏，只收下了一匹素缎。皇后笑着说你太过谨慎，这话传到寿康宫，太后倒夸你知道分寸。",
+      jinxiXiangzhu: "槿汐替你回了话，说小主素来不爱鲜亮的颜色。皇后便改赏了几盒燕窝，槿汐亲手验过，日日炖给你喝。",
     },
   },
   xieliGongwu: {
@@ -1182,11 +1183,12 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     flavor: "皇后说六宫琐事繁杂，请你帮着打理一二。",
     reward: [q(1)],
     penalty: NO,
-    resolvedText: "没有效果",
+    cardReward: { jinyanShenxing: [sc(1)], meizhuangXiangzhu: [sz(1)] },
+    resolvedText: "谨言慎行：圣宠 +1；眉庄相助：身子 +1",
     unresolvedText: "清誉 +1",
     resolvedStory: {
-      jinyanShenxing: "你推说自己年轻，不懂这些，怕误了娘娘的事。皇后便不再提了。",
-      meizhuangXiangzhu: "眉庄替你说了几句，说你身子不便，不如由她来帮衬。皇后笑着应了。",
+      jinyanShenxing: "你推说自己年轻，不懂这些，怕误了娘娘的事。皇上听说了，倒夸你不揽权、识大体。",
+      meizhuangXiangzhu: "眉庄替你说了几句，说你身子要紧，不如由她来帮衬。皇后笑着应了，你也落得清闲，好好歇了几日。",
     },
   },
   antaiBupin: {
@@ -1198,12 +1200,13 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     reward: [q(1)],
     penalty: NO,
     lingrongSecret: "qiciBuyong",
-    resolvedText: "没有效果",
+    cardReward: { wenTaiyiZhenzhi: [sz(1)], jinxiXiangzhu: [sz(1)] },
+    resolvedText: "温太医相助或槿汐相助：身子 +1",
     unresolvedText: "清誉 +1",
     note: "只在有孕时出现。",
     resolvedStory: {
-      wenTaiyiZhenzhi: "温实初验过才敢让你吃。东西倒是干净的，只是你心里那根弦，再也松不下来。",
-      jinxiXiangzhu: "槿汐接过补品，回头就倒进了花盆里，换了一盅自己炖的。",
+      wenTaiyiZhenzhi: "温实初验过才敢让你吃。东西倒是干净的，他又添了两味药，另开了一张安胎的方子。",
+      jinxiXiangzhu: "槿汐接过补品，回头就倒进了花盆里，换了一盅自己炖的，火候一刻也不差。",
     },
   },
   jiayanXianyi: {
@@ -1215,11 +1218,12 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     reward: [sc(1)],
     penalty: NO,
     lingrongSecret: "jierenYaochong",
-    resolvedText: "没有效果",
+    cardReward: { jingguanQibian: [q(1)], jinyanShenxing: [sz(1)] },
+    resolvedText: "静观其变：清誉 +1；谨言慎行：身子 +1",
     unresolvedText: "圣宠 +1",
     resolvedStory: {
-      jingguanQibian: "你推说指上的伤还没好，只在席间安安静静地坐着。",
-      jinyanShenxing: "你说有孕之身不宜劳神，请皇后另择他人。皇后点点头，说你懂事。",
+      jingguanQibian: "你推说指上的伤还没好，只在席间安安静静地坐着。太后看在眼里，说你稳重。",
+      jinyanShenxing: "你说近来身子乏，不宜劳神，请皇后另择他人。皇后点点头，说你懂事。你早早回宫歇下了。",
     },
   },
   shanghuaXiaoju: {
@@ -1231,11 +1235,12 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     reward: [q(1)],
     penalty: NO,
     lingrongSecret: "xijianSiyu",
-    resolvedText: "没有效果",
+    cardReward: { shoulongRenxin: [sz(1)], meizhuangXiangzhu: [sc(1)] },
+    resolvedText: "收拢人心：身子 +1；眉庄相助：圣宠 +1",
     unresolvedText: "清誉 +1",
     resolvedStory: {
-      shoulongRenxin: "你托人告了假，说身子不适。第二日让小允子给各宫送了些点心赔礼。",
-      meizhuangXiangzhu: "眉庄陪你去坐了一会儿，便借口要去太后宫里，把你一起带了出来。",
+      shoulongRenxin: "你托人告了假，说身子不适，在屋里安安静静歇了一日。第二日让小允子给各宫送了些点心赔礼。",
+      meizhuangXiangzhu: "眉庄陪你去坐了一会儿，便借口要去太后宫里，把你一起带了出来。正巧皇上也来寿康宫请安，留你们说了好一会儿话。",
     },
   },
   // ---- 第二、三幕 · 机会
@@ -1758,7 +1763,7 @@ export const STORIES3: Record<StoryId3, StoryDef3> = {
         card: "guojunwangXiangzhu",
         effects: [],
         xiayu: "guo",
-        text: "不扣圣宠，父亲在狱中少受些苦（以礼相待过：清誉 -1）",
+        text: "不扣圣宠，父亲在狱中少受些苦",
         story: "果郡王替你在前朝奔走，又打点了狱卒。父亲在狱里总算少吃了些苦头。",
       },
       {
@@ -2108,7 +2113,7 @@ export const POPUP_TEXT = {
     { name: "齐妃", text: "三阿哥的生母，王府时就跟着皇上，却不大有心计。她是皇后的旧人，向来唯景仁宫马首是瞻，见你得宠，心里早不痛快。" },
     { name: "祺贵人", text: "瓜尔佳氏，华妃倒后新近得宠，年轻娇纵。父亲鄂敏在前朝颇有势力，和甄家素来不睦。她进宫没多久，就常往景仁宫走动。" },
   ] as readonly { readonly name: string; readonly text: string }[],
-  huanghouRules: ["🦚 皇后事件：接下来一段日子，景仁宫还会时常有所表示。可以打出匹配牌应对；不应对，回合末按默认结算。"],
+  huanghouRules: ["🦚 皇后事件：接下来一段日子，景仁宫还会时常有所表示。回合末按默认结算；打出卡面列出的牌，会换成那张牌对应的赏赐。"],
   /** 开局规则说明里的第一幕事件规则。 */
   eventRules: [
     "🤝 盟友事件：第一次把握端妃、敬妃、欣贵人的事件，会得到她们的盟友状态。",
@@ -2182,7 +2187,7 @@ export const TAG3_INFO: Record<TagId3, { label: string; lore: string; rules: str
   huanghou: {
     label: "皇后",
     lore: "景仁宫的心意，向来不好推辞。",
-    rules: "第 3–9 回合每回合 1 张。可以打出匹配牌应对；不应对，回合末按默认结算。标 🎶 的也能交给陵容周旋。",
+    rules: "第 3–9 回合每回合 1 张。回合末按默认结算；打出卡面列出的牌，会换成那张牌对应的赏赐。标 🎶 的也能交给陵容。",
   },
   story: { label: "剧情", lore: "命运的关口，如约而至。", rules: "可以选一个基础选项（不占出牌），或从手牌打出卡面所列的牌（占 1 次出牌，另加该牌效果）。不处理就结束回合时，按默认选项处理。" },
   negative: { label: "负面", lore: "缠身的麻烦。", rules: "持续性的不利状态。温太医相助可移除 1 个（标“不可移除”的除外）。" },

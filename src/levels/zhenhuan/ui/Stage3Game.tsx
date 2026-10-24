@@ -156,7 +156,7 @@ function resolvedDetail(inst: EventInst3): string {
   const by = inst.resolvedBy ? `由【${CARDS3[inst.resolvedBy].name}】` : "";
   const tier = inst.lingrong && inst.resolvedBy === "lingrongXiangzhu" ? `（陵容·${TIER_LABEL[inst.lingrong]}）` : "";
   const suppressed = inst.suppressed && def.rival ? `；打压了${RIVALS[def.rival].name}` : "";
-  if (def.kind === "huanghou") return `${by}应对过去${tier}。`;
+  if (def.kind === "huanghou") return `${by}领受${tier}。`;
   if (def.kind !== "opportunity") return `${by}化解${tier}，回合末不受惩罚${suppressed}。`;
   return `${by}把握${tier}${inst.rewardDoubled ? "（眉庄相助：奖励翻倍）" : ""}。`;
 }
@@ -201,9 +201,9 @@ function EventCard({ state, inst, fold, dispatch }: { state: Z3State; inst: Even
   );
   const story = inst.resolved && inst.resolvedBy && inst.resolvedBy !== "lingrongXiangzhu" ? (inst.story ?? def.resolvedStory[inst.resolvedBy]) : undefined;
   const lingrongStory = inst.lingrong && (!inst.resolved || inst.resolvedBy === "lingrongXiangzhu") ? LINGRONG_EVENT3[inst.id]?.[inst.lingrong]?.story : undefined;
-  const resolvedLabel = isOpp ? "已把握" : def.kind === "huanghou" ? "已应对" : "已化解";
-  const okLabel = def.kind === "huanghou" ? "应对（打出匹配牌）：" : "处理：";
-  const noLabel = def.kind === "huanghou" ? "不应对（回合末默认）：" : "未处理（回合末）：";
+  const resolvedLabel = isOpp ? "已把握" : def.kind === "huanghou" ? "已领受" : "已化解";
+  const okLabel = def.kind === "huanghou" ? "打出特定牌：" : "处理：";
+  const noLabel = def.kind === "huanghou" ? "默认（回合末）：" : "未处理（回合末）：";
   const flavor = state.atPeak && def.peakFlavor ? def.peakFlavor : def.flavor;
   if (fold.compact && !fold.expanded) {
     return (
@@ -897,7 +897,7 @@ function endTurnHints(state: Z3State): string[] {
     hints.push(option.hidden ? `【${def.name}】未处理：${option.text}。` : `【${def.name}】未选择，将按默认【${option.name}】处理。`);
   }
   if (state.crisis && !state.crisis.resolved) hints.push(`【${EVENTS3[state.crisis.id].name}】未化解：${EVENTS3[state.crisis.id].unresolvedText}。`);
-  if (state.huanghou && !state.huanghou.resolved) hints.push(`【${EVENTS3[state.huanghou.id].name}】没有应对：回合末按默认结算。`);
+  if (state.huanghou && !state.huanghou.resolved) hints.push(`【${EVENTS3[state.huanghou.id].name}】回合末按默认结算。`);
   const tier = tierOf3(state);
   const lingrongInHand = state.hand.filter((c) => c.id === "lingrongXiangzhu").length;
   if (tier && lingrongInHand > 0 && state.turn < STAGE3.confrontTurn) {

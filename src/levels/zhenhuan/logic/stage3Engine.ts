@@ -737,7 +737,7 @@ function suppress(s: Z3State, rival: RivalId, crisis: CrisisId3): void {
 // ---------------------------------------------------------------- resolution
 
 function verb(kind: string): string {
-  return kind === "opportunity" ? "把握" : kind === "huanghou" ? "应对" : "化解";
+  return kind === "opportunity" ? "把握" : kind === "huanghou" ? "领受" : "化解";
 }
 
 function resolveEventByCard(s: Z3State, ev: EventInst3, card: CardId3, doubleReward: boolean): void {
@@ -759,6 +759,7 @@ function resolveEventByCard(s: Z3State, ev: EventInst3, card: CardId3, doubleRew
     }
     opportunityExtras(s, ev, card);
   }
+  if (def.kind === "huanghou") applyDeltas3(s, def.cardReward?.[card] ?? [], def.name);
   if (def.kind === "crisis") {
     if (def.rival && def.suppressCard === card && !def.pair) {
       ev.suppressed = true;
@@ -1404,7 +1405,7 @@ function endTurn3(s: Z3State): void {
   if (!alive(s)) return;
   if (s.huanghou && !s.huanghou.resolved) {
     const def = EVENTS3[s.huanghou.id];
-    log(s, `皇后事件【${def.name}】没有应对，按默认结算。`);
+    log(s, `皇后事件【${def.name}】按默认结算。`);
     applyDeltas3(s, def.reward, def.name);
     addSecret(s, `enshang.${s.huanghou.id as HuanghouId}`, null);
   }
