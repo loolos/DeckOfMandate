@@ -1091,7 +1091,10 @@ function PopupBody({ state, id }: { state: Z3State; id: PopupId }) {
     case "ximai":
       return (
         <>
-          <p>{POPUP_TEXT.ximai}</p>
+          {state.exitTier && state.exitTier <= 3 ? <p>{POPUP_TEXT.ximaiRecall[state.exitTier as 1 | 2 | 3]}</p> : null}
+          {POPUP_TEXT.ximai.map((t) => (
+            <p key={t}>{t}</p>
+          ))}
           <p className={styles.muted}>{POPUP_TEXT.ximaiRules}</p>
         </>
       );
