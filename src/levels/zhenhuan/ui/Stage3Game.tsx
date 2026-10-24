@@ -1245,8 +1245,7 @@ export function Stage3Game({ state, dispatch, runCode, showRules, onShowRules, o
   const plays = state.act === 1 ? RANKS[state.turnRank].plays : XIUXING.plays;
   const shengchongShown = state.act === 1 || (state.yihua != null && state.yihua.step >= 3);
   const badges = [
-    { text: ACT_TITLE[state.act], brief: ["", "一", "二", "三"][state.act] },
-    ...(state.pregnant ? [{ text: "👶 身怀龙裔", brief: "👶", gold: true }] : []),
+    { text: ACT_TITLE[state.act], brief: ["", "一幕", "二幕", "三幕"][state.act] },
     ...(state.childBorn && state.act === 1 ? [{ text: "🎀 胧月", brief: "🎀" }] : []),
   ];
   const boardCount = [state.crisis, state.opportunity, state.huanghou].filter((e) => e != null);
