@@ -3,22 +3,27 @@ import { CampaignSwitcher } from "../../../components/CampaignSwitcher";
 import { RunCodePanel } from "../../../components/RunCodePanel";
 import { CAMPAIGN_TITLE, CHAPTER } from "../data/content";
 import { STAGE2 } from "../data/stage2Content";
+import { STAGE3 } from "../data/stage3Content";
 import { newGame, reduce, type ZhAction } from "../logic/engine";
 import {
   clearSession,
   continueToStage2,
+  continueToStage3,
   decodeSessionCode,
   encodeSessionCode,
   loadSession,
   saveSession,
   startStage2Standalone,
+  startStage3Standalone,
   type Session,
 } from "../logic/session";
 import { newStage2, reduce2, type Z2Action } from "../logic/stage2Engine";
+import { newStage3, reduce3, type Z3Action } from "../logic/stage3Engine";
 import { backdropUrl } from "./art";
 import { Backdrop } from "./common";
 import { CompactModeToggle } from "./CompactModeToggle";
 import { Stage2Game } from "./Stage2Game";
+import { Stage3Game } from "./Stage3Game";
 import { musicMood } from "./music";
 import { MusicToggle, useBgm } from "./useBgm";
 import { ZhenhuanGame } from "./ZhenhuanGame";
@@ -42,7 +47,7 @@ export function ZhenhuanRoot() {
   const [saved, setSaved] = useState<Session | null>(() => loadSession());
   const [seedText, setSeedText] = useState("");
   const [menuVisible, setMenuVisible] = useState(false);
-  const [menuStage, setMenuStage] = useState<1 | 2>(1);
+  const [menuStage, setMenuStage] = useState<1 | 2 | 3>(1);
 
   const seedTrimmed = seedText.trim();
   const seedInvalid = seedTrimmed !== "" && !Number.isInteger(Number(seedTrimmed));
@@ -53,6 +58,9 @@ export function ZhenhuanRoot() {
   }, []);
   const dispatch2 = useCallback((action: Z2Action) => {
     setSession((g) => (g?.stage === 2 ? { ...g, state: reduce2(g.state, action) } : g));
+  }, []);
+  const dispatch3 = useCallback((action: Z3Action) => {
+    setSession((g) => (g?.stage === 3 ? { ...g, state: reduce3(g.state, action) } : g));
   }, []);
 
   // Autosave point is the start of the current turn; a finished run clears the save
@@ -154,6 +162,33 @@ export function ZhenhuanRoot() {
               }}
               onMenu={backToMenu}
               onLoadCode={loadCode}
+              onNextStage={session.state.outcome === "won" ? () => open(continueToStage3(session, randomSeed()), true) : undefined}
+            />
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  if (session?.stage === 3) {
+    return (
+      <div className={styles.root}>
+        <Backdrop src={backdropUrl(3)} />
+        {introPending ? null : (
+          <div className={introFade ? styles.introFade : undefined}>
+            <Stage3Game
+              state={session.state}
+              dispatch={dispatch3}
+              runCode={runCode}
+              showRules={showRules}
+              onShowRules={onShowRules}
+              onRestart={() => {
+                // Same carry-over (and earlier records) as this run, new seed.
+                const seed = randomSeed();
+                open({ ...session, state: newStage3(seed, session.state.carry) }, true);
+              }}
+              onMenu={backToMenu}
+              onLoadCode={loadCode}
             />
           </div>
         )}
@@ -180,15 +215,18 @@ export function ZhenhuanRoot() {
             id="zh-level"
             className={styles.menuInput}
             value={menuStage}
-            onChange={(e) => setMenuStage(e.target.value === "2" ? 2 : 1)}
+            onChange={(e) => setMenuStage(e.target.value === "3" ? 3 : e.target.value === "2" ? 2 : 1)}
           >
             <option value={1}>{CHAPTER.title}</option>
             <option value={2}>{STAGE2.title}</option>
+            <option value={3}>{STAGE3.title}</option>
           </select>
           <p className={styles.menuHint}>
             {menuStage === 1
               ? `${CHAPTER.title}：甄嬛初入宫门，位分低微，宫里的一切规矩、人心与风波，都要她一一去面对。`
-              : `${STAGE2.title}：甄嬛渐得圣宠，也入了宠冠六宫的华妃的眼。翊坤宫的锋芒，从此冲着她而来。`}
+              : menuStage === 2
+                ? `${STAGE2.title}：甄嬛渐得圣宠，也入了宠冠六宫的华妃的眼。翊坤宫的锋芒，从此冲着她而来。`
+                : `${STAGE3.title}：华妃倒了，皇后的笑意却一日深过一日。从碎玉轩到甘露寺，再从凌云峰回到紫禁城。`}
           </p>
           <label className={styles.menuLabel} htmlFor="zh-seed">
             随机种子（可选）
@@ -208,14 +246,17 @@ export function ZhenhuanRoot() {
             className={`${styles.btn} ${styles.btnPrimary}`}
             disabled={seedInvalid}
             onClick={() =>
-              open(menuStage === 1 ? { stage: 1, state: newGame(chosenSeed()) } : startStage2Standalone(chosenSeed()), true)
+              open(
+                menuStage === 1 ? { stage: 1, state: newGame(chosenSeed()) } : menuStage === 2 ? startStage2Standalone(chosenSeed()) : startStage3Standalone(chosenSeed()),
+                true,
+              )
             }
           >
             开始关卡
           </button>
           {saved ? (
             <button type="button" className={styles.btn} onClick={() => open(saved, false)}>
-              继续存档（{saved.stage === 2 ? "第二关" : "第一关"} 第 {saved.state.turn} 回合开始）
+              继续存档（{["", "第一关", "第二关", "第三关"][saved.stage]} 第 {saved.state.turn} 回合开始）
             </button>
           ) : null}
           <RunCodePanel variant="startMenu" code="" onLoad={loadCode} />

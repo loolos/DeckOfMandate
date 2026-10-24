@@ -1,5 +1,6 @@
 import type { CardId, EventId, StoryId } from "../data/content";
 import type { CardId2, EventId2, StoryId2 } from "../data/stage2Content";
+import type { CardId3, EventId3, StoryId3 } from "../data/stage3Content";
 
 /**
  * Card / event / backdrop art (docs/art-spec.md). Files are named by id, so dropping
@@ -16,24 +17,27 @@ const EVENT_ART = indexByBasename(import.meta.glob<string>("../assets/events/*.w
 const STORY_ART = indexByBasename(import.meta.glob<string>("../assets/stories/*.webp", { eager: true, import: "default" }));
 const BACKDROPS = indexByBasename(import.meta.glob<string>("../assets/backdrops/*.webp", { eager: true, import: "default" }));
 
-export function cardArtUrl(id: CardId | CardId2): string | null {
+export function cardArtUrl(id: CardId | CardId2 | CardId3): string | null {
   return CARD_ART.get(id) ?? null;
 }
 
-/** Events shared by both chapters (same id) share one picture. */
-export function eventArtUrl(id: EventId | EventId2): string | null {
+/** Events shared by several chapters (same id) share one picture. */
+export function eventArtUrl(id: EventId | EventId2 | EventId3): string | null {
   return EVENT_ART.get(id) ?? null;
 }
 
 /** Story variants that share one picture (both 玉阶炎日 cards use the plain one). */
-const STORY_ART_ALIAS: Partial<Record<StoryId | StoryId2, StoryId | StoryId2>> = { fakuiPregnant: "fakuiPlain" };
+const STORY_ART_ALIAS: Partial<Record<StoryId | StoryId2 | StoryId3, StoryId | StoryId2 | StoryId3>> = { fakuiPregnant: "fakuiPlain" };
 
-export function storyArtUrl(id: StoryId | StoryId2): string | null {
+export function storyArtUrl(id: StoryId | StoryId2 | StoryId3): string | null {
   return STORY_ART.get(STORY_ART_ALIAS[id] ?? id) ?? null;
 }
 
-/** Story-area cards that have no id of their own (晋封考验 ×2, 翊坤落幕); files live in `assets/stories/`. */
-export const SPECIAL_ART_KEYS = ["promotionTrial", "guirenTrial", "finale"] as const;
+/**
+ * Story-area cards that have no id of their own (晋封考验 ×2, 翊坤落幕; 第三关 纯元故衣, 景仁宫对质, 肺痨之诬,
+ * 长相思, 移花接木); files live in `assets/stories/`.
+ */
+export const SPECIAL_ART_KEYS = ["promotionTrial", "guirenTrial", "finale", "chunyuan", "confront", "feilao", "changxiangsi", "yihua"] as const;
 export type SpecialArtKey = (typeof SPECIAL_ART_KEYS)[number];
 
 export function specialArtUrl(key: SpecialArtKey): string | null {
@@ -41,6 +45,6 @@ export function specialArtUrl(key: SpecialArtKey): string | null {
 }
 
 /** The start menu uses the 第一关 backdrop. */
-export function backdropUrl(stage: 1 | 2): string | null {
+export function backdropUrl(stage: 1 | 2 | 3): string | null {
   return BACKDROPS.get(`stage${stage}`) ?? null;
 }

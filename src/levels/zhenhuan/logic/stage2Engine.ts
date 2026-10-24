@@ -68,6 +68,7 @@ import {
   type TagId2,
   type ResponsePenalty,
 } from "../data/stage2Content";
+import type { Stage2SecretId } from "../data/stage3Content";
 
 export type CardInst2 = { readonly uid: string; readonly id: CardId2 };
 
@@ -173,6 +174,8 @@ export type Z2State = {
   /** 陵容 uids whose 联袂 was used this turn. */
   lianmeiSpent: string[];
   evidence: EvidenceId[];
+  /** 陵容经手过的私事：第三关景仁宫对质时皇后手里的把柄（本关不显示）。 */
+  lingrongSecrets: Stage2SecretId[];
   /** 华妃事件 evidence needs two qualifying answers: how many so far, per evidence. */
   evidenceClues: Partial<Record<EvidenceId, number>>;
   shuhenjiaoHarm: number;
@@ -847,7 +850,21 @@ function resolveEventByLingrong(s: Z2State, ev: EventInst2, tier: LingrongTier):
     gainEvidence(s, def.evidence.id);
   }
   if (o.shuhenjiao) shuhenjiao(s, tier);
+  const secret = LINGRONG_EVENT_SECRET[ev.id];
+  if (secret) noteLingrongSecret(s, secret);
   return o.relation ?? 0;
+}
+
+/** Events whose 陵容 resolution leaves her a 把柄 for 第三关. */
+const LINGRONG_EVENT_SECRET: Partial<Record<EventId2, Stage2SecretId>> = {
+  liPinJingmeng: "zhuangshenNonggui",
+  huanyixiangZhuanchong: "jierenYaochong",
+  songzhiKuisi: "kuitanGongwei",
+  baohuadianQifu: "qiuziXinqie",
+};
+
+function noteLingrongSecret(s: Z2State, id: Stage2SecretId): void {
+  if (!s.lingrongSecrets.includes(id)) s.lingrongSecrets.push(id);
 }
 
 function applyStoryOption(s: Z2State, inst: StoryInst2, option: StoryOption2, source: string, tier: LingrongTier | null): number {
@@ -864,6 +881,7 @@ function applyStoryOption(s: Z2State, inst: StoryInst2, option: StoryOption2, so
     inst.story = o.story;
     inst.result = o.result === "success" ? "侍寝成功" : o.result === "stolen" ? "陵容夺功，你未侍寝" : "召幸被截走";
     if (o.effects) applyDeltas2(s, o.effects, "陵容截宠");
+    if (o.result !== "lost") noteLingrongSecret(s, "shiqinNeiqing");
     if (o.result === "success") summonSuccess(s, "召幸");
     return o.relation ?? 0;
   }
@@ -899,7 +917,10 @@ function applyStoryOption(s: Z2State, inst: StoryInst2, option: StoryOption2, so
   }
   if (option.status) addStatus2(s, option.status);
   relationDelta += (option.relation ?? 0) + (tier ? (option.tierRelation?.[tier] ?? 0) : 0);
-  if (option.evidence && (!option.evidenceTiers || (tier != null && option.evidenceTiers.includes(tier)))) gainEvidence(s, option.evidence);
+  if (option.evidence && (!option.evidenceTiers || (tier != null && option.evidenceTiers.includes(tier)))) {
+    gainEvidence(s, option.evidence);
+    if (option.card === "lingrongXiangzhu") noteLingrongSecret(s, "sitanSiqiu");
+  }
   if (option.exit) {
     s.xibie = option.exit;
     log(s, `${XIBIE[option.exit].who}将要离你远去：【${CARDS2[option.exit].name}】带上【惜别】标签。下次抓到时，其余的同名牌离场，只留这一张。`, "bad");
@@ -1489,6 +1510,7 @@ export function newStage2(seed: number, carry: Carry | null): Z2State {
     fakuiHarsh: false,
     lianmeiSpent: [],
     evidence: [],
+    lingrongSecrets: [],
     evidenceClues: {},
     shuhenjiaoHarm: 0,
     statuses: [],
