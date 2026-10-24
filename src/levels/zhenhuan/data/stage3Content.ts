@@ -1595,7 +1595,8 @@ export type StoryId3 =
   | "wentaiyiTanshi"
   | "taxueWenji"
   | "hehunGengtie"
-  | "diannanZhixing";
+  | "diannanZhixing"
+  | "zhoufuEHao";
 
 /** 甄远道下狱: which option, and how heavy it lands (see `xiayuCost`). */
 export type XiayuChoice = "kneel" | "taihou" | "guo" | "lingrong";
@@ -1646,6 +1647,7 @@ export const FIXED_STORIES3: Partial<Record<number, StoryId3>> = {
   19: "taxueWenji",
   23: "hehunGengtie",
   24: "diannanZhixing",
+  25: "zhoufuEHao",
 };
 
 export const STORIES3: Record<StoryId3, StoryDef3> = {
@@ -1895,6 +1897,19 @@ export const STORIES3: Record<StoryId3, StoryDef3> = {
     options: [
       { id: "wuyan", name: "不去相送", effects: [], text: "无效果", story: "你没有去送他。那一夜，你坐在窗前，听着山风一阵紧似一阵，直到天边泛白。" },
       { id: "songxing", name: "送行", card: "guojunwangXiangzhu", effects: [], flag: "songxing", text: "他留下一件信物，日后或许用得上", story: "你送他到山下。他翻身下马，把那支随身多年的笛子塞进你手里：「等我回来。」" },
+    ],
+  },
+  zhoufuEHao: {
+    id: "zhoufuEHao",
+    name: "舟覆噩耗",
+    emoji: "🌊",
+    flavor: "果亲王的船在江上翻了，尸骨无存。你握着那支他留下的东西，半晌说不出一个字。",
+    defaultOptionId: "beitong",
+    options: [
+      { id: "beitong", name: "悲恸难抑", effects: [sz(-2)], shenziFloor: 1, text: "身子 -2（最少扣到 1）", story: "你一夜没有合眼，水米未进，第二天起身时，眼前一阵阵发黑。" },
+      { id: "jinxiPeiban", name: "槿汐陪伴", card: "jinxiXiangzhu", effects: [], text: "身子不扣", story: "槿汐什么也没说，只一遍遍替你暖着手，陪你在窗前坐到天亮。" },
+      { id: "fotianJingzuo", name: "佛前静坐", card: "chanyuXiushen", effects: [sz(-1)], shenziFloor: 1, text: "身子 -1", story: "你在佛前跪了一夜，念的是往生咒，眼泪却止不住。天亮时，心里空落落的，却也静了下来。" },
+      { id: "meizhuangQuanwei", name: "眉庄劝慰", card: "meizhuangXiangzhu", effects: [sz(-1)], shenziFloor: 1, removeNegatives: 1, text: "身子 -1；移除 1 个负面状态", story: "眉庄托人捎来长信，只写了一句：「人去了，你还得好好活着，才不辜负他。」" },
     ],
   },
 };

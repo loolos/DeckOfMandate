@@ -84,6 +84,7 @@
 | S25 | 踏雪问疾 | 剧情 | taxueWenji |
 | S26 | 合婚庚帖 | 剧情 | hehunGengtie |
 | S27 | 滇南之行 | 剧情 | diannanZhixing |
+| S27b | 舟覆噩耗 | 剧情 | zhoufuEHao |
 | S28 | 纯元故衣 | 特殊剧情 | chunyuan |
 | S29 | 景仁宫对质 | 特殊剧情 | confront |
 | S30 | 肺痨之诬 | 特殊剧情 | feilao |
