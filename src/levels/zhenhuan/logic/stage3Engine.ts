@@ -45,6 +45,7 @@ import {
   STAGE3_TEMPLE_DECK,
   STATUSES3,
   SUPPRESS_STATUS,
+  statusText3,
   STORIES3,
   SUMMON_THRESHOLD3,
   TAG3_INFO,
@@ -570,7 +571,7 @@ function shenziZero(s: Z3State): void {
 function addStatus3(s: Z3State, id: StatusId3, turns?: number): void {
   const def = STATUSES3[id];
   s.statuses.push({ uid: `s${s.nextUid++}`, id, appliesFromTurn: s.turn + 1, remaining: turns ?? def.duration });
-  log(s, `获得状态【${def.name}】（${def.effectText}）`, def.tag === "negative" ? "bad" : "good");
+  log(s, `获得状态【${def.name}】（${statusText3(def, s.turn).effectText}）`, def.tag === "negative" ? "bad" : "good");
 }
 
 function removeStatusById(s: Z3State, id: StatusId3): boolean {
@@ -734,7 +735,7 @@ function suppress(s: Z3State, rival: RivalId, crisis: CrisisId3): void {
 // ---------------------------------------------------------------- resolution
 
 function verb(kind: string): string {
-  return kind === "opportunity" ? "把握" : kind === "huanghou" ? "婉拒" : "化解";
+  return kind === "opportunity" ? "把握" : kind === "huanghou" ? "应对" : "化解";
 }
 
 function resolveEventByCard(s: Z3State, ev: EventInst3, card: CardId3, doubleReward: boolean): void {
@@ -1256,6 +1257,10 @@ function beginTurn3(s: Z3State, turn: number): void {
 
   if (turn === STAGE3.act2Start) enterTemple(s);
   if (turn === STAGE3.act3Start) enterYihua(s);
+  for (const st of s.statuses) {
+    const v = STATUSES3[st.id].veiled;
+    if (v?.untilTurn === turn) log(s, `【${STATUSES3[st.id].name}】${STATUSES3[st.id].flavor}（${STATUSES3[st.id].effectText}）`, "good");
+  }
   if (s.yihua?.step === 2 && s.yihua.ouyuDue === turn) log(s, "皇上驾临甘露寺：本回合打出【禅语修身】完成偶遇。", "info");
 
   const fixed = FIXED_STORIES3[turn];
@@ -1397,8 +1402,8 @@ function endTurn3(s: Z3State): void {
   if (!alive(s)) return;
   if (s.huanghou && !s.huanghou.resolved) {
     const def = EVENTS3[s.huanghou.id];
-    log(s, `皇后事件【${def.name}】没有婉拒，就算收下了。`);
-    applyDeltas3(s, def.reward, `${def.name}（收下）`);
+    log(s, `皇后事件【${def.name}】没有应对，按默认结算。`);
+    applyDeltas3(s, def.reward, def.name);
     addSecret(s, `enshang.${s.huanghou.id as HuanghouId}`, null);
   }
   if (!alive(s)) return;

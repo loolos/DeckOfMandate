@@ -378,7 +378,14 @@ export type StatusDef3 = {
   readonly turnEnd?: readonly Delta3[];
   readonly effectText: string;
   readonly flavor: string;
+  /** Before this turn the player only sees the veiled text (盟友状态的效果日后才揭晓). */
+  readonly veiled?: { readonly untilTurn: number; readonly effectText: string; readonly flavor: string };
 };
+
+/** What the player is shown of a status on `turn`. */
+export function statusText3(def: StatusDef3, turn: number): { effectText: string; flavor: string } {
+  return def.veiled && turn < def.veiled.untilTurn ? def.veiled : def;
+}
 
 /** 打压 leaves one of these: that crisis is auto-resolved the next time it is drawn. */
 function daya(id: StatusId3, crisisName: string, flavor: string): StatusDef3 {
@@ -472,8 +479,9 @@ export const STATUSES3: Record<StatusId3, StatusDef3> = {
     duration: 0,
     permanent: true,
     drawModifier: 0,
-    effectText: "第 10 回合景仁宫对质时，皇后呈上的把柄 -1。",
+    effectText: "景仁宫对质时，皇后呈上的把柄 -1。",
     flavor: "端妃说话不多，可景仁宫那一套，她早就看透了。",
+    veiled: { untilTurn: 10, effectText: "日后或许用得上。", flavor: "端妃说话不多，临走只叮嘱你一句：「景仁宫那边，凡事多留个心。」" },
   },
   jingfeiZhiyi: {
     id: "jingfeiZhiyi",
@@ -483,8 +491,9 @@ export const STATUSES3: Record<StatusId3, StatusDef3> = {
     duration: 0,
     permanent: true,
     drawModifier: 0,
-    effectText: "出宫后，第二幕【宫中来信】解决时另 🌱身子 +1。",
-    flavor: "敬妃膝下无子，最盼着你的孩子。她说往后孩子有她看顾。",
+    effectText: "【宫中来信】解决时另 🌱身子 +1。",
+    flavor: "敬妃膝下无子，最盼着你的孩子。她托人捎话：胧月有她看顾，你只管保重自己。",
+    veiled: { untilTurn: 11, effectText: "日后或许用得上。", flavor: "敬妃拉着你的手说，往后有什么难处，只管来咸福宫找她。" },
   },
   xinGuirenZhangyi: {
     id: "xinGuirenZhangyi",
@@ -1149,7 +1158,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
       jinyanShenxing: "你只说是来给端妃送药的，说完便告退。齐妃回去，什么也说不出来。",
     },
   },
-  // ---- 第一幕 · 皇后事件（恩赏）
+  // ---- 第一幕 · 皇后事件（恩赏：不应对即收下，暗留把柄）
   jingrenHoushang: {
     id: "jingrenHoushang",
     kind: "huanghou",
@@ -1158,8 +1167,8 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     flavor: "皇后赏下几匹云锦、一支点翠步摇，说是给碎玉轩添喜。",
     reward: [sc(1)],
     penalty: NO,
-    resolvedText: "婉拒：没有收益",
-    unresolvedText: "收下：圣宠 +1",
+    resolvedText: "没有效果",
+    unresolvedText: "圣宠 +1",
     resolvedStory: {
       jinyanShenxing: "你说嫔妾福薄，受不起这样的厚赏，只收下了一匹素缎。皇后笑着说你太过谨慎。",
       jinxiXiangzhu: "槿汐替你回了话，说小主如今有孕，不宜穿戴这样鲜亮的颜色，东西原样送了回去。",
@@ -1173,8 +1182,8 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     flavor: "皇后说六宫琐事繁杂，请你帮着打理一二。",
     reward: [q(1)],
     penalty: NO,
-    resolvedText: "婉拒：没有收益",
-    unresolvedText: "收下：清誉 +1",
+    resolvedText: "没有效果",
+    unresolvedText: "清誉 +1",
     resolvedStory: {
       jinyanShenxing: "你推说自己年轻，不懂这些，怕误了娘娘的事。皇后便不再提了。",
       meizhuangXiangzhu: "眉庄替你说了几句，说你身子不便，不如由她来帮衬。皇后笑着应了。",
@@ -1189,8 +1198,8 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     reward: [q(1)],
     penalty: NO,
     lingrongSecret: "qiciBuyong",
-    resolvedText: "婉拒：没有收益",
-    unresolvedText: "收下：清誉 +1",
+    resolvedText: "没有效果",
+    unresolvedText: "清誉 +1",
     note: "只在有孕时出现。",
     resolvedStory: {
       wenTaiyiZhenzhi: "温实初验过才敢让你吃。东西倒是干净的，只是你心里那根弦，再也松不下来。",
@@ -1206,8 +1215,8 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     reward: [sc(1)],
     penalty: NO,
     lingrongSecret: "jierenYaochong",
-    resolvedText: "婉拒：没有收益",
-    unresolvedText: "收下：圣宠 +1",
+    resolvedText: "没有效果",
+    unresolvedText: "圣宠 +1",
     resolvedStory: {
       jingguanQibian: "你推说指上的伤还没好，只在席间安安静静地坐着。",
       jinyanShenxing: "你说有孕之身不宜劳神，请皇后另择他人。皇后点点头，说你懂事。",
@@ -1222,8 +1231,8 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     reward: [q(1)],
     penalty: NO,
     lingrongSecret: "xijianSiyu",
-    resolvedText: "婉拒：没有收益",
-    unresolvedText: "收下：清誉 +1",
+    resolvedText: "没有效果",
+    unresolvedText: "清誉 +1",
     resolvedStory: {
       shoulongRenxin: "你托人告了假，说身子不适。第二日让小允子给各宫送了些点心赔礼。",
       meizhuangXiangzhu: "眉庄陪你去坐了一会儿，便借口要去太后宫里，把你一起带了出来。",
@@ -1646,7 +1655,7 @@ export const STORIES3: Record<StoryId3, StoryDef3> = {
     name: "皇后笑意",
     emoji: "🦚",
     flavor: "华妃倒后，皇后亲自来碎玉轩道贺，赏下一对玉镯。她笑得温和，你却想起翊坤宫倒下那日，她站在廊下一言不发的样子。",
-    note: "皇后第一次登门。怎么接这份赏，各有各的好处；这一回她不会记你什么。",
+    note: "皇后第一次登门。怎么接这份赏，各有各的好处。",
     defaultOptionId: "xieen",
     options: [
       { id: "xieen", name: "谢恩收下", effects: [sc(1)], text: "圣宠 +1", story: "你跪下谢恩，把玉镯收进了妆奁。皇后扶你起来，说往后常来景仁宫坐坐。" },
@@ -1670,10 +1679,9 @@ export const STORIES3: Record<StoryId3, StoryDef3> = {
         id: "dashangLairen",
         name: "打赏来人",
         card: "shoulongRenxin",
-        effects: [],
-        status: "ermuLingtong",
-        text: "获得【耳目灵通】",
-        story: "你让小允子重重打赏了景仁宫来送东西的宫人。几句闲话下来，你知道了景仁宫近来常有哪些人走动。",
+        effects: [q(1), sc(1)],
+        text: "清誉 +1、圣宠 +1",
+        story: "你让小允子重重打赏了景仁宫来送东西的宫人。没过几日，各宫都传碎玉轩的主子待下宽厚，这话也传到了皇上耳朵里。",
       },
     ],
   },
@@ -2085,11 +2093,12 @@ export const POPUP_TEXT = {
   } as Record<string, string>,
   openingRules: [
     "👭 眉庄冤屈洗刷、复了位分，说话更有分量：本关【眉庄相助】打出时，除了原有效果，还立刻抓 1 张牌。",
-    "🦚 皇后会在第 2 回合登门道贺，之后她的“恩赏”每回合都有。",
+    "🦚 皇后会在第 2 回合亲自登门。",
   ],
   huanghou:
     "皇后亲自来碎玉轩道贺，赏下一对玉镯：「华妃之事，妹妹受委屈了。往后六宫和睦，还要靠妹妹帮衬。」她笑得温和，你却想起翊坤宫倒下那日，她站在廊下一言不发的样子。",
-  huanghouPeople: [
+  /** 第一幕说明里的六宫人物。 */
+  people: [
     "端妃久病深居，最看得透景仁宫。",
     "敬妃膝下无子，性子温厚。",
     "欣贵人心直口快，素来看不惯齐妃。",
@@ -2097,7 +2106,7 @@ export const POPUP_TEXT = {
     "祺贵人瓜尔佳氏新近得宠，父亲鄂敏在前朝与甄家不睦。这两位，都是常往景仁宫走动的。",
   ],
   huanghouRules: [
-    "🦚 皇后事件：从下一回合起每回合 1 张。皇后的事件都是“恩赏”，不应对就算收下，有收益；打出匹配牌就是婉拒，什么也没有。",
+    "🦚 皇后事件：从下一回合起，景仁宫每回合都会有所表示。可以打出匹配牌应对；不应对，回合末按默认结算。",
     "🤝 盟友事件：第一次把握端妃、敬妃、欣贵人的事件，会得到她们的盟友状态。",
     "⚔️ 对头事件：齐妃、祺贵人的危机，用指定的牌化解才算打压，获得一个【打压】状态：这张危机下次再出现时自动化解一次。",
     "🔗 连环事件：机会和危机成对出现。先化解危机，机会才能把握；一张共同匹配牌能一石二鸟，结交盟友并打压对头。",
@@ -2168,8 +2177,8 @@ export const TAG3_INFO: Record<TagId3, { label: string; lore: string; rules: str
   crisis: { label: "危机", lore: "躲不过就得接住。", rules: "每回合抽 1 张。打出匹配牌即可化解；未化解时回合末结算惩罚。" },
   huanghou: {
     label: "皇后",
-    lore: "皇后从不明着罚，她的事件都是“恩赏”。",
-    rules: "第 3–9 回合每回合 1 张。不应对就算收下：拿到收益。打出匹配牌就是婉拒：没有收益。标 🎶 的也能交给陵容周旋。",
+    lore: "景仁宫的心意，向来不好推辞。",
+    rules: "第 3–9 回合每回合 1 张。可以打出匹配牌应对；不应对，回合末按默认结算。标 🎶 的也能交给陵容周旋。",
   },
   story: { label: "剧情", lore: "命运的关口，如约而至。", rules: "可以选一个基础选项（不占出牌），或从手牌打出卡面所列的牌（占 1 次出牌，另加该牌效果）。不处理就结束回合时，按默认选项处理。" },
   negative: { label: "负面", lore: "缠身的麻烦。", rules: "持续性的不利状态。温太医相助可移除 1 个（标“不可移除”的除外）。" },

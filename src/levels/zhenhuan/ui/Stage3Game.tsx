@@ -28,6 +28,7 @@ import {
   SHENZI,
   STAGE3,
   STATUSES3,
+  statusText3,
   STORIES3,
   TAG3_INFO,
   XIUXING,
@@ -155,7 +156,7 @@ function resolvedDetail(inst: EventInst3): string {
   const by = inst.resolvedBy ? `由【${CARDS3[inst.resolvedBy].name}】` : "";
   const tier = inst.lingrong && inst.resolvedBy === "lingrongXiangzhu" ? `（陵容·${TIER_LABEL[inst.lingrong]}）` : "";
   const suppressed = inst.suppressed && def.rival ? `；打压了${RIVALS[def.rival].name}` : "";
-  if (def.kind === "huanghou") return `${by}婉拒${tier}，没有收下恩赏。`;
+  if (def.kind === "huanghou") return `${by}应对过去${tier}。`;
   if (def.kind !== "opportunity") return `${by}化解${tier}，回合末不受惩罚${suppressed}。`;
   return `${by}把握${tier}${inst.rewardDoubled ? "（眉庄相助：奖励翻倍）" : ""}。`;
 }
@@ -200,9 +201,9 @@ function EventCard({ state, inst, fold, dispatch }: { state: Z3State; inst: Even
   );
   const story = inst.resolved && inst.resolvedBy && inst.resolvedBy !== "lingrongXiangzhu" ? (inst.story ?? def.resolvedStory[inst.resolvedBy]) : undefined;
   const lingrongStory = inst.lingrong && (!inst.resolved || inst.resolvedBy === "lingrongXiangzhu") ? LINGRONG_EVENT3[inst.id]?.[inst.lingrong]?.story : undefined;
-  const resolvedLabel = isOpp ? "已把握" : def.kind === "huanghou" ? "已婉拒" : "已化解";
-  const okLabel = def.kind === "huanghou" ? "婉拒（打出匹配牌）：" : "处理：";
-  const noLabel = def.kind === "huanghou" ? "不应对（回合末收下）：" : "未处理（回合末）：";
+  const resolvedLabel = isOpp ? "已把握" : def.kind === "huanghou" ? "已应对" : "已化解";
+  const okLabel = def.kind === "huanghou" ? "应对（打出匹配牌）：" : "处理：";
+  const noLabel = def.kind === "huanghou" ? "不应对（回合末默认）：" : "未处理（回合末）：";
   const flavor = state.atPeak && def.peakFlavor ? def.peakFlavor : def.flavor;
   if (fold.compact && !fold.expanded) {
     return (
@@ -216,7 +217,7 @@ function EventCard({ state, inst, fold, dispatch }: { state: Z3State; inst: Even
           {inst.resolved
             ? `${isOpp ? "✅" : "🛡️"} ${inst.resolvedBy ? CARDS3[inst.resolvedBy].emoji : ""}`
             : def.kind === "huanghou"
-              ? `🎁 ${compactEffect3(def.unresolvedText)} ｜ 🙅 ${compactEffect3(def.resolvedText)}`
+              ? `⏳ ${compactEffect3(def.unresolvedText)} ｜ 🛡️ ${compactEffect3(def.resolvedText)}`
               : isOpp
                 ? `✅ ${compactEffect3(def.resolvedText)}${locked ? " 🔒" : ""}`
                 : `❌ ${compactEffect3(def.unresolvedText)}`}
@@ -864,10 +865,10 @@ function Statuses({ state, dispatch }: { state: Z3State; dispatch: Dispatch }) {
               </div>
               {expanded ? (
                 <div className={styles.statusDetail}>
-                  <p className={styles.flavor}>{def.flavor}</p>
+                  <p className={styles.flavor}>{statusText3(def, state.turn).flavor}</p>
                   <p className={styles.rule}>
                     <span className={styles.ruleLabel}>机制：</span>
-                    {def.effectText}
+                    {statusText3(def, state.turn).effectText}
                   </p>
                 </div>
               ) : null}
@@ -897,7 +898,7 @@ function endTurnHints(state: Z3State): string[] {
     hints.push(option.hidden ? `【${def.name}】未处理：${option.text}。` : `【${def.name}】未选择，将按默认【${option.name}】处理。`);
   }
   if (state.crisis && !state.crisis.resolved) hints.push(`【${EVENTS3[state.crisis.id].name}】未化解：${EVENTS3[state.crisis.id].unresolvedText}。`);
-  if (state.huanghou && !state.huanghou.resolved) hints.push(`【${EVENTS3[state.huanghou.id].name}】不婉拒就算收下。`);
+  if (state.huanghou && !state.huanghou.resolved) hints.push(`【${EVENTS3[state.huanghou.id].name}】没有应对：回合末按默认结算。`);
   const tier = tierOf3(state);
   const lingrongInHand = state.hand.filter((c) => c.id === "lingrongXiangzhu").length;
   if (tier && lingrongInHand > 0 && state.turn < STAGE3.confrontTurn) {
@@ -962,11 +963,6 @@ function PopupBody({ state, id }: { state: Z3State; id: PopupId }) {
       return (
         <>
           <p>{POPUP_TEXT.huanghou}</p>
-          {POPUP_TEXT.huanghouPeople.map((l) => (
-            <p key={l} className={styles.muted}>
-              {l}
-            </p>
-          ))}
           {POPUP_TEXT.huanghouRules.map((l) => (
             <p key={l}>{l}</p>
           ))}
@@ -1092,16 +1088,16 @@ export function Stage3Rules() {
   return (
     <ul>
       <li>
-        全关 {STAGE3.totalTurns} 回合，分三幕：<strong>第一幕</strong>在宫中（1–10），<strong>第二幕</strong>在甘露寺 / 凌云峰（11–25），<strong>第三幕</strong>移花接木（26–33）。
+        华妃倒了，翊坤宫的门关上了。你在碎玉轩，是六宫里最得宠的那一个；眉庄的冤屈也洗清了，复了位分。可景仁宫的<strong>皇后</strong>，从来不是表面上那样温和。
       </li>
+      <li>守住 🪷清誉 与 👑圣宠，任一项降到 0 即失败。</li>
       <li>
-        第一幕守住 🪷清誉 与 👑圣宠，任一项降到 0 即失败。第 9 回合之前要<strong>有孕</strong>，并尽量晋到<strong>嫔</strong>。
-      </li>
-      <li>
-        华妃倒了，<strong>皇后</strong>的“恩赏”开始了。陵容在暗中替皇后记下你的事：第 10 回合【景仁宫对质】时，皇后会把这些一件件拿出来。
-      </li>
-      <li>
-        出宫之后成了修行之人：每回合抓 {XIUXING.draw} 打 {XIUXING.plays}，清誉上限 {XIUXING.cap}，圣宠冻结；🌱身子归 0 即失败。
+        如今的后宫：
+        <ul>
+          {POPUP_TEXT.people.map((l) => (
+            <li key={l}>{l}</li>
+          ))}
+        </ul>
       </li>
     </ul>
   );

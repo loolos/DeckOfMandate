@@ -177,9 +177,12 @@ describe("zhenhuan stage 3 engine", () => {
     let t = advanceTo(newStage3(7, CARRY), 2);
     clearBoard(t);
     t.stories = [{ id: "huanghouXiaoyi", chosenOptionId: null }];
+    t.qingyu = 10;
+    t.shengchong = 10;
     const [shou] = setHand(t, ["shoulongRenxin"]);
     t = act(t, { type: "playCard", cardUid: shou! });
-    expect(t.statuses.filter((x) => x.id === "ermuLingtong").length).toBeGreaterThan(0);
+    expect(t.stories[0]!.chosenOptionId).toBe("dashangLairen");
+    expect([t.qingyu, t.shengchong]).toEqual([11, 11]);
   });
 
   it("凤鸾承恩 left alone: 称病避宠, 圣宠 -1", () => {
