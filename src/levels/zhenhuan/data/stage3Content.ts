@@ -503,7 +503,7 @@ export const STATUSES3: Record<StatusId3, StatusDef3> = {
     duration: 0,
     permanent: true,
     drawModifier: 0,
-    effectText: "下一个齐妃或祺贵人的危机事件没化解时，替你挡下这次惩罚（不留把柄）。事件照常可以化解、打压。用掉后消失。",
+    effectText: "下一个齐妃或祺贵人的危机事件没化解时，替你挡下这次惩罚。事件照常可以化解、打压。用掉后消失。",
     flavor: "欣贵人快人快语，最看不惯齐妃那副样子。",
   },
   fuxiongMengchen: {
@@ -1516,9 +1516,9 @@ export const LINGRONG_EVENT3: Partial<Record<EventId3, TierTable>> = {
   neiwufuDiaonan: LINGRONG_EVENT.neiwufuDiaonan,
   liyiShiwu: LINGRONG_EVENT.liyiShiwu,
   wangyeXiantan: {
-    close: { resolves: true, effects: [q(1)], story: "陵容替你收下了王爷送来的诗集，笑着说王爷的字写得真好。她翻了几页，又细细问了几句王爷平日都同你说些什么。" },
-    distant: { resolves: true, effects: [q(1)], story: "陵容替你去回了王爷的礼。回来时她多看了你两眼，什么也没说。" },
-    resentful: { resolves: true, effects: [q(1)], story: "陵容替你把东西送回了王爷那里。她回来时笑盈盈的，说王爷待姐姐真是上心。" },
+    close: { resolves: true, effects: [q(1)], story: "陵容替你收下了王爷送来的诗集，笑着说王爷的字写得真好。又陪你挑了几句诗回赠。" },
+    distant: { resolves: true, effects: [q(1)], story: "陵容替你去回了王爷的礼，回来只说东西送到了。" },
+    resentful: { resolves: true, effects: [q(1)], story: "陵容替你把东西送回了王爷那里，淡淡说了句「送到了」，便回自己宫里去了。" },
   },
   yanqingTanbing: {
     close: { resolves: true, effects: [q(1)], story: "陵容陪你去延庆殿，调了一味安神的香给端妃。端妃看了她一眼，淡淡道了声谢。" },
@@ -1536,9 +1536,9 @@ export const LINGRONG_EVENT3: Partial<Record<EventId3, TierTable>> = {
     resentful: { resolves: false, story: "欣贵人说话没轻没重，陵容听了几句便沉了脸，起身走了。" },
   },
   antaiBupin: {
-    close: { resolves: true, story: "陵容闻了闻那盅补品，说太燥了，悄悄替你倒进了花盆里：「皇后那边，只当姐姐收下了。」她替你掖好被角，又细细问了几句近来胎动可好。" },
-    distant: { resolves: true, story: "陵容说这补品太燥，替你倒了。她倒得很仔细，一滴也没洒在外头。" },
-    resentful: { resolves: true, story: "陵容端走了补品，说替姐姐处置了。她出门时回头看了一眼，那眼神你没看懂。" },
+    close: { resolves: true, story: "陵容闻了闻那盅补品，说太燥了，悄悄替你倒进了花盆里：「皇后那边，只当姐姐收下了。」她替你掖好被角，又陪你说了一会儿话。" },
+    distant: { resolves: true, story: "陵容说这补品太燥，替你倒了，又叮嘱你往后入口的东西都要当心。" },
+    resentful: { resolves: true, story: "陵容端走了补品，说替姐姐处置了。她没多坐，放下话便走了。" },
   },
   jiayanXianyi: {
     close: { resolves: true, effects: [sc(1)], story: "你抚琴，陵容唱曲。一曲终了，皇上抚掌大笑，赏赐都记在了碎玉轩名下。陵容低着头，没说话。" },
@@ -1546,9 +1546,9 @@ export const LINGRONG_EVENT3: Partial<Record<EventId3, TierTable>> = {
     resentful: { resolves: true, effects: [sc(1)], story: "临上场前，陵容说嗓子哑了。你只好独自弹了一曲。皇上很喜欢，陵容在席间看着你，脸上没有表情。" },
   },
   shanghuaXiaoju: {
-    close: { resolves: true, effects: [q(1)], relation: 1, story: "陵容陪你在花下应酬各宫，你随口跟她议论了几句谁家的衣裳太艳、谁家的话太多。她抿嘴笑着听，一句一句记在心里。" },
-    distant: { resolves: true, effects: [q(1)], relation: 1, story: "陵容陪你在花下坐了半日。你随口说了几句各宫的长短，她只是点头。" },
-    resentful: { resolves: true, effects: [q(1)], relation: 1, story: "陵容陪你去了。席间你随口议论了几句，她听得格外仔细。" },
+    close: { resolves: true, effects: [q(1)], relation: 1, story: "陵容陪你在花下应酬各宫，替你挡了几句不好接的话。两人说说笑笑，一下午过得飞快。" },
+    distant: { resolves: true, effects: [q(1)], relation: 1, story: "陵容陪你在花下坐了半日。你说起各宫的趣事，她也跟着笑了笑。" },
+    resentful: { resolves: true, effects: [q(1)], relation: 1, story: "陵容陪你去了。席间她话不多，倒也替你周全了礼数。" },
   },
 };
 
@@ -1735,9 +1735,9 @@ export const STORIES3: Record<StoryId3, StoryDef3> = {
         text: "她替你圆场",
         story: "陵容替你圆了场。",
         tierStory: {
-          close: "陵容笑盈盈地替你挡在前头，说姐姐走累了，拉着你便走。回去的路上，她挽着你的胳膊，问王爷方才同姐姐说了什么。",
-          distant: "陵容替你圆了场，说你们是来赏花的。王爷笑着送了你们一枝桐花，陵容接过，看了你一眼。",
-          resentful: "陵容替你说了几句场面话，王爷送了一枝桐花。陵容接过来，回去的路上一直握在手里。",
+          close: "陵容笑盈盈地替你挡在前头，说姐姐走累了，拉着你便走。回去的路上，她挽着你的胳膊，说桐花台的花开得真好。",
+          distant: "陵容替你圆了场，说你们是来赏花的。王爷笑着送了你们一枝桐花，陵容接过来，回去替你插在了瓶里。",
+          resentful: "陵容替你说了几句场面话，王爷送了一枝桐花。陵容接过来，回去的路上没怎么说话。",
         },
       },
     ],
@@ -1772,8 +1772,8 @@ export const STORIES3: Record<StoryId3, StoryDef3> = {
         story: "陵容替你往狱里递了一封信。",
         tierStory: {
           close: "陵容说她父亲在狱里有旧识，替你把信递了进去。她回来时眼眶红红的，说甄伯父让姐姐保重。",
-          distant: "陵容替你把信送了进去，回来时说一切都好。你问她信是怎么递的，她只笑笑。",
-          resentful: "陵容把信递了进去。她说狱里的人收了好处，什么话都肯带。",
+          distant: "陵容替你把信送了进去，回来时说一切都好，甄伯父让你别挂心。",
+          resentful: "陵容把信递了进去，只说狱里打点过了，叫你放心。",
         },
       },
     ],
