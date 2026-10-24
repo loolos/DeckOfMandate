@@ -386,7 +386,7 @@ describe("zhenhuan stage 3 engine", () => {
       s.discard.push({ uid: `r-${id}`, id: id as CardId3 });
       return `r-${id}`;
     });
-    s.yihua!.doubt = 2;
+    s.yihua!.doubt = 1;
     const [jinxi, chanyu, wen] = setHand(s, ["jinxiXiangzhu", "chanyuXiushen", "wenTaiyiZhenzhi"]);
     s.discard = s.discard.filter((c) => !c.id.startsWith("yiwu") || relicUids.includes(c.uid));
     s = act(s, { type: "playCard", cardUid: jinxi! });
@@ -396,7 +396,7 @@ describe("zhenhuan stage 3 engine", () => {
     expect(s.yihua!.step).toBe(3);
     expect(s.shengchong).toBe(9);
     s = act(s, { type: "playCard", cardUid: wen! });
-    expect(s.yihua!.doubt).toBe(1);
+    expect(s.yihua!.doubt).toBe(0);
     // relics: playing one burns it, nothing else
     for (const uid of relicUids) {
       takeToHand(s, uid);
@@ -422,16 +422,21 @@ describe("zhenhuan stage 3 engine", () => {
     expect(s.lossKind).toBe("doubt");
   });
 
-  it("a hidden relic in hand at 偶遇 raises 疑点 (睹物生疑)", () => {
+  it("睹物生疑: every relic still in hand at the end of the 偶遇 turn adds 1 疑点", () => {
     let s = advanceTo(newStage3(15, CARRY), 26);
     s.extraPlays = 5;
     clearBoard(s);
-    const [, chanyu] = setHand(s, ["yiwuPifeng", "chanyuXiushen"]);
+    const [gengtie, , , chanyu] = setHand(s, ["yiwuGengtie", "yiwuDi", "yiwuPifeng", "chanyuXiushen"]);
     s.yihua!.step = 2;
-    const before = s.yihua!.doubt;
+    s.yihua!.doubt = 1;
     s = act(s, { type: "playCard", cardUid: chanyu! });
+    expect(s.yihua!.doubt).toBe(1);
+    s = act(s, { type: "playCard", cardUid: gengtie! });
+    expect(s.yihua!.doubt).toBe(1);
+    expect(s.yihua!.ouyuTurn).toBe(s.turn);
+    s = act(s, { type: "endTurn" });
     expect(s.yihua!.dushu).toBe(true);
-    expect(s.yihua!.doubt).toBe(before + 1);
+    expect(s.yihua!.doubt).toBe(3);
   });
 
   it("story options can be chosen by id", () => {

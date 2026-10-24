@@ -119,7 +119,7 @@ function palace(id: Exclude<CardId3, "lingrongXiangzhu" | "jinxiXiangzhu" | "guo
   return { id, name: c.name, emoji: c.emoji, flavor: c.flavor, base: c.base, baseDraw: c.baseDraw, baseStatus: c.baseStatus as StatusId3 | undefined, matches: [], rulesText: c.rulesText, ...o };
 }
 
-const RELIC_RULES = ["打出即焚毁，牌离场；偶遇完成后焚毁可使疑点 -1。没有别的效果。", "偶遇完成那回合若还在手里，会触发睹物生疑，疑点 +1。"];
+const RELIC_RULES = ["打出即焚毁，牌离场。没有别的效果。", "偶遇完成那回合结束时，手里每有 1 件遗物，疑点 +1（睹物生疑）。"];
 
 export const CARDS3: Record<CardId3, CardDef3> = {
   yirongZhengsu: palace("yirongZhengsu", {
@@ -2114,7 +2114,7 @@ export const POPUP_TEXT = {
   feilao: "槿汐背着你，一步一步踩着雪往后山走。身后，甘露寺的门「砰」地关上了。",
   feilaoRules: "迁居凌云峰：罚做粗活、诬偷香油钱移出；月下对谈、夜半惊扰、闲人窥探加入。",
   zhoufu: "消息是夜里传来的：果亲王的船在江上翻了，尸骨无存。你手里的长相思笛，再没有人来和。",
-  zhoufuRules: "3 张【果郡王相助】变成了 🕯️遗物。遗物打出即焚毁，没有别的效果；留在手里的，偶遇那回合会让疑点 +1。",
+  zhoufuRules: "3 张【果郡王相助】变成了 🕯️遗物。遗物打出即焚毁，没有别的效果；偶遇那回合结束时还在手里的，每件让疑点 +1。",
   ximai:
     "温太医的手指搭在你腕上，迟迟没有拿开。「嬛妹妹……是喜脉。」你怔怔地坐着，手不自觉地护住了小腹。允礼走了，连尸骨都没有找回来，这是他留在世上唯一的骨血。温太医低声劝你：「这孩子若被人知道，你和他都活不成……」你打断他：「我要留下他。」凌云峰上，一个带罪修行的人有了身孕，瞒不过三个月。要保住这个孩子，只有一条路：回宫，让皇上相信，这是他的孩子。",
   ximaiRules: "持续事件【🎎移花接木】：引驾 → 偶遇 → 改脉，依次完成。📜疑点到 5，或第 33 回合末仍未完成即失败；🌱身子归 0 即小产，失败。",
@@ -2189,7 +2189,7 @@ export const TAG3_INFO: Record<TagId3, { label: string; lore: string; rules: str
     rules: "机会与危机成对出现。危机没化解之前，机会锁着；共同匹配牌一张就能先化解危机、再把握机会，并算作打压对头。危机没化解，机会随之作废。",
   },
   jingbai: { label: "静白刁难", lore: "静白师太看你不顺眼。", rules: "寺中（第 11–18 回合）的刁难没化解，静白就更嚣张；她嚣张的程度决定第 18 回合你被赶走时有多狼狈。" },
-  relic: { label: "遗物", lore: "他留下的东西。", rules: "打出即焚毁，牌离场（偶遇完成后焚毁可使疑点 -1），没有别的效果。偶遇完成那回合若还在手里，会触发睹物生疑，疑点 +1。" },
+  relic: { label: "遗物", lore: "他留下的东西。", rules: "打出即焚毁，牌离场，没有别的效果。偶遇完成那回合结束时，手里每有 1 件遗物，疑点 +1（睹物生疑）。" },
   yihua: {
     label: "持续",
     lore: "唯一的活路。",
@@ -2198,6 +2198,6 @@ export const TAG3_INFO: Record<TagId3, { label: string; lore: string; rules: str
   doubt: {
     label: "疑点",
     lore: "月份差得越多，越瞒不住。",
-    rules: "从 1 起算。偶遇完成之前每回合末 +1；睹物生疑 +1；景仁宫来人没应对 +1。到 5 即失败。偶遇完成后：温太医相助 -1、焚毁遗物 -1。",
+    rules: "从 1 起算。偶遇完成之前每回合末 +1；睹物生疑（偶遇那回合结束时手里每件遗物）+1；景仁宫来人没应对 +1。到 5 即失败。偶遇完成后：温太医相助 -1。",
   },
 };

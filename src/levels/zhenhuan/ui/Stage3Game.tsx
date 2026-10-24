@@ -22,7 +22,6 @@ import {
   PLAYS_INFO3,
   POPUP_TEXT,
   RANKS,
-  RELICS,
   RESOURCE_INFO3,
   RESOURCE3_LABEL,
   RIVALS,
@@ -587,7 +586,7 @@ function YihuaCard({ state, fold, dispatch }: { state: Z3State; fold: Fold; disp
   if (!y) return null;
   const inHand = (id: CardId3) => state.hand.some((x) => x.id === id && yihuaAccepts(state, id));
   const stepCards: readonly CardId3[][] = [YIHUA.yinjiaCards.filter((id) => id !== "wenTaiyiZhenzhi" || state.daixin), ["chanyuXiushen"], ["wenTaiyiZhenzhi"]];
-  const relicInHand = state.hand.some((c) => isRelic(c.id));
+  const relicCount = state.hand.filter((c) => isRelic(c.id)).length;
   return (
     <SpecialCard
       emoji={YIHUA.emoji}
@@ -627,8 +626,8 @@ function YihuaCard({ state, fold, dispatch }: { state: Z3State; fold: Fold; disp
                   {state.daixin ? "" : "（温太医须在第 15 回合托他带过信才可用）"}
                 </>
               ) : null}
-              {n === 2 && relicInHand && y.step === 2 ? <span className={styles.endHint}> 手里有遗物：完成偶遇时会睹物生疑，疑点 +1。</span> : null}
-              {n === 3 ? "（偶遇之后把📜疑点降到 0 即完成：温太医相助 -1，焚毁遗物 -1）" : ""}
+              {relicCount > 0 && (y.step === 2 || y.ouyuTurn === state.turn) ? (n === 2 ? <span className={styles.endHint}> 手里有 {relicCount} 件遗物：偶遇那回合结束时还在手里，疑点 +{relicCount}（睹物生疑）。</span> : null) : null}
+              {n === 3 ? "（偶遇之后把📜疑点降到 0 即完成：温太医相助 -1）" : ""}
               {state_ !== "done" && n !== 3 ? (
                 <>
                   <br />
@@ -638,7 +637,7 @@ function YihuaCard({ state, fold, dispatch }: { state: Z3State; fold: Fold; disp
               {n === 3 && y.step === 3 ? (
                 <>
                   <br />
-                  <Chips ids={["wenTaiyiZhenzhi", ...RELICS]} lit={(id) => state.hand.some((x) => x.id === id)} />
+                  <Chips ids={["wenTaiyiZhenzhi"]} lit={(id) => state.hand.some((x) => x.id === id)} />
                 </>
               ) : null}
             </span>

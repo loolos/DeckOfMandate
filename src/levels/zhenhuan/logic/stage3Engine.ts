@@ -146,6 +146,8 @@ export type Yihua = {
   doubt: number;
   /** The turn the last step was done. */
   doneTurn: number | null;
+  /** The turn ② 偶遇 was done: 遗物 still in hand at its end raise 疑点. */
+  ouyuTurn: number | null;
   dushu: boolean;
 };
 
@@ -1062,7 +1064,6 @@ function resolvePlay3(s: Z3State, cardUid: string, removeStatusUid?: string): vo
     s.departed.push(card);
     s.relicsBurned++;
     log(s, `🕯️ 焚毁【${def.name}】：${RELIC_TEXT[card.id]}`);
-    if (alive(s) && s.yihua && s.yihua.step === 3) changeDoubt(s, -1, "焚毁遗物");
   } else s.discard.push(card);
 }
 
@@ -1124,11 +1125,7 @@ function advanceYihua(s: Z3State, card: CardId3): void {
       s.shengchong = s.exitShengchong;
       log(s, `圣宠恢复为 ${s.shengchong}。`, "good");
     }
-    if (s.hand.some((c) => isRelic(c.id))) {
-      y.dushu = true;
-      log(s, `睹物生疑：${YIHUA.dushuStory}`, "bad");
-      changeDoubt(s, 1, "睹物生疑");
-    }
+    y.ouyuTurn = s.turn;
     return;
   }
   if (y.step === 3) changeDoubt(s, -1, "温太医改脉");
@@ -1195,7 +1192,7 @@ function enterYihua(s: Z3State): void {
     s.crisisPool = shuffleInto(s, [...s.crisisPool, "jingrenLairen"]);
     log(s, "景仁宫还在打听你的消息：【景仁宫来人】洗入危机池。", "bad");
   }
-  s.yihua = { step: 1, yinjia: [], yinjiaNeed: s.luofa ? 2 : 1, duishi: false, doubt: DOUBT.start, doneTurn: null, dushu: false };
+  s.yihua = { step: 1, yinjia: [], yinjiaNeed: s.luofa ? 2 : 1, duishi: false, doubt: DOUBT.start, doneTurn: null, ouyuTurn: null, dushu: false };
   log(s, "—— 第三幕 · 移花接木 —— 温太医诊出喜脉，牌库加入 1 张【温太医相助】。持续事件【🎎移花接木】开始，📜疑点为 1。", "info");
   popup(s, "ximai");
 }
@@ -1401,6 +1398,23 @@ function endTurn3(s: Z3State): void {
     addSecret(s, `enshang.${s.huanghou.id as HuanghouId}`, null);
   }
   if (!alive(s)) return;
+
+  // 睹物生疑: every 遗物 still in hand at the end of the 偶遇 turn
+  const yh = s.yihua;
+  if (yh && yh.ouyuTurn === s.turn) {
+    const n = s.hand.filter((c) => isRelic(c.id)).length;
+    if (n > 0) {
+      yh.dushu = true;
+      log(s, `睹物生疑：${YIHUA.dushuStory}`, "bad");
+      if (yh.step === 4) {
+        yh.step = 3;
+        yh.doneTurn = null;
+        log(s, "脉案上的月份又对不上了。", "bad");
+      }
+      changeDoubt(s, n, `睹物生疑（手里 ${n} 件遗物）`);
+      if (!alive(s)) return;
+    }
+  }
 
   // events leave
   if (s.opportunity?.id === PIN_EVENT) {
