@@ -9,6 +9,7 @@ import {
   CHANGXIANGSI,
   CHUNYUAN,
   CONFRONT,
+  FABRICATED_SECRET,
   DOUBT,
   EVENT_KIND3_LABEL,
   EVENTS3,
@@ -33,7 +34,6 @@ import {
   TAG3_INFO,
   XIUXING,
   YIHUA,
-  ZHENHUAN_REALIZE,
   confrontOutcome,
   type CardId3,
   type EventId3,
@@ -52,6 +52,7 @@ import {
   endingLines3,
   feilaoAccepts,
   feilaoCurrentTier,
+  hasStatus3,
   isFreeByLianmei3,
   isRelic,
   lianmeiLit3,
@@ -156,7 +157,7 @@ function resolvedDetail(inst: EventInst3): string {
   const by = inst.resolvedBy ? `由【${CARDS3[inst.resolvedBy].name}】` : "";
   const tier = inst.lingrong && inst.resolvedBy === "lingrongXiangzhu" ? `（陵容·${TIER_LABEL[inst.lingrong]}）` : "";
   const suppressed = inst.suppressed && def.rival ? `；打压了${RIVALS[def.rival].name}` : "";
-  if (def.kind === "huanghou") return `${by}应对过去${tier}。`;
+  if (def.kind === "huanghou") return `${by}领受${tier}。`;
   if (def.kind !== "opportunity") return `${by}化解${tier}，回合末不受惩罚${suppressed}。`;
   return `${by}把握${tier}${inst.rewardDoubled ? "（眉庄相助：奖励翻倍）" : ""}。`;
 }
@@ -201,9 +202,9 @@ function EventCard({ state, inst, fold, dispatch }: { state: Z3State; inst: Even
   );
   const story = inst.resolved && inst.resolvedBy && inst.resolvedBy !== "lingrongXiangzhu" ? (inst.story ?? def.resolvedStory[inst.resolvedBy]) : undefined;
   const lingrongStory = inst.lingrong && (!inst.resolved || inst.resolvedBy === "lingrongXiangzhu") ? LINGRONG_EVENT3[inst.id]?.[inst.lingrong]?.story : undefined;
-  const resolvedLabel = isOpp ? "已把握" : def.kind === "huanghou" ? "已应对" : "已化解";
-  const okLabel = def.kind === "huanghou" ? "应对（打出匹配牌）：" : "处理：";
-  const noLabel = def.kind === "huanghou" ? "不应对（回合末默认）：" : "未处理（回合末）：";
+  const resolvedLabel = isOpp ? "已把握" : def.kind === "huanghou" ? "已领受" : "已化解";
+  const okLabel = def.kind === "huanghou" ? "打出特定牌：" : "处理：";
+  const noLabel = def.kind === "huanghou" ? "默认（回合末）：" : "未处理（回合末）：";
   const flavor = state.atPeak && def.peakFlavor ? def.peakFlavor : def.flavor;
   if (fold.compact && !fold.expanded) {
     return (
@@ -715,6 +716,11 @@ function HandCard({ state, card, dispatch, fold }: { state: Z3State; card: CardI
           掣肘
         </Tag>
       ) : null}
+      {absent ? (
+        <Tag tag="chengbing" tone={styles.kindCrisis} dispatch={dispatch}>
+          称病
+        </Tag>
+      ) : null}
       {relic ? (
         <Tag tag="relic" tone={styles.kindTrial} dispatch={dispatch}>
           🕯️遗物
@@ -897,7 +903,7 @@ function endTurnHints(state: Z3State): string[] {
     hints.push(option.hidden ? `【${def.name}】未处理：${option.text}。` : `【${def.name}】未选择，将按默认【${option.name}】处理。`);
   }
   if (state.crisis && !state.crisis.resolved) hints.push(`【${EVENTS3[state.crisis.id].name}】未化解：${EVENTS3[state.crisis.id].unresolvedText}。`);
-  if (state.huanghou && !state.huanghou.resolved) hints.push(`【${EVENTS3[state.huanghou.id].name}】没有应对：回合末按默认结算。`);
+  if (state.huanghou && !state.huanghou.resolved) hints.push(`【${EVENTS3[state.huanghou.id].name}】回合末按默认结算。`);
   const tier = tierOf3(state);
   const lingrongInHand = state.hand.filter((c) => c.id === "lingrongXiangzhu").length;
   if (tier && lingrongInHand > 0 && state.turn < STAGE3.confrontTurn) {
@@ -923,18 +929,36 @@ function Notice({ title, children, onClose, button = "知道了" }: { title: str
   );
 }
 
-function ConfrontReveal({ state }: { state: Z3State }) {
+/** 对质开始：列出所有把柄，陵容瞒下的单独标出。 */
+function ConfrontEvidence({ state }: { state: Z3State }) {
   const lines = confrontLines(state);
-  if (lines.length === 0) return <p className={styles.muted}>皇后手里什么也没有。</p>;
+  if (lines.length === 0) return <p className={styles.muted}>{POPUP_TEXT.confrontNone}</p>;
   return (
     <>
-      <p className={styles.muted}>皇后一件一件拿出来的事：</p>
+      <p className={styles.muted}>{POPUP_TEXT.confrontIntro}</p>
       {lines.map((l, i) => (
-        <p key={`${l.line}-${i}`}>
+        <p key={`${l.line}-${i}`} className={l.withheld ? styles.muted : undefined}>
           {l.line}
-          {l.lingrong ? <span className={styles.muted}> {ZHENHUAN_REALIZE}</span> : null}
+          {l.withheld ? <em>（{POPUP_TEXT.confrontWithheld}）</em> : null}
         </p>
       ))}
+      {hasStatus3(state, "duanfeiXianghu") ? <p className={styles.muted}>{POPUP_TEXT.confrontDuanfei}</p> : null}
+    </>
+  );
+}
+
+/** 对质之后：不再列证据，只写甄嬛明白过来的那一刻。 */
+function ConfrontRealize({ state }: { state: Z3State }) {
+  const lines = confrontLines(state);
+  const exposed = lines.some((l) => l.lingrong && !l.withheld);
+  const withheld = lines.some((l) => l.withheld);
+  const fabricated = lines.some((l) => l.line === FABRICATED_SECRET);
+  const text = POPUP_TEXT.confrontRealize;
+  return (
+    <>
+      {exposed ? <p>{text.exposed}</p> : withheld ? <p>{text.withheldOnly}</p> : null}
+      {exposed && withheld ? <p>{text.withheld}</p> : null}
+      {fabricated ? <p>{text.fabricated}</p> : null}
     </>
   );
 }
@@ -979,12 +1003,28 @@ function PopupBody({ state, id }: { state: Z3State; id: PopupId }) {
       );
     }
     case "wanwan":
-      return <p>{POPUP_TEXT.wanwan}</p>;
+      return (
+        <>
+          {POPUP_TEXT.wanwan.map((t) => (
+            <p key={t}>{t}</p>
+          ))}
+        </>
+      );
+    case "confront":
+      return (
+        <>
+          <p>{CONFRONT.flavor}</p>
+          <ConfrontEvidence state={state} />
+          <p className={styles.muted}>
+            本回合须打出 {state.confront?.needed ?? 0} 张辩白牌{state.rank === "guiren" ? "（贵人多 1 张）" : ""}。陵容称病没来，她的牌本回合打不出。
+          </p>
+        </>
+      );
     case "exit": {
       const exit = state.exitTier ? EXIT[state.exitTier] : null;
       return (
         <>
-          <ConfrontReveal state={state} />
+          <ConfrontRealize state={state} />
           {exit ? (
             <p>
               <strong>
@@ -1031,6 +1071,7 @@ const POPUP_TITLE: Record<PopupId, string> = {
   tonghuatai: "🎐 桐花台",
   chunyuan: "👗 纯元故衣",
   wanwan: "💔 菀菀类卿",
+  confront: "⚖️ 景仁宫对质",
   exit: "⚖️ 景仁宫对质 · 自请出宫",
   feilao: "🤒 迁居凌云峰",
   zhoufu: "🌊 舟覆噩耗",
@@ -1057,7 +1098,7 @@ function OutcomeModal({ state, onRestart, onMenu }: { state: Z3State; onRestart:
             {state.lossKind ? <p>{LOSS3_STORY[state.lossKind]}</p> : null}
             {state.lossKind === "lenggong" ? (
               <>
-                <ConfrontReveal state={state} />
+                <ConfrontRealize state={state} />
                 {tier ? <p className={styles.muted}>{LENGGONG_LINGRONG[tier]}</p> : null}
               </>
             ) : null}
@@ -1096,11 +1137,16 @@ export function Stage3Rules() {
       <li>
         如今的后宫：
         <ul>
-          {POPUP_TEXT.people.map((l) => (
-            <li key={l}>{l}</li>
+          {POPUP_TEXT.people.map((p) => (
+            <li key={p.name}>
+              <strong>{p.name}</strong>：{p.text}
+            </li>
           ))}
         </ul>
       </li>
+      {POPUP_TEXT.eventRules.map((l) => (
+        <li key={l}>{l}</li>
+      ))}
     </ul>
   );
 }

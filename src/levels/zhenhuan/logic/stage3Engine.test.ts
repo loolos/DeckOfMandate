@@ -3,6 +3,7 @@ import {
   CARDS3,
   CONFRONT,
   EVENTS3,
+  FABRICATED_SECRET,
   FIXED_STORIES3,
   LINGRONG_EVENT3,
   PAIRS,
@@ -19,6 +20,7 @@ import {
 } from "../data/stage3Content";
 import {
   canPlayCard3,
+  confrontLines,
   feilaoBaseTier,
   feilaoCurrentTier,
   matchedEvents3,
@@ -151,6 +153,21 @@ describe("zhenhuan stage 3 engine", () => {
     const id = s.huanghou!.id;
     s = act(s, { type: "endTurn" });
     expect(s.secrets[`enshang.${id}` as keyof typeof s.secrets]).toBe(1);
+  });
+
+  it("皇后事件 played with a listed card: that card's own reward, no 把柄", () => {
+    let s = advanceTo(newStage3(5, CARRY), 3);
+    clearBoard(s);
+    s.huanghou = ev(s, "jingrenHoushang");
+    s.shenzi = 3;
+    const sc = s.shengchong;
+    const [jinxi] = setHand(s, ["jinxiXiangzhu"]);
+    s = act(s, { type: "playCard", cardUid: jinxi! });
+    expect(s.huanghou!.resolved).toBe(true);
+    expect(s.shenzi).toBe(4);
+    s = act(s, { type: "endTurn" });
+    expect(s.shengchong).toBeLessThanOrEqual(sc);
+    expect(s.secrets["enshang.jingrenHoushang" as keyof typeof s.secrets]).toBeUndefined();
   });
 
   it("海棠春睡 (turn 3) makes a 未孕 player pregnant whatever is chosen", () => {
@@ -291,6 +308,20 @@ describe("zhenhuan stage 3 engine", () => {
     expect(presentedSecrets(s)).toBe(4);
   });
 
+  it("对质 evidence list: 亲厚 marks two of 陵容's as withheld, 怨怼 adds the made-up one", () => {
+    const s = newStage3(1, { ...CARRY, secrets: ["shiqinNeiqing", "zhuangshenNonggui", "sitanSiqiu"] });
+    s.secrets.chuyanDingzhuang = 1;
+    s.relation = 2;
+    const close = confrontLines(s);
+    expect(close).toHaveLength(4);
+    expect(close.filter((l) => l.withheld)).toHaveLength(2);
+    expect(close.filter((l) => l.withheld).every((l) => l.lingrong)).toBe(true);
+    s.relation = -2;
+    const resentful = confrontLines(s);
+    expect(resentful.some((l) => l.withheld)).toBe(false);
+    expect(resentful.at(-1)!.line).toBe(FABRICATED_SECRET);
+  });
+
   it("甄远道下狱 cost: 父兄蒙尘 heavier, 打压祺贵人 lighter", () => {
     const s = newStage3(1, CARRY);
     expect(xiayuCost(s, "kneel")).toEqual([{ resource: "shengchong", amount: -2 }]);
@@ -306,6 +337,7 @@ describe("zhenhuan stage 3 engine", () => {
     let s = advanceTo(newStage3(4, CARRY), 10);
     expect(s.opportunity ?? s.crisis ?? s.huanghou).toBeNull();
     expect(s.confront).not.toBeNull();
+    expect(s.popups).toContain("confront");
     const need = s.confront!.needed;
     const ids = setHand(s, ["lingrongXiangzhu", ...CONFRONT.cards.slice(0, 3)]);
     s.extraPlays = 3;
@@ -376,6 +408,19 @@ describe("zhenhuan stage 3 engine", () => {
     expect(s.act).toBe(3);
     expect(s.pregnant).toBe(true);
     expect(s.yihua!.doubt).toBe(1);
+  });
+
+  it("皇后事件 every turn 3–9, never the same one two turns running", () => {
+    for (const seed of [1, 2, 3, 7, 42, 99]) {
+      let s = newStage3(seed, CARRY);
+      const seen: string[] = [];
+      while (s.turn < 10) {
+        if (s.turn >= 3) seen.push(s.huanghou!.id);
+        s = advanceTo(s, s.turn + 1);
+      }
+      expect(seen).toHaveLength(7);
+      seen.forEach((id, i) => expect(id, `seed ${seed}`).not.toBe(seen[i - 1]));
+    }
   });
 
   it("移花接木: 槿汐引驾 → 两回合后偶遇 (圣宠 restored) → 温太医改脉; perfect needs all relics burned", () => {

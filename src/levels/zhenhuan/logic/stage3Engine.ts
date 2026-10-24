@@ -640,9 +640,9 @@ function addCardToDeck(s: Z3State, id: CardId3): void {
 }
 
 function drawFromPool<T extends EventId3>(s: Z3State, poolKey: "opportunityPool" | "crisisPool" | "huanghouPool", usedKey: "opportunityUsed" | "crisisUsed" | "huanghouUsed", ok: (id: T) => boolean = () => true): T | null {
-  const take = (): T | null => {
+  const take = (also: (id: T) => boolean = () => true): T | null => {
     const pool = s[poolKey] as T[];
-    const i = pool.findIndex(ok);
+    const i = pool.findIndex((id) => ok(id) && also(id));
     if (i < 0) return null;
     return pool.splice(i, 1)[0]!;
   };
@@ -650,9 +650,11 @@ function drawFromPool<T extends EventId3>(s: Z3State, poolKey: "opportunityPool"
   if (first) return first;
   const used = s[usedKey] as T[];
   if (!used.some(ok)) return null;
+  const last = used[used.length - 1];
   (s[poolKey] as T[]) = [...(s[poolKey] as T[]), ...shuffleInto(s, used)];
   (s[usedKey] as T[]) = [];
-  return take();
+  // A reshuffle never hands back the card that just left, when another one fits.
+  return take((id) => id !== last) ?? take();
 }
 
 function removeFromPools(s: Z3State, ids: readonly EventId3[]): void {
@@ -735,7 +737,7 @@ function suppress(s: Z3State, rival: RivalId, crisis: CrisisId3): void {
 // ---------------------------------------------------------------- resolution
 
 function verb(kind: string): string {
-  return kind === "opportunity" ? "把握" : kind === "huanghou" ? "应对" : "化解";
+  return kind === "opportunity" ? "把握" : kind === "huanghou" ? "领受" : "化解";
 }
 
 function resolveEventByCard(s: Z3State, ev: EventInst3, card: CardId3, doubleReward: boolean): void {
@@ -757,6 +759,7 @@ function resolveEventByCard(s: Z3State, ev: EventInst3, card: CardId3, doubleRew
     }
     opportunityExtras(s, ev, card);
   }
+  if (def.kind === "huanghou") applyDeltas3(s, def.cardReward?.[card] ?? [], def.name);
   if (def.kind === "crisis") {
     if (def.rival && def.suppressCard === card && !def.pair) {
       ev.suppressed = true;
@@ -1273,6 +1276,7 @@ function beginTurn3(s: Z3State, turn: number): void {
     const presented = presentedSecrets(s);
     const needed = confrontNeeded(presented) + (s.rank === "guiren" ? 1 : 0);
     s.confront = { presented, needed, played: [], stories: [] };
+    popup(s, "confront");
     log(s, `剧情事件：【${CONFRONT.name}】皇后拿出了 ${presented} 件事。本回合须打出 ${needed} 张辩白牌${s.rank === "guiren" ? "（贵人多 1 张）" : ""}。陵容称病没来，她的牌打不出。`, "bad");
   }
   if (turn === STAGE3.templeLastTurn) {
@@ -1402,7 +1406,7 @@ function endTurn3(s: Z3State): void {
   if (!alive(s)) return;
   if (s.huanghou && !s.huanghou.resolved) {
     const def = EVENTS3[s.huanghou.id];
-    log(s, `皇后事件【${def.name}】没有应对，按默认结算。`);
+    log(s, `皇后事件【${def.name}】按默认结算。`);
     applyDeltas3(s, def.reward, def.name);
     addSecret(s, `enshang.${s.huanghou.id as HuanghouId}`, null);
   }
@@ -1701,20 +1705,17 @@ export function replay3(seed: number, carry: Carry3 | null, actions: readonly Z3
   return s;
 }
 
-/** The 把柄 皇后 brought out at 对质, for the outcome text (hidden before). */
-export function confrontLines(s: Z3State): { line: string; lingrong: boolean }[] {
+/** The 把柄 at 对质: what 皇后 brought out, plus the ones a 亲厚 陵容 kept back (`withheld`). */
+export function confrontLines(s: Z3State): { line: string; lingrong: boolean; withheld?: boolean }[] {
   const tier = s.exitTierLingrong ?? lingrongTier(s.relation);
   const held = (Object.keys(s.secrets) as SecretId[]).filter((id) => (s.secrets[id] ?? 0) > 0);
   // a 亲厚 陵容 kept two of hers back
   let hidden = tier === "close" ? 2 : 0;
-  const shown = held.filter((id) => {
-    if (hidden > 0 && SECRETS[id].lingrong) {
-      hidden--;
-      return false;
-    }
-    return true;
+  const lines = held.map((id) => {
+    const withheld = hidden > 0 && SECRETS[id].lingrong;
+    if (withheld) hidden--;
+    return { line: SECRETS[id].line, lingrong: SECRETS[id].lingrong, ...(withheld ? { withheld } : {}) };
   });
-  const lines = shown.map((id) => ({ line: SECRETS[id].line, lingrong: SECRETS[id].lingrong }));
   if (tier === "resentful") lines.push({ line: FABRICATED_SECRET, lingrong: true });
   return lines;
 }
