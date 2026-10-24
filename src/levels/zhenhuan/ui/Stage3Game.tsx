@@ -585,7 +585,7 @@ function YihuaCard({ state, fold, dispatch }: { state: Z3State; fold: Fold; disp
   const y = state.yihua;
   if (!y) return null;
   const inHand = (id: CardId3) => state.hand.some((x) => x.id === id && yihuaAccepts(state, id));
-  const stepCards: readonly CardId3[][] = [YIHUA.yinjiaCards.filter((id) => id !== "wenTaiyiZhenzhi" || state.daixin), ["chanyuXiushen"], ["wenTaiyiZhenzhi"]];
+  const stepCards: readonly (readonly CardId3[])[] = [y.yinjiaNeed > 1 ? [...YIHUA.yinjiaCards, YIHUA.luofaExtra] : YIHUA.yinjiaCards, ["chanyuXiushen"], ["wenTaiyiZhenzhi"]];
   const relicCount = state.hand.filter((c) => isRelic(c.id)).length;
   return (
     <SpecialCard
@@ -622,22 +622,17 @@ function YihuaCard({ state, fold, dispatch }: { state: Z3State; fold: Fold; disp
               {n === 1 ? (
                 <>
                   {" "}
-                  {y.yinjiaNeed > 1 ? `（已落发：要打 ${y.yinjiaNeed} 张，已打 ${y.yinjia.length} 张）` : ""}
-                  {state.daixin ? "" : "（温太医须在第 15 回合托他带过信才可用）"}
+                  {y.yinjiaNeed > 1 ? `（已落发：要打 ${y.yinjiaNeed} 张，至少 1 张槿汐，另一张可以是眉庄；已打 ${y.yinjia.length} 张）` : ""}
                 </>
               ) : null}
               {relicCount > 0 && (y.step === 2 || y.ouyuTurn === state.turn) ? (n === 2 ? <span className={styles.endHint}> 手里有 {relicCount} 件遗物：偶遇那回合结束时还在手里，疑点 +{relicCount}（睹物生疑）。</span> : null) : null}
-              {n === 3 ? "（偶遇之后把📜疑点降到 0 即完成：温太医相助 -1）" : ""}
-              {state_ !== "done" && n !== 3 ? (
+              {n === 2 && y.step === 2 && y.ouyuDue != null ? (y.ouyuDue === state.turn ? "（皇上今日驾临：本回合打出禅语修身）" : `（第 ${y.ouyuDue} 回合皇上驾临）`) : ""}
+              {n === 2 && y.step < 2 ? `（引驾完成后第 ${YIHUA.ouyuDelay} 回合；没成隔一回合再来）` : ""}
+              {n === 3 ? "（偶遇之后打出温太医相助即完成）" : ""}
+              {state_ !== "done" ? (
                 <>
                   <br />
                   <Chips ids={stepCards[i]!} lit={inHand} />
-                </>
-              ) : null}
-              {n === 3 && y.step === 3 ? (
-                <>
-                  <br />
-                  <Chips ids={["wenTaiyiZhenzhi"]} lit={(id) => state.hand.some((x) => x.id === id)} />
                 </>
               ) : null}
             </span>
@@ -646,7 +641,7 @@ function YihuaCard({ state, fold, dispatch }: { state: Z3State; fold: Fold; disp
       })}
       <p className={styles.rule}>
         <span className={styles.ruleLabel}>📜 疑点 {y.doubt}/{DOUBT.max}：</span>
-        {y.step < 3 ? "偶遇完成之前每回合末 +1。" : "已止住上涨。"}到 {DOUBT.max} 即失败；第 {STAGE3.totalTurns} 回合末仍未完成也失败。
+        {y.step < 3 ? "偶遇完成之前每回合末 +1。" : "已止住上涨。"}每打出一张槿汐相助或眉庄相助 -1。到 {DOUBT.max} 即失败；第 {STAGE3.totalTurns} 回合末仍未完成也失败。
       </p>
       {y.step >= 2 ? (
         <p className={styles.muted}>

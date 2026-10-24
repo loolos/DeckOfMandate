@@ -375,29 +375,38 @@ describe("zhenhuan stage 3 engine", () => {
     expect(s.yihua!.doubt).toBe(1);
   });
 
-  it("移花接木: 引驾 → 偶遇 (圣宠 restored) → 改脉 brings 疑点 to 0; perfect needs all relics burned and 对食", () => {
+  it("移花接木: 槿汐引驾 → 两回合后偶遇 (圣宠 restored) → 温太医改脉; perfect needs all relics burned", () => {
     let s = advanceTo(newStage3(13, CARRY), 26);
     s.exitShengchong = 9;
-    s.extraPlays = 9;
+    s.shenzi = 6;
+    const next = () => {
+      clearBoard(s);
+      s = act(s, { type: "endTurn" });
+      clearBoard(s);
+      s.extraPlays = 9;
+    };
     clearBoard(s);
+    s.extraPlays = 9;
     s.discard.push(...s.drawPile);
     s.drawPile = [];
     const relicUids = ["yiwuGengtie", "yiwuDi", "yiwuPifeng"].map((id) => {
       s.discard.push({ uid: `r-${id}`, id: id as CardId3 });
       return `r-${id}`;
     });
-    s.yihua!.doubt = 1;
-    const [jinxi, chanyu, wen] = setHand(s, ["jinxiXiangzhu", "chanyuXiushen", "wenTaiyiZhenzhi"]);
+    const [jinxi, chanyuEarly] = setHand(s, ["jinxiXiangzhu", "chanyuXiushen"]);
     s.discard = s.discard.filter((c) => !c.id.startsWith("yiwu") || relicUids.includes(c.uid));
     s = act(s, { type: "playCard", cardUid: jinxi! });
     expect(s.yihua!.step).toBe(2);
     expect(s.yihua!.duishi).toBe(true);
-    s = act(s, { type: "playCard", cardUid: chanyu! });
-    expect(s.yihua!.step).toBe(3);
-    expect(s.shengchong).toBe(9);
-    s = act(s, { type: "playCard", cardUid: wen! });
+    expect(s.yihua!.ouyuDue).toBe(28);
     expect(s.yihua!.doubt).toBe(0);
-    // relics: playing one burns it, nothing else
+    s = act(s, { type: "playCard", cardUid: chanyuEarly! });
+    expect(s.yihua!.step).toBe(2);
+    next();
+    expect(s.yihua!.doubt).toBe(1);
+    next();
+    expect(s.turn).toBe(28);
+    expect(s.yihua!.doubt).toBe(2);
     for (const uid of relicUids) {
       takeToHand(s, uid);
       const before = { q: s.qingyu, hand: s.hand.length };
@@ -405,12 +414,32 @@ describe("zhenhuan stage 3 engine", () => {
       expect(s.qingyu).toBe(before.q);
       expect(s.hand.length).toBe(before.hand - 1);
     }
-    expect(s.relicsBurned).toBe(3);
     expect(relicsKept(s)).toBe(0);
+    const [chanyu, wen] = setHand(s, ["chanyuXiushen", "wenTaiyiZhenzhi"]);
+    s = act(s, { type: "playCard", cardUid: chanyu! });
+    expect(s.yihua!.step).toBe(3);
+    expect(s.shengchong).toBe(9);
+    s = act(s, { type: "playCard", cardUid: wen! });
     expect(s.yihua!.step).toBe(4);
+    clearBoard(s);
     s = act(s, { type: "endTurn" });
     expect(s.outcome).toBe("won");
     expect(s.victory).toBe("perfect");
+  });
+
+  it("移花接木: a missed 偶遇 comes back two turns later; 眉庄 lowers 疑点", () => {
+    let s = advanceTo(newStage3(13, CARRY), 26);
+    clearBoard(s);
+    s.yihua!.step = 2;
+    s.yihua!.ouyuDue = 26;
+    s.yihua!.doubt = 3;
+    const [meizhuang] = setHand(s, ["meizhuangXiangzhu"]);
+    s = act(s, { type: "playCard", cardUid: meizhuang! });
+    expect(s.yihua!.doubt).toBe(2);
+    clearBoard(s);
+    s = act(s, { type: "endTurn" });
+    expect(s.yihua!.ouyuDue).toBe(28);
+    expect(s.yihua!.doubt).toBe(3);
   });
 
   it("疑点 rises each turn before 偶遇; at 5 the run is lost", () => {
@@ -422,17 +451,32 @@ describe("zhenhuan stage 3 engine", () => {
     expect(s.lossKind).toBe("doubt");
   });
 
+  it("落发: 引驾 needs 槿汐 plus one more 槿汐 or 眉庄", () => {
+    const s = advanceTo(newStage3(13, CARRY), 26);
+    clearBoard(s);
+    s.extraPlays = 5;
+    s.yihua!.yinjiaNeed = 2;
+    const [mei, mei2, jinxi] = setHand(s, ["meizhuangXiangzhu", "meizhuangXiangzhu", "jinxiXiangzhu"]);
+    let t = act(s, { type: "playCard", cardUid: mei! });
+    expect(t.yihua!.step).toBe(1);
+    expect(t.yihua!.yinjia).toEqual(["meizhuangXiangzhu"]);
+    t = act(t, { type: "playCard", cardUid: mei2! });
+    expect(t.yihua!.yinjia).toEqual(["meizhuangXiangzhu"]);
+    t = act(t, { type: "playCard", cardUid: jinxi! });
+    expect(t.yihua!.step).toBe(2);
+  });
+
   it("睹物生疑: every relic still in hand at the end of the 偶遇 turn adds 1 疑点", () => {
     let s = advanceTo(newStage3(15, CARRY), 26);
     s.extraPlays = 5;
     clearBoard(s);
     const [gengtie, , , chanyu] = setHand(s, ["yiwuGengtie", "yiwuDi", "yiwuPifeng", "chanyuXiushen"]);
     s.yihua!.step = 2;
+    s.yihua!.ouyuDue = 26;
     s.yihua!.doubt = 1;
     s = act(s, { type: "playCard", cardUid: chanyu! });
     expect(s.yihua!.doubt).toBe(1);
     s = act(s, { type: "playCard", cardUid: gengtie! });
-    expect(s.yihua!.doubt).toBe(1);
     expect(s.yihua!.ouyuTurn).toBe(s.turn);
     s = act(s, { type: "endTurn" });
     expect(s.yihua!.dushu).toBe(true);

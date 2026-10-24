@@ -1592,7 +1592,7 @@ export type StoryOption3 = {
   readonly shenziFloor?: number;
   readonly xiayu?: XiayuChoice;
   /** Story-specific flag the engine records (桐花台 / 莫愁 / 温太医探视 / 庚帖 / 送行). */
-  readonly flag?: "li" | "di" | "lingrong" | "luofa" | "daixin" | "gengtie" | "songxing" | "xiangshou";
+  readonly flag?: "li" | "di" | "lingrong" | "luofa" | "gengtie" | "songxing" | "xiangshou";
   readonly status?: StatusId3;
 };
 
@@ -1798,11 +1798,11 @@ export const STORIES3: Record<StoryId3, StoryDef3> = {
     name: "莫愁",
     emoji: "🪷",
     flavor: "静岸师太为你取法号莫愁。她问你俗家名字，你答「甄嬛」，不提皇上赐的那个“莞”字。",
-    note: "落发：第三幕引驾一步要多打 1 张牌。",
+    note: "落发：第三幕引驾要多打 1 张槿汐相助或眉庄相助。",
     defaultOptionId: "daifa",
     options: [
       { id: "daifa", name: "带发修行", effects: [], text: "无效果（尘缘未断）", story: "你没有落发。师太看着你，说：「尘缘未断，也是缘法。」" },
-      { id: "luofa", name: "落发", card: "chanyuXiushen", effects: [q(2)], flag: "luofa", text: "清誉 +2；第三幕引驾要多打 1 张", story: "青丝一缕一缕落在地上。你闭着眼，听见剪刀的声音，像是什么东西断了。" },
+      { id: "luofa", name: "落发", card: "chanyuXiushen", effects: [q(2)], flag: "luofa", text: "清誉 +2；第三幕引驾要多打 1 张槿汐或眉庄", story: "青丝一缕一缕落在地上。你闭着眼，听见剪刀的声音，像是什么东西断了。" },
     ],
   },
   shanmenOuyu: {
@@ -1826,15 +1826,6 @@ export const STORIES3: Record<StoryId3, StoryDef3> = {
     defaultOptionId: "zhenzhi",
     options: [
       { id: "zhenzhi", name: "请他诊治", effects: [sz(2)], removeNegatives: "all", text: "移除全部负面状态；身子 +2", story: "温实初替你诊了脉，开了方子，又留下许多药材。临走时他说：「嬛妹妹，你要好好的。」" },
-      {
-        id: "daixin",
-        name: "托他带信",
-        card: "wenTaiyiZhenzhi",
-        effects: [],
-        flag: "daixin",
-        text: "不诊治；第三幕引驾可用温太医相助完成",
-        story: "你没让他诊治，只托他带一封信回宫。信里写了什么，他没问，你也没说。",
-      },
     ],
   },
   taxueWenji: {
@@ -1982,12 +1973,18 @@ export const YIHUA = {
     { name: "偶遇", emoji: "🌸", story: "皇上驾临，佛前重逢，当夜留宿甘露寺。" },
     { name: "改脉", emoji: "📜", story: "温太医在脉案上改写月份。" },
   ],
-  yinjiaCards: ["jinxiXiangzhu", "meizhuangXiangzhu", "wenTaiyiZhenzhi"] as readonly CardId3[],
+  yinjiaCards: ["jinxiXiangzhu"] as readonly CardId3[],
   yinjiaStory: {
     jinxiXiangzhu: "槿汐托了苏培盛。苏培盛问她：「这些年的心意，你可明白？」槿汐低着头，应下了对食之约。",
     meizhuangXiangzhu: "眉庄在太后跟前进言，说甘露寺香火灵验，太后凤体欠安，正该去那里祈福。",
-    wenTaiyiZhenzhi: "温实初把你那封信递到了太后手里。太后看完，沉默了许久，说想去甘露寺上一炷香。",
   } as Record<string, string>,
+  /** 落发后引驾要多打的那一张，除了槿汐也可以是这张。 */
+  luofaExtra: "meizhuangXiangzhu" as CardId3,
+  /** 引驾完成后第几回合偶遇；偶遇没成，再隔几回合。 */
+  ouyuDelay: 2,
+  ouyuRetry: 2,
+  /** 移花接木开始后，每打出一张 📜疑点 -1。 */
+  doubtCards: ["jinxiXiangzhu", "meizhuangXiangzhu"] as readonly CardId3[],
   ouyuStory: "皇上在佛前看见你，愣住了。「嬛嬛。」他唤你。你第一次明白，可以把“像她”当成手段：这一回，是我借了她的影子。当夜，皇上留宿甘露寺。",
   doubtLabel: "疑点",
   dushuStory: "皇上在你屋里看见了那件东西，随口问了一句是谁的。你答得很快，可他已经多看了一眼。",
@@ -2117,7 +2114,7 @@ export const POPUP_TEXT = {
   zhoufuRules: "3 张【果郡王相助】变成了 🕯️遗物。遗物打出即焚毁，没有别的效果；偶遇那回合结束时还在手里的，每件让疑点 +1。",
   ximai:
     "温太医的手指搭在你腕上，迟迟没有拿开。「嬛妹妹……是喜脉。」你怔怔地坐着，手不自觉地护住了小腹。允礼走了，连尸骨都没有找回来，这是他留在世上唯一的骨血。温太医低声劝你：「这孩子若被人知道，你和他都活不成……」你打断他：「我要留下他。」凌云峰上，一个带罪修行的人有了身孕，瞒不过三个月。要保住这个孩子，只有一条路：回宫，让皇上相信，这是他的孩子。",
-  ximaiRules: "持续事件【🎎移花接木】：引驾 → 偶遇 → 改脉，依次完成。📜疑点到 5，或第 33 回合末仍未完成即失败；🌱身子归 0 即小产，失败。",
+  ximaiRules: "持续事件【🎎移花接木】：打出槿汐相助引驾 → 两回合后皇上驾临，当回合打出禅语修身完成偶遇（没成就隔一回合再来）→ 打出温太医相助改脉，即回宫。每打出一张槿汐相助或眉庄相助，📜疑点 -1。📜疑点到 5，或第 33 回合末仍未完成即失败；🌱身子归 0 即小产，失败。",
   homecoming: "圣旨念完了：钮祜禄氏，封熹妃，即日回宫。从此不必再顶着那个“莞”字。",
   homecomingTier: {
     1: "回宫那日，皇上亲自在宫门前等你。",
@@ -2193,11 +2190,11 @@ export const TAG3_INFO: Record<TagId3, { label: string; lore: string; rules: str
   yihua: {
     label: "持续",
     lore: "唯一的活路。",
-    rules: "依次完成：① 引驾（槿汐 / 眉庄 / 托过信的温太医）→ ② 偶遇（禅语修身）→ ③ 改脉（偶遇之后把疑点降到 0）。三步完成即回宫。",
+    rules: "依次完成：① 引驾（槿汐相助；落发的再加 1 张槿汐或眉庄）→ 两回合后 ② 偶遇（当回合打出禅语修身；没成隔一回合再来）→ ③ 改脉（偶遇之后打出温太医相助）。三步完成即回宫。",
   },
   doubt: {
     label: "疑点",
     lore: "月份差得越多，越瞒不住。",
-    rules: "从 1 起算。偶遇完成之前每回合末 +1；睹物生疑（偶遇那回合结束时手里每件遗物）+1；景仁宫来人没应对 +1。到 5 即失败。偶遇完成后：温太医相助 -1。",
+    rules: "从 1 起算。偶遇完成之前每回合末 +1；睹物生疑（偶遇那回合结束时手里每件遗物）+1；景仁宫来人没应对 +1。每打出一张槿汐相助或眉庄相助 -1。到 5 即失败。",
   },
 };

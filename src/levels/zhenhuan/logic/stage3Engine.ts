@@ -146,6 +146,8 @@ export type Yihua = {
   doubt: number;
   /** The turn the last step was done. */
   doneTurn: number | null;
+  /** ② 偶遇 can be done on this turn only (引驾 + 2; missed → 2 turns later). */
+  ouyuDue: number | null;
   /** The turn ② 偶遇 was done: 遗物 still in hand at its end raise 疑点. */
   ouyuTurn: number | null;
   dushu: boolean;
@@ -208,7 +210,6 @@ export type Z3State = {
   feilaoTier: 0 | 1 | 2 | null;
   atPeak: boolean;
   luofa: boolean;
-  daixin: boolean;
   gengtie: boolean;
   songxing: boolean;
   /** 温太医探视: the temporary card's uid, and whether 「为女儿撑下去」 was used. */
@@ -446,8 +447,12 @@ export function chunyuanAccepts(s: Z3State, cardId: CardId3): 1 | 2 | null {
 export function yihuaAccepts(s: Z3State, cardId: CardId3): boolean {
   const y = s.yihua;
   if (!y || s.outcome !== "playing") return false;
-  if (y.step === 1) return YIHUA.yinjiaCards.includes(cardId) && (cardId !== "wenTaiyiZhenzhi" || s.daixin);
-  if (y.step === 2) return cardId === "chanyuXiushen";
+  if (y.step === 1) {
+    if (cardId === "jinxiXiangzhu") return true;
+    // 落发: the extra card may be 眉庄 instead of a second 槿汐
+    return cardId === YIHUA.luofaExtra && y.yinjiaNeed > 1 && !y.yinjia.includes(cardId);
+  }
+  if (y.step === 2) return cardId === "chanyuXiushen" && s.turn === y.ouyuDue;
   if (y.step === 3) return cardId === "wenTaiyiZhenzhi";
   return false;
 }
@@ -896,9 +901,6 @@ function applyStoryOption(s: Z3State, inst: StoryInst3, option: StoryOption3, so
     case "luofa":
       s.luofa = true;
       break;
-    case "daixin":
-      s.daixin = true;
-      break;
     case "gengtie":
       s.gengtie = true;
       break;
@@ -1043,6 +1045,7 @@ function resolvePlay3(s: Z3State, cardUid: string, removeStatusUid?: string): vo
     if (alive(s)) removeNegatives(s, 1, "为女儿撑下去");
   }
   if (alive(s) && yihuaStep) advanceYihua(s, card.id);
+  if (alive(s) && s.yihua && s.yihua.step < 4 && YIHUA.doubtCards.includes(card.id)) changeDoubt(s, -1, def.name);
 
   // 5. 陵容 with nothing to answer: her company, 情分 +1 (after 纯元故衣, a cold word)
   if (alive(s) && isLingrong && tier && !answered) {
@@ -1099,11 +1102,6 @@ function changeDoubt(s: Z3State, delta: number, source: string): void {
     lose(s, "疑点到 5，胎象再也瞒不住", "doubt");
     return;
   }
-  if (next === 0 && y.step === 3) {
-    y.step = 4;
-    y.doneTurn = s.turn;
-    log(s, `③ 改脉：${YIHUA.steps[2]!.story}脉案上的月份对上了。移花接木，三步俱成。`, "good");
-  }
 }
 
 function advanceYihua(s: Z3State, card: CardId3): void {
@@ -1112,10 +1110,11 @@ function advanceYihua(s: Z3State, card: CardId3): void {
     y.yinjia.push(card);
     log(s, `① 引驾：${YIHUA.yinjiaStory[card] ?? ""}`, "good");
     if (card === "jinxiXiangzhu") y.duishi = true;
-    if (y.yinjia.length >= y.yinjiaNeed) {
+    if (y.yinjia.length >= y.yinjiaNeed && y.yinjia.includes("jinxiXiangzhu")) {
       y.step = 2;
-      log(s, "引驾完成：皇上要来甘露寺了。", "good");
-    } else log(s, `你已落发，皇上未必肯来：引驾还差 ${y.yinjiaNeed - y.yinjia.length} 张。`);
+      y.ouyuDue = s.turn + YIHUA.ouyuDelay;
+      log(s, `引驾完成：皇上要来甘露寺了（第 ${y.ouyuDue} 回合偶遇）。`, "good");
+    } else log(s, `你已落发，皇上未必肯来：引驾还差 ${y.yinjiaNeed - y.yinjia.length} 张${y.yinjia.includes("jinxiXiangzhu") ? "（槿汐相助或眉庄相助）" : "槿汐相助"}。`);
     return;
   }
   if (y.step === 2) {
@@ -1128,7 +1127,11 @@ function advanceYihua(s: Z3State, card: CardId3): void {
     y.ouyuTurn = s.turn;
     return;
   }
-  if (y.step === 3) changeDoubt(s, -1, "温太医改脉");
+  if (y.step === 3) {
+    y.step = 4;
+    y.doneTurn = s.turn;
+    log(s, `③ 改脉：${YIHUA.steps[2]!.story}脉案上的月份对上了。移花接木，三步俱成。`, "good");
+  }
 }
 
 // ---------------------------------------------------------------- turn flow
@@ -1192,7 +1195,7 @@ function enterYihua(s: Z3State): void {
     s.crisisPool = shuffleInto(s, [...s.crisisPool, "jingrenLairen"]);
     log(s, "景仁宫还在打听你的消息：【景仁宫来人】洗入危机池。", "bad");
   }
-  s.yihua = { step: 1, yinjia: [], yinjiaNeed: s.luofa ? 2 : 1, duishi: false, doubt: DOUBT.start, doneTurn: null, ouyuTurn: null, dushu: false };
+  s.yihua = { step: 1, yinjia: [], yinjiaNeed: s.luofa ? 2 : 1, duishi: false, doubt: DOUBT.start, doneTurn: null, ouyuDue: null, ouyuTurn: null, dushu: false };
   log(s, "—— 第三幕 · 移花接木 —— 温太医诊出喜脉，牌库加入 1 张【温太医相助】。持续事件【🎎移花接木】开始，📜疑点为 1。", "info");
   popup(s, "ximai");
 }
@@ -1253,6 +1256,7 @@ function beginTurn3(s: Z3State, turn: number): void {
 
   if (turn === STAGE3.act2Start) enterTemple(s);
   if (turn === STAGE3.act3Start) enterYihua(s);
+  if (s.yihua?.step === 2 && s.yihua.ouyuDue === turn) log(s, "皇上驾临甘露寺：本回合打出【禅语修身】完成偶遇。", "info");
 
   const fixed = FIXED_STORIES3[turn];
   if (fixed) openStory(s, fixed);
@@ -1406,11 +1410,6 @@ function endTurn3(s: Z3State): void {
     if (n > 0) {
       yh.dushu = true;
       log(s, `睹物生疑：${YIHUA.dushuStory}`, "bad");
-      if (yh.step === 4) {
-        yh.step = 3;
-        yh.doneTurn = null;
-        log(s, "脉案上的月份又对不上了。", "bad");
-      }
       changeDoubt(s, n, `睹物生疑（手里 ${n} 件遗物）`);
       if (!alive(s)) return;
     }
@@ -1508,6 +1507,10 @@ function endTurn3(s: Z3State): void {
       log(s, perfect ? "凤阙归来：完美结局！" : "凤阙归来：钮祜禄氏，封熹妃，即日回宫。", "good");
       return;
     }
+    if (y.step === 2 && y.ouyuDue === s.turn) {
+      y.ouyuDue = s.turn + YIHUA.ouyuRetry;
+      log(s, `偶遇没成：皇上这回没见着你，隔一回合还会再来（第 ${y.ouyuDue} 回合）。`, "bad");
+    }
     if (y.step < 3) changeDoubt(s, 1, "召幸迟迟未成，月份越差越多");
     if (!alive(s)) return;
     if (s.turn >= STAGE3.totalTurns) {
@@ -1587,7 +1590,6 @@ export function newStage3(seed: number, carry: Carry3 | null): Z3State {
     feilaoTier: null,
     atPeak: false,
     luofa: false,
-    daixin: false,
     gengtie: false,
     songxing: false,
     tempWenUid: null,
