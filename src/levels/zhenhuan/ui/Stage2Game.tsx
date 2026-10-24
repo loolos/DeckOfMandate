@@ -71,7 +71,7 @@ import {
 } from "../logic/stage2Engine";
 import { cardArtUrl, eventArtUrl, specialArtUrl, storyArtUrl } from "./art";
 import { CardArt, FoldBox, GameHeader, LogView, Pile, PileGroup, ResolvedBanner, ScrollRow, StatChip, TagChip, activateOnKey, countBy, isTypingTarget, type Fold } from "./common";
-import { compactEffect2, expandedEffect2, statusBrief2 } from "./effectText2";
+import { compactEffect2, expandedEffect2 } from "./effectText2";
 import styles from "./zhenhuan.module.css";
 
 type Dispatch = (a: Z2Action) => void;
@@ -705,8 +705,7 @@ function Statuses({ state, dispatch }: { state: Z2State; dispatch: Dispatch }) {
                   <span className={styles.statusFull}> {def.name}</span>
                 </span>
                 <span className={styles.statusBrief}>
-                  {statusBrief2(def)}
-                  {def.permanent ? "" : ` ⏳${st.remaining}`}
+                  {def.permanent ? "" : `⏳${st.remaining}`}
                 </span>
                 <button
                   type="button"

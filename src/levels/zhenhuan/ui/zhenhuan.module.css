@@ -1007,7 +1007,7 @@
   width: var(--zh-compact-col);
 }
 
-/* Collapsed statuses shrink to emoji + effect + turns; name and tag return on expand. */
+/* Collapsed statuses shrink to emoji + remaining turns (none if permanent); name and tag return on expand. */
 .statusBrief {
   display: none;
 }

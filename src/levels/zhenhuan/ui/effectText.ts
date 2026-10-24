@@ -1,4 +1,4 @@
-import { CARDS, RESOURCE_EMOJI, STATUSES, type StatusDef } from "../data/content";
+import { RESOURCE_EMOJI, STATUSES } from "../data/content";
 
 /**
  * Emoji forms of effect text (events, cards, story options). Compact (略缩) cards show emoji only
@@ -45,11 +45,3 @@ export function expandedEffect(text: string): string {
     .replace(/清誉/g, `${RESOURCE_EMOJI.qingyu}清誉`);
 }
 
-const signed = (n: number) => `${n > 0 ? "+" : ""}${n}`;
-
-/** Emoji-only mechanics of a status for the 略缩 status bar ("🎴+1", "🚫👗"). */
-export function statusBrief(def: StatusDef): string {
-  if (def.blocksCards) return `🚫${def.blocksCards.map((id) => CARDS[id].emoji).join("")}${def.drawModifier ? `${DRAW}${signed(def.drawModifier)}` : ""}`;
-  if (def.perTurn) return def.perTurn.map((d) => `${RESOURCE_EMOJI[d.resource]}${signed(d.amount)}`).join(" ");
-  return `${DRAW}${signed(def.drawModifier)}`;
-}
