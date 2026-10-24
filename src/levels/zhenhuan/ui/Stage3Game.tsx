@@ -974,6 +974,14 @@ function PopupBody({ state, id }: { state: Z3State; id: PopupId }) {
           <p>{tail}</p>
           <p>{POPUP_TEXT.meizhuang}</p>
           {returned ? <p>{returned}</p> : null}
+          <p>如今的后宫：</p>
+          <ul>
+            {POPUP_TEXT.people.map((p) => (
+              <li key={p.name}>
+                <strong>{p.name}</strong>：{p.text}
+              </li>
+            ))}
+          </ul>
           {POPUP_TEXT.openingRules.map((l) => (
             <p key={l} className={styles.muted}>
               {l}
@@ -1134,16 +1142,6 @@ export function Stage3Rules() {
         华妃倒了，翊坤宫的门关上了。你在碎玉轩，是六宫里最得宠的那一个；眉庄的冤屈也洗清了，复了位分。可景仁宫的<strong>皇后</strong>，从来不是表面上那样温和。
       </li>
       <li>守住 🪷清誉 与 👑圣宠，任一项降到 0 即失败。</li>
-      <li>
-        如今的后宫：
-        <ul>
-          {POPUP_TEXT.people.map((p) => (
-            <li key={p.name}>
-              <strong>{p.name}</strong>：{p.text}
-            </li>
-          ))}
-        </ul>
-      </li>
       {POPUP_TEXT.eventRules.map((l) => (
         <li key={l}>{l}</li>
       ))}
