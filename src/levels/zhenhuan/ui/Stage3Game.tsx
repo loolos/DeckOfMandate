@@ -152,7 +152,7 @@ function answeringCards(id: EventId3): CardId3[] {
 
 function resolvedDetail(inst: EventInst3): string {
   const def = EVENTS3[inst.id];
-  if (inst.byXin) return "欣贵人当众顶了回去，自动化解（不算打压）。";
+  if (inst.bySuppress) return "上回被你打压过，这回没敢闹大：消耗【打压】状态，自动化解。";
   const by = inst.resolvedBy ? `由【${CARDS3[inst.resolvedBy].name}】` : "";
   const tier = inst.lingrong && inst.resolvedBy === "lingrongXiangzhu" ? `（陵容·${TIER_LABEL[inst.lingrong]}）` : "";
   const suppressed = inst.suppressed && def.rival ? `；打压了${RIVALS[def.rival].name}` : "";
@@ -253,14 +253,17 @@ function EventCard({ state, inst, fold, dispatch }: { state: Z3State; inst: Even
       {def.rival && def.suppressCard && !def.pair ? (
         <p className={styles.rule}>
           ⚔️ 用【{CARDS3[def.suppressCard].emoji}
-          {CARDS3[def.suppressCard].name}】化解算打压{RIVALS[def.rival].name}：她的其余事件本幕不再出现。
+          {CARDS3[def.suppressCard].name}】化解算打压{RIVALS[def.rival].name}：获得【打压】状态，这张危机下次出现时自动化解一次。
         </p>
+      ) : null}
+      {def.rival && !inst.resolved && state.statuses.some((st) => st.id === "xinGuirenZhangyi") ? (
+        <p className={styles.rule}>🗣️ 没化解的话，【欣贵人仗义】会替你挡下这次惩罚。</p>
       ) : null}
       {def.pair ? (
         <p className={styles.rule}>
           🔗 {PAIRS[def.pair].name}：{isOpp ? `须先化解【${EVENTS3[PAIRS[def.pair].crisis].name}】才能把握。` : `没化解，【${EVENTS3[PAIRS[def.pair].opportunity].name}】随之作废。`}
           一张【{CARDS3[PAIRS[def.pair].shared].emoji}
-          {CARDS3[PAIRS[def.pair].shared].name}】能一石二鸟：结交盟友并打压{RIVALS[PAIRS[def.pair].rival].name}。
+          {CARDS3[PAIRS[def.pair].shared].name}】能一石二鸟：结交盟友并打压{RIVALS[PAIRS[def.pair].rival].name}（这张危机下次出现时自动化解一次）。
         </p>
       ) : null}
       {locked ? <p className={styles.endHint}>🔒 连环危机还没化解，这张机会暂时锁着。</p> : null}
@@ -784,19 +787,7 @@ function HandCard({ state, card, dispatch, fold }: { state: Z3State; card: CardI
       {answers.length > 0 ? <p className={styles.solves}>打出将解决：{answers.map((a) => `【${a}】`).join("")}</p> : null}
       {notes}
       <div className={styles.cardActions}>
-        {isPending && state.pending?.kind === "relic" ? (
-          <>
-            <button type="button" className={`${styles.btn} ${styles.btnPrimary} ${styles.btnSmall}`} onClick={() => dispatch({ type: "relicChoice", choice: "burn" })}>
-              🔥 焚毁
-            </button>
-            <button type="button" className={`${styles.btn} ${styles.btnSmall}`} onClick={() => dispatch({ type: "relicChoice", choice: "hide" })}>
-              📦 藏起
-            </button>
-            <button type="button" className={`${styles.btn} ${styles.btnSmall}`} onClick={() => dispatch({ type: "cancelPending" })}>
-              取消
-            </button>
-          </>
-        ) : isPending ? (
+        {isPending ? (
           <>
             <span className={styles.solves}>请在上方状态上点「移除」</span>
             <button type="button" className={`${styles.btn} ${styles.btnSmall}`} onClick={() => dispatch({ type: "cancelPending" })}>
@@ -805,7 +796,7 @@ function HandCard({ state, card, dispatch, fold }: { state: Z3State; card: CardI
           </>
         ) : (
           <button type="button" className={`${styles.btn} ${styles.btnPrimary} ${styles.btnSmall}`} disabled={!canPlay} onClick={play}>
-            {free ? "打出（联袂）" : "打出"}
+            {relic ? "🔥 焚毁" : free ? "打出（联袂）" : "打出"}
           </button>
         )}
       </div>
@@ -896,7 +887,6 @@ function Statuses({ state, dispatch }: { state: Z3State; dispatch: Dispatch }) {
 
 function endTurnHints(state: Z3State): string[] {
   const hints: string[] = [];
-  if (state.pending?.kind === "relic") hints.push("请先选择焚毁或藏起这件遗物，或取消。");
   if (state.pending?.kind === "wentaiyi") hints.push("请先选择要移除的负面状态，或取消温太医相助。");
   const left = playsLeft3(state);
   if (left > 0 && state.hand.length > 0) hints.push(`还可出 ${left} 张牌。`);
@@ -1128,7 +1118,6 @@ type Shown = { seed: number; ids: PopupId[] };
 export function Stage3Game({ state, dispatch, runCode, showRules, onShowRules, onRestart, onMenu, onLoadCode }: Props) {
   const compact = useSmallScreen();
   const hints = endTurnHints(state);
-  const tier = tierOf3(state);
 
   // Story popups raised by the latest action (shown once; not when a save or code is loaded mid-run).
   const [queue, setQueue] = useState<PopupId[]>(() => (state.actions.length === 0 ? [...state.popups] : []));
@@ -1215,7 +1204,6 @@ export function Stage3Game({ state, dispatch, runCode, showRules, onShowRules, o
           ) : null}
           <StatChip icon="🌱" label="身子" info={RESOURCE_INFO3.shenzi} value={state.shenzi} max={SHENZI.max} danger={state.shenzi <= 1} />
           {state.yihua ? <StatChip icon="📜" label="疑点" hint={`（到 ${DOUBT.max} 即失败）`} info={{ lore: TAG3_INFO.doubt.lore, rules: [TAG3_INFO.doubt.rules] }} value={state.yihua.doubt} max={DOUBT.max} danger={state.yihua.doubt >= DOUBT.max - 1} /> : null}
-          {tier ? <StatChip icon={TIER_EMOJI[tier]} label={`陵容 · ${TIER_LABEL[tier]}`} value={state.hand.filter((c) => c.id === "lingrongXiangzhu").length} meter={false} info={{ lore: "她待你的情分。数字是手里的陵容相助张数。", rules: ["亲厚：联袂；生分：依依；怨怼：掣肘。", "情分越差，她替皇后记下的事越多。"] }} /> : null}
           <span className={styles.stripDivider} aria-hidden="true" />
           <StatChip icon="🀄" label="本回合出牌" info={PLAYS_INFO3} value={state.playsUsed} max={playLimit3(state)} meter={false} />
           <PileGroup compact={compact}>

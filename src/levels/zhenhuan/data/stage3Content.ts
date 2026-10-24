@@ -119,7 +119,7 @@ function palace(id: Exclude<CardId3, "lingrongXiangzhu" | "jinxiXiangzhu" | "guo
   return { id, name: c.name, emoji: c.emoji, flavor: c.flavor, base: c.base, baseDraw: c.baseDraw, baseStatus: c.baseStatus as StatusId3 | undefined, matches: [], rulesText: c.rulesText, ...o };
 }
 
-const RELIC_RULES = ["🪷+1；抽 2 张；本回合出牌 +1（他最后一次护着你）。", "打出时须选：焚毁（离场；偶遇完成后疑点 -1）或藏起（回到弃牌堆；偶遇那回合在手里会让疑点 +1）。"];
+const RELIC_RULES = ["打出即焚毁，牌离场；偶遇完成后焚毁可使疑点 -1。没有别的效果。", "偶遇完成那回合若还在手里，会触发睹物生疑，疑点 +1。"];
 
 export const CARDS3: Record<CardId3, CardDef3> = {
   yirongZhengsu: palace("yirongZhengsu", {
@@ -263,52 +263,40 @@ export const CARDS3: Record<CardId3, CardDef3> = {
     name: "合婚庚帖",
     emoji: "📜",
     flavor: "庚帖上写的是「嬛嬛」。他从来只唤你自己的名字。",
-    base: [{ resource: "qingyu", amount: 1 }],
-    baseDraw: 2,
-    extraPlays: 1,
+    base: [],
+    baseDraw: 0,
     matches: [],
     rulesText: RELIC_RULES,
-    rulesCompact: "🕯️ 🪷+1 🎴+2 🀄+1",
+    rulesCompact: "🕯️ 焚毁",
   },
   yiwuDi: {
     id: "yiwuDi",
     name: "长相思笛",
     emoji: "🎶",
     flavor: "笛子还是那支笛子，再没有人来和了。",
-    base: [{ resource: "qingyu", amount: 1 }],
-    baseDraw: 2,
-    extraPlays: 1,
+    base: [],
+    baseDraw: 0,
     matches: [],
     rulesText: RELIC_RULES,
-    rulesCompact: "🕯️ 🪷+1 🎴+2 🀄+1",
+    rulesCompact: "🕯️ 焚毁",
   },
   yiwuPifeng: {
     id: "yiwuPifeng",
     name: "旧日披风",
     emoji: "🧣",
     flavor: "踏雪问疾那夜，他把这件披风披在了你身上。",
-    base: [{ resource: "qingyu", amount: 1 }],
-    baseDraw: 2,
-    extraPlays: 1,
+    base: [],
+    baseDraw: 0,
     matches: [],
     rulesText: RELIC_RULES,
-    rulesCompact: "🕯️ 🪷+1 🎴+2 🀄+1",
+    rulesCompact: "🕯️ 焚毁",
   },
 };
 
-export const RELIC_TEXT: Record<RelicId, { burn: string; hide: string }> = {
-  yiwuGengtie: {
-    burn: "你把庚帖凑近烛火。「嬛嬛」两个字卷起来，黑了，散了。你没有哭。",
-    hide: "你把庚帖折好，压在经卷最底下。总有一日，你还想再看一眼那两个字。",
-  },
-  yiwuDi: {
-    burn: "笛子投进火盆，噼啪响了几声。长相思，摧心肝。你在心里替他吹完了最后一句。",
-    hide: "你用旧帕子把笛子裹好，藏进了禅房的梁上。",
-  },
-  yiwuPifeng: {
-    burn: "披风烧得很慢，一点一点地，像是舍不得走。",
-    hide: "你把披风叠好，塞进了箱笼最深处，上面压着几件粗布衣裳。",
-  },
+export const RELIC_TEXT: Record<RelicId, string> = {
+  yiwuGengtie: "你把庚帖凑近烛火。「嬛嬛」两个字卷起来，黑了，散了。你没有哭。",
+  yiwuDi: "笛子投进火盆，噼啪响了几声。长相思，摧心肝。你在心里替他吹完了最后一句。",
+  yiwuPifeng: "披风烧得很慢，一点一点地，像是舍不得走。",
 };
 
 /** 第一幕牌库：第二关因【惜别】离场的眉庄 / 温太医回来了，各 2 张。 */
@@ -364,7 +352,14 @@ export type StatusId3 =
   | "hanzheng"
   | "jingji"
   | "xinruZhishui"
-  | "yishiWucuo";
+  | "yishiWucuo"
+  | "dayaQifeiXunxin"
+  | "dayaSanAgeYaochong"
+  | "dayaXinrenZhengchong"
+  | "dayaEmingCanben"
+  | "dayaYuhuayuanQi"
+  | "dayaXianfuQi"
+  | "dayaYanqingQi";
 
 export type StatusDef3 = {
   readonly id: StatusId3;
@@ -384,6 +379,21 @@ export type StatusDef3 = {
   readonly effectText: string;
   readonly flavor: string;
 };
+
+/** 打压 leaves one of these: that crisis is auto-resolved the next time it is drawn. */
+function daya(id: StatusId3, crisisName: string, flavor: string): StatusDef3 {
+  return {
+    id,
+    name: `打压·${crisisName}`,
+    emoji: "⚔️",
+    tag: "positive",
+    duration: 0,
+    permanent: true,
+    drawModifier: 0,
+    effectText: `【${crisisName}】下次出现时自动化解一次。用掉后消失。`,
+    flavor,
+  };
+}
 
 export const STATUSES3: Record<StatusId3, StatusDef3> = {
   liuyanChanshen: {
@@ -484,7 +494,7 @@ export const STATUSES3: Record<StatusId3, StatusDef3> = {
     duration: 0,
     permanent: true,
     drawModifier: 0,
-    effectText: "下一个齐妃或祺贵人的危机事件自动化解（不算打压）。用掉后消失。",
+    effectText: "下一个齐妃或祺贵人的危机事件没化解时，替你挡下这次惩罚（不留把柄）。事件照常可以化解、打压。用掉后消失。",
     flavor: "欣贵人快人快语，最看不惯齐妃那副样子。",
   },
   fuxiongMengchen: {
@@ -499,6 +509,13 @@ export const STATUSES3: Record<StatusId3, StatusDef3> = {
     effectText: "第 8 回合【甄远道下狱】每个选项的代价再加重一档。不可移除。",
     flavor: "鄂敏的折子递上去了，前朝都在议论甄家。",
   },
+  dayaQifeiXunxin: daya("dayaQifeiXunxin", "齐妃寻衅", "齐妃在众人面前下不来台，往后请安时收敛了许多。"),
+  dayaSanAgeYaochong: daya("dayaSanAgeYaochong", "三阿哥邀宠", "皇上不往长春宫去了，齐妃一时也想不出别的法子。"),
+  dayaXinrenZhengchong: daya("dayaXinrenZhengchong", "新人争宠", "祺贵人吃了一回亏，在御花园里不敢再那么张扬。"),
+  dayaEmingCanben: daya("dayaEmingCanben", "鄂敏参本", "折子留中不发，鄂敏在前朝也得掂量掂量。"),
+  dayaYuhuayuanQi: daya("dayaYuhuayuanQi", "齐妃讥讽", "齐妃讨了个没趣，见了你和欣贵人便绕道走。"),
+  dayaXianfuQi: daya("dayaXianfuQi", "祺贵人告状", "皇后那里没告成，祺贵人一时不敢再搬弄是非。"),
+  dayaYanqingQi: daya("dayaYanqingQi", "齐妃探病", "齐妃白跑一趟，皇后那边也懒得再差她来。"),
   lingrongDeXiang: {
     id: "lingrongDeXiang",
     name: "陵容的香",
@@ -637,9 +654,20 @@ export const ALLIES: Record<AllyId, { name: string; status: StatusId3 }> = {
 
 export const RIVALS: Record<RivalId, { name: string }> = { qifei: { name: "齐妃" }, guaerjia: { name: "祺贵人" } };
 
+/** The 打压 status each rival crisis leaves behind. */
+export const SUPPRESS_STATUS: Partial<Record<CrisisId3, StatusId3>> = {
+  qifeiXunxin: "dayaQifeiXunxin",
+  sanAgeYaochong: "dayaSanAgeYaochong",
+  xinrenZhengchong: "dayaXinrenZhengchong",
+  emingCanben: "dayaEmingCanben",
+  yuhuayuanQi: "dayaYuhuayuanQi",
+  xianfuQi: "dayaXianfuQi",
+  yanqingQi: "dayaYanqingQi",
+};
+
 export type PairId = "yuhuayuan" | "xianfu" | "yanqing";
 
-export const PAIRS: Record<PairId, { name: string; emoji: string; opportunity: OpportunityId3; crisis: CrisisId3; shared: CardId3; ally: AllyId; rival: RivalId; sharedStory: string }> = {
+export const PAIRS: Record<PairId, { name: string; emoji: string; opportunity: OpportunityId3; crisis: CrisisId3; shared: CardId3; ally: AllyId; rival: RivalId }> = {
   yuhuayuan: {
     name: "御花园赏花",
     emoji: "🌸",
@@ -648,7 +676,6 @@ export const PAIRS: Record<PairId, { name: string; emoji: string; opportunity: O
     shared: "jinyanShenxing",
     ally: "xin",
     rival: "qifei",
-    sharedStory: "你只淡淡回了齐妃一句，欣贵人立刻接了话头，三言两语说得齐妃面红耳赤。回去的路上，欣贵人挽着你笑：「早该有人治治她了。」",
   },
   xianfu: {
     name: "咸福宫托付",
@@ -658,7 +685,6 @@ export const PAIRS: Record<PairId, { name: string; emoji: string; opportunity: O
     shared: "meizhuangXiangzhu",
     ally: "jingfei",
     rival: "guaerjia",
-    sharedStory: "眉庄陪你把条陈呈到皇后跟前，一字一句都是敬妃的意思。祺贵人告你越权，倒被眉庄问得答不上话来。",
   },
   yanqing: {
     name: "延庆殿夜话",
@@ -668,7 +694,6 @@ export const PAIRS: Record<PairId, { name: string; emoji: string; opportunity: O
     shared: "wenTaiyiZhenzhi",
     ally: "duanfei",
     rival: "qifei",
-    sharedStory: "温实初借口要给端妃请脉，客客气气把齐妃请了出去。门一关上，端妃才慢慢说起景仁宫的旧事。",
   },
 };
 
@@ -887,6 +912,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     resolvedText: "圣宠 +1；第一次把握时获得【欣贵人仗义】",
     unresolvedText: "无额外效果，事件消失",
     resolvedStory: {
+      jinyanShenxing: "齐妃走远了，欣贵人挽着你笑：「你那一句不软不硬，我接得可痛快。早该有人治治她了。」两人在花下一直说到日头西斜。",
       yirongZhengsu: "你陪欣贵人在花下走了一圈，说说笑笑，倒把方才的不快都忘了。",
       shoulongRenxin: "你让宫人给欣贵人送去一盆开得正好的芍药，她高兴得当天就来回礼。",
     },
@@ -904,6 +930,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     resolvedText: "清誉 +1；第一次把握时获得【敬妃之谊】",
     unresolvedText: "无额外效果，事件消失",
     resolvedStory: {
+      meizhuangXiangzhu: "眉庄陪你在咸福宫把条陈一字一字斟酌定了。敬妃拉着你们俩的手说：「往后咸福宫的门，你们随时来。」",
       shoulongRenxin: "你托小允子去内务府问清了各处的规矩，条陈写得周周全全。敬妃拿着看了三遍。",
       jinxiXiangzhu: "槿汐对宫里的规矩比谁都熟，一条一条替你核过。敬妃说，这份情她记下了。",
     },
@@ -921,6 +948,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     resolvedText: "清誉 +1；第一次把握时获得【端妃相护】",
     unresolvedText: "无额外效果，事件消失",
     resolvedStory: {
+      wenTaiyiZhenzhi: "温实初诊完脉，便退到殿外守着。门一关上，端妃才慢慢说起景仁宫的旧事，说一句，停一停。",
       shoulongRenxin: "你让小允子守着殿门。端妃这才开口，说起纯元皇后当年的事，说到一半，停住了。",
       jingguanQibian: "你只是静静坐着，不催也不问。端妃看了你很久，终于说：「皇后这个人，从来不是表面上那样。」",
     },
@@ -1004,7 +1032,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     rival: "qifei",
     suppressCard: "jinyanShenxing",
     secret: "chuyanDingzhuang",
-    resolvedText: "移除事件；用谨言慎行化解算作打压齐妃",
+    resolvedText: "移除事件；用谨言慎行化解算作打压齐妃，获得【打压·齐妃寻衅】",
     unresolvedText: "清誉 -1、获得【流言缠身】",
     resolvedStory: {
       jinyanShenxing: "你笑着回了一句：「娘娘说笑了，三阿哥的功课，皇上才是放在心尖上的。」齐妃一时下不来台，再没敢开口。",
@@ -1022,7 +1050,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     penalty: [sc(-1)],
     rival: "qifei",
     suppressCard: "yirongZhengsu",
-    resolvedText: "移除事件；用仪容整肃化解算作打压齐妃",
+    resolvedText: "移除事件；用仪容整肃化解算作打压齐妃，获得【打压·三阿哥邀宠】",
     unresolvedText: "圣宠 -1",
     resolvedStory: {
       yirongZhengsu: "你换了一身新裁的衣裳，在皇上回养心殿的路上候着。皇上远远看见，便不往长春宫去了。",
@@ -1040,7 +1068,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     rival: "guaerjia",
     suppressCard: "yirongZhengsu",
     secret: "shanduShide",
-    resolvedText: "移除事件；用仪容整肃化解算作打压祺贵人",
+    resolvedText: "移除事件；用仪容整肃化解算作打压祺贵人，获得【打压·新人争宠】",
     unresolvedText: "圣宠 -1",
     resolvedStory: {
       yirongZhengsu: "你在同一处园子里赏花，一身素净，倒衬得祺贵人过于艳丽。皇上看了你们一眼，携了你的手走了。",
@@ -1059,7 +1087,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     rival: "guaerjia",
     suppressCard: "shoulongRenxin",
     secret: "yuanwangJunfu",
-    resolvedText: "移除事件；用收拢人心化解算作打压祺贵人（第 8 回合下狱的代价减轻一档）",
+    resolvedText: "移除事件；用收拢人心化解算作打压祺贵人，获得【打压·鄂敏参本】（第 8 回合下狱的代价减轻一档）",
     unresolvedText: "获得【父兄蒙尘】：第 8 回合下狱的代价加重一档",
     note: "第 5 回合后洗入危机池。",
     resolvedStory: {
@@ -1080,6 +1108,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     resolvedText: "移除事件；与【欣贵人邀游】相连",
     unresolvedText: "清誉 -1；【欣贵人邀游】随之作废",
     resolvedStory: {
+      jinyanShenxing: "你只淡淡回了一句「娘娘教训的是」，欣贵人立刻接过话头，三言两语说得齐妃面红耳赤，拂袖走了。",
       jingguanQibian: "你不接她的话，只顾着赏花。齐妃自讨没趣，悻悻地走了。",
       jinxiXiangzhu: "槿汐上前行了个礼，说皇后正找齐妃娘娘，齐妃只得走了。",
     },
@@ -1097,6 +1126,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     resolvedText: "移除事件；与【敬妃托付】相连",
     unresolvedText: "清誉 -1；【敬妃托付】随之作废",
     resolvedStory: {
+      meizhuangXiangzhu: "皇后召你去问越权的事，眉庄陪着同去。她把条陈一页页摊开：「这是敬妃娘娘的意思，嫔妾们不过代笔。」祺贵人被问得答不上话来。",
       jinyanShenxing: "你在皇后面前只说是替敬妃抄写，一个字也没多说。皇后挑不出错，只得罢了。",
       jingguanQibian: "你按下不动，等皇后自己去问敬妃。敬妃一句话，便把这事揭过去了。",
     },
@@ -1114,6 +1144,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     resolvedText: "移除事件；与【端妃旧话】相连",
     unresolvedText: "清誉 -1；【端妃旧话】随之作废",
     resolvedStory: {
+      wenTaiyiZhenzhi: "温实初提着药箱进来，说该给端妃请脉了，病人须得静养。齐妃坐不住，客客气气地被请了出去。",
       jinxiXiangzhu: "槿汐引着齐妃去偏殿喝茶，絮絮叨叨说了好些闲话，齐妃什么也没听着。",
       jinyanShenxing: "你只说是来给端妃送药的，说完便告退。齐妃回去，什么也说不出来。",
     },
@@ -2071,7 +2102,7 @@ export const POPUP_TEXT = {
   huanghouRules: [
     "🦚 皇后事件：从下一回合起每回合 1 张。皇后的事件都是“恩赏”，不应对就算收下，有收益；打出匹配牌就是婉拒，什么也没有。",
     "🤝 盟友事件：第一次把握端妃、敬妃、欣贵人的事件，会得到她们的盟友状态。",
-    "⚔️ 对头事件：齐妃、祺贵人的危机，用指定的牌化解才算打压，她的另一张事件就不会再出现。",
+    "⚔️ 对头事件：齐妃、祺贵人的危机，用指定的牌化解才算打压，获得一个【打压】状态：这张危机下次再出现时自动化解一次。",
     "🔗 连环事件：机会和危机成对出现。先化解危机，机会才能把握；一张共同匹配牌能一石二鸟，结交盟友并打压对头。",
   ],
   tonghuatai: "笛声停了。那人回过身来，朝你一揖：「允礼唐突，惊扰小主了。」",
@@ -2083,7 +2114,7 @@ export const POPUP_TEXT = {
   feilao: "槿汐背着你，一步一步踩着雪往后山走。身后，甘露寺的门「砰」地关上了。",
   feilaoRules: "迁居凌云峰：罚做粗活、诬偷香油钱移出；月下对谈、夜半惊扰、闲人窥探加入。",
   zhoufu: "消息是夜里传来的：果亲王的船在江上翻了，尸骨无存。你手里的长相思笛，再没有人来和。",
-  zhoufuRules: "3 张【果郡王相助】变成了 🕯️遗物。打出遗物时必须选：焚毁，或藏起。",
+  zhoufuRules: "3 张【果郡王相助】变成了 🕯️遗物。遗物打出即焚毁，没有别的效果；留在手里的，偶遇那回合会让疑点 +1。",
   ximai:
     "温太医的手指搭在你腕上，迟迟没有拿开。「嬛妹妹……是喜脉。」你怔怔地坐着，手不自觉地护住了小腹。允礼走了，连尸骨都没有找回来，这是他留在世上唯一的骨血。温太医低声劝你：「这孩子若被人知道，你和他都活不成……」你打断他：「我要留下他。」凌云峰上，一个带罪修行的人有了身孕，瞒不过三个月。要保住这个孩子，只有一条路：回宫，让皇上相信，这是他的孩子。",
   ximaiRules: "持续事件【🎎移花接木】：引驾 → 偶遇 → 改脉，依次完成。📜疑点到 5，或第 33 回合末仍未完成即失败；🌱身子归 0 即小产，失败。",
@@ -2151,14 +2182,14 @@ export const TAG3_INFO: Record<TagId3, { label: string; lore: string; rules: str
   yiyi: { label: "依依", lore: "缠着姐姐不肯走。", rules: "情分生分时，陵容在回合末留在手牌中；留下几张，下回合就少抓几张。" },
   double: { label: "双牌", lore: "一个人扛不住。", rules: "同一回合内打出两张匹配牌才算解决；回合末不满 2 张则进度清零。" },
   ally: { label: "盟友", lore: "后宫重新站队，总有人愿意站在你这边。", rules: "第一次把握这位盟友的事件，额外获得她的盟友状态（端妃相护 / 敬妃之谊 / 欣贵人仗义）。" },
-  rival: { label: "对头", lore: "她们都是皇后的人。", rules: "用卡面标注的打压牌化解，这位对头的另一张单独事件从危机池移出。" },
+  rival: { label: "对头", lore: "她们都是皇后的人。", rules: "用卡面标注的打压牌化解（连环事件用共同牌一石二鸟）算打压，获得对应的【打压】状态：这张危机下次再出现时自动化解一次。" },
   pair: {
     label: "连环",
     lore: "一石二鸟。",
     rules: "机会与危机成对出现。危机没化解之前，机会锁着；共同匹配牌一张就能先化解危机、再把握机会，并算作打压对头。危机没化解，机会随之作废。",
   },
   jingbai: { label: "静白刁难", lore: "静白师太看你不顺眼。", rules: "寺中（第 11–18 回合）的刁难没化解，静白就更嚣张；她嚣张的程度决定第 18 回合你被赶走时有多狼狈。" },
-  relic: { label: "遗物", lore: "他留下的东西。", rules: "打出后须选：焚毁（离场；偶遇完成后疑点 -1）或藏起（回到弃牌堆；偶遇那回合在手里会触发睹物生疑，疑点 +1）。" },
+  relic: { label: "遗物", lore: "他留下的东西。", rules: "打出即焚毁，牌离场（偶遇完成后焚毁可使疑点 -1），没有别的效果。偶遇完成那回合若还在手里，会触发睹物生疑，疑点 +1。" },
   yihua: {
     label: "持续",
     lore: "唯一的活路。",

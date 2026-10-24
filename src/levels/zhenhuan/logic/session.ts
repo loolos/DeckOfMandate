@@ -85,8 +85,6 @@ function encodeAction3(a: Z3Action): string {
       return `s${a.storyId}.${a.optionId}`;
     case "removeStatus":
       return `r${a.statusUid}`;
-    case "relicChoice":
-      return a.choice === "burn" ? "b" : "h";
     case "cancelPending":
       return "x";
     case "endTurn":
@@ -109,10 +107,6 @@ function decodeAction3(raw: string): Z3Action {
     }
     case "r":
       return { type: "removeStatus", statusUid: body };
-    case "b":
-      return { type: "relicChoice", choice: "burn" };
-    case "h":
-      return { type: "relicChoice", choice: "hide" };
     case "x":
       return { type: "cancelPending" };
     case "e":

@@ -44,6 +44,7 @@ import {
   STAGE3_ACT1_DECK,
   STAGE3_TEMPLE_DECK,
   STATUSES3,
+  SUPPRESS_STATUS,
   STORIES3,
   SUMMON_THRESHOLD3,
   TAG3_INFO,
@@ -94,8 +95,10 @@ export type EventInst3 = {
   lingrong?: LingrongTier;
   lingrongFailed?: boolean;
   aggravated?: boolean;
-  /** 欣贵人仗义 took it. */
+  /** Unresolved, but 欣贵人仗义 took the penalty. */
   byXin?: boolean;
+  /** An earlier 打压 status took it. */
+  bySuppress?: boolean;
   /** Resolved with the 打压 card (or the 连环 shared card). */
   suppressed?: boolean;
   story?: string;
@@ -125,7 +128,6 @@ export type Z3Action =
   | { readonly type: "playCard"; readonly cardUid: string }
   | { readonly type: "chooseStory"; readonly storyId: StoryId3; readonly optionId: string }
   | { readonly type: "removeStatus"; readonly statusUid: string }
-  | { readonly type: "relicChoice"; readonly choice: "burn" | "hide" }
   | { readonly type: "cancelPending" }
   | { readonly type: "endTurn" }
   /** UI-only: not recorded. */
@@ -186,8 +188,6 @@ export type Z3State = {
   secrets: Partial<Record<SecretId, number>>;
   allies: Record<AllyId, boolean>;
   suppressed: Record<RivalId, boolean>;
-  /** 打压 took these out for the rest of 第一幕. */
-  removedEvents: CrisisId3[];
   guoMeet: "li" | "di" | "lingrong" | null;
   /** 纯元故衣 (turn 6): ① 起疑 card, then ② 查实 card. */
   chunyuan: { first: CardId3 | null; second: CardId3 | null } | null;
@@ -215,14 +215,13 @@ export type Z3State = {
   changxiangsi: { played: CardId3[]; done: boolean } | null;
   yihua: Yihua | null;
   relicsBurned: number;
-  relicsHidden: number;
   statuses: StatusInst3[];
   playsUsed: number;
   extraPlays: number;
   drawnThisTurn: number;
   lianmeiSpent: string[];
   playedThisTurn: CardId3[];
-  pending: { kind: "wentaiyi" | "relic"; cardUid: string } | null;
+  pending: { kind: "wentaiyi"; cardUid: string } | null;
   outcome: Z3Outcome;
   lossReason: string | null;
   lossKind: Loss3Kind | null;
@@ -302,6 +301,11 @@ export function summonUnwell3(s: Z3State): string | null {
 
 export function tierOf3(s: Z3State): LingrongTier | null {
   return s.lingrongGone ? null : lingrongTier(s.relation);
+}
+
+/** 遗物 still in hand / 抽牌堆 / 弃牌堆 (not yet burned). */
+export function relicsKept(s: Z3State): number {
+  return [...s.hand, ...s.drawPile, ...s.discard].filter((c) => isRelic(c.id)).length;
 }
 
 export function isRelic(id: CardId3): id is RelicId {
@@ -711,17 +715,13 @@ function befriend(s: Z3State, ally: AllyId): void {
   addStatus3(s, ALLIES[ally].status);
 }
 
-/** 打压: the rival's other single crisis events leave for the rest of 第一幕. */
-function suppress(s: Z3State, rival: RivalId): void {
-  if (s.suppressed[rival]) return;
+/** 打压: a status that auto-resolves this crisis the next time it is drawn. */
+function suppress(s: Z3State, rival: RivalId, crisis: CrisisId3): void {
+  const first = !s.suppressed[rival];
   s.suppressed[rival] = true;
-  const others = (Object.keys(EVENTS3) as EventId3[]).filter((id) => {
-    const d = EVENTS3[id];
-    return d.kind === "crisis" && d.rival === rival && !d.pair;
-  }) as CrisisId3[];
-  removeFromPools(s, others);
-  s.removedEvents = [...new Set([...s.removedEvents, ...others])];
-  log(s, `⚔️ 打压${RIVALS[rival].name}：她的其余事件本幕不再出现${rival === "guaerjia" ? "；第 8 回合父亲下狱的代价减轻一档" : ""}。`, "good");
+  log(s, `⚔️ 打压${RIVALS[rival].name}${first && rival === "guaerjia" ? "：第 8 回合父亲下狱的代价减轻一档" : ""}。`, "good");
+  const status = SUPPRESS_STATUS[crisis];
+  if (status && !s.statuses.some((st) => st.id === status)) addStatus3(s, status);
 }
 
 // ---------------------------------------------------------------- resolution
@@ -752,7 +752,7 @@ function resolveEventByCard(s: Z3State, ev: EventInst3, card: CardId3, doubleRew
   if (def.kind === "crisis") {
     if (def.rival && def.suppressCard === card && !def.pair) {
       ev.suppressed = true;
-      suppress(s, def.rival);
+      suppress(s, def.rival, ev.id as CrisisId3);
     }
     if (card === "jingchaiBuqun" && alive(s)) {
       log(s, "荆钗布裙联动：静白一时挑不出错。", "good");
@@ -931,7 +931,7 @@ function birth(s: Z3State): void {
   popup(s, "wanwan");
 }
 
-function resolvePlay3(s: Z3State, cardUid: string, removeStatusUid?: string, relicChoice?: "burn" | "hide"): void {
+function resolvePlay3(s: Z3State, cardUid: string, removeStatusUid?: string): void {
   const idx = s.hand.findIndex((c) => c.uid === cardUid);
   if (idx < 0) return;
   const lianmei = lianmeiSourceFor(s, idx);
@@ -981,7 +981,6 @@ function resolvePlay3(s: Z3State, cardUid: string, removeStatusUid?: string, rel
 
   // 3. events: 连环 crisis first, then opportunity, then the rest; each checked again right before
   const ordered = [...events].sort((a, b) => rankEvent(a) - rankEvent(b));
-  let guoResolved = false;
   const resolvedNow: EventInst3[] = [];
   for (const ev of ordered) {
     if (!alive(s)) break;
@@ -997,13 +996,8 @@ function resolvePlay3(s: Z3State, cardUid: string, removeStatusUid?: string, rel
     if (isLingrong && tier) relationDelta += resolveEventByLingrong(s, ev, tier);
     else resolveEventByCard(s, ev, card.id, card.id === "meizhuangXiangzhu");
     if (ev.resolved) resolvedNow.push(ev);
-    if (ev.resolved && card.id === "guojunwangXiangzhu") guoResolved = true;
   }
   sharedPairCheck(s, card.id, resolvedNow);
-  if (guoResolved && s.act === 2 && s.turn <= STAGE3.templeLastTurn && !s.atPeak) {
-    s.arrogance++; // hidden
-    log(s, "寺里人多眼杂，有人看见了王爷的人往你屋里去。");
-  }
 
   // 4. special cards of this turn
   if (alive(s) && s.chunyuan) {
@@ -1065,16 +1059,10 @@ function resolvePlay3(s: Z3State, cardUid: string, removeStatusUid?: string, rel
     s.tempWenUid = null;
     log(s, "临时的【温太医相助】用掉了。");
   } else if (isRelic(card.id)) {
-    if (relicChoice === "burn") {
-      s.departed.push(card);
-      s.relicsBurned++;
-      log(s, `🕯️ 焚毁【${def.name}】：${RELIC_TEXT[card.id].burn}`);
-      if (alive(s) && s.yihua && s.yihua.step === 3) changeDoubt(s, -1, "焚毁遗物");
-    } else {
-      s.discard.push(card);
-      s.relicsHidden++;
-      log(s, `🕯️ 藏起【${def.name}】：${RELIC_TEXT[card.id].hide}`);
-    }
+    s.departed.push(card);
+    s.relicsBurned++;
+    log(s, `🕯️ 焚毁【${def.name}】：${RELIC_TEXT[card.id]}`);
+    if (alive(s) && s.yihua && s.yihua.step === 3) changeDoubt(s, -1, "焚毁遗物");
   } else s.discard.push(card);
 }
 
@@ -1092,10 +1080,10 @@ function sharedPairCheck(s: Z3State, card: CardId3, resolvedNow: EventInst3[]): 
     if (p.shared !== card) continue;
     const both = resolvedNow.some((e) => e.id === p.crisis) && resolvedNow.some((e) => e.id === p.opportunity);
     if (!both || !alive(s)) continue;
-    log(s, `🔗 ${p.name}·一石二鸟：${p.sharedStory}`, "good");
+    log(s, `🔗 ${p.name}·一石二鸟：一张【${CARDS3[card].name}】两头都顾上了。`, "good");
     const crisis = resolvedNow.find((e) => e.id === p.crisis)!;
     crisis.suppressed = true;
-    suppress(s, p.rival);
+    suppress(s, p.rival, p.crisis);
   }
 }
 
@@ -1213,11 +1201,12 @@ function enterYihua(s: Z3State): void {
 }
 
 function drawEvents(s: Z3State): void {
-  const xinTakes = (ev: EventInst3) => {
-    if (!EVENTS3[ev.id].rival || !removeStatusById(s, "xinGuirenZhangyi")) return;
+  const autoResolve = (ev: EventInst3) => {
+    const daya = SUPPRESS_STATUS[ev.id as CrisisId3];
+    if (!daya || !removeStatusById(s, daya)) return;
     ev.resolved = true;
-    ev.byXin = true;
-    log(s, `【欣贵人仗义】欣贵人当众顶了回去：【${EVENTS3[ev.id].name}】自动化解（不算打压）。`, "good");
+    ev.bySuppress = true;
+    log(s, `【${STATUSES3[daya].name}】上回吃了亏，这回没敢闹大：【${EVENTS3[ev.id].name}】自动化解。`, "good");
   };
   let opp = drawFromPool<OpportunityId3>(s, "opportunityPool", "opportunityUsed");
   let crisis = drawFromPool<CrisisId3>(s, "crisisPool", "crisisUsed");
@@ -1245,7 +1234,7 @@ function drawEvents(s: Z3State): void {
   if (crisis) {
     s.crisis = newEvent(s, crisis);
     log(s, `危机事件：【${EVENTS3[crisis].name}】${EVENTS3[crisis].pair ? "（连环）" : ""}`);
-    xinTakes(s.crisis);
+    autoResolve(s.crisis);
   }
 }
 
@@ -1325,6 +1314,12 @@ function settleCrisis(s: Z3State, ev: EventInst3): void {
   if (jingbai) s.arrogance++; // hidden
   if (removeStatusById(s, "shitaiBihu")) {
     log(s, `【师太庇护】静岸师太替你挡下了【${def.name}】。`, "good");
+    return;
+  }
+  if (def.rival && removeStatusById(s, "xinGuirenZhangyi")) {
+    ev.byXin = true;
+    log(s, `【欣贵人仗义】【${def.name}】没化解，欣贵人当众顶了回去，替你挡下了惩罚。`, "good");
+    if (def.pair) log(s, `连环：【${EVENTS3[PAIRS[def.pair].opportunity].name}】随之作废。`, "bad");
     return;
   }
   log(s, `危机事件【${def.name}】未化解：${def.unresolvedText}。`, "bad");
@@ -1414,7 +1409,7 @@ function endTurn3(s: Z3State): void {
       log(s, "【请脉报喜】没能稳妥报喜，洗回机会牌池。");
     }
   } else if (s.opportunity) s.opportunityUsed.push(s.opportunity.id as OpportunityId3);
-  if (s.crisis && !s.removedEvents.includes(s.crisis.id as CrisisId3)) s.crisisUsed.push(s.crisis.id as CrisisId3);
+  if (s.crisis) s.crisisUsed.push(s.crisis.id as CrisisId3);
   if (s.huanghou) s.huanghouUsed.push(s.huanghou.id as HuanghouId);
   s.opportunity = null;
   s.crisis = null;
@@ -1478,7 +1473,7 @@ function endTurn3(s: Z3State): void {
     log(s, "🦚 从下一回合起，每回合会有一张皇后事件。");
     popup(s, "huanghou");
   }
-  if (s.turn === 5 && !s.removedEvents.includes("emingCanben")) {
+  if (s.turn === 5) {
     s.crisisPool = shuffleInto(s, [...s.crisisPool, "emingCanben"]);
     log(s, "前朝起了风波：【鄂敏参本】洗入危机池。", "bad");
   }
@@ -1494,7 +1489,7 @@ function endTurn3(s: Z3State): void {
   if (y) {
     if (y.step === 4) {
       s.outcome = "won";
-      const perfect = y.doneTurn != null && y.doneTurn < STAGE3.perfectBefore && s.relicsHidden === 0 && s.relicsBurned >= RELICS.length && y.duishi;
+      const perfect = y.doneTurn != null && y.doneTurn < STAGE3.perfectBefore && relicsKept(s) === 0 && s.relicsBurned > 0 && y.duishi;
       s.victory = perfect ? "perfect" : "return";
       log(s, perfect ? "凤阙归来：完美结局！" : "凤阙归来：钮祜禄氏，封熹妃，即日回宫。", "good");
       return;
@@ -1564,7 +1559,6 @@ export function newStage3(seed: number, carry: Carry3 | null): Z3State {
     secrets: {},
     allies: { duanfei: false, jingfei: false, xin: false },
     suppressed: { qifei: false, guaerjia: false },
-    removedEvents: [],
     guoMeet: null,
     chunyuan: null,
     chunyuanPassed: false,
@@ -1587,7 +1581,6 @@ export function newStage3(seed: number, carry: Carry3 | null): Z3State {
     changxiangsi: null,
     yihua: null,
     relicsBurned: 0,
-    relicsHidden: 0,
     statuses: [],
     playsUsed: 0,
     extraPlays: 0,
@@ -1628,10 +1621,7 @@ export function reduce3(state: Z3State, action: Z3Action): Z3State {
     case "playCard": {
       if (!canPlayCard3(s, action.cardUid)) return state;
       const card = s.hand.find((c) => c.uid === action.cardUid)!;
-      if (isRelic(card.id)) {
-        s.pending = { kind: "relic", cardUid: card.uid };
-        log(s, `${CARDS3[card.id].name}：请选择焚毁或藏起（可取消）。`);
-      } else if (card.id === "wenTaiyiZhenzhi" && removableNegatives3(s).length > 1) {
+      if (card.id === "wenTaiyiZhenzhi" && removableNegatives3(s).length > 1) {
         s.pending = { kind: "wentaiyi", cardUid: card.uid };
         log(s, "温太医相助：请选择要移除的负面状态（可取消）。");
       } else resolvePlay3(s, card.uid);
@@ -1644,13 +1634,6 @@ export function reduce3(state: Z3State, action: Z3Action): Z3State {
       const cardUid = s.pending.cardUid;
       s.pending = null;
       resolvePlay3(s, cardUid, st.uid);
-      break;
-    }
-    case "relicChoice": {
-      if (s.pending?.kind !== "relic") return state;
-      const cardUid = s.pending.cardUid;
-      s.pending = null;
-      resolvePlay3(s, cardUid, undefined, action.choice);
       break;
     }
     case "cancelPending": {
@@ -1721,7 +1704,8 @@ export function endingLines3(s: Z3State): string[] {
   if (s.exitTier) lines.push(`出宫：${EXIT[s.exitTier].emoji} ${EXIT[s.exitTier].name}。`);
   if (s.outcome === "won") {
     if (s.yihua?.duishi) lines.push("槿汐应下了苏培盛的对食之约。她说，这是她心甘情愿的。");
-    if (s.relicsHidden > 0) lines.push(`他留下的东西，你藏起了 ${s.relicsHidden} 次。有些念想，终究舍不得烧。`);
+    const kept = relicsKept(s);
+    if (kept > 0) lines.push(`他留下的东西，你还留着 ${kept} 件。有些念想，终究舍不得烧。`);
     else if (s.relicsBurned > 0) lines.push("他留下的东西，你一件一件都烧了。从此心里只剩下要走的路。");
   }
   const t = s.exitTierLingrong;

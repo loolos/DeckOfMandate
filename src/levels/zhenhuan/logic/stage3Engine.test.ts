@@ -26,6 +26,7 @@ import {
   pairLocked,
   presentedSecrets,
   reduce3,
+  relicsKept,
   replay3,
   storyBasicOptions3,
   xiayuCost,
@@ -96,8 +97,7 @@ describe("zhenhuan stage 3 content", () => {
       const def = EVENTS3[id];
       const cards = (Object.keys(CARDS3) as CardId3[]).filter((c) => CARDS3[c].matches.includes(id));
       expect(cards.length + (def.double?.length ?? 0) + (LINGRONG_EVENT3[id] ? 1 : 0), id).toBeGreaterThan(0);
-      const pairShared = def.pair ? PAIRS[def.pair].shared : null;
-      for (const c of cards) if (c !== "lingrongXiangzhu" && c !== pairShared) expect(def.resolvedStory[c], `${id} / ${c}`).toBeTruthy();
+      for (const c of cards) if (c !== "lingrongXiangzhu") expect(def.resolvedStory[c], `${id} / ${c}`).toBeTruthy();
       if (cards.includes("lingrongXiangzhu")) expect(LINGRONG_EVENT3[id], id).toBeTruthy();
     }
   });
@@ -233,6 +233,49 @@ describe("zhenhuan stage 3 engine", () => {
     expect(t.allies.xin).toBe(true);
   });
 
+  it("打压 leaves a status: the crisis stays in the pool and is auto-resolved the next time it is drawn", () => {
+    let s = advanceTo(newStage3(3, CARRY), 3);
+    clearBoard(s);
+    s.crisis = ev(s, "qifeiXunxin");
+    const [uid] = setHand(s, ["jinyanShenxing"]);
+    s = act(s, { type: "playCard", cardUid: uid! });
+    expect(s.suppressed.qifei).toBe(true);
+    expect(s.statuses.some((st) => st.id === "dayaQifeiXunxin")).toBe(true);
+    s.crisisPool = ["qifeiXunxin"];
+    s.crisisUsed = [];
+    s.opportunityPool = [];
+    s.opportunityUsed = [];
+    s = act(s, { type: "endTurn" });
+    expect(s.crisis?.id).toBe("qifeiXunxin");
+    expect(s.crisis!.resolved && s.crisis!.bySuppress).toBe(true);
+    expect(s.statuses.some((st) => st.id === "dayaQifeiXunxin")).toBe(false);
+  });
+
+  it("连环 shared card: 打压 status for the pair crisis, and each half shows its own story", () => {
+    const s = newStage3(2, CARRY);
+    clearBoard(s);
+    s.crisis = ev(s, "xianfuQi");
+    s.opportunity = ev(s, "xianfuJing");
+    const [uid] = setHand(s, ["meizhuangXiangzhu"]);
+    const t = act(s, { type: "playCard", cardUid: uid! });
+    expect(t.statuses.some((st) => st.id === "dayaXianfuQi")).toBe(true);
+    expect(EVENTS3.xianfuQi.resolvedStory.meizhuangXiangzhu).not.toBe(EVENTS3.xianfuJing.resolvedStory.meizhuangXiangzhu);
+  });
+
+  it("欣贵人仗义 waives one rival crisis penalty; the crisis itself stays resolvable", () => {
+    let s = advanceTo(newStage3(3, CARRY), 3);
+    clearBoard(s);
+    s.crisis = ev(s, "qifeiXunxin");
+    withStatus(s, "xinGuirenZhangyi");
+    setHand(s, ["jinyanShenxing"]);
+    expect(matchedEvents3(s, "jinyanShenxing").map((e) => e.id)).toContain("qifeiXunxin");
+    const before = s.secrets.chuyanDingzhuang ?? 0;
+    s = act(s, { type: "endTurn" });
+    expect(s.log.some((l) => l.text.includes("替你挡下了惩罚"))).toBe(true);
+    expect(s.statuses.some((st) => st.id === "xinGuirenZhangyi" || st.id === "liuyanChanshen")).toBe(false);
+    expect(s.secrets.chuyanDingzhuang ?? 0).toBe(before);
+  });
+
   it("把柄 the player sees at 对质: 亲厚 -2, 怨怼 +1, 端妃相护 -1", () => {
     const s = newStage3(1, { ...CARRY, secrets: ["shiqinNeiqing", "zhuangshenNonggui", "sitanSiqiu", "jierenYaochong"] });
     s.relation = 0;
@@ -343,9 +386,9 @@ describe("zhenhuan stage 3 engine", () => {
       s.discard.push({ uid: `r-${id}`, id: id as CardId3 });
       return `r-${id}`;
     });
-    s.discard = s.discard.filter((c) => !c.id.startsWith("yiwu") || relicUids.includes(c.uid));
     s.yihua!.doubt = 2;
     const [jinxi, chanyu, wen] = setHand(s, ["jinxiXiangzhu", "chanyuXiushen", "wenTaiyiZhenzhi"]);
+    s.discard = s.discard.filter((c) => !c.id.startsWith("yiwu") || relicUids.includes(c.uid));
     s = act(s, { type: "playCard", cardUid: jinxi! });
     expect(s.yihua!.step).toBe(2);
     expect(s.yihua!.duishi).toBe(true);
@@ -354,14 +397,16 @@ describe("zhenhuan stage 3 engine", () => {
     expect(s.shengchong).toBe(9);
     s = act(s, { type: "playCard", cardUid: wen! });
     expect(s.yihua!.doubt).toBe(1);
-    // relics: burn them all (pending → choice)
+    // relics: playing one burns it, nothing else
     for (const uid of relicUids) {
       takeToHand(s, uid);
+      const before = { q: s.qingyu, hand: s.hand.length };
       s = act(s, { type: "playCard", cardUid: uid });
-      expect(s.pending?.kind).toBe("relic");
-      s = act(s, { type: "relicChoice", choice: "burn" });
+      expect(s.qingyu).toBe(before.q);
+      expect(s.hand.length).toBe(before.hand - 1);
     }
     expect(s.relicsBurned).toBe(3);
+    expect(relicsKept(s)).toBe(0);
     expect(s.yihua!.step).toBe(4);
     s = act(s, { type: "endTurn" });
     expect(s.outcome).toBe("won");
@@ -402,7 +447,7 @@ describe("zhenhuan stage 3 engine", () => {
       let s = newStage3(seed, seed % 2 ? CARRY : null);
       for (let i = 0; i < 400 && s.outcome === "playing"; i++) {
         if (s.pending) {
-          s = reduce3(s, s.pending.kind === "relic" ? { type: "relicChoice", choice: i % 3 ? "burn" : "hide" } : { type: "cancelPending" });
+          s = reduce3(s, { type: "cancelPending" });
           continue;
         }
         const c = s.hand.find((x) => canPlayCard3(s, x.uid));
