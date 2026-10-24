@@ -1401,7 +1401,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
   wutouXiangyou: {
     id: "wutouXiangyou",
     kind: "crisis",
-    name: "香油钱之冤",
+    name: "功德箱失窃",
     emoji: "📿",
     flavor: "功德箱里少了钱，静白一口咬定是你拿的。",
     reward: NO,
@@ -1418,7 +1418,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
   yebanJingrao: {
     id: "yebanJingrao",
     kind: "crisis",
-    name: "夜半惊魂",
+    name: "夜半惊扰",
     emoji: "🐺",
     flavor: "半夜里山上起了狼嚎，一声比一声近。",
     reward: NO,
@@ -2149,7 +2149,7 @@ export const POPUP_TEXT = {
   exitGate: "马车停在甘露寺山门前。静白师太上下打量你：「进了这道门，就没有什么小主娘娘了。」",
   exitRules: "第二幕：失去位分，每回合抓 2 打 1，清誉上限 8，换成寺中牌库；🌱身子归 0 即病死寺中。",
   feilao: "槿汐背着你，一步一步踩着雪往后山走。身后，甘露寺的门「砰」地关上了。",
-  feilaoRules: "杂役磋磨、香油钱之冤移出；月下对谈、夜半惊魂、耳目窥伺加入。",
+  feilaoRules: "杂役磋磨、功德箱失窃移出；月下对谈、夜半惊扰、耳目窥伺加入。",
   zhoufu: "消息是夜里传来的：果亲王的船在江上翻了，尸骨无存。他留给你的那些东西，如今只剩下念想。",
   zhoufuRules: "3 张【果郡王相助】变成 🕯️遗物：打出即焚毁；偶遇当回合末仍在手里的，每件疑点 +1。",
   ximai:

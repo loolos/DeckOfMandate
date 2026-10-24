@@ -69,8 +69,8 @@
 | E50 | 月下对谈 | 机会 | yuexiaDuitan |
 | E51 | 断炭缺粮 | 危机 | tanhuoLiangmi |
 | E52 | 杂役磋磨 | 危机 | fazuoCuhuo |
-| E53 | 香油钱之冤 | 危机 | wutouXiangyou |
-| E54 | 夜半惊魂 | 危机 | yebanJingrao |
+| E53 | 功德箱失窃 | 危机 | wutouXiangyou |
+| E54 | 夜半惊扰 | 危机 | yebanJingrao |
 | E55 | 耳目窥伺 | 危机 | xianrenKuitan |
 | E56 | 景仁宫来人 | 危机 | jingrenLairen |
 | S17 | 皇后笑意 | 剧情 | huanghouXiaoyi |
