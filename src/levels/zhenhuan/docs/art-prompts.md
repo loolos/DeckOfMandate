@@ -80,7 +80,7 @@
 | S21 | 菀菀类卿 | 剧情 | wanwanLeiqing |
 | S22 | 莫愁 | 剧情 | mochou |
 | S23 | 山门偶遇 | 剧情 | shanmenOuyu |
-| S24 | 故人山中·胧月小像 | 剧情 | wentaiyiTanshi |
+| S24 | 故人来访 | 剧情 | wentaiyiTanshi |
 | S25 | 踏雪问疾 | 剧情 | taxueWenji |
 | S26 | 合婚庚帖 | 剧情 | hehunGengtie |
 | S27 | 滇南之行 | 剧情 | diannanZhixing |
