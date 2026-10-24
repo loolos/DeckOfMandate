@@ -1883,7 +1883,7 @@ export const STORIES3: Record<StoryId3, StoryDef3> = {
     defaultOptionId: "buxie",
     options: [
       { id: "buxie", name: "不写", effects: [q(1)], text: "清誉 +1", story: "你把红纸推了回去。他没有说什么，只把它仔细折好，收进了袖子里。" },
-      { id: "xiexia", name: "写下庚帖", card: "guojunwangXiangzhu", effects: [], flag: "gengtie", text: "舟覆之后，其中一件遗物是【合婚庚帖】", story: "你提笔写下自己的生辰。他在旁边写的是「嬛嬛」。他从来只唤你自己的名字。" },
+      { id: "xiexia", name: "写下庚帖", card: "guojunwangXiangzhu", effects: [], flag: "gengtie", text: "他收好了庚帖，日后或许用得上", story: "你提笔写下自己的生辰。他在旁边写的是「嬛嬛」。他从来只唤你自己的名字。" },
     ],
   },
   diannanZhixing: {
@@ -1894,7 +1894,7 @@ export const STORIES3: Record<StoryId3, StoryDef3> = {
     defaultOptionId: "wuyan",
     options: [
       { id: "wuyan", name: "不去相送", effects: [], text: "无效果", story: "你没有去送他。那一夜，你坐在窗前，听着山风一阵紧似一阵，直到天边泛白。" },
-      { id: "songxing", name: "送行", card: "guojunwangXiangzhu", effects: [], flag: "songxing", text: "他留下长相思笛：舟覆之后，其中一件遗物是【长相思笛】", story: "你送他到山下。他翻身下马，把那支随身多年的笛子塞进你手里：「等我回来。」" },
+      { id: "songxing", name: "送行", card: "guojunwangXiangzhu", effects: [], flag: "songxing", text: "他留下一件信物，日后或许用得上", story: "你送他到山下。他翻身下马，把那支随身多年的笛子塞进你手里：「等我回来。」" },
     ],
   },
 };
