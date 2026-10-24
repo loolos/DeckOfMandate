@@ -1879,7 +1879,7 @@ export const STORIES3: Record<StoryId3, StoryDef3> = {
     id: "hehunGengtie",
     name: "合婚庚帖",
     emoji: "📜",
-    flavor: "果郡王拿来一张红纸，请你写下庚帖。",
+    flavor: "果郡王趁着无人，从袖中取出一张红纸，轻声请你写下自己的庚帖。",
     defaultOptionId: "buxie",
     options: [
       { id: "buxie", name: "不写", effects: [q(1)], text: "清誉 +1", story: "你把红纸推了回去。他没有说什么，只把它仔细折好，收进了袖子里。" },
@@ -1890,11 +1890,11 @@ export const STORIES3: Record<StoryId3, StoryDef3> = {
     id: "diannanZhixing",
     name: "滇南之行",
     emoji: "⛵",
-    flavor: "果郡王奉旨出使滇南，明日一早便要启程。",
+    flavor: "果郡王奉旨出使滇南，明日一早便要启程，这一去，少说也得大半年。",
     defaultOptionId: "wuyan",
     options: [
-      { id: "wuyan", name: "不去相送", effects: [], text: "无效果", story: "你没有去送他。那一夜，你坐在窗前，听了一夜的风。" },
-      { id: "songxing", name: "送行", card: "guojunwangXiangzhu", effects: [], flag: "songxing", text: "他留下长相思笛：舟覆之后，其中一件遗物是【长相思笛】", story: "你送他到山下。他把那支笛子塞进你手里：「等我回来。」" },
+      { id: "wuyan", name: "不去相送", effects: [], text: "无效果", story: "你没有去送他。那一夜，你坐在窗前，听着山风一阵紧似一阵，直到天边泛白。" },
+      { id: "songxing", name: "送行", card: "guojunwangXiangzhu", effects: [], flag: "songxing", text: "他留下长相思笛：舟覆之后，其中一件遗物是【长相思笛】", story: "你送他到山下。他翻身下马，把那支随身多年的笛子塞进你手里：「等我回来。」" },
     ],
   },
 };
