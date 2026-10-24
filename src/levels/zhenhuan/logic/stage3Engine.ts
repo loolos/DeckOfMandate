@@ -640,9 +640,9 @@ function addCardToDeck(s: Z3State, id: CardId3): void {
 }
 
 function drawFromPool<T extends EventId3>(s: Z3State, poolKey: "opportunityPool" | "crisisPool" | "huanghouPool", usedKey: "opportunityUsed" | "crisisUsed" | "huanghouUsed", ok: (id: T) => boolean = () => true): T | null {
-  const take = (): T | null => {
+  const take = (also: (id: T) => boolean = () => true): T | null => {
     const pool = s[poolKey] as T[];
-    const i = pool.findIndex(ok);
+    const i = pool.findIndex((id) => ok(id) && also(id));
     if (i < 0) return null;
     return pool.splice(i, 1)[0]!;
   };
@@ -650,9 +650,11 @@ function drawFromPool<T extends EventId3>(s: Z3State, poolKey: "opportunityPool"
   if (first) return first;
   const used = s[usedKey] as T[];
   if (!used.some(ok)) return null;
+  const last = used[used.length - 1];
   (s[poolKey] as T[]) = [...(s[poolKey] as T[]), ...shuffleInto(s, used)];
   (s[usedKey] as T[]) = [];
-  return take();
+  // A reshuffle never hands back the card that just left, when another one fits.
+  return take((id) => id !== last) ?? take();
 }
 
 function removeFromPools(s: Z3State, ids: readonly EventId3[]): void {

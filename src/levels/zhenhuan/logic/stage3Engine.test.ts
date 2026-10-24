@@ -378,6 +378,19 @@ describe("zhenhuan stage 3 engine", () => {
     expect(s.yihua!.doubt).toBe(1);
   });
 
+  it("皇后事件 every turn 3–9, never the same one two turns running", () => {
+    for (const seed of [1, 2, 3, 7, 42, 99]) {
+      let s = newStage3(seed, CARRY);
+      const seen: string[] = [];
+      while (s.turn < 10) {
+        if (s.turn >= 3) seen.push(s.huanghou!.id);
+        s = advanceTo(s, s.turn + 1);
+      }
+      expect(seen).toHaveLength(7);
+      seen.forEach((id, i) => expect(id, `seed ${seed}`).not.toBe(seen[i - 1]));
+    }
+  });
+
   it("移花接木: 槿汐引驾 → 两回合后偶遇 (圣宠 restored) → 温太医改脉; perfect needs all relics burned", () => {
     let s = advanceTo(newStage3(13, CARRY), 26);
     s.exitShengchong = 9;
