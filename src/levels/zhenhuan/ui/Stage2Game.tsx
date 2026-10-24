@@ -85,6 +85,8 @@ type Props = {
   onRestart: () => void;
   onMenu: () => void;
   onLoadCode: (raw: string) => { ok: true } | { ok: false; error: string };
+  /** Shown on the win screen: carry on to 第三关. */
+  onNextStage?: () => void;
 };
 
 function Tag({ tag, tone, dispatch, dim, children }: { tag: TagId2; tone?: string; dispatch: Dispatch; dim?: boolean; children: ReactNode }) {
@@ -783,7 +785,7 @@ function endTurnHints(state: Z2State): string[] {
   return hints;
 }
 
-function OutcomeModal({ state, onRestart, onMenu }: { state: Z2State; onRestart: () => void; onMenu: () => void }) {
+function OutcomeModal({ state, onRestart, onMenu, onNextStage }: { state: Z2State; onRestart: () => void; onMenu: () => void; onNextStage?: () => void }) {
   if (state.outcome === "playing") return null;
   const won = state.outcome === "won";
   return (
@@ -800,9 +802,14 @@ function OutcomeModal({ state, onRestart, onMenu }: { state: Z2State; onRestart:
           <button type="button" className={styles.btn} onClick={onMenu}>
             返回主菜单
           </button>
-          <button type="button" className={`${styles.btn} ${styles.btnPrimary}`} onClick={onRestart}>
+          <button type="button" className={won && onNextStage ? styles.btn : `${styles.btn} ${styles.btnPrimary}`} onClick={onRestart}>
             重新开始第二关
           </button>
+          {won && onNextStage ? (
+            <button type="button" className={`${styles.btn} ${styles.btnPrimary}`} onClick={onNextStage} autoFocus>
+              进入第三关
+            </button>
+          ) : null}
         </div>
       </div>
     </div>
@@ -857,7 +864,7 @@ function boardDone(state: Z2State): boolean[] {
   return done;
 }
 
-export function Stage2Game({ state, dispatch, runCode, showRules, onShowRules, onRestart, onMenu, onLoadCode }: Props) {
+export function Stage2Game({ state, dispatch, runCode, showRules, onShowRules, onRestart, onMenu, onLoadCode, onNextStage }: Props) {
   const rank = RANKS[state.turnRank];
   const compact = useSmallScreen();
   const hints = endTurnHints(state);
@@ -1107,7 +1114,7 @@ export function Stage2Game({ state, dispatch, runCode, showRules, onShowRules, o
           </p>
         </Notice>
       ) : null}
-      <OutcomeModal state={state} onRestart={onRestart} onMenu={onMenu} />
+      <OutcomeModal state={state} onRestart={onRestart} onMenu={onMenu} onNextStage={onNextStage} />
     </div>
   );
 }

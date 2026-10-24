@@ -1,0 +1,1302 @@
+import { useEffect, useRef, useState, type ReactNode } from "react";
+import { RunCodePanel } from "../../../components/RunCodePanel";
+import { useSmallScreen } from "../../../logic/useSmallScreen";
+import { CAMPAIGN_TITLE } from "../data/content";
+import { TIER_EMOJI, TIER_LABEL } from "../data/stage2Content";
+import {
+  ACT_TITLE,
+  CARDS3,
+  CHANGXIANGSI,
+  CHUNYUAN,
+  CONFRONT,
+  DOUBT,
+  EVENT_KIND3_LABEL,
+  EVENTS3,
+  EXIT,
+  FEILAO,
+  HOMECOMING,
+  LENGGONG_LINGRONG,
+  LINGRONG_EVENT3,
+  LOSS3_STORY,
+  PAIRS,
+  PLAYS_INFO3,
+  POPUP_TEXT,
+  RANKS,
+  RESOURCE_INFO3,
+  RESOURCE3_LABEL,
+  RIVALS,
+  SHENZI,
+  STAGE3,
+  STATUSES3,
+  statusText3,
+  STORIES3,
+  TAG3_INFO,
+  XIUXING,
+  YIHUA,
+  ZHENHUAN_REALIZE,
+  confrontOutcome,
+  type CardId3,
+  type EventId3,
+  type PopupId,
+  type TagId3,
+} from "../data/stage3Content";
+import {
+  blockedByChezhou3,
+  blockingStatusName3,
+  canEndTurn3,
+  canPlayCard3,
+  chunyuanAccepts,
+  chunyuanChecked,
+  confrontAccepts,
+  confrontLines,
+  endingLines3,
+  feilaoAccepts,
+  feilaoCurrentTier,
+  isFreeByLianmei3,
+  isRelic,
+  lianmeiLit3,
+  lingrongAbsent,
+  matchedEvents3,
+  openStories3,
+  pairLocked,
+  playLimit3,
+  playsLeft3,
+  rankCap3,
+  rankName3,
+  removableNegatives3,
+  storyBasicOptions3,
+  storyCardResponses3,
+  storyResponsesFor3,
+  summonUnwell3,
+  tierOf3,
+  xiayuCost,
+  yihuaAccepts,
+  type CardInst3,
+  type EventInst3,
+  type StoryInst3,
+  type Z3Action,
+  type Z3State,
+} from "../logic/stage3Engine";
+import { cardArtUrl, eventArtUrl, specialArtUrl, storyArtUrl } from "./art";
+import { CardArt, FoldBox, GameHeader, LogView, Pile, PileGroup, ResolvedBanner, ScrollRow, StatChip, TagChip, activateOnKey, countBy, isTypingTarget, type Fold } from "./common";
+import { compactEffect3, expandedEffect3, statusBrief3 } from "./effectText3";
+import styles from "./zhenhuan.module.css";
+
+type Dispatch = (a: Z3Action) => void;
+
+type Props = {
+  state: Z3State;
+  dispatch: Dispatch;
+  runCode: string;
+  showRules: boolean;
+  onShowRules: (open: boolean) => void;
+  onRestart: () => void;
+  onMenu: () => void;
+  onLoadCode: (raw: string) => { ok: true } | { ok: false; error: string };
+};
+
+function Tag({ tag, tone, dispatch, dim, children }: { tag: TagId3; tone?: string; dispatch: Dispatch; dim?: boolean; children: ReactNode }) {
+  return (
+    <TagChip tone={[tone, dim && styles.tagDim].filter(Boolean).join(" ")} onExplain={() => dispatch({ type: "explainTag", tag })}>
+      {children}
+    </TagChip>
+  );
+}
+
+function CardList({ ids, empty }: { ids: readonly CardId3[]; empty: string }) {
+  if (ids.length === 0) return <p className={styles.muted}>{empty}</p>;
+  return (
+    <ul className={styles.popoverList}>
+      {countBy(ids).map(([id, n]) => (
+        <li key={id}>
+          {CARDS3[id].emoji} {CARDS3[id].name} ×{n}
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+function EventList({ ids, empty }: { ids: readonly EventId3[]; empty: string }) {
+  if (ids.length === 0) return <p className={styles.muted}>{empty}</p>;
+  return (
+    <ul className={styles.popoverList}>
+      {countBy(ids).map(([id, n]) => (
+        <li key={id}>
+          {EVENTS3[id].emoji} {EVENTS3[id].name} ×{n}
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+function Chips({ ids, lit }: { ids: readonly CardId3[]; lit: (id: CardId3) => boolean }) {
+  return (
+    <>
+      {ids.map((id) => (
+        <span key={id} className={[styles.matchChip, lit(id) && styles.matchChipInHand].filter(Boolean).join(" ")}>
+          {CARDS3[id].emoji} {CARDS3[id].name}
+        </span>
+      ))}
+    </>
+  );
+}
+
+const KIND_TONE = { opportunity: styles.kindOpportunity, crisis: styles.kindCrisis, huanghou: styles.kindEnvy };
+const CARD_TONE = { opportunity: styles.cardOpportunity, crisis: styles.cardCrisis, huanghou: styles.cardEnvy };
+
+function answeringCards(id: EventId3): CardId3[] {
+  const def = EVENTS3[id];
+  const singles = (Object.keys(CARDS3) as CardId3[]).filter((c) => CARDS3[c].matches.includes(id));
+  return [...singles, ...(def.double ?? []).filter((c) => !singles.includes(c))];
+}
+
+function resolvedDetail(inst: EventInst3): string {
+  const def = EVENTS3[inst.id];
+  if (inst.bySuppress) return "上回被你打压过，这回没敢闹大：消耗【打压】状态，自动化解。";
+  const by = inst.resolvedBy ? `由【${CARDS3[inst.resolvedBy].name}】` : "";
+  const tier = inst.lingrong && inst.resolvedBy === "lingrongXiangzhu" ? `（陵容·${TIER_LABEL[inst.lingrong]}）` : "";
+  const suppressed = inst.suppressed && def.rival ? `；打压了${RIVALS[def.rival].name}` : "";
+  if (def.kind === "huanghou") return `${by}应对过去${tier}。`;
+  if (def.kind !== "opportunity") return `${by}化解${tier}，回合末不受惩罚${suppressed}。`;
+  return `${by}把握${tier}${inst.rewardDoubled ? "（眉庄相助：奖励翻倍）" : ""}。`;
+}
+
+function EventCard({ state, inst, fold, dispatch }: { state: Z3State; inst: EventInst3; fold: Fold; dispatch: Dispatch }) {
+  const def = EVENTS3[inst.id];
+  const isOpp = def.kind === "opportunity";
+  const locked = pairLocked(state, inst);
+  const handIds = new Set(inst.resolved ? [] : state.hand.map((c) => c.id));
+  const className = [styles.card, CARD_TONE[def.kind], inst.resolved && styles.cardResolved].filter(Boolean).join(" ");
+  const tags = (
+    <span className={styles.tagGroup}>
+      <Tag tag={def.kind} tone={KIND_TONE[def.kind]} dispatch={dispatch}>
+        {EVENT_KIND3_LABEL[def.kind]}
+      </Tag>
+      {def.ally ? (
+        <Tag tag="ally" tone={styles.kindOpportunity} dispatch={dispatch}>
+          盟友
+        </Tag>
+      ) : null}
+      {def.rival ? (
+        <Tag tag="rival" tone={styles.kindCrisis} dispatch={dispatch}>
+          对头·{RIVALS[def.rival].name}
+        </Tag>
+      ) : null}
+      {def.pair ? (
+        <Tag tag="pair" tone={styles.kindTrial} dispatch={dispatch}>
+          🔗连环{locked ? "·锁" : ""}
+        </Tag>
+      ) : null}
+      {def.jingbai && state.act === 2 && !state.atPeak ? (
+        <Tag tag="jingbai" tone={styles.kindCrisis} dispatch={dispatch}>
+          🧹静白
+        </Tag>
+      ) : null}
+      {def.double ? (
+        <Tag tag="double" tone={styles.kindStory} dispatch={dispatch}>
+          双牌 {(inst.progress ?? []).length}/2
+        </Tag>
+      ) : null}
+    </span>
+  );
+  const story = inst.resolved && inst.resolvedBy && inst.resolvedBy !== "lingrongXiangzhu" ? (inst.story ?? def.resolvedStory[inst.resolvedBy]) : undefined;
+  const lingrongStory = inst.lingrong && (!inst.resolved || inst.resolvedBy === "lingrongXiangzhu") ? LINGRONG_EVENT3[inst.id]?.[inst.lingrong]?.story : undefined;
+  const resolvedLabel = isOpp ? "已把握" : def.kind === "huanghou" ? "已应对" : "已化解";
+  const okLabel = def.kind === "huanghou" ? "应对（打出匹配牌）：" : "处理：";
+  const noLabel = def.kind === "huanghou" ? "不应对（回合末默认）：" : "未处理（回合末）：";
+  const flavor = state.atPeak && def.peakFlavor ? def.peakFlavor : def.flavor;
+  if (fold.compact && !fold.expanded) {
+    return (
+      <FoldBox fold={fold} className={className}>
+        <div className={styles.compactTitle}>
+          {def.emoji} {def.name}
+          {inst.resolved ? " 🆗" : ""}
+          {tags}
+        </div>
+        <div className={styles.compactSummary}>
+          {inst.resolved
+            ? `${isOpp ? "✅" : "🛡️"} ${inst.resolvedBy ? CARDS3[inst.resolvedBy].emoji : ""}`
+            : def.kind === "huanghou"
+              ? `⏳ ${compactEffect3(def.unresolvedText)} ｜ 🛡️ ${compactEffect3(def.resolvedText)}`
+              : isOpp
+                ? `✅ ${compactEffect3(def.resolvedText)}${locked ? " 🔒" : ""}`
+                : `❌ ${compactEffect3(def.unresolvedText)}`}
+        </div>
+      </FoldBox>
+    );
+  }
+  const lingrongTable = LINGRONG_EVENT3[inst.id];
+  const tier = tierOf3(state);
+  return (
+    <FoldBox fold={fold} className={className}>
+      <div className={styles.cardHead}>
+        <span className={styles.cardName}>
+          <span className={styles.cardEmoji}>{def.emoji}</span>
+          {def.name}
+          {inst.resolved ? " 🆗" : null}
+        </span>
+        {tags}
+      </div>
+      <CardArt src={eventArtUrl(inst.id)} emoji={def.emoji} />
+      {inst.resolved ? <ResolvedBanner icon={isOpp ? "✅" : "🛡️"} label={resolvedLabel} detail={resolvedDetail(inst)} story={story ?? lingrongStory} /> : null}
+      {!inst.resolved && inst.lingrongFailed ? <p className={styles.endHint}>陵容失效：{lingrongStory}</p> : null}
+      <p className={styles.flavor}>{flavor}</p>
+      <p className={styles.rule}>
+        <span className={styles.ruleLabel}>{okLabel}</span>
+        {expandedEffect3(def.resolvedText)}
+      </p>
+      <p className={styles.rule}>
+        <span className={styles.ruleLabel}>{noLabel}</span>
+        {expandedEffect3(def.unresolvedText)}
+      </p>
+      {def.note ? <p className={styles.rule}>{def.note}</p> : null}
+      {def.rival && def.suppressCard && !def.pair ? (
+        <p className={styles.rule}>
+          ⚔️ 用【{CARDS3[def.suppressCard].emoji}
+          {CARDS3[def.suppressCard].name}】化解算打压{RIVALS[def.rival].name}：获得【打压】状态，这张危机下次出现时自动化解一次。
+        </p>
+      ) : null}
+      {def.rival && !inst.resolved && state.statuses.some((st) => st.id === "xinGuirenZhangyi") ? (
+        <p className={styles.rule}>🗣️ 没化解的话，【欣贵人仗义】会替你挡下这次惩罚。</p>
+      ) : null}
+      {def.pair ? (
+        <p className={styles.rule}>
+          🔗 {PAIRS[def.pair].name}：{isOpp ? `须先化解【${EVENTS3[PAIRS[def.pair].crisis].name}】才能把握。` : `没化解，【${EVENTS3[PAIRS[def.pair].opportunity].name}】随之作废。`}
+          一张【{CARDS3[PAIRS[def.pair].shared].emoji}
+          {CARDS3[PAIRS[def.pair].shared].name}】能一石二鸟：结交盟友并打压{RIVALS[PAIRS[def.pair].rival].name}（这张危机下次出现时自动化解一次）。
+        </p>
+      ) : null}
+      {locked ? <p className={styles.endHint}>🔒 连环危机还没化解，这张机会暂时锁着。</p> : null}
+      <p className={styles.rule}>
+        <span className={styles.ruleLabel}>匹配牌：</span>
+        <Chips ids={answeringCards(inst.id)} lit={(id) => handIds.has(id)} />
+      </p>
+      {lingrongTable && tier ? (
+        <p className={styles.rule}>
+          🎶 也可用【陵容相助】，效果视你与陵容的情分而定（当前：{TIER_EMOJI[tier]}
+          {TIER_LABEL[tier]}）{Object.values(lingrongTable).some((o) => o.shuhenjiao) ? "；她会送来🧴舒痕胶" : ""}。
+        </p>
+      ) : null}
+    </FoldBox>
+  );
+}
+
+function StoryCard({ state, inst, dispatch, fold }: { state: Z3State; inst: StoryInst3; dispatch: Dispatch; fold: Fold }) {
+  const def = STORIES3[inst.id];
+  const chosen = inst.chosenOptionId;
+  const unwell = inst.id === "zhaoxing" && chosen == null ? summonUnwell3(state) : null;
+  const cardResponses = unwell ? [] : storyCardResponses3(def);
+  const locked = chosen != null || state.pending != null || state.outcome !== "playing";
+  const chosenOption = chosen ? def.options.find((o) => o.id === chosen) : undefined;
+  const defaultOption = def.options.find((o) => o.id === def.defaultOptionId)!;
+  const tier = tierOf3(state);
+  const className = [styles.card, styles.cardStory, chosen && styles.cardResolved].filter(Boolean).join(" ");
+  const tag = (
+    <span className={styles.tagGroup}>
+      <Tag tag="story" tone={styles.kindStory} dispatch={dispatch}>
+        剧情
+      </Tag>
+    </span>
+  );
+  const costNote = (o: (typeof def.options)[number]) => {
+    if (!o.xiayu) return "";
+    const cost = xiayuCost(state, o.xiayu);
+    return `（眼下的代价：${cost.length ? cost.map((d) => `${RESOURCE3_LABEL[d.resource]} ${d.amount}`).join("、") : "没有代价"}）`;
+  };
+  const resultText = inst.result ?? (chosenOption ? chosenOption.text : "");
+  if (fold.compact && !fold.expanded) {
+    return (
+      <FoldBox fold={fold} className={className}>
+        <div className={styles.compactTitle}>
+          {def.emoji} {def.name}
+          {chosen ? " 🆗" : ""}
+          {tag}
+        </div>
+        <div className={styles.compactSummary}>
+          {chosenOption
+            ? `📝 ${inst.viaCard ? CARDS3[inst.viaCard].emoji : chosenOption.name} ${chosenOption.compact ?? compactEffect3(resultText)}`
+            : `⏳ 默认「${defaultOption.name}」`}
+        </div>
+      </FoldBox>
+    );
+  }
+  return (
+    <FoldBox fold={fold} className={className}>
+      <div className={styles.cardHead}>
+        <span className={styles.cardName}>
+          <span className={styles.cardEmoji}>{def.emoji}</span>
+          {def.name}
+          {chosen ? " 🆗" : null}
+        </span>
+        {tag}
+      </div>
+      <CardArt src={storyArtUrl(inst.id)} emoji={def.emoji} />
+      {chosenOption ? (
+        <ResolvedBanner
+          icon="📝"
+          label="已抉择"
+          detail={`${inst.viaCard ? `打出【${CARDS3[inst.viaCard].name}】：` : "选择"}「${chosenOption.name}」：${expandedEffect3(resultText)}。`}
+          story={inst.story ?? chosenOption.story}
+        />
+      ) : null}
+      <p className={styles.flavor}>{def.flavor}</p>
+      {def.note ? <p className={styles.rule}>{def.note}</p> : null}
+      {unwell ? <p className={styles.endHint}>{unwell}，不能侍寝。</p> : null}
+      {storyBasicOptions3(def).map((option) => (
+        <div key={option.id} className={[styles.option, chosen === option.id && styles.optionChosen].filter(Boolean).join(" ")}>
+          <span>
+            <strong>{option.name}</strong>
+            {option.id === def.defaultOptionId ? <span className={styles.muted}>（默认）</span> : null}：{expandedEffect3(option.text)}
+            {chosen == null ? costNote(option) : ""}
+          </span>
+          <button
+            type="button"
+            className={`${styles.btn} ${styles.btnSmall}`}
+            disabled={locked}
+            onClick={() => dispatch({ type: "chooseStory", storyId: inst.id, optionId: option.id })}
+          >
+            {chosen === option.id ? "已选" : "选择"}
+          </button>
+        </div>
+      ))}
+      {cardResponses.length > 0 ? (
+        <p className={styles.rule}>
+          <span className={styles.ruleLabel}>可由手牌打出解决：</span>
+        </p>
+      ) : null}
+      {cardResponses.map((option) => {
+        const inHand = state.hand.some((c) => c.id === option.card);
+        const lingrongNote = option.card === "lingrongXiangzhu" && tier ? `（当前情分：${TIER_EMOJI[tier]}${TIER_LABEL[tier]}）` : "";
+        return (
+          <p key={option.id} className={[styles.rule, chosen === option.id && styles.optionChosen].filter(Boolean).join(" ")}>
+            <span className={[styles.matchChip, inHand && !locked && styles.matchChipInHand].filter(Boolean).join(" ")}>
+              {CARDS3[option.card!].emoji} {CARDS3[option.card!].name}
+            </span>
+            {option.name}：{expandedEffect3(option.text)}
+            {chosen == null ? costNote(option) : ""}
+            {lingrongNote}
+          </p>
+        );
+      })}
+      {!chosen && !defaultOption.hidden ? <p className={styles.flavor}>未作选择就结束回合时，按默认选项【{defaultOption.name}】处理。</p> : null}
+      {!chosen && defaultOption.hidden ? <p className={styles.flavor}>不处理：{defaultOption.text}</p> : null}
+    </FoldBox>
+  );
+}
+
+/** A story-area card with a progress line (纯元故衣 / 对质 / 肺痨之诬 / 长相思 / 移花接木). */
+function SpecialCard({
+  emoji,
+  name,
+  art,
+  done,
+  tag,
+  summary,
+  fold,
+  dispatch,
+  children,
+}: {
+  emoji: string;
+  name: string;
+  art: Parameters<typeof specialArtUrl>[0];
+  done: boolean;
+  tag?: ReactNode;
+  summary: string;
+  fold: Fold;
+  dispatch: Dispatch;
+  children: ReactNode;
+}) {
+  const className = [styles.card, styles.cardStory, done && styles.cardReady].filter(Boolean).join(" ");
+  const tags = (
+    <span className={styles.tagGroup}>
+      <Tag tag="story" tone={styles.kindStory} dispatch={dispatch}>
+        剧情
+      </Tag>
+      {tag}
+    </span>
+  );
+  if (fold.compact && !fold.expanded) {
+    return (
+      <FoldBox fold={fold} className={className}>
+        <div className={styles.compactTitle}>
+          {emoji} {name}
+          {done ? " 🆗" : ""}
+          {tags}
+        </div>
+        <div className={styles.compactSummary}>{summary}</div>
+      </FoldBox>
+    );
+  }
+  return (
+    <FoldBox fold={fold} className={className}>
+      <div className={styles.cardHead}>
+        <span className={styles.cardName}>
+          <span className={styles.cardEmoji}>{emoji}</span>
+          {name}
+          {done ? " 🆗" : null}
+        </span>
+        {tags}
+      </div>
+      <CardArt src={specialArtUrl(art)} emoji={emoji} />
+      {children}
+    </FoldBox>
+  );
+}
+
+const mark = (ok: boolean) => <span className={ok ? styles.ok : styles.no}>{ok ? "✓" : "✗"}</span>;
+
+function ChunyuanCard({ state, fold, dispatch }: { state: Z3State; fold: Fold; dispatch: Dispatch }) {
+  const c = state.chunyuan;
+  if (!c) return null;
+  const done = chunyuanChecked(state);
+  const inHand = (id: CardId3) => chunyuanAccepts(state, id) != null && state.hand.some((x) => x.id === id);
+  const outlook = done ? "识破" : c.first ? `只起疑：👑-${CHUNYUAN.halfPenalty}` : `❌ 👑-${CHUNYUAN.failPenalty}`;
+  return (
+    <SpecialCard
+      emoji={CHUNYUAN.emoji}
+      name={CHUNYUAN.name}
+      art="chunyuan"
+      done={done}
+      summary={`${c.first ? "✓" : "✗"}① ${c.second ? "✓" : "✗"}② ${outlook}`}
+      fold={fold}
+      dispatch={dispatch}
+    >
+      {done ? <ResolvedBanner icon="👗" label="已识破" detail="免祸。" story={CHUNYUAN.successStory} /> : null}
+      <p className={styles.flavor}>{CHUNYUAN.flavor}</p>
+      <p className={styles.rule}>{expandedEffect3(CHUNYUAN.rule)}</p>
+      <p className={styles.check}>
+        {mark(c.first != null)} ① 起疑：<Chips ids={CHUNYUAN.firstCards} lit={inHand} />
+      </p>
+      {c.first ? <p className={styles.rule}>{CHUNYUAN.firstStory[c.first]}</p> : null}
+      <p className={styles.check}>
+        {mark(c.second != null)} ② 查实（须先起疑）：<Chips ids={CHUNYUAN.checkCards} lit={inHand} />
+      </p>
+      {c.second ? <p className={styles.rule}>{CHUNYUAN.checkStory[c.second]}</p> : null}
+      <p className={styles.rule}>
+        <span className={styles.ruleLabel}>照现在：</span>
+        {done ? "识破，免祸。" : c.first ? `只起疑，回合末圣宠 -${CHUNYUAN.halfPenalty}。` : `没识破，回合末圣宠 -${CHUNYUAN.failPenalty}。`}
+      </p>
+    </SpecialCard>
+  );
+}
+
+function ConfrontCard({ state, fold, dispatch }: { state: Z3State; fold: Fold; dispatch: Dispatch }) {
+  const c = state.confront;
+  if (!c) return null;
+  const short = Math.max(0, c.needed - c.played.length);
+  const exit = EXIT[confrontOutcome(c.presented, short)];
+  const inHand = (id: CardId3) => state.hand.some((x) => x.id === id);
+  return (
+    <SpecialCard
+      emoji={CONFRONT.emoji}
+      name={CONFRONT.name}
+      art="confront"
+      done={short === 0}
+      tag={
+        <span className={styles.muted}>
+          辩白 {c.played.length}/{c.needed}
+        </span>
+      }
+      summary={`🗂️${c.presented} 🃏${c.played.length}/${c.needed} → ${exit.emoji}${exit.name}`}
+      fold={fold}
+      dispatch={dispatch}
+    >
+      <p className={styles.flavor}>{CONFRONT.flavor}</p>
+      <p className={styles.rule}>
+        <span className={styles.ruleLabel}>皇后拿出了 {c.presented} 件事：</span>本回合须打出 <strong>{c.needed}</strong> 张辩白牌
+        {state.rank === "guiren" ? "（贵人位分低，多 1 张）" : ""}。少打一张，结果就差一档。陵容称病没来，她的牌打不出。
+      </p>
+      <p className={styles.rule}>
+        <span className={styles.ruleLabel}>照现在的辩白：</span>
+        {exit.emoji} {exit.name}
+        {exit.effects.length ? `（${exit.effects.map((d) => `${RESOURCE3_LABEL[d.resource]} ${d.amount}`).join("、")}）` : ""}
+        {exit.name === EXIT[4].name ? "：关卡失败" : ""}
+      </p>
+      {c.stories.map((line) => (
+        <p key={line} className={styles.rule}>
+          {line}
+        </p>
+      ))}
+      <p className={styles.rule}>
+        <span className={styles.ruleLabel}>辩白牌：</span>
+        <Chips ids={CONFRONT.cards} lit={inHand} />
+      </p>
+    </SpecialCard>
+  );
+}
+
+function FeilaoCard({ state, fold, dispatch }: { state: Z3State; fold: Fold; dispatch: Dispatch }) {
+  const f = state.feilao;
+  if (!f) return null;
+  const t = feilaoCurrentTier(state);
+  const tierDef = FEILAO.tiers[t]!;
+  const inHand = (id: CardId3) => state.hand.some((x) => x.id === id);
+  return (
+    <SpecialCard emoji={FEILAO.emoji} name={FEILAO.name} art="feilao" done={t === 0} summary={`${tierDef.name} · ${compactEffect3(tierDef.text)}`} fold={fold} dispatch={dispatch}>
+      <p className={styles.flavor}>{FEILAO.flavor}</p>
+      <p className={styles.rule}>
+        <span className={styles.ruleLabel}>起始档位：</span>
+        {FEILAO.tiers[f.base]!.name}（静白在寺里越嚣张，档位越重）
+      </p>
+      <p className={styles.rule}>
+        <span className={styles.ruleLabel}>现在：</span>
+        {tierDef.name}：{expandedEffect3(tierDef.text)}
+      </p>
+      {f.played.map((id, i) => (
+        <p key={`${id}-${i}`} className={styles.rule}>
+          {FEILAO.cardStory[id]}
+        </p>
+      ))}
+      <p className={styles.rule}>
+        <span className={styles.ruleLabel}>每张减轻一档：</span>
+        <Chips ids={FEILAO.cards} lit={inHand} />
+      </p>
+      <p className={styles.muted}>回合末结算，之后迁居凌云峰。</p>
+    </SpecialCard>
+  );
+}
+
+function ChangxiangsiCard({ state, fold, dispatch }: { state: Z3State; fold: Fold; dispatch: Dispatch }) {
+  const c = state.changxiangsi;
+  if (!c) return null;
+  const guo = c.played.includes("guojunwangXiangzhu");
+  const chan = c.played.includes("chanyuXiushen");
+  const inHand = (id: CardId3) => !c.done && state.hand.some((x) => x.id === id);
+  return (
+    <SpecialCard
+      emoji={CHANGXIANGSI.emoji}
+      name={CHANGXIANGSI.name}
+      art="changxiangsi"
+      done={c.done}
+      summary={c.done ? "🎶 笛箫合奏 🪷+2" : `${guo ? "✓" : "✗"}🎐 ${chan ? "✓" : "✗"}📿 → 🪷+2`}
+      fold={fold}
+      dispatch={dispatch}
+    >
+      {c.done ? <ResolvedBanner icon="🎶" label="笛箫合奏" detail="清誉 +2。" story={CHANGXIANGSI.story} /> : null}
+      <p className={styles.flavor}>{CHANGXIANGSI.flavor}</p>
+      <p className={styles.rule}>{expandedEffect3(CHANGXIANGSI.rule)}</p>
+      <p className={styles.rule}>
+        <Chips ids={["guojunwangXiangzhu", "chanyuXiushen"]} lit={inHand} />
+      </p>
+    </SpecialCard>
+  );
+}
+
+function YihuaCard({ state, fold, dispatch }: { state: Z3State; fold: Fold; dispatch: Dispatch }) {
+  const y = state.yihua;
+  if (!y) return null;
+  const inHand = (id: CardId3) => state.hand.some((x) => x.id === id && yihuaAccepts(state, id));
+  const stepCards: readonly (readonly CardId3[])[] = [y.yinjiaNeed > 1 ? [...YIHUA.yinjiaCards, YIHUA.luofaExtra] : YIHUA.yinjiaCards, ["chanyuXiushen"], ["wenTaiyiZhenzhi"]];
+  const relicCount = state.hand.filter((c) => isRelic(c.id)).length;
+  return (
+    <SpecialCard
+      emoji={YIHUA.emoji}
+      name={YIHUA.name}
+      art="yihua"
+      done={y.step === 4}
+      tag={
+        <>
+          <Tag tag="yihua" tone={styles.kindTrial} dispatch={dispatch}>
+            持续
+          </Tag>
+          <Tag tag="doubt" tone={styles.kindCrisis} dispatch={dispatch}>
+            📜{y.doubt}/{DOUBT.max}
+          </Tag>
+        </>
+      }
+      summary={`${YIHUA.steps.map((s, i) => `${y.step > i + 1 ? "✓" : y.step === i + 1 ? "▶" : "·"}${s.emoji}`).join(" ")} 📜${y.doubt}/${DOUBT.max}`}
+      fold={fold}
+      dispatch={dispatch}
+    >
+      {y.step === 4 ? <ResolvedBanner icon="👑" label="三步俱成" detail="回合末回宫。" /> : null}
+      <p className={styles.flavor}>{YIHUA.flavor}</p>
+      {YIHUA.steps.map((s, i) => {
+        const n = i + 1;
+        const state_ = y.step > n ? "done" : y.step === n ? "now" : "later";
+        return (
+          <div key={s.name} className={[styles.option, state_ === "now" && styles.optionChosen].filter(Boolean).join(" ")}>
+            <span>
+              {mark(state_ === "done")} <strong>
+                {["①", "②", "③"][i]} {s.emoji} {s.name}
+              </strong>
+              ：{s.story}
+              {n === 1 ? (
+                <>
+                  {" "}
+                  {y.yinjiaNeed > 1 ? `（已落发：要打 ${y.yinjiaNeed} 张，至少 1 张槿汐，另一张可以是眉庄；已打 ${y.yinjia.length} 张）` : ""}
+                </>
+              ) : null}
+              {relicCount > 0 && (y.step === 2 || y.ouyuTurn === state.turn) ? (n === 2 ? <span className={styles.endHint}> 手里有 {relicCount} 件遗物：偶遇那回合结束时还在手里，疑点 +{relicCount}（睹物生疑）。</span> : null) : null}
+              {n === 2 && y.step === 2 && y.ouyuDue != null ? (y.ouyuDue === state.turn ? "（皇上今日驾临：本回合打出禅语修身）" : `（第 ${y.ouyuDue} 回合皇上驾临）`) : ""}
+              {n === 2 && y.step < 2 ? `（引驾完成后第 ${YIHUA.ouyuDelay} 回合；没成隔一回合再来）` : ""}
+              {n === 3 ? "（偶遇之后打出温太医相助即完成）" : ""}
+              {state_ !== "done" ? (
+                <>
+                  <br />
+                  <Chips ids={stepCards[i]!} lit={inHand} />
+                </>
+              ) : null}
+            </span>
+          </div>
+        );
+      })}
+      <p className={styles.rule}>
+        <span className={styles.ruleLabel}>📜 疑点 {y.doubt}/{DOUBT.max}：</span>
+        {y.step < 3 ? "偶遇完成之前每回合末 +1。" : "已止住上涨。"}每打出一张槿汐相助或眉庄相助 -1。到 {DOUBT.max} 即失败；第 {STAGE3.totalTurns} 回合末仍未完成也失败。
+      </p>
+      {y.step >= 2 ? (
+        <p className={styles.muted}>
+          引驾：{y.yinjia.map((id) => CARDS3[id].name).join("、")}
+          {y.duishi ? "（槿汐应下了对食之约）" : ""}
+        </p>
+      ) : null}
+    </SpecialCard>
+  );
+}
+
+function NoticeCard({ emoji, name, text, fold }: { emoji: string; name: string; text: string; fold: Fold }) {
+  return (
+    <FoldBox fold={fold} className={`${styles.card} ${styles.cardStory}`}>
+      <div className={fold.compact && !fold.expanded ? styles.compactTitle : styles.cardHead}>
+        <span className={styles.cardName}>
+          <span className={styles.cardEmoji}>{emoji}</span>
+          {name}
+        </span>
+      </div>
+      {fold.compact && !fold.expanded ? (
+        <div className={styles.compactSummary}>剧情 · 无需处理</div>
+      ) : (
+        <>
+          <p className={styles.flavor}>{text}</p>
+          <p className={styles.muted}>仅为剧情交代，没有选项，无需处理。</p>
+        </>
+      )}
+    </FoldBox>
+  );
+}
+
+function HandCard({ state, card, dispatch, fold }: { state: Z3State; card: CardInst3; dispatch: Dispatch; fold: Fold }) {
+  const def = CARDS3[card.id];
+  const tier = tierOf3(state);
+  const isLingrong = card.id === "lingrongXiangzhu";
+  const relic = isRelic(card.id);
+  const canPlay = canPlayCard3(state, card.uid);
+  const free = isFreeByLianmei3(state, card.uid);
+  const blocked = blockedByChezhou3(state, card.uid);
+  const blocker = blockingStatusName3(state, card.id);
+  const absent = lingrongAbsent(state, card.id);
+  const responses = storyResponsesFor3(state, card.id);
+  const events = matchedEvents3(state, card.id);
+  const isPending = state.pending?.cardUid === card.uid;
+  const temp = card.uid === state.tempWenUid;
+  const play = () => {
+    if (canPlay) dispatch({ type: "playCard", cardUid: card.uid });
+  };
+  const tags = (
+    <span className={styles.tagGroup}>
+      {isLingrong && tier ? (
+        <span className={styles.muted}>
+          {TIER_EMOJI[tier]}
+          {TIER_LABEL[tier]}
+        </span>
+      ) : null}
+      {isLingrong && tier === "close" ? (
+        <Tag tag="lianmei" tone={styles.kindOpportunity} dispatch={dispatch} dim={!lianmeiLit3(state, card)}>
+          联袂
+        </Tag>
+      ) : null}
+      {isLingrong && tier === "distant" ? (
+        <Tag tag="yiyi" tone={styles.kindStory} dispatch={dispatch}>
+          依依
+        </Tag>
+      ) : null}
+      {isLingrong && tier === "resentful" ? (
+        <Tag tag="chezhou" tone={styles.kindCrisis} dispatch={dispatch}>
+          掣肘
+        </Tag>
+      ) : null}
+      {relic ? (
+        <Tag tag="relic" tone={styles.kindTrial} dispatch={dispatch}>
+          🕯️遗物
+        </Tag>
+      ) : null}
+      {temp ? <span className={styles.muted}>临时</span> : null}
+    </span>
+  );
+  const notes = (
+    <>
+      {free ? <div className={styles.solves}>联袂：可不占出牌名额打出</div> : null}
+      {blocked ? <div className={styles.endHint}>被陵容掣肘，不能打出</div> : null}
+      {blocker ? <div className={styles.endHint}>{blocker}，不能打出</div> : null}
+      {absent ? <div className={styles.endHint}>陵容称病没来，打不出</div> : null}
+    </>
+  );
+  const className = [styles.handCard, isPending && styles.handCardPending, fold.compact && !canPlay && !isPending && styles.handCardDisabled].filter(Boolean).join(" ");
+  const answers = [
+    ...responses.map((r) => `${STORIES3[r.story.id].name}·${r.option.name}`),
+    ...events.map((e) => EVENTS3[e.id].name + (EVENTS3[e.id].double && !def.matches.includes(e.id) ? "（双牌）" : "")),
+    ...(confrontAccepts(state, card.id) ? ["景仁宫对质"] : []),
+    ...(feilaoAccepts(state, card.id) ? [FEILAO.name] : []),
+    ...(chunyuanAccepts(state, card.id) ? [`${CHUNYUAN.name}·${chunyuanAccepts(state, card.id) === 1 ? "起疑" : "查实"}`] : []),
+    ...(state.changxiangsi && !state.changxiangsi.done && (card.id === "guojunwangXiangzhu" || card.id === "chanyuXiushen") ? [CHANGXIANGSI.name] : []),
+    ...(yihuaAccepts(state, card.id) ? [`${YIHUA.name}·${YIHUA.steps[state.yihua!.step - 1]!.name}`] : []),
+  ];
+  if (fold.compact && !fold.expanded && !isPending) {
+    return (
+      <FoldBox fold={fold} className={className} onDouble={play}>
+        <div className={styles.compactTitle}>
+          {def.emoji} {def.name}
+          {tags}
+        </div>
+        <div className={styles.compactSummary}>{def.rulesCompact ?? def.rulesText.map(compactEffect3).join(" ")}</div>
+        {notes}
+      </FoldBox>
+    );
+  }
+  return (
+    <FoldBox fold={fold} className={className} onDouble={play}>
+      <div className={styles.cardHead}>
+        <span className={styles.cardName}>
+          <span className={styles.cardEmoji}>{def.emoji}</span>
+          {def.name}
+        </span>
+        {tags}
+      </div>
+      <CardArt src={cardArtUrl(card.id, state.act === 1 ? undefined : "temple")} emoji={def.emoji} />
+      <p className={styles.flavor}>{def.flavor}</p>
+      {def.rulesText.map((line) => (
+        <p key={line} className={styles.rule}>
+          {expandedEffect3(line)}
+        </p>
+      ))}
+      {def.matches.length > 0 ? (
+        <p className={styles.rule}>
+          <span className={styles.ruleLabel}>匹配事件：</span>
+          {def.matches.map((id) => (
+            <span key={id} className={[styles.matchChip, events.some((e) => e.id === id) && styles.matchChipInHand].filter(Boolean).join(" ")}>
+              {EVENTS3[id].emoji} {EVENTS3[id].name}
+            </span>
+          ))}
+        </p>
+      ) : null}
+      {answers.length > 0 ? <p className={styles.solves}>打出将解决：{answers.map((a) => `【${a}】`).join("")}</p> : null}
+      {notes}
+      <div className={styles.cardActions}>
+        {isPending ? (
+          <>
+            <span className={styles.solves}>请在上方状态上点「移除」</span>
+            <button type="button" className={`${styles.btn} ${styles.btnSmall}`} onClick={() => dispatch({ type: "cancelPending" })}>
+              取消
+            </button>
+          </>
+        ) : (
+          <button type="button" className={`${styles.btn} ${styles.btnPrimary} ${styles.btnSmall}`} disabled={!canPlay} onClick={play}>
+            {relic ? "🔥 焚毁" : free ? "打出（联袂）" : "打出"}
+          </button>
+        )}
+      </div>
+    </FoldBox>
+  );
+}
+
+function Statuses({ state, dispatch }: { state: Z3State; dispatch: Dispatch }) {
+  const [open, setOpen] = useState<ReadonlySet<string>>(() => new Set());
+  const removable = new Set(state.pending?.kind === "wentaiyi" ? removableNegatives3(state).map((s) => s.uid) : []);
+  const toggle = (uid: string) =>
+    setOpen((cur) => {
+      const next = new Set(cur);
+      if (next.has(uid)) next.delete(uid);
+      else next.add(uid);
+      return next;
+    });
+  return (
+    <div className={styles.statusRow}>
+      <span className={styles.muted}>状态：</span>
+      <ScrollRow className={styles.statuses}>
+        {state.statuses.length === 0 ? <span className={styles.muted}>无</span> : null}
+        {state.statuses.map((st) => {
+          const def = STATUSES3[st.id];
+          const notYet = !def.permanent && st.appliesFromTurn > state.turn;
+          const expanded = open.has(st.uid);
+          return (
+            <div
+              key={st.uid}
+              className={[styles.status, def.tag === "negative" ? styles.statusNegative : styles.statusPositive, expanded && styles.statusExpanded].filter(Boolean).join(" ")}
+              role="button"
+              tabIndex={0}
+              onClick={() => toggle(st.uid)}
+              onKeyDown={(e) => activateOnKey(e, () => toggle(st.uid))}
+            >
+              <div className={styles.statusLine}>
+                <span>
+                  {def.emoji}
+                  <span className={styles.statusFull}> {def.name}</span>
+                </span>
+                <span className={styles.statusBrief}>
+                  {statusBrief3(def)}
+                  {def.permanent ? "" : ` ⏳${st.remaining}`}
+                </span>
+                <button
+                  type="button"
+                  className={`${styles.tag} ${styles.tagButton} ${styles.statusFull}`}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    dispatch({ type: "explainTag", tag: def.tag });
+                  }}
+                >
+                  {def.tag === "negative" ? "负面" : "正面"}
+                  {def.unremovable ? "·不可移除" : ""}
+                </button>
+                <span className={`${styles.muted} ${styles.statusFull}`}>
+                  {def.permanent ? "触发 / 结束前一直保留" : notYet ? `下回合起生效，共 ${st.remaining} 回合` : `剩余 ${st.remaining} 回合`}
+                </span>
+                {removable.has(st.uid) ? (
+                  <button
+                    type="button"
+                    className={`${styles.btn} ${styles.btnPrimary} ${styles.btnSmall}`}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      dispatch({ type: "removeStatus", statusUid: st.uid });
+                    }}
+                  >
+                    移除
+                  </button>
+                ) : null}
+              </div>
+              {expanded ? (
+                <div className={styles.statusDetail}>
+                  <p className={styles.flavor}>{statusText3(def, state.turn).flavor}</p>
+                  <p className={styles.rule}>
+                    <span className={styles.ruleLabel}>机制：</span>
+                    {statusText3(def, state.turn).effectText}
+                  </p>
+                </div>
+              ) : null}
+            </div>
+          );
+        })}
+      </ScrollRow>
+    </div>
+  );
+}
+
+function endTurnHints(state: Z3State): string[] {
+  const hints: string[] = [];
+  if (state.pending?.kind === "wentaiyi") hints.push("请先选择要移除的负面状态，或取消温太医相助。");
+  const left = playsLeft3(state);
+  if (left > 0 && state.hand.length > 0) hints.push(`还可出 ${left} 张牌。`);
+  const c = state.confront;
+  if (c && c.played.length < c.needed) hints.push(`【景仁宫对质】还差 ${c.needed - c.played.length} 张辩白牌。`);
+  if (state.chunyuan && !chunyuanChecked(state)) {
+    hints.push(state.chunyuan.first ? `【${CHUNYUAN.name}】只起了疑：回合末圣宠 -${CHUNYUAN.halfPenalty}。` : `【${CHUNYUAN.name}】还没识破：回合末圣宠 -${CHUNYUAN.failPenalty}。`);
+  }
+  if (state.feilao && feilaoCurrentTier(state) > 0) hints.push(`【${FEILAO.name}】现为 ${FEILAO.tiers[feilaoCurrentTier(state)]!.name}。`);
+  if (state.yihua && state.yihua.step < 3) hints.push(`偶遇还没完成：回合末📜疑点 +1（现为 ${state.yihua.doubt}）。`);
+  for (const inst of openStories3(state)) {
+    const def = STORIES3[inst.id];
+    const option = def.options.find((o) => o.id === def.defaultOptionId)!;
+    hints.push(option.hidden ? `【${def.name}】未处理：${option.text}。` : `【${def.name}】未选择，将按默认【${option.name}】处理。`);
+  }
+  if (state.crisis && !state.crisis.resolved) hints.push(`【${EVENTS3[state.crisis.id].name}】未化解：${EVENTS3[state.crisis.id].unresolvedText}。`);
+  if (state.huanghou && !state.huanghou.resolved) hints.push(`【${EVENTS3[state.huanghou.id].name}】没有应对：回合末按默认结算。`);
+  const tier = tierOf3(state);
+  const lingrongInHand = state.hand.filter((c) => c.id === "lingrongXiangzhu").length;
+  if (tier && lingrongInHand > 0 && state.turn < STAGE3.confrontTurn) {
+    hints.push("手里的陵容没打出：冷落，她会和你生分些。");
+    if (tier === "distant") hints.push(`依依：${lingrongInHand} 张陵容会留在手里，下回合少抓 ${lingrongInHand} 张。`);
+  }
+  return hints;
+}
+
+function Notice({ title, children, onClose, button = "知道了" }: { title: string; children: ReactNode; onClose: () => void; button?: string }) {
+  return (
+    <div className={styles.overlay} role="dialog" aria-modal="true" aria-labelledby="zh3-notice-title">
+      <div className={styles.modal}>
+        <h2 id="zh3-notice-title">{title}</h2>
+        {children}
+        <div className={styles.modalActions}>
+          <button type="button" className={`${styles.btn} ${styles.btnPrimary}`} onClick={onClose} autoFocus>
+            {button}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ConfrontReveal({ state }: { state: Z3State }) {
+  const lines = confrontLines(state);
+  if (lines.length === 0) return <p className={styles.muted}>皇后手里什么也没有。</p>;
+  return (
+    <>
+      <p className={styles.muted}>皇后一件一件拿出来的事：</p>
+      {lines.map((l, i) => (
+        <p key={`${l.line}-${i}`}>
+          {l.line}
+          {l.lingrong ? <span className={styles.muted}> {ZHENHUAN_REALIZE}</span> : null}
+        </p>
+      ))}
+    </>
+  );
+}
+
+function PopupBody({ state, id }: { state: Z3State; id: PopupId }) {
+  switch (id) {
+    case "opening": {
+      const tail = POPUP_TEXT.openingTail[`${state.rank === "pin" ? "pin" : "guiren"}${state.pregnant ? "Pregnant" : "Plain"}` as keyof typeof POPUP_TEXT.openingTail];
+      const returned = state.carry?.returned ? POPUP_TEXT.returned[state.carry.returned] : null;
+      return (
+        <>
+          <p>{POPUP_TEXT.opening}</p>
+          <p>{tail}</p>
+          <p>{POPUP_TEXT.meizhuang}</p>
+          {returned ? <p>{returned}</p> : null}
+          {POPUP_TEXT.openingRules.map((l) => (
+            <p key={l} className={styles.muted}>
+              {l}
+            </p>
+          ))}
+        </>
+      );
+    }
+    case "huanghou":
+      return (
+        <>
+          <p>{POPUP_TEXT.huanghou}</p>
+          {POPUP_TEXT.huanghouRules.map((l) => (
+            <p key={l}>{l}</p>
+          ))}
+        </>
+      );
+    case "tonghuatai":
+      return <p>{POPUP_TEXT.tonghuatai}</p>;
+    case "chunyuan": {
+      const r = state.chunyuanResult ?? "fail";
+      return (
+        <>
+          <p>{CHUNYUAN.popup[r]}</p>
+          <p className={styles.muted}>{CHUNYUAN.popupRules[r]}</p>
+        </>
+      );
+    }
+    case "wanwan":
+      return <p>{POPUP_TEXT.wanwan}</p>;
+    case "exit": {
+      const exit = state.exitTier ? EXIT[state.exitTier] : null;
+      return (
+        <>
+          <ConfrontReveal state={state} />
+          {exit ? (
+            <p>
+              <strong>
+                {exit.emoji} {exit.name}
+              </strong>
+              ：{exit.story}
+              {exit.longyue}
+              {exit.effects.length ? `（${exit.effects.map((d) => `${RESOURCE3_LABEL[d.resource]} ${d.amount}`).join("、")}）` : ""}
+            </p>
+          ) : null}
+          <p>{POPUP_TEXT.exitHeart}</p>
+          <p>{POPUP_TEXT.exitGate}</p>
+          <p className={styles.muted}>{POPUP_TEXT.exitRules}</p>
+        </>
+      );
+    }
+    case "feilao":
+      return (
+        <>
+          <p>{POPUP_TEXT.feilao}</p>
+          <p className={styles.muted}>{POPUP_TEXT.feilaoRules}</p>
+        </>
+      );
+    case "zhoufu":
+      return (
+        <>
+          <p>{POPUP_TEXT.zhoufu}</p>
+          <p className={styles.muted}>{POPUP_TEXT.zhoufuRules}</p>
+        </>
+      );
+    case "ximai":
+      return (
+        <>
+          <p>{POPUP_TEXT.ximai}</p>
+          <p className={styles.muted}>{POPUP_TEXT.ximaiRules}</p>
+        </>
+      );
+  }
+}
+
+const POPUP_TITLE: Record<PopupId, string> = {
+  opening: "🏮 第一幕 · 凤仪之下",
+  huanghou: "🦚 皇后笑意",
+  tonghuatai: "🎐 桐花台",
+  chunyuan: "👗 纯元故衣",
+  wanwan: "💔 菀菀类卿",
+  exit: "⚖️ 景仁宫对质 · 自请出宫",
+  feilao: "🤒 迁居凌云峰",
+  zhoufu: "🌊 舟覆噩耗",
+  ximai: "💗 喜脉惊心",
+};
+
+function OutcomeModal({ state, onRestart, onMenu }: { state: Z3State; onRestart: () => void; onMenu: () => void }) {
+  if (state.outcome === "playing") return null;
+  const won = state.outcome === "won";
+  const tier = state.exitTierLingrong;
+  return (
+    <div className={styles.overlay} role="dialog" aria-modal="true" aria-labelledby="zh3-outcome-title">
+      <div className={styles.modal}>
+        <h2 id="zh3-outcome-title">{won ? (state.victory === "perfect" ? `🌟 完美结局：${HOMECOMING.name}` : `${HOMECOMING.emoji} ${HOMECOMING.name}`) : "🥀 功亏一篑"}</h2>
+        {won ? (
+          <>
+            <p>{POPUP_TEXT.homecoming}</p>
+            {state.exitTier ? <p>{POPUP_TEXT.homecomingTier[state.exitTier]}</p> : null}
+            {state.victory === "perfect" ? <p>{POPUP_TEXT.perfect}</p> : null}
+          </>
+        ) : (
+          <>
+            <p>{state.lossReason}。</p>
+            {state.lossKind ? <p>{LOSS3_STORY[state.lossKind]}</p> : null}
+            {state.lossKind === "lenggong" ? (
+              <>
+                <ConfrontReveal state={state} />
+                {tier ? <p className={styles.muted}>{LENGGONG_LINGRONG[tier]}</p> : null}
+              </>
+            ) : null}
+          </>
+        )}
+        {endingLines3(state).map((line) => (
+          <p key={line}>{line}</p>
+        ))}
+        <p className={styles.muted}>
+          最终：第 {state.turn} 回合 · {won ? "熹妃" : rankName3(state)} · 清誉 {state.qingyu} · 身子 {state.shenzi}
+          {state.yihua ? ` · 疑点 ${state.yihua.doubt}` : ""}
+        </p>
+        <div className={styles.modalActions}>
+          <button type="button" className={styles.btn} onClick={onMenu}>
+            返回主菜单
+          </button>
+          <button type="button" className={`${styles.btn} ${styles.btnPrimary}`} onClick={onRestart}>
+            重新开始第三关
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export function Stage3Rules() {
+  return (
+    <ul>
+      <li>
+        🚧 <strong>试玩版</strong>：本关还在开发中，机制和数值都可能还不完善，之后也可能调整。
+      </li>
+      <li>
+        华妃倒了，翊坤宫的门关上了。你在碎玉轩，是六宫里最得宠的那一个；眉庄的冤屈也洗清了，复了位分。可景仁宫的<strong>皇后</strong>，从来不是表面上那样温和。
+      </li>
+      <li>守住 🪷清誉 与 👑圣宠，任一项降到 0 即失败。</li>
+      <li>
+        如今的后宫：
+        <ul>
+          {POPUP_TEXT.people.map((l) => (
+            <li key={l}>{l}</li>
+          ))}
+        </ul>
+      </li>
+    </ul>
+  );
+}
+
+type Shown = { seed: number; ids: PopupId[] };
+
+export function Stage3Game({ state, dispatch, runCode, showRules, onShowRules, onRestart, onMenu, onLoadCode }: Props) {
+  const compact = useSmallScreen();
+  const hints = endTurnHints(state);
+
+  // Story popups raised by the latest action (shown once; not when a save or code is loaded mid-run).
+  const [queue, setQueue] = useState<PopupId[]>(() => (state.actions.length === 0 ? [...state.popups] : []));
+  const prev = useRef<{ seed: number; actions: number; popups: PopupId[] } | null>(null);
+  const shown = useRef<Shown>({ seed: state.seed, ids: state.actions.length === 0 ? [...state.popups] : [] });
+  useEffect(() => {
+    const p = prev.current;
+    prev.current = { seed: state.seed, actions: state.actions.length, popups: state.popups };
+    if (!p || p.seed !== state.seed) {
+      if (p && p.seed !== state.seed) {
+        shown.current = { seed: state.seed, ids: state.actions.length === 0 ? [...state.popups] : [] };
+        setQueue(state.actions.length === 0 ? [...state.popups] : []);
+      }
+      return;
+    }
+    if (state.actions.length <= p.actions) return;
+    const fresh = state.popups.filter((id) => !shown.current.ids.includes(id) && !p.popups.includes(id));
+    if (fresh.length === 0) return;
+    shown.current.ids.push(...fresh);
+    setQueue((q) => [...q, ...fresh]);
+  }, [state]);
+  const popup = queue[0] ?? null;
+
+  const endTurnReady = canEndTurn3(state) && !showRules && popup == null;
+  useEffect(() => {
+    const onKeyDown = (event: globalThis.KeyboardEvent) => {
+      if (event.key !== " " && event.code !== "Space") return;
+      if (event.defaultPrevented || isTypingTarget(event.target)) return;
+      if (!endTurnReady) return;
+      event.preventDefault();
+      dispatch({ type: "endTurn" });
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [endTurnReady, dispatch]);
+
+  const [expandedKey, setExpandedKey] = useState<string | null>(null);
+  const fold = (key: string): Fold => ({
+    compact,
+    expanded: expandedKey === key,
+    onToggle: () => setExpandedKey((cur) => (cur === key ? null : key)),
+  });
+
+  const draw = state.act === 1 ? RANKS[state.turnRank].draw : XIUXING.draw;
+  const plays = state.act === 1 ? RANKS[state.turnRank].plays : XIUXING.plays;
+  const shengchongShown = state.act === 1 || (state.yihua != null && state.yihua.step >= 3);
+  const badges = [
+    { text: ACT_TITLE[state.act], brief: ["", "一", "二", "三"][state.act] },
+    ...(state.pregnant ? [{ text: "👶 身怀龙裔", brief: "👶", gold: true }] : []),
+    ...(state.childBorn && state.act === 1 ? [{ text: "🎀 胧月", brief: "🎀" }] : []),
+  ];
+  const boardCount = [state.crisis, state.opportunity, state.huanghou].filter((e) => e != null);
+  const unresolved = boardCount.filter((e) => !e.resolved).length + openStories3(state).length;
+
+  return (
+    <div className={[styles.page, compact && styles.compact].filter(Boolean).join(" ")}>
+      <GameHeader
+        compact={compact}
+        campaignTitle={CAMPAIGN_TITLE}
+        stageTitle={STAGE3.title}
+        turn={state.turn}
+        totalTurns={STAGE3.totalTurns}
+        rankName={rankName3(state)}
+        rankDetail={`抓 ${draw} · 打 ${plays} · 上限 ${rankCap3(state)}`}
+        badges={badges}
+        onRules={() => onShowRules(true)}
+        onRestart={onRestart}
+        onMenu={onMenu}
+      />
+
+      <div className={styles.topStrip}>
+        <ScrollRow className={styles.stats}>
+          <StatChip icon="🪷" label="清誉" hint="（归 0 即失败）" info={RESOURCE_INFO3.qingyu} value={state.qingyu} max={rankCap3(state)} danger={state.qingyu <= 1} />
+          {shengchongShown ? (
+            <StatChip
+              icon="👑"
+              label="圣宠"
+              hint={state.act === 1 ? "（归 0 即失败）" : undefined}
+              info={RESOURCE_INFO3.shengchong}
+              value={state.shengchong}
+              max={state.act === 1 ? rankCap3(state) : undefined}
+              danger={state.act === 1 && state.shengchong <= 1}
+            />
+          ) : null}
+          <StatChip icon="🌱" label="身子" info={RESOURCE_INFO3.shenzi} value={state.shenzi} max={SHENZI.max} danger={state.shenzi <= 1} />
+          {state.yihua ? <StatChip icon="📜" label="疑点" hint={`（到 ${DOUBT.max} 即失败）`} info={{ lore: TAG3_INFO.doubt.lore, rules: [TAG3_INFO.doubt.rules] }} value={state.yihua.doubt} max={DOUBT.max} danger={state.yihua.doubt >= DOUBT.max - 1} /> : null}
+          <span className={styles.stripDivider} aria-hidden="true" />
+          <StatChip icon="🀄" label="本回合出牌" info={PLAYS_INFO3} value={state.playsUsed} max={playLimit3(state)} meter={false} />
+          <PileGroup compact={compact}>
+            <Pile icon="🎴" label="抽牌堆" count={state.drawPile.length}>
+              <p className={styles.popoverTitle}>抽牌堆剩余（顺序未知）</p>
+              <CardList ids={state.drawPile.map((c) => c.id)} empty="已空，需要时将弃牌堆洗回。" />
+            </Pile>
+            <Pile icon="🗑️" label="弃牌堆" count={state.discard.length}>
+              <p className={styles.popoverTitle}>弃牌堆</p>
+              <CardList ids={state.discard.map((c) => c.id)} empty="空" />
+            </Pile>
+            {state.departed.length > 0 ? (
+              <Pile icon="🕯️" label="已离场" count={state.departed.length}>
+                <p className={styles.popoverTitle}>已离场（含封存的宫中牌）</p>
+                <CardList ids={state.departed.map((c) => c.id)} empty="无" />
+              </Pile>
+            ) : null}
+            <Pile icon="🌸" label="机会牌池" tag={TAG3_INFO.opportunity} count={state.opportunityPool.length}>
+              <p className={styles.popoverTitle}>剩余机会事件</p>
+              <EventList ids={state.opportunityPool} empty="已抽完，下次将把已用事件重新洗匀。" />
+              <p className={styles.popoverTitle}>本轮已出现</p>
+              <EventList ids={state.opportunity ? [...state.opportunityUsed, state.opportunity.id] : state.opportunityUsed} empty="无" />
+            </Pile>
+            <Pile icon="⚡" label="危机牌池" tag={TAG3_INFO.crisis} count={state.crisisPool.length}>
+              <p className={styles.popoverTitle}>剩余危机事件</p>
+              <EventList ids={state.crisisPool} empty="已抽完，下次将把已用事件重新洗匀。" />
+              <p className={styles.popoverTitle}>本轮已出现</p>
+              <EventList ids={state.crisis ? [...state.crisisUsed, state.crisis.id] : state.crisisUsed} empty="无" />
+            </Pile>
+            {state.act === 1 && state.turn >= 2 ? (
+              <Pile icon="🦚" label="皇后事件" tag={TAG3_INFO.huanghou} count={state.huanghouPool.length}>
+                <p className={styles.popoverTitle}>本轮还没出现</p>
+                <EventList ids={state.huanghouPool} empty="已轮过一遍。" />
+                <p className={styles.popoverTitle}>本轮已出现</p>
+                <EventList ids={state.huanghouUsed} empty="无" />
+              </Pile>
+            ) : null}
+          </PileGroup>
+        </ScrollRow>
+        <Statuses state={state} dispatch={dispatch} />
+      </div>
+
+      <h2 className={styles.sectionTitle}>
+        本回合事件 <span title="未解决的事件与剧情">{unresolved}</span>
+      </h2>
+      <ScrollRow className={styles.events}>
+        <YihuaCard state={state} fold={fold("yihua")} dispatch={dispatch} />
+        {state.notices.map((n) => (
+          <NoticeCard key={n.name} emoji={n.emoji} name={n.name} text={n.text} fold={fold(`notice-${n.name}`)} />
+        ))}
+        <ConfrontCard state={state} fold={fold("confront")} dispatch={dispatch} />
+        <FeilaoCard state={state} fold={fold("feilao")} dispatch={dispatch} />
+        <ChunyuanCard state={state} fold={fold("chunyuan")} dispatch={dispatch} />
+        <ChangxiangsiCard state={state} fold={fold("changxiangsi")} dispatch={dispatch} />
+        {state.stories.map((inst, i) => (
+          <StoryCard key={`${inst.id}-${i}`} state={state} inst={inst} dispatch={dispatch} fold={fold(`story-${inst.id}-${i}`)} />
+        ))}
+        {state.crisis ? <EventCard state={state} inst={state.crisis} fold={fold(state.crisis.uid)} dispatch={dispatch} /> : null}
+        {state.opportunity ? <EventCard state={state} inst={state.opportunity} fold={fold(state.opportunity.uid)} dispatch={dispatch} /> : null}
+        {state.huanghou ? <EventCard state={state} inst={state.huanghou} fold={fold(state.huanghou.uid)} dispatch={dispatch} /> : null}
+      </ScrollRow>
+
+      <h2 className={styles.sectionTitle}>
+        手牌（{state.hand.length}）· 按抓牌顺序排列
+        <span className={styles.muted}>{compact ? " · 点击展开，双击打出" : " · 双击打出"}</span>
+      </h2>
+      <ScrollRow className={styles.hand}>
+        {state.hand.length === 0 ? <p className={styles.muted}>没有手牌。</p> : null}
+        {state.hand.map((card) => (
+          <HandCard key={card.uid} state={state} card={card} dispatch={dispatch} fold={fold(card.uid)} />
+        ))}
+      </ScrollRow>
+
+      <div className={styles.endTurnRow}>
+        <button type="button" className={`${styles.btn} ${styles.btnPrimary}`} disabled={!canEndTurn3(state)} onClick={() => dispatch({ type: "endTurn" })}>
+          结束回合（空格）
+        </button>
+        {hints.map((h) => (
+          <span key={h} className={styles.endHint}>
+            {h}
+          </span>
+        ))}
+      </div>
+
+      <div className={styles.bottom}>
+        <LogView entries={state.log} />
+        <RunCodePanel code={runCode} onLoad={onLoadCode} />
+      </div>
+
+      {showRules ? (
+        <Notice title="规则说明 · 第三关" onClose={() => onShowRules(false)} button="谨记在心">
+          <Stage3Rules />
+        </Notice>
+      ) : null}
+      {!showRules && popup ? (
+        <Notice title={POPUP_TITLE[popup]} onClose={() => setQueue((q) => q.slice(1))}>
+          <PopupBody state={state} id={popup} />
+        </Notice>
+      ) : null}
+      {popup == null ? <OutcomeModal state={state} onRestart={onRestart} onMenu={onMenu} /> : null}
+    </div>
+  );
+}
