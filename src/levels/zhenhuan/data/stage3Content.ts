@@ -222,7 +222,7 @@ export const CARDS3: Record<CardId3, CardDef3> = {
     baseDraw: 2,
     extraPlays: 1,
     matches: ["wangyeXiantan", "tanhuoLiangmi", "shanzhongCaiyao", "yuexiaDuitan", "yebanJingrao"],
-    rulesText: ["抽 2 张牌；本回合出牌 +1。", "在甘露寺（第 11–18 回合）用他化解事件：💢静白嚣张 +1（寺里人多眼杂）。"],
+    rulesText: ["抽 2 张牌；本回合出牌 +1。"],
     rulesCompact: "🎴+2 🀄+1",
   },
   chanyuXiushen: {
