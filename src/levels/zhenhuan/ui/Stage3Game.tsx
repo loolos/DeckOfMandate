@@ -170,7 +170,7 @@ function EventCard({ state, inst, fold, dispatch }: { state: Z3State; inst: Even
   const isOpp = def.kind === "opportunity";
   const locked = pairLocked(state, inst);
   const handIds = new Set(inst.resolved ? [] : state.hand.map((c) => c.id));
-  const className = [styles.card, CARD_TONE[def.kind], inst.resolved && styles.cardResolved].filter(Boolean).join(" ");
+  const className = [styles.card, CARD_TONE[def.kind], inst.resolved && styles.cardResolved, locked && styles.cardLocked].filter(Boolean).join(" ");
   const tags = (
     <span className={styles.tagGroup}>
       <Tag tag={def.kind} tone={KIND_TONE[def.kind]} dispatch={dispatch}>

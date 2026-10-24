@@ -713,6 +713,12 @@
   opacity: 0.55;
 }
 
+.cardLocked {
+  border-color: var(--zh-muted);
+  --zh-edge: var(--zh-muted);
+  filter: saturate(0.3) brightness(0.88);
+}
+
 .flavor {
   font-size: 0.82rem;
   color: var(--zh-muted);
