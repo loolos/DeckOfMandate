@@ -1,4 +1,4 @@
-import { CARDS3, RESOURCE3_EMOJI, STATUSES3, type StatusDef3 } from "../data/stage3Content";
+import { RESOURCE3_EMOJI, STATUSES3 } from "../data/stage3Content";
 
 /** 第三关 effect text in emoji form (略缩 cards) and with emoji added (expanded cards). */
 
@@ -41,18 +41,4 @@ export function expandedEffect3(text: string): string {
     .replace(/清誉/g, `${RESOURCE3_EMOJI.qingyu}清誉`)
     .replace(/身子/g, `${RESOURCE3_EMOJI.shenzi}身子`)
     .replace(/疑点/g, "📜疑点");
-}
-
-const signed = (n: number) => `${n > 0 ? "+" : ""}${n}`;
-
-/** Emoji-only mechanics of a status for the 略缩 status bar. */
-export function statusBrief3(def: StatusDef3): string {
-  const parts: string[] = [];
-  if (def.drawModifier) parts.push(`🎴${signed(def.drawModifier)}`);
-  if (def.blocksCards) parts.push(`🚫${def.blocksCards.map((id) => CARDS3[id].emoji).join("")}`);
-  if (def.playCap) parts.push(`🀄≤${def.playCap}`);
-  if (def.playBonus) parts.push(`🀄+${def.playBonus}`);
-  for (const d of def.turnEnd ?? []) parts.push(`${RESOURCE3_EMOJI[d.resource]}${signed(d.amount)}`);
-  if (def.noSummon) parts.push("🌙✗");
-  return parts.length > 0 ? parts.join(" ") : "🛡️";
 }

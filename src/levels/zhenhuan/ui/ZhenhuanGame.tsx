@@ -48,7 +48,7 @@ import {
 import { encodeRunCode } from "../logic/persistence";
 import { cardArtUrl, eventArtUrl, specialArtUrl, storyArtUrl } from "./art";
 import { RulesSummary } from "./RulesSummary";
-import { compactEffect, expandedEffect, statusBrief } from "./effectText";
+import { compactEffect, expandedEffect } from "./effectText";
 import styles from "./zhenhuan.module.css";
 
 type Props = {
@@ -567,7 +567,7 @@ function Statuses({ state, dispatch }: { state: ZhState; dispatch: Dispatch }) {
                     <span className={styles.statusFull}> {def.name}</span>
                   </span>
                   <span className={styles.statusBrief}>
-                    {statusBrief(def)} ⏳{st.remaining}
+                    ⏳{st.remaining}
                   </span>
                   <button
                     type="button"

@@ -1,4 +1,4 @@
-import { CARDS2, RESOURCE2_EMOJI, STATUSES2, type StatusDef2 } from "../data/stage2Content";
+import { RESOURCE2_EMOJI, STATUSES2 } from "../data/stage2Content";
 
 /** 第二关 effect text in emoji form (略缩 cards) and with emoji added (expanded cards). */
 
@@ -62,18 +62,3 @@ export function expandedEffect2(text: string): string {
     .replace(/恨意/g, `${RESOURCE2_EMOJI.hate}恨意`);
 }
 
-const signed2 = (n: number) => `${n > 0 ? "+" : ""}${n}`;
-
-/** Emoji-only mechanics of a status for the 略缩 status bar ("🎴-1", "🚫👗🙊", "🀄-1"). */
-export function statusBrief2(def: StatusDef2): string {
-  const parts: string[] = [];
-  if (def.drawModifier) parts.push(`🎴${signed2(def.drawModifier)}`);
-  if (def.blocksCards) parts.push(`🚫${def.blocksCards.map((id) => CARDS2[id].emoji).join("")}`);
-  if (def.playCap) parts.push(`🀄≤${def.playCap}`);
-  if (def.playPenalty) parts.push(`🀄-${def.playPenalty}`);
-  if (def.playBonus) parts.push(`🀄+${def.playBonus}`);
-  if (def.hateCap != null) parts.push(`🔥≤${def.hateCap}`);
-  for (const d of def.turnStart ?? []) parts.push(`${RESOURCE2_EMOJI[d.resource]}${signed2(d.amount)}`);
-  if (def.noSummon) parts.push("🌙✗");
-  return parts.length > 0 ? parts.join(" ") : "🛡️";
-}
