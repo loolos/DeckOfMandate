@@ -17,6 +17,7 @@ import {
   FEILAO,
   HOMECOMING,
   LENGGONG_LINGRONG,
+  LINGRONG_FAREWELL,
   LINGRONG_EVENT3,
   LOSS3_STORY,
   PAIRS,
@@ -1066,6 +1067,7 @@ function PopupBody({ state, id }: { state: Z3State; id: PopupId }) {
               {exit.effects.length ? `（${exit.effects.map((d) => `${RESOURCE3_LABEL[d.resource]} ${d.amount}`).join("、")}）` : ""}
             </p>
           ) : null}
+          {state.exitTierLingrong ? <p>{LINGRONG_FAREWELL[state.exitTierLingrong]}</p> : null}
           <p>{POPUP_TEXT.exitHeart}</p>
           <p>{POPUP_TEXT.exitGate}</p>
           <p className={styles.muted}>{POPUP_TEXT.exitRules}</p>
