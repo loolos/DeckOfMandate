@@ -170,7 +170,9 @@ export const CARDS3: Record<CardId3, CardDef3> = {
       "gongzhongLaixin",
       "tanhuoLiangmi",
     ],
-    rulesCompact: "🪷+1 👭奖励×2",
+    baseDraw: 1,
+    rulesText: ["清誉 +1；抽 1 张牌（眉庄冤屈洗刷，复了位分）。", "联动：它解决的机会事件，事件奖励翻倍（自身基础效果不翻倍）。"],
+    rulesCompact: "🪷+1 🎴+1 👭奖励×2",
   }),
   lingrongXiangzhu: {
     ...CARDS2.lingrongXiangzhu,
@@ -2048,10 +2050,15 @@ export const POPUP_TEXT = {
     pinPlain: "你已是嫔位，只是腹中还没有动静。",
     guirenPlain: "位分还低，腹中也还没有动静。时日不多了。",
   },
+  /** 每局都有：眉庄洗冤复位。 */
+  meizhuang: "华妃一倒，眉庄假孕一案也查清了：是华妃买通太医刘畚设的局。皇上复了她的位分，又赏了好些东西。眉庄解了禁足，头一件事就是来碎玉轩看你。",
   returned: {
-    meizhuangXiangzhu: "眉庄解了禁足，又能出门走动了。",
     wenTaiyiZhenzhi: "温实初从疫所回到了太医院。",
   } as Record<string, string>,
+  openingRules: [
+    "👭 眉庄冤屈洗刷、复了位分，说话更有分量：本关【眉庄相助】打出时，除了原有效果，还立刻抓 1 张牌。",
+    "🦚 皇后会在第 2 回合登门道贺，之后她的“恩赏”每回合都有。",
+  ],
   huanghou:
     "皇后亲自来碎玉轩道贺，赏下一对玉镯：「华妃之事，妹妹受委屈了。往后六宫和睦，还要靠妹妹帮衬。」她笑得温和，你却想起翊坤宫倒下那日，她站在廊下一言不发的样子。",
   huanghouPeople: [

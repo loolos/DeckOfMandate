@@ -964,7 +964,13 @@ function PopupBody({ state, id }: { state: Z3State; id: PopupId }) {
         <>
           <p>{POPUP_TEXT.opening}</p>
           <p>{tail}</p>
+          <p>{POPUP_TEXT.meizhuang}</p>
           {returned ? <p>{returned}</p> : null}
+          {POPUP_TEXT.openingRules.map((l) => (
+            <p key={l} className={styles.muted}>
+              {l}
+            </p>
+          ))}
         </>
       );
     }
