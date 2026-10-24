@@ -282,7 +282,7 @@ describe("zhenhuan stage 3 engine", () => {
     expect(EVENTS3.xianfuQi.resolvedStory.meizhuangXiangzhu).not.toBe(EVENTS3.xianfuJing.resolvedStory.meizhuangXiangzhu);
   });
 
-  it("欣贵人仗义 waives one rival crisis penalty; the crisis itself stays resolvable", () => {
+  it("欣贵人解围 waives one rival crisis penalty; the crisis itself stays resolvable", () => {
     let s = advanceTo(newStage3(3, CARRY), 3);
     clearBoard(s);
     s.crisis = ev(s, "qifeiXunxin");
@@ -410,6 +410,18 @@ describe("zhenhuan stage 3 engine", () => {
     expect(s.yihua!.doubt).toBe(1);
   });
 
+  it("圣驾偶遇 is its own 剧情事件 on the due turn; only 禅语修身 completes step ②", () => {
+    let s = advanceTo(newStage3(21, CARRY), 26);
+    s.yihua!.step = 2;
+    s.yihua!.ouyuDue = 27;
+    s = advanceTo(s, 27);
+    expect(s.stories.some((st) => st.id === "yihuaOuyu")).toBe(true);
+    expect(s.yihua!.step).toBe(2);
+    s = act(s, { type: "endTurn" });
+    expect(s.yihua!.step).toBe(2);
+    expect(s.yihua!.ouyuDue).toBe(29);
+  });
+
   it("皇后事件 every turn 3–9, never the same one two turns running", () => {
     for (const seed of [1, 2, 3, 7, 42, 99]) {
       let s = newStage3(seed, CARRY);
@@ -463,6 +475,8 @@ describe("zhenhuan stage 3 engine", () => {
       expect(s.hand.length).toBe(before.hand - 1);
     }
     expect(relicsKept(s)).toBe(0);
+    expect(s.stories.some((st) => st.id === "yihuaOuyu")).toBe(false);
+    s.stories.push({ id: "yihuaOuyu", chosenOptionId: null });
     const [chanyu, wen] = setHand(s, ["chanyuXiushen", "wenTaiyiZhenzhi"]);
     s = act(s, { type: "playCard", cardUid: chanyu! });
     expect(s.yihua!.step).toBe(3);
@@ -522,6 +536,7 @@ describe("zhenhuan stage 3 engine", () => {
     s.yihua!.step = 2;
     s.yihua!.ouyuDue = 26;
     s.yihua!.doubt = 1;
+    s.stories.push({ id: "yihuaOuyu", chosenOptionId: null });
     s = act(s, { type: "playCard", cardUid: chanyu! });
     expect(s.yihua!.doubt).toBe(1);
     s = act(s, { type: "playCard", cardUid: gengtie! });

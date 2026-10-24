@@ -35,7 +35,7 @@ export const STAGE3 = {
   standaloneShenzi: 4,
   /** 单独开始第三关：从第二关的 6 种把柄里随机带入几种。 */
   standaloneSecrets: 3,
-  /** 第 13、16……31 回合末【陵容的香】🌱+1。 */
+  /** 第 13、16……31 回合末【暗香盈袖】🌱+1。 */
   fragranceTurns: [13, 16, 19, 22, 25, 28, 31] as readonly number[],
   /** 🌟完美：三步在这一回合之前完成。 */
   perfectBefore: 30,
@@ -243,7 +243,7 @@ export const CARDS3: Record<CardId3, CardDef3> = {
     base: [],
     baseDraw: 0,
     matches: ["tanhuoLiangmi", "fazuoCuhuo", "jinganChuilian", "shanzhongCaiyao", "moyanYuanshou"],
-    rulesText: ["无基础效果。", "联动：用它化解危机时，获得【一时无错】：下回合抓牌 +1（静白一时挑不出错）。"],
+    rulesText: ["无基础效果。", "联动：用它化解危机时，获得【滴水不漏】：下回合抓牌 +1（静白一时挑不出错）。"],
     rulesCompact: "⚡→🎴+1",
   },
   jingxinRennai: {
@@ -352,6 +352,7 @@ export type StatusId3 =
   | "hanzheng"
   | "jingji"
   | "xinruZhishui"
+  | "jingfeiZhouji"
   | "yishiWucuo"
   | "dayaQifeiXunxin"
   | "dayaSanAgeYaochong"
@@ -374,7 +375,7 @@ export type StatusDef3 = {
   readonly playBonus?: number;
   readonly blocksCards?: readonly CardId3[];
   readonly noSummon?: boolean;
-  /** Applied at the end of every turn it is in effect (寒症). */
+  /** Applied at the end of every turn it is in effect (寒疾缠身). */
   readonly turnEnd?: readonly Delta3[];
   readonly effectText: string;
   readonly flavor: string;
@@ -497,7 +498,7 @@ export const STATUSES3: Record<StatusId3, StatusDef3> = {
   },
   xinGuirenZhangyi: {
     id: "xinGuirenZhangyi",
-    name: "欣贵人仗义",
+    name: "欣贵人解围",
     emoji: "🗣️",
     tag: "positive",
     duration: 0,
@@ -527,19 +528,19 @@ export const STATUSES3: Record<StatusId3, StatusDef3> = {
   dayaYanqingQi: daya("dayaYanqingQi", "延庆殿夜话·齐妃探病", "齐妃白跑一趟，皇后那边也懒得再差她来。"),
   lingrongDeXiang: {
     id: "lingrongDeXiang",
-    name: "陵容的香",
+    name: "暗香盈袖",
     emoji: "🎶",
     tag: "positive",
     duration: 0,
     permanent: true,
     unremovable: true,
     drawModifier: 0,
-    effectText: "第 13、16、19、22、25、28、31 回合末各 🌱身子 +1，一直持续到回宫。",
+    effectText: "第 13 回合起，每 3 回合末 🌱身子 +1，直至回宫。",
     flavor: "一盒亲手调的香，这回真的无害。",
   },
   shitaiBihu: {
     id: "shitaiBihu",
-    name: "师太庇护",
+    name: "佛门庇荫",
     emoji: "🍵",
     tag: "positive",
     duration: 0,
@@ -550,7 +551,7 @@ export const STATUSES3: Record<StatusId3, StatusDef3> = {
   },
   hanzheng: {
     id: "hanzheng",
-    name: "寒症",
+    name: "寒疾缠身",
     emoji: "🥶",
     tag: "negative",
     duration: 2,
@@ -580,9 +581,19 @@ export const STATUSES3: Record<StatusId3, StatusDef3> = {
     effectText: "未来 3 回合，每回合抓牌数 +1。",
     flavor: "一卷经抄完，心里那些翻来覆去的念头，竟也平了。",
   },
+  jingfeiZhouji: {
+    id: "jingfeiZhouji",
+    name: "敬妃周济",
+    emoji: "🧺",
+    tag: "positive",
+    duration: 3,
+    drawModifier: 1,
+    effectText: "未来 3 回合，每回合抓牌数 +1。",
+    flavor: "敬妃托温太医捎上山的衣物药材和米面，替你把山居的日子打点得宽裕了些。",
+  },
   yishiWucuo: {
     id: "yishiWucuo",
-    name: "一时无错",
+    name: "滴水不漏",
     emoji: "🪵",
     tag: "positive",
     duration: 1,
@@ -620,35 +631,38 @@ export type SecretDef = {
   readonly line: string;
   /** 只有陵容在场：甄嬛从这几条里明白是她。 */
   readonly lingrong: boolean;
+  /** 这件事当初是怎么来的（对质时标在皇后的问话下面）。 */
+  readonly hint: string;
 };
 
 const ENSHANG_LINE = "「本宫赏的东西，妹妹收得倒也心安。」";
 
 export const SECRETS: Record<SecretId, SecretDef> = {
-  shiqinNeiqing: { name: "侍寝内情", emoji: "🌙", lingrong: true, line: "「那晚妹妹说身子乏，怎么转头就让旁人替了去？」" },
-  zhuangshenNonggui: { name: "装神弄鬼", emoji: "👻", lingrong: true, line: "「丽嫔那夜见的‘福子’，本宫倒想问问是谁扮的。」" },
-  sitanSiqiu: { name: "私探死囚", emoji: "🥀", lingrong: true, line: "「余氏临死前，碎玉轩还派人去冷宫见过她。」" },
-  jierenYaochong: { name: "借人邀宠", emoji: "🌺", lingrong: true, line: "「那支曲子唱得巧，皇上偏偏就往碎玉轩去了。」" },
-  kuitanGongwei: { name: "窥探宫闱", emoji: "👁️", lingrong: true, line: "「各宫的宫女往哪儿走，妹妹倒比内务府还清楚。」" },
-  qiuziXinqie: { name: "求子心切", emoji: "🙏", lingrong: true, line: "「妹妹在宝华殿求的，只怕不只是平安。」" },
-  wangyeZengwu: { name: "王爷赠物", emoji: "🎐", lingrong: true, line: "「桐花台那日，十七弟与妹妹说了好一会子话。」" },
-  guyiYuanyan: { name: "故衣怨言", emoji: "👗", lingrong: true, line: "「穿了一回旧衣，妹妹就说皇上看的从来不是你？」" },
-  xinlengZhiyu: { name: "心冷之语", emoji: "💔", lingrong: true, line: "「心冷二字，妹妹也说得出口。」" },
-  yuzhongShuxin: { name: "狱中书信", emoji: "📜", lingrong: true, line: "「往狱里递的那封信，写了什么，皇上不妨问问她。」" },
-  qiciBuyong: { name: "弃赐不用", emoji: "🍲", lingrong: true, line: "「本宫送去的补品，妹妹一口没动，倒是喂了花。」" },
-  xijianSiyu: { name: "席间私语", emoji: "🏮", lingrong: true, line: "「赏花那日，妹妹和人说了好些各宫的长短。」" },
-  chuyanDingzhuang: { name: "出言顶撞", emoji: "🗣️", lingrong: false, line: "「齐妃说，那日你当着本宫的面顶了她一句……」" },
-  shanduShide: { name: "善妒失德", emoji: "🐍", lingrong: false, line: "「祺贵人哭着来说，你给了她好大的脸色。」" },
-  yuanwangJunfu: { name: "怨望君父", emoji: "⛓️", lingrong: false, line: "「听说妹妹私下说，甄大人这案子冤在皇上？」" },
-  "enshang.jingrenHoushang": { name: "恩赏为凭·云锦步摇", emoji: "🎁", lingrong: false, line: ENSHANG_LINE },
-  "enshang.xieliGongwu": { name: "恩赏为凭·协理宫务", emoji: "📜", lingrong: false, line: "「本宫让妹妹帮着打理宫务，妹妹倒真把六宫当成了自己的。」" },
-  "enshang.antaiBupin": { name: "恩赏为凭·安胎补品", emoji: "🍲", lingrong: false, line: ENSHANG_LINE },
-  "enshang.jiayanXianyi": { name: "恩赏为凭·家宴献艺", emoji: "🎵", lingrong: false, line: "「家宴上那一曲，妹妹是唱给谁听的？」" },
-  "enshang.shanghuaXiaoju": { name: "恩赏为凭·赏花小聚", emoji: "🏮", lingrong: false, line: ENSHANG_LINE },
+  shiqinNeiqing: { name: "侍寝内情", emoji: "🌙", lingrong: true, line: "「那晚妹妹说身子乏，怎么转头就让旁人替了去？」", hint: "第二关里，你曾让陵容代你侍寝。" },
+  zhuangshenNonggui: { name: "装神弄鬼", emoji: "👻", lingrong: true, line: "「丽嫔那夜见的‘福子’，本宫倒想问问是谁扮的。」", hint: "丽嫔惊梦那夜，装“福子”吓她，是陵容帮你办的。" },
+  sitanSiqiu: { name: "私探死囚", emoji: "🥀", lingrong: true, line: "「余氏临死前，碎玉轩还派人去冷宫见过她。」", hint: "余莺儿临死前，你让陵容去探视过她。" },
+  jierenYaochong: { name: "借人邀宠", emoji: "🌺", lingrong: true, line: "「那支曲子唱得巧，皇上偏偏就往碎玉轩去了。」", hint: "欢宜香浓那回，你借陵容的曲子把皇上引到了碎玉轩。" },
+  kuitanGongwei: { name: "窥探宫闱", emoji: "👁️", lingrong: true, line: "「各宫的宫女往哪儿走，妹妹倒比内务府还清楚。」", hint: "隔墙有耳那回，各宫的动静是陵容替你打探的。" },
+  qiuziXinqie: { name: "求子心切", emoji: "🙏", lingrong: true, line: "「妹妹在宝华殿求的，只怕不只是平安。」", hint: "在宝华殿祈福时，你求的是子嗣。" },
+  wangyeZengwu: { name: "王爷赠物", emoji: "🎐", lingrong: true, line: "「桐花台那日，十七弟与妹妹说了好一会子话。」", hint: "桐花台初遇果郡王，你与他说了好一会儿话。" },
+  guyiYuanyan: { name: "故衣怨言", emoji: "👗", lingrong: true, line: "「穿了一回旧衣，妹妹就说皇上看的从来不是你？」", hint: "纯元故衣之后，你对陵容说过皇上看的从来不是你。" },
+  xinlengZhiyu: { name: "心冷之语", emoji: "💔", lingrong: true, line: "「心冷二字，妹妹也说得出口。」", hint: "菀菀类卿之后，你对陵容说过心冷的话。" },
+  yuzhongShuxin: { name: "狱中书信", emoji: "📜", lingrong: true, line: "「往狱里递的那封信，写了什么，皇上不妨问问她。」", hint: "父亲下狱后，你托人往狱里递过信。" },
+  qiciBuyong: { name: "弃赐不用", emoji: "🍲", lingrong: true, line: "「本宫送去的补品，妹妹一口没动，倒是喂了花。」", hint: "皇后送的安胎补品，你没有用。" },
+  xijianSiyu: { name: "席间私语", emoji: "🏮", lingrong: true, line: "「赏花那日，妹妹和人说了好些各宫的长短。」", hint: "赏花小聚上，你与人议论过各宫的长短。" },
+  chuyanDingzhuang: { name: "出言顶撞", emoji: "🗣️", lingrong: false, line: "「齐妃说，那日你当着本宫的面顶了她一句……」", hint: "齐妃寻衅的事没有压下去，你当面顶过她。" },
+  shanduShide: { name: "善妒失德", emoji: "🐍", lingrong: false, line: "「祺贵人哭着来说，你给了她好大的脸色。」", hint: "祺贵人争宠的事没有压下去，你给过她脸色。" },
+  yuanwangJunfu: { name: "怨望君父", emoji: "⛓️", lingrong: false, line: "「听说妹妹私下说，甄大人这案子冤在皇上？」", hint: "鄂敏参本的事没有压下去，你为父亲的案子流露过怨望。" },
+  "enshang.jingrenHoushang": { name: "恩赏为凭·云锦步摇", emoji: "🎁", lingrong: false, line: ENSHANG_LINE, hint: "你收下了景仁宫的云锦步摇。" },
+  "enshang.xieliGongwu": { name: "恩赏为凭·协理宫务", emoji: "📜", lingrong: false, line: "「本宫让妹妹帮着打理宫务，妹妹倒真把六宫当成了自己的。」", hint: "你应下了皇后托付的宫务。" },
+  "enshang.antaiBupin": { name: "恩赏为凭·安胎补品", emoji: "🍲", lingrong: false, line: ENSHANG_LINE, hint: "你收下了景仁宫的安胎补品。" },
+  "enshang.jiayanXianyi": { name: "恩赏为凭·家宴献艺", emoji: "🎵", lingrong: false, line: "「家宴上那一曲，妹妹是唱给谁听的？」", hint: "你应了皇后，在家宴上献艺。" },
+  "enshang.shanghuaXiaoju": { name: "恩赏为凭·赏花小聚", emoji: "🏮", lingrong: false, line: ENSHANG_LINE, hint: "你随皇后赏花，收下了她的好意。" },
 };
 
 /** 怨怼的陵容编出来的那一条（甄嬛知道是假的，却也知道只有陵容编得出来）。 */
 export const FABRICATED_SECRET = "「还有一桩：妹妹私下说过，这宫里的位分，迟早都是她的。」";
+export const FABRICATED_HINT = "这话你从未说过。";
 
 // ---------------------------------------------------------------- 盟友 / 对头
 
@@ -782,7 +796,7 @@ export type EventDef3 = {
   readonly resolvedText: string;
   readonly unresolvedText: string;
   readonly resolvedStory: Partial<Record<CardId3, string>>;
-  /** 凌云峰 text (炭火粮米 / 师太 / 莫言 change their story on the mountain). */
+  /** 凌云峰 text (断炭缺粮 / 师太 / 莫言 change their story on the mountain). */
   readonly peakFlavor?: string;
   readonly note?: string;
 };
@@ -901,7 +915,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     reward: [sc(1)],
     penalty: NO,
     ally: "xin",
-    resolvedText: "圣宠 +1；第一次把握时获得【欣贵人仗义】",
+    resolvedText: "圣宠 +1；第一次把握时获得【欣贵人解围】",
     unresolvedText: "无额外效果，事件消失",
     resolvedStory: {
       shoulongRenxin: "你让小允子备了她最爱吃的点心。欣贵人吃得高兴，拍着胸脯说往后谁敢欺负你，她第一个不答应。",
@@ -918,7 +932,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     penalty: NO,
     ally: "xin",
     pair: "yuhuayuan",
-    resolvedText: "圣宠 +1；第一次把握时获得【欣贵人仗义】",
+    resolvedText: "圣宠 +1；第一次把握时获得【欣贵人解围】",
     unresolvedText: "无额外效果，事件消失",
     resolvedStory: {
       jinyanShenxing: "齐妃走远了，欣贵人挽着你笑：「你那一句不软不硬，我接得可痛快。早该有人治治她了。」两人在花下一直说到日头西斜。",
@@ -975,7 +989,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     resolvedText: "移除事件",
     unresolvedText: "获得【流言缠身】",
     resolvedStory: {
-      jinyanShenxing: "你闭门不出，见了谁都只说些天气花草。流言找不到新的把柄，几日便散了。",
+      jinyanShenxing: "你闭门不出，见了谁都只说些天气花草。流言找不到新的话柄，几日便散了。",
       meizhuangXiangzhu: "眉庄在各宫走动时替你分说清楚，又寻出了嚼舌根的宫女。流言一夜之间没了声息。",
       shoulongRenxin: "你让小允子拿了些碎银子，在各宫的宫人间打点了一圈。流言渐渐没人再提。",
       jinxiXiangzhu: "槿汐暗中寻到了传话的源头，把几个碎嘴的宫人敲打了一番。流言没了下文。",
@@ -1172,7 +1186,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     unresolvedText: "圣宠 +1",
     resolvedStory: {
       jinyanShenxing: "你说嫔妾福薄，受不起这样的厚赏，只收下了一匹素缎。皇后笑着说你太过谨慎，这话传到寿康宫，太后倒夸你知道分寸。",
-      jinxiXiangzhu: "槿汐替你回了话，说小主素来不爱鲜亮的颜色。皇后便改赏了几盒燕窝，槿汐亲手验过，日日炖给你喝。",
+      jinxiXiangzhu: "槿汐替你回了话，说小主素来不爱鲜亮的颜色。皇后便改赏了几盒燕窝，槿汐把燕窝收进小厨房，每日炖好了给你送去。",
     },
   },
   xieliGongwu: {
@@ -1205,8 +1219,8 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     unresolvedText: "清誉 +1",
     note: "只在有孕时出现。",
     resolvedStory: {
-      wenTaiyiZhenzhi: "温实初验过才敢让你吃。东西倒是干净的，他又添了两味药，另开了一张安胎的方子。",
-      jinxiXiangzhu: "槿汐接过补品，回头就倒进了花盆里，换了一盅自己炖的，火候一刻也不差。",
+      wenTaiyiZhenzhi: "温实初照例看过才让你用。补品并无不妥，他又添了两味药，另开了一张安胎的方子。",
+      jinxiXiangzhu: "槿汐谢了赏，替你收下，转头吩咐小厨房另炖了一盅清润的，说小主这几日胃口淡，补品先温着，换着用。",
     },
   },
   jiayanXianyi: {
@@ -1283,7 +1297,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     peakFlavor: "静岸师太拄着拐杖上了凌云峰，说是来看看你的病。",
     reward: NO,
     penalty: NO,
-    resolvedText: "获得【师太庇护】",
+    resolvedText: "获得【佛门庇荫】",
     unresolvedText: "无额外效果，事件消失",
     resolvedStory: {
       chanyuXiushen: "你与师太说了几句禅理。师太点点头：「你倒是有慧根。」此后静白再刁难你，师太总会拦一拦。",
@@ -1359,7 +1373,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
   tanhuoLiangmi: {
     id: "tanhuoLiangmi",
     kind: "crisis",
-    name: "炭火粮米",
+    name: "断炭缺粮",
     emoji: "🔥",
     flavor: "静白又克扣了你屋里的炭火，说寺里清苦，修行之人不该贪暖。",
     peakFlavor: "风雪封了山，凌云峰上缺衣少粮，屋里冷得像冰窖。",
@@ -1368,7 +1382,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     penaltyStatus: "hanzheng",
     jingbai: true,
     resolvedText: "移除事件",
-    unresolvedText: "获得【寒症】（未来 2 回合，每回合末身子 -1）",
+    unresolvedText: "获得【寒疾缠身】（未来 2 回合，每回合末身子 -1）",
     note: "寺中算静白刁难（🧹）；凌云峰上是风雪断粮。",
     resolvedStory: {
       jingchaiBuqun: "你自己上山拾了一捆柴，手上磨出了血泡。屋里总算有了点暖气。",
@@ -1380,7 +1394,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
   fazuoCuhuo: {
     id: "fazuoCuhuo",
     kind: "crisis",
-    name: "罚做粗活",
+    name: "杂役磋磨",
     emoji: "🪣",
     flavor: "静白说你偷懒，罚你挑满后院的水缸，劈完一院子的柴。",
     reward: NO,
@@ -1398,7 +1412,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
   wutouXiangyou: {
     id: "wutouXiangyou",
     kind: "crisis",
-    name: "诬偷香油钱",
+    name: "功德箱失窃",
     emoji: "📿",
     flavor: "功德箱里少了钱，静白一口咬定是你拿的。",
     reward: NO,
@@ -1433,7 +1447,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
   xianrenKuitan: {
     id: "xianrenKuitan",
     kind: "crisis",
-    name: "闲人窥探",
+    name: "耳目窥伺",
     emoji: "👀",
     flavor: "有几个寺里的小尼姑总在凌云峰附近转悠，探头探脑的。",
     reward: NO,
@@ -1541,9 +1555,9 @@ export const LINGRONG_EVENT3: Partial<Record<EventId3, TierTable>> = {
     resentful: { resolves: false, story: "欣贵人说话没轻没重，陵容听了几句便沉了脸，起身走了。" },
   },
   antaiBupin: {
-    close: { resolves: true, story: "陵容闻了闻那盅补品，说太燥了，悄悄替你倒进了花盆里：「皇后那边，只当姐姐收下了。」她替你掖好被角，又陪你说了一会儿话。" },
-    distant: { resolves: true, story: "陵容说这补品太燥，替你倒了，又叮嘱你往后入口的东西都要当心。" },
-    resentful: { resolves: true, story: "陵容端走了补品，说替姐姐处置了。她没多坐，放下话便走了。" },
+    close: { resolves: true, story: "陵容尝了尝那盅补品，说炖得偏燥，不如先搁着，另让小厨房炖了盅清淡的给你。她替你掖好被角，又陪你说了一会儿话。" },
+    distant: { resolves: true, story: "陵容说这补品炖得偏燥，替你换了盅清淡的，又叮嘱你多歇着。" },
+    resentful: { resolves: true, story: "陵容端走了补品，说替姐姐换盅清淡的来。她没多坐，放下话便走了。" },
   },
   jiayanXianyi: {
     close: { resolves: true, effects: [sc(1)], story: "你抚琴，陵容唱曲。一曲终了，皇上抚掌大笑，赏赐都记在了碎玉轩名下。陵容低着头，没说话。" },
@@ -1581,7 +1595,9 @@ export type StoryId3 =
   | "wentaiyiTanshi"
   | "taxueWenji"
   | "hehunGengtie"
-  | "diannanZhixing";
+  | "diannanZhixing"
+  | "zhoufuEHao"
+  | "yihuaOuyu";
 
 /** 甄远道下狱: which option, and how heavy it lands (see `xiayuCost`). */
 export type XiayuChoice = "kneel" | "taihou" | "guo" | "lingrong";
@@ -1606,7 +1622,7 @@ export type StoryOption3 = {
   readonly shenziFloor?: number;
   readonly xiayu?: XiayuChoice;
   /** Story-specific flag the engine records (桐花台 / 莫愁 / 温太医探视 / 庚帖 / 送行). */
-  readonly flag?: "li" | "di" | "lingrong" | "luofa" | "gengtie" | "songxing" | "xiangshou";
+  readonly flag?: "li" | "di" | "lingrong" | "luofa" | "gengtie" | "songxing" | "xiangshou" | "ouyu";
   readonly status?: StatusId3;
 };
 
@@ -1632,6 +1648,7 @@ export const FIXED_STORIES3: Partial<Record<number, StoryId3>> = {
   19: "taxueWenji",
   23: "hehunGengtie",
   24: "diannanZhixing",
+  25: "zhoufuEHao",
 };
 
 export const STORIES3: Record<StoryId3, StoryDef3> = {
@@ -1787,13 +1804,12 @@ export const STORIES3: Record<StoryId3, StoryDef3> = {
     id: "wanwanLeiqing",
     name: "菀菀类卿",
     emoji: "💔",
-    flavor:
-      "父亲还在狱中。你挺着肚子去养心殿，想再为他求一次情。苏培盛说皇上在前殿议事，请你在暖阁里稍候。暖阁里静得很，案上摊着一卷皇上的手书，墨迹已经旧了。你本不该看，目光却落在了那几个字上：「菀菀类卿，暂排苦思，亦除却巫山非云也。」旁边压着一幅小像，画里的女子眉眼与你有七分相似，只是那人不是你。原来倚梅园那一夜、杏花微雨的初见、他赐你的那个“莞”字，都是因为另一个人。你扶着桌沿站了很久，腹中一阵一阵地疼起来。",
+    flavor: "你挺着肚子去养心殿，想再为父亲求一次情。暖阁里案上摊着一卷皇上的手书，墨迹已旧；旁边压着一幅小像，画中女子的眉眼与你有七分相似。你扶着桌沿站了很久，腹中一阵一阵地疼起来。",
     note: "当夜早产，生下胧月。身子最少扣到 1。",
     defaultOptionId: "shihun",
     options: [
-      { id: "shihun", name: "失魂而归", effects: [sz(-1)], shenziFloor: 1, text: "身子 -1（最少扣到 1）", story: "你不记得是怎么走出养心殿的，只记得宫道很长，风很冷。回到碎玉轩，当夜便腹痛如绞，太医来了又走，宫人进进出出。天快亮时，你听见一声啼哭，有人说：「是位公主。」你偏过头去，眼泪这才流下来。" },
-      { id: "fuhui", name: "扶你回宫", card: "jinxiXiangzhu", effects: [], text: "身子不扣", story: "槿汐见你脸色不对，什么也没问，赶在旁人看见之前扶你出了养心殿，一路低声说：「小主，咱们先回去，什么都等孩子平安了再说。」当夜你动了胎气，槿汐守在床前一步也没离开。天亮时，你生下了一个女儿。" },
+      { id: "shihun", name: "失魂而归", effects: [sz(-1)], shenziFloor: 1, text: "身子 -1（最少扣到 1）", story: "你不记得是怎么走出养心殿的，只记得宫道很长，风很冷。当夜腹痛如绞，天快亮时，你听见一声啼哭，有人说：「是位公主。」" },
+      { id: "fuhui", name: "扶你回宫", card: "jinxiXiangzhu", effects: [], text: "身子不扣", story: "槿汐什么也没问，赶在旁人看见之前扶你出了养心殿，低声说：「小主，什么都等孩子平安了再说。」她守了你一夜，天亮时你生下了一个女儿。" },
       {
         id: "baochan",
         name: "连夜保产",
@@ -1801,9 +1817,9 @@ export const STORIES3: Record<StoryId3, StoryDef3> = {
         effects: [],
         removeNegatives: 1,
         text: "身子不扣；移除 1 个负面状态",
-        story: "温实初连夜赶来，一边施针一边开方，额上的汗也顾不得擦。产房里熬了一夜的药，天亮时终于传出一声啼哭，母女平安。他走出碎玉轩时天已大亮，袖口上还沾着药渍。",
+        story: "温实初连夜赶来，施针开方，额上的汗也顾不得擦。天亮时终于传出一声啼哭，母女平安。",
       },
-      { id: "shouhou", name: "守在产房外", card: "meizhuangXiangzhu", effects: [sz(-1), q(1)], shenziFloor: 1, text: "身子 -1、清誉 +1", story: "眉庄听说了，连夜赶到碎玉轩，在产房外守了一夜，谁来都不让进。你疼得昏昏沉沉，只听见她在门外一遍遍地吩咐宫人。天亮时，她抱着孩子进来，眼睛红红的：「是个公主，长得像你。」" },
+      { id: "shouhou", name: "守在产房外", card: "meizhuangXiangzhu", effects: [sz(-1), q(1)], shenziFloor: 1, text: "身子 -1、清誉 +1", story: "眉庄连夜赶到碎玉轩，在产房外守了一夜，谁来都不让进。天亮时她抱着孩子进来，眼睛红红的：「是个公主，长得像你。」" },
     ],
   },
   mochou: {
@@ -1832,10 +1848,10 @@ export const STORIES3: Record<StoryId3, StoryDef3> = {
   },
   wentaiyiTanshi: {
     id: "wentaiyiTanshi",
-    name: "温太医探视 · 胧月画像",
+    name: "故人来访",
     emoji: "🩺",
     flavor: "温实初上山来了，捎来胧月的一张小像，是敬妃托他带的。画上的孩子胖乎乎的，眉眼像你。",
-    note: "本回合手牌加入一张临时的【温太医相助】（不占抓牌，回合末离场）。另可打出眉庄相助或槿汐相助「为女儿撑下去」：清誉 +1、移除 1 个负面状态（与前两项叠加）。",
+    note: "本回合手牌加入一张临时的【温太医相助】（不占抓牌，回合末离场）。另可打出眉庄相助或槿汐相助「为女儿撑下去」：清誉 +1、移除 1 个负面状态（与前两项叠加）。有【敬妃之谊】时，另获得【敬妃周济】。",
     defaultOptionId: "zhenzhi",
     options: [
       { id: "zhenzhi", name: "请他诊治", effects: [sz(2)], removeNegatives: "all", text: "移除全部负面状态；身子 +2", story: "温实初替你诊了脉，开了方子，又留下许多药材。临走时他说：「嬛妹妹，你要好好的。」" },
@@ -1866,22 +1882,47 @@ export const STORIES3: Record<StoryId3, StoryDef3> = {
     id: "hehunGengtie",
     name: "合婚庚帖",
     emoji: "📜",
-    flavor: "果郡王拿来一张红纸，请你写下庚帖。",
+    flavor: "果郡王趁着无人，从袖中取出一张红纸，轻声请你写下自己的庚帖。",
     defaultOptionId: "buxie",
     options: [
       { id: "buxie", name: "不写", effects: [q(1)], text: "清誉 +1", story: "你把红纸推了回去。他没有说什么，只把它仔细折好，收进了袖子里。" },
-      { id: "xiexia", name: "写下庚帖", card: "guojunwangXiangzhu", effects: [], flag: "gengtie", text: "舟覆之后，其中一件遗物是【合婚庚帖】", story: "你提笔写下自己的生辰。他在旁边写的是「嬛嬛」。他从来只唤你自己的名字。" },
+      { id: "xiexia", name: "写下庚帖", card: "guojunwangXiangzhu", effects: [], flag: "gengtie", text: "他收好了庚帖，日后或许用得上", story: "你提笔写下自己的生辰。他在旁边写的是「嬛嬛」。他从来只唤你自己的名字。" },
     ],
   },
   diannanZhixing: {
     id: "diannanZhixing",
     name: "滇南之行",
     emoji: "⛵",
-    flavor: "果郡王奉旨出使滇南，明日一早便要启程。",
+    flavor: "果郡王奉旨出使滇南，明日一早便要启程，这一去，少说也得大半年。",
     defaultOptionId: "wuyan",
     options: [
-      { id: "wuyan", name: "不去相送", effects: [], text: "无效果", story: "你没有去送他。那一夜，你坐在窗前，听了一夜的风。" },
-      { id: "songxing", name: "送行", card: "guojunwangXiangzhu", effects: [], flag: "songxing", text: "他留下长相思笛：舟覆之后，其中一件遗物是【长相思笛】", story: "你送他到山下。他把那支笛子塞进你手里：「等我回来。」" },
+      { id: "wuyan", name: "不去相送", effects: [], text: "无效果", story: "你没有去送他。那一夜，你坐在窗前，听着山风一阵紧似一阵，直到天边泛白。" },
+      { id: "songxing", name: "送行", card: "guojunwangXiangzhu", effects: [], flag: "songxing", text: "他留下一件信物，日后或许用得上", story: "你送他到山下。他翻身下马，把那支随身多年的笛子塞进你手里：「等我回来。」" },
+    ],
+  },
+  zhoufuEHao: {
+    id: "zhoufuEHao",
+    name: "舟覆噩耗",
+    emoji: "🌊",
+    flavor: "果亲王的船在江上翻了，尸骨无存。你握着那支他留下的东西，半晌说不出一个字。",
+    defaultOptionId: "beitong",
+    options: [
+      { id: "beitong", name: "悲恸难抑", effects: [sz(-2)], shenziFloor: 1, text: "身子 -2（最少扣到 1）", story: "你一夜没有合眼，水米未进，第二天起身时，眼前一阵阵发黑。" },
+      { id: "jinxiPeiban", name: "槿汐陪伴", card: "jinxiXiangzhu", effects: [], text: "身子不扣", story: "槿汐什么也没说，只一遍遍替你暖着手，陪你在窗前坐到天亮。" },
+      { id: "fotianJingzuo", name: "佛前静坐", card: "chanyuXiushen", effects: [sz(-1)], shenziFloor: 1, text: "身子 -1", story: "你在佛前跪了一夜，念的是往生咒，眼泪却止不住。天亮时，心里空落落的，却也静了下来。" },
+      { id: "meizhuangQuanwei", name: "眉庄劝慰", card: "meizhuangXiangzhu", effects: [sz(-1)], shenziFloor: 1, removeNegatives: 1, text: "身子 -1；移除 1 个负面状态", story: "眉庄托人捎来长信，只写了一句：「人去了，你还得好好活着，才不辜负他。」" },
+    ],
+  },
+  yihuaOuyu: {
+    id: "yihuaOuyu",
+    name: "圣驾偶遇",
+    emoji: "🌸",
+    flavor: "皇上驾临甘露寺，正往佛堂这边来。你若不在佛前相见，这一回便又错过了。",
+    note: "打出【禅语修身】才算偶遇成功；没成就隔一回合再来。",
+    defaultOptionId: "cuoguo",
+    options: [
+      { id: "cuoguo", name: "错失圣驾", effects: [], text: "偶遇没成，隔一回合再来", story: "皇上在山门外立了片刻，终究没有见到你，由苏培盛扶着回了銮驾。" },
+      { id: "foqianChongfeng", name: "佛前重逢", card: "chanyuXiushen", effects: [], flag: "ouyu", text: "偶遇成功", story: "你在佛前念着经，听见身后的脚步声停了下来。皇上望着你的背影，许久，轻轻唤了一声你的名字。" },
     ],
   },
 };
@@ -1915,9 +1956,9 @@ export const CHUNYUAN = {
   halfStory: "你觉得这衣裳哪里不对，却说不清是哪里，到底没敢穿，换了件旧衣去赴宴。皇上看见你，眼里的光暗了一下：「皇后说给你备了件新衣裳，怎么没穿？」",
   failStory: "你穿着那身衣裳进了殿。皇上看见你，手里的酒杯停在半空，怔了半晌，只说了一句「你穿这身，倒像极了一个人」，便拂袖而去。",
   popup: {
-    seen: "那件衣裳原样送回了库里，生辰宴平平安安地过去了。夜里槿汐替你卸了妆，犹豫了许久，才低声道：「小主，那件衣裳……奴婢瞧着，像是纯元皇后当年穿过的。」你一夜没睡。皇上第一次见你时，看的到底是谁？",
-    half: "宴散后，皇上一句话也没多说就回了养心殿。你坐在灯下，想起他看你时那一瞬的失望：他期待你穿上的，究竟是一件新衣裳，还是另一个人的影子？",
-    fail: "满殿的人都低着头。你跪在那里，听见皇上走远了，才有人小声说：那是纯元皇后的旧衣。原来你穿上它的那一刻，他看见的不是你。",
+    seen: "那件衣裳原样送回了库里，生辰宴平平安安地过去了。夜里槿汐替你卸了妆，犹豫了许久，才低声道：「小主，那件衣裳……奴婢瞧着，像是纯元皇后当年穿过的。」你一夜没睡。纯元皇后是皇上的元配，宫里人人都知道，她走了这么多年，皇上心里从来没有放下过。皇后偏偏在这时候，把她的旧衣送到碎玉轩来。你想起皇上第一次见你时的神情，那一眼里有惊，有喜，如今想来，竟又有几分恍惚。他看的到底是谁？你不敢往下想，却也再不能当作什么都没有发生过。",
+    half: "宴散后，皇上一句话也没多说就回了养心殿。你坐在灯下，想起他看你时那一瞬的失望：他期待你穿上的，究竟是一件新衣裳，还是另一个人的影子？你到底没弄明白那衣裳的来历，只隐约觉得，皇后既然特意备下，便不会只是一份寻常的心意。往后的日子，你得多留几分心。",
+    fail: "满殿的人都低着头。你跪在那里，听见皇上走远了，才有人小声说：那是纯元皇后的旧衣。原来你穿上它的那一刻，他看见的不是你。皇后在一旁轻轻叹了口气，只说是自己疏忽，没留意衣裳的来历，转头还温言安慰了你几句。可你心里明白，这样的疏忽，偏偏落在你身上，绝不会是巧合。皇上的冷淡，一时半会儿是挽不回来了。",
   },
   popupRules: {
     seen: "识破：免祸。",
@@ -1954,9 +1995,9 @@ export const FEILAO = {
     meizhuangXiangzhu: "「宫中送药」：眉庄托人连夜送来药材和厚衣。",
   } as Record<string, string>,
   tiers: [
-    { name: "甲 · 师太暗护", text: "身子不减；获得【师太庇护】", story: "静岸师太拦不住静白，却悄悄让人把被褥和药送上了山。" },
-    { name: "乙 · 仓皇出寺", text: "身子 -1；获得【寒症】", story: "只许带随身衣物。槿汐扶着你，踩着雪往后山走。" },
-    { name: "丙 · 连夜被逐", text: "身子 -2、清誉 -1；获得【寒症】", story: "当夜就被抬出寺门。寺里都传你得了肺痨，没人敢靠近凌云峰。" },
+    { name: "甲 · 师太暗护", text: "身子不减；获得【佛门庇荫】", story: "静岸师太拦不住静白，却悄悄让人把被褥和药送上了山。" },
+    { name: "乙 · 仓皇出寺", text: "身子 -1；获得【寒疾缠身】", story: "只许带随身衣物。槿汐扶着你，踩着雪往后山走。" },
+    { name: "丙 · 连夜被逐", text: "身子 -2、清誉 -1；获得【寒疾缠身】", story: "当夜就被抬出寺门。寺里都传你得了肺痨，没人敢靠近凌云峰。" },
   ],
 };
 
@@ -2127,9 +2168,13 @@ export const POPUP_TEXT = {
     "「菀菀类卿，暂排苦思，亦除却巫山非云也。」短短一行字，墨色早就旧了。你忽然想起生辰宴前那件封在库里的旧衣，想起镜子里那个陌生的自己，原来那从来不是巧合。倚梅园里那一句许愿，杏花林下那一回眸，他赐你的那个“莞”字，取的原是她的“菀”。这些年的恩宠，枕边那些温存的话，一句一句，原来都是说给另一个人听的。",
     "那一夜碎玉轩的灯一直亮着。天将明时，孩子落了地，哭声细细的，像一只刚出壳的雏鸟。皇上隔日赐了名，叫胧月。你抱着她，看窗外的天一点点亮起来，心里却有什么东西，跟着那一夜的月色一起暗了下去。",
   ] as readonly string[],
-  confrontIntro: "这些日子，你落在旁人眼里、记在旁人心里的事：",
+  confrontIntro: "皇后把这些日子的事一桩桩拿出来问：",
   confrontNone: "皇后手里什么也没有。",
-  confrontWithheld: "陵容瞒下了此事，皇后并不知道",
+  confrontSummary: {
+    exposed: "这里头有几桩，本该只有陵容一个人知道。看来是她透露给了皇后。",
+    withheld: "可她知道的并不止这些，另有几桩，似乎被她瞒了下来：",
+    withheldOnly: "你隐约觉得，有几桩只有陵容知道的事，皇后并没有问起，应是她瞒了下来：",
+  },
   confrontDuanfei: "端妃在一旁淡淡说了一句，皇后便略过了一桩。",
   confrontRealize: {
     exposed:
@@ -2143,12 +2188,19 @@ export const POPUP_TEXT = {
   exitGate: "马车停在甘露寺山门前。静白师太上下打量你：「进了这道门，就没有什么小主娘娘了。」",
   exitRules: "第二幕：失去位分，每回合抓 2 打 1，清誉上限 8，换成寺中牌库；🌱身子归 0 即病死寺中。",
   feilao: "槿汐背着你，一步一步踩着雪往后山走。身后，甘露寺的门「砰」地关上了。",
-  feilaoRules: "罚做粗活、诬偷香油钱移出；月下对谈、夜半惊扰、闲人窥探加入。",
+  feilaoRules: "杂役磋磨、功德箱失窃移出；月下对谈、夜半惊扰、耳目窥伺加入。",
   zhoufu: "消息是夜里传来的：果亲王的船在江上翻了，尸骨无存。他留给你的那些东西，如今只剩下念想。",
-  zhoufuRules: "3 张【果郡王相助】变成 🕯️遗物：打出即焚毁；偶遇当回合末仍在手里的，每件疑点 +1。",
-  ximai:
-    "温太医的手指搭在你腕上，迟迟没有拿开。「嬛妹妹……是喜脉。」你怔怔地坐着，手不自觉地护住了小腹。允礼走了，连尸骨都没有找回来，这是他留在世上唯一的骨血。温太医低声劝你：「这孩子若被人知道，你和他都活不成……」你打断他：「我要留下他。」凌云峰上，一个带罪修行的人有了身孕，瞒不过三个月。要保住这个孩子，只有一条路：回宫，让皇上相信，这是他的孩子。",
-  ximaiRules: "持续事件【🎎移花接木】：槿汐相助引驾 → 两回合后禅语修身偶遇 → 温太医相助改脉，即回宫。槿汐相助、眉庄相助各让📜疑点 -1。疑点到 5、第 33 回合末未完成或🌱身子归 0，失败。",
+  zhoufuRules: "3 张【果郡王相助】变成 🕯️遗物：打出即焚毁，没有别的效果；留在手里，日后恐惹人生疑。",
+  ximaiRecall: {
+    1: "当初你自请出宫，临行前亲手把胧月交给了敬妃，原想从此清清静静，在佛前了此残生。",
+    2: "当初你被劝出宫，跪着求了皇上许久，才许你把胧月托付给敬妃。你原想从此在佛前了此残生。",
+    3: "当初你被废出宫，胧月被嬷嬷当场抱走，直到后来才知道她在敬妃身边。你原想从此在佛前了此残生。",
+  } as Record<1 | 2 | 3, string>,
+  ximai: [
+    "温太医的手指搭在你腕上，迟迟没有拿开。「嬛妹妹……是喜脉。」你怔怔地坐着，手不自觉地护住了小腹。允礼走了，连尸骨都没有找回来，这是他留在世上唯一的骨血。温太医低声劝你：「这孩子若被人知道，你和他都活不成……」你打断他：「我要留下他。」",
+    "凌云峰上，一个带罪修行的人有了身孕，瞒不过三个月。要保住这个孩子，只有一条路：回宫，让皇上相信，这是他的孩子。头一件事，便是想法子把皇上引到甘露寺来。",
+  ] as readonly string[],
+  ximaiRules: "持续事件【🎎移花接木】开始，详见事件卡。🌱身子归 0 即小产，失败。",
   homecoming: "圣旨念完了：钮祜禄氏，封熹妃，即日回宫。从此不必再顶着那个“莞”字。",
   homecomingTier: {
     1: "回宫那日，皇上亲自在宫门前等你。",
@@ -2213,14 +2265,14 @@ export const TAG3_INFO: Record<TagId3, { label: string; lore: string; rules: str
   chezhou: { label: "掣肘", lore: "处处牵制。", rules: "情分怨怼时，陵容左右相邻的牌不能打出。打出陵容后解除。" },
   yiyi: { label: "依依", lore: "缠着姐姐不肯走。", rules: "情分生分时，陵容在回合末留在手牌中；留下几张，下回合就少抓几张。" },
   double: { label: "双牌", lore: "一个人扛不住。", rules: "同一回合内打出两张匹配牌才算解决；回合末不满 2 张则进度清零。" },
-  ally: { label: "盟友", lore: "后宫重新站队，总有人愿意站在你这边。", rules: "第一次把握她的事件，获得盟友状态（端妃相护 / 敬妃之谊 / 欣贵人仗义）。" },
+  ally: { label: "盟友", lore: "后宫重新站队，总有人愿意站在你这边。", rules: "第一次把握她的事件，获得盟友状态（端妃相护 / 敬妃之谊 / 欣贵人解围）。" },
   rival: { label: "对头", lore: "她们都是皇后的人。", rules: "用卡面标注的牌化解算打压，获得【打压】状态：该危机下次出现时自动化解一次。" },
   pair: {
     label: "连环",
     lore: "一石二鸟。",
     rules: "机会与危机成对出现。先化解危机才能把握机会；共同牌一张即可两头都顾上，并算打压。危机没化解，机会随之作废。",
   },
-  jingbai: { label: "静白刁难", lore: "静白师太看你不顺眼。", rules: "第 11–18 回合的刁难没化解，静白就更嚣张，决定第 18 回合被赶走时有多狼狈。" },
+  jingbai: { label: "静白刁难", lore: "静白师太在甘露寺里管着杂务，最讲寺规。你是被废出宫的带罪之人，在她眼里，不过是躲到寺里来避祸的小主，非得磨一磨性子不可：克扣炭火，杂役磋磨，甚至诬你偷香油钱。静岸师太看不过去，却也不好当面驳她。", rules: "第 11–18 回合的刁难没化解，静白就更嚣张，决定第 18 回合被赶走时有多狼狈。" },
   relic: { label: "遗物", lore: "他留下的东西。", rules: "打出即焚毁，没有别的效果。偶遇当回合末手里每有 1 件，疑点 +1（睹物生疑）。" },
   chengbing: { label: "称病", lore: "陵容身子不适，告了假。", rules: "景仁宫对质这一回合，陵容称病没有来，她的牌打不出。" },
   yihua: {

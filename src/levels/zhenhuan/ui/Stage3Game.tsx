@@ -17,6 +17,7 @@ import {
   FEILAO,
   HOMECOMING,
   LENGGONG_LINGRONG,
+  LINGRONG_FAREWELL,
   LINGRONG_EVENT3,
   LOSS3_STORY,
   PAIRS,
@@ -170,7 +171,7 @@ function EventCard({ state, inst, fold, dispatch }: { state: Z3State; inst: Even
   const isOpp = def.kind === "opportunity";
   const locked = pairLocked(state, inst);
   const handIds = new Set(inst.resolved ? [] : state.hand.map((c) => c.id));
-  const className = [styles.card, CARD_TONE[def.kind], inst.resolved && styles.cardResolved].filter(Boolean).join(" ");
+  const className = [styles.card, CARD_TONE[def.kind], inst.resolved && styles.cardResolved, locked && styles.cardLocked].filter(Boolean).join(" ");
   const tags = (
     <span className={styles.tagGroup}>
       <Tag tag={def.kind} tone={KIND_TONE[def.kind]} dispatch={dispatch}>
@@ -261,7 +262,7 @@ function EventCard({ state, inst, fold, dispatch }: { state: Z3State; inst: Even
         </p>
       ) : null}
       {def.rival && !inst.resolved && state.statuses.some((st) => st.id === "xinGuirenZhangyi") ? (
-        <p className={styles.rule}>🗣️ 没化解的话，【欣贵人仗义】会替你挡下这次惩罚。</p>
+        <p className={styles.rule}>🗣️ 没化解的话，【欣贵人解围】会替你挡下这次惩罚。</p>
       ) : null}
       {def.pair ? (
         <p className={styles.rule}>
@@ -603,12 +604,9 @@ function YihuaCard({ state, fold, dispatch }: { state: Z3State; fold: Fold; disp
           <Tag tag="yihua" tone={styles.kindTrial} dispatch={dispatch}>
             持续
           </Tag>
-          <Tag tag="doubt" tone={styles.kindCrisis} dispatch={dispatch}>
-            📜{y.doubt}/{DOUBT.max}
-          </Tag>
         </>
       }
-      summary={`${YIHUA.steps.map((s, i) => `${y.step > i + 1 ? "✓" : y.step === i + 1 ? "▶" : "·"}${s.emoji}`).join(" ")} 📜${y.doubt}/${DOUBT.max}`}
+      summary={`${YIHUA.steps.map((s, i) => `${y.step > i + 1 ? "✓" : y.step === i + 1 ? "▶" : "·"}${s.emoji}`).join(" ")}`}
       fold={fold}
       dispatch={dispatch}
     >
@@ -631,7 +629,7 @@ function YihuaCard({ state, fold, dispatch }: { state: Z3State; fold: Fold; disp
                 </>
               ) : null}
               {relicCount > 0 && (y.step === 2 || y.ouyuTurn === state.turn) ? (n === 2 ? <span className={styles.endHint}> 手里有 {relicCount} 件遗物：偶遇那回合结束时还在手里，疑点 +{relicCount}（睹物生疑）。</span> : null) : null}
-              {n === 2 && y.step === 2 && y.ouyuDue != null ? (y.ouyuDue === state.turn ? "（皇上今日驾临：本回合打出禅语修身）" : `（第 ${y.ouyuDue} 回合皇上驾临）`) : ""}
+              {n === 2 && y.step === 2 && y.ouyuDue != null ? (y.ouyuDue === state.turn ? "（皇上今日驾临：本回合解决【圣驾偶遇】）" : `（第 ${y.ouyuDue} 回合皇上驾临）`) : ""}
               {n === 2 && y.step < 2 ? `（引驾完成后第 ${YIHUA.ouyuDelay} 回合；没成隔一回合再来）` : ""}
               {n === 3 ? "（偶遇之后打出温太医相助即完成）" : ""}
               {state_ !== "done" ? (
@@ -822,7 +820,7 @@ function Statuses({ state, dispatch }: { state: Z3State; dispatch: Dispatch }) {
     <div className={styles.statusRow}>
       <span className={styles.muted}>状态：</span>
       <ScrollRow className={styles.statuses}>
-        {state.statuses.length === 0 ? <span className={styles.muted}>无</span> : null}
+        {state.statuses.length === 0 && !state.yihua ? <span className={styles.muted}>无</span> : null}
         {state.statuses.map((st) => {
           const def = STATUSES3[st.id];
           const notYet = !def.permanent && st.appliesFromTurn > state.turn;
@@ -883,6 +881,25 @@ function Statuses({ state, dispatch }: { state: Z3State; dispatch: Dispatch }) {
             </div>
           );
         })}
+        {state.yihua ? (
+          <div
+            className={[styles.status, styles.statusNegative].join(" ")}
+            role="button"
+            tabIndex={0}
+            onClick={() => dispatch({ type: "explainTag", tag: "doubt" })}
+            onKeyDown={(e) => activateOnKey(e, () => dispatch({ type: "explainTag", tag: "doubt" }))}
+          >
+            <div className={styles.statusLine}>
+              <span>
+                📜<span className={styles.statusFull}> 疑点</span>
+              </span>
+              <span className={styles.statusBrief}>
+                {state.yihua.doubt}/{DOUBT.max}
+              </span>
+              <span className={`${styles.muted} ${styles.statusFull}`}>到 {DOUBT.max} 即失败</span>
+            </div>
+          </div>
+        ) : null}
       </ScrollRow>
     </div>
   );
@@ -936,16 +953,29 @@ function Notice({ title, children, onClose, button = "知道了" }: { title: str
 function ConfrontEvidence({ state }: { state: Z3State }) {
   const lines = confrontLines(state);
   if (lines.length === 0) return <p className={styles.muted}>{POPUP_TEXT.confrontNone}</p>;
+  const shown = lines.filter((l) => !l.withheld);
+  const withheld = lines.filter((l) => l.withheld);
+  const exposed = shown.some((l) => l.lingrong);
+  const summary = POPUP_TEXT.confrontSummary;
+  const entry = (l: (typeof lines)[number], i: number) => (
+    <p key={`${l.line}-${i}`}>
+      {l.line}
+      <br />
+      <span className={styles.muted}>（{l.hint}）</span>
+    </p>
+  );
   return (
     <>
-      <p className={styles.muted}>{POPUP_TEXT.confrontIntro}</p>
-      {lines.map((l, i) => (
-        <p key={`${l.line}-${i}`} className={l.withheld ? styles.muted : undefined}>
-          {l.line}
-          {l.withheld ? <em>（{POPUP_TEXT.confrontWithheld}）</em> : null}
+      {shown.length > 0 ? <p className={styles.muted}>{POPUP_TEXT.confrontIntro}</p> : null}
+      {shown.map(entry)}
+      {hasStatus3(state, "duanfeiXianghu") ? <p className={styles.muted}>{POPUP_TEXT.confrontDuanfei}</p> : null}
+      {exposed ? <p>{summary.exposed}</p> : null}
+      {withheld.length > 0 ? <p>{exposed ? summary.withheld : summary.withheldOnly}</p> : null}
+      {withheld.map((l, i) => (
+        <p key={`${l.line}-${i}`} className={styles.muted}>
+          · {l.hint}
         </p>
       ))}
-      {hasStatus3(state, "duanfeiXianghu") ? <p className={styles.muted}>{POPUP_TEXT.confrontDuanfei}</p> : null}
     </>
   );
 }
@@ -1053,6 +1083,7 @@ function PopupBody({ state, id }: { state: Z3State; id: PopupId }) {
               {exit.effects.length ? `（${exit.effects.map((d) => `${RESOURCE3_LABEL[d.resource]} ${d.amount}`).join("、")}）` : ""}
             </p>
           ) : null}
+          {state.exitTierLingrong ? <p>{LINGRONG_FAREWELL[state.exitTierLingrong]}</p> : null}
           <p>{POPUP_TEXT.exitHeart}</p>
           <p>{POPUP_TEXT.exitGate}</p>
           <p className={styles.muted}>{POPUP_TEXT.exitRules}</p>
@@ -1076,7 +1107,10 @@ function PopupBody({ state, id }: { state: Z3State; id: PopupId }) {
     case "ximai":
       return (
         <>
-          <p>{POPUP_TEXT.ximai}</p>
+          {state.exitTier && state.exitTier <= 3 ? <p>{POPUP_TEXT.ximaiRecall[state.exitTier as 1 | 2 | 3]}</p> : null}
+          {POPUP_TEXT.ximai.map((t) => (
+            <p key={t}>{t}</p>
+          ))}
           <p className={styles.muted}>{POPUP_TEXT.ximaiRules}</p>
         </>
       );
@@ -1249,7 +1283,6 @@ export function Stage3Game({ state, dispatch, runCode, showRules, onShowRules, o
             />
           ) : null}
           <StatChip icon="🌱" label="身子" info={RESOURCE_INFO3.shenzi} value={state.shenzi} max={SHENZI.max} danger={state.shenzi <= 1} />
-          {state.yihua ? <StatChip icon="📜" label="疑点" hint={`（到 ${DOUBT.max} 即失败）`} info={{ lore: TAG3_INFO.doubt.lore, rules: [TAG3_INFO.doubt.rules] }} value={state.yihua.doubt} max={DOUBT.max} danger={state.yihua.doubt >= DOUBT.max - 1} /> : null}
           <span className={styles.stripDivider} aria-hidden="true" />
           <StatChip icon="🀄" label="本回合出牌" info={PLAYS_INFO3} value={state.playsUsed} max={playLimit3(state)} meter={false} />
           <PileGroup compact={compact}>

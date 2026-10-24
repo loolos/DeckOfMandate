@@ -67,11 +67,11 @@
 | E48 | 禅房抄经 | 机会 | chanfangChaojing |
 | E49 | 莫言援手 | 机会 | moyanYuanshou |
 | E50 | 月下对谈 | 机会 | yuexiaDuitan |
-| E51 | 炭火粮米 | 危机 | tanhuoLiangmi |
-| E52 | 罚做粗活 | 危机 | fazuoCuhuo |
-| E53 | 诬偷香油钱 | 危机 | wutouXiangyou |
+| E51 | 断炭缺粮 | 危机 | tanhuoLiangmi |
+| E52 | 杂役磋磨 | 危机 | fazuoCuhuo |
+| E53 | 功德箱失窃 | 危机 | wutouXiangyou |
 | E54 | 夜半惊扰 | 危机 | yebanJingrao |
-| E55 | 闲人窥探 | 危机 | xianrenKuitan |
+| E55 | 耳目窥伺 | 危机 | xianrenKuitan |
 | E56 | 景仁宫来人 | 危机 | jingrenLairen |
 | S17 | 皇后笑意 | 剧情 | huanghouXiaoyi |
 | S18 | 海棠春睡 | 剧情 | haitangChunshui |
@@ -80,10 +80,12 @@
 | S21 | 菀菀类卿 | 剧情 | wanwanLeiqing |
 | S22 | 莫愁 | 剧情 | mochou |
 | S23 | 山门偶遇 | 剧情 | shanmenOuyu |
-| S24 | 温太医探视 · 胧月画像 | 剧情 | wentaiyiTanshi |
+| S24 | 故人来访 | 剧情 | wentaiyiTanshi |
 | S25 | 踏雪问疾 | 剧情 | taxueWenji |
 | S26 | 合婚庚帖 | 剧情 | hehunGengtie |
 | S27 | 滇南之行 | 剧情 | diannanZhixing |
+| S27b | 舟覆噩耗 | 剧情 | zhoufuEHao |
+| S27c | 圣驾偶遇 | 剧情 | yihuaOuyu |
 | S28 | 纯元故衣 | 特殊剧情 | chunyuan |
 | S29 | 景仁宫对质 | 特殊剧情 | confront |
 | S30 | 肺痨之诬 | 特殊剧情 | feilao |
