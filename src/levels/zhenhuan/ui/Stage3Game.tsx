@@ -979,7 +979,13 @@ function PopupBody({ state, id }: { state: Z3State; id: PopupId }) {
       );
     }
     case "wanwan":
-      return <p>{POPUP_TEXT.wanwan}</p>;
+      return (
+        <>
+          {POPUP_TEXT.wanwan.map((t) => (
+            <p key={t}>{t}</p>
+          ))}
+        </>
+      );
     case "exit": {
       const exit = state.exitTier ? EXIT[state.exitTier] : null;
       return (
