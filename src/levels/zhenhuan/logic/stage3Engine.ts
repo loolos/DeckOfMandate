@@ -1278,7 +1278,8 @@ function beginTurn3(s: Z3State, turn: number): void {
   }
 
   const fixed = FIXED_STORIES3[turn];
-  if (fixed) openStory(s, fixed);
+  // 嫔位已报过喜脉：海棠春睡只是留宿夜谈
+  if (fixed) openStory(s, fixed === "haitangChunshui" && s.pregnant && s.rank === "pin" ? "haitangYeyu" : fixed);
   if (turn === 6) {
     s.chunyuan = { first: null, second: null };
     log(s, `剧情事件：【${CHUNYUAN.name}】${CHUNYUAN.rule}`);

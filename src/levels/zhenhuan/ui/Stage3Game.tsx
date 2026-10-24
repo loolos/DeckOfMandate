@@ -143,8 +143,8 @@ function Chips({ ids, lit }: { ids: readonly CardId3[]; lit: (id: CardId3) => bo
   );
 }
 
-const KIND_TONE = { opportunity: styles.kindOpportunity, crisis: styles.kindCrisis, huanghou: styles.kindEnvy };
-const CARD_TONE = { opportunity: styles.cardOpportunity, crisis: styles.cardCrisis, huanghou: styles.cardEnvy };
+const KIND_TONE = { opportunity: styles.kindOpportunity, crisis: styles.kindCrisis, huanghou: styles.kindHuanghou };
+const CARD_TONE = { opportunity: styles.cardOpportunity, crisis: styles.cardCrisis, huanghou: styles.cardHuanghou };
 
 // 连环事件标题是「连环名·事件名」，说明里连环名已在前面，只引事件名。
 const shortEventName = (name: string) => name.split("·").pop() ?? name;

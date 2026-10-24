@@ -1587,6 +1587,7 @@ export type StoryId3 =
   | "zhaoxing"
   | "huanghouXiaoyi"
   | "haitangChunshui"
+  | "haitangYeyu"
   | "tonghuataiChuyu"
   | "zhenYuandaoXiayu"
   | "wanwanLeiqing"
@@ -1733,6 +1734,33 @@ export const STORIES3: Record<StoryId3, StoryDef3> = {
         pregnancy: true,
         text: "清誉 +1；未孕时必定有孕",
         story: "你在灯下陪皇上读诗，读到「只恐夜深花睡去」，他笑着接了下一句。",
+      },
+    ],
+  },
+  haitangYeyu: {
+    id: "haitangYeyu",
+    name: "海棠春睡",
+    emoji: "🌸",
+    flavor: "太医的喜脉早已报到了御前。皇上这几日仍常往碎玉轩来，只在海棠树下坐坐，陪你说说话。",
+    note: "只是一段恩宠。",
+    defaultOptionId: "chengen",
+    options: [
+      { id: "chengen", name: "承恩", effects: [sc(1)], text: "圣宠 +1", story: "海棠树下，皇上扶你坐下，只问腹中孩子今日闹不闹。那一夜他宿在碎玉轩，什么也没做，只听你絮絮说了半宿的话。" },
+      {
+        id: "haitangXinzhuang",
+        name: "海棠新妆",
+        card: "yirongZhengsu",
+        effects: [sc(2)],
+        text: "圣宠 +2",
+        story: "你簪了一朵新开的海棠。皇上看了你很久，笑说等孩子落了地，要带他来看这满树的花。",
+      },
+      {
+        id: "dengxiaDushi",
+        name: "灯下读诗",
+        card: "jinyanShenxing",
+        effects: [q(1)],
+        text: "清誉 +1",
+        story: "你在灯下陪皇上读诗，读到「只恐夜深花睡去」，他笑着把你肩上的披风拢了拢，不许你熬夜。",
       },
     ],
   },

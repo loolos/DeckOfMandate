@@ -30,7 +30,7 @@ export function eventArtUrl(id: EventId | EventId2 | EventId3): string | null {
 }
 
 /** Story variants that share one picture (both 玉阶炎日 cards use the plain one). */
-const STORY_ART_ALIAS: Partial<Record<StoryId | StoryId2 | StoryId3, StoryId | StoryId2 | StoryId3>> = { fakuiPregnant: "fakuiPlain" };
+const STORY_ART_ALIAS: Partial<Record<StoryId | StoryId2 | StoryId3, StoryId | StoryId2 | StoryId3>> = { fakuiPregnant: "fakuiPlain", haitangYeyu: "haitangChunshui" };
 
 export function storyArtUrl(id: StoryId | StoryId2 | StoryId3): string | null {
   return STORY_ART.get(STORY_ART_ALIAS[id] ?? id) ?? null;
