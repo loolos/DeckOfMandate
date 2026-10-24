@@ -1834,7 +1834,7 @@ export const STORIES3: Record<StoryId3, StoryDef3> = {
   },
   wentaiyiTanshi: {
     id: "wentaiyiTanshi",
-    name: "温太医探视 · 胧月画像",
+    name: "故人山中·胧月小像",
     emoji: "🩺",
     flavor: "温实初上山来了，捎来胧月的一张小像，是敬妃托他带的。画上的孩子胖乎乎的，眉眼像你。",
     note: "本回合手牌加入一张临时的【温太医相助】（不占抓牌，回合末离场）。另可打出眉庄相助或槿汐相助「为女儿撑下去」：清誉 +1、移除 1 个负面状态（与前两项叠加）。",
