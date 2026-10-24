@@ -23,7 +23,6 @@ import {
   FEILAO,
   FIXED_STORIES3,
   HUANGHOU_EVENTS,
-  HUANGHOU_XIAOYI,
   LINGRONG_COLD_TEXT,
   LINGRONG_EVENT3,
   LINGRONG_FAREWELL,
@@ -868,6 +867,7 @@ function applyStoryOption(s: Z3State, inst: StoryInst3, option: StoryOption3, so
   } else applyDeltas3(s, option.effects, `${def.name}·${option.name}`);
   if (!alive(s)) return 0;
 
+  if (option.status) addStatus3(s, option.status);
   if (option.removeNegatives) removeNegatives(s, option.removeNegatives, option.name);
   if (option.drawCards) drawCards3(s, option.drawCards);
   if (option.pregnancy) becomePregnant(s, def.name);
@@ -1260,11 +1260,6 @@ function beginTurn3(s: Z3State, turn: number): void {
 
   const fixed = FIXED_STORIES3[turn];
   if (fixed) openStory(s, fixed);
-  if (turn === 2) {
-    s.notices.push({ emoji: HUANGHOU_XIAOYI.emoji, name: HUANGHOU_XIAOYI.name, text: HUANGHOU_XIAOYI.text });
-    log(s, `🦚 ${HUANGHOU_XIAOYI.text}从下一回合起，每回合会有一张皇后事件。`);
-    popup(s, "huanghou");
-  }
   if (turn === 6) {
     s.chunyuan = { played: [], lingrong: false };
     log(s, `剧情事件：【${CHUNYUAN.name}】${CHUNYUAN.rule}`);
@@ -1463,7 +1458,11 @@ function endTurn3(s: Z3State): void {
   if (!alive(s)) return;
 
   // scheduled additions
-  if (s.turn === 2) s.huanghouPool = shuffleInto(s, HUANGHOU_EVENTS);
+  if (s.turn === 2) {
+    s.huanghouPool = shuffleInto(s, HUANGHOU_EVENTS);
+    log(s, "🦚 从下一回合起，每回合会有一张皇后事件。");
+    popup(s, "huanghou");
+  }
   if (s.turn === 5 && !s.removedEvents.includes("emingCanben")) {
     s.crisisPool = shuffleInto(s, [...s.crisisPool, "emingCanben"]);
     log(s, "前朝起了风波：【鄂敏参本】洗入危机池。", "bad");
@@ -1590,7 +1589,7 @@ export function newStage3(seed: number, carry: Carry3 | null): Z3State {
     nextUid,
   };
   for (const id of carry ? carry.secrets : randomSecrets(s, STAGE3.standaloneSecrets)) s.secrets[id] = 1;
-  if (carry?.pregnant) {
+  if (carry ? carry.pregnant : STAGE3.standalonePregnant) {
     s.pregnant = true;
     s.statuses.push({ uid: `s${s.nextUid++}`, id: "shenhuaiLongyi", appliesFromTurn: 0, remaining: 0 });
     if (rank === "guiren") addPinEvent(s);
@@ -1599,7 +1598,7 @@ export function newStage3(seed: number, carry: Carry3 | null): Z3State {
     s,
     carry
       ? `承接第二关：${RANKS[rank].name}${carry.pregnant ? "，身怀龙裔" : ""}；清誉 ${s.qingyu}、圣宠 ${s.shengchong}、身子 ${s.shenzi}。`
-      : `单独开始第三关：${RANKS[rank].name}，未孕；清誉 ${s.qingyu}、圣宠 ${s.shengchong}、身子 ${s.shenzi}。`,
+      : `单独开始第三关：${RANKS[rank].name}${s.pregnant ? "，身怀龙裔" : "，未孕"}；清誉 ${s.qingyu}、圣宠 ${s.shengchong}、身子 ${s.shenzi}。`,
   );
   popup(s, "opening");
   beginTurn3(s, 1);

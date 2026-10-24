@@ -127,11 +127,12 @@ describe("zhenhuan stage 3 content", () => {
 });
 
 describe("zhenhuan stage 3 engine", () => {
-  it("standalone start: 嫔, not pregnant, 10/10, 身子 2, three carried 把柄, opening popup", () => {
+  it("standalone start: 嫔, pregnant, 15/15, 身子 4, three carried 把柄, opening popup", () => {
     const s = newStage3(11, null);
     expect(s.turn).toBe(1);
     expect(s.rank).toBe("pin");
-    expect(s.pregnant).toBe(false);
+    expect(s.pregnant).toBe(true);
+    expect(s.statuses.some((x) => x.id === "shenhuaiLongyi")).toBe(true);
     expect([s.qingyu, s.shengchong, s.shenzi]).toEqual([STAGE3.standaloneQingyu, STAGE3.standaloneShengchong, STAGE3.standaloneShenzi]);
     expect(Object.keys(s.secrets)).toHaveLength(STAGE3.standaloneSecrets);
     expect(s.popups).toContain("opening");
@@ -153,10 +154,42 @@ describe("zhenhuan stage 3 engine", () => {
   });
 
   it("海棠春睡 (turn 3) makes a 未孕 player pregnant whatever is chosen", () => {
-    let s = advanceTo(newStage3(8, null), 3);
+    let s = advanceTo(newStage3(8, { ...CARRY, pregnant: false }), 3);
     expect(s.stories.map((x) => x.id)).toContain(FIXED_STORIES3[3]);
     s = act(s, { type: "endTurn" });
     expect(s.pregnant).toBe(true);
+  });
+
+  it("皇后笑意 (turn 2): each answering card has its own reward, none leaves a 把柄", () => {
+    let s = advanceTo(newStage3(7, CARRY), 2);
+    expect(s.stories.map((x) => x.id)).toContain("huanghouXiaoyi");
+    clearBoard(s);
+    s.stories = [{ id: "huanghouXiaoyi", chosenOptionId: null }];
+    s.shengchong = 10;
+    const [uid] = setHand(s, ["yirongZhengsu"]);
+    const secrets = { ...s.secrets };
+    s = act(s, { type: "playCard", cardUid: uid! });
+    expect(s.shengchong).toBe(13); // 戴上玉镯 +2, plus the card's own +1
+    s = act(s, { type: "endTurn" });
+    expect(s.secrets).toEqual(secrets);
+    expect(s.popups).toContain("huanghou");
+
+    let t = advanceTo(newStage3(7, CARRY), 2);
+    clearBoard(t);
+    t.stories = [{ id: "huanghouXiaoyi", chosenOptionId: null }];
+    const [shou] = setHand(t, ["shoulongRenxin"]);
+    t = act(t, { type: "playCard", cardUid: shou! });
+    expect(t.statuses.filter((x) => x.id === "ermuLingtong").length).toBeGreaterThan(0);
+  });
+
+  it("凤鸾承恩 left alone: 称病避宠, 圣宠 -1", () => {
+    let s = newStage3(3, { ...CARRY, pregnant: false });
+    clearBoard(s);
+    s.stories = [{ id: "zhaoxing", chosenOptionId: null }];
+    s.shengchong = 9;
+    s = act(s, { type: "endTurn" });
+    expect(s.log.some((l) => l.text.includes("称病避宠"))).toBe(true);
+    expect(s.shengchong).toBeLessThanOrEqual(8);
   });
 
   it("连环: the opportunity half is locked until its crisis is cleared; the shared card does both and 打压", () => {

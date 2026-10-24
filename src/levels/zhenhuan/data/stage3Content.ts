@@ -27,11 +27,12 @@ export const STAGE3 = {
   confrontTurn: 10,
   /** 寺中阶段（静白嚣张计数、静白刁难）到这一回合为止。 */
   templeLastTurn: 18,
-  /** 单独开始第三关：嫔、未孕。 */
+  /** 单独开始第三关：嫔、已有孕。 */
   standaloneRank: "pin" as RankId,
-  standaloneQingyu: 10,
-  standaloneShengchong: 10,
-  standaloneShenzi: 2,
+  standalonePregnant: true,
+  standaloneQingyu: 15,
+  standaloneShengchong: 15,
+  standaloneShenzi: 4,
   /** 单独开始第三关：从第二关的 6 种把柄里随机带入几种。 */
   standaloneSecrets: 3,
   /** 第 13、16……31 回合末【陵容的香】🌱+1。 */
@@ -1523,6 +1524,7 @@ export const LINGRONG_COLD_TEXT = "你留陵容说话，说着说着，竟说了
 
 export type StoryId3 =
   | "zhaoxing"
+  | "huanghouXiaoyi"
   | "haitangChunshui"
   | "tonghuataiChuyu"
   | "zhenYuandaoXiayu"
@@ -1558,6 +1560,7 @@ export type StoryOption3 = {
   readonly xiayu?: XiayuChoice;
   /** Story-specific flag the engine records (桐花台 / 莫愁 / 温太医探视 / 庚帖 / 送行). */
   readonly flag?: "li" | "di" | "lingrong" | "luofa" | "daixin" | "gengtie" | "songxing" | "xiangshou";
+  readonly status?: StatusId3;
 };
 
 export type StoryDef3 = {
@@ -1571,6 +1574,7 @@ export type StoryDef3 = {
 };
 
 export const FIXED_STORIES3: Partial<Record<number, StoryId3>> = {
+  2: "huanghouXiaoyi",
   3: "haitangChunshui",
   5: "tonghuataiChuyu",
   8: "zhenYuandaoXiayu",
@@ -1589,13 +1593,55 @@ export const STORIES3: Record<StoryId3, StoryDef3> = {
     name: "凤鸾承恩",
     emoji: "🌙",
     flavor: "敬事房的公公来报：今夜皇上翻了你的绿头牌。",
-    note: "打出仪容整肃 / 谨言慎行即侍寝成功（圣宠 +1，按身子 ÷ 5 判定喜脉）；打出陵容相助，效果视情分而定。不处理则错过。",
-    defaultOptionId: "cuoguo",
+    note: "打出仪容整肃 / 谨言慎行即侍寝成功（圣宠 +1，按身子 ÷ 5 判定喜脉）；打出陵容相助，效果视情分而定。不处理则称病避宠。",
+    defaultOptionId: "chengbingBichong",
     options: [
-      { id: "cuoguo", name: "错过", hidden: true, effects: [], text: "无效果", story: "这一夜就这样过去了。" },
+      {
+        id: "chengbingBichong",
+        name: "称病避宠",
+        effects: [{ resource: "shengchong", amount: -1 }],
+        text: "圣宠 -1",
+        story: "你推说身子不适，请皇上另择他人。敬事房的公公讪讪地走了。",
+      },
       { id: "shengzhuangChengen", name: "盛装承恩", card: "yirongZhengsu", effects: [], summon: true, text: "侍寝成功", story: "你盛装承恩，皇上留你到天明。" },
       { id: "shiciDechong", name: "以诗词得宠", card: "jinyanShenxing", effects: [], summon: true, text: "侍寝成功", story: "你与皇上对诗到深夜，他笑着说你是解语花。" },
       { id: "lingrongXiezhuang", name: "陵容相助", card: "lingrongXiangzhu", effects: [], text: "效果视你与陵容的情分而定", story: "陵容来了碎玉轩。" },
+    ],
+  },
+  huanghouXiaoyi: {
+    id: "huanghouXiaoyi",
+    name: "皇后笑意",
+    emoji: "🦚",
+    flavor: "华妃倒后，皇后亲自来碎玉轩道贺，赏下一对玉镯。她笑得温和，你却想起翊坤宫倒下那日，她站在廊下一言不发的样子。",
+    note: "皇后第一次登门。怎么接这份赏，各有各的好处；这一回她不会记你什么。",
+    defaultOptionId: "xieen",
+    options: [
+      { id: "xieen", name: "谢恩收下", effects: [sc(1)], text: "圣宠 +1", story: "你跪下谢恩，把玉镯收进了妆奁。皇后扶你起来，说往后常来景仁宫坐坐。" },
+      {
+        id: "daishangYuzhuo",
+        name: "戴上玉镯",
+        card: "yirongZhengsu",
+        effects: [sc(2)],
+        text: "圣宠 +2",
+        story: "你当场把玉镯戴上，衬着新裁的衣裳。当晚皇上来碎玉轩，一眼就看见了，说皇后挑东西向来有眼光。",
+      },
+      {
+        id: "gongjinYingdui",
+        name: "恭谨应对",
+        card: "jinyanShenxing",
+        effects: [q(1)],
+        text: "清誉 +1",
+        story: "你句句谦让，只说华妃之事全赖皇上圣明、皇后主持。皇后笑意更深了些，回去便在太后跟前夸你懂事。",
+      },
+      {
+        id: "dashangLairen",
+        name: "打赏来人",
+        card: "shoulongRenxin",
+        effects: [],
+        status: "ermuLingtong",
+        text: "获得【耳目灵通】",
+        story: "你让小允子重重打赏了景仁宫来送东西的宫人。几句闲话下来，你知道了景仁宫近来常有哪些人走动。",
+      },
     ],
   },
   haitangChunshui: {
@@ -1804,13 +1850,6 @@ export const STORIES3: Record<StoryId3, StoryDef3> = {
 };
 
 // ---------------------------------------------------------------- special event cards
-
-/** 第 2 回合：皇后第一次来（只有剧情，事件池从第 3 回合起每回合抽 1 张）。 */
-export const HUANGHOU_XIAOYI = {
-  name: "皇后笑意",
-  emoji: "🦚",
-  text: "华妃倒后，皇后亲自来碎玉轩道贺，赏下一对玉镯。她笑得温和，你却想起翊坤宫倒下那日，她站在廊下一言不发的样子。",
-};
 
 /** 第 6 回合【纯元故衣】：槿汐 + 一张查验类牌才能识破。 */
 export const CHUNYUAN = {
