@@ -17,7 +17,7 @@
 ## 发给 ChatGPT 的消息
 
 ```text
-请通过 GitHub 连接读取仓库 loolos/DeckOfMandate 里的文件 src/levels/zhenhuan/docs/art-prompts-stage3.md（在 claude/project-thread-dpee0i 分支上；如果这个分支已经不存在，就读 main 分支上的同一个文件）。这是一组插画任务，一共 60 段 prompt。
+请通过 GitHub 连接读取仓库 loolos/DeckOfMandate 里的文件 src/levels/zhenhuan/docs/art-prompts-stage3.md（main 分支）。这是一组插画任务，一共 60 段 prompt。
 
 先完整读一遍文件里的「一、统一设定」「二、第三关补充设定」「三、出图格式」，之后每张图都必须遵守。现在先不要画图，读完回复“已读完，共 60 段”。
 
