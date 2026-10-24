@@ -762,7 +762,7 @@ function HandCard({ state, card, dispatch, fold }: { state: Z3State; card: CardI
         </span>
         {tags}
       </div>
-      <CardArt src={cardArtUrl(card.id)} emoji={def.emoji} />
+      <CardArt src={cardArtUrl(card.id, state.act === 1 ? undefined : "temple")} emoji={def.emoji} />
       <p className={styles.flavor}>{def.flavor}</p>
       {def.rulesText.map((line) => (
         <p key={line} className={styles.rule}>

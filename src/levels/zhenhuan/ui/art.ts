@@ -17,8 +17,11 @@ const EVENT_ART = indexByBasename(import.meta.glob<string>("../assets/events/*.w
 const STORY_ART = indexByBasename(import.meta.glob<string>("../assets/stories/*.webp", { eager: true, import: "default" }));
 const BACKDROPS = indexByBasename(import.meta.glob<string>("../assets/backdrops/*.webp", { eager: true, import: "default" }));
 
-export function cardArtUrl(id: CardId | CardId2 | CardId3): string | null {
-  return CARD_ART.get(id) ?? null;
+/** 第三关寺中（第二、三幕）换了修行装束的手牌，配图是 `cards/<id>_temple.webp`；没有这张就用原图。 */
+export const TEMPLE_CARD_ART = ["jinxiXiangzhu", "meizhuangXiangzhu", "wenTaiyiZhenzhi"] as const satisfies readonly CardId3[];
+
+export function cardArtUrl(id: CardId | CardId2 | CardId3, variant?: "temple"): string | null {
+  return (variant ? CARD_ART.get(`${id}_${variant}`) : undefined) ?? CARD_ART.get(id) ?? null;
 }
 
 /** Events shared by several chapters (same id) share one picture. */
