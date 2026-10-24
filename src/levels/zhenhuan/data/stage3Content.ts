@@ -18,7 +18,7 @@ export const RESOURCE3_LABEL: Record<Resource3, string> = { qingyu: "清誉", sh
 export const RESOURCE3_EMOJI: Record<Resource3, string> = { qingyu: "🪷", shengchong: "👑", shenzi: "🌱" };
 
 export const STAGE3 = {
-  title: "第三关 · 青灯凤阙",
+  title: "第三关 · 青灯凤阙（试玩版）",
   totalTurns: 33,
   /** 第二幕（甘露寺）从这一回合开始。 */
   act2Start: 11,
