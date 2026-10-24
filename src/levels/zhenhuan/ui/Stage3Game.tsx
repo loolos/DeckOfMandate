@@ -604,12 +604,9 @@ function YihuaCard({ state, fold, dispatch }: { state: Z3State; fold: Fold; disp
           <Tag tag="yihua" tone={styles.kindTrial} dispatch={dispatch}>
             持续
           </Tag>
-          <Tag tag="doubt" tone={styles.kindCrisis} dispatch={dispatch}>
-            📜{y.doubt}/{DOUBT.max}
-          </Tag>
         </>
       }
-      summary={`${YIHUA.steps.map((s, i) => `${y.step > i + 1 ? "✓" : y.step === i + 1 ? "▶" : "·"}${s.emoji}`).join(" ")} 📜${y.doubt}/${DOUBT.max}`}
+      summary={`${YIHUA.steps.map((s, i) => `${y.step > i + 1 ? "✓" : y.step === i + 1 ? "▶" : "·"}${s.emoji}`).join(" ")}`}
       fold={fold}
       dispatch={dispatch}
     >
@@ -823,7 +820,7 @@ function Statuses({ state, dispatch }: { state: Z3State; dispatch: Dispatch }) {
     <div className={styles.statusRow}>
       <span className={styles.muted}>状态：</span>
       <ScrollRow className={styles.statuses}>
-        {state.statuses.length === 0 ? <span className={styles.muted}>无</span> : null}
+        {state.statuses.length === 0 && !state.yihua ? <span className={styles.muted}>无</span> : null}
         {state.statuses.map((st) => {
           const def = STATUSES3[st.id];
           const notYet = !def.permanent && st.appliesFromTurn > state.turn;
@@ -884,6 +881,25 @@ function Statuses({ state, dispatch }: { state: Z3State; dispatch: Dispatch }) {
             </div>
           );
         })}
+        {state.yihua ? (
+          <div
+            className={[styles.status, styles.statusNegative].join(" ")}
+            role="button"
+            tabIndex={0}
+            onClick={() => dispatch({ type: "explainTag", tag: "doubt" })}
+            onKeyDown={(e) => activateOnKey(e, () => dispatch({ type: "explainTag", tag: "doubt" }))}
+          >
+            <div className={styles.statusLine}>
+              <span>
+                📜<span className={styles.statusFull}> 疑点</span>
+              </span>
+              <span className={styles.statusBrief}>
+                {state.yihua.doubt}/{DOUBT.max}
+              </span>
+              <span className={`${styles.muted} ${styles.statusFull}`}>到 {DOUBT.max} 即失败</span>
+            </div>
+          </div>
+        ) : null}
       </ScrollRow>
     </div>
   );
@@ -1267,7 +1283,6 @@ export function Stage3Game({ state, dispatch, runCode, showRules, onShowRules, o
             />
           ) : null}
           <StatChip icon="🌱" label="身子" info={RESOURCE_INFO3.shenzi} value={state.shenzi} max={SHENZI.max} danger={state.shenzi <= 1} />
-          {state.yihua ? <StatChip icon="📜" label="疑点" hint={`（到 ${DOUBT.max} 即失败）`} info={{ lore: TAG3_INFO.doubt.lore, rules: [TAG3_INFO.doubt.rules] }} value={state.yihua.doubt} max={DOUBT.max} danger={state.yihua.doubt >= DOUBT.max - 1} /> : null}
           <span className={styles.stripDivider} aria-hidden="true" />
           <StatChip icon="🀄" label="本回合出牌" info={PLAYS_INFO3} value={state.playsUsed} max={playLimit3(state)} meter={false} />
           <PileGroup compact={compact}>
