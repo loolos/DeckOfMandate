@@ -620,35 +620,38 @@ export type SecretDef = {
   readonly line: string;
   /** 只有陵容在场：甄嬛从这几条里明白是她。 */
   readonly lingrong: boolean;
+  /** 这件事当初是怎么来的（对质时标在皇后的问话下面）。 */
+  readonly hint: string;
 };
 
 const ENSHANG_LINE = "「本宫赏的东西，妹妹收得倒也心安。」";
 
 export const SECRETS: Record<SecretId, SecretDef> = {
-  shiqinNeiqing: { name: "侍寝内情", emoji: "🌙", lingrong: true, line: "「那晚妹妹说身子乏，怎么转头就让旁人替了去？」" },
-  zhuangshenNonggui: { name: "装神弄鬼", emoji: "👻", lingrong: true, line: "「丽嫔那夜见的‘福子’，本宫倒想问问是谁扮的。」" },
-  sitanSiqiu: { name: "私探死囚", emoji: "🥀", lingrong: true, line: "「余氏临死前，碎玉轩还派人去冷宫见过她。」" },
-  jierenYaochong: { name: "借人邀宠", emoji: "🌺", lingrong: true, line: "「那支曲子唱得巧，皇上偏偏就往碎玉轩去了。」" },
-  kuitanGongwei: { name: "窥探宫闱", emoji: "👁️", lingrong: true, line: "「各宫的宫女往哪儿走，妹妹倒比内务府还清楚。」" },
-  qiuziXinqie: { name: "求子心切", emoji: "🙏", lingrong: true, line: "「妹妹在宝华殿求的，只怕不只是平安。」" },
-  wangyeZengwu: { name: "王爷赠物", emoji: "🎐", lingrong: true, line: "「桐花台那日，十七弟与妹妹说了好一会子话。」" },
-  guyiYuanyan: { name: "故衣怨言", emoji: "👗", lingrong: true, line: "「穿了一回旧衣，妹妹就说皇上看的从来不是你？」" },
-  xinlengZhiyu: { name: "心冷之语", emoji: "💔", lingrong: true, line: "「心冷二字，妹妹也说得出口。」" },
-  yuzhongShuxin: { name: "狱中书信", emoji: "📜", lingrong: true, line: "「往狱里递的那封信，写了什么，皇上不妨问问她。」" },
-  qiciBuyong: { name: "弃赐不用", emoji: "🍲", lingrong: true, line: "「本宫送去的补品，妹妹一口没动，倒是喂了花。」" },
-  xijianSiyu: { name: "席间私语", emoji: "🏮", lingrong: true, line: "「赏花那日，妹妹和人说了好些各宫的长短。」" },
-  chuyanDingzhuang: { name: "出言顶撞", emoji: "🗣️", lingrong: false, line: "「齐妃说，那日你当着本宫的面顶了她一句……」" },
-  shanduShide: { name: "善妒失德", emoji: "🐍", lingrong: false, line: "「祺贵人哭着来说，你给了她好大的脸色。」" },
-  yuanwangJunfu: { name: "怨望君父", emoji: "⛓️", lingrong: false, line: "「听说妹妹私下说，甄大人这案子冤在皇上？」" },
-  "enshang.jingrenHoushang": { name: "恩赏为凭·云锦步摇", emoji: "🎁", lingrong: false, line: ENSHANG_LINE },
-  "enshang.xieliGongwu": { name: "恩赏为凭·协理宫务", emoji: "📜", lingrong: false, line: "「本宫让妹妹帮着打理宫务，妹妹倒真把六宫当成了自己的。」" },
-  "enshang.antaiBupin": { name: "恩赏为凭·安胎补品", emoji: "🍲", lingrong: false, line: ENSHANG_LINE },
-  "enshang.jiayanXianyi": { name: "恩赏为凭·家宴献艺", emoji: "🎵", lingrong: false, line: "「家宴上那一曲，妹妹是唱给谁听的？」" },
-  "enshang.shanghuaXiaoju": { name: "恩赏为凭·赏花小聚", emoji: "🏮", lingrong: false, line: ENSHANG_LINE },
+  shiqinNeiqing: { name: "侍寝内情", emoji: "🌙", lingrong: true, line: "「那晚妹妹说身子乏，怎么转头就让旁人替了去？」", hint: "第二关里，你曾让陵容代你侍寝。" },
+  zhuangshenNonggui: { name: "装神弄鬼", emoji: "👻", lingrong: true, line: "「丽嫔那夜见的‘福子’，本宫倒想问问是谁扮的。」", hint: "丽嫔惊梦那夜，装“福子”吓她，是陵容帮你办的。" },
+  sitanSiqiu: { name: "私探死囚", emoji: "🥀", lingrong: true, line: "「余氏临死前，碎玉轩还派人去冷宫见过她。」", hint: "余莺儿临死前，你让陵容去探视过她。" },
+  jierenYaochong: { name: "借人邀宠", emoji: "🌺", lingrong: true, line: "「那支曲子唱得巧，皇上偏偏就往碎玉轩去了。」", hint: "欢宜香浓那回，你借陵容的曲子把皇上引到了碎玉轩。" },
+  kuitanGongwei: { name: "窥探宫闱", emoji: "👁️", lingrong: true, line: "「各宫的宫女往哪儿走，妹妹倒比内务府还清楚。」", hint: "隔墙有耳那回，各宫的动静是陵容替你打探的。" },
+  qiuziXinqie: { name: "求子心切", emoji: "🙏", lingrong: true, line: "「妹妹在宝华殿求的，只怕不只是平安。」", hint: "在宝华殿祈福时，你求的是子嗣。" },
+  wangyeZengwu: { name: "王爷赠物", emoji: "🎐", lingrong: true, line: "「桐花台那日，十七弟与妹妹说了好一会子话。」", hint: "桐花台初遇果郡王，你与他说了好一会儿话。" },
+  guyiYuanyan: { name: "故衣怨言", emoji: "👗", lingrong: true, line: "「穿了一回旧衣，妹妹就说皇上看的从来不是你？」", hint: "纯元故衣之后，你对陵容说过皇上看的从来不是你。" },
+  xinlengZhiyu: { name: "心冷之语", emoji: "💔", lingrong: true, line: "「心冷二字，妹妹也说得出口。」", hint: "菀菀类卿之后，你对陵容说过心冷的话。" },
+  yuzhongShuxin: { name: "狱中书信", emoji: "📜", lingrong: true, line: "「往狱里递的那封信，写了什么，皇上不妨问问她。」", hint: "父亲下狱后，你托人往狱里递过信。" },
+  qiciBuyong: { name: "弃赐不用", emoji: "🍲", lingrong: true, line: "「本宫送去的补品，妹妹一口没动，倒是喂了花。」", hint: "皇后送的安胎补品，你没有用。" },
+  xijianSiyu: { name: "席间私语", emoji: "🏮", lingrong: true, line: "「赏花那日，妹妹和人说了好些各宫的长短。」", hint: "赏花小聚上，你与人议论过各宫的长短。" },
+  chuyanDingzhuang: { name: "出言顶撞", emoji: "🗣️", lingrong: false, line: "「齐妃说，那日你当着本宫的面顶了她一句……」", hint: "齐妃寻衅的事没有压下去，你当面顶过她。" },
+  shanduShide: { name: "善妒失德", emoji: "🐍", lingrong: false, line: "「祺贵人哭着来说，你给了她好大的脸色。」", hint: "祺贵人争宠的事没有压下去，你给过她脸色。" },
+  yuanwangJunfu: { name: "怨望君父", emoji: "⛓️", lingrong: false, line: "「听说妹妹私下说，甄大人这案子冤在皇上？」", hint: "鄂敏参本的事没有压下去，你为父亲的案子流露过怨望。" },
+  "enshang.jingrenHoushang": { name: "恩赏为凭·云锦步摇", emoji: "🎁", lingrong: false, line: ENSHANG_LINE, hint: "你收下了景仁宫的云锦步摇。" },
+  "enshang.xieliGongwu": { name: "恩赏为凭·协理宫务", emoji: "📜", lingrong: false, line: "「本宫让妹妹帮着打理宫务，妹妹倒真把六宫当成了自己的。」", hint: "你应下了皇后托付的宫务。" },
+  "enshang.antaiBupin": { name: "恩赏为凭·安胎补品", emoji: "🍲", lingrong: false, line: ENSHANG_LINE, hint: "你收下了景仁宫的安胎补品。" },
+  "enshang.jiayanXianyi": { name: "恩赏为凭·家宴献艺", emoji: "🎵", lingrong: false, line: "「家宴上那一曲，妹妹是唱给谁听的？」", hint: "你应了皇后，在家宴上献艺。" },
+  "enshang.shanghuaXiaoju": { name: "恩赏为凭·赏花小聚", emoji: "🏮", lingrong: false, line: ENSHANG_LINE, hint: "你随皇后赏花，收下了她的好意。" },
 };
 
 /** 怨怼的陵容编出来的那一条（甄嬛知道是假的，却也知道只有陵容编得出来）。 */
 export const FABRICATED_SECRET = "「还有一桩：妹妹私下说过，这宫里的位分，迟早都是她的。」";
+export const FABRICATED_HINT = "这话你从未说过。";
 
 // ---------------------------------------------------------------- 盟友 / 对头
 
@@ -2126,9 +2129,13 @@ export const POPUP_TEXT = {
     "「菀菀类卿，暂排苦思，亦除却巫山非云也。」短短一行字，墨色早就旧了。你忽然想起生辰宴前那件封在库里的旧衣，想起镜子里那个陌生的自己，原来那从来不是巧合。倚梅园里那一句许愿，杏花林下那一回眸，他赐你的那个“莞”字，取的原是她的“菀”。这些年的恩宠，枕边那些温存的话，一句一句，原来都是说给另一个人听的。",
     "那一夜碎玉轩的灯一直亮着。天将明时，孩子落了地，哭声细细的，像一只刚出壳的雏鸟。皇上隔日赐了名，叫胧月。你抱着她，看窗外的天一点点亮起来，心里却有什么东西，跟着那一夜的月色一起暗了下去。",
   ] as readonly string[],
-  confrontIntro: "这些日子，你落在旁人眼里、记在旁人心里的事：",
+  confrontIntro: "皇后把这些日子的事一桩桩拿出来问：",
   confrontNone: "皇后手里什么也没有。",
-  confrontWithheld: "陵容瞒下了此事，皇后并不知道",
+  confrontSummary: {
+    exposed: "这里头有几桩，本该只有陵容一个人知道。看来是她透露给了皇后。",
+    withheld: "可她知道的并不止这些，另有几桩，似乎被她瞒了下来：",
+    withheldOnly: "你隐约觉得，有几桩只有陵容知道的事，皇后并没有问起，应是她瞒了下来：",
+  },
   confrontDuanfei: "端妃在一旁淡淡说了一句，皇后便略过了一桩。",
   confrontRealize: {
     exposed:

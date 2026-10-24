@@ -19,6 +19,7 @@ import {
   EVENT_KIND3_LABEL,
   EVENTS3,
   EXIT,
+  FABRICATED_HINT,
   FABRICATED_SECRET,
   FEILAO,
   FIXED_STORIES3,
@@ -1706,7 +1707,7 @@ export function replay3(seed: number, carry: Carry3 | null, actions: readonly Z3
 }
 
 /** The 把柄 at 对质: what 皇后 brought out, plus the ones a 亲厚 陵容 kept back (`withheld`). */
-export function confrontLines(s: Z3State): { line: string; lingrong: boolean; withheld?: boolean }[] {
+export function confrontLines(s: Z3State): { line: string; hint: string; lingrong: boolean; withheld?: boolean }[] {
   const tier = s.exitTierLingrong ?? lingrongTier(s.relation);
   const held = (Object.keys(s.secrets) as SecretId[]).filter((id) => (s.secrets[id] ?? 0) > 0);
   // a 亲厚 陵容 kept two of hers back
@@ -1714,9 +1715,9 @@ export function confrontLines(s: Z3State): { line: string; lingrong: boolean; wi
   const lines = held.map((id) => {
     const withheld = hidden > 0 && SECRETS[id].lingrong;
     if (withheld) hidden--;
-    return { line: SECRETS[id].line, lingrong: SECRETS[id].lingrong, ...(withheld ? { withheld } : {}) };
+    return { line: SECRETS[id].line, hint: SECRETS[id].hint, lingrong: SECRETS[id].lingrong, ...(withheld ? { withheld } : {}) };
   });
-  if (tier === "resentful") lines.push({ line: FABRICATED_SECRET, lingrong: true });
+  if (tier === "resentful") lines.push({ line: FABRICATED_SECRET, hint: FABRICATED_HINT, lingrong: true });
   return lines;
 }
 

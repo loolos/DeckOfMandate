@@ -936,16 +936,29 @@ function Notice({ title, children, onClose, button = "知道了" }: { title: str
 function ConfrontEvidence({ state }: { state: Z3State }) {
   const lines = confrontLines(state);
   if (lines.length === 0) return <p className={styles.muted}>{POPUP_TEXT.confrontNone}</p>;
+  const shown = lines.filter((l) => !l.withheld);
+  const withheld = lines.filter((l) => l.withheld);
+  const exposed = shown.some((l) => l.lingrong);
+  const summary = POPUP_TEXT.confrontSummary;
+  const entry = (l: (typeof lines)[number], i: number) => (
+    <p key={`${l.line}-${i}`}>
+      {l.line}
+      <br />
+      <span className={styles.muted}>（{l.hint}）</span>
+    </p>
+  );
   return (
     <>
-      <p className={styles.muted}>{POPUP_TEXT.confrontIntro}</p>
-      {lines.map((l, i) => (
-        <p key={`${l.line}-${i}`} className={l.withheld ? styles.muted : undefined}>
-          {l.line}
-          {l.withheld ? <em>（{POPUP_TEXT.confrontWithheld}）</em> : null}
+      {shown.length > 0 ? <p className={styles.muted}>{POPUP_TEXT.confrontIntro}</p> : null}
+      {shown.map(entry)}
+      {hasStatus3(state, "duanfeiXianghu") ? <p className={styles.muted}>{POPUP_TEXT.confrontDuanfei}</p> : null}
+      {exposed ? <p>{summary.exposed}</p> : null}
+      {withheld.length > 0 ? <p>{exposed ? summary.withheld : summary.withheldOnly}</p> : null}
+      {withheld.map((l, i) => (
+        <p key={`${l.line}-${i}`} className={styles.muted}>
+          · {l.hint}
         </p>
       ))}
-      {hasStatus3(state, "duanfeiXianghu") ? <p className={styles.muted}>{POPUP_TEXT.confrontDuanfei}</p> : null}
     </>
   );
 }
