@@ -975,7 +975,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     resolvedText: "移除事件",
     unresolvedText: "获得【流言缠身】",
     resolvedStory: {
-      jinyanShenxing: "你闭门不出，见了谁都只说些天气花草。流言找不到新的把柄，几日便散了。",
+      jinyanShenxing: "你闭门不出，见了谁都只说些天气花草。流言找不到新的话柄，几日便散了。",
       meizhuangXiangzhu: "眉庄在各宫走动时替你分说清楚，又寻出了嚼舌根的宫女。流言一夜之间没了声息。",
       shoulongRenxin: "你让小允子拿了些碎银子，在各宫的宫人间打点了一圈。流言渐渐没人再提。",
       jinxiXiangzhu: "槿汐暗中寻到了传话的源头，把几个碎嘴的宫人敲打了一番。流言没了下文。",
@@ -1172,7 +1172,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     unresolvedText: "圣宠 +1",
     resolvedStory: {
       jinyanShenxing: "你说嫔妾福薄，受不起这样的厚赏，只收下了一匹素缎。皇后笑着说你太过谨慎，这话传到寿康宫，太后倒夸你知道分寸。",
-      jinxiXiangzhu: "槿汐替你回了话，说小主素来不爱鲜亮的颜色。皇后便改赏了几盒燕窝，槿汐亲手验过，日日炖给你喝。",
+      jinxiXiangzhu: "槿汐替你回了话，说小主素来不爱鲜亮的颜色。皇后便改赏了几盒燕窝，槿汐把燕窝收进小厨房，每日炖好了给你送去。",
     },
   },
   xieliGongwu: {
@@ -1205,8 +1205,8 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     unresolvedText: "清誉 +1",
     note: "只在有孕时出现。",
     resolvedStory: {
-      wenTaiyiZhenzhi: "温实初验过才敢让你吃。东西倒是干净的，他又添了两味药，另开了一张安胎的方子。",
-      jinxiXiangzhu: "槿汐接过补品，回头就倒进了花盆里，换了一盅自己炖的，火候一刻也不差。",
+      wenTaiyiZhenzhi: "温实初照例看过才让你用。补品并无不妥，他又添了两味药，另开了一张安胎的方子。",
+      jinxiXiangzhu: "槿汐谢了赏，替你收下，转头吩咐小厨房另炖了一盅清润的，说小主这几日胃口淡，补品先温着，换着用。",
     },
   },
   jiayanXianyi: {
@@ -1541,9 +1541,9 @@ export const LINGRONG_EVENT3: Partial<Record<EventId3, TierTable>> = {
     resentful: { resolves: false, story: "欣贵人说话没轻没重，陵容听了几句便沉了脸，起身走了。" },
   },
   antaiBupin: {
-    close: { resolves: true, story: "陵容闻了闻那盅补品，说太燥了，悄悄替你倒进了花盆里：「皇后那边，只当姐姐收下了。」她替你掖好被角，又陪你说了一会儿话。" },
-    distant: { resolves: true, story: "陵容说这补品太燥，替你倒了，又叮嘱你往后入口的东西都要当心。" },
-    resentful: { resolves: true, story: "陵容端走了补品，说替姐姐处置了。她没多坐，放下话便走了。" },
+    close: { resolves: true, story: "陵容尝了尝那盅补品，说炖得偏燥，不如先搁着，另让小厨房炖了盅清淡的给你。她替你掖好被角，又陪你说了一会儿话。" },
+    distant: { resolves: true, story: "陵容说这补品炖得偏燥，替你换了盅清淡的，又叮嘱你多歇着。" },
+    resentful: { resolves: true, story: "陵容端走了补品，说替姐姐换盅清淡的来。她没多坐，放下话便走了。" },
   },
   jiayanXianyi: {
     close: { resolves: true, effects: [sc(1)], story: "你抚琴，陵容唱曲。一曲终了，皇上抚掌大笑，赏赐都记在了碎玉轩名下。陵容低着头，没说话。" },
