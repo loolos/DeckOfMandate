@@ -67,11 +67,11 @@
 | E48 | 禅房抄经 | 机会 | chanfangChaojing |
 | E49 | 莫言援手 | 机会 | moyanYuanshou |
 | E50 | 月下对谈 | 机会 | yuexiaDuitan |
-| E51 | 炭火粮米 | 危机 | tanhuoLiangmi |
-| E52 | 罚做粗活 | 危机 | fazuoCuhuo |
-| E53 | 诬偷香油钱 | 危机 | wutouXiangyou |
-| E54 | 夜半惊扰 | 危机 | yebanJingrao |
-| E55 | 闲人窥探 | 危机 | xianrenKuitan |
+| E51 | 断炭缺粮 | 危机 | tanhuoLiangmi |
+| E52 | 杂役磋磨 | 危机 | fazuoCuhuo |
+| E53 | 香油钱之冤 | 危机 | wutouXiangyou |
+| E54 | 夜半惊魂 | 危机 | yebanJingrao |
+| E55 | 耳目窥伺 | 危机 | xianrenKuitan |
 | E56 | 景仁宫来人 | 危机 | jingrenLairen |
 | S17 | 皇后笑意 | 剧情 | huanghouXiaoyi |
 | S18 | 海棠春睡 | 剧情 | haitangChunshui |

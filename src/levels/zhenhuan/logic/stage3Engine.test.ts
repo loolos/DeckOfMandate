@@ -282,7 +282,7 @@ describe("zhenhuan stage 3 engine", () => {
     expect(EVENTS3.xianfuQi.resolvedStory.meizhuangXiangzhu).not.toBe(EVENTS3.xianfuJing.resolvedStory.meizhuangXiangzhu);
   });
 
-  it("欣贵人仗义 waives one rival crisis penalty; the crisis itself stays resolvable", () => {
+  it("欣贵人解围 waives one rival crisis penalty; the crisis itself stays resolvable", () => {
     let s = advanceTo(newStage3(3, CARRY), 3);
     clearBoard(s);
     s.crisis = ev(s, "qifeiXunxin");

@@ -262,7 +262,7 @@ function EventCard({ state, inst, fold, dispatch }: { state: Z3State; inst: Even
         </p>
       ) : null}
       {def.rival && !inst.resolved && state.statuses.some((st) => st.id === "xinGuirenZhangyi") ? (
-        <p className={styles.rule}>🗣️ 没化解的话，【欣贵人仗义】会替你挡下这次惩罚。</p>
+        <p className={styles.rule}>🗣️ 没化解的话，【欣贵人解围】会替你挡下这次惩罚。</p>
       ) : null}
       {def.pair ? (
         <p className={styles.rule}>

@@ -35,7 +35,7 @@ export const STAGE3 = {
   standaloneShenzi: 4,
   /** 单独开始第三关：从第二关的 6 种把柄里随机带入几种。 */
   standaloneSecrets: 3,
-  /** 第 13、16……31 回合末【陵容的香】🌱+1。 */
+  /** 第 13、16……31 回合末【暗香盈袖】🌱+1。 */
   fragranceTurns: [13, 16, 19, 22, 25, 28, 31] as readonly number[],
   /** 🌟完美：三步在这一回合之前完成。 */
   perfectBefore: 30,
@@ -243,7 +243,7 @@ export const CARDS3: Record<CardId3, CardDef3> = {
     base: [],
     baseDraw: 0,
     matches: ["tanhuoLiangmi", "fazuoCuhuo", "jinganChuilian", "shanzhongCaiyao", "moyanYuanshou"],
-    rulesText: ["无基础效果。", "联动：用它化解危机时，获得【一时无错】：下回合抓牌 +1（静白一时挑不出错）。"],
+    rulesText: ["无基础效果。", "联动：用它化解危机时，获得【滴水不漏】：下回合抓牌 +1（静白一时挑不出错）。"],
     rulesCompact: "⚡→🎴+1",
   },
   jingxinRennai: {
@@ -374,7 +374,7 @@ export type StatusDef3 = {
   readonly playBonus?: number;
   readonly blocksCards?: readonly CardId3[];
   readonly noSummon?: boolean;
-  /** Applied at the end of every turn it is in effect (寒症). */
+  /** Applied at the end of every turn it is in effect (寒疾缠身). */
   readonly turnEnd?: readonly Delta3[];
   readonly effectText: string;
   readonly flavor: string;
@@ -497,7 +497,7 @@ export const STATUSES3: Record<StatusId3, StatusDef3> = {
   },
   xinGuirenZhangyi: {
     id: "xinGuirenZhangyi",
-    name: "欣贵人仗义",
+    name: "欣贵人解围",
     emoji: "🗣️",
     tag: "positive",
     duration: 0,
@@ -527,19 +527,19 @@ export const STATUSES3: Record<StatusId3, StatusDef3> = {
   dayaYanqingQi: daya("dayaYanqingQi", "延庆殿夜话·齐妃探病", "齐妃白跑一趟，皇后那边也懒得再差她来。"),
   lingrongDeXiang: {
     id: "lingrongDeXiang",
-    name: "陵容的香",
+    name: "暗香盈袖",
     emoji: "🎶",
     tag: "positive",
     duration: 0,
     permanent: true,
     unremovable: true,
     drawModifier: 0,
-    effectText: "第 13、16、19、22、25、28、31 回合末各 🌱身子 +1，一直持续到回宫。",
+    effectText: "第 13 回合起，每 3 回合末 🌱身子 +1，直至回宫。",
     flavor: "一盒亲手调的香，这回真的无害。",
   },
   shitaiBihu: {
     id: "shitaiBihu",
-    name: "师太庇护",
+    name: "佛门庇荫",
     emoji: "🍵",
     tag: "positive",
     duration: 0,
@@ -550,7 +550,7 @@ export const STATUSES3: Record<StatusId3, StatusDef3> = {
   },
   hanzheng: {
     id: "hanzheng",
-    name: "寒症",
+    name: "寒疾缠身",
     emoji: "🥶",
     tag: "negative",
     duration: 2,
@@ -582,7 +582,7 @@ export const STATUSES3: Record<StatusId3, StatusDef3> = {
   },
   yishiWucuo: {
     id: "yishiWucuo",
-    name: "一时无错",
+    name: "滴水不漏",
     emoji: "🪵",
     tag: "positive",
     duration: 1,
@@ -785,7 +785,7 @@ export type EventDef3 = {
   readonly resolvedText: string;
   readonly unresolvedText: string;
   readonly resolvedStory: Partial<Record<CardId3, string>>;
-  /** 凌云峰 text (炭火粮米 / 师太 / 莫言 change their story on the mountain). */
+  /** 凌云峰 text (断炭缺粮 / 师太 / 莫言 change their story on the mountain). */
   readonly peakFlavor?: string;
   readonly note?: string;
 };
@@ -904,7 +904,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     reward: [sc(1)],
     penalty: NO,
     ally: "xin",
-    resolvedText: "圣宠 +1；第一次把握时获得【欣贵人仗义】",
+    resolvedText: "圣宠 +1；第一次把握时获得【欣贵人解围】",
     unresolvedText: "无额外效果，事件消失",
     resolvedStory: {
       shoulongRenxin: "你让小允子备了她最爱吃的点心。欣贵人吃得高兴，拍着胸脯说往后谁敢欺负你，她第一个不答应。",
@@ -921,7 +921,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     penalty: NO,
     ally: "xin",
     pair: "yuhuayuan",
-    resolvedText: "圣宠 +1；第一次把握时获得【欣贵人仗义】",
+    resolvedText: "圣宠 +1；第一次把握时获得【欣贵人解围】",
     unresolvedText: "无额外效果，事件消失",
     resolvedStory: {
       jinyanShenxing: "齐妃走远了，欣贵人挽着你笑：「你那一句不软不硬，我接得可痛快。早该有人治治她了。」两人在花下一直说到日头西斜。",
@@ -1286,7 +1286,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     peakFlavor: "静岸师太拄着拐杖上了凌云峰，说是来看看你的病。",
     reward: NO,
     penalty: NO,
-    resolvedText: "获得【师太庇护】",
+    resolvedText: "获得【佛门庇荫】",
     unresolvedText: "无额外效果，事件消失",
     resolvedStory: {
       chanyuXiushen: "你与师太说了几句禅理。师太点点头：「你倒是有慧根。」此后静白再刁难你，师太总会拦一拦。",
@@ -1362,7 +1362,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
   tanhuoLiangmi: {
     id: "tanhuoLiangmi",
     kind: "crisis",
-    name: "炭火粮米",
+    name: "断炭缺粮",
     emoji: "🔥",
     flavor: "静白又克扣了你屋里的炭火，说寺里清苦，修行之人不该贪暖。",
     peakFlavor: "风雪封了山，凌云峰上缺衣少粮，屋里冷得像冰窖。",
@@ -1371,7 +1371,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     penaltyStatus: "hanzheng",
     jingbai: true,
     resolvedText: "移除事件",
-    unresolvedText: "获得【寒症】（未来 2 回合，每回合末身子 -1）",
+    unresolvedText: "获得【寒疾缠身】（未来 2 回合，每回合末身子 -1）",
     note: "寺中算静白刁难（🧹）；凌云峰上是风雪断粮。",
     resolvedStory: {
       jingchaiBuqun: "你自己上山拾了一捆柴，手上磨出了血泡。屋里总算有了点暖气。",
@@ -1383,7 +1383,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
   fazuoCuhuo: {
     id: "fazuoCuhuo",
     kind: "crisis",
-    name: "罚做粗活",
+    name: "杂役磋磨",
     emoji: "🪣",
     flavor: "静白说你偷懒，罚你挑满后院的水缸，劈完一院子的柴。",
     reward: NO,
@@ -1401,7 +1401,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
   wutouXiangyou: {
     id: "wutouXiangyou",
     kind: "crisis",
-    name: "诬偷香油钱",
+    name: "香油钱之冤",
     emoji: "📿",
     flavor: "功德箱里少了钱，静白一口咬定是你拿的。",
     reward: NO,
@@ -1418,7 +1418,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
   yebanJingrao: {
     id: "yebanJingrao",
     kind: "crisis",
-    name: "夜半惊扰",
+    name: "夜半惊魂",
     emoji: "🐺",
     flavor: "半夜里山上起了狼嚎，一声比一声近。",
     reward: NO,
@@ -1436,7 +1436,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
   xianrenKuitan: {
     id: "xianrenKuitan",
     kind: "crisis",
-    name: "闲人窥探",
+    name: "耳目窥伺",
     emoji: "👀",
     flavor: "有几个寺里的小尼姑总在凌云峰附近转悠，探头探脑的。",
     reward: NO,
@@ -1956,9 +1956,9 @@ export const FEILAO = {
     meizhuangXiangzhu: "「宫中送药」：眉庄托人连夜送来药材和厚衣。",
   } as Record<string, string>,
   tiers: [
-    { name: "甲 · 师太暗护", text: "身子不减；获得【师太庇护】", story: "静岸师太拦不住静白，却悄悄让人把被褥和药送上了山。" },
-    { name: "乙 · 仓皇出寺", text: "身子 -1；获得【寒症】", story: "只许带随身衣物。槿汐扶着你，踩着雪往后山走。" },
-    { name: "丙 · 连夜被逐", text: "身子 -2、清誉 -1；获得【寒症】", story: "当夜就被抬出寺门。寺里都传你得了肺痨，没人敢靠近凌云峰。" },
+    { name: "甲 · 师太暗护", text: "身子不减；获得【佛门庇荫】", story: "静岸师太拦不住静白，却悄悄让人把被褥和药送上了山。" },
+    { name: "乙 · 仓皇出寺", text: "身子 -1；获得【寒疾缠身】", story: "只许带随身衣物。槿汐扶着你，踩着雪往后山走。" },
+    { name: "丙 · 连夜被逐", text: "身子 -2、清誉 -1；获得【寒疾缠身】", story: "当夜就被抬出寺门。寺里都传你得了肺痨，没人敢靠近凌云峰。" },
   ],
 };
 
@@ -2149,7 +2149,7 @@ export const POPUP_TEXT = {
   exitGate: "马车停在甘露寺山门前。静白师太上下打量你：「进了这道门，就没有什么小主娘娘了。」",
   exitRules: "第二幕：失去位分，每回合抓 2 打 1，清誉上限 8，换成寺中牌库；🌱身子归 0 即病死寺中。",
   feilao: "槿汐背着你，一步一步踩着雪往后山走。身后，甘露寺的门「砰」地关上了。",
-  feilaoRules: "罚做粗活、诬偷香油钱移出；月下对谈、夜半惊扰、闲人窥探加入。",
+  feilaoRules: "杂役磋磨、香油钱之冤移出；月下对谈、夜半惊魂、耳目窥伺加入。",
   zhoufu: "消息是夜里传来的：果亲王的船在江上翻了，尸骨无存。他留给你的那些东西，如今只剩下念想。",
   zhoufuRules: "3 张【果郡王相助】变成 🕯️遗物：打出即焚毁；偶遇当回合末仍在手里的，每件疑点 +1。",
   ximai:
@@ -2219,14 +2219,14 @@ export const TAG3_INFO: Record<TagId3, { label: string; lore: string; rules: str
   chezhou: { label: "掣肘", lore: "处处牵制。", rules: "情分怨怼时，陵容左右相邻的牌不能打出。打出陵容后解除。" },
   yiyi: { label: "依依", lore: "缠着姐姐不肯走。", rules: "情分生分时，陵容在回合末留在手牌中；留下几张，下回合就少抓几张。" },
   double: { label: "双牌", lore: "一个人扛不住。", rules: "同一回合内打出两张匹配牌才算解决；回合末不满 2 张则进度清零。" },
-  ally: { label: "盟友", lore: "后宫重新站队，总有人愿意站在你这边。", rules: "第一次把握她的事件，获得盟友状态（端妃相护 / 敬妃之谊 / 欣贵人仗义）。" },
+  ally: { label: "盟友", lore: "后宫重新站队，总有人愿意站在你这边。", rules: "第一次把握她的事件，获得盟友状态（端妃相护 / 敬妃之谊 / 欣贵人解围）。" },
   rival: { label: "对头", lore: "她们都是皇后的人。", rules: "用卡面标注的牌化解算打压，获得【打压】状态：该危机下次出现时自动化解一次。" },
   pair: {
     label: "连环",
     lore: "一石二鸟。",
     rules: "机会与危机成对出现。先化解危机才能把握机会；共同牌一张即可两头都顾上，并算打压。危机没化解，机会随之作废。",
   },
-  jingbai: { label: "静白刁难", lore: "静白师太在甘露寺里管着杂务，最讲寺规。你是被废出宫的带罪之人，在她眼里，不过是躲到寺里来避祸的小主，非得磨一磨性子不可：克扣炭火，罚做粗活，甚至诬你偷香油钱。静岸师太看不过去，却也不好当面驳她。", rules: "第 11–18 回合的刁难没化解，静白就更嚣张，决定第 18 回合被赶走时有多狼狈。" },
+  jingbai: { label: "静白刁难", lore: "静白师太在甘露寺里管着杂务，最讲寺规。你是被废出宫的带罪之人，在她眼里，不过是躲到寺里来避祸的小主，非得磨一磨性子不可：克扣炭火，杂役磋磨，甚至诬你偷香油钱。静岸师太看不过去，却也不好当面驳她。", rules: "第 11–18 回合的刁难没化解，静白就更嚣张，决定第 18 回合被赶走时有多狼狈。" },
   relic: { label: "遗物", lore: "他留下的东西。", rules: "打出即焚毁，没有别的效果。偶遇当回合末手里每有 1 件，疑点 +1（睹物生疑）。" },
   chengbing: { label: "称病", lore: "陵容身子不适，告了假。", rules: "景仁宫对质这一回合，陵容称病没有来，她的牌打不出。" },
   yihua: {
