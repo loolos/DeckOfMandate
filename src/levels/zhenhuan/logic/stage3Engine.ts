@@ -889,6 +889,10 @@ function applyStoryOption(s: Z3State, inst: StoryInst3, option: StoryOption3, so
   if (!alive(s)) return 0;
 
   if (option.status) addStatus3(s, option.status);
+  if (def.id === "wentaiyiTanshi" && hasStatus3(s, "jingfeiZhiyi")) {
+    log(s, "敬妃托温太医带来了不少物资，山居的日子打点得宽裕了些。", "good");
+    addStatus3(s, "jingfeiZhouji");
+  }
   if (option.removeNegatives) removeNegatives(s, option.removeNegatives, option.name);
   if (option.drawCards) drawCards3(s, option.drawCards);
   if (option.pregnancy) becomePregnant(s, def.name);

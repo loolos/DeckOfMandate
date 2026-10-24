@@ -352,6 +352,7 @@ export type StatusId3 =
   | "hanzheng"
   | "jingji"
   | "xinruZhishui"
+  | "jingfeiZhouji"
   | "yishiWucuo"
   | "dayaQifeiXunxin"
   | "dayaSanAgeYaochong"
@@ -579,6 +580,16 @@ export const STATUSES3: Record<StatusId3, StatusDef3> = {
     drawModifier: 1,
     effectText: "未来 3 回合，每回合抓牌数 +1。",
     flavor: "一卷经抄完，心里那些翻来覆去的念头，竟也平了。",
+  },
+  jingfeiZhouji: {
+    id: "jingfeiZhouji",
+    name: "敬妃周济",
+    emoji: "🧺",
+    tag: "positive",
+    duration: 3,
+    drawModifier: 1,
+    effectText: "未来 3 回合，每回合抓牌数 +1。",
+    flavor: "敬妃托温太医捎上山的衣物药材和米面，替你把山居的日子打点得宽裕了些。",
   },
   yishiWucuo: {
     id: "yishiWucuo",
@@ -1837,7 +1848,7 @@ export const STORIES3: Record<StoryId3, StoryDef3> = {
     name: "故人山中·胧月小像",
     emoji: "🩺",
     flavor: "温实初上山来了，捎来胧月的一张小像，是敬妃托他带的。画上的孩子胖乎乎的，眉眼像你。",
-    note: "本回合手牌加入一张临时的【温太医相助】（不占抓牌，回合末离场）。另可打出眉庄相助或槿汐相助「为女儿撑下去」：清誉 +1、移除 1 个负面状态（与前两项叠加）。",
+    note: "本回合手牌加入一张临时的【温太医相助】（不占抓牌，回合末离场）。另可打出眉庄相助或槿汐相助「为女儿撑下去」：清誉 +1、移除 1 个负面状态（与前两项叠加）。有【敬妃之谊】时，另获得【敬妃周济】。",
     defaultOptionId: "zhenzhi",
     options: [
       { id: "zhenzhi", name: "请他诊治", effects: [sz(2)], removeNegatives: "all", text: "移除全部负面状态；身子 +2", story: "温实初替你诊了脉，开了方子，又留下许多药材。临走时他说：「嬛妹妹，你要好好的。」" },
