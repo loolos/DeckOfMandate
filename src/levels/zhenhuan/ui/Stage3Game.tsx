@@ -1103,6 +1103,9 @@ export function Stage3Rules() {
           ))}
         </ul>
       </li>
+      {POPUP_TEXT.eventRules.map((l) => (
+        <li key={l}>{l}</li>
+      ))}
     </ul>
   );
 }
