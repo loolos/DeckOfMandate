@@ -192,6 +192,33 @@ describe("zhenhuan stage 3 engine", () => {
     expect(s.shengchong).toBeLessThanOrEqual(8);
   });
 
+  it("纯元故衣: ① 起疑 then ② 查实 avoids it; only ① costs 圣宠 -2, nothing -5; 查实 first does not count", () => {
+    const start = advanceTo(newStage3(17, CARRY), 6);
+    expect(start.chunyuan).not.toBeNull();
+    const run = (cards: CardId3[]): Z3State => {
+      let s = structuredClone(start);
+      clearBoard(s);
+      s.shengchong = 12;
+      s.extraPlays = 3;
+      for (const uid of setHand(s, cards)) s = act(s, { type: "playCard", cardUid: uid });
+      return act(s, { type: "endTurn" });
+    };
+    const seen = run(["jinxiXiangzhu", "shoulongRenxin"]);
+    expect(seen.chunyuanResult).toBe("seen");
+    expect(seen.popups).toContain("chunyuan");
+    const half = run(["yirongZhengsu"]);
+    expect(half.chunyuanResult).toBe("half");
+    const reversed = run(["wenTaiyiZhenzhi", "jinxiXiangzhu"]);
+    expect(reversed.chunyuanResult).toBe("half");
+    const fail = run([]);
+    expect(fail.chunyuanResult).toBe("fail");
+    expect(fail.log.some((l) => l.text.includes("纯元故衣：圣宠 -5"))).toBe(true);
+    expect(half.log.some((l) => l.text.includes("纯元故衣：圣宠 -2"))).toBe(true);
+    const lingrong = run(["lingrongXiangzhu", "wenTaiyiZhenzhi"]);
+    expect(lingrong.chunyuanResult).toBe("seen");
+    expect(lingrong.secrets.guyiYuanyan).toBeGreaterThan(0);
+  });
+
   it("连环: the opportunity half is locked until its crisis is cleared; the shared card does both and 打压", () => {
     const s = newStage3(2, CARRY);
     clearBoard(s);

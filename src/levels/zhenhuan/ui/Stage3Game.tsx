@@ -45,6 +45,7 @@ import {
   blockingStatusName3,
   canEndTurn3,
   canPlayCard3,
+  chunyuanAccepts,
   chunyuanChecked,
   confrontAccepts,
   confrontLines,
@@ -445,27 +446,33 @@ function ChunyuanCard({ state, fold, dispatch }: { state: Z3State; fold: Fold; d
   const c = state.chunyuan;
   if (!c) return null;
   const done = chunyuanChecked(state);
-  const jinxi = c.played.includes("jinxiXiangzhu");
-  const check = c.played.some((id) => CHUNYUAN.checkCards.includes(id));
-  const inHand = (id: CardId3) => !done && state.hand.some((x) => x.id === id);
+  const inHand = (id: CardId3) => chunyuanAccepts(state, id) != null && state.hand.some((x) => x.id === id);
+  const outlook = done ? "识破" : c.first ? `只起疑：👑-${CHUNYUAN.halfPenalty}` : `❌ 👑-${CHUNYUAN.failPenalty}`;
   return (
     <SpecialCard
       emoji={CHUNYUAN.emoji}
       name={CHUNYUAN.name}
       art="chunyuan"
       done={done}
-      summary={`${jinxi ? "✓" : "✗"}🏮 ${check ? "✓" : "✗"}🔍 ${done ? "识破" : "❌圣宠减半"}`}
+      summary={`${c.first ? "✓" : "✗"}① ${c.second ? "✓" : "✗"}② ${outlook}`}
       fold={fold}
       dispatch={dispatch}
     >
       {done ? <ResolvedBanner icon="👗" label="已识破" detail="免祸。" story={CHUNYUAN.successStory} /> : null}
       <p className={styles.flavor}>{CHUNYUAN.flavor}</p>
       <p className={styles.rule}>{expandedEffect3(CHUNYUAN.rule)}</p>
-      <p className={styles.check}>{mark(jinxi)} 🏮 槿汐相助</p>
       <p className={styles.check}>
-        {mark(check)} 查验：<Chips ids={CHUNYUAN.checkCards} lit={inHand} />
+        {mark(c.first != null)} ① 起疑：<Chips ids={CHUNYUAN.firstCards} lit={inHand} />
       </p>
-      {c.lingrong ? <p className={styles.rule}>🎶 {CHUNYUAN.lingrongStory}</p> : null}
+      {c.first ? <p className={styles.rule}>{CHUNYUAN.firstStory[c.first]}</p> : null}
+      <p className={styles.check}>
+        {mark(c.second != null)} ② 查实（须先起疑）：<Chips ids={CHUNYUAN.checkCards} lit={inHand} />
+      </p>
+      {c.second ? <p className={styles.rule}>{CHUNYUAN.checkStory[c.second]}</p> : null}
+      <p className={styles.rule}>
+        <span className={styles.ruleLabel}>照现在：</span>
+        {done ? "识破，免祸。" : c.first ? `只起疑，回合末圣宠 -${CHUNYUAN.halfPenalty}。` : `没识破，回合末圣宠 -${CHUNYUAN.failPenalty}。`}
+      </p>
     </SpecialCard>
   );
 }
@@ -732,7 +739,7 @@ function HandCard({ state, card, dispatch, fold }: { state: Z3State; card: CardI
     ...events.map((e) => EVENTS3[e.id].name + (EVENTS3[e.id].double && !def.matches.includes(e.id) ? "（双牌）" : "")),
     ...(confrontAccepts(state, card.id) ? ["景仁宫对质"] : []),
     ...(feilaoAccepts(state, card.id) ? [FEILAO.name] : []),
-    ...(state.chunyuan && !chunyuanChecked(state) && (card.id === "jinxiXiangzhu" || CHUNYUAN.checkCards.includes(card.id)) ? [CHUNYUAN.name] : []),
+    ...(chunyuanAccepts(state, card.id) ? [`${CHUNYUAN.name}·${chunyuanAccepts(state, card.id) === 1 ? "起疑" : "查实"}`] : []),
     ...(state.changxiangsi && !state.changxiangsi.done && (card.id === "guojunwangXiangzhu" || card.id === "chanyuXiushen") ? [CHANGXIANGSI.name] : []),
     ...(yihuaAccepts(state, card.id) ? [`${YIHUA.name}·${YIHUA.steps[state.yihua!.step - 1]!.name}`] : []),
   ];
@@ -895,7 +902,9 @@ function endTurnHints(state: Z3State): string[] {
   if (left > 0 && state.hand.length > 0) hints.push(`还可出 ${left} 张牌。`);
   const c = state.confront;
   if (c && c.played.length < c.needed) hints.push(`【景仁宫对质】还差 ${c.needed - c.played.length} 张辩白牌。`);
-  if (state.chunyuan && !chunyuanChecked(state)) hints.push(`【${CHUNYUAN.name}】还没识破：回合末圣宠减半。`);
+  if (state.chunyuan && !chunyuanChecked(state)) {
+    hints.push(state.chunyuan.first ? `【${CHUNYUAN.name}】只起了疑：回合末圣宠 -${CHUNYUAN.halfPenalty}。` : `【${CHUNYUAN.name}】还没识破：回合末圣宠 -${CHUNYUAN.failPenalty}。`);
+  }
   if (state.feilao && feilaoCurrentTier(state) > 0) hints.push(`【${FEILAO.name}】现为 ${FEILAO.tiers[feilaoCurrentTier(state)]!.name}。`);
   if (state.yihua && state.yihua.step < 3) hints.push(`偶遇还没完成：回合末📜疑点 +1（现为 ${state.yihua.doubt}）。`);
   for (const inst of openStories3(state)) {
@@ -975,6 +984,15 @@ function PopupBody({ state, id }: { state: Z3State; id: PopupId }) {
       );
     case "tonghuatai":
       return <p>{POPUP_TEXT.tonghuatai}</p>;
+    case "chunyuan": {
+      const r = state.chunyuanResult ?? "fail";
+      return (
+        <>
+          <p>{CHUNYUAN.popup[r]}</p>
+          <p className={styles.muted}>{CHUNYUAN.popupRules[r]}</p>
+        </>
+      );
+    }
     case "wanwan":
       return <p>{POPUP_TEXT.wanwan}</p>;
     case "exit": {
@@ -1026,6 +1044,7 @@ const POPUP_TITLE: Record<PopupId, string> = {
   opening: "🏮 第一幕 · 凤仪之下",
   huanghou: "🦚 皇后笑意",
   tonghuatai: "🎐 桐花台",
+  chunyuan: "👗 纯元故衣",
   wanwan: "💔 菀菀类卿",
   exit: "⚖️ 景仁宫对质 · 自请出宫",
   feilao: "🤒 迁居凌云峰",

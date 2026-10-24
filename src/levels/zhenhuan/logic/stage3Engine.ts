@@ -189,7 +189,9 @@ export type Z3State = {
   /** 打压 took these out for the rest of 第一幕. */
   removedEvents: CrisisId3[];
   guoMeet: "li" | "di" | "lingrong" | null;
-  chunyuan: { played: CardId3[]; lingrong: boolean } | null;
+  /** 纯元故衣 (turn 6): ① 起疑 card, then ② 查实 card. */
+  chunyuan: { first: CardId3 | null; second: CardId3 | null } | null;
+  chunyuanResult: "seen" | "half" | "fail" | null;
   /** 纯元故衣 is behind us: your words to 陵容 turn cold. */
   chunyuanPassed: boolean;
   confront: { presented: number; needed: number; played: CardId3[]; stories: string[] } | null;
@@ -423,8 +425,15 @@ export function feilaoCurrentTier(s: Z3State): 0 | 1 | 2 {
 }
 
 export function chunyuanChecked(s: Z3State): boolean {
+  return s.chunyuan?.second != null;
+}
+
+/** The 纯元故衣 step this card would take now (① 起疑, then ② 查实). */
+export function chunyuanAccepts(s: Z3State, cardId: CardId3): 1 | 2 | null {
   const c = s.chunyuan;
-  return c != null && c.played.includes("jinxiXiangzhu") && c.played.some((id) => CHUNYUAN.checkCards.includes(id));
+  if (!c || c.second) return null;
+  if (!c.first) return CHUNYUAN.firstCards.includes(cardId) ? 1 : null;
+  return CHUNYUAN.checkCards.includes(cardId) ? 2 : null;
 }
 
 /** The 移花接木 step this card would advance now. */
@@ -998,16 +1007,17 @@ function resolvePlay3(s: Z3State, cardUid: string, removeStatusUid?: string, rel
 
   // 4. special cards of this turn
   if (alive(s) && s.chunyuan) {
-    if (isLingrong && tier && !s.chunyuan.lingrong) {
-      s.chunyuan.lingrong = true;
-      answered = true;
-      log(s, CHUNYUAN.lingrongStory);
-      addSecret(s, "guyiYuanyan", tier);
+    const step = chunyuanAccepts(s, card.id);
+    if (step === 1) {
+      s.chunyuan.first = card.id;
+      log(s, `【${CHUNYUAN.name}】① 起疑：${CHUNYUAN.firstStory[card.id]}`, "good");
+    } else if (step === 2) {
+      s.chunyuan.second = card.id;
+      log(s, `【${CHUNYUAN.name}】② 查实：${CHUNYUAN.checkStory[card.id]}`, "good");
     }
-    if (card.id === "jinxiXiangzhu" || CHUNYUAN.checkCards.includes(card.id)) {
-      const before = chunyuanChecked(s);
-      s.chunyuan.played.push(card.id);
-      if (!before && chunyuanChecked(s)) log(s, `【${CHUNYUAN.name}】${CHUNYUAN.successStory}`, "good");
+    if (isLingrong && tier) {
+      answered = true;
+      addSecret(s, "guyiYuanyan", tier);
     }
   }
   if (alive(s) && s.confront && confrontAccepts(s, card.id)) {
@@ -1261,7 +1271,7 @@ function beginTurn3(s: Z3State, turn: number): void {
   const fixed = FIXED_STORIES3[turn];
   if (fixed) openStory(s, fixed);
   if (turn === 6) {
-    s.chunyuan = { played: [], lingrong: false };
+    s.chunyuan = { first: null, second: null };
     log(s, `剧情事件：【${CHUNYUAN.name}】${CHUNYUAN.rule}`);
   }
   if (turn === STAGE3.confrontTurn) {
@@ -1372,10 +1382,15 @@ function endTurn3(s: Z3State): void {
 
   // 纯元故衣
   if (s.chunyuan) {
-    if (!chunyuanChecked(s)) {
-      log(s, `【${CHUNYUAN.name}】没识破：${CHUNYUAN.failStory}`, "bad");
-      applyDelta3(s, { resource: "shengchong", amount: -Math.floor(s.shengchong / 2) }, "圣宠减半");
+    const c = s.chunyuan;
+    const result = c.second ? "seen" : c.first ? "half" : "fail";
+    s.chunyuanResult = result;
+    if (result === "seen") log(s, `【${CHUNYUAN.name}】识破：${CHUNYUAN.successStory}`, "good");
+    else {
+      log(s, `【${CHUNYUAN.name}】${result === "half" ? "只起了疑" : "没识破"}：${result === "half" ? CHUNYUAN.halfStory : CHUNYUAN.failStory}`, "bad");
+      applyDelta3(s, { resource: "shengchong", amount: -(result === "half" ? CHUNYUAN.halfPenalty : CHUNYUAN.failPenalty) }, CHUNYUAN.name);
     }
+    popup(s, "chunyuan");
     s.chunyuanPassed = true;
     if (!alive(s)) return;
   }
@@ -1553,6 +1568,7 @@ export function newStage3(seed: number, carry: Carry3 | null): Z3State {
     guoMeet: null,
     chunyuan: null,
     chunyuanPassed: false,
+    chunyuanResult: null,
     confront: null,
     exitTier: null,
     exitShengchong: null,
