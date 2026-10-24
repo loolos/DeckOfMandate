@@ -24,6 +24,7 @@
 ```
 src/levels/zhenhuan/assets/
   cards/<CardId2>.webp        手牌，如 cards/yirongZhengsu.webp
+  cards/<CardId>_temple.webp  第三关寺中版手牌（第二、三幕显示），如 cards/jinxiXiangzhu_temple.webp
   events/<EventId2>.webp      事件，如 events/yizhangHong.webp
   stories/<StoryId2>.webp     剧情，如 stories/yimeiYuan.webp
   stories/promotionTrial.webp 第一关晋封考验（另有 guirenTrial、finale）
@@ -33,6 +34,7 @@ src/levels/zhenhuan/assets/
 
 - id 大小写须与 `data/content.ts` / `data/stage2Content.ts` 中完全一致。
 - 两关共用的事件 id（如 `huanghouShangshi`、`gongzhongLiuyan`）共用同一张图。
+- 第三关第二、三幕在甘露寺和凌云峰，槿汐相助、眉庄相助、温太医相助另有寺中版 `<id>_temple.webp`（`ui/art.ts` 的 `TEMPLE_CARD_ART`），这两幕优先显示它，没有就用原图。
 - 单元测试 `ui/art.test.ts` 校验 `cards/`、`events/`、`stories/`、`backdrops/` 下的每个文件名都必须是已存在的 id（或 `stage1` / `stage2`），防止拼错后静默不显示。
 
 ## 3. 构图要求
@@ -139,5 +141,5 @@ src/levels/zhenhuan/assets/
 
 ## 6. 出图
 
-- 用 ChatGPT 逐张生成，风格设定、每张图的 prompt 与短编号（C01–C08、E01–E23、S01–S16、B1–B2）见 [art-prompts.md](./art-prompts.md)。
+- 用 ChatGPT 逐张生成，风格设定、每张图的 prompt 与短编号（C01–C18、E01–E56、S01–S32、B1–B3）见 [art-prompts.md](./art-prompts.md)；第三关给 ChatGPT 直接读取的设定和 prompt 在 [art-prompts-stage3.md](./art-prompts-stage3.md)。
 - 选定的原图按短编号命名放进 `art-inbox/`，导入时改名为游戏 id、裁切并压缩到本文第 2 节的位置。
