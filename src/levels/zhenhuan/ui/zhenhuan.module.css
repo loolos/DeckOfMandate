@@ -12,6 +12,7 @@
   --zh-crisis: #d9706a;
   --zh-story: #c49ad9;
   --zh-envy: #e08cb4;
+  --zh-huanghou: #e8a23c;
   min-height: 100vh;
   min-height: 100dvh;
   background:
@@ -670,6 +671,10 @@
   color: var(--zh-envy);
 }
 
+.kindHuanghou {
+  color: var(--zh-huanghou);
+}
+
 .tagGroup {
   display: inline-flex;
   flex-wrap: wrap;
@@ -695,6 +700,10 @@
 
 .cardEnvy {
   border-top: 3px solid var(--zh-envy);
+}
+
+.cardHuanghou {
+  border-top: 3px solid var(--zh-huanghou);
 }
 
 .cardStory {
