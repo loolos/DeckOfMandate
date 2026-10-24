@@ -1096,8 +1096,10 @@ export function Stage3Rules() {
       <li>
         如今的后宫：
         <ul>
-          {POPUP_TEXT.people.map((l) => (
-            <li key={l}>{l}</li>
+          {POPUP_TEXT.people.map((p) => (
+            <li key={p.name}>
+              <strong>{p.name}</strong>：{p.text}
+            </li>
           ))}
         </ul>
       </li>
