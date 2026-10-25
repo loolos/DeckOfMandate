@@ -105,8 +105,8 @@ export type EventInst3 = {
   aggravated?: boolean;
   /** Unresolved, but 欣贵人解围 took the penalty. */
   byXin?: boolean;
-  /** An earlier 打压 status took it. */
-  bySuppress?: boolean;
+  /** An earlier 打压 status eased it: one fewer 解牌 needed. */
+  eased?: boolean;
   /** Resolved with the 打压 card (or the 连环 shared card). */
   suppressed?: boolean;
   story?: string;
@@ -361,6 +361,11 @@ export function pairLocked(s: Z3State, ev: EventInst3): boolean {
   if (!pair || EVENTS3[ev.id].kind !== "opportunity") return false;
   const crisis = s.crisis;
   return crisis != null && crisis.id === PAIRS[pair].crisis && !crisis.resolved;
+}
+
+/** 解牌 a 对头 crisis needs: two, one fewer after an earlier 打压. */
+export function solveCount(ev: EventInst3): number {
+  return ev.eased ? 1 : 2;
 }
 
 /** Does `cardId` count toward this unresolved event right now (single match or 双牌 progress)? */
@@ -748,7 +753,7 @@ function befriend(s: Z3State, ally: AllyId): void {
   addStatus3(s, ALLIES[ally].status);
 }
 
-/** 打压: a status that auto-resolves this rival's next crisis. */
+/** 打压: a status that eases this rival's next crisis by one 解牌. */
 function suppress(s: Z3State, rival: RivalId): void {
   const first = !s.suppressed[rival];
   s.suppressed[rival] = true;
@@ -1065,7 +1070,7 @@ function resolvePlay3(s: Z3State, cardUid: string, removeStatusUid?: string): vo
     }
     if (d.needTwo) {
       ev.progress = [...(ev.progress ?? []), card.id];
-      if (ev.progress.length >= 2) {
+      if (ev.progress.length >= solveCount(ev)) {
         if (isLingrong && tier) relationDelta += resolveEventByLingrong(s, ev, tier);
         else {
           // 连环: with the shared card among the two, its story always wins
@@ -1073,7 +1078,7 @@ function resolvePlay3(s: Z3State, cardUid: string, removeStatusUid?: string): vo
           resolveEventByCard(s, ev, shared && ev.progress.includes(shared) ? shared : card.id, false);
         }
         if (ev.resolved) resolvedNow.push(ev);
-      } else log(s, `【${d.name}】解牌 1/2。`);
+      } else log(s, `【${d.name}】解牌 1/${solveCount(ev)}。`);
       continue;
     }
     if (isLingrong && tier) relationDelta += resolveEventByLingrong(s, ev, tier);
@@ -1315,16 +1320,12 @@ function enterYihua(s: Z3State): void {
 }
 
 function drawEvents(s: Z3State): void {
-  const autoResolve = (ev: EventInst3) => {
+  const ease = (ev: EventInst3) => {
     const rival = EVENTS3[ev.id].rival;
     const daya = rival ? SUPPRESS_STATUS[rival] : undefined;
     if (!daya || !removeStatusById(s, daya)) return;
-    ev.resolved = true;
-    ev.bySuppress = true;
-    const story = EVENTS3[ev.id].suppressedStory;
-    if (story) ev.story = story;
-    log(s, `【${STATUSES3[daya].name}】上回吃了亏，这回没敢闹大：【${EVENTS3[ev.id].name}】自动化解。`, "good");
-    if (story) log(s, story);
+    ev.eased = true;
+    log(s, `【${STATUSES3[daya].name}】上回吃了亏，这回没敢闹大：【${EVENTS3[ev.id].name}】少需要 1 张解牌。`, "good");
   };
   let opp = drawFromPool<OpportunityId3>(s, "opportunityPool", "opportunityUsed");
   let crisis = drawFromPool<CrisisId3>(s, "crisisPool", "crisisUsed");
@@ -1352,7 +1353,7 @@ function drawEvents(s: Z3State): void {
   if (crisis) {
     s.crisis = newEvent(s, crisis);
     log(s, `危机事件：【${EVENTS3[crisis].name}】${EVENTS3[crisis].pair ? "（连环）" : ""}`);
-    autoResolve(s.crisis);
+    ease(s.crisis);
   }
 }
 

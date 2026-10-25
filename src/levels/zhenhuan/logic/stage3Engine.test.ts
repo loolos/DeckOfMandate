@@ -305,7 +305,7 @@ describe("zhenhuan stage 3 engine", () => {
     expect(t.allies.xin).toBe(true);
   });
 
-  it("打压 leaves a status: the crisis stays in the pool and is auto-resolved the next time it is drawn", () => {
+  it("打压 leaves a status: the crisis stays in the pool and needs one fewer 解牌 the next time it is drawn", () => {
     let s = advanceTo(newStage3(3, CARRY), 3);
     clearBoard(s);
     s.crisis = ev(s, "qifeiXunxin");
@@ -321,8 +321,12 @@ describe("zhenhuan stage 3 engine", () => {
     s.opportunityUsed = [];
     s = act(s, { type: "endTurn" });
     expect(s.crisis?.id).toBe("qifeiXunxin");
-    expect(s.crisis!.resolved && s.crisis!.bySuppress).toBe(true);
+    expect(s.crisis!.eased).toBe(true);
+    expect(s.crisis!.resolved).toBe(false);
     expect(s.statuses.some((st) => st.id === "dayaQifei")).toBe(false);
+    const [one] = setHand(s, ["jinyanShenxing"]);
+    s = act(s, { type: "playCard", cardUid: one! });
+    expect(s.crisis!.resolved).toBe(true);
   });
 
   it("连环: two cards without the shared one clear the crisis only; the opportunity unlocks but stays open", () => {
@@ -339,7 +343,7 @@ describe("zhenhuan stage 3 engine", () => {
     expect(t.statuses.some((st) => st.id === "dayaGuaerjia")).toBe(false);
   });
 
-  it("打压 is per rival: 齐妃寻衅 suppressed → 三阿哥邀宠 (also 齐妃) is auto-resolved next", () => {
+  it("打压 is per rival: 齐妃寻衅 suppressed → 三阿哥邀宠 (also 齐妃) is eased next", () => {
     let s = advanceTo(newStage3(3, CARRY), 3);
     clearBoard(s);
     withStatus(s, "dayaQifei");
@@ -349,7 +353,7 @@ describe("zhenhuan stage 3 engine", () => {
     s.opportunityUsed = [];
     s = act(s, { type: "endTurn" });
     expect(s.crisis?.id).toBe("sanAgeYaochong");
-    expect(s.crisis!.resolved && s.crisis!.bySuppress).toBe(true);
+    expect(s.crisis!.eased).toBe(true);
     expect(s.statuses.some((st) => st.id === "dayaQifei")).toBe(false);
   });
 
@@ -432,6 +436,24 @@ describe("zhenhuan stage 3 engine", () => {
     expect(xiayuCost(s, "guo")).toEqual([{ resource: "qingyu", amount: -1 }]);
     s.suppressed.guaerjia = true;
     expect(xiayuCost(s, "taihou")).toEqual([{ resource: "qingyu", amount: -2 }]);
+  });
+
+  it("鄂敏参本: 没化解 清誉 -4 + 父兄蒙尘; 一张解牌 清誉 -1 + 父兄蒙尘; 化解也 清誉 -1", () => {
+    const run = (hand: CardId3[]) => {
+      let s = advanceTo(newStage3(5, CARRY), 5);
+      clearBoard(s);
+      s.crisis = ev(s, "emingCanben");
+      const before = s.qingyu;
+      const uids = setHand(s, hand);
+      for (const u of uids) s = act(s, { type: "playCard", cardUid: u });
+      s = act(s, { type: "endTurn" });
+      return { delta: s.qingyu - before, curse: s.statuses.some((st) => st.id === "fuxiongMengchen"), log: s.log };
+    };
+    expect(run([])).toMatchObject({ delta: -4, curse: true });
+    expect(run(["shoulongRenxin"])).toMatchObject({ curse: true });
+    const full = run(["shoulongRenxin", "meizhuangXiangzhu"]);
+    expect(full.curse).toBe(false);
+    expect(full.log.some((l) => l.text.includes("鄂敏参本（化解了，仍有些折损）：清誉 -1"))).toBe(true);
   });
 
   it("景仁宫对质 (turn 10): no ordinary events, 陵容 cannot be played, outcome by cards played", () => {

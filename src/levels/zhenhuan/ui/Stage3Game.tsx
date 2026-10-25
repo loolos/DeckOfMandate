@@ -66,6 +66,7 @@ import {
   matchedEvents3,
   openStories3,
   pairLocked,
+  solveCount,
   playLimit3,
   playsLeft3,
   rankCap3,
@@ -175,7 +176,6 @@ function answeringCards(id: EventId3): CardId3[] {
 
 function resolvedDetail(inst: EventInst3): string {
   const def = EVENTS3[inst.id];
-  if (inst.bySuppress) return "上回被你打压过，这回没敢闹大：消耗【打压】状态，自动化解。";
   const by = inst.resolvedBy ? `由【${CARDS3[inst.resolvedBy].name}】` : "";
   const tier = inst.lingrong && inst.resolvedBy === "lingrongXiangzhu" ? `（陵容·${TIER_LABEL[inst.lingrong]}）` : "";
   const suppressed = inst.suppressed && def.rival ? `；打压了${RIVALS[def.rival].name}` : "";
@@ -217,12 +217,12 @@ function EventCard({ state, inst, fold, dispatch }: { state: Z3State; inst: Even
       ) : null}
       {def.double || def.needTwo ? (
         <Tag tag="double" tone={styles.kindStory} dispatch={dispatch}>
-          双牌 {(inst.progress ?? []).length}/2
+          双牌 {(inst.progress ?? []).length}/{def.needTwo ? solveCount(inst) : 2}
         </Tag>
       ) : null}
     </span>
   );
-  const story = inst.bySuppress && inst.story ? inst.story : inst.resolved && inst.resolvedBy && inst.resolvedBy !== "lingrongXiangzhu" ? (inst.story ?? def.resolvedStory[inst.resolvedBy]) : undefined;
+  const story = inst.resolved && inst.resolvedBy && inst.resolvedBy !== "lingrongXiangzhu" ? (inst.story ?? def.resolvedStory[inst.resolvedBy]) : undefined;
   const lingrongStory = inst.lingrong && (!inst.resolved || inst.resolvedBy === "lingrongXiangzhu") ? LINGRONG_EVENT3[inst.id]?.[inst.lingrong]?.story : undefined;
   const resolvedLabel = isOpp ? "已把握" : def.kind === "huanghou" ? "已领受" : "已化解";
   const okLabel = def.kind === "huanghou" ? "打出特定牌：" : "处理：";
@@ -276,7 +276,7 @@ function EventCard({ state, inst, fold, dispatch }: { state: Z3State; inst: Even
       {def.rival && def.suppressCard && !def.pair ? (
         <p className={styles.rule}>
           ⚔️ 两张解牌中有【{CARDS3[def.suppressCard].emoji}
-          {CARDS3[def.suppressCard].name}】即算打压{RIVALS[def.rival].name}：获得【打压·{RIVALS[def.rival].name}】，她的危机下次出现时自动化解一次。
+          {CARDS3[def.suppressCard].name}】即算打压{RIVALS[def.rival].name}：获得【打压·{RIVALS[def.rival].name}】，她的危机下次出现时少需要 1 张解牌。
         </p>
       ) : null}
       {def.rival && !inst.resolved && state.statuses.some((st) => st.id === "xinGuirenZhangyi") ? (
@@ -286,7 +286,7 @@ function EventCard({ state, inst, fold, dispatch }: { state: Z3State; inst: Even
         <p className={styles.rule}>
           🔗 {PAIRS[def.pair].name}：{isOpp ? `须先化解【${shortEventName(EVENTS3[PAIRS[def.pair].crisis].name)}】才能把握。` : `没化解，【${shortEventName(EVENTS3[PAIRS[def.pair].opportunity].name)}】随之作废。`}
           危机须两张解牌；其中有【{CARDS3[PAIRS[def.pair].shared].emoji}
-          {CARDS3[PAIRS[def.pair].shared].name}】可一石二鸟：结交盟友并打压{RIVALS[PAIRS[def.pair].rival].name}（她的危机下次出现时自动化解一次）。
+          {CARDS3[PAIRS[def.pair].shared].name}】可一石二鸟：结交盟友并打压{RIVALS[PAIRS[def.pair].rival].name}（她的危机下次出现时少需要 1 张解牌）。
         </p>
       ) : null}
       {locked ? <p className={styles.endHint}>🔒 连环危机还没化解，这张机会暂时锁着。</p> : null}
