@@ -1887,7 +1887,7 @@ export const STORIES3: Record<StoryId3, StoryDef3> = {
     name: "甄远道下狱",
     emoji: "⛓️",
     flavor: "父亲因文字狱下狱。消息传进碎玉轩时，你手里的茶盏摔在了地上。",
-    note: "后四项须再打出另一张解牌，只打一张则按跪求皇上、惩罚减轻 1。代价随前朝局势变化：【父兄蒙尘】加重一档，打压过祺贵人减轻一档。",
+    note: "须双牌解；只打一张按跪求皇上，少扣 1。代价随局势：【父兄蒙尘】加重，打压过祺贵人减轻。",
     defaultOptionId: "guiqiu",
     options: [
       { id: "guiqiu", name: "跪求皇上", effects: [], xiayu: "kneel", text: "圣宠大减（皇上避而不见）", story: "你在养心殿外跪了一夜。皇上没有见你，只让苏培盛传了一句：「后宫不得干政。」" },
@@ -1899,7 +1899,7 @@ export const STORIES3: Record<StoryId3, StoryDef3> = {
         two: true,
         effects: [],
         xiayu: "guo",
-        text: "不扣圣宠，父亲在狱中少受些苦",
+        text: "不扣圣宠",
         story: "果郡王替你在前朝奔走，又打点了狱卒。父亲在狱里总算少吃了些苦头。",
       },
       {
@@ -1909,7 +1909,7 @@ export const STORIES3: Record<StoryId3, StoryDef3> = {
         two: true,
         effects: [],
         xiayu: "shoulong",
-        text: "不扣圣宠，花些银钱四处打点",
+        text: "不扣圣宠",
         story: "你让小允子拿体己银子在前朝四处打点，托人往狱里递话送物。父亲在狱中的日子好过了些。",
       },
       {
@@ -1919,7 +1919,7 @@ export const STORIES3: Record<StoryId3, StoryDef3> = {
         two: true,
         effects: [],
         xiayu: "jinyan",
-        text: "不求人，只损圣宠，损得轻些",
+        text: "只损圣宠",
         story: "你一个字也没有替父亲辩，只称病闭门，等着风头过去。皇上虽未见你，也没有迁怒碎玉轩。",
       },
       {
@@ -1930,7 +1930,7 @@ export const STORIES3: Record<StoryId3, StoryDef3> = {
         effects: [],
         xiayu: "lingrong",
         secret: "yuzhongShuxin",
-        text: "不扣圣宠，请陵容设法递信",
+        text: "不扣圣宠",
         story: "陵容应下此事，当天便托人替你往狱里递了一封信。",
         tierStory: {
           close: "陵容说她父亲在狱里有旧识，替你把信递了进去。她回来时眼眶红红的，说甄伯父让姐姐保重。",
