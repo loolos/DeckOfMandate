@@ -1138,6 +1138,7 @@ function PopupBody({ state, id }: { state: Z3State; id: PopupId }) {
       return (
         <>
           {state.exitTier && state.exitTier <= 3 ? <p>{POPUP_TEXT.ximaiRecall[state.exitTier as 1 | 2 | 3]}</p> : null}
+          <p>{POPUP_TEXT.ximaiBridge}</p>
           {POPUP_TEXT.ximai.map((t) => (
             <p key={t}>{t}</p>
           ))}
