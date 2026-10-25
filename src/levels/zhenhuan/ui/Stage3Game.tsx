@@ -44,6 +44,7 @@ import {
   type EventId3,
   type PopupId,
   type TagId3,
+  dengmenOpenText,
 } from "../data/stage3Content";
 import {
   blockedByChezhou3,
@@ -630,6 +631,25 @@ function ChangxiangsiCard({ state, fold, dispatch }: { state: Z3State; fold: Fol
   );
 }
 
+/** 移花接木第 n 步解完后的结果文本，按落发、所用解牌而不同。 */
+function yihuaDoneText(state: Z3State, n: number): string {
+  const y = state.yihua!;
+  switch (n) {
+    case 1:
+      return y.yinjia.map((id) => YIHUA.yinjiaStory[id] ?? "").join("") + (y.yinjiaNeed > 1 ? YIHUA.luofaDone : "");
+    case 2:
+      return `${YIHUA.ouyuDone[y.ouyuCard ?? "chanyuXiushen"] ?? ""}${YIHUA.ouyuStory}`;
+    case 3:
+      return YIHUA.maiDone;
+    default: {
+      const d = y.dengmen;
+      if (!d) return "";
+      const closing = d.needed === 0 ? YIHUA.dengmenNoneDone : state.victory === "narrow" || state.exitTier === 3 ? YIHUA.dengmenNarrow : YIHUA.dengmenDone;
+      return d.played.map((id) => YIHUA.dengmenStory[id] ?? "").join("") + closing;
+    }
+  }
+}
+
 function YihuaCard({ state, fold, dispatch }: { state: Z3State; fold: Fold; dispatch: Dispatch }) {
   const y = state.yihua;
   if (!y) return null;
@@ -657,26 +677,19 @@ function YihuaCard({ state, fold, dispatch }: { state: Z3State; fold: Fold; disp
       <p className={styles.flavor}>{YIHUA.flavor}</p>
       {YIHUA.steps.map((s, i) => {
         const n = i + 1;
-        const state_ = y.step > n ? "done" : y.step === n ? "now" : "later";
+        if (y.step < n) return null;
+        const state_ = y.step > n ? "done" : "now";
         return (
           <div key={s.name} className={[styles.option, state_ === "now" && styles.optionChosen, state_ === "done" && styles.stepStory].filter(Boolean).join(" ")}>
             <span>
               {mark(state_ === "done")} <strong>
                 {["①", "②", "③", "④"][i]} {s.emoji} {s.name}
               </strong>
-              ：{n === 1 && state_ === "done" ? y.yinjia.map((id) => YIHUA.yinjiaStory[id] ?? "").join("") || s.story : s.story}
-              {n === 1 ? (
-                <>
-                  {" "}
-                  {y.yinjiaNeed > 1 ? `（已落发：要打 ${y.yinjiaNeed} 张，至少 1 张槿汐，另一张可以是眉庄；已打 ${y.yinjia.length} 张）` : ""}
-                </>
-              ) : null}
-              {relicCount > 0 && y.step >= 2 && y.step < 5 ? (n === 2 ? <span className={styles.endHint}> 手里有 {relicCount} 件遗物：回合结束时还在手里，疑点 +{relicCount}（睹物生疑）。</span> : null) : null}
-              {n === 2 && y.step === 2 && y.ouyuDue != null ? (y.ouyuDue === state.turn ? "（皇上今日驾临：本回合解决【圣驾偶遇】）" : `（第 ${y.ouyuDue} 回合皇上驾临）`) : ""}
-              {n === 2 && y.step < 2 ? `（引驾完成后第 ${YIHUA.ouyuDelay} 回合；没成隔一回合再来）` : ""}
-              {n === 3 ? "（偶遇之后打出温太医相助即完成）" : ""}
-              {n === 4 ? (y.dengmen ? `（皇上已登门：须在第 ${y.dengmen.openTurn}–${y.dengmen.openTurn + 1} 回合内打出 ${y.dengmen.needed} 张解牌${y.dengmen.needed === 0 ? "，只需过剧情" : `，已打 ${Math.min(y.dengmen.played.length, y.dengmen.needed)} 张；疑点 ${y.dengmen.doubt}、遗物 ${y.dengmen.relics} 件${state.exitTier === 1 ? "" : "，非体面自请多 1 张"}`}）` : "（改脉的下一回合皇上登门：按当时的疑点与未焚的遗物定张数，两回合内打够）") : ""}
-              {state_ !== "done" ? (
+              ：{state_ === "done" ? yihuaDoneText(state, n) : s.todo}
+              {state_ === "now" && n === 1 && y.yinjiaNeed > 1 ? ` （已落发：要打 ${y.yinjiaNeed} 张，至少 1 张槿汐，另一张可以是眉庄；已打 ${y.yinjia.length} 张）` : ""}
+              {state_ === "now" && n === 2 && y.ouyuDue != null ? (y.ouyuDue === state.turn ? "（皇上今日驾临：本回合解决【圣驾偶遇】）" : `（第 ${y.ouyuDue} 回合皇上驾临）`) : ""}
+              {state_ === "now" && n === 4 ? (y.dengmen ? `（皇上已登门：须在第 ${y.dengmen.openTurn}–${y.dengmen.openTurn + 1} 回合内打出 ${y.dengmen.needed} 张解牌${y.dengmen.needed === 0 ? "，只需过剧情" : `，已打 ${Math.min(y.dengmen.played.length, y.dengmen.needed)} 张；疑点 ${y.dengmen.doubt}、遗物 ${y.dengmen.relics} 件${state.exitTier === 1 ? "" : "，非体面自请多 1 张"}`}）` : "（下一回合到来：按当时的疑点与未焚的遗物定解牌张数，两回合内打够）") : ""}
+              {state_ === "now" ? (
                 <>
                   <br />
                   <Chips ids={stepCards[i]!} lit={inHand} />
@@ -686,6 +699,9 @@ function YihuaCard({ state, fold, dispatch }: { state: Z3State; fold: Fold; disp
           </div>
         );
       })}
+      {relicCount > 0 && y.step >= 2 && y.step < 5 ? (
+        <p className={styles.endHint}>手里有 {relicCount} 件遗物：回合结束时还在手里，疑点 +{relicCount}（睹物生疑）。</p>
+      ) : null}
       <p className={styles.rule}>
         <span className={styles.ruleLabel}>📜 疑点 {y.doubt}/{DOUBT.max}：</span>
         {y.step < 3 ? "偶遇完成之前每回合末 +1。" : "已止住上涨。"}每打出一张槿汐相助或眉庄相助 -1。到 {DOUBT.max} 即失败；第 {STAGE3.totalTurns} 回合末仍未完成也失败。
@@ -785,7 +801,7 @@ function HandCard({ state, card, dispatch, fold }: { state: Z3State; card: CardI
     ...(feilaoAccepts(state, card.id) ? [FEILAO.name] : []),
     ...(chunyuanAccepts(state, card.id) ? [`${CHUNYUAN.name}·${chunyuanAccepts(state, card.id) === 1 ? "起疑" : "查实"}`] : []),
     ...(state.changxiangsi && !state.changxiangsi.done && (card.id === "guojunwangXiangzhu" || card.id === "chanyuXiushen") ? [CHANGXIANGSI.name] : []),
-    ...(yihuaAccepts(state, card.id) ? [`${YIHUA.name}·${YIHUA.steps[state.yihua!.step - 1]!.name}`] : []),
+    ...(yihuaAccepts(state, card.id) ? [`${YIHUA.name}·${YIHUA.steps[state.yihua!.step - 1]?.name ?? ''}`] : []),
   ];
   if (fold.compact && !fold.expanded && !isPending) {
     return (
@@ -1100,7 +1116,7 @@ function PopupBody({ state, id }: { state: Z3State; id: PopupId }) {
       const d = state.yihua?.dengmen;
       return (
         <>
-          <p>{d && d.needed === 0 ? YIHUA.dengmenOpen.none : YIHUA.dengmenOpen.some}</p>
+          <p>{d ? dengmenOpenText(d.doubt, d.relics, state.exitTier) : null}</p>
           <p className={styles.muted}>
             {d && d.needed === 0 ? "皇上没有起疑，只需过完剧情。" : `${POPUP_TEXT.dengmenRules}本次需要 ${d?.needed ?? 0} 张。`}
           </p>

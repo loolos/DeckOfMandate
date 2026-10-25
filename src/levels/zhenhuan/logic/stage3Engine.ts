@@ -62,6 +62,7 @@ import {
   YIHUA,
   ZHOUFU,
   confrontNeeded,
+  dengmenOpenText,
   confrontOutcome,
   lingrongTier,
   summonInterval,
@@ -1242,7 +1243,7 @@ function advanceYihua(s: Z3State, card: CardId3): void {
   }
   if (y.step === 3) {
     y.step = 4;
-    log(s, `③ 改脉：${YIHUA.steps[2]!.story}脉案上的月份对上了。只是皇上明日要亲自登门。`, "good");
+    log(s, `③ 改脉：${YIHUA.maiDone}脉案上的月份对上了。只是皇上明日要亲自登门。`, "good");
   }
 }
 
@@ -1259,7 +1260,7 @@ function openDengmen(s: Z3State): void {
   const needed = dengmenNeeded(s, y.doubt, relics);
   y.dengmen = { doubt: y.doubt, relics, needed, played: [], openTurn: s.turn };
   popup(s, "dengmen");
-  log(s, `皇上亲自登门：${needed === 0 ? YIHUA.dengmenOpen.none : YIHUA.dengmenOpen.some}`, "info");
+  log(s, `皇上亲自登门：${dengmenOpenText(y.doubt, relics, s.exitTier)}`, "info");
   if (needed === 0) finishDengmen(s);
   else log(s, `登门需打出 ${needed} 张解牌（📜疑点 ${y.doubt}、遗物 ${relics} 件${s.exitTier === 1 ? "" : "，非体面自请多 1 张"}），须在本回合与下一回合内打够（一回合内打够才可能完胜，少 1 张为险胜）。`, "info");
 }
@@ -1895,6 +1896,7 @@ export function endingStory3(s: Z3State): string[] {
   lines.push(...POPUP_TEXT.homecoming);
   if (s.exitTier) lines.push(POPUP_TEXT.homecomingTier[s.exitTier]!);
   if (s.exitTierLingrong) lines.push(ENDING.lingrong[s.exitTierLingrong]);
+  if (s.victory === "perfect") lines.push(...ENDING.perfect);
   return lines;
 }
 
