@@ -1563,7 +1563,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     needTwo: true,
     halfStatusTurns: 1,
     resolvedText: "移除事件；需打出两张解牌；熬过去也要身子 -1",
-    unresolvedText: "身子 -1，并获得【寒疾缠身】；只打出一张解牌则只持续 1 回合",
+    unresolvedText: "身子 -1，未来 2 回合每回合末身子 -1；只打出一张解牌则只持续 1 回合",
     note: "寺中算静白刁难（🧹）；凌云峰上是风雪断粮。",
     resolvedStory: {
       jingchaiBuqun: "你自己上山拾了一捆柴，手上磨出了血泡。屋里总算有了点暖气。",
@@ -1640,7 +1640,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     penaltyStatus: "yanxianHuansi",
     place: "peak",
     resolvedText: "移除事件",
-    unresolvedText: "获得【眼线环伺】；本回合若打出过果郡王相助，再清誉 -1（被撞见）",
+    unresolvedText: "未来 2 回合每回合抓牌 -1（至少 1 张）；本回合若打出过果郡王相助，再清誉 -1（被撞见）",
     resolvedStory: {
       chanyuXiushen: "你开门请她们进来喝茶，念了一段经给她们听。她们听得无趣，便不再来了。",
       jinxiXiangzhu: "槿汐拿着扫帚迎了出去，笑着问她们是来扫地的还是来看热闹的，几句话就把人打发走了。",
@@ -1714,7 +1714,7 @@ const ACT1_EVENTS: ReadonlySet<EventId3> = new Set<EventId3>([...ACT1_OPPORTUNIT
 
 /** 事件上显示的「没化解」文本：第 25 回合果郡王翻船之后，耳目窥伺不再提「撞见」。 */
 export function unresolvedText3(def: EventDef3, turn: number): string {
-  return def.id === "xianrenKuitan" && turn >= 25 ? "获得【眼线环伺】" : def.unresolvedText;
+  return def.id === "xianrenKuitan" && turn >= 25 ? "未来 2 回合每回合抓牌 -1（至少 1 张）" : def.unresolvedText;
 }
 
 /** 手牌「匹配事件」只列这一幕（寺中 / 凌云峰）真的会出现的事件。 */
