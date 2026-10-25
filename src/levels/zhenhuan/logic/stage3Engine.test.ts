@@ -877,6 +877,7 @@ describe("zhenhuan stage 3 engine", () => {
     expect(s.victory).toBe("perfect");
     const story = endingStory3(s).join("\n");
     expect(story).toContain("自请去甘露寺");
+    expect(story).toContain("枝繁叶茂");
     expect(story).not.toContain("还活着");
     expect(story.indexOf("景仁宫那一日")).toBeLessThan(story.indexOf("甘露寺"));
     expect(story.indexOf("凌云峰")).toBeLessThan(story.indexOf("钮祜禄氏"));
