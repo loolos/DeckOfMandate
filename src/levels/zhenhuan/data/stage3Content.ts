@@ -2017,10 +2017,12 @@ export const STORIES3: Record<StoryId3, StoryDef3> = {
     name: "故人来访",
     emoji: "🩺",
     flavor: "温实初上山来了，捎来胧月的一张小像，是敬妃托他带的。画上的孩子胖乎乎的，眉眼像你。",
-    note: "本回合可另打出眉庄相助：她远远托温太医捎来补给，未来 3 回合每回合末身子 +1；或槿汐相助「为女儿撑下去」：未来 2 回合每回合末清誉 +1。有【敬妃之谊】时另得未来 3 回合每回合抓牌 +1。",
+    note: "诊治、眉庄相助、槿汐相助三选一；有【敬妃之谊】时，无论怎么选，另得未来 3 回合每回合抓牌 +1。",
     defaultOptionId: "zhenzhi",
     options: [
       { id: "zhenzhi", name: "请他诊治", effects: [sz(2)], removeNegatives: "all", text: "移除全部负面状态；身子 +2", story: "温实初替你诊了脉，开了方子，又留下许多药材。临走时他说：「嬛妹妹，你要好好的。」" },
+      { id: "yuandaoBuji", name: "眉庄捎来补给", card: "meizhuangXiangzhu", effects: [], status: "yuandaoBuji", text: "未来 3 回合每回合末身子 +1", compact: "🌱+1×3", story: "眉庄在宫里放心不下，远远托温实初带了药材和补给上山。" },
+      { id: "weiNver", name: "为女儿撑下去", card: "jinxiXiangzhu", effects: [], status: "weiNverChengxia", text: "未来 2 回合每回合末清誉 +1", compact: "🪷+1×2", story: "你看着胧月的小像，看了很久。槿汐在一旁默默替你添了一盏灯。" },
     ],
   },
   taxueWenji: {

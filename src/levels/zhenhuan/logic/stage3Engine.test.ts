@@ -474,7 +474,7 @@ describe("zhenhuan stage 3 engine", () => {
     expect(s.statuses.some((x) => x.id === "yuandaoBuji")).toBe(true);
   });
 
-  it("故人来访 (turn 15): 槿汐相助「为女儿撑下去」gives 清誉 +1 for 2 turns, only one of the two bonuses", () => {
+  it("故人来访 (turn 15): 槿汐相助 / 眉庄相助 are exclusive options (and 默认 诊治 is the third)", () => {
     let s = advanceTo(newStage3(6, CARRY), 15);
     s.extraPlays = 3;
     const [jx, mz] = setHand(s, ["jinxiXiangzhu", "meizhuangXiangzhu"]);

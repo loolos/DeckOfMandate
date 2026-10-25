@@ -220,7 +220,6 @@ export type Z3State = {
   gengtie: boolean;
   songxing: boolean;
   /** 温太医探视: the temporary card's uid, and whether 「为女儿撑下去」 was used. */
-  tanshiBonus: boolean;
   changxiangsi: { played: CardId3[]; done: boolean } | null;
   yihua: Yihua | null;
   relicsBurned: number;
@@ -1115,18 +1114,6 @@ function resolvePlay3(s: Z3State, cardUid: string, removeStatusUid?: string): vo
       applyDelta3(s, { resource: "qingyu", amount: 2 }, "笛箫合奏");
     }
   }
-  const tanshiOpen = openStories3(s).some((st) => st.id === "wentaiyiTanshi");
-  if (alive(s) && tanshiOpen && !s.tanshiBonus && card.id === "meizhuangXiangzhu") {
-    s.tanshiBonus = true;
-    answered = true;
-    log(s, "眉庄在宫里放心不下，远远托温实初带了药材和补给上山。", "good");
-    addStatus3(s, "yuandaoBuji");
-  } else if (alive(s) && tanshiOpen && !s.tanshiBonus && card.id === "jinxiXiangzhu") {
-    s.tanshiBonus = true;
-    answered = true;
-    log(s, "为女儿撑下去：你看着胧月的小像，看了很久。槿汐在一旁默默替你添了一盏灯。", "good");
-    addStatus3(s, "weiNverChengxia");
-  }
   if (alive(s) && yihuaStep) advanceYihua(s, card.id);
   if (alive(s) && s.yihua && s.yihua.step < 4 && YIHUA.doubtCards.includes(card.id)) changeDoubt(s, -1, def.name);
 
@@ -1679,7 +1666,6 @@ export function newStage3(seed: number, carry: Carry3 | null): Z3State {
     luofa: false,
     gengtie: false,
     songxing: false,
-    tanshiBonus: false,
     changxiangsi: null,
     yihua: null,
     relicsBurned: 0,
