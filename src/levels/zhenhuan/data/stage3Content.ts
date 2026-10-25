@@ -94,10 +94,15 @@ export type CardId3 =
   | "jingxinRennai"
   | "yiwuGengtie"
   | "yiwuDi"
-  | "yiwuPifeng";
+  | "yiwuPifeng"
+  | "yiwuDipu"
+  | "yiwuTonghua"
+  | "yiwuHehua"
+  | "yiwuZitiao";
 
-export type RelicId = "yiwuGengtie" | "yiwuDi" | "yiwuPifeng";
-export const RELICS: readonly RelicId[] = ["yiwuGengtie", "yiwuDi", "yiwuPifeng"];
+export type RelicId = "yiwuGengtie" | "yiwuDi" | "yiwuPifeng" | "yiwuDipu" | "yiwuTonghua" | "yiwuHehua" | "yiwuZitiao";
+/** 舟覆后果郡王相助变成的遗物，按先后取用（有的剧情选择才有）。 */
+export const RELICS: readonly RelicId[] = ["yiwuGengtie", "yiwuDi", "yiwuPifeng", "yiwuZitiao", "yiwuHehua", "yiwuDipu", "yiwuTonghua"];
 
 export type CardDef3 = {
   readonly id: CardId3;
@@ -303,12 +308,60 @@ export const CARDS3: Record<CardId3, CardDef3> = {
     rulesText: RELIC_RULES,
     rulesCompact: "🕯️🔥",
   },
+  yiwuDipu: {
+    id: "yiwuDipu",
+    name: "旧笛谱",
+    emoji: "🎼",
+    flavor: "桐花台那晚他随手写在谱子上的曲子，你一直没有还他。",
+    base: [],
+    baseDraw: 0,
+    matches: [],
+    rulesText: RELIC_RULES,
+    rulesCompact: "🕯️🔥",
+  },
+  yiwuTonghua: {
+    id: "yiwuTonghua",
+    name: "桐花一枝",
+    emoji: "🌸",
+    flavor: "桐花台上他折了一枝递给你，你没有接，他便放在了石桌上。",
+    base: [],
+    baseDraw: 0,
+    matches: [],
+    rulesText: RELIC_RULES,
+    rulesCompact: "🕯️🔥",
+  },
+  yiwuHehua: {
+    id: "yiwuHehua",
+    name: "合欢花籽",
+    emoji: "🌱",
+    flavor: "他说在安栖观外种了一片合欢，等开了花，请你去看。",
+    base: [],
+    baseDraw: 0,
+    matches: [],
+    rulesText: RELIC_RULES,
+    rulesCompact: "🕯️🔥",
+  },
+  yiwuZitiao: {
+    id: "yiwuZitiao",
+    name: "隔窗字条",
+    emoji: "📝",
+    flavor: "你父亲在狱里的那些日子，他奔走回来，隔着门缝递给你的几行字。",
+    base: [],
+    baseDraw: 0,
+    matches: [],
+    rulesText: RELIC_RULES,
+    rulesCompact: "🕯️🔥",
+  },
 };
 
 export const RELIC_TEXT: Record<RelicId, string> = {
   yiwuGengtie: "你把庚帖凑近烛火。「嬛嬛」两个字卷起来，黑了，散了。你没有哭。",
   yiwuDi: "笛子投进火盆，噼啪响了几声。长相思，摧心肝。你在心里替他吹完了最后一句。",
   yiwuPifeng: "披风烧得很慢，一点一点地，像是舍不得走。",
+  yiwuDipu: "谱子卷起了边，那支没有名字的曲子，在火里一个音一个音地没了。",
+  yiwuTonghua: "桐花早已干枯，一碰就碎。火舌卷过去，只剩一缕淡淡的香。",
+  yiwuHehua: "花籽在火里炸开一声轻响。安栖观外的合欢，再也没有人等它开花了。",
+  yiwuZitiao: "字条上的墨迹被火舔过，他的字一行一行浮出来，又一行一行暗下去。",
 };
 
 /** 第一幕牌库：第二关因【惜别】离场的眉庄 / 温太医回来了，各 2 张。 */
@@ -1752,6 +1805,8 @@ export type StoryOption3 = {
   readonly shenziFloor?: number;
   readonly xiayu?: XiayuChoice;
   /** Story-specific flag the engine records (桐花台 / 莫愁 / 温太医探视 / 庚帖 / 送行). */
+  /** 舟覆后果郡王相助可能变成的遗物。 */
+  readonly relic?: RelicId;
   readonly flag?: "li" | "di" | "lingrong" | "luofa" | "gengtie" | "songxing" | "xiangshou" | "ouyu";
   readonly status?: StatusId3;
 };
@@ -1900,9 +1955,9 @@ export const STORIES3: Record<StoryId3, StoryDef3> = {
     note: "无论怎样结算，之后牌库加入第 1 张【果郡王相助】，机会池洗入【王爷闲谈】。",
     defaultOptionId: "lundi",
     options: [
-      { id: "lundi", name: "论笛谈诗", effects: [], drawCards: 1, flag: "di", text: "抽 1 张牌（他记住了你）", compact: "🎴+1", story: "你说他的笛子吹得太急，像是心里有事。他怔了怔，笑着说：「小主是第一个这样说的人。」" },
-      { id: "lundiCard", name: "论笛谈诗", card: "yirongZhengsu", effects: [], drawCards: 1, flag: "di", text: "抽 1 张牌（他记住了你）", compact: "🎴+1", story: "你理了理衣裳走上前去，与他说起笛中的曲子。他听得认真，临走时回头看了你一眼。" },
-      { id: "yili", name: "以礼相待", card: "jinyanShenxing", effects: [q(1)], flag: "li", text: "清誉 +1", story: "你福了福身，只道了一句「王爷安好」，便转身离开了。他站在桐花台上，没有再吹笛子。" },
+      { id: "lundi", name: "论笛谈诗", relic: "yiwuDipu", effects: [], drawCards: 1, flag: "di", text: "抽 1 张牌（他记住了你）", compact: "🎴+1", story: "你说他的笛子吹得太急，像是心里有事。他怔了怔，笑着说：「小主是第一个这样说的人。」" },
+      { id: "lundiCard", name: "论笛谈诗", card: "yirongZhengsu", relic: "yiwuDipu", effects: [], drawCards: 1, flag: "di", text: "抽 1 张牌（他记住了你）", compact: "🎴+1", story: "你理了理衣裳走上前去，与他说起笛中的曲子。他听得认真，临走时回头看了你一眼。" },
+      { id: "yili", name: "以礼相待", card: "jinyanShenxing", relic: "yiwuTonghua", effects: [q(1)], flag: "li", text: "清誉 +1", story: "你福了福身，只道了一句「王爷安好」，便转身离开了。他站在桐花台上，没有再吹笛子。" },
       {
         id: "lingrongZaice",
         name: "有陵容在侧",
@@ -1935,6 +1990,7 @@ export const STORIES3: Record<StoryId3, StoryDef3> = {
         name: "托果郡王周旋",
         card: "guojunwangXiangzhu",
         two: true,
+        relic: "yiwuZitiao",
         effects: [],
         xiayu: "guo",
         text: "不扣圣宠",
@@ -2020,7 +2076,7 @@ export const STORIES3: Record<StoryId3, StoryDef3> = {
     defaultOptionId: "huibi",
     options: [
       { id: "huibi", name: "回避", effects: [q(1)], text: "清誉 +1", story: "你低着头从他身边走过去。他怔了一下，低声叫了一句「莫愁师父」。你没有回头。" },
-      { id: "yichanXiangtan", name: "以禅相谈", card: "chanyuXiushen", effects: [], drawCards: 1, text: "抽 1 张牌", story: "你站在山门下，与他说了几句禅语。他说：「我在安栖观外种了一片合欢，等开了花，请你来看。」" },
+      { id: "yichanXiangtan", name: "以禅相谈", card: "chanyuXiushen", relic: "yiwuHehua", effects: [], drawCards: 1, text: "抽 1 张牌", story: "你站在山门下，与他说了几句禅语。他说：「我在安栖观外种了一片合欢，等开了花，请你来看。」" },
     ],
   },
   wentaiyiTanshi: {
@@ -2049,6 +2105,7 @@ export const STORIES3: Record<StoryId3, StoryDef3> = {
         id: "bingzhongXiangshou",
         name: "病中相守",
         card: "guojunwangXiangzhu",
+        relic: "yiwuPifeng",
         effects: [sz(3)],
         removeNegatives: "all",
         flag: "xiangshou",
@@ -2065,7 +2122,7 @@ export const STORIES3: Record<StoryId3, StoryDef3> = {
     defaultOptionId: "buxie",
     options: [
       { id: "buxie", name: "不写", effects: [q(1)], text: "清誉 +1", story: "你把红纸推了回去。他没有说什么，只把它仔细折好，收进了袖子里。" },
-      { id: "xiexia", name: "写下庚帖", card: "guojunwangXiangzhu", effects: [], flag: "gengtie", text: "他收好了庚帖，日后或许用得上", story: "你提笔写下自己的生辰。他在旁边写的是「嬛嬛」。他从来只唤你自己的名字。" },
+      { id: "xiexia", name: "写下庚帖", card: "guojunwangXiangzhu", relic: "yiwuGengtie", effects: [], flag: "gengtie", text: "他收好了庚帖，日后或许用得上", story: "你提笔写下自己的生辰。他在旁边写的是「嬛嬛」。他从来只唤你自己的名字。" },
     ],
   },
   diannanZhixing: {
@@ -2076,7 +2133,7 @@ export const STORIES3: Record<StoryId3, StoryDef3> = {
     defaultOptionId: "wuyan",
     options: [
       { id: "wuyan", name: "不去相送", effects: [], text: "无效果", story: "你没有去送他。那一夜，你坐在窗前，听着山风一阵紧似一阵，直到天边泛白。" },
-      { id: "songxing", name: "送行", card: "guojunwangXiangzhu", effects: [], flag: "songxing", status: "songxingBieyi", text: "未来 3 回合每回合抓牌 +1", story: "你送他到山下。他翻身下马，把那支随身多年的笛子塞进你手里：「等我回来。」" },
+      { id: "songxing", name: "送行", card: "guojunwangXiangzhu", relic: "yiwuDi", effects: [], flag: "songxing", status: "songxingBieyi", text: "未来 3 回合每回合抓牌 +1", story: "你送他到山下。他翻身下马，把那支随身多年的笛子塞进你手里：「等我回来。」" },
     ],
   },
   zhoufuEHao: {

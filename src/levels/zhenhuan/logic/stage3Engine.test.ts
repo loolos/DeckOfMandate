@@ -592,7 +592,8 @@ describe("zhenhuan stage 3 engine", () => {
     s.drawPile.push({ uid: "g1", id: "guojunwangXiangzhu" }, { uid: "g2", id: "guojunwangXiangzhu" });
     s = advanceTo(s, 25);
     const relics = [...s.hand, ...s.drawPile, ...s.discard].map((c) => c.id).filter((id) => id.startsWith("yiwu"));
-    expect(relics.sort()).toEqual(["yiwuGengtie", "yiwuPifeng"]);
+    // 桐花台默认「论笛谈诗」留下旧笛谱；庚帖优先，其余按往来取用
+    expect(relics.sort()).toEqual(["yiwuDipu", "yiwuGengtie"]);
     expect([...s.hand, ...s.drawPile, ...s.discard].some((c) => c.id === "guojunwangXiangzhu")).toBe(false);
     s = act(s, { type: "endTurn" });
     expect(s.act).toBe(3);
