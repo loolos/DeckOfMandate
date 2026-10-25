@@ -34,7 +34,7 @@
 | C10 | 禅语修身 | 手牌 | chanyuXiushen |
 | C11 | 荆钗布裙 | 手牌 | jingchaiBuqun |
 | C12 | 静心忍耐 | 手牌 | jingxinRennai |
-| C13 | 果郡王遗物（共用一张图；合婚庚帖、长相思笛、旧日披风、旧笛谱、桐花一枝、合欢花籽、隔窗字条，剧情文本各不同） | 手牌 | yiwuGuojunwang |
+| C13 | 果郡王遗物（共用一张图；合婚庚帖、长相思笛、旧日披风、旧笛谱、桐花一枝、合欢花籽，剧情文本各不同） | 手牌 | yiwuGuojunwang |
 | C16 | 槿汐相助（寺中版） | 手牌 | jinxiXiangzhu_temple |
 | C17 | 眉庄相助（寺中版） | 手牌 | meizhuangXiangzhu_temple |
 | C18 | 温太医相助（寺中版） | 手牌 | wenTaiyiZhenzhi_temple |
