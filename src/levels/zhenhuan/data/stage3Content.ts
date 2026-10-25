@@ -34,7 +34,7 @@ export const STAGE3 = {
   standaloneShengchong: 15,
   standaloneShenzi: 4,
   /** 单独开始第三关：从第二关的 6 种把柄里随机带入几种。 */
-  standaloneSecrets: 3,
+  standaloneSecrets: 4,
   /** 第 13、16……31 回合末【暗香盈袖】🌱+1。 */
   fragranceTurns: [13, 16, 19, 22, 25, 28, 31] as readonly number[],
   /** 🌟完美：三步在这一回合之前完成。 */
