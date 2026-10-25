@@ -726,13 +726,13 @@ function befriend(s: Z3State, ally: AllyId): void {
   addStatus3(s, ALLIES[ally].status);
 }
 
-/** 打压: a status that auto-resolves this crisis the next time it is drawn. */
-function suppress(s: Z3State, rival: RivalId, crisis: CrisisId3): void {
+/** 打压: a status that auto-resolves this rival's next crisis. */
+function suppress(s: Z3State, rival: RivalId): void {
   const first = !s.suppressed[rival];
   s.suppressed[rival] = true;
   log(s, `⚔️ 打压${RIVALS[rival].name}${first && rival === "guaerjia" ? "：第 8 回合父亲下狱的代价减轻一档" : ""}。`, "good");
-  const status = SUPPRESS_STATUS[crisis];
-  if (status && !s.statuses.some((st) => st.id === status)) addStatus3(s, status);
+  const status = SUPPRESS_STATUS[rival];
+  if (!s.statuses.some((st) => st.id === status)) addStatus3(s, status);
 }
 
 // ---------------------------------------------------------------- resolution
@@ -764,7 +764,7 @@ function resolveEventByCard(s: Z3State, ev: EventInst3, card: CardId3, doubleRew
   if (def.kind === "crisis") {
     if (def.rival && def.suppressCard === card && !def.pair) {
       ev.suppressed = true;
-      suppress(s, def.rival, ev.id as CrisisId3);
+      suppress(s, def.rival);
     }
     if (card === "jingchaiBuqun" && alive(s)) {
       log(s, "荆钗布裙联动：静白一时挑不出错。", "good");
@@ -1099,7 +1099,7 @@ function sharedPairCheck(s: Z3State, card: CardId3, resolvedNow: EventInst3[]): 
     log(s, `🔗 ${p.name}·一石二鸟：一张【${CARDS3[card].name}】两头都顾上了。`, "good");
     const crisis = resolvedNow.find((e) => e.id === p.crisis)!;
     crisis.suppressed = true;
-    suppress(s, p.rival, p.crisis);
+    suppress(s, p.rival);
   }
 }
 
@@ -1214,7 +1214,8 @@ function enterYihua(s: Z3State): void {
 
 function drawEvents(s: Z3State): void {
   const autoResolve = (ev: EventInst3) => {
-    const daya = SUPPRESS_STATUS[ev.id as CrisisId3];
+    const rival = EVENTS3[ev.id].rival;
+    const daya = rival ? SUPPRESS_STATUS[rival] : undefined;
     if (!daya || !removeStatusById(s, daya)) return;
     ev.resolved = true;
     ev.bySuppress = true;

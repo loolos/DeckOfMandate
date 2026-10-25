@@ -355,13 +355,8 @@ export type StatusId3 =
   | "xinruZhishui"
   | "jingfeiZhouji"
   | "yishiWucuo"
-  | "dayaQifeiXunxin"
-  | "dayaSanAgeYaochong"
-  | "dayaXinrenZhengchong"
-  | "dayaEmingCanben"
-  | "dayaYuhuayuanQi"
-  | "dayaXianfuQi"
-  | "dayaYanqingQi";
+  | "dayaQifei"
+  | "dayaGuaerjia";
 
 export type StatusDef3 = {
   readonly id: StatusId3;
@@ -389,17 +384,17 @@ export function statusText3(def: StatusDef3, turn: number): { effectText: string
   return def.veiled && turn < def.veiled.untilTurn ? def.veiled : def;
 }
 
-/** 打压 leaves one of these: that crisis is auto-resolved the next time it is drawn. */
-function daya(id: StatusId3, crisisName: string, flavor: string): StatusDef3 {
+/** 打压 leaves one of these per rival: her next crisis is auto-resolved once. */
+function daya(id: StatusId3, rivalName: string, flavor: string): StatusDef3 {
   return {
     id,
-    name: `打压·${crisisName}`,
+    name: `打压·${rivalName}`,
     emoji: "⚔️",
     tag: "positive",
     duration: 0,
     permanent: true,
     drawModifier: 0,
-    effectText: `【${crisisName}】下次出现时自动化解一次。用掉后消失。`,
+    effectText: `${rivalName}的危机事件下次出现时，自动化解一次。用掉后消失。`,
     flavor,
   };
 }
@@ -520,13 +515,8 @@ export const STATUSES3: Record<StatusId3, StatusDef3> = {
     effectText: "第 8 回合【甄远道下狱】每个选项的代价再加重一档。不可移除。",
     flavor: "鄂敏的折子递上去了，前朝都在议论甄家。",
   },
-  dayaQifeiXunxin: daya("dayaQifeiXunxin", "齐妃寻衅", "齐妃在众人面前下不来台，往后请安时收敛了许多。"),
-  dayaSanAgeYaochong: daya("dayaSanAgeYaochong", "三阿哥邀宠", "皇上不往长春宫去了，齐妃一时也想不出别的法子。"),
-  dayaXinrenZhengchong: daya("dayaXinrenZhengchong", "新人争宠", "祺贵人吃了一回亏，在御花园里不敢再那么张扬。"),
-  dayaEmingCanben: daya("dayaEmingCanben", "鄂敏参本", "折子留中不发，鄂敏在前朝也得掂量掂量。"),
-  dayaYuhuayuanQi: daya("dayaYuhuayuanQi", "御花园赏花·齐妃讥讽", "齐妃讨了个没趣，见了你和欣贵人便绕道走。"),
-  dayaXianfuQi: daya("dayaXianfuQi", "咸福宫托付·祺贵人告状", "皇后那里没告成，祺贵人一时不敢再搬弄是非。"),
-  dayaYanqingQi: daya("dayaYanqingQi", "延庆殿夜话·齐妃探病", "齐妃白跑一趟，皇后那边也懒得再差她来。"),
+  dayaQifei: daya("dayaQifei", "齐妃", "齐妃在众人面前下不来台，往后见了你都收敛了许多。"),
+  dayaGuaerjia: daya("dayaGuaerjia", "祺贵人", "祺贵人吃了一回亏，在人前不敢再那么张扬。"),
   lingrongDeXiang: {
     id: "lingrongDeXiang",
     name: "暗香盈袖",
@@ -678,16 +668,8 @@ export const ALLIES: Record<AllyId, { name: string; status: StatusId3 }> = {
 
 export const RIVALS: Record<RivalId, { name: string }> = { qifei: { name: "齐妃" }, guaerjia: { name: "祺贵人" } };
 
-/** The 打压 status each rival crisis leaves behind. */
-export const SUPPRESS_STATUS: Partial<Record<CrisisId3, StatusId3>> = {
-  qifeiXunxin: "dayaQifeiXunxin",
-  sanAgeYaochong: "dayaSanAgeYaochong",
-  xinrenZhengchong: "dayaXinrenZhengchong",
-  emingCanben: "dayaEmingCanben",
-  yuhuayuanQi: "dayaYuhuayuanQi",
-  xianfuQi: "dayaXianfuQi",
-  yanqingQi: "dayaYanqingQi",
-};
+/** The 打压 status each rival leaves behind. */
+export const SUPPRESS_STATUS: Record<RivalId, StatusId3> = { qifei: "dayaQifei", guaerjia: "dayaGuaerjia" };
 
 export type PairId = "yuhuayuan" | "xianfu" | "yanqing";
 
@@ -1056,7 +1038,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     rival: "qifei",
     suppressCard: "jinyanShenxing",
     secret: "chuyanDingzhuang",
-    resolvedText: "移除事件；用谨言慎行化解算作打压齐妃，获得【打压·齐妃寻衅】",
+    resolvedText: "移除事件；用谨言慎行化解算作打压齐妃，获得【打压·齐妃】",
     unresolvedText: "清誉 -1、获得【流言缠身】",
     resolvedStory: {
       jinyanShenxing: "你笑着回了一句：「娘娘说笑了，三阿哥的功课，皇上才是放在心尖上的。」齐妃一时下不来台，再没敢开口。",
@@ -1074,7 +1056,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     penalty: [sc(-1)],
     rival: "qifei",
     suppressCard: "yirongZhengsu",
-    resolvedText: "移除事件；用仪容整肃化解算作打压齐妃，获得【打压·三阿哥邀宠】",
+    resolvedText: "移除事件；用仪容整肃化解算作打压齐妃，获得【打压·齐妃】",
     unresolvedText: "圣宠 -1",
     resolvedStory: {
       yirongZhengsu: "你换了一身新裁的衣裳，在皇上回养心殿的路上候着。皇上远远看见，便不往长春宫去了。",
@@ -1092,7 +1074,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     rival: "guaerjia",
     suppressCard: "yirongZhengsu",
     secret: "shanduShide",
-    resolvedText: "移除事件；用仪容整肃化解算作打压祺贵人，获得【打压·新人争宠】",
+    resolvedText: "移除事件；用仪容整肃化解算作打压祺贵人，获得【打压·祺贵人】",
     unresolvedText: "圣宠 -1",
     resolvedStory: {
       yirongZhengsu: "你在同一处园子里赏花，一身素净，倒衬得祺贵人过于艳丽。皇上看了你们一眼，携了你的手走了。",
@@ -1111,7 +1093,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     rival: "guaerjia",
     suppressCard: "shoulongRenxin",
     secret: "yuanwangJunfu",
-    resolvedText: "移除事件；用收拢人心化解算作打压祺贵人，获得【打压·鄂敏参本】（第 8 回合下狱的代价减轻一档）",
+    resolvedText: "移除事件；用收拢人心化解算作打压祺贵人，获得【打压·祺贵人】（第 8 回合下狱的代价减轻一档）",
     unresolvedText: "获得【父兄蒙尘】：第 8 回合下狱的代价加重一档",
     note: "第 5 回合后洗入危机池。",
     resolvedStory: {
@@ -2184,7 +2166,7 @@ export const POPUP_TEXT = {
   /** 开局规则说明里的第一幕事件规则。 */
   eventRules: [
     "🤝 盟友事件：第一次把握，获得她的盟友状态。",
-    "⚔️ 对头事件：用指定的牌化解才算打压，该危机下次出现时自动化解一次。",
+    "⚔️ 对头事件：用指定的牌化解才算打压，获得【打压】状态：她的危机下次出现时自动化解一次。",
     "🔗 连环事件：先化解危机才能把握机会；一张共同牌可一石二鸟。",
   ],
   tonghuatai: [
@@ -2295,7 +2277,7 @@ export const TAG3_INFO: Record<TagId3, { label: string; lore: string; rules: str
   yiyi: { label: "依依", lore: "缠着姐姐不肯走。", rules: "情分生分时，陵容在回合末留在手牌中；留下几张，下回合就少抓几张。" },
   double: { label: "双牌", lore: "一个人扛不住。", rules: "同一回合内打出两张匹配牌才算解决；回合末不满 2 张则进度清零。" },
   ally: { label: "盟友", lore: "后宫重新站队，总有人愿意站在你这边。", rules: "第一次把握她的事件，获得盟友状态（端妃相护 / 敬妃之谊 / 欣贵人解围）。" },
-  rival: { label: "对头", lore: "她们都是皇后的人。", rules: "用卡面标注的牌化解算打压，获得【打压】状态：该危机下次出现时自动化解一次。" },
+  rival: { label: "对头", lore: "她们都是皇后的人。", rules: "用卡面标注的牌化解算打压，获得该对头的【打压】状态：她的危机下次出现时自动化解一次。" },
   pair: {
     label: "连环",
     lore: "一石二鸟。",

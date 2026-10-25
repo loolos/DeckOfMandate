@@ -260,7 +260,7 @@ describe("zhenhuan stage 3 engine", () => {
     const [uid] = setHand(s, ["jinyanShenxing"]);
     s = act(s, { type: "playCard", cardUid: uid! });
     expect(s.suppressed.qifei).toBe(true);
-    expect(s.statuses.some((st) => st.id === "dayaQifeiXunxin")).toBe(true);
+    expect(s.statuses.some((st) => st.id === "dayaQifei")).toBe(true);
     s.crisisPool = ["qifeiXunxin"];
     s.crisisUsed = [];
     s.opportunityPool = [];
@@ -268,7 +268,21 @@ describe("zhenhuan stage 3 engine", () => {
     s = act(s, { type: "endTurn" });
     expect(s.crisis?.id).toBe("qifeiXunxin");
     expect(s.crisis!.resolved && s.crisis!.bySuppress).toBe(true);
-    expect(s.statuses.some((st) => st.id === "dayaQifeiXunxin")).toBe(false);
+    expect(s.statuses.some((st) => st.id === "dayaQifei")).toBe(false);
+  });
+
+  it("打压 is per rival: 齐妃寻衅 suppressed → 三阿哥邀宠 (also 齐妃) is auto-resolved next", () => {
+    let s = advanceTo(newStage3(3, CARRY), 3);
+    clearBoard(s);
+    withStatus(s, "dayaQifei");
+    s.crisisPool = ["sanAgeYaochong"];
+    s.crisisUsed = [];
+    s.opportunityPool = [];
+    s.opportunityUsed = [];
+    s = act(s, { type: "endTurn" });
+    expect(s.crisis?.id).toBe("sanAgeYaochong");
+    expect(s.crisis!.resolved && s.crisis!.bySuppress).toBe(true);
+    expect(s.statuses.some((st) => st.id === "dayaQifei")).toBe(false);
   });
 
   it("连环 shared card: 打压 status for the pair crisis, and each half shows its own story", () => {
@@ -278,7 +292,7 @@ describe("zhenhuan stage 3 engine", () => {
     s.opportunity = ev(s, "xianfuJing");
     const [uid] = setHand(s, ["meizhuangXiangzhu"]);
     const t = act(s, { type: "playCard", cardUid: uid! });
-    expect(t.statuses.some((st) => st.id === "dayaXianfuQi")).toBe(true);
+    expect(t.statuses.some((st) => st.id === "dayaGuaerjia")).toBe(true);
     expect(EVENTS3.xianfuQi.resolvedStory.meizhuangXiangzhu).not.toBe(EVENTS3.xianfuJing.resolvedStory.meizhuangXiangzhu);
   });
 
