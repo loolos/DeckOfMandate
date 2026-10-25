@@ -855,7 +855,7 @@ describe("zhenhuan stage 3 engine", () => {
     const run = (played: CardId3[]) => {
       let s = advanceTo(newStage3(16, CARRY), 33);
       clearBoard(s);
-      s.yihua = { step: 4, yinjia: ["jinxiXiangzhu"], yinjiaNeed: 1, duishi: true, doubt: 0, doneTurn: null, ouyuDue: null, ouyuTurn: 27, yinjiaTurn: 25, dushu: false, dengmen: { doubt: 3, relics: 0, needed: 3, played } };
+      s.yihua = { step: 4, yinjia: ["jinxiXiangzhu"], yinjiaNeed: 1, duishi: true, doubt: 0, doneTurn: null, ouyuDue: null, ouyuTurn: 27, yinjiaTurn: 25, dushu: false, dengmen: { doubt: 3, relics: 0, needed: 3, played, openTurn: 32 } };
       return act(s, { type: "endTurn" });
     };
     const narrow = run(["chanyuXiushen", "jingchaiBuqun"]);
@@ -864,10 +864,35 @@ describe("zhenhuan stage 3 engine", () => {
     expect(run(["chanyuXiushen"]).outcome).toBe("lost");
   });
 
+  it("皇上登门: two-turn window; 被废出宫 caps at 险胜; only a one-turn clear can be 完胜", () => {
+    const run = (tier: 1 | 3, plays: CardId3[][]) => {
+      let s = advanceTo(newStage3(17, CARRY), 29);
+      clearBoard(s);
+      s.exitTier = tier;
+      s.drawPile = s.drawPile.filter((c) => !c.id.startsWith("yiwu"));
+      s.discard = s.discard.filter((c) => !c.id.startsWith("yiwu"));
+      s.hand = s.hand.filter((c) => !c.id.startsWith("yiwu"));
+      s.yihua = { step: 4, yinjia: ["jinxiXiangzhu"], yinjiaNeed: 1, duishi: true, doubt: 0, doneTurn: null, ouyuDue: null, ouyuTurn: 27, yinjiaTurn: 25, dushu: false, dengmen: { doubt: 1, relics: 0, needed: tier === 1 ? 1 : 2, played: [], openTurn: 29 } };
+      for (let i = 0; i < plays.length; i++) {
+        clearBoard(s);
+        s.extraPlays = 3;
+        for (const uid of setHand(s, plays[i]!)) s = act(s, { type: "playCard", cardUid: uid });
+        clearBoard(s);
+        if (s.outcome === "playing") s = act(s, { type: "endTurn" });
+      }
+      return s;
+    };
+    expect(run(1, [["chanyuXiushen"]]).victory).toBe("perfect");
+    expect(run(1, [[], ["chanyuXiushen"]]).victory).toBe("return");
+    expect(run(3, [["chanyuXiushen", "jingchaiBuqun"]]).victory).toBe("narrow");
+    expect(run(3, [["chanyuXiushen"], []]).victory).toBe("narrow");
+    expect(run(3, [[], []]).outcome).toBe("lost");
+  });
+
   it("皇上登门: 温太医相助 counts, and the step spans turns", () => {
     let s = advanceTo(newStage3(15, CARRY), 29);
     clearBoard(s);
-    s.yihua = { step: 4, yinjia: ["jinxiXiangzhu"], yinjiaNeed: 1, duishi: true, doubt: 3, doneTurn: null, ouyuDue: null, ouyuTurn: 27, yinjiaTurn: 25, dushu: false, dengmen: { doubt: 3, relics: 0, needed: 2, played: [] } };
+    s.yihua = { step: 4, yinjia: ["jinxiXiangzhu"], yinjiaNeed: 1, duishi: true, doubt: 3, doneTurn: null, ouyuDue: null, ouyuTurn: 27, yinjiaTurn: 25, dushu: false, dengmen: { doubt: 3, relics: 0, needed: 2, played: [], openTurn: s.turn } };
     expect(yihuaAccepts(s, "wenTaiyiZhenzhi")).toBe(true);
     expect(yihuaAccepts(s, "jingxinRennai")).toBe(false);
     expect(musicMood({ stage: 3, state: s } as never)).toBe("return");

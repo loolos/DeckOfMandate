@@ -661,7 +661,7 @@ function YihuaCard({ state, fold, dispatch }: { state: Z3State; fold: Fold; disp
               {n === 2 && y.step === 2 && y.ouyuDue != null ? (y.ouyuDue === state.turn ? "（皇上今日驾临：本回合解决【圣驾偶遇】）" : `（第 ${y.ouyuDue} 回合皇上驾临）`) : ""}
               {n === 2 && y.step < 2 ? `（引驾完成后第 ${YIHUA.ouyuDelay} 回合；没成隔一回合再来）` : ""}
               {n === 3 ? "（偶遇之后打出温太医相助即完成）" : ""}
-              {n === 4 ? (y.dengmen ? `（皇上已登门：须打出 ${y.dengmen.needed} 张解牌${y.dengmen.needed === 0 ? "，只需过剧情" : `，已打 ${Math.min(y.dengmen.played.length, y.dengmen.needed)} 张；疑点 ${y.dengmen.doubt}、遗物 ${y.dengmen.relics} 件${state.exitTier === 1 ? "" : "，非体面自请多 1 张"}`}）` : "（改脉的下一回合皇上登门：按当时的疑点与未焚的遗物定张数，可跨回合）") : ""}
+              {n === 4 ? (y.dengmen ? `（皇上已登门：须在第 ${y.dengmen.openTurn}–${y.dengmen.openTurn + 1} 回合内打出 ${y.dengmen.needed} 张解牌${y.dengmen.needed === 0 ? "，只需过剧情" : `，已打 ${Math.min(y.dengmen.played.length, y.dengmen.needed)} 张；疑点 ${y.dengmen.doubt}、遗物 ${y.dengmen.relics} 件${state.exitTier === 1 ? "" : "，非体面自请多 1 张"}`}）` : "（改脉的下一回合皇上登门：按当时的疑点与未焚的遗物定张数，两回合内打够）") : ""}
               {state_ !== "done" ? (
                 <>
                   <br />
