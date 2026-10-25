@@ -154,7 +154,7 @@ export const CARDS3: Record<CardId3, CardDef3> = {
     matches: ["gongzhongLiuyan", "neiwufuDiaonan", "suiyuxuanXianhua", "kuairenKuaiyu", "emingCanben", "shanghuaXiaoju", "yuhuayuanXin", "xianfuJing", "yanqingDuan"],
     rulesCompact: "👂×2 📦→🎴+1",
   }),
-  jingguanQibian: palace("jingguanQibian", { extraPlays: 1, matches: ["sanAgeYaochong", "jiayanXianyi", "yuhuayuanQi", "xianfuQi", "yanqingDuan"] }),
+  jingguanQibian: palace("jingguanQibian", { extraPlays: 1, rulesCompact: "🎴+2 🀄+1", matches: ["sanAgeYaochong", "jiayanXianyi", "yuhuayuanQi", "xianfuQi", "yanqingDuan"] }),
   meizhuangXiangzhu: palace("meizhuangXiangzhu", {
     matches: [
       "taihouChuixun",
@@ -172,7 +172,7 @@ export const CARDS3: Record<CardId3, CardDef3> = {
     ],
     baseDraw: 1,
     rulesText: ["清誉 +1；抽 1 张牌（眉庄冤屈洗刷，复了位分）。", "联动：它解决的机会事件，事件奖励翻倍（自身基础效果不翻倍）。"],
-    rulesCompact: "🪷+1 🎴+1 👭奖励×2",
+    rulesCompact: "🪷+1 🎴+1 🎁×2",
   }),
   lingrongXiangzhu: {
     ...CARDS2.lingrongXiangzhu,
@@ -193,6 +193,7 @@ export const CARDS3: Record<CardId3, CardDef3> = {
   jinxiXiangzhu: {
     ...CARDS2.jinxiXiangzhu,
     baseStatus: "zhushiTuotie",
+    rulesCompact: "🗝️⏭️🀄+1",
     matches: [
       "gongzhongLiuyan",
       "neiwufuDiaonan",
@@ -267,7 +268,7 @@ export const CARDS3: Record<CardId3, CardDef3> = {
     baseDraw: 0,
     matches: [],
     rulesText: RELIC_RULES,
-    rulesCompact: "🕯️ 焚毁",
+    rulesCompact: "🕯️🔥",
   },
   yiwuDi: {
     id: "yiwuDi",
@@ -278,7 +279,7 @@ export const CARDS3: Record<CardId3, CardDef3> = {
     baseDraw: 0,
     matches: [],
     rulesText: RELIC_RULES,
-    rulesCompact: "🕯️ 焚毁",
+    rulesCompact: "🕯️🔥",
   },
   yiwuPifeng: {
     id: "yiwuPifeng",
@@ -289,7 +290,7 @@ export const CARDS3: Record<CardId3, CardDef3> = {
     baseDraw: 0,
     matches: [],
     rulesText: RELIC_RULES,
-    rulesCompact: "🕯️ 焚毁",
+    rulesCompact: "🕯️🔥",
   },
 };
 
