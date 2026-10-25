@@ -426,7 +426,8 @@ export type StatusId3 =
   | "yishiWucuo"
   | "dayaQifei"
   | "dayaGuaerjia"
-  | "yanxianHuansi";
+  | "yanxianHuansi"
+  | "xianhuaChuanKai";
 
 export type StatusDef3 = {
   readonly id: StatusId3;
@@ -470,6 +471,16 @@ function daya(id: StatusId3, rivalName: string, flavor: string): StatusDef3 {
 }
 
 export const STATUSES3: Record<StatusId3, StatusDef3> = {
+  xianhuaChuanKai: {
+    id: "xianhuaChuanKai",
+    name: "闲话传开",
+    emoji: "🗣️",
+    tag: "negative",
+    duration: 2,
+    drawModifier: -1,
+    effectText: "未来 2 回合，每回合抓牌数 -1（至少抓 1 张）。多个实例分别计时、效果叠加。",
+    flavor: "碎玉轩里的闲话传到了别的宫里，走到哪儿都有人指指点点，你也没了往日的从容。",
+  },
   yanxianHuansi: {
     id: "yanxianHuansi",
     name: "眼线环伺",
@@ -1191,9 +1202,13 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     emoji: "🗣️",
     flavor: "碎玉轩里有人嚼舌根，说小主如今眼里只有皇上，待下人越发冷淡了。",
     reward: NO,
-    penalty: [q(-1)],
-    resolvedText: "移除事件",
-    unresolvedText: "清誉 -1",
+    penalty: NO,
+    penaltyStatus: "xianhuaChuanKai",
+    halfStatusTurns: 1,
+    needTwo: true,
+    resolveCost: [q(-1)],
+    resolvedText: "移除事件；需打出两张解牌；化解也要清誉 -1",
+    unresolvedText: "未来 2 回合每回合抓牌 -1（至少 1 张）；只打出一张解牌则只持续 1 回合",
     resolvedStory: {
       jinxiXiangzhu: "槿汐把碎玉轩上下叫到一处，不轻不重地说了几句。往后再没人敢乱说话。",
       shoulongRenxin: "你赏了碎玉轩上下每人一个月的月钱。宫人们感恩戴德，闲话也就没了。",
