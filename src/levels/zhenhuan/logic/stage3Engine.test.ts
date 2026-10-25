@@ -245,9 +245,11 @@ describe("zhenhuan stage 3 engine", () => {
     s.crisis = ev(s, "yuhuayuanQi");
     s.opportunity = ev(s, "yuhuayuanXin");
     expect(pairLocked(s, s.opportunity)).toBe(true);
-    const [uid] = setHand(s, ["jinyanShenxing"]);
-    expect(matchedEvents3(s, "jinyanShenxing").map((e) => e.id).sort()).toEqual(["yuhuayuanQi", "yuhuayuanXin"]);
-    const t = act(s, { type: "playCard", cardUid: uid! });
+    const [uid, uid2] = setHand(s, ["jinyanShenxing", "jinxiXiangzhu"]);
+    expect(matchedEvents3(s, "jinyanShenxing").map((e) => e.id)).toContain("yuhuayuanQi");
+    let t = act(s, { type: "playCard", cardUid: uid! });
+    expect(t.crisis!.resolved).toBe(false);
+    t = act(t, { type: "playCard", cardUid: uid2! });
     expect(t.crisis!.resolved && t.opportunity!.resolved).toBe(true);
     expect(t.suppressed.qifei).toBe(true);
     expect(t.allies.xin).toBe(true);
@@ -257,8 +259,10 @@ describe("zhenhuan stage 3 engine", () => {
     let s = advanceTo(newStage3(3, CARRY), 3);
     clearBoard(s);
     s.crisis = ev(s, "qifeiXunxin");
-    const [uid] = setHand(s, ["jinyanShenxing"]);
+    const [uid, uid2] = setHand(s, ["jinyanShenxing", "meizhuangXiangzhu"]);
     s = act(s, { type: "playCard", cardUid: uid! });
+    expect(s.crisis!.resolved).toBe(false);
+    s = act(s, { type: "playCard", cardUid: uid2! });
     expect(s.suppressed.qifei).toBe(true);
     expect(s.statuses.some((st) => st.id === "dayaQifei")).toBe(true);
     s.crisisPool = ["qifeiXunxin"];
@@ -269,6 +273,20 @@ describe("zhenhuan stage 3 engine", () => {
     expect(s.crisis?.id).toBe("qifeiXunxin");
     expect(s.crisis!.resolved && s.crisis!.bySuppress).toBe(true);
     expect(s.statuses.some((st) => st.id === "dayaQifei")).toBe(false);
+  });
+
+  it("连环: two cards without the shared one clear the crisis only; the opportunity unlocks but stays open", () => {
+    const s = newStage3(2, CARRY);
+    clearBoard(s);
+    s.crisis = ev(s, "xianfuQi");
+    s.opportunity = ev(s, "xianfuJing");
+    const [a, b] = setHand(s, ["jingguanQibian", "jinyanShenxing"]);
+    let t = act(s, { type: "playCard", cardUid: a! });
+    t = act(t, { type: "playCard", cardUid: b! });
+    expect(t.crisis!.resolved).toBe(true);
+    expect(t.opportunity!.resolved).toBe(false);
+    expect(pairLocked(t, t.opportunity!)).toBe(false);
+    expect(t.statuses.some((st) => st.id === "dayaGuaerjia")).toBe(false);
   });
 
   it("打压 is per rival: 齐妃寻衅 suppressed → 三阿哥邀宠 (also 齐妃) is auto-resolved next", () => {
@@ -290,9 +308,11 @@ describe("zhenhuan stage 3 engine", () => {
     clearBoard(s);
     s.crisis = ev(s, "xianfuQi");
     s.opportunity = ev(s, "xianfuJing");
-    const [uid] = setHand(s, ["meizhuangXiangzhu"]);
-    const t = act(s, { type: "playCard", cardUid: uid! });
+    const [uid, uid2] = setHand(s, ["meizhuangXiangzhu", "jinyanShenxing"]);
+    let t = act(s, { type: "playCard", cardUid: uid! });
+    t = act(t, { type: "playCard", cardUid: uid2! });
     expect(t.statuses.some((st) => st.id === "dayaGuaerjia")).toBe(true);
+    expect(t.opportunity!.resolved).toBe(true);
     expect(EVENTS3.xianfuQi.resolvedStory.meizhuangXiangzhu).not.toBe(EVENTS3.xianfuJing.resolvedStory.meizhuangXiangzhu);
   });
 

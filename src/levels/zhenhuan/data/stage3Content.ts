@@ -765,6 +765,8 @@ export type EventDef3 = {
   readonly ally?: AllyId;
   /** 对头事件 and whose. */
   readonly rival?: RivalId;
+  /** 对头事件: two matching cards in one turn to resolve. */
+  readonly needTwo?: boolean;
   /** 对头事件: resolving with this card is 打压. */
   readonly suppressCard?: CardId3;
   /** 对头事件 unresolved: 皇后 is told (hidden 把柄). */
@@ -1033,13 +1035,14 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     emoji: "🌰",
     flavor: "景仁宫请安时，齐妃当着众人的面讥讽你：「莞嫔如今可是皇上心尖上的人了。」",
     reward: NO,
-    penalty: [q(-1)],
+    penalty: [q(-2)],
     penaltyStatus: "liuyanChanshen",
     rival: "qifei",
+    needTwo: true,
     suppressCard: "jinyanShenxing",
     secret: "chuyanDingzhuang",
-    resolvedText: "移除事件；用谨言慎行化解算作打压齐妃，获得【打压·齐妃】",
-    unresolvedText: "清誉 -1、获得【流言缠身】",
+    resolvedText: "移除事件；打出两张解牌，其中有谨言慎行即算作打压齐妃，获得【打压·齐妃】",
+    unresolvedText: "清誉 -2、获得【流言缠身】",
     resolvedStory: {
       jinyanShenxing: "你笑着回了一句：「娘娘说笑了，三阿哥的功课，皇上才是放在心尖上的。」齐妃一时下不来台，再没敢开口。",
       meizhuangXiangzhu: "眉庄不咸不淡地接过话头，把齐妃的话轻轻挡了回去。",
@@ -1053,11 +1056,12 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     emoji: "📚",
     flavor: "齐妃借三阿哥的功课把皇上留在了长春宫，一连几日。",
     reward: NO,
-    penalty: [sc(-1)],
+    penalty: [sc(-2)],
     rival: "qifei",
+    needTwo: true,
     suppressCard: "yirongZhengsu",
-    resolvedText: "移除事件；用仪容整肃化解算作打压齐妃，获得【打压·齐妃】",
-    unresolvedText: "圣宠 -1",
+    resolvedText: "移除事件；打出两张解牌，其中有仪容整肃即算作打压齐妃，获得【打压·齐妃】",
+    unresolvedText: "圣宠 -2",
     resolvedStory: {
       yirongZhengsu: "你换了一身新裁的衣裳，在皇上回养心殿的路上候着。皇上远远看见，便不往长春宫去了。",
       jingguanQibian: "你按兵不动。三阿哥的功课本就不好，皇上考了几回，自己便没了兴致。",
@@ -1070,12 +1074,13 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     emoji: "💃",
     flavor: "祺贵人新近入宫，在御花园里“偶遇”了皇上，笑得比花还艳。",
     reward: NO,
-    penalty: [sc(-1)],
+    penalty: [sc(-2)],
     rival: "guaerjia",
+    needTwo: true,
     suppressCard: "yirongZhengsu",
     secret: "shanduShide",
-    resolvedText: "移除事件；用仪容整肃化解算作打压祺贵人，获得【打压·祺贵人】",
-    unresolvedText: "圣宠 -1",
+    resolvedText: "移除事件；打出两张解牌，其中有仪容整肃即算作打压祺贵人，获得【打压·祺贵人】",
+    unresolvedText: "圣宠 -2",
     resolvedStory: {
       yirongZhengsu: "你在同一处园子里赏花，一身素净，倒衬得祺贵人过于艳丽。皇上看了你们一眼，携了你的手走了。",
       jinyanShenxing: "你不争不抢，只在皇上跟前提了一句祺贵人年轻活泼。皇上笑笑，倒觉得你大度。",
@@ -1088,13 +1093,14 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     emoji: "📜",
     flavor: "祺贵人的父亲鄂敏在前朝上了折子，弹劾甄远道。",
     reward: NO,
-    penalty: NO,
+    penalty: [q(-1)],
     penaltyStatus: "fuxiongMengchen",
     rival: "guaerjia",
+    needTwo: true,
     suppressCard: "shoulongRenxin",
     secret: "yuanwangJunfu",
-    resolvedText: "移除事件；用收拢人心化解算作打压祺贵人，获得【打压·祺贵人】（第 8 回合下狱的代价减轻一档）",
-    unresolvedText: "获得【父兄蒙尘】：第 8 回合下狱的代价加重一档",
+    resolvedText: "移除事件；打出两张解牌，其中有收拢人心即算作打压祺贵人，获得【打压·祺贵人】（第 8 回合下狱的代价减轻一档）",
+    unresolvedText: "清誉 -1、获得【父兄蒙尘】：第 8 回合下狱的代价加重一档",
     note: "第 5 回合后洗入危机池。",
     resolvedStory: {
       shoulongRenxin: "你托人在前朝周旋，鄂敏的折子被压了下来，留中不发。",
@@ -1108,11 +1114,12 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     emoji: "🌸",
     flavor: "齐妃在御花园里撞见你和欣贵人，当众冷嘲热讽。",
     reward: NO,
-    penalty: [q(-1)],
+    penalty: [q(-2)],
     rival: "qifei",
+    needTwo: true,
     pair: "yuhuayuan",
     resolvedText: "移除事件；与【御花园赏花·欣贵人邀游】相连",
-    unresolvedText: "清誉 -1；【御花园赏花·欣贵人邀游】随之作废",
+    unresolvedText: "清誉 -2；【御花园赏花·欣贵人邀游】随之作废",
     resolvedStory: {
       jinyanShenxing: "你只淡淡回了一句「娘娘教训的是」，欣贵人立刻接过话头，三言两语说得齐妃面红耳赤，拂袖走了。",
       jingguanQibian: "你不接她的话，只顾着赏花。齐妃自讨没趣，悻悻地走了。",
@@ -1126,11 +1133,12 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     emoji: "🧵",
     flavor: "祺贵人在皇后面前告了你一状，说你越权替敬妃拟条陈。",
     reward: NO,
-    penalty: [q(-1)],
+    penalty: [q(-2)],
     rival: "guaerjia",
+    needTwo: true,
     pair: "xianfu",
     resolvedText: "移除事件；与【咸福宫托付·敬妃求助】相连",
-    unresolvedText: "清誉 -1；【咸福宫托付·敬妃求助】随之作废",
+    unresolvedText: "清誉 -2；【咸福宫托付·敬妃求助】随之作废",
     resolvedStory: {
       meizhuangXiangzhu: "皇后召你去问越权的事，眉庄陪着同去。她把条陈一页页摊开：「这是敬妃娘娘的意思，嫔妾们不过代笔。」祺贵人被问得答不上话来。",
       jinyanShenxing: "你在皇后面前只说是替敬妃抄写，一个字也没多说。皇后挑不出错，只得罢了。",
@@ -1144,11 +1152,12 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     emoji: "🍵",
     flavor: "齐妃奉皇后之命来延庆殿“探病”，正撞见你和端妃说话。",
     reward: NO,
-    penalty: [q(-1)],
+    penalty: [q(-2)],
     rival: "qifei",
+    needTwo: true,
     pair: "yanqing",
     resolvedText: "移除事件；与【延庆殿夜话·端妃旧话】相连",
-    unresolvedText: "清誉 -1；【延庆殿夜话·端妃旧话】随之作废",
+    unresolvedText: "清誉 -2；【延庆殿夜话·端妃旧话】随之作废",
     resolvedStory: {
       wenTaiyiZhenzhi: "温实初提着药箱进来，说该给端妃请脉了，病人须得静养。齐妃坐不住，客客气气地被请了出去。",
       jinxiXiangzhu: "槿汐引着齐妃去偏殿喝茶，絮絮叨叨说了好些闲话，齐妃什么也没听着。",
@@ -2166,8 +2175,8 @@ export const POPUP_TEXT = {
   /** 开局规则说明里的第一幕事件规则。 */
   eventRules: [
     "🤝 盟友事件：第一次把握，获得她的盟友状态。",
-    "⚔️ 对头事件：用指定的牌化解才算打压，获得【打压】状态：她的危机下次出现时自动化解一次。",
-    "🔗 连环事件：先化解危机才能把握机会；一张共同牌可一石二鸟。",
+    "⚔️ 对头事件：须同回合打出两张解牌；其中有指定的牌才算打压，获得【打压】状态：她的危机下次出现时自动化解一次。",
+    "🔗 连环事件：先化解危机才能把握机会；危机的两张解牌里有共同牌，可一石二鸟，顺带把握机会。",
   ],
   tonghuatai: [
     "笛声停了。那人回过身来，朝你一揖：「允礼唐突，惊扰小主了。」",
@@ -2277,11 +2286,11 @@ export const TAG3_INFO: Record<TagId3, { label: string; lore: string; rules: str
   yiyi: { label: "依依", lore: "缠着姐姐不肯走。", rules: "情分生分时，陵容在回合末留在手牌中；留下几张，下回合就少抓几张。" },
   double: { label: "双牌", lore: "一个人扛不住。", rules: "同一回合内打出两张匹配牌才算解决；回合末不满 2 张则进度清零。" },
   ally: { label: "盟友", lore: "后宫重新站队，总有人愿意站在你这边。", rules: "第一次把握她的事件，获得盟友状态（端妃相护 / 敬妃之谊 / 欣贵人解围）。" },
-  rival: { label: "对头", lore: "她们都是皇后的人。", rules: "用卡面标注的牌化解算打压，获得该对头的【打压】状态：她的危机下次出现时自动化解一次。" },
+  rival: { label: "对头", lore: "她们都是皇后的人。", rules: "危机须同回合打出两张解牌才能化解；其中有卡面标注的牌算打压，获得该对头的【打压】状态：她的危机下次出现时自动化解一次。" },
   pair: {
     label: "连环",
     lore: "一石二鸟。",
-    rules: "机会与危机成对出现。先化解危机才能把握机会；共同牌一张即可两头都顾上，并算打压。危机没化解，机会随之作废。",
+    rules: "机会与危机成对出现。先化解危机才能把握机会；危机的两张解牌里有共同牌，机会顺带解决并算打压，否则机会要另外解。危机没化解，机会随之作废。",
   },
   jingbai: { label: "静白刁难", lore: "静白师太在甘露寺里管着杂务，最讲寺规。你是被废出宫的带罪之人，在她眼里，不过是躲到寺里来避祸的小主，非得磨一磨性子不可：克扣炭火，杂役磋磨，甚至诬你偷香油钱。静岸师太看不过去，却也不好当面驳她。", rules: "第 11–18 回合的刁难没化解，静白就更嚣张，决定第 18 回合被赶走时有多狼狈。" },
   relic: { label: "遗物", lore: "他留下的东西。", rules: "打出即焚毁，没有别的效果。偶遇当回合末手里每有 1 件，疑点 +1（睹物生疑）。" },

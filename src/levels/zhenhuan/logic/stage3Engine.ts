@@ -357,11 +357,8 @@ export function cardAffectsEvent3(s: Z3State, ev: EventInst3, cardId: CardId3): 
   const def = EVENTS3[ev.id];
   if (def.double) return def.double.includes(cardId) && !(ev.progress ?? []).includes(cardId);
   if (!CARDS3[cardId].matches.includes(ev.id)) return false;
-  if (pairLocked(s, ev)) {
-    // the shared card clears the crisis first, then takes the opportunity
-    return CARDS3[cardId].matches.includes(s.crisis!.id);
-  }
-  return true;
+  // 连环 opportunity stays locked until its crisis is cleared (the shared card among the crisis's two cards takes it afterwards)
+  return !pairLocked(s, ev);
 }
 
 export function matchedEvents3(s: Z3State, cardId: CardId3): EventInst3[] {
@@ -762,7 +759,7 @@ function resolveEventByCard(s: Z3State, ev: EventInst3, card: CardId3, doubleRew
   }
   if (def.kind === "huanghou") applyDeltas3(s, def.cardReward?.[card] ?? [], def.name);
   if (def.kind === "crisis") {
-    if (def.rival && def.suppressCard === card && !def.pair) {
+    if (def.rival && def.suppressCard && (ev.progress ?? [card]).includes(def.suppressCard) && !def.pair) {
       ev.suppressed = true;
       suppress(s, def.rival);
     }
@@ -1009,9 +1006,28 @@ function resolvePlay3(s: Z3State, cardUid: string, removeStatusUid?: string): vo
       else log(s, `【${d.name}】双牌进度 1/2。`);
       continue;
     }
+    if (d.needTwo && !(isLingrong && tier)) {
+      ev.progress = [...(ev.progress ?? []), card.id];
+      if (ev.progress.length >= 2) {
+        resolveEventByCard(s, ev, card.id, false);
+        resolvedNow.push(ev);
+      } else log(s, `【${d.name}】解牌 1/2。`);
+      continue;
+    }
     if (isLingrong && tier) relationDelta += resolveEventByLingrong(s, ev, tier);
     else resolveEventByCard(s, ev, card.id, card.id === "meizhuangXiangzhu");
     if (ev.resolved) resolvedNow.push(ev);
+  }
+  // 连环 crisis cleared with the shared card among its two cards: the opportunity half is taken along
+  for (const ev of [...resolvedNow]) {
+    const pairId = EVENTS3[ev.id].pair;
+    if (!pairId || EVENTS3[ev.id].kind !== "crisis" || !alive(s)) continue;
+    const p = PAIRS[pairId];
+    const opp = s.opportunity;
+    if (!ev.progress?.includes(p.shared) || !opp || opp.id !== p.opportunity || opp.resolved) continue;
+    resolveEventByCard(s, opp, p.shared, p.shared === "meizhuangXiangzhu");
+    resolvedNow.push(opp);
+    sharedPairCheck(s, p.shared, resolvedNow);
   }
   sharedPairCheck(s, card.id, resolvedNow);
 
@@ -1098,6 +1114,7 @@ function sharedPairCheck(s: Z3State, card: CardId3, resolvedNow: EventInst3[]): 
     if (!both || !alive(s)) continue;
     log(s, `🔗 ${p.name}·一石二鸟：一张【${CARDS3[card].name}】两头都顾上了。`, "good");
     const crisis = resolvedNow.find((e) => e.id === p.crisis)!;
+    if (crisis.suppressed) continue;
     crisis.suppressed = true;
     suppress(s, p.rival);
   }

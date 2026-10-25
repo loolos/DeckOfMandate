@@ -197,7 +197,7 @@ function EventCard({ state, inst, fold, dispatch }: { state: Z3State; inst: Even
           🧹静白
         </Tag>
       ) : null}
-      {def.double ? (
+      {def.double || def.needTwo ? (
         <Tag tag="double" tone={styles.kindStory} dispatch={dispatch}>
           双牌 {(inst.progress ?? []).length}/2
         </Tag>
@@ -257,8 +257,8 @@ function EventCard({ state, inst, fold, dispatch }: { state: Z3State; inst: Even
       {def.note ? <p className={styles.rule}>{def.note}</p> : null}
       {def.rival && def.suppressCard && !def.pair ? (
         <p className={styles.rule}>
-          ⚔️ 用【{CARDS3[def.suppressCard].emoji}
-          {CARDS3[def.suppressCard].name}】化解算打压{RIVALS[def.rival].name}：获得【打压·{RIVALS[def.rival].name}】，她的危机下次出现时自动化解一次。
+          ⚔️ 两张解牌中有【{CARDS3[def.suppressCard].emoji}
+          {CARDS3[def.suppressCard].name}】即算打压{RIVALS[def.rival].name}：获得【打压·{RIVALS[def.rival].name}】，她的危机下次出现时自动化解一次。
         </p>
       ) : null}
       {def.rival && !inst.resolved && state.statuses.some((st) => st.id === "xinGuirenZhangyi") ? (
@@ -267,8 +267,8 @@ function EventCard({ state, inst, fold, dispatch }: { state: Z3State; inst: Even
       {def.pair ? (
         <p className={styles.rule}>
           🔗 {PAIRS[def.pair].name}：{isOpp ? `须先化解【${shortEventName(EVENTS3[PAIRS[def.pair].crisis].name)}】才能把握。` : `没化解，【${shortEventName(EVENTS3[PAIRS[def.pair].opportunity].name)}】随之作废。`}
-          一张【{CARDS3[PAIRS[def.pair].shared].emoji}
-          {CARDS3[PAIRS[def.pair].shared].name}】能一石二鸟：结交盟友并打压{RIVALS[PAIRS[def.pair].rival].name}（她的危机下次出现时自动化解一次）。
+          危机须两张解牌；其中有【{CARDS3[PAIRS[def.pair].shared].emoji}
+          {CARDS3[PAIRS[def.pair].shared].name}】可一石二鸟：结交盟友并打压{RIVALS[PAIRS[def.pair].rival].name}（她的危机下次出现时自动化解一次）。
         </p>
       ) : null}
       {locked ? <p className={styles.endHint}>🔒 连环危机还没化解，这张机会暂时锁着。</p> : null}
