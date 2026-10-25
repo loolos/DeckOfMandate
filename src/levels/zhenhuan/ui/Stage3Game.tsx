@@ -304,6 +304,11 @@ function StoryCard({ state, inst, dispatch, fold }: { state: Z3State; inst: Stor
       <Tag tag="story" tone={styles.kindStory} dispatch={dispatch}>
         剧情
       </Tag>
+      {def.options.some((o) => o.two) ? (
+        <Tag tag="double" tone={styles.kindStory} dispatch={dispatch}>
+          双牌 {inst.pendingOptionId ? 1 : 0}/2
+        </Tag>
+      ) : null}
     </span>
   );
   const costNote = (o: (typeof def.options)[number]) => {

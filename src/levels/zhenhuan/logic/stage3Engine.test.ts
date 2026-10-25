@@ -192,7 +192,7 @@ describe("zhenhuan stage 3 engine", () => {
       return s;
     };
     let s = base();
-    const [g, j] = setHand(s, ["guojunwangXiangzhu", "jinyanShenxing"]);
+    const [g, j] = setHand(s, ["guojunwangXiangzhu", "shoulongRenxin"]);
     s = act(s, { type: "playCard", cardUid: g! });
     expect(s.stories[0]!.chosenOptionId).toBeNull();
     s = act(s, { type: "playCard", cardUid: j! });

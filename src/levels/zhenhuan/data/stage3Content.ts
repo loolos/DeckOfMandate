@@ -1697,7 +1697,7 @@ export type StoryOption3 = {
   readonly name: string;
   readonly card?: CardId3;
   readonly hidden?: boolean;
-  /** Needs this card plus one more card (any) in the same turn. */
+  /** 双牌：同回合须再打出这张故事里另一张可应对此事的牌。 */
   readonly two?: boolean;
   readonly effects: readonly Delta3[];
   readonly text: string;
@@ -1887,7 +1887,7 @@ export const STORIES3: Record<StoryId3, StoryDef3> = {
     name: "甄远道下狱",
     emoji: "⛓️",
     flavor: "父亲因文字狱下狱。消息传进碎玉轩时，你手里的茶盏摔在了地上。",
-    note: "后四项须再打出一张牌，只打一张则按跪求皇上、惩罚减轻 1。代价随前朝局势变化：【父兄蒙尘】加重一档，打压过祺贵人减轻一档。",
+    note: "后四项须再打出另一张解牌，只打一张则按跪求皇上、惩罚减轻 1。代价随前朝局势变化：【父兄蒙尘】加重一档，打压过祺贵人减轻一档。",
     defaultOptionId: "guiqiu",
     options: [
       { id: "guiqiu", name: "跪求皇上", effects: [], xiayu: "kneel", text: "圣宠大减（皇上避而不见）", story: "你在养心殿外跪了一夜。皇上没有见你，只让苏培盛传了一句：「后宫不得干政。」" },
