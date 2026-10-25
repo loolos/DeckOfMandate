@@ -570,6 +570,25 @@ describe("zhenhuan stage 3 engine", () => {
     expect(none.statuses.some((x) => x.id === "hanzheng" && x.appliesFromTurn === 13)).toBe(true);
   });
 
+  it("功德箱失窃: cleared still costs 🪷1; unresolved gives 香油疑云 (🪷-1 at each of the next 3 turn ends)", () => {
+    const run = (ids: CardId3[]) => {
+      let s = advanceTo(newStage3(6, CARRY), 12);
+      clearBoard(s);
+      s.qingyu = 5;
+      s.crisis = ev(s, "wutouXiangyou");
+      s.extraPlays = 5;
+      for (const uid of setHand(s, ids)) s = act(s, { type: "playCard", cardUid: uid });
+      s = act(s, { type: "endTurn" });
+      return s;
+    };
+    const solved = run(["jinxiXiangzhu"]);
+    const none = run([]);
+    expect(solved.qingyu).toBe(4);
+    expect(solved.statuses.some((x) => x.id === "xiangyouYiyun")).toBe(false);
+    expect(none.qingyu).toBe(5);
+    expect(none.statuses.find((x) => x.id === "xiangyouYiyun")?.remaining).toBe(3);
+  });
+
   it("圣驾偶遇: 荆钗布裙 also completes step ②", () => {
     let s = advanceTo(newStage3(12, CARRY), 27);
     clearBoard(s);

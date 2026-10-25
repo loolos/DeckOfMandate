@@ -405,6 +405,7 @@ export type StatusId3 =
   | "shitaiBihu"
   | "hanzheng"
   | "jingji"
+  | "xiangyouYiyun"
   | "xinruZhishui"
   | "jingfeiZhouji"
   | "yuandaoBuji"
@@ -660,6 +661,17 @@ export const STATUSES3: Record<StatusId3, StatusDef3> = {
     blocksCards: ["chanyuXiushen"],
     effectText: "未来 2 回合，不能打出【禅语修身】。",
     flavor: "夜里一点动静，你就惊得坐起来，再也静不下心念经。",
+  },
+  xiangyouYiyun: {
+    id: "xiangyouYiyun",
+    name: "香油疑云",
+    emoji: "📿",
+    tag: "negative",
+    duration: 3,
+    drawModifier: 0,
+    turnEnd: [{ resource: "qingyu", amount: -1 }],
+    effectText: "未来 3 回合，每回合末 🪷清誉 -1。多个实例分别计时、效果叠加。",
+    flavor: "功德箱的事没人替你说清，寺里上上下下看你的眼神都带了几分疑。",
   },
   xinruZhishui: {
     id: "xinruZhishui",
@@ -1606,11 +1618,13 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     emoji: "📿",
     flavor: "功德箱里少了几吊香油钱，静白一口咬定是你拿的，当着满寺的师父要你给个交代。",
     reward: NO,
-    penalty: [q(-2)],
+    penalty: NO,
+    penaltyStatus: "xiangyouYiyun",
+    resolveCost: [q(-1)],
     jingbai: true,
     place: "temple",
-    resolvedText: "移除事件",
-    unresolvedText: "清誉 -2",
+    resolvedText: "移除事件；化解也要清誉 -1",
+    unresolvedText: "未来 3 回合每回合末清誉 -1",
     resolvedStory: {
       chanyuXiushen: "你在佛前跪下，平平静静地说：「佛祖在上，弟子没有。」师太看了你一眼，叫静白去查别处。",
       jinxiXiangzhu: "槿汐站出来作证，说那日小主一直在屋里抄经，她寸步不离地守着。",
