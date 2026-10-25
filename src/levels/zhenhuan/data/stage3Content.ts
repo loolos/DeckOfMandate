@@ -220,11 +220,12 @@ export const CARDS3: Record<CardId3, CardDef3> = {
     emoji: "🎐",
     flavor: "允礼总在你最难的时候出现，笑意淡淡的，像是一切都不值一提。",
     base: [],
-    baseDraw: 2,
+    baseDraw: 1,
+    baseStatus: "wangyeGuaNian",
     extraPlays: 1,
     matches: ["wangyeXiantan", "tanhuoLiangmi", "shanzhongCaiyao", "yuexiaDuitan", "yebanJingrao"],
-    rulesText: ["抽 2 张牌；本回合出牌 +1。"],
-    rulesCompact: "🎴+2 🀄+1",
+    rulesText: ["抽 1 张牌；本回合出牌 +1；获得【王爷挂念】：下回合抓牌 +1。"],
+    rulesCompact: "🎴+1 🀄+1 ⏭️🎴+1",
   },
   chanyuXiushen: {
     id: "chanyuXiushen",
@@ -356,6 +357,7 @@ export type StatusId3 =
   | "jingfeiZhouji"
   | "yuandaoBuji"
   | "weiNverChengxia"
+  | "wangyeGuaNian"
   | "yishiWucuo"
   | "dayaQifei"
   | "dayaGuaerjia";
@@ -446,6 +448,16 @@ export const STATUSES3: Record<StatusId3, StatusDef3> = {
     noSummon: true,
     effectText: "未来 2 回合，不能打出【仪容整肃】和【谨言慎行】，也不能侍寝。",
     flavor: "身子一阵阵发虚，连起身梳妆都勉强，太医嘱咐这几日不宜操劳，更不可侍寝。",
+  },
+  wangyeGuaNian: {
+    id: "wangyeGuaNian",
+    name: "王爷挂念",
+    emoji: "🎐",
+    tag: "positive",
+    duration: 1,
+    drawModifier: 1,
+    effectText: "下回合抓牌数 +1。多个实例效果叠加。",
+    flavor: "他把你的难处都记在了心上，转头便着手替你一件件周旋，下回合你便能轻省些。",
   },
   zhushiTuotie: {
     id: "zhushiTuotie",
@@ -2341,7 +2353,7 @@ export const POPUP_TEXT = {
     "他是当今皇上的十七弟，封果郡王，先帝最小的儿子。生母出身不高，他自幼不争不抢，爱诗词，爱笛，也爱游历山川，一年里倒有大半年在宫外。皇上待他亲厚，宫里的人也都说他是诸王里最清净、最没有机心的一个。",
     "他说他刚从外头回京，是循着桐花台的旧景来看看。他看你的眼神很干净，没有试探，也没有讨好。",
   ] as readonly string[],
-  tonghuataiRules: "往后他会不时在你最难的时候伸手帮你：牌库里加入【🎐果郡王相助】，打出可抽 2 张牌，本回合出牌 +1；日后还会有几次相逢，每次再添一张。",
+  tonghuataiRules: "往后他会不时在你最难的时候伸手帮你：牌库里加入【🎐果郡王相助】，打出可抽 1 张牌，本回合出牌 +1，下回合再多抽 1 张；日后还会有几次相逢，每次再添一张。",
   wanwan: [
     "「菀菀类卿，暂排苦思，亦除却巫山非云也。」短短一行字，是皇上的亲笔，墨色早就旧了。你忽然想起生辰宴前那件封在库里的旧衣，想起镜子里那个陌生的自己，原来那从来不是巧合：皇上这些年对你青眼有加，只因你生得像纯元皇后。倚梅园里那一句许愿，杏花林下那一回眸，他赐你的那个“莞”字，取的原是她的“菀”。枕边那些温存的话，一句一句，原来都是说给另一个人听的。",
     "那一夜碎玉轩的灯一直亮着。你受了这一场惊动，当夜便动了胎气，孩子早产落了地，哭声细细的，像一只刚出壳的雏鸟。是位公主，皇上隔日赐了名，叫胧月。你抱着她，看窗外的天一点点亮起来，心里却有什么东西，跟着那一夜的月色一起暗了下去。",

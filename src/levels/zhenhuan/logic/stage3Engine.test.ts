@@ -33,6 +33,7 @@ import {
   replay3,
   storyBasicOptions3,
   xiayuCost,
+  playLimit3,
   type Carry3,
   type EventInst3,
   type Z3Action,
@@ -482,6 +483,16 @@ describe("zhenhuan stage 3 engine", () => {
     const t1 = run("tanhuoLiangmi", ["jinxiXiangzhu"]).statuses.find((x) => x.id === "hanzheng" && x.appliesFromTurn === 13)?.remaining;
     const t0 = run("tanhuoLiangmi", []).statuses.find((x) => x.id === "hanzheng" && x.appliesFromTurn === 13)?.remaining;
     expect([t0, t1]).toEqual([2, 1]);
+  });
+
+  it("果郡王相助: draws 1, +1 play this turn, 王爷挂念 gives +1 draw next turn", () => {
+    let s = advanceTo(newStage3(6, CARRY), 12);
+    clearBoard(s);
+    const [g] = setHand(s, ["guojunwangXiangzhu"]);
+    const before = playLimit3(s);
+    s = act(s, { type: "playCard", cardUid: g! });
+    expect(playLimit3(s)).toBe(before + 1);
+    expect(s.statuses.some((x) => x.id === "wangyeGuaNian")).toBe(true);
   });
 
   it("entering the temple: 修行 identity, temple deck plus the 果郡王 cards, 清誉 capped at 8", () => {
