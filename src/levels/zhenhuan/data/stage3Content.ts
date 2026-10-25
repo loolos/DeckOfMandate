@@ -791,6 +791,10 @@ export type EventDef3 = {
   readonly rival?: RivalId;
   /** 对头事件: two matching cards in one turn to resolve. */
   readonly needTwo?: boolean;
+  /** 需两张解牌的危机只凑了一张时的惩罚（不写则按完整惩罚）。 */
+  readonly halfPenalty?: readonly Delta3[];
+  /** 同上：惩罚状态只持续这么多回合。 */
+  readonly halfStatusTurns?: number;
   /** 对头事件: resolving with this card is 打压. */
   readonly suppressCard?: CardId3;
   /** 对头事件 unresolved: 皇后 is told (hidden 把柄). */
@@ -1400,8 +1404,10 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     penalty: NO,
     penaltyStatus: "hanzheng",
     jingbai: true,
-    resolvedText: "移除事件",
-    unresolvedText: "获得【寒疾缠身】（未来 2 回合，每回合末身子 -1）",
+    needTwo: true,
+    halfStatusTurns: 1,
+    resolvedText: "移除事件；需打出两张解牌",
+    unresolvedText: "获得【寒疾缠身】（未来 2 回合，每回合末身子 -1）；只打出一张解牌则只持续 1 回合",
     note: "寺中算静白刁难（🧹）；凌云峰上是风雪断粮。",
     resolvedStory: {
       jingchaiBuqun: "你自己上山拾了一捆柴，手上磨出了血泡。屋里总算有了点暖气。",
@@ -1417,11 +1423,13 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     emoji: "🪣",
     flavor: "静白说你念经时偷懒，罚你一日之内挑满后院七八口水缸，再劈完一院子的柴，不干完不许吃饭。",
     reward: NO,
-    penalty: [sz(-1)],
+    penalty: [sz(-2)],
+    halfPenalty: [sz(-1)],
+    needTwo: true,
     jingbai: true,
     place: "temple",
-    resolvedText: "移除事件",
-    unresolvedText: "身子 -1（挑水劈柴，累倒在井边）",
+    resolvedText: "移除事件；需打出两张解牌",
+    unresolvedText: "身子 -2（挑水劈柴，累倒在井边）；只打出一张解牌则身子 -1",
     resolvedStory: {
       jingchaiBuqun: "你一声不吭地把活干完了，干得又快又好。静白挑了半天，没找出错来。",
       jinxiXiangzhu: "槿汐抢着替你挑了一半的水。她年纪大了，回来时腰都直不起来。",
@@ -1454,9 +1462,11 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     reward: NO,
     penalty: NO,
     penaltyStatus: "jingji",
+    needTwo: true,
+    halfStatusTurns: 1,
     place: "peak",
-    resolvedText: "移除事件",
-    unresolvedText: "获得【惊悸】（未来 2 回合不能打出禅语修身）",
+    resolvedText: "移除事件；需打出两张解牌",
+    unresolvedText: "获得【惊悸】（未来 2 回合不能打出禅语修身）；只打出一张解牌则只持续 1 回合",
     resolvedStory: {
       jingxinRennai: "你把油灯拨亮了些，坐着念了一夜的经。天亮时，狼嚎声也远了。",
       wenTaiyiZhenzhi: "你照着温实初留下的方子煎了一碗安神药，喝下去便睡着了。",

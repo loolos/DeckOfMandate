@@ -1394,11 +1394,14 @@ function settleCrisis(s: Z3State, ev: EventInst3): void {
     return;
   }
   log(s, `危机事件【${def.name}】未化解：${def.unresolvedText}。`, "bad");
-  applyDeltas3(s, def.penalty, def.name);
+  const half = def.needTwo === true && (ev.progress ?? []).length === 1;
+  if (half) log(s, `只凑了一张解牌，【${def.name}】的惩罚减轻了。`, "info");
+  applyDeltas3(s, half && def.halfPenalty ? def.halfPenalty : def.penalty, def.name);
   if (ev.id === "xianrenKuitan" && s.playedThisTurn.includes("guojunwangXiangzhu")) applyDelta3(s, { resource: "qingyu", amount: -1 }, "被撞见");
   if (def.penaltyStatus && alive(s)) {
-    addStatus3(s, def.penaltyStatus);
-    if (ev.aggravated && alive(s)) addStatus3(s, def.penaltyStatus);
+    const turns = half ? def.halfStatusTurns : undefined;
+    addStatus3(s, def.penaltyStatus, turns);
+    if (ev.aggravated && alive(s)) addStatus3(s, def.penaltyStatus, turns);
   }
   if (def.secret) addSecret(s, def.secret, null);
   if (ev.id === "jingrenLairen") changeDoubt(s, 1, "景仁宫来人");

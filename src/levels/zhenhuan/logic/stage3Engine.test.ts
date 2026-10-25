@@ -466,6 +466,24 @@ describe("zhenhuan stage 3 engine", () => {
     expect(s.statuses.some((x) => x.id === "yuandaoBuji")).toBe(false);
   });
 
+  it("第二幕危机需两张解牌: 杂役磋磨 -2 none / -1 one card / cleared with two; 断炭缺粮 half = 寒疾缠身 1 turn", () => {
+    const run = (id: "fazuoCuhuo" | "tanhuoLiangmi", ids: CardId3[]) => {
+      let s = advanceTo(newStage3(6, CARRY), 12);
+      clearBoard(s);
+      s.shenzi = 4;
+      s.crisis = ev(s, id);
+      s.extraPlays = 5;
+      for (const uid of setHand(s, ids)) s = act(s, { type: "playCard", cardUid: uid });
+      s = act(s, { type: "endTurn" });
+      return s;
+    };
+    const fBoth = run("fazuoCuhuo", ["jinxiXiangzhu", "jingxinRennai"]).shenzi;
+    expect([run("fazuoCuhuo", []).shenzi, run("fazuoCuhuo", ["jinxiXiangzhu"]).shenzi]).toEqual([fBoth - 2, fBoth - 1]);
+    const t1 = run("tanhuoLiangmi", ["jinxiXiangzhu"]).statuses.find((x) => x.id === "hanzheng")?.remaining;
+    const t0 = run("tanhuoLiangmi", []).statuses.find((x) => x.id === "hanzheng")?.remaining;
+    expect([t0, t1]).toEqual([2, 1]);
+  });
+
   it("entering the temple: 修行 identity, temple deck plus the 果郡王 cards, 清誉 capped at 8", () => {
     let s = advanceTo(newStage3(6, CARRY), 10);
     s.qingyu = 15;
@@ -501,6 +519,7 @@ describe("zhenhuan stage 3 engine", () => {
     expect([0, 1, 2, 3, 4, 7].map(feilaoBaseTier)).toEqual([0, 0, 1, 1, 2, 2]);
     let s = advanceTo(newStage3(9, CARRY), 18);
     s.feilao = { base: 2, played: [] };
+    s.shenzi = 6;
     const ids = setHand(s, ["jinxiXiangzhu", "chanyuXiushen"]);
     s.extraPlays = 2;
     s = act(s, { type: "playCard", cardUid: ids[0]! });
