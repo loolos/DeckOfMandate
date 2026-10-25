@@ -1138,6 +1138,7 @@ function PopupBody({ state, id }: { state: Z3State; id: PopupId }) {
       return (
         <>
           {state.exitTier && state.exitTier <= 3 ? <p>{POPUP_TEXT.ximaiRecall[state.exitTier as 1 | 2 | 3]}</p> : null}
+          <p>{POPUP_TEXT.ximaiBridge}</p>
           {POPUP_TEXT.ximai.map((t) => (
             <p key={t}>{t}</p>
           ))}
@@ -1171,7 +1172,9 @@ function OutcomeModal({ state, onRestart, onMenu }: { state: Z3State; onRestart:
         <h2 id="zh3-outcome-title">{won ? (state.victory === "perfect" ? `🌟 完美结局：${HOMECOMING.name}` : `${HOMECOMING.emoji} ${HOMECOMING.name}`) : "🥀 功亏一篑"}</h2>
         {won ? (
           <>
-            <p>{POPUP_TEXT.homecoming}</p>
+            {POPUP_TEXT.homecoming.map((l) => (
+              <p key={l}>{l}</p>
+            ))}
             {state.exitTier ? <p>{POPUP_TEXT.homecomingTier[state.exitTier]}</p> : null}
             {state.victory === "perfect" ? <p>{POPUP_TEXT.perfect}</p> : null}
           </>

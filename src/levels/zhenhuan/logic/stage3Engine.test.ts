@@ -430,7 +430,7 @@ describe("zhenhuan stage 3 engine", () => {
   });
 
   it("景仁宫对质 (turn 10): no ordinary events, 陵容 cannot be played, outcome by cards played", () => {
-    let s = advanceTo(newStage3(4, CARRY), 10);
+    let s = advanceTo(newStage3(7, CARRY), 10);
     expect(s.opportunity ?? s.crisis ?? s.huanghou).toBeNull();
     expect(s.confront).not.toBeNull();
     expect(s.popups).toContain("confront");
@@ -582,6 +582,25 @@ describe("zhenhuan stage 3 engine", () => {
     expect(s.popups).toContain("ouyu");
   });
 
+  it("碎玉轩闲话: two cards, cleared costs 🪷1; one card = 闲话传开 1 turn, none = 2 turns", () => {
+    const run = (ids: CardId3[]) => {
+      let s = advanceTo(newStage3(6, CARRY), 8);
+      clearBoard(s);
+      s.crisis = ev(s, "suiyuxuanXianhua");
+      s.extraPlays = 5;
+      const q0 = s.qingyu;
+      for (const uid of setHand(s, ids)) s = act(s, { type: "playCard", cardUid: uid });
+      const q1 = s.qingyu;
+      s = act(s, { type: "endTurn" });
+      return { s, dq: q1 - q0 };
+    };
+    const rem = (s: Z3State) => s.statuses.find((x) => x.id === "xianhuaChuanKai" && x.appliesFromTurn === 9)?.remaining;
+    const both = run(["jinxiXiangzhu", "shoulongRenxin"]);
+    expect(rem(both.s)).toBeUndefined();
+    expect(both.dq).toBeLessThanOrEqual(0);
+    expect([rem(run(["jinxiXiangzhu"]).s), rem(run([]).s)]).toEqual([1, 2]);
+  });
+
   it("耳目窥伺: unresolved gives 眼线环伺 (draw -1, never below 1) and no 清誉 loss", () => {
     let s = advanceTo(newStage3(6, CARRY), 20);
     clearBoard(s);
@@ -684,7 +703,7 @@ describe("zhenhuan stage 3 engine", () => {
   });
 
   it("移花接木: 槿汐引驾 → 两回合后偶遇 (圣宠 restored) → 温太医改脉; perfect needs all relics burned", () => {
-    let s = advanceTo(newStage3(13, CARRY), 26);
+    let s = advanceTo(newStage3(15, CARRY), 26);
     s.exitShengchong = 9;
     s.shenzi = 6;
     const next = () => {
