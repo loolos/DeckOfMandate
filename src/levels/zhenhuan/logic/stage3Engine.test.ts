@@ -435,6 +435,24 @@ describe("zhenhuan stage 3 engine", () => {
     expect(xiayuCost(s, "taihou")).toEqual([{ resource: "qingyu", amount: -2 }]);
   });
 
+  it("鄂敏参本: 没化解 清誉 -4 + 父兄蒙尘; 一张解牌 清誉 -1 + 父兄蒙尘; 化解也 清誉 -1", () => {
+    const run = (hand: CardId3[]) => {
+      let s = advanceTo(newStage3(5, CARRY), 5);
+      clearBoard(s);
+      s.crisis = ev(s, "emingCanben");
+      const before = s.qingyu;
+      const uids = setHand(s, hand);
+      for (const u of uids) s = act(s, { type: "playCard", cardUid: u });
+      s = act(s, { type: "endTurn" });
+      return { delta: s.qingyu - before, curse: s.statuses.some((st) => st.id === "fuxiongMengchen"), log: s.log };
+    };
+    expect(run([])).toMatchObject({ delta: -4, curse: true });
+    expect(run(["shoulongRenxin"])).toMatchObject({ curse: true });
+    const full = run(["shoulongRenxin", "meizhuangXiangzhu"]);
+    expect(full.curse).toBe(false);
+    expect(full.log.some((l) => l.text.includes("鄂敏参本（化解了，仍有些折损）：清誉 -1"))).toBe(true);
+  });
+
   it("景仁宫对质 (turn 10): no ordinary events, 陵容 cannot be played, outcome by cards played", () => {
     let s = advanceTo(newStage3(7, CARRY), 10);
     expect(s.opportunity ?? s.crisis ?? s.huanghou).toBeNull();
