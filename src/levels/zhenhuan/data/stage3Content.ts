@@ -2389,7 +2389,7 @@ export const YIHUA = {
   steps: [
     { name: "引驾", emoji: "🔔", story: "托人在御前递话，说太后凤体欠安，宜往甘露寺祈福。" },
     { name: "偶遇", emoji: "🌸", story: "皇上驾临甘露寺，佛前重逢，二人相对无言，当夜便留宿在了寺中。" },
-    { name: "改脉", emoji: "📜", story: "温太医在脉案上悄悄改写了月份，把这个孩子的来历瞒得严严实实。" },
+    { name: "改脉", emoji: "📜", story: "你再三恳求温太医：皇上留宿之后，宫里很快就要传出喜脉的消息，这孩子的月份必须对得上，否则你们几个人都活不成。他沉默了许久，终于长叹一声，答应在脉案上悄悄改写了月份，把这个孩子的来历瞒得严严实实。" },
   ],
   yinjiaCards: ["jinxiXiangzhu"] as readonly CardId3[],
   yinjiaStory: {
