@@ -197,7 +197,7 @@ function EventCard({ state, inst, fold, dispatch }: { state: Z3State; inst: Even
           🧹静白
         </Tag>
       ) : null}
-      {def.double ? (
+      {def.double || def.needTwo ? (
         <Tag tag="double" tone={styles.kindStory} dispatch={dispatch}>
           双牌 {(inst.progress ?? []).length}/2
         </Tag>
@@ -257,8 +257,8 @@ function EventCard({ state, inst, fold, dispatch }: { state: Z3State; inst: Even
       {def.note ? <p className={styles.rule}>{def.note}</p> : null}
       {def.rival && def.suppressCard && !def.pair ? (
         <p className={styles.rule}>
-          ⚔️ 用【{CARDS3[def.suppressCard].emoji}
-          {CARDS3[def.suppressCard].name}】化解算打压{RIVALS[def.rival].name}：获得【打压】状态，这张危机下次出现时自动化解一次。
+          ⚔️ 两张解牌中有【{CARDS3[def.suppressCard].emoji}
+          {CARDS3[def.suppressCard].name}】即算打压{RIVALS[def.rival].name}：获得【打压·{RIVALS[def.rival].name}】，她的危机下次出现时自动化解一次。
         </p>
       ) : null}
       {def.rival && !inst.resolved && state.statuses.some((st) => st.id === "xinGuirenZhangyi") ? (
@@ -267,8 +267,8 @@ function EventCard({ state, inst, fold, dispatch }: { state: Z3State; inst: Even
       {def.pair ? (
         <p className={styles.rule}>
           🔗 {PAIRS[def.pair].name}：{isOpp ? `须先化解【${shortEventName(EVENTS3[PAIRS[def.pair].crisis].name)}】才能把握。` : `没化解，【${shortEventName(EVENTS3[PAIRS[def.pair].opportunity].name)}】随之作废。`}
-          一张【{CARDS3[PAIRS[def.pair].shared].emoji}
-          {CARDS3[PAIRS[def.pair].shared].name}】能一石二鸟：结交盟友并打压{RIVALS[PAIRS[def.pair].rival].name}（这张危机下次出现时自动化解一次）。
+          危机须两张解牌；其中有【{CARDS3[PAIRS[def.pair].shared].emoji}
+          {CARDS3[PAIRS[def.pair].shared].name}】可一石二鸟：结交盟友并打压{RIVALS[PAIRS[def.pair].rival].name}（她的危机下次出现时自动化解一次）。
         </p>
       ) : null}
       {locked ? <p className={styles.endHint}>🔒 连环危机还没化解，这张机会暂时锁着。</p> : null}
@@ -472,11 +472,11 @@ function ChunyuanCard({ state, fold, dispatch }: { state: Z3State; fold: Fold; d
       <p className={styles.check}>
         {mark(c.first != null)} ① 起疑：<Chips ids={CHUNYUAN.firstCards} lit={inHand} />
       </p>
-      {c.first ? <p className={styles.rule}>{CHUNYUAN.firstStory[c.first]}</p> : null}
+      {c.first ? <p className={styles.stepStory}>{CHUNYUAN.firstStory[c.first]}</p> : null}
       <p className={styles.check}>
         {mark(c.second != null)} ② 查实（须先起疑）：<Chips ids={CHUNYUAN.checkCards} lit={inHand} />
       </p>
-      {c.second ? <p className={styles.rule}>{CHUNYUAN.checkStory[c.second]}</p> : null}
+      {c.second ? <p className={styles.stepStory}>{CHUNYUAN.checkStory[c.second]}</p> : null}
       <p className={styles.rule}>
         <span className={styles.ruleLabel}>照现在：</span>
         {done ? "识破，免祸。" : c.first ? `只起疑，回合末圣宠 -${CHUNYUAN.halfPenalty}。` : `没识破，回合末圣宠 -${CHUNYUAN.failPenalty}。`}
@@ -518,7 +518,7 @@ function ConfrontCard({ state, fold, dispatch }: { state: Z3State; fold: Fold; d
         {exit.name === EXIT[4].name ? "：关卡失败" : ""}
       </p>
       {c.stories.map((line) => (
-        <p key={line} className={styles.rule}>
+        <p key={line} className={styles.stepStory}>
           {line}
         </p>
       ))}
@@ -548,7 +548,7 @@ function FeilaoCard({ state, fold, dispatch }: { state: Z3State; fold: Fold; dis
         {tierDef.name}：{expandedEffect3(tierDef.text)}
       </p>
       {f.played.map((id, i) => (
-        <p key={`${id}-${i}`} className={styles.rule}>
+        <p key={`${id}-${i}`} className={styles.stepStory}>
           {FEILAO.cardStory[id]}
         </p>
       ))}
@@ -616,7 +616,7 @@ function YihuaCard({ state, fold, dispatch }: { state: Z3State; fold: Fold; disp
         const n = i + 1;
         const state_ = y.step > n ? "done" : y.step === n ? "now" : "later";
         return (
-          <div key={s.name} className={[styles.option, state_ === "now" && styles.optionChosen].filter(Boolean).join(" ")}>
+          <div key={s.name} className={[styles.option, state_ === "now" && styles.optionChosen, state_ === "done" && styles.stepStory].filter(Boolean).join(" ")}>
             <span>
               {mark(state_ === "done")} <strong>
                 {["①", "②", "③"][i]} {s.emoji} {s.name}

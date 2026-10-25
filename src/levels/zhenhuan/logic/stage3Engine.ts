@@ -357,11 +357,8 @@ export function cardAffectsEvent3(s: Z3State, ev: EventInst3, cardId: CardId3): 
   const def = EVENTS3[ev.id];
   if (def.double) return def.double.includes(cardId) && !(ev.progress ?? []).includes(cardId);
   if (!CARDS3[cardId].matches.includes(ev.id)) return false;
-  if (pairLocked(s, ev)) {
-    // the shared card clears the crisis first, then takes the opportunity
-    return CARDS3[cardId].matches.includes(s.crisis!.id);
-  }
-  return true;
+  // 连环 opportunity stays locked until its crisis is cleared (the shared card among the crisis's two cards takes it afterwards)
+  return !pairLocked(s, ev);
 }
 
 export function matchedEvents3(s: Z3State, cardId: CardId3): EventInst3[] {
@@ -726,13 +723,13 @@ function befriend(s: Z3State, ally: AllyId): void {
   addStatus3(s, ALLIES[ally].status);
 }
 
-/** 打压: a status that auto-resolves this crisis the next time it is drawn. */
-function suppress(s: Z3State, rival: RivalId, crisis: CrisisId3): void {
+/** 打压: a status that auto-resolves this rival's next crisis. */
+function suppress(s: Z3State, rival: RivalId): void {
   const first = !s.suppressed[rival];
   s.suppressed[rival] = true;
   log(s, `⚔️ 打压${RIVALS[rival].name}${first && rival === "guaerjia" ? "：第 8 回合父亲下狱的代价减轻一档" : ""}。`, "good");
-  const status = SUPPRESS_STATUS[crisis];
-  if (status && !s.statuses.some((st) => st.id === status)) addStatus3(s, status);
+  const status = SUPPRESS_STATUS[rival];
+  if (!s.statuses.some((st) => st.id === status)) addStatus3(s, status);
 }
 
 // ---------------------------------------------------------------- resolution
@@ -762,9 +759,9 @@ function resolveEventByCard(s: Z3State, ev: EventInst3, card: CardId3, doubleRew
   }
   if (def.kind === "huanghou") applyDeltas3(s, def.cardReward?.[card] ?? [], def.name);
   if (def.kind === "crisis") {
-    if (def.rival && def.suppressCard === card && !def.pair) {
+    if (def.rival && def.suppressCard && (ev.progress ?? [card]).includes(def.suppressCard) && !def.pair) {
       ev.suppressed = true;
-      suppress(s, def.rival, ev.id as CrisisId3);
+      suppress(s, def.rival);
     }
     if (card === "jingchaiBuqun" && alive(s)) {
       log(s, "荆钗布裙联动：静白一时挑不出错。", "good");
@@ -1009,9 +1006,29 @@ function resolvePlay3(s: Z3State, cardUid: string, removeStatusUid?: string): vo
       else log(s, `【${d.name}】双牌进度 1/2。`);
       continue;
     }
+    if (d.needTwo) {
+      ev.progress = [...(ev.progress ?? []), card.id];
+      if (ev.progress.length >= 2) {
+        if (isLingrong && tier) relationDelta += resolveEventByLingrong(s, ev, tier);
+        else resolveEventByCard(s, ev, card.id, false);
+        if (ev.resolved) resolvedNow.push(ev);
+      } else log(s, `【${d.name}】解牌 1/2。`);
+      continue;
+    }
     if (isLingrong && tier) relationDelta += resolveEventByLingrong(s, ev, tier);
     else resolveEventByCard(s, ev, card.id, card.id === "meizhuangXiangzhu");
     if (ev.resolved) resolvedNow.push(ev);
+  }
+  // 连环 crisis cleared with the shared card among its two cards: the opportunity half is taken along
+  for (const ev of [...resolvedNow]) {
+    const pairId = EVENTS3[ev.id].pair;
+    if (!pairId || EVENTS3[ev.id].kind !== "crisis" || !alive(s)) continue;
+    const p = PAIRS[pairId];
+    const opp = s.opportunity;
+    if (!ev.progress?.includes(p.shared) || !opp || opp.id !== p.opportunity || opp.resolved) continue;
+    resolveEventByCard(s, opp, p.shared, p.shared === "meizhuangXiangzhu");
+    resolvedNow.push(opp);
+    sharedPairCheck(s, p.shared, resolvedNow);
   }
   sharedPairCheck(s, card.id, resolvedNow);
 
@@ -1098,8 +1115,9 @@ function sharedPairCheck(s: Z3State, card: CardId3, resolvedNow: EventInst3[]): 
     if (!both || !alive(s)) continue;
     log(s, `🔗 ${p.name}·一石二鸟：一张【${CARDS3[card].name}】两头都顾上了。`, "good");
     const crisis = resolvedNow.find((e) => e.id === p.crisis)!;
+    if (crisis.suppressed) continue;
     crisis.suppressed = true;
-    suppress(s, p.rival, p.crisis);
+    suppress(s, p.rival);
   }
 }
 
@@ -1214,7 +1232,8 @@ function enterYihua(s: Z3State): void {
 
 function drawEvents(s: Z3State): void {
   const autoResolve = (ev: EventInst3) => {
-    const daya = SUPPRESS_STATUS[ev.id as CrisisId3];
+    const rival = EVENTS3[ev.id].rival;
+    const daya = rival ? SUPPRESS_STATUS[rival] : undefined;
     if (!daya || !removeStatusById(s, daya)) return;
     ev.resolved = true;
     ev.bySuppress = true;

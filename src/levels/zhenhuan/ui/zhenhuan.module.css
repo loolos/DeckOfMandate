@@ -1356,3 +1356,13 @@
   border-color: var(--zh-gold);
   color: var(--zh-gold);
 }
+
+/* 多步事件里已完成的一步：剧情文本用绿框标出，整张卡到全部完成才变绿 */
+.stepStory {
+  font-size: 0.88rem;
+  margin: 0;
+  border: 1px solid var(--zh-green);
+  background: rgba(108, 191, 138, 0.12);
+  border-radius: 8px;
+  padding: 0.3rem 0.5rem;
+}
