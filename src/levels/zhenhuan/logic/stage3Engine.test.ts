@@ -194,7 +194,7 @@ describe("zhenhuan stage 3 engine", () => {
     expect(s.secrets["enshang.jingrenHoushang" as keyof typeof s.secrets]).toBe(1);
   });
 
-  it("甄远道下狱: 托果郡王 needs one more card; alone it falls back to 跪求皇上", () => {
+  it("甄远道下狱: 托果郡王 needs three cards; two cost 清誉 +2 more; one falls back to 跪求皇上", () => {
     const base = () => {
       const s = advanceTo(newStage3(5, CARRY), 8);
       clearBoard(s);
@@ -202,19 +202,29 @@ describe("zhenhuan stage 3 engine", () => {
       return s;
     };
     let s = base();
-    const [g, j] = setHand(s, ["guojunwangXiangzhu", "shoulongRenxin"]);
+    const [g, j, k] = setHand(s, ["guojunwangXiangzhu", "shoulongRenxin", "jinyanShenxing"]);
     s = act(s, { type: "playCard", cardUid: g! });
-    expect(s.stories[0]!.chosenOptionId).toBeNull();
     s = act(s, { type: "playCard", cardUid: j! });
+    expect(s.stories[0]!.chosenOptionId).toBeNull();
+    s = act(s, { type: "playCard", cardUid: k! });
     expect(s.stories[0]!.chosenOptionId).toBe("tuoGuo");
-    // 眉庄相助与此事无关，不算第二张
+    // 眉庄相助与此事无关，不算解牌
     let w = base();
     const [g3, t3, j3] = setHand(w, ["guojunwangXiangzhu", "meizhuangXiangzhu", "jinyanShenxing"]);
     w = act(w, { type: "playCard", cardUid: g3! });
     w = act(w, { type: "playCard", cardUid: t3! });
-    expect(w.stories[0]!.chosenOptionId).toBeNull();
     w = act(w, { type: "playCard", cardUid: j3! });
-    expect(w.stories[0]!.chosenOptionId).toBe("tuoGuo");
+    expect(w.stories[0]!.chosenOptionId).toBeNull();
+    // 凑了两张：按已选的处理，清誉再 -2
+    let v = base();
+    const before = v.qingyu;
+    const [g4, j4] = setHand(v, ["guojunwangXiangzhu", "shoulongRenxin"]);
+    v = act(v, { type: "playCard", cardUid: g4! });
+    v = act(v, { type: "playCard", cardUid: j4! });
+    v = act(v, { type: "endTurn" });
+    expect(v.log.some((l) => l.text.includes("惩罚加重"))).toBe(true);
+    expect(xiayuCost(base(), "guo", 1)).toEqual([{ resource: "qingyu", amount: -2 }]);
+    expect(before - v.qingyu).toBeGreaterThanOrEqual(2);
     let u = base();
     const [g2] = setHand(u, ["guojunwangXiangzhu"]);
     u = act(u, { type: "playCard", cardUid: g2! });

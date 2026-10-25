@@ -113,7 +113,7 @@ export type EventInst3 = {
   story?: string;
 };
 
-export type StoryInst3 = { readonly id: StoryId3; chosenOptionId: string | null; viaCard?: CardId3; pendingOptionId?: string; result?: string; story?: string };
+export type StoryInst3 = { readonly id: StoryId3; chosenOptionId: string | null; viaCard?: CardId3; pendingOptionId?: string; pendingCount?: number; result?: string; story?: string };
 export type StatusInst3 = { readonly uid: string; readonly id: StatusId3; readonly appliesFromTurn: number; remaining: number };
 export type LogTone = "info" | "good" | "bad";
 export type LogEntry = { readonly turn: number; readonly text: string; readonly tone: LogTone };
@@ -491,24 +491,29 @@ export function xiayuSeverity(s: Z3State): number {
   return Math.max(0, Math.min(2, 1 + (hasStatus3(s, "fuxiongMengchen") ? 1 : 0) - (s.suppressed.guaerjia ? 1 : 0)));
 }
 
-export function xiayuCost(s: Z3State, choice: XiayuChoice): Delta3[] {
+/** 下狱的解牌数：基础二选一不用出牌，其余须凑齐三张；少一张惩罚 +2（`missing`）。 */
+export const XIAYU_CARDS_NEEDED = 3;
+export const XIAYU_MISSING_PENALTY = 2;
+
+export function xiayuCost(s: Z3State, choice: XiayuChoice, missing = 0): Delta3[] {
   const sev = xiayuSeverity(s);
+  const extra = missing * XIAYU_MISSING_PENALTY;
   switch (choice) {
     case "kneel":
       return [{ resource: "shengchong", amount: -(sev + 1) }];
     case "taihou":
       return [{ resource: "qingyu", amount: -(sev + 1) }];
     case "guo": {
-      const n = Math.max(0, sev - 1) + (s.guoMeet === "li" ? 1 : 0);
+      const n = Math.max(0, sev - 1) + (s.guoMeet === "li" ? 1 : 0) + extra;
       return n > 0 ? [{ resource: "qingyu", amount: -n }] : [];
     }
     case "jinyan": {
-      const n = Math.max(0, sev - 1) + 1;
+      const n = Math.max(0, sev - 1) + 1 + extra;
       return [{ resource: "shengchong", amount: -n }];
     }
     case "shoulong":
     case "lingrong": {
-      const n = Math.max(0, sev - 1);
+      const n = Math.max(0, sev - 1) + extra;
       return n > 0 ? [{ resource: "qingyu", amount: -n }] : [];
     }
   }
@@ -888,7 +893,7 @@ function shuhenjiao(s: Z3State, tier: LingrongTier): void {
   else log(s, "药膏清凉，伤处好得很快。");
 }
 
-function applyStoryOption(s: Z3State, inst: StoryInst3, option: StoryOption3, source: string, tier: LingrongTier | null, lighter = false): number {
+function applyStoryOption(s: Z3State, inst: StoryInst3, option: StoryOption3, source: string, tier: LingrongTier | null, lighter = false, missing = 0): number {
   const def = STORIES3[inst.id];
   inst.chosenOptionId = option.id;
   if (option.card) inst.viaCard = option.card;
@@ -910,7 +915,7 @@ function applyStoryOption(s: Z3State, inst: StoryInst3, option: StoryOption3, so
   log(s, told);
 
   if (option.xiayu) {
-    const cost = xiayuCost(s, option.xiayu)
+    const cost = xiayuCost(s, option.xiayu, missing)
       .map((d) => ({ ...d, amount: lighter ? Math.min(0, d.amount + 1) : d.amount }))
       .filter((d) => d.amount !== 0);
     inst.result = cost.length ? cost.map((d) => `${RESOURCE3_LABEL[d.resource]} ${d.amount}`).join("、") : "没有代价";
@@ -1026,8 +1031,10 @@ function resolvePlay3(s: Z3State, cardUid: string, removeStatusUid?: string): vo
     if (option.two) {
       if (!story.pendingOptionId) {
         story.pendingOptionId = option.id;
+        story.pendingCount = 1;
         startedNow.add(story);
-        log(s, `【${STORIES3[story.id].name}】·${option.name} 1/2：还需再打出一张牌。`);
+        const need = option.xiayu ? XIAYU_CARDS_NEEDED : 2;
+        log(s, `【${STORIES3[story.id].name}】·${option.name} 1/${need}：还需再打出 ${need - 1} 张牌。`);
       }
       continue;
     }
@@ -1042,8 +1049,15 @@ function resolvePlay3(s: Z3State, cardUid: string, removeStatusUid?: string): vo
     if (!STORIES3[st.id].options.some((o) => o.card === card.id)) continue;
     const opt = STORIES3[st.id].options.find((o) => o.id === st.pendingOptionId)!;
     if (opt.distinct && opt.card === card.id) continue;
-    st.pendingOptionId = undefined;
     answered = true;
+    const need = opt.xiayu ? XIAYU_CARDS_NEEDED : 2;
+    st.pendingCount = (st.pendingCount ?? 1) + 1;
+    if (st.pendingCount < need) {
+      log(s, `【${STORIES3[st.id].name}】·${opt.name} ${st.pendingCount}/${need}：还需再打出 ${need - st.pendingCount} 张牌。`);
+      continue;
+    }
+    st.pendingOptionId = undefined;
+    st.pendingCount = undefined;
     relationDelta += applyStoryOption(s, st, opt, `【${STORIES3[st.id].name}】·${opt.name}（再打出【${def.name}】）`, opt.card === "lingrongXiangzhu" ? lingrongTier(s.relation) : null);
   }
 
@@ -1522,10 +1536,18 @@ function endTurn3(s: Z3State): void {
   for (const inst of s.stories) {
     if (inst.chosenOptionId != null || !alive(s)) continue;
     const def = STORIES3[inst.id];
-    const option = def.options.find((o) => o.id === def.defaultOptionId)!;
+    const pendingOpt = inst.pendingOptionId != null ? def.options.find((o) => o.id === inst.pendingOptionId) : undefined;
+    // 下狱：凑了两张（差一张）按已选的那条走，惩罚 +2；只凑了一张按默认处理。
+    const short = pendingOpt?.xiayu != null && (inst.pendingCount ?? 1) >= XIAYU_CARDS_NEEDED - 1;
+    const option = short ? pendingOpt! : def.options.find((o) => o.id === def.defaultOptionId)!;
     const msg = option.hidden ? `【${def.name}】未处理，${option.story}` : `未作选择，已按默认选项【${option.name}】处理【${def.name}】。`;
-    const half = inst.pendingOptionId != null && option.xiayu != null;
-    const delta = applyStoryOption(s, inst, option, half ? `只凑了一张牌，【${def.name}】没能周全，按【${option.name}】处理，但皇上的怒气稍缓。` : msg, null, half);
+    const half = inst.pendingOptionId != null && option.xiayu != null && !short;
+    const note = short
+      ? `只凑了两张牌，【${def.name}】没能周全，按【${option.name}】处理，惩罚加重了。`
+      : half
+        ? `只凑了一张牌，【${def.name}】没能周全，按【${option.name}】处理，但皇上的怒气稍缓。`
+        : msg;
+    const delta = applyStoryOption(s, inst, option, note, null, half, short ? 1 : 0);
     if (delta) changeRelation(s, delta);
   }
   if (!alive(s)) return;

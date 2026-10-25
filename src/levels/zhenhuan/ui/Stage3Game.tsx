@@ -323,7 +323,7 @@ function StoryCard({ state, inst, dispatch, fold }: { state: Z3State; inst: Stor
       </Tag>
       {def.options.some((o) => o.two) ? (
         <Tag tag="double" tone={styles.kindStory} dispatch={dispatch}>
-          双牌 {inst.pendingOptionId ? 1 : 0}/2
+          {def.options.some((o) => o.xiayu && o.two) ? "三牌" : "双牌"} {inst.pendingOptionId ? inst.pendingCount ?? 1 : 0}/{def.options.some((o) => o.xiayu && o.two) ? 3 : 2}
         </Tag>
       ) : null}
     </span>
@@ -418,7 +418,7 @@ function StoryCard({ state, inst, dispatch, fold }: { state: Z3State; inst: Stor
       })}
       {!chosen && inst.pendingOptionId ? (
         <p className={styles.endHint}>
-          ⏳ 【{def.options.find((o) => o.id === inst.pendingOptionId)?.name}】1/2：本回合再打出另一张能应对此事的牌。
+          ⏳ 【{def.options.find((o) => o.id === inst.pendingOptionId)?.name}】{inst.pendingCount ?? 1}/{def.options.find((o) => o.id === inst.pendingOptionId)?.xiayu ? 3 : 2}：本回合再打出另一张能应对此事的牌。
         </p>
       ) : null}
       {!chosen && !defaultOption.hidden ? <p className={styles.flavor}>未作选择就结束回合时，按默认选项【{defaultOption.name}】处理。</p> : null}
