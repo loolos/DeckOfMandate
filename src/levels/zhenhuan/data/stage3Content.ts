@@ -2216,7 +2216,7 @@ export const YIHUA = {
   ],
   yinjiaCards: ["jinxiXiangzhu"] as readonly CardId3[],
   yinjiaStory: {
-    jinxiXiangzhu: "槿汐托了苏培盛。苏培盛问她：「这些年的心意，你可明白？」槿汐低着头，应下了对食之约。",
+    jinxiXiangzhu: "槿汐想法子去拉拢御前的苏培盛，托他在皇上跟前递话，说太后凤体欠安，宜往甘露寺祈福。苏培盛问她：「这些年的心意，你可明白？」槿汐低着头，应下了对食之约，只求他把话递到。",
     meizhuangXiangzhu: "眉庄在太后跟前进言，说甘露寺香火灵验，太后凤体欠安，正该去那里祈福。",
   } as Record<string, string>,
   /** 落发后引驾要多打的那一张，除了槿汐也可以是这张。 */

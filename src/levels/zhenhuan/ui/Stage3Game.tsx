@@ -655,7 +655,6 @@ function YihuaCard({ state, fold, dispatch }: { state: Z3State; fold: Fold; disp
       {y.step >= 2 ? (
         <p className={styles.muted}>
           引驾：{y.yinjia.map((id) => CARDS3[id].name).join("、")}
-          {y.duishi ? "（槿汐应下了对食之约）" : ""}
         </p>
       ) : null}
     </SpecialCard>
