@@ -181,7 +181,7 @@ export const CARDS3: Record<CardId3, CardDef3> = {
     baseDraw: 1,
     rulesText: ["清誉 +1；抽 1 张牌（眉庄冤屈洗刷，复了位分）。", "联动：它解决的机会事件，事件奖励翻倍（自身基础效果不翻倍）。"],
     rulesCompact: "🪷+1 🎴+1 🎁×2",
-    templeRulesText: ["获得【眉庄打点】：未来 3 回合，每回合抓牌 +1（她托家里人帮忙打点）。", "联动：它解决的机会事件，事件奖励翻倍。"],
+    templeRulesText: ["未来 3 回合，每回合抓牌 +1（她托家里人帮忙打点）。", "联动：它解决的机会事件，事件奖励翻倍。"],
     templeRulesCompact: "⏳🎴+1×3 🎁×2",
   }),
   lingrongXiangzhu: {
@@ -234,7 +234,7 @@ export const CARDS3: Record<CardId3, CardDef3> = {
     baseStatus: "wangyeGuaNian",
     extraPlays: 1,
     matches: ["wangyeXiantan", "tanhuoLiangmi", "shanzhongCaiyao", "yuexiaDuitan", "yebanJingrao"],
-    rulesText: ["抽 1 张牌；本回合出牌 +1；获得【王爷挂念】：下回合抓牌 +1。"],
+    rulesText: ["抽 1 张牌；本回合出牌 +1；下回合抓牌 +1。"],
     rulesCompact: "🎴+1 🀄+1 ⏭️🎴+1",
   },
   chanyuXiushen: {
@@ -255,7 +255,7 @@ export const CARDS3: Record<CardId3, CardDef3> = {
     base: [],
     baseDraw: 0,
     matches: ["tanhuoLiangmi", "fazuoCuhuo", "jinganChuilian", "shanzhongCaiyao", "moyanYuanshou"],
-    rulesText: ["无基础效果。", "联动：用它化解危机时，获得【滴水不漏】：下回合抓牌 +1（静白一时挑不出错）。"],
+    rulesText: ["无基础效果。", "联动：用它化解危机时，下回合抓牌 +1（静白一时挑不出错）。"],
     rulesCompact: "⚡→🎴+1",
   },
   jingxinRennai: {
@@ -1062,7 +1062,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     penalty: NO,
     penaltyStatus: "liuyanChanshen",
     resolvedText: "移除事件",
-    unresolvedText: "获得【流言缠身】",
+    unresolvedText: "未来 3 回合每回合抓牌 -1",
     resolvedStory: {
       jinyanShenxing: "你闭门不出，见了谁都只说些天气花草。流言找不到新的话柄，几日便散了。",
       meizhuangXiangzhu: "眉庄在各宫走动时替你分说清楚，又寻出了嚼舌根的宫女。流言一夜之间没了声息。",
@@ -1097,7 +1097,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     penalty: [q(-1), sc(-1)],
     resolvedText: "移除事件",
     unresolvedText: "清誉 -1、圣宠 -1",
-    note: "用陵容相助解决时，她会送来舒痕胶（🧴）；有害时改为获得【抱恙在身】，不伤胎。",
+    note: "用陵容相助解决时，她会送来舒痕胶（🧴）；有害时改为未来 2 回合不能打仪容整肃、谨言慎行，不能侍寝，不伤胎。",
     resolvedStory: {
       yirongZhengsu: "你当即整好衣饰、从容请罪，礼数周全得挑不出错处。",
       wenTaiyiZhenzhi: "温实初替你出了一张脉案，说你那几日头晕乏力。众人这才知道你是抱病强撑。",
@@ -1133,7 +1133,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     suppressCard: "jinyanShenxing",
     secret: "chuyanDingzhuang",
     resolvedText: "移除事件；两张解牌含谨言慎行即打压齐妃，获得【打压·齐妃】",
-    unresolvedText: "清誉 -2、获得【流言缠身】",
+    unresolvedText: "清誉 -2、未来 3 回合每回合抓牌 -1",
     resolvedStory: {
       jinyanShenxing: "你笑着回了一句：「娘娘说笑了，三阿哥的功课，皇上才是放在心尖上的。」齐妃一时下不来台，再没敢开口。",
       meizhuangXiangzhu: "眉庄不咸不淡地接过话头，把齐妃的话轻轻挡了回去。",
@@ -1193,8 +1193,8 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     suppressedStory: "鄂敏的折子递到半路，又被祺贵人悄悄劝了回去。她想起上回在皇后面前碰的钉子，生怕再闹出事来，折子到底没敢呈上去。",
     suppressCard: "shoulongRenxin",
     secret: "yuanwangJunfu",
-    resolvedText: "移除事件；两张解牌含收拢人心即打压祺贵人，获得【打压·祺贵人】（第 8 回合下狱代价减轻一档）",
-    unresolvedText: "清誉 -1、获得【父兄蒙尘】：第 8 回合下狱的代价加重一档",
+    resolvedText: "移除事件；两张解牌含收拢人心即打压祺贵人，获得【打压·祺贵人】",
+    unresolvedText: "清誉 -1、获得【父兄蒙尘】",
     note: "第 5 回合后洗入危机池。",
     resolvedStory: {
       shoulongRenxin: "你托人在前朝周旋，鄂敏的折子被压了下来，留中不发。",
@@ -1389,7 +1389,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     peakFlavor: "静岸师太拄着拐杖，一步一步爬上了凌云峰，说是放心不下，要亲眼来看看你的病好些没有。",
     reward: NO,
     penalty: NO,
-    resolvedText: "获得【佛门庇荫】",
+    resolvedText: "下一次危机未化解时免罚",
     unresolvedText: "无额外效果，事件消失",
     resolvedStory: {
       chanyuXiushen: "你与师太说了几句禅理。师太点点头：「你倒是有慧根。」此后静白再刁难你，师太总会拦一拦。",
@@ -1420,7 +1420,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     flavor: "师太把一卷《金刚经》和笔墨放到你案上，说：「不急着抄完，一笔一画抄下来，心也就静了。」",
     reward: NO,
     penalty: NO,
-    resolvedText: "获得【心如止水】：未来 3 回合，每回合抓牌 +1",
+    resolvedText: "未来 3 回合，每回合抓牌 +1",
     unresolvedText: "无额外效果，事件消失",
     resolvedStory: {
       chanyuXiushen: "你一笔一画地抄，抄到「一切有为法，如梦幻泡影」，笔停了很久。",
@@ -1476,7 +1476,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     needTwo: true,
     halfStatusTurns: 1,
     resolvedText: "移除事件；需打出两张解牌",
-    unresolvedText: "获得【寒疾缠身】（未来 2 回合，每回合末身子 -1）；只打出一张解牌则只持续 1 回合",
+    unresolvedText: "未来 2 回合，每回合末身子 -1；只打出一张解牌则只持续 1 回合",
     note: "寺中算静白刁难（🧹）；凌云峰上是风雪断粮。",
     resolvedStory: {
       jingchaiBuqun: "你自己上山拾了一捆柴，手上磨出了血泡。屋里总算有了点暖气。",
@@ -1535,7 +1535,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     halfStatusTurns: 1,
     place: "peak",
     resolvedText: "移除事件；需打出两张解牌",
-    unresolvedText: "获得【惊悸】（未来 2 回合不能打出禅语修身）；只打出一张解牌则只持续 1 回合",
+    unresolvedText: "未来 2 回合不能打出禅语修身；只打出一张解牌则只持续 1 回合",
     resolvedStory: {
       jingxinRennai: "你把油灯拨亮了些，坐着念了一夜的经。天亮时，狼嚎声也远了。",
       wenTaiyiZhenzhi: "你照着温实初留下的方子煎了一碗安神药，喝下去便睡着了。",
@@ -2017,7 +2017,7 @@ export const STORIES3: Record<StoryId3, StoryDef3> = {
     name: "故人来访",
     emoji: "🩺",
     flavor: "温实初上山来了，捎来胧月的一张小像，是敬妃托他带的。画上的孩子胖乎乎的，眉眼像你。",
-    note: "本回合可另打出眉庄相助：她远远托温太医捎来补给，获得【远道补给】；或槿汐相助「为女儿撑下去」：获得【为女儿撑下去】。有【敬妃之谊】时另获【敬妃周济】。",
+    note: "本回合可另打出眉庄相助：她远远托温太医捎来补给，未来 3 回合每回合末身子 +1；或槿汐相助「为女儿撑下去」：未来 2 回合每回合末清誉 +1。有【敬妃之谊】时另得未来 3 回合每回合抓牌 +1。",
     defaultOptionId: "zhenzhi",
     options: [
       { id: "zhenzhi", name: "请他诊治", effects: [sz(2)], removeNegatives: "all", text: "移除全部负面状态；身子 +2", story: "温实初替你诊了脉，开了方子，又留下许多药材。临走时他说：「嬛妹妹，你要好好的。」" },
@@ -2244,9 +2244,9 @@ export const FEILAO = {
     meizhuangXiangzhu: "「宫中送药」：眉庄托人连夜送来药材和厚衣。",
   } as Record<string, string>,
   tiers: [
-    { name: "甲 · 师太暗护", text: "身子不减；获得【佛门庇荫】", story: "静岸师太拦不住静白，却悄悄让人把被褥和药送上了山。" },
-    { name: "乙 · 仓皇出寺", text: "身子 -1；获得【寒疾缠身】", story: "只许带随身衣物。槿汐扶着你，踩着雪往后山走。" },
-    { name: "丙 · 连夜被逐", text: "身子 -2、清誉 -1；获得【寒疾缠身】", story: "当夜就被抬出寺门。寺里都传你得了肺痨，没人敢靠近凌云峰。" },
+    { name: "甲 · 师太暗护", text: "身子不减；下一次危机未化解时免罚", story: "静岸师太拦不住静白，却悄悄让人把被褥和药送上了山。" },
+    { name: "乙 · 仓皇出寺", text: "身子 -1；未来 2 回合每回合末身子 -1", story: "只许带随身衣物。槿汐扶着你，踩着雪往后山走。" },
+    { name: "丙 · 连夜被逐", text: "身子 -2、清誉 -1；未来 2 回合每回合末身子 -1", story: "当夜就被抬出寺门。寺里都传你得了肺痨，没人敢靠近凌云峰。" },
   ],
 };
 

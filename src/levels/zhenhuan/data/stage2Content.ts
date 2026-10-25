@@ -405,7 +405,7 @@ export const CARDS2: Record<CardId2, CardDef2> = {
     baseDraw: 0,
     baseStatus: "zhushiTuotie",
     matches: ["supeishengToufeng", "neiwufuDiaonan", "kekouFenli", "shanshiYouyi", "songzhiKuisi", "yikungongLiGuiju", "gongzhongLiuyan"],
-    rulesText: ["获得【诸事妥帖】：下回合出牌数 +1。"],
+    rulesText: ["下回合出牌数 +1。"],
     rulesCompact: "🗝️ 下回合🀄+1",
   },
 };
@@ -417,7 +417,7 @@ export const XIBIE: Record<DepartingCard, { effectName: string; rulesText: strin
   meizhuangXiangzhu: {
     effectName: "临别相托",
     who: "眉庄",
-    rulesText: "惜别：清誉 +2（解决机会事件时奖励照样翻倍）；获得【眉庄嘱托】。这是最后一张眉庄相助，打出后离场。",
+    rulesText: "惜别：清誉 +2（解决机会事件时奖励照样翻倍）；之后抵消一次华妃事件未化解的效果。这是最后一张眉庄相助，打出后离场。",
     compact: "🕯️ 🪷+2 🛡️",
     playStory: "闲月阁的门落锁前，眉庄隔着门缝塞给你一方帕子：“我是倦了，往后这宫里的事，我不想再理。华妃不会就此罢手，你万事当心。”",
     leaveStory: "眉庄心灰意冷，从此闭门不出，再不过问后宫之事。",
@@ -428,7 +428,7 @@ export const XIBIE: Record<DepartingCard, { effectName: string; rulesText: strin
   wenTaiyiZhenzhi: {
     effectName: "临行诊治",
     who: "温太医",
-    rulesText: "惜别：移除全部可移除的负面状态；身子 +2；获得【温太医留方】。这是最后一张温太医相助，打出后离场。",
+    rulesText: "惜别：移除全部可移除的负面状态；身子 +2；之后抵消一次伤胎类事件的后果。这是最后一张温太医相助，打出后离场。",
     compact: "🕯️ 🧹全部负面 🌱+2 📜",
     playStory: "临去疫所前夜，温实初最后一次替你请脉，把一张方子压在了茶盏底下。",
     leaveStory: "疫所路远，从此只有书信偶尔递进宫来。",
@@ -904,7 +904,7 @@ export const EVENTS2: Record<EventId2, EventDef2> = {
     },
     resolvedText: "收拢人心：只清誉 -1；静观其变、槿汐相助：只恨意 +1；眉庄相助：完美化解，没有代价；陵容相助：视情分而定",
     resolvedCompact: "🤝🪷-1 · 🍵🏮🔥+1 · 👭✨ · 🎶",
-    unresolvedText: "清誉 -1、获得【流言缠身】（2 回合）",
+    unresolvedText: "清誉 -1、未来 2 回合每回合抓牌 -1",
     unresolvedCompact: "🪷-1 🗯️×2",
     note: "不论恨意高低都可能抽到（恨意 ≥ 3 才会出现华妃事件）。",
     resolvedStory: {
@@ -927,7 +927,7 @@ export const EVENTS2: Record<EventId2, EventDef2> = {
     penalty: [],
     penaltyStatus: "liuyanChanshen",
     resolvedText: "移除事件，不产生负面状态",
-    unresolvedText: "获得状态【流言缠身】",
+    unresolvedText: "未来 3 回合每回合抓牌 -1",
     resolvedStory: {
       jinyanShenxing: "你闭门不出，见了谁都只说些天气花草。流言找不到新的把柄，几日便散了。",
       meizhuangXiangzhu: "眉庄姐姐在各宫走动时替你分说清楚，又寻出了嚼舌根的宫女。流言一夜之间没了声息。",
@@ -988,7 +988,7 @@ export const EVENTS2: Record<EventId2, EventDef2> = {
     harmsPregnancy: true,
     penaltyStatus: "baoyangZaishen",
     resolvedText: "移除事件",
-    unresolvedText: "伤胎：有孕前身子 -1、获得【抱恙在身】；有孕后直接小产",
+    unresolvedText: "伤胎：有孕前身子 -1、未来 2 回合不能打仪容整肃、谨言慎行，不能侍寝；有孕后直接小产",
     resolvedStory: {
       wenTaiyiZhenzhi: "温实初正好来请脉，看了一眼那碗冰果便摇头：小主体寒，这东西碰不得。",
       jingguanQibian: "你只看了一眼便叫人撤下，说近来脾胃虚寒，碰不得凉的。",
@@ -1012,7 +1012,7 @@ export const EVENTS2: Record<EventId2, EventDef2> = {
     },
     resolvedCompact: "🤐🏮🪷-1 · 👭🔥+1",
     resolvedText: "谨言慎行、槿汐相助：只清誉 -1；眉庄相助：只恨意 +1",
-    unresolvedText: "清誉 -2、获得【闭门思过】；激怒：恨意 +1",
+    unresolvedText: "清誉 -2、未来 2 回合出牌上限 -1；激怒：恨意 +1",
     resolvedStory: {
       jinyanShenxing: "你垂首听训，一句不辩，末了只说“娘娘教训得是”。华妃挑不出大错，却还是当众数落了你几句。",
       meizhuangXiangzhu: "眉庄陪你一同站了半日规矩，替你挡下了不少难听的话。华妃冷笑一声，把这笔账记在了你头上。",
@@ -1044,7 +1044,7 @@ export const EVENTS2: Record<EventId2, EventDef2> = {
     resolvedCompact: "🤝🪷-1 🗂️×2？ · 🏮🪷-1 · 🎶🪷-1",
     unresolvedCompact: "👑-1 🪷-1 ⏳→👑-2 🤒×2",
     resolvedText: "收拢人心：只清誉 -1，多次应对后可能搜集到华妃的罪证；槿汐相助：只清誉 -1；陵容相助：视情分而定",
-    unresolvedText: "延烧：圣宠 -1、清誉 -1，事件留到下回合；下回合仍未应对：圣宠 -2、获得【抱恙在身】后离场",
+    unresolvedText: "延烧：圣宠 -1、清誉 -1，事件留到下回合；下回合仍未应对：圣宠 -2、事件离场，未来 2 回合不能打仪容整肃、谨言慎行，不能侍寝",
     resolvedStory: {
       shoulongRenxin: "你让小允子拿银子去内务府打点，炭火吃食总算补了回来。他回来悄悄说，账上好几笔份例的去向，都记着翊坤宫的吩咐。",
       jinxiXiangzhu: "槿汐去内务府走了一趟，几句软中带硬的话，炭火吃食总算补回来大半。只是宫里都在传，碎玉轩为了几篓炭跟内务府斤斤计较。",
@@ -1069,7 +1069,7 @@ export const EVENTS2: Record<EventId2, EventDef2> = {
     resolvedCompact: "💊🪷-1 · 🤝👑-1 · 🏮🔥+1",
     unresolvedCompact: "⚠️ 🌱-1",
     resolvedText: "温太医相助：只清誉 -1；收拢人心：只圣宠 -1；槿汐相助：只恨意 +1",
-    unresolvedText: "伤胎：有孕前身子 -1、获得【抱恙在身】；有孕后直接小产；另外身子 -1",
+    unresolvedText: "伤胎：有孕前身子 -1、未来 2 回合不能打仪容整肃、谨言慎行，不能侍寝；有孕后直接小产；另外身子 -1",
     resolvedStory: {
       wenTaiyiZhenzhi: "温实初验过汤水，脸色一沉：里头加了活血的东西。你滴水未沾，可太医深夜出入碎玉轩的事传了出去，宫里都说你疑神疑鬼。",
       shoulongRenxin: "御膳房里收过你赏钱的小太监悄悄递话：今日的汤，别喝。你把这事闹到了御前，皇上却嫌你小题大做。",
@@ -1094,8 +1094,8 @@ export const EVENTS2: Record<EventId2, EventDef2> = {
     evidence: { id: "lanyongSixing", cards: ["shoulongRenxin"] },
     resolvedCompact: "✌️🔥+1 · ☝️🪷-1 🍂×1",
     unresolvedCompact: "🪷-2 🍂×2 🔥-1",
-    resolvedText: "打出 2 张：只恨意 +1（两张中含收拢人心，多次应对后可能搜集到华妃的罪证）；只打出 1 张：回合末清誉 -1、获得【噤若寒蝉】（1 回合）",
-    unresolvedText: "清誉 -2、获得【噤若寒蝉】（2 回合）；出气：恨意 -1",
+    resolvedText: "打出 2 张：只恨意 +1（两张中含收拢人心，多次应对后可能搜集到华妃的罪证）；只打出 1 张：回合末清誉 -1、1 回合内不能打收拢人心、槿汐相助",
+    unresolvedText: "清誉 -2、2 回合内不能打收拢人心、槿汐相助；出气：恨意 -1",
     note: "双牌：同一回合打出谨言慎行、仪容整肃、收拢人心中任意 2 张。",
     resolvedStory: {
       jinyanShenxing: "你在翊坤宫外长跪不起，话说得极轻极缓：宫人冲撞是奴婢管教无方，不敢辩，也不敢求，只求娘娘息怒。字字挑不出错处，华妃几次想拿话头发作，都没能寻到由头。",

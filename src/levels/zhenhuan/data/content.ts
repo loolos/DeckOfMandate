@@ -144,7 +144,7 @@ export const EVENTS: Record<EventId, EventDef> = {
     penalty: [],
     penaltyStatus: "liuyanChanshen",
     resolvedText: "移除事件，不产生负面状态",
-    unresolvedText: "获得状态【流言缠身】",
+    unresolvedText: "未来 3 回合每回合抓牌 -1",
     resolvedStory: {
       jinyanShenxing:
         "你闭门不出，见了谁都只说些天气花草。旁人遇上这种事总忍不住辩白，反倒越描越黑；你却一字不辩，流言找不到新的把柄，传了几日便自己散了。",
@@ -235,7 +235,7 @@ export const EVENTS: Record<EventId, EventDef> = {
     penalty: [{ resource: "qingyu", amount: -1 }],
     penaltyStatus: "shiyiMengxiu",
     resolvedText: "移除事件，不产生负面状态",
-    unresolvedText: "清誉 -1、获得状态【失仪蒙羞】",
+    unresolvedText: "清誉 -1、未来 4 回合不能打仪容整肃且每回合抓牌 -1",
     resolvedStory: {
       meizhuangXiangzhu:
         "眉庄姐姐来碎玉轩说话，随手抖开你明日要穿的宫装，一眼看出腰身的缝线被人挑断了。她连夜叫自己宫里的绣娘缝好，又记下那晚进过衣房的人。你们心照不宣，暂且按下不发。",
@@ -411,7 +411,7 @@ export const CARDS: Record<CardId, CardDef> = {
     baseDraw: 0,
     baseStatus: "ermuLingtong",
     matches: ["gongzhongLiuyan", "neiwufuDiaonan", "yuDayingZhengchong", "anzhongXiaban"],
-    rulesText: ["获得【耳目灵通】：未来 2 回合每回合抓牌 +1。", "联动：用它解决【内务府刁难】时，额外抽 1 张牌。"],
+    rulesText: ["未来 2 回合每回合抓牌 +1。", "联动：用它解决【内务府刁难】时，额外抽 1 张牌。"],
   },
   jingguanQibian: {
     id: "jingguanQibian",
@@ -533,7 +533,7 @@ export const STORIES: Record<StoryId, StoryDef> = {
         card: "shoulongRenxin",
         effects: [],
         gainStatus: "gongrenChuifeng",
-        text: "获得【宫人吹风】：未来 2 回合每回合圣宠 +1",
+        text: "未来 2 回合每回合圣宠 +1",
         story: "倚梅园的小太监私下告诉你，余答应连字都认不全。你赏了他们银子，宫人们便在各宫、御前悄悄吹起风来。",
       },
     ],
