@@ -978,13 +978,19 @@ function ConfrontEvidence({ state }: { state: Z3State }) {
           <span className={styles.muted}>（{l.hint}）</span>
         </>
       )}
+      {l.duanfei ? (
+        <>
+          <br />
+          <span className={styles.muted}>端妃在一旁淡淡说道：「{l.duanfei}」皇后便略过了这一桩。</span>
+        </>
+      ) : null}
     </p>
   );
   return (
     <>
       {shown.length > 0 ? <p className={styles.muted}>{POPUP_TEXT.confrontIntro}</p> : null}
       {shown.map(entry)}
-      {hasStatus3(state, "duanfeiXianghu") ? <p className={styles.muted}>{POPUP_TEXT.confrontDuanfei}</p> : null}
+      {hasStatus3(state, "duanfeiXianghu") && !shown.some((l) => l.duanfei) ? <p className={styles.muted}>{POPUP_TEXT.confrontDuanfei}</p> : null}
       {exposed ? <p>{summary.exposed}</p> : null}
       {withheld.length > 0 ? <p>{exposed ? summary.withheld : summary.withheldOnly}</p> : null}
       {withheld.map((l, i) => (

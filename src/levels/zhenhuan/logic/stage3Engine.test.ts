@@ -393,6 +393,15 @@ describe("zhenhuan stage 3 engine", () => {
     expect(lines.filter((l) => /小太监|小宫女|嬷嬷/.test(l)).length).toBeGreaterThanOrEqual(3);
   });
 
+  it("端妃相护: the covered accusation is still raised, with 端妃 speaking for her", () => {
+    const s = newStage3(1, { ...CARRY, secrets: ["shiqinNeiqing", "sitanSiqiu"] });
+    s.relation = 0;
+    withStatus(s, "duanfeiXianghu");
+    const lines = confrontLines(s);
+    expect(lines).toHaveLength(2);
+    expect(lines.filter((l) => l.duanfei)).toHaveLength(1);
+  });
+
   it("对质 evidence list: 亲厚 marks two of 陵容's as withheld, 怨怼 adds the made-up one", () => {
     const s = newStage3(1, { ...CARRY, secrets: ["shiqinNeiqing", "zhuangshenNonggui", "sitanSiqiu"] });
     s.secrets.chuyanDingzhuang = 1;

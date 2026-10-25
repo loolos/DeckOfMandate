@@ -710,6 +710,31 @@ export const SECRETS: Record<SecretId, SecretDef> = {
   "enshang.shanghuaXiaoju": { name: "恩赏为凭·赏花小聚", emoji: "🏮", lingrong: false, line: ENSHANG_LINE, hint: "你随皇后赏花，也收下了她的一番好意。" },
 };
 
+/** 端妃相护：被她挡下的那一桩，指控照常提出，她在一旁出言替你辩护。 */
+export const DUANFEI_DEFENSE: Record<string, string> = {
+  shiqinNeiqing: "那几日她身子不好，本宫是知道的。这种事翻出来，也无趣。",
+  zhuangshenNonggui: "丽嫔那场惊梦，太医早断了是心病。这么多年的旧事，该翻篇了。",
+  sitanSiqiu: "余氏是死是活，宫里人心里都有数。她临去前有个故人探视，算不得罪过。",
+  jierenYaochong: "皇上去哪一宫，是皇上的心思。曲子好不好听，不是妃嫔的罪。",
+  kuitanGongwei: "宫里谁不留心几分动静？不留心的，在这宫里活不到今天。",
+  qiuziXinqie: "在佛前求个子嗣，本宫当年也求过。这算什么罪？",
+  wangyeZengwu: "桐花台人来人往，说几句话便是罪过，那宫里没一个干净的。",
+  guyiYuanyan: "一件旧衣裳，谁都可能一时说错话，何必追着不放。",
+  xinlengZhiyu: "产后伤心，说几句丧气话，本宫也说过。",
+  yuzhongShuxin: "做女儿的递一封家书，皇上若要追究，倒显得不近人情。",
+  qiciBuyong: "补品入口前验一验，是规矩，不是罪。",
+  xijianSiyu: "席间闲话，各宫都说，若都要追究，这景仁宫今日怕是坐不下。",
+  chuyanDingzhuang: "齐妃的嘴，宫里谁不知道？被顶一句，算不得大事。",
+  shanduShide: "新人看不看脸色，是祺贵人自己的心思，何必拿来告状。",
+  yuanwangJunfu: "父亲下了狱，女儿心里有怨，是人之常情。皇上也是做父亲的人。",
+};
+/** 没有专门对应的把柄时，端妃的通用说法。 */
+export const DUANFEI_DEFAULT: readonly string[] = [
+  "这些话都是风闻，本宫不信。",
+  "皇后娘娘，这件事不妨到此为止吧。",
+  "宫里的事查来查去，查不出什么，反倒伤了和气。",
+];
+
 /** 怨怼的陵容编出来的那一条（甄嬛知道是假的，却也知道只有陵容编得出来）。 */
 export const FABRICATED_SECRET = "齐妃扬声道：「还有一桩：莞嫔私下说过，这宫里的位分，迟早都是她的。口出狂言，这是觊觎中宫，目无皇上。」";
 export const FABRICATED_HINT = "这话你从未说过。";
@@ -2134,8 +2159,8 @@ export const CONFRONT = {
       shoulongRenxin: "小允子叩头道：「那夜碎玉轩上下都在，门禁是奴才亲手落的锁，没有人出去过。」",
     },
     sitanSiqiu: {
-      jinyanShenxing: "你垂泪道：「臣妾只是念着旧识一场，想让她走得安心些，并无传话灭口之意。」",
-      shoulongRenxin: "小允子叩头道：「碎玉轩去冷宫，是领了牌子、记了档的，内务府一查便知。」",
+      jinyanShenxing: "你垂泪道：「臣妾去冷宫看余氏，只是念着旧识一场，想让她走得安心些，并无传话灭口之意。」",
+      shoulongRenxin: "小允子叩头道：「碎玉轩去冷宫探余氏，是领了牌子、记了档的，内务府一查便知。」",
     },
     jierenYaochong: {
       jinyanShenxing: "你轻声道：「那支曲子，不过是姐妹间的消遣。皇上驾临，臣妾事先全然不知。」",

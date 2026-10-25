@@ -40,6 +40,8 @@ import {
   RESOURCE3_LABEL,
   RIVALS,
   SECRETS,
+  DUANFEI_DEFAULT,
+  DUANFEI_DEFENSE,
   SHENZI,
   STAGE2_SECRETS,
   STAGE3,
@@ -1096,7 +1098,8 @@ function resolvePlay3(s: Z3State, cardUid: string, removeStatusUid?: string): vo
       const target = confrontLines(s).find((l) => !l.withheld && !c.rebutted.includes(l.id) && CONFRONT.pleas[l.id]?.[card.id]);
       if (target) c.rebutted.push(target.id);
       const text = target ? CONFRONT.pleas[target.id]![card.id]! : CONFRONT.cardStory[card.id];
-      if (text) c.stories.push(`${def.emoji} ${text}`);
+      const topic = target ? `回应「${target.id === "fabricated" ? "凭空编造的话" : SECRETS[target.id as SecretId].name.replace("恩赏为凭·", "")}」：` : "";
+      if (text) c.stories.push(`${def.emoji} ${topic}${text}`);
     }
     log(s, `【景仁宫对质】辩白 ${c.played.length}/${c.needed}`, "good");
   }
@@ -1780,12 +1783,12 @@ export function replay3(seed: number, carry: Carry3 | null, actions: readonly Z3
 }
 
 /** The 把柄 at 对质: what 皇后 brought out, plus the ones a 亲厚 陵容 kept back (`withheld`). */
-export function confrontLines(s: Z3State): { id: string; line: string; hint: string; lingrong: boolean; withheld?: boolean }[] {
+export function confrontLines(s: Z3State): { id: string; line: string; hint: string; lingrong: boolean; withheld?: boolean; duanfei?: string }[] {
   const tier = s.exitTierLingrong ?? lingrongTier(s.relation);
   const held = (Object.keys(s.secrets) as SecretId[]).filter((id) => (s.secrets[id] ?? 0) > 0);
   // a 亲厚 陵容 kept two of hers back
   let hidden = tier === "close" ? 2 : 0;
-  const lines: { id: string; line: string; hint: string; lingrong: boolean; withheld?: boolean }[] = held.map((id, i) => {
+  const lines: { id: string; line: string; hint: string; lingrong: boolean; withheld?: boolean; duanfei?: string }[] = held.map((id, i) => {
     const withheld = hidden > 0 && SECRETS[id].lingrong;
     if (withheld) hidden--;
     // 每隔一条由宫人、小太监说出，保证对质里总有下人开口
@@ -1793,6 +1796,11 @@ export function confrontLines(s: Z3State): { id: string; line: string; hint: str
     return { id, line, hint: SECRETS[id].hint, lingrong: SECRETS[id].lingrong, ...(withheld ? { withheld } : {}) };
   });
   if (tier === "resentful") lines.push({ id: "fabricated", line: FABRICATED_SECRET, hint: FABRICATED_HINT, lingrong: true });
+  // 端妃相护：挡下最后一条真正提出的指控，指控照常提出，端妃在一旁替你说话
+  if (hasStatus3(s, "duanfeiXianghu")) {
+    const covered = [...lines].reverse().find((l) => !l.withheld && l.id !== "fabricated");
+    if (covered) covered.duanfei = DUANFEI_DEFENSE[covered.id] ?? DUANFEI_DEFAULT[s.seed % DUANFEI_DEFAULT.length]!;
+  }
   return lines;
 }
 
