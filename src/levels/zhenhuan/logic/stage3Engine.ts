@@ -1440,6 +1440,8 @@ function settleConfront(s: Z3State): void {
     return;
   }
   log(s, `${exit.emoji} ${exit.name}：${exit.story}${exit.longyue}`, tier === 1 ? "good" : "bad");
+  // 出宫扣减算在修行的起点上：先按修行上限封顶，否则宫中攒的高清誉会把扣减吞掉
+  if (exit.effects.length && s.qingyu > XIUXING.cap) s.qingyu = XIUXING.cap;
   applyDeltas3(s, exit.effects, exit.name);
   if (!alive(s)) {
     s.lossKind = "lenggong";

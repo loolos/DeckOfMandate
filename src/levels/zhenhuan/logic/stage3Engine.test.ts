@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { decodeSessionCode } from "./session";
 import {
   CARDS3,
   CONFRONT,
@@ -863,5 +864,22 @@ describe("zhenhuan stage 3 engine", () => {
       const r = replay3(s.seed, s.carry, s.actions);
       expect(JSON.stringify(r)).toBe(JSON.stringify(s));
     }
+  });
+});
+
+describe("出宫扣减不被修行上限吞掉", () => {
+  it("宫中清誉高于修行上限时，被废出宫仍从上限 8 起扣", () => {
+    const code =
+      "ZH3-MyA3MjE1MjQ5MjcgLSBwYzcgcGMzIHBjMTYgcGMxNyBwYzUgZSBwYzEgcGMyIHBjOSBlIHBjMyBwYzYgcGM4IHBjNyBwYzE3IHBjOSBlIHBjMTUgcGMxNCBwYzEzIGUgcGMyIHBjNSBwYzE1IHBjNyBwYzQgcGM2IHBjMTYgZSBwYzggcGM3IHBjMTMgcGMxMiBwYzQwIHBjNSBwYzkgZSBwYzYgcGM0MCBwYzE1IHBjOSBwYzIgcGMxNyBlIHBjNyBwYzggcGM0MCBwYzIgcGM0IHBjMTMgcGMxNyBlIHBjNiBwYzQgcGM5IHBjOCBwYzE1IHBjNSBlIHBjNDAgcGM3IHBjMTIgcGMxMyBwYzMgZSBwYzczIHBjNzc";
+    const r = decodeSessionCode(code);
+    if (!r.ok || r.session.stage !== 3) throw new Error("decode failed");
+    const s0 = r.session.state;
+    const before = replay3(s0.seed, s0.carry, s0.actions.slice(0, 59));
+    expect(before.turn).toBe(10);
+    expect(before.qingyu).toBe(18);
+    // 第 10 回合一张辩白牌都不打：缺 3 张，被废出宫
+    const after = replay3(s0.seed, s0.carry, [...s0.actions.slice(0, 59), { type: "endTurn" }]);
+    expect(after.exitTier).toBe(3);
+    expect(after.qingyu).toBe(4);
   });
 });
