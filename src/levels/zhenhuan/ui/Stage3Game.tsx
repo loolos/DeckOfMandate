@@ -80,6 +80,7 @@ import {
   summonUnwell3,
   tierOf3,
   xiayuCost,
+  xiayuS,
   yihuaAccepts,
   type CardInst3,
   type EventInst3,
@@ -323,14 +324,14 @@ function StoryCard({ state, inst, dispatch, fold }: { state: Z3State; inst: Stor
       </Tag>
       {def.options.some((o) => o.two) ? (
         <Tag tag="double" tone={styles.kindStory} dispatch={dispatch}>
-          {def.options.some((o) => o.xiayu && o.two) ? "三牌" : "双牌"} {inst.pendingOptionId ? inst.pendingCount ?? 1 : 0}/{def.options.some((o) => o.xiayu && o.two) ? 3 : 2}
+          双牌 {inst.pendingOptionId ? 1 : 0}/2
         </Tag>
       ) : null}
     </span>
   );
   const costNote = (o: (typeof def.options)[number]) => {
     if (!o.xiayu) return "";
-    const cost = xiayuCost(state, o.xiayu);
+    const cost = xiayuCost(state, o.xiayu, inst.solved ?? 0);
     return `（眼下的代价：${cost.length ? cost.map((d) => `${RESOURCE3_LABEL[d.resource]} ${d.amount}`).join("、") : "没有代价"}）`;
   };
   const resultText = inst.result ?? (chosenOption ? chosenOption.text : "");
@@ -371,6 +372,12 @@ function StoryCard({ state, inst, dispatch, fold }: { state: Z3State; inst: Stor
       ) : null}
       <p className={styles.flavor}>{def.flavor}</p>
       {def.note ? <p className={styles.rule}>{def.note}</p> : null}
+      {def.options.some((o) => o.xiayu) && !chosen ? (
+        <p className={styles.rule}>局势 {xiayuS(state, inst.solved ?? 0)}：再打出 {xiayuS(state, inst.solved ?? 0)} 张解牌即可完美解决。</p>
+      ) : null}
+      {(inst.steps ?? []).map((t, i) => (
+        <p key={i} className={styles.flavor}>{t}</p>
+      ))}
       {unwell ? <p className={styles.endHint}>{unwell}，不能侍寝。</p> : null}
       {storyBasicOptions3(def).map((option) => (
         <div key={option.id} className={[styles.option, chosen === option.id && styles.optionChosen].filter(Boolean).join(" ")}>
@@ -418,7 +425,7 @@ function StoryCard({ state, inst, dispatch, fold }: { state: Z3State; inst: Stor
       })}
       {!chosen && inst.pendingOptionId ? (
         <p className={styles.endHint}>
-          ⏳ 【{def.options.find((o) => o.id === inst.pendingOptionId)?.name}】{inst.pendingCount ?? 1}/{def.options.find((o) => o.id === inst.pendingOptionId)?.xiayu ? 3 : 2}：本回合再打出另一张能应对此事的牌。
+          ⏳ 【{def.options.find((o) => o.id === inst.pendingOptionId)?.name}】1/2：本回合再打出另一张能应对此事的牌。
         </p>
       ) : null}
       {!chosen && !defaultOption.hidden ? <p className={styles.flavor}>未作选择就结束回合时，按默认选项【{defaultOption.name}】处理。</p> : null}
