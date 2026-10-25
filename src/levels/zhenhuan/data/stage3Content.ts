@@ -562,7 +562,7 @@ export const STATUSES3: Record<StatusId3, StatusDef3> = {
     unremovable: true,
     drawModifier: 0,
     effectText: "第 13 回合起，每 3 回合末 🌱身子 +1，直至回宫。",
-    flavor: "陵容亲手调的一盒香，闻着清清淡淡的，这回真的无害，你收在了妆台边。",
+    flavor: "陵容亲手调的一盒香，闻着清清淡淡的，附的话只说心中有愧，盼姐姐平安。你收在了妆台边。",
   },
   shitaiBihu: {
     id: "shitaiBihu",
@@ -2362,7 +2362,7 @@ export const LINGRONG_TRUTH: Record<LingrongTier, string> = {
   resentful: "连没有的事，她也替皇后想好了。",
 };
 export const LINGRONG_FAREWELL: Record<LingrongTier, string> = {
-  close: "出宫前一夜，宝鹊悄悄送来一盒亲手调的香，说是她家小主给的。这一回，香是真的无害。",
+  close: "出宫前一夜，宝鹊悄悄送来一盒亲手调的香，说是她家小主给的，只带了一句话：「心中有愧，只愿姐姐平安。」",
   distant: "陵容没有来送。只托人带了一句「姐姐保重」。",
   resentful: "陵容没有来送。后来你才知道，她还在替皇后打听你的消息。",
 };
