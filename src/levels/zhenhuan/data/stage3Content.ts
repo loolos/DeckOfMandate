@@ -1596,7 +1596,7 @@ export type StoryId3 =
   | "yihuaOuyu";
 
 /** 甄远道下狱: which option, and how heavy it lands (see `xiayuCost`). */
-export type XiayuChoice = "kneel" | "taihou" | "guo" | "lingrong";
+export type XiayuChoice = "kneel" | "taihou" | "guo" | "lingrong" | "shoulong" | "jinyan";
 
 export type StoryOption3 = {
   readonly id: string;
@@ -1808,6 +1808,26 @@ export const STORIES3: Record<StoryId3, StoryDef3> = {
         xiayu: "guo",
         text: "须再打出一张牌；不扣圣宠，父亲在狱中少受些苦",
         story: "果郡王替你在前朝奔走，又打点了狱卒。父亲在狱里总算少吃了些苦头。",
+      },
+      {
+        id: "tuoRenxin",
+        name: "托人在前朝打点",
+        card: "shoulongRenxin",
+        two: true,
+        effects: [],
+        xiayu: "shoulong",
+        text: "须再打出一张牌；代价同托陵容",
+        story: "你让小允子拿体己银子在前朝四处打点，托人往狱里递话送物。父亲在狱中的日子好过了些。",
+      },
+      {
+        id: "yinrenBuyan",
+        name: "隐忍不言",
+        card: "jinyanShenxing",
+        two: true,
+        effects: [],
+        xiayu: "jinyan",
+        text: "须再打出一张牌；不求人，只损圣宠，损得轻些",
+        story: "你一个字也没有替父亲辩，只称病闭门，等着风头过去。皇上虽未见你，也没有迁怒碎玉轩。",
       },
       {
         id: "tuoLingrong",

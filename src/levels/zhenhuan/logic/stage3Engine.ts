@@ -472,6 +472,11 @@ export function xiayuCost(s: Z3State, choice: XiayuChoice): Delta3[] {
       const n = Math.max(0, sev - 1) + (s.guoMeet === "li" ? 1 : 0);
       return n > 0 ? [{ resource: "qingyu", amount: -n }] : [];
     }
+    case "jinyan": {
+      const n = Math.max(0, sev - 1) + 1;
+      return [{ resource: "shengchong", amount: -n }];
+    }
+    case "shoulong":
     case "lingrong": {
       const n = Math.max(0, sev - 1);
       return n > 0 ? [{ resource: "qingyu", amount: -n }] : [];
