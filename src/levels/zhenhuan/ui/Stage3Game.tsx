@@ -1066,7 +1066,9 @@ function PopupBody({ state, id }: { state: Z3State; id: PopupId }) {
     case "confront":
       return (
         <>
-          <p>{CONFRONT.flavor}</p>
+          {POPUP_TEXT.confrontScene.map((line) => (
+            <p key={line}>{line}</p>
+          ))}
           <ConfrontEvidence state={state} />
           <p className={styles.muted}>
             本回合须打出 {state.confront?.needed ?? 0} 张辩白牌{state.rank === "guiren" ? "（贵人多 1 张）" : ""}。陵容称病没来，她的牌本回合打不出。
