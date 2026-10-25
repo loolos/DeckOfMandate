@@ -479,8 +479,8 @@ describe("zhenhuan stage 3 engine", () => {
     };
     const fBoth = run("fazuoCuhuo", ["jinxiXiangzhu", "jingxinRennai"]).shenzi;
     expect([run("fazuoCuhuo", []).shenzi, run("fazuoCuhuo", ["jinxiXiangzhu"]).shenzi]).toEqual([fBoth - 2, fBoth - 1]);
-    const t1 = run("tanhuoLiangmi", ["jinxiXiangzhu"]).statuses.find((x) => x.id === "hanzheng")?.remaining;
-    const t0 = run("tanhuoLiangmi", []).statuses.find((x) => x.id === "hanzheng")?.remaining;
+    const t1 = run("tanhuoLiangmi", ["jinxiXiangzhu"]).statuses.find((x) => x.id === "hanzheng" && x.appliesFromTurn === 13)?.remaining;
+    const t0 = run("tanhuoLiangmi", []).statuses.find((x) => x.id === "hanzheng" && x.appliesFromTurn === 13)?.remaining;
     expect([t0, t1]).toEqual([2, 1]);
   });
 
