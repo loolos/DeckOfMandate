@@ -495,6 +495,20 @@ describe("zhenhuan stage 3 engine", () => {
     expect(s.statuses.some((x) => x.id === "wangyeGuaNian")).toBe(true);
   });
 
+  it("睹物生疑: from the turn after 引驾 until 回宫, each 遗物 in hand at turn end adds 疑点 (not only on the 偶遇 turn)", () => {
+    const doubtAfter = (hand: CardId3[]) => {
+      let s = advanceTo(newStage3(12, CARRY), 27);
+      clearBoard(s);
+      s.yihua!.step = 2;
+      s.yihua!.yinjiaTurn = 26;
+      s.yihua!.ouyuDue = 99;
+      setHand(s, hand);
+      s = act(s, { type: "endTurn" });
+      return s.yihua!.doubt;
+    };
+    expect(doubtAfter(["yiwuDi", "yiwuPifeng"]) - doubtAfter([])).toBe(2);
+  });
+
   it("entering the temple: 修行 identity, temple deck plus the 果郡王 cards, 清誉 capped at 8", () => {
     let s = advanceTo(newStage3(6, CARRY), 10);
     s.qingyu = 15;

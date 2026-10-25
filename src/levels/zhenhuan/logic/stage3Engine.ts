@@ -150,8 +150,10 @@ export type Yihua = {
   doneTurn: number | null;
   /** ② 偶遇 can be done on this turn only (引驾 + 2; missed → 2 turns later). */
   ouyuDue: number | null;
-  /** The turn ② 偶遇 was done: 遗物 still in hand at its end raise 疑点. */
+  /** The turn ② 偶遇 was done (its end always checks 遗物 in hand). */
   ouyuTurn: number | null;
+  /** The turn ① 引驾 was done: from the next turn on until 回宫, 遗物 in hand at each turn's end raise 疑点. */
+  yinjiaTurn: number | null;
   dushu: boolean;
 };
 
@@ -1178,6 +1180,7 @@ function advanceYihua(s: Z3State, card: CardId3): void {
     if (card === "jinxiXiangzhu") y.duishi = true;
     if (y.yinjia.length >= y.yinjiaNeed && y.yinjia.includes("jinxiXiangzhu")) {
       y.step = 2;
+      y.yinjiaTurn = s.turn;
       y.ouyuDue = s.turn + YIHUA.ouyuDelay;
       log(s, `引驾完成：皇上要来甘露寺了（第 ${y.ouyuDue} 回合偶遇）。`, "good");
     } else log(s, `你已落发，皇上未必肯来：引驾还差 ${y.yinjiaNeed - y.yinjia.length} 张${y.yinjia.includes("jinxiXiangzhu") ? "（槿汐相助或眉庄相助）" : "槿汐相助"}。`);
@@ -1261,7 +1264,7 @@ function enterYihua(s: Z3State): void {
     s.crisisPool = shuffleInto(s, [...s.crisisPool, "jingrenLairen"]);
     log(s, "景仁宫还在打听你的消息：【景仁宫来人】洗入危机池。", "bad");
   }
-  s.yihua = { step: 1, yinjia: [], yinjiaNeed: s.luofa ? 2 : 1, duishi: false, doubt: DOUBT.start, doneTurn: null, ouyuDue: null, ouyuTurn: null, dushu: false };
+  s.yihua = { step: 1, yinjia: [], yinjiaNeed: s.luofa ? 2 : 1, duishi: false, doubt: DOUBT.start, doneTurn: null, ouyuDue: null, ouyuTurn: null, yinjiaTurn: null, dushu: false };
   log(s, "—— 第三幕 · 移花接木 —— 温太医诊出喜脉，牌库加入 1 张【温太医相助】。持续事件【🎎移花接木】开始，📜疑点为 1。", "info");
   popup(s, "ximai");
 }
@@ -1477,13 +1480,13 @@ function endTurn3(s: Z3State): void {
   }
   if (!alive(s)) return;
 
-  // 睹物生疑: every 遗物 still in hand at the end of the 偶遇 turn
+  // 睹物生疑: every 遗物 still in hand at the end of any turn between 引驾 and 回宫 (and the 偶遇 turn itself)
   const yh = s.yihua;
-  if (yh && yh.ouyuTurn === s.turn) {
+  if (yh && ((yh.yinjiaTurn != null && yh.step < 4 && s.turn > yh.yinjiaTurn) || yh.ouyuTurn === s.turn)) {
     const n = s.hand.filter((c) => isRelic(c.id)).length;
     if (n > 0) {
       yh.dushu = true;
-      log(s, `睹物生疑：${YIHUA.dushuStory}`, "bad");
+      log(s, `睹物生疑：${yh.ouyuTurn === s.turn ? YIHUA.dushuStory : YIHUA.dushuNote}`, "bad");
       changeDoubt(s, n, `睹物生疑（手里 ${n} 件遗物）`);
       if (!alive(s)) return;
     }

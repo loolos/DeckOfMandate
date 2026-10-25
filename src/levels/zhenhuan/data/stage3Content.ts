@@ -119,7 +119,7 @@ function palace(id: Exclude<CardId3, "lingrongXiangzhu" | "jinxiXiangzhu" | "guo
   return { id, name: c.name, emoji: c.emoji, flavor: c.flavor, base: c.base, baseDraw: c.baseDraw, baseStatus: c.baseStatus as StatusId3 | undefined, matches: [], rulesText: c.rulesText, ...o };
 }
 
-const RELIC_RULES = ["打出即焚毁，没有别的效果。", "偶遇完成那回合末，手里每有 1 件遗物，疑点 +1。"];
+const RELIC_RULES = ["打出即焚毁，没有别的效果。", "引驾之后、回宫之前，每回合末手里每有 1 件遗物，疑点 +1。"];
 
 export const CARDS3: Record<CardId3, CardDef3> = {
   yirongZhengsu: palace("yirongZhengsu", {
@@ -2228,6 +2228,7 @@ export const YIHUA = {
   doubtCards: ["jinxiXiangzhu", "meizhuangXiangzhu"] as readonly CardId3[],
   ouyuStory: "皇上在佛前看见你，愣住了。「嬛嬛。」他唤你。你第一次明白，可以把“像她”当成手段：这一回，是我借了她的影子。当夜，皇上留宿甘露寺。",
   doubtLabel: "疑点",
+  dushuNote: "那件旧物还留在手边，宫里人多眼杂，万一被谁瞧见，便是说不清的麻烦。你一整日都坐立不安。",
   dushuStory: "皇上在你屋里看见了那件东西，随口问了一句是谁的。你答得很快，可他已经多看了一眼。",
 };
 
@@ -2470,7 +2471,7 @@ export const TAG3_INFO: Record<TagId3, { label: string; lore: string; rules: str
     rules: "机会与危机成对出现。先化解危机才能把握机会；危机的两张解牌里有共同牌，机会顺带解决并算打压，否则机会要另外解。危机没化解，机会随之作废。",
   },
   jingbai: { label: "静白刁难", lore: "静白师太管着甘露寺的杂务，最讲寺规。在她眼里，你不过是躲来避祸的带罪之人，非磨磨性子不可：克扣炭火，杂役磋磨，甚至诬你偷香油钱。", rules: "第 11–18 回合的刁难没化解，静白就更嚣张，决定第 18 回合被赶走时有多狼狈。" },
-  relic: { label: "遗物", lore: "他留下的东西。", rules: "打出即焚毁，没有别的效果。偶遇当回合末手里每有 1 件，疑点 +1（睹物生疑）。" },
+  relic: { label: "遗物", lore: "他留下的东西。", rules: "打出即焚毁，没有别的效果。引驾之后、回宫之前，每回合末手里每有 1 件，疑点 +1（睹物生疑）。" },
   chengbing: { label: "称病", lore: "陵容身子不适，告了假。", rules: "景仁宫对质这一回合，陵容称病没有来，她的牌打不出。" },
   yihua: {
     label: "持续",
@@ -2480,6 +2481,6 @@ export const TAG3_INFO: Record<TagId3, { label: string; lore: string; rules: str
   doubt: {
     label: "疑点",
     lore: "月份差得越多，越瞒不住。",
-    rules: "从 1 起算。偶遇前每回合末 +1；睹物生疑 +1；景仁宫来人没应对 +1。槿汐相助、眉庄相助各 -1。到 5 即失败。",
+    rules: "从 1 起算。偶遇前每回合末 +1；睹物生疑（引驾后每回合末手里每件遗物）+1；景仁宫来人没应对 +1。槿汐相助、眉庄相助各 -1。到 5 即失败。",
   },
 };

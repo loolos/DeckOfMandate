@@ -634,7 +634,7 @@ function YihuaCard({ state, fold, dispatch }: { state: Z3State; fold: Fold; disp
                   {y.yinjiaNeed > 1 ? `（已落发：要打 ${y.yinjiaNeed} 张，至少 1 张槿汐，另一张可以是眉庄；已打 ${y.yinjia.length} 张）` : ""}
                 </>
               ) : null}
-              {relicCount > 0 && (y.step === 2 || y.ouyuTurn === state.turn) ? (n === 2 ? <span className={styles.endHint}> 手里有 {relicCount} 件遗物：偶遇那回合结束时还在手里，疑点 +{relicCount}（睹物生疑）。</span> : null) : null}
+              {relicCount > 0 && y.step >= 2 && y.step < 4 ? (n === 2 ? <span className={styles.endHint}> 手里有 {relicCount} 件遗物：回合结束时还在手里，疑点 +{relicCount}（睹物生疑）。</span> : null) : null}
               {n === 2 && y.step === 2 && y.ouyuDue != null ? (y.ouyuDue === state.turn ? "（皇上今日驾临：本回合解决【圣驾偶遇】）" : `（第 ${y.ouyuDue} 回合皇上驾临）`) : ""}
               {n === 2 && y.step < 2 ? `（引驾完成后第 ${YIHUA.ouyuDelay} 回合；没成隔一回合再来）` : ""}
               {n === 3 ? "（偶遇之后打出温太医相助即完成）" : ""}
