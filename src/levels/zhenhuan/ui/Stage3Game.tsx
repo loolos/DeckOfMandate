@@ -218,7 +218,7 @@ function EventCard({ state, inst, fold, dispatch }: { state: Z3State; inst: Even
       ) : null}
       {def.double || def.needTwo ? (
         <Tag tag="double" tone={styles.kindStory} dispatch={dispatch}>
-          双牌 {(inst.progress ?? []).length}/{def.needTwo ? solveCount(inst) : 2}
+          双牌{def.needTwo && inst.eased ? "·打压" : ""} {(inst.progress ?? []).length}/{def.needTwo ? solveCount(inst) : 2}
         </Tag>
       ) : null}
     </span>
