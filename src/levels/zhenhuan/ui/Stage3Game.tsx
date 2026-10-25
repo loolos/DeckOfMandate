@@ -1012,7 +1012,6 @@ function PopupBody({ state, id }: { state: Z3State; id: PopupId }) {
           <p>{tail}</p>
           <p>{POPUP_TEXT.meizhuang}</p>
           {returned ? <p>{returned}</p> : null}
-          <p>如今的后宫：</p>
           <ul>
             {POPUP_TEXT.people.map((p) => (
               <li key={p.name}>
