@@ -417,7 +417,7 @@ function StoryCard({ state, inst, dispatch, fold }: { state: Z3State; inst: Stor
   );
 }
 
-/** A story-area card with a progress line (纯元故衣 / 对质 / 肺痨之诬 / 长相思 / 移花接木). */
+/** A story-area card with a progress line (纯元故衣 / 对质 / 肺痨之诬 / 月下琴笛 / 移花接木). */
 function SpecialCard({
   emoji,
   name,
@@ -597,6 +597,11 @@ function ChangxiangsiCard({ state, fold, dispatch }: { state: Z3State; fold: Fol
       name={CHANGXIANGSI.name}
       art="changxiangsi"
       done={c.done}
+      tag={
+        <Tag tag="double" tone={styles.kindStory} dispatch={dispatch}>
+          双牌 {c.done ? 2 : Number(guo) + Number(chan)}/2
+        </Tag>
+      }
       summary={c.done ? "🎶 笛箫合奏 🪷+2" : `${guo ? "✓" : "✗"}🎐 ${chan ? "✓" : "✗"}📿 → 🪷+2`}
       fold={fold}
       dispatch={dispatch}
