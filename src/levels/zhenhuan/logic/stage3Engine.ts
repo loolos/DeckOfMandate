@@ -1012,6 +1012,7 @@ function resolvePlay3(s: Z3State, cardUid: string, removeStatusUid?: string): vo
     // 第二张须是这件事的某个卡牌应对（温太医相助之类不相干的牌不算）
     if (!STORIES3[st.id].options.some((o) => o.card === card.id)) continue;
     const opt = STORIES3[st.id].options.find((o) => o.id === st.pendingOptionId)!;
+    if (opt.distinct && opt.card === card.id) continue;
     st.pendingOptionId = undefined;
     answered = true;
     relationDelta += applyStoryOption(s, st, opt, `【${STORIES3[st.id].name}】·${opt.name}（再打出【${def.name}】）`, opt.card === "lingrongXiangzhu" ? lingrongTier(s.relation) : null);

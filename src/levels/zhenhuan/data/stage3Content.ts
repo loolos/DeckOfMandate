@@ -1837,6 +1837,8 @@ export type StoryOption3 = {
   readonly hidden?: boolean;
   /** 双牌：同回合须再打出这张故事里另一张可应对此事的牌。 */
   readonly two?: boolean;
+  /** 双牌：第二张须与第一张不同名（各打一张）。 */
+  readonly distinct?: boolean;
   readonly effects: readonly Delta3[];
   readonly text: string;
   readonly compact?: string;
@@ -2164,11 +2166,13 @@ export const STORIES3: Record<StoryId3, StoryDef3> = {
     id: "hehunGengtie",
     name: "合婚庚帖",
     emoji: "📜",
-    flavor: "果郡王趁着无人，从袖中取出一张红纸，轻声请你写下自己的庚帖。",
+    flavor: "果郡王趁着无人，从袖中取出一张红纸，轻声请你写下自己的庚帖。他说这一笔写下去，便是把你这个人托付给他，他不要你应他什么，只要你肯留下一个名字。你捏着笔，迟迟没有落下。",
+    note: "须双牌：【果郡王相助】与【荆钗布裙】各打一张；只打一张，回合末按默认选项处理。",
     defaultOptionId: "buxie",
     options: [
       { id: "buxie", name: "不写", effects: [q(1)], text: "清誉 +1", story: "你把红纸推了回去。他没有说什么，只把它仔细折好，收进了袖子里。" },
-      { id: "xiexia", name: "写下庚帖", card: "guojunwangXiangzhu", relic: "yiwuGengtie", effects: [], flag: "gengtie", text: "他收好了庚帖，日后或许用得上", story: "你提笔写下自己的生辰。他在旁边写的是「嬛嬛」。他从来只唤你自己的名字。" },
+      { id: "xiexia", name: "写下庚帖", card: "guojunwangXiangzhu", two: true, distinct: true, relic: "yiwuGengtie", effects: [], flag: "gengtie", text: "他收好了庚帖，日后或许用得上", story: "你换了一身素净的布衣，提笔写下自己的生辰。他在旁边写的是「嬛嬛」，一笔一画，写得极慢。写罢他把两张红纸并在一起，轻轻吹干了墨，低声说：「我不求名分，只求你的名字，在我这里有个着落。」你没有应声，只看着那两行字在灯下并排立着，像是两个本不该相遇的人。" },
+      { id: "xiexiaBuqun", name: "素衣写帖", card: "jingchaiBuqun", two: true, distinct: true, relic: "yiwuGengtie", effects: [], flag: "gengtie", text: "他收好了庚帖，日后或许用得上", story: "你换了一身素净的布衣，提笔写下自己的生辰。他在旁边写的是「嬛嬛」，一笔一画，写得极慢。写罢他把两张红纸并在一起，轻轻吹干了墨，低声说：「我不求名分，只求你的名字，在我这里有个着落。」你没有应声，只看着那两行字在灯下并排立着，像是两个本不该相遇的人。" },
     ],
   },
   diannanZhixing: {
@@ -2368,13 +2372,15 @@ export const FEILAO = {
   ],
 };
 
-/** 第 21 回合【长相思】（条件事件）。 */
+/** 第 21 回合【月下琴笛】（条件事件）。 */
 export const CHANGXIANGSI = {
-  name: "长相思",
+  name: "月下琴笛",
   emoji: "🎶",
-  flavor: "月色很好。他带了笛子来，你屋里有一张旧琴。",
+  flavor:
+    "山中夜深，月色清得像水。窗外忽然传来几声试笛，你推门出去，果郡王正立在院中那株光秃秃的合欢树下，袖里露出半截笛子。他不看你，只低声说：「路过听见屋里有琴声，便想着，若有人肯和一曲就好了。」你屋里确有一张旧琴，是入寺时带来的，弦已松了大半。",
   rule: "同一回合打出【果郡王相助】与【禅语修身】「笛箫合奏」：清誉 +2。不触发则没有效果。",
-  story: "笛声起，琴声和。一曲长相思，山风都静了下来。",
+  story:
+    "你把旧琴搬到石桌上，一根一根调好了弦。他横笛在唇边，先吹了一段起头，你听出是《长相思》，指尖便落了下去。笛声清，琴声缓，一句接着一句，谁也没有开口说话。山风吹过枯枝，竟也静了下来。曲终时他放下笛子，只说了一句：「这曲子，原不该只有我一个人吹。」你低头拨了拨余音未尽的琴弦，没有应声，可案上的灯花，却爆了两下。",
 };
 
 /** 第 25 回合【舟覆噩耗】。 */
