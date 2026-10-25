@@ -1237,7 +1237,6 @@ function zhoufu(s: Z3State): void {
   s.drawPile = convert(s.drawPile);
   s.discard = convert(s.discard);
   s.hand = convert(s.hand);
-  s.notices.push({ emoji: ZHOUFU.emoji, name: ZHOUFU.name, text: ZHOUFU.text });
   log(s, `🌊 ${ZHOUFU.text}【果郡王相助】都变成了 🕯️遗物。`, "bad");
   popup(s, "zhoufu");
 }
