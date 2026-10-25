@@ -2104,9 +2104,9 @@ export type ExitTier = 1 | 2 | 3 | 4;
 /** Cards needed by presented 把柄 (before the 贵人 +1). */
 export function confrontNeeded(presented: number): number {
   if (presented <= 0) return 0;
-  if (presented <= 8) return presented <= 3 ? 1 : 2;
-  if (presented <= 13) return 2;
-  return 3;
+  if (presented <= 3) return 2;
+  if (presented <= 8) return 3;
+  return 4;
 }
 
 /** Outcome by presented 把柄 and how many cards were missing. */

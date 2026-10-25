@@ -117,7 +117,7 @@ describe("zhenhuan stage 3 content", () => {
   });
 
   it("对质 table (design-stage3.md §2.7)", () => {
-    expect([0, 1, 3, 4, 8, 9, 13, 14, 20].map(confrontNeeded)).toEqual([0, 1, 1, 2, 2, 2, 2, 3, 3]);
+    expect([0, 1, 3, 4, 8, 9, 13, 14, 20].map(confrontNeeded)).toEqual([0, 2, 2, 3, 3, 4, 4, 4, 4]);
     expect(confrontOutcome(0, 0)).toBe(1);
     expect(confrontOutcome(5, 0)).toBe(1);
     expect(confrontOutcome(5, 1)).toBe(2);
