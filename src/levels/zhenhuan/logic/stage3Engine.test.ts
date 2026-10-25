@@ -456,6 +456,16 @@ describe("zhenhuan stage 3 engine", () => {
     expect(s.statuses.some((x) => x.id === "yuandaoBuji")).toBe(true);
   });
 
+  it("故人来访 (turn 15): 槿汐相助「为女儿撑下去」gives 清誉 +1 for 2 turns, only one of the two bonuses", () => {
+    let s = advanceTo(newStage3(6, CARRY), 15);
+    s.extraPlays = 3;
+    const [jx, mz] = setHand(s, ["jinxiXiangzhu", "meizhuangXiangzhu"]);
+    s = act(s, { type: "playCard", cardUid: jx! });
+    s = act(s, { type: "playCard", cardUid: mz! });
+    expect(s.statuses.some((x) => x.id === "weiNverChengxia")).toBe(true);
+    expect(s.statuses.some((x) => x.id === "yuandaoBuji")).toBe(false);
+  });
+
   it("entering the temple: 修行 identity, temple deck plus the 果郡王 cards, 清誉 capped at 8", () => {
     let s = advanceTo(newStage3(6, CARRY), 10);
     s.qingyu = 15;

@@ -1109,9 +1109,8 @@ function resolvePlay3(s: Z3State, cardUid: string, removeStatusUid?: string): vo
   } else if (alive(s) && tanshiOpen && !s.tanshiBonus && card.id === "jinxiXiangzhu") {
     s.tanshiBonus = true;
     answered = true;
-    log(s, "为女儿撑下去：你看着胧月的小像，看了很久。", "good");
-    applyDelta3(s, { resource: "qingyu", amount: 1 }, "为女儿撑下去");
-    if (alive(s)) removeNegatives(s, 1, "为女儿撑下去");
+    log(s, "为女儿撑下去：你看着胧月的小像，看了很久。槿汐在一旁默默替你添了一盏灯。", "good");
+    addStatus3(s, "weiNverChengxia");
   }
   if (alive(s) && yihuaStep) advanceYihua(s, card.id);
   if (alive(s) && s.yihua && s.yihua.step < 4 && YIHUA.doubtCards.includes(card.id)) changeDoubt(s, -1, def.name);
