@@ -30,6 +30,7 @@ import {
   SHENZI,
   STAGE3,
   matchesInAct,
+  cardRules3,
   unresolvedText3,
   STATUSES3,
   statusText3,
@@ -685,6 +686,7 @@ function NoticeCard({ emoji, name, text, fold }: { emoji: string; name: string; 
 
 function HandCard({ state, card, dispatch, fold }: { state: Z3State; card: CardInst3; dispatch: Dispatch; fold: Fold }) {
   const def = CARDS3[card.id];
+  const rules = cardRules3(def, state.act);
   const tier = tierOf3(state);
   const isLingrong = card.id === "lingrongXiangzhu";
   const relic = isRelic(card.id);
@@ -759,7 +761,7 @@ function HandCard({ state, card, dispatch, fold }: { state: Z3State; card: CardI
           {def.emoji} {def.name}
           {tags}
         </div>
-        <div className={styles.compactSummary}>{def.rulesCompact ?? def.rulesText.map(compactEffect3).join(" ")}</div>
+        <div className={styles.compactSummary}>{rules.rulesCompact ?? rules.rulesText.map(compactEffect3).join(" ")}</div>
         {notes}
       </FoldBox>
     );
@@ -776,7 +778,7 @@ function HandCard({ state, card, dispatch, fold }: { state: Z3State; card: CardI
       </div>
       <CardArt src={cardArtUrl(card.id, state.act === 1 ? undefined : "temple")} emoji={def.emoji} />
       <p className={styles.flavor}>{def.flavor}</p>
-      {def.rulesText.map((line) => (
+      {rules.rulesText.map((line) => (
         <p key={line} className={styles.rule}>
           {expandedEffect3(line)}
         </p>

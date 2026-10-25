@@ -112,7 +112,15 @@ export type CardDef3 = {
   readonly matches: readonly EventId3[];
   readonly rulesText: readonly string[];
   readonly rulesCompact?: string;
+  /** 第二幕起这张牌的效果换成另一套（眉庄相助）。 */
+  readonly templeRulesText?: readonly string[];
+  readonly templeRulesCompact?: string;
 };
+
+/** 这张牌在第 `act` 幕的说明文字。 */
+export function cardRules3(def: CardDef3, act: Act): { rulesText: readonly string[]; rulesCompact: string | undefined } {
+  return act >= 2 && def.templeRulesText ? { rulesText: def.templeRulesText, rulesCompact: def.templeRulesCompact } : { rulesText: def.rulesText, rulesCompact: def.rulesCompact };
+}
 
 function palace(id: Exclude<CardId3, "lingrongXiangzhu" | "jinxiXiangzhu" | "guojunwangXiangzhu" | "chanyuXiushen" | "jingchaiBuqun" | "jingxinRennai" | RelicId>, o: Partial<CardDef3>): CardDef3 {
   const c = STAGE1_CARDS[id];
@@ -173,6 +181,8 @@ export const CARDS3: Record<CardId3, CardDef3> = {
     baseDraw: 1,
     rulesText: ["清誉 +1；抽 1 张牌（眉庄冤屈洗刷，复了位分）。", "联动：它解决的机会事件，事件奖励翻倍（自身基础效果不翻倍）。"],
     rulesCompact: "🪷+1 🎴+1 🎁×2",
+    templeRulesText: ["获得【眉庄打点】：未来 3 回合，每回合抓牌 +1（她托家里人帮忙打点）。", "联动：它解决的机会事件，事件奖励翻倍。"],
+    templeRulesCompact: "⏳🎴+1×3 🎁×2",
   }),
   lingrongXiangzhu: {
     ...CARDS2.lingrongXiangzhu,
@@ -358,6 +368,7 @@ export type StatusId3 =
   | "yuandaoBuji"
   | "weiNverChengxia"
   | "wangyeGuaNian"
+  | "meizhuangDadian"
   | "yishiWucuo"
   | "dayaQifei"
   | "dayaGuaerjia";
@@ -458,6 +469,16 @@ export const STATUSES3: Record<StatusId3, StatusDef3> = {
     drawModifier: 1,
     effectText: "下回合抓牌数 +1。多个实例效果叠加。",
     flavor: "他把你的难处都记在了心上，转头便着手替你一件件周旋，下回合你便能轻省些。",
+  },
+  meizhuangDadian: {
+    id: "meizhuangDadian",
+    name: "眉庄打点",
+    emoji: "🌸",
+    tag: "positive",
+    duration: 3,
+    drawModifier: 1,
+    effectText: "未来 3 回合，每回合抓牌数 +1。多个实例分别计时、效果叠加。",
+    flavor: "眉庄托了沈家的人，在宫里宫外四处替你打点，日子渐渐宽裕了些。",
   },
   zhushiTuotie: {
     id: "zhushiTuotie",

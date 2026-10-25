@@ -1008,9 +1008,13 @@ function resolvePlay3(s: Z3State, cardUid: string, removeStatusUid?: string): vo
 
   // 2. card's own effect
   if (alive(s)) {
-    applyDeltas3(s, def.base, def.name);
-    if (def.baseStatus && alive(s)) addStatus3(s, def.baseStatus);
-    if (def.baseDraw > 0 && alive(s)) drawCards3(s, def.baseDraw);
+    if (card.id === "meizhuangXiangzhu" && s.act >= 2) {
+      addStatus3(s, "meizhuangDadian");
+    } else {
+      applyDeltas3(s, def.base, def.name);
+      if (def.baseStatus && alive(s)) addStatus3(s, def.baseStatus);
+      if (def.baseDraw > 0 && alive(s)) drawCards3(s, def.baseDraw);
+    }
     if (def.extraPlays && alive(s)) {
       s.extraPlays += def.extraPlays;
       log(s, `${def.name}：本回合出牌 +${def.extraPlays}（现为 ${playLimit3(s)}）。`, "good");
