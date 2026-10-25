@@ -402,6 +402,7 @@ export type StatusId3 =
   | "duanfeiXianghu"
   | "jingfeiZhiyi"
   | "songxingBieyi"
+  | "qinseHeming"
   | "xinGuirenZhangyi"
   | "fuxiongMengchen"
   | "lingrongDeXiang"
@@ -695,6 +696,18 @@ export const STATUSES3: Record<StatusId3, StatusDef3> = {
     drawModifier: 1,
     effectText: "未来 3 回合，每回合抓牌数 +1。",
     flavor: "他走后，山风里似乎还留着那支笛子的余音，叫人心里踏实了些。",
+  },
+  qinseHeming: {
+    id: "qinseHeming",
+    name: "琴瑟同心",
+    emoji: "🎼",
+    tag: "positive",
+    duration: 0,
+    permanent: true,
+    drawModifier: 1,
+    effectText: "此后每回合抓牌数 +1。",
+    flavor: "他走了，那一夜的琴声笛声却还留在心里。你比从前更稳，日子再难，也撑得住。",
+    veiled: { untilTurn: 26, effectText: "日后或许用得上。", flavor: "山中月夜，琴笛相和，庚帖并放。往后无论如何，这些都是你的底气。" },
   },
   jingfeiZhouji: {
     id: "jingfeiZhouji",
@@ -2518,7 +2531,7 @@ export const LINGRONG_FAREWELL: Record<LingrongTier, string> = {
 
 // ---------------------------------------------------------------- popups (§五)
 
-export type PopupId = "opening" | "huanghou" | "tonghuatai" | "chunyuan" | "wanwan" | "confront" | "exit" | "feilao" | "zhoufu" | "ximai" | "ouyu";
+export type PopupId = "opening" | "huanghou" | "tonghuatai" | "chunyuan" | "wanwan" | "confront" | "exit" | "feilao" | "zhoufu" | "ximai" | "ouyu" | "qinse";
 
 export const POPUP_TEXT = {
   opening: "翊坤宫的门关上了。华妃倒了，六宫都说碎玉轩的莞主子是头一份的恩宠。听说景仁宫也要亲自来贺。",
@@ -2608,6 +2621,12 @@ export const POPUP_TEXT = {
     "静白咬定你得了肺痨，当着满寺师父的面，说要把你挪出去，免得过了病气给旁人。你知道那是诬陷，可这样的话一旦说出口，便没有人敢替你争辩。于是你只带了几件随身的衣物，由槿汐扶着，踩着雪往后山走。身后，甘露寺的门「砰」地关上了。山路又陡又滑，你却渐渐觉得心里松了一口气：凌云峰上没有人盯着你的一举一动，没有刁难，也没有闲话，只有风声、雪声和一间清冷的小屋。名声是被人糟蹋了，日子，倒也算落得个清净。",
   feilaoRules: "杂役磋磨、功德箱失窃移出；月下对谈、夜半惊扰、耳目窥伺加入。",
   zhoufu: "消息是夜里传来的：果郡王的船在江上翻了，尸骨无存。他留给你的那些东西，如今只剩下念想。",
+  qinse: [
+    "庚帖上，两个名字并排立着，墨迹一点点干了。你忽然想起前些日子，雪夜里他赶来的身影，月色下他吹起的那支长相思，想起你抚琴时他低头含笑的样子。琴瑟和鸣，原不过是这样的光景：你不必说，他也懂；他不必问，你也应。",
+    "这几件事，一桩一桩，都像是在心里种下了什么。你只觉得，往后不论山风再冷、日子再长，心里总有一处是暖的、定的。",
+  ],
+  zhoufuQinse:
+    "只是那夜琴笛相和的光景还在眼前，你竟没有倒下。你把他留下的东西一件一件收好，心里空得发疼，却也有什么东西在这疼里慢慢沉了下来：他不在了，你更要好好活着，把日子一步一步走下去。",
   zhoufuRules: "3 张【果郡王相助】变成 🕯️遗物：打出即焚毁，没有别的效果。",
   ximaiRecall: {
     1: "当初你自请出宫，临行前亲手把胧月交给了敬妃，原想从此清清静静，在佛前了此残生。",

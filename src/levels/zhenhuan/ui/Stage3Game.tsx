@@ -59,6 +59,7 @@ import {
   feilaoAccepts,
   feilaoCurrentTier,
   hasStatus3,
+  qinseReady,
   isFreeByLianmei3,
   isRelic,
   lianmeiLit3,
@@ -401,6 +402,7 @@ function StoryCard({ state, inst, dispatch, fold }: { state: Z3State; inst: Stor
               {CARDS3[option.card!].emoji} {CARDS3[option.card!].name}
             </span>
             {option.name}：{expandedEffect3(option.text)}
+            {chosen == null ? qinseNote(state, option) : ""}
             {chosen == null ? costNote(option) : ""}
             {lingrongNote}
           </p>
@@ -418,6 +420,11 @@ function StoryCard({ state, inst, dispatch, fold }: { state: Z3State; inst: Stor
 }
 
 /** A story-area card with a progress line (纯元故衣 / 对质 / 肺痨之诬 / 月下琴笛 / 移花接木). */
+/** 合婚庚帖：踏雪问疾与月下琴笛都已完成时，才写下这一笔的后续效果。 */
+function qinseNote(state: Z3State, option: { readonly flag?: string }): string {
+  return option.flag === "gengtie" && qinseReady(state) ? "；此后每回合抓牌 +1（舟覆之后起）" : "";
+}
+
 function SpecialCard({
   emoji,
   name,
@@ -1154,7 +1161,16 @@ function PopupBody({ state, id }: { state: Z3State; id: PopupId }) {
       return (
         <>
           <p>{POPUP_TEXT.zhoufu}</p>
+          {hasStatus3(state, "qinseHeming") ? <p>{POPUP_TEXT.zhoufuQinse}</p> : null}
           <p className={styles.muted}>{POPUP_TEXT.zhoufuRules}</p>
+        </>
+      );
+    case "qinse":
+      return (
+        <>
+          {POPUP_TEXT.qinse.map((t) => (
+            <p key={t}>{t}</p>
+          ))}
         </>
       );
     case "ximai":
@@ -1181,6 +1197,7 @@ const POPUP_TITLE: Record<PopupId, string> = {
   exit: "⚖️ 景仁宫对质 · 自请出宫",
   feilao: "🤒 迁居凌云峰",
   zhoufu: "🌊 舟覆噩耗",
+  qinse: "🎼 琴瑟和鸣",
   ximai: "💗 喜脉惊心",
   ouyu: "🌸 圣驾偶遇",
 };
