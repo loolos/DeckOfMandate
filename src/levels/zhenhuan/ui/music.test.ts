@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { newGame } from "../logic/engine";
-import { startStage2Standalone } from "../logic/session";
+import { startStage2Standalone, startStage3Standalone } from "../logic/session";
 import { newStage2 } from "../logic/stage2Engine";
 import { musicMood } from "./music";
 
@@ -36,5 +36,15 @@ describe("musicMood", () => {
       "calm", "calm", "tension", "tension", "sorrow", "sorrow", "calm", "calm", "tender", "tender", "sorrow", "sorrow",
       "tension", "tension", "climax", "climax",
     ]);
+  });
+
+  it("stage 3 follows its story beats and ends on return", () => {
+    const s = startStage3Standalone(1);
+    const at = (turn: number) => musicMood({ ...s, state: { ...s.state, turn } });
+    expect([1, 2, 3, 5, 6, 8, 10, 11, 17, 18, 24, 25, 26, 33].map(at)).toEqual([
+      "calm", "calm", "fengyi", "tender", "fengyi", "confront", "confront", "temple", "temple", "snow", "snow", "sorrow",
+      "graft", "graft",
+    ]);
+    expect(musicMood({ ...s, state: { ...s.state, turn: 33, outcome: "won" } })).toBe("return");
   });
 });

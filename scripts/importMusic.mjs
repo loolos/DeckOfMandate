@@ -28,12 +28,18 @@ const TRACKS = [
   ["M03", "sorrow", "哀婉"],
   ["M04", "climax", "高潮"],
   ["M05", "tender", "柔情"],
+  ["M06", "fengyi", "第三关 · 凤仪之下"],
+  ["M07", "confront", "第三关 · 景仁宫对质"],
+  ["M08", "temple", "第三关 · 青灯古佛"],
+  ["M09", "snow", "第三关 · 凌云峰"],
+  ["M10", "graft", "第三关 · 移花接木"],
+  ["M11", "return", "第三关 · 凤阙归来"],
 ];
 const MAX_BYTES = 1024 * 1024;
 const MIN_SECONDS = 30;
 const MAX_SECONDS = 45;
 /** The level-cleared track may run longer than the in-game moods. */
-const MAX_SECONDS_BY_MOOD = { victory: 90 };
+const MAX_SECONDS_BY_MOOD = { victory: 90, return: 90 };
 const RAW = process.argv.includes("--raw");
 
 function has(cmd) {
@@ -66,7 +72,7 @@ function importAll() {
     const parsed = parseInboxName(name);
     const track = parsed && TRACKS.find(([id]) => id === parsed[0]);
     if (!track || !EXTS.includes(parsed[1])) {
-      notes.push(`跳过 ${name}：文件名应为 M00–M05，格式 ${EXTS.join(" / ")}`);
+      notes.push(`跳过 ${name}：文件名应为 M00–M11，格式 ${EXTS.join(" / ")}`);
       continue;
     }
     const src = path.join(INBOX, name);
