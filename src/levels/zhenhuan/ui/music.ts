@@ -60,13 +60,13 @@ const MUSIC_SCHEDULE: Record<1 | 2 | 3, readonly (readonly [fromTurn: number, mo
 /**
  * The track to start next, given the turn the game is on *when the previous track ends*
  * (events are ignored); `null` session = start menu (`calm`). Once 第二关 is won with 大胜 or 完美胜利 the next track is
- * `victory`, and once 第三关 is won it is `return`: they only play if the player is still on the cleared screen when the
+ * `victory`, and once 第三关 is won, or 皇上登门 has begun, it is `return`: they only play if the player is still on the cleared screen when the
  * previous track ends. Every other outcome (第一关 win, 险胜, loss) follows the schedule.
  */
 export function musicMood(session: Session | null): MusicMood {
   if (!session) return "calm";
   if (session.stage === 2 && session.state.outcome === "won" && session.state.victory !== "narrow") return "victory";
-  if (session.stage === 3 && session.state.outcome === "won") return "return";
+  if (session.stage === 3 && (session.state.outcome === "won" || session.state.yihua?.dengmen)) return "return";
   let mood: MusicMood = "calm";
   for (const [fromTurn, m] of MUSIC_SCHEDULE[session.stage]) {
     if (session.state.turn >= fromTurn) mood = m;

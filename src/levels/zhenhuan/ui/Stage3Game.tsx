@@ -67,6 +67,7 @@ import {
   matchedEvents3,
   openStories3,
   pairLocked,
+  solveCount,
   playLimit3,
   playsLeft3,
   rankCap3,
@@ -176,7 +177,6 @@ function answeringCards(id: EventId3): CardId3[] {
 
 function resolvedDetail(inst: EventInst3): string {
   const def = EVENTS3[inst.id];
-  if (inst.bySuppress) return "上回被你打压过，这回没敢闹大：消耗【打压】状态，自动化解。";
   const by = inst.resolvedBy ? `由【${CARDS3[inst.resolvedBy].name}】` : "";
   const tier = inst.lingrong && inst.resolvedBy === "lingrongXiangzhu" ? `（陵容·${TIER_LABEL[inst.lingrong]}）` : "";
   const suppressed = inst.suppressed && def.rival ? `；打压了${RIVALS[def.rival].name}` : "";
@@ -218,12 +218,12 @@ function EventCard({ state, inst, fold, dispatch }: { state: Z3State; inst: Even
       ) : null}
       {def.double || def.needTwo ? (
         <Tag tag="double" tone={styles.kindStory} dispatch={dispatch}>
-          双牌 {(inst.progress ?? []).length}/2
+          双牌 {(inst.progress ?? []).length}/{def.needTwo ? solveCount(inst) : 2}
         </Tag>
       ) : null}
     </span>
   );
-  const story = inst.bySuppress && inst.story ? inst.story : inst.resolved && inst.resolvedBy && inst.resolvedBy !== "lingrongXiangzhu" ? (inst.story ?? def.resolvedStory[inst.resolvedBy]) : undefined;
+  const story = inst.resolved && inst.resolvedBy && inst.resolvedBy !== "lingrongXiangzhu" ? (inst.story ?? def.resolvedStory[inst.resolvedBy]) : undefined;
   const lingrongStory = inst.lingrong && (!inst.resolved || inst.resolvedBy === "lingrongXiangzhu") ? LINGRONG_EVENT3[inst.id]?.[inst.lingrong]?.story : undefined;
   const resolvedLabel = isOpp ? "已把握" : def.kind === "huanghou" ? "已领受" : "已化解";
   const okLabel = def.kind === "huanghou" ? "打出特定牌：" : "处理：";
@@ -277,7 +277,7 @@ function EventCard({ state, inst, fold, dispatch }: { state: Z3State; inst: Even
       {def.rival && def.suppressCard && !def.pair ? (
         <p className={styles.rule}>
           ⚔️ 两张解牌中有【{CARDS3[def.suppressCard].emoji}
-          {CARDS3[def.suppressCard].name}】即算打压{RIVALS[def.rival].name}：获得【打压·{RIVALS[def.rival].name}】，她的危机下次出现时自动化解一次。
+          {CARDS3[def.suppressCard].name}】即算打压{RIVALS[def.rival].name}：获得【打压·{RIVALS[def.rival].name}】，她的危机下次出现时少需要 1 张解牌。
         </p>
       ) : null}
       {def.rival && !inst.resolved && state.statuses.some((st) => st.id === "xinGuirenZhangyi") ? (
@@ -287,7 +287,7 @@ function EventCard({ state, inst, fold, dispatch }: { state: Z3State; inst: Even
         <p className={styles.rule}>
           🔗 {PAIRS[def.pair].name}：{isOpp ? `须先化解【${shortEventName(EVENTS3[PAIRS[def.pair].crisis].name)}】才能把握。` : `没化解，【${shortEventName(EVENTS3[PAIRS[def.pair].opportunity].name)}】随之作废。`}
           危机须两张解牌；其中有【{CARDS3[PAIRS[def.pair].shared].emoji}
-          {CARDS3[PAIRS[def.pair].shared].name}】可一石二鸟：结交盟友并打压{RIVALS[PAIRS[def.pair].rival].name}（她的危机下次出现时自动化解一次）。
+          {CARDS3[PAIRS[def.pair].shared].name}】可一石二鸟：结交盟友并打压{RIVALS[PAIRS[def.pair].rival].name}（她的危机下次出现时少需要 1 张解牌）。
         </p>
       ) : null}
       {locked ? <p className={styles.endHint}>🔒 连环危机还没化解，这张机会暂时锁着。</p> : null}
@@ -627,14 +627,14 @@ function YihuaCard({ state, fold, dispatch }: { state: Z3State; fold: Fold; disp
   const y = state.yihua;
   if (!y) return null;
   const inHand = (id: CardId3) => state.hand.some((x) => x.id === id && yihuaAccepts(state, id));
-  const stepCards: readonly (readonly CardId3[])[] = [y.yinjiaNeed > 1 ? [...YIHUA.yinjiaCards, YIHUA.luofaExtra] : YIHUA.yinjiaCards, ["chanyuXiushen", "jingchaiBuqun"], ["wenTaiyiZhenzhi"]];
+  const stepCards: readonly (readonly CardId3[])[] = [y.yinjiaNeed > 1 ? [...YIHUA.yinjiaCards, YIHUA.luofaExtra] : YIHUA.yinjiaCards, ["chanyuXiushen", "jingchaiBuqun"], ["wenTaiyiZhenzhi"], YIHUA.dengmenCards];
   const relicCount = state.hand.filter((c) => isRelic(c.id)).length;
   return (
     <SpecialCard
       emoji={YIHUA.emoji}
       name={YIHUA.name}
       art="yihua"
-      done={y.step === 4}
+      done={y.step === 5}
       tag={
         <>
           <Tag tag="yihua" tone={styles.kindTrial} dispatch={dispatch}>
@@ -646,7 +646,7 @@ function YihuaCard({ state, fold, dispatch }: { state: Z3State; fold: Fold; disp
       fold={fold}
       dispatch={dispatch}
     >
-      {y.step === 4 ? <ResolvedBanner icon="👑" label="三步俱成" detail="回合末回宫。" /> : null}
+      {y.step === 5 ? <ResolvedBanner icon="👑" label="四步俱成" detail="回合末回宫。" /> : null}
       <p className={styles.flavor}>{YIHUA.flavor}</p>
       {YIHUA.steps.map((s, i) => {
         const n = i + 1;
@@ -655,7 +655,7 @@ function YihuaCard({ state, fold, dispatch }: { state: Z3State; fold: Fold; disp
           <div key={s.name} className={[styles.option, state_ === "now" && styles.optionChosen, state_ === "done" && styles.stepStory].filter(Boolean).join(" ")}>
             <span>
               {mark(state_ === "done")} <strong>
-                {["①", "②", "③"][i]} {s.emoji} {s.name}
+                {["①", "②", "③", "④"][i]} {s.emoji} {s.name}
               </strong>
               ：{n === 1 && state_ === "done" ? y.yinjia.map((id) => YIHUA.yinjiaStory[id] ?? "").join("") || s.story : s.story}
               {n === 1 ? (
@@ -664,10 +664,11 @@ function YihuaCard({ state, fold, dispatch }: { state: Z3State; fold: Fold; disp
                   {y.yinjiaNeed > 1 ? `（已落发：要打 ${y.yinjiaNeed} 张，至少 1 张槿汐，另一张可以是眉庄；已打 ${y.yinjia.length} 张）` : ""}
                 </>
               ) : null}
-              {relicCount > 0 && y.step >= 2 && y.step < 4 ? (n === 2 ? <span className={styles.endHint}> 手里有 {relicCount} 件遗物：回合结束时还在手里，疑点 +{relicCount}（睹物生疑）。</span> : null) : null}
+              {relicCount > 0 && y.step >= 2 && y.step < 5 ? (n === 2 ? <span className={styles.endHint}> 手里有 {relicCount} 件遗物：回合结束时还在手里，疑点 +{relicCount}（睹物生疑）。</span> : null) : null}
               {n === 2 && y.step === 2 && y.ouyuDue != null ? (y.ouyuDue === state.turn ? "（皇上今日驾临：本回合解决【圣驾偶遇】）" : `（第 ${y.ouyuDue} 回合皇上驾临）`) : ""}
               {n === 2 && y.step < 2 ? `（引驾完成后第 ${YIHUA.ouyuDelay} 回合；没成隔一回合再来）` : ""}
               {n === 3 ? "（偶遇之后打出温太医相助即完成）" : ""}
+              {n === 4 ? (y.dengmen ? `（皇上已登门：须在第 ${y.dengmen.openTurn}–${y.dengmen.openTurn + 1} 回合内打出 ${y.dengmen.needed} 张解牌${y.dengmen.needed === 0 ? "，只需过剧情" : `，已打 ${Math.min(y.dengmen.played.length, y.dengmen.needed)} 张；疑点 ${y.dengmen.doubt}、遗物 ${y.dengmen.relics} 件${state.exitTier === 1 ? "" : "，非体面自请多 1 张"}`}）` : "（改脉的下一回合皇上登门：按当时的疑点与未焚的遗物定张数，两回合内打够）") : ""}
               {state_ !== "done" ? (
                 <>
                   <br />
@@ -1088,6 +1089,17 @@ function PopupBody({ state, id }: { state: Z3State; id: PopupId }) {
         </>
       );
     }
+    case "dengmen": {
+      const d = state.yihua?.dengmen;
+      return (
+        <>
+          <p>{d && d.needed === 0 ? YIHUA.dengmenOpen.none : YIHUA.dengmenOpen.some}</p>
+          <p className={styles.muted}>
+            {d && d.needed === 0 ? "皇上没有起疑，只需过完剧情。" : `${POPUP_TEXT.dengmenRules}本次需要 ${d?.needed ?? 0} 张。`}
+          </p>
+        </>
+      );
+    }
     case "tonghuatai": {
       const meet = state.guoMeet ?? "di";
       return (
@@ -1201,6 +1213,7 @@ const POPUP_TITLE: Record<PopupId, string> = {
   qinse: "🎼 琴瑟和鸣",
   ximai: "💗 喜脉惊心",
   ouyu: "🌸 圣驾偶遇",
+  dengmen: "🚪 皇上登门",
 };
 
 function OutcomeModal({ state, onRestart, onMenu }: { state: Z3State; onRestart: () => void; onMenu: () => void }) {
@@ -1210,7 +1223,7 @@ function OutcomeModal({ state, onRestart, onMenu }: { state: Z3State; onRestart:
   return (
     <div className={styles.overlay} role="dialog" aria-modal="true" aria-labelledby="zh3-outcome-title">
       <div className={styles.modal}>
-        <h2 id="zh3-outcome-title">{won ? (state.victory === "perfect" ? `🌟 完美结局：${HOMECOMING.name}` : `${HOMECOMING.emoji} ${HOMECOMING.name}`) : "🥀 功亏一篑"}</h2>
+        <h2 id="zh3-outcome-title">{won ? (state.victory === "perfect" ? `🌟 完胜：${HOMECOMING.name}` : state.victory === "narrow" ? `${HOMECOMING.emoji} 险胜：${HOMECOMING.name}` : `${HOMECOMING.emoji} 大胜：${HOMECOMING.name}`) : "🥀 功亏一篑"}</h2>
         {won ? (
           <>
             {endingStory3(state).map((line) => (

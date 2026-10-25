@@ -38,7 +38,7 @@ export const STAGE3 = {
   /** 第 13、16……31 回合末【暗香盈袖】🌱+1。 */
   fragranceTurns: [13, 16, 19, 22, 25, 28, 31] as readonly number[],
   /** 🌟完美：三步在这一回合之前完成。 */
-  perfectBefore: 30,
+  perfectBefore: 31,
 };
 
 export const ACT_TITLE: Record<Act, string> = { 1: "第一幕 · 凤仪之下", 2: "第二幕 · 青灯古佛", 3: "第三幕 · 移花接木" };
@@ -448,7 +448,7 @@ export function statusText3(def: StatusDef3, turn: number): { effectText: string
   return def.veiled && turn < def.veiled.untilTurn ? def.veiled : def;
 }
 
-/** 打压 leaves one of these per rival: her next crisis is auto-resolved once. */
+/** 打压 leaves one of these per rival: her next crisis needs one fewer 解牌. */
 function daya(id: StatusId3, rivalName: string, flavor: string): StatusDef3 {
   return {
     id,
@@ -458,7 +458,7 @@ function daya(id: StatusId3, rivalName: string, flavor: string): StatusDef3 {
     duration: 0,
     permanent: true,
     drawModifier: 0,
-    effectText: `${rivalName}的危机下次出现时自动化解。用掉后消失。`,
+    effectText: `${rivalName}的危机下次出现时少需要 1 张解牌。用掉后消失。`,
     flavor,
   };
 }
@@ -953,8 +953,6 @@ export type EventDef3 = {
   readonly needTwo?: boolean;
   /** 对头事件没化解、欣贵人替你挡下惩罚时的日志。 */
   readonly xinCover?: string;
-  /** 打压状态让这张危机自动化解时的剧情。 */
-  readonly suppressedStory?: string;
   /** 需两张解牌的危机只凑了一张时的惩罚（不写则按完整惩罚）。 */
   readonly halfPenalty?: readonly Delta3[];
   /** 危机被化解时也要付的代价（断炭缺粮：熬过去也伤身子）。 */
@@ -1240,7 +1238,6 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     penaltyStatus: "liuyanChanshen",
     rival: "qifei",
     needTwo: true,
-    suppressedStory: "请安那日，齐妃刚张口要提「心尖上的人」，目光落到你身上，又想起上回在三阿哥的功课上吃的亏，讪讪闭了嘴，只低头喝茶。",
     suppressCard: "jinyanShenxing",
     secret: "chuyanDingzhuang",
     resolveCost: [sz(-1)],
@@ -1263,7 +1260,6 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     penalty: [sc(-2)],
     rival: "qifei",
     needTwo: true,
-    suppressedStory: "长春宫的人来碎玉轩送东西，话说得格外客气。齐妃自上回被你堵得下不来台，这次没再拿三阿哥的功课做文章，皇上也没被扣在长春宫。",
     suppressCard: "yirongZhengsu",
     resolveCost: [q(-1)],
     resolvedText: "移除事件；两张解牌含仪容整肃即打压齐妃，获得【打压·齐妃】；化解也要清誉 -1",
@@ -1284,7 +1280,6 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     penalty: [sc(-2)],
     rival: "guaerjia",
     needTwo: true,
-    suppressedStory: "祺贵人在御花园遇见你，笑得有些发僵，福身行礼，一句多的话也没说。她还记着上回被压下去的那场风波，没敢再来“偶遇”。",
     suppressCard: "yirongZhengsu",
     secret: "shanduShide",
     resolvedText: "移除事件；两张解牌含仪容整肃即打压祺贵人，获得【打压·祺贵人】",
@@ -1302,15 +1297,16 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     xinCover: "欣贵人在殿上直言：「甄大人的事前朝自有公断，哪有拿后宫姐妹的家世说嘴的道理。」祺贵人被噎得说不出话，那道折子的分量也就轻了几分。",
     flavor: "祺贵人的父亲鄂敏在前朝递了一道折子，参甄远道平日文字轻狂、结交不慎，字字句句都冲着甄家而来。",
     reward: NO,
-    penalty: [q(-1)],
+    penalty: [q(-4)],
+    halfPenalty: [q(-1)],
+    resolveCost: [q(-1)],
     penaltyStatus: "fuxiongMengchen",
     rival: "guaerjia",
     needTwo: true,
-    suppressedStory: "鄂敏的折子递到半路，又被祺贵人悄悄劝了回去。她想起上回在皇后面前碰的钉子，生怕再闹出事来，折子到底没敢呈上去。",
     suppressCard: "shoulongRenxin",
     secret: "yuanwangJunfu",
-    resolvedText: "移除事件；两张解牌含收拢人心即打压祺贵人，获得【打压·祺贵人】",
-    unresolvedText: "清誉 -1、获得【父兄蒙尘】",
+    resolvedText: "移除事件；化解也要清誉 -1；两张解牌含收拢人心即打压祺贵人，获得【打压·祺贵人】",
+    unresolvedText: "清誉 -4、获得【父兄蒙尘】；只打出一张解牌则清誉 -1、仍获得【父兄蒙尘】",
     note: "第 5 回合后洗入危机池。",
     resolvedStory: {
       shoulongRenxin: "你托人在前朝周旋，鄂敏的折子被压了下来，留中不发。",
@@ -1328,7 +1324,6 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     penalty: [q(-2)],
     rival: "qifei",
     needTwo: true,
-    suppressedStory: "齐妃远远瞧见你和欣贵人，脚步顿了顿，绕着另一条路走了。上回在这儿吃的亏她还记着，这回连招呼都省了。",
     pair: "yuhuayuan",
     resolvedText: "移除事件；与【御花园赏花·欣贵人邀游】相连",
     unresolvedText: "清誉 -2；【御花园赏花·欣贵人邀游】随之作废",
@@ -1349,7 +1344,6 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     penalty: [q(-2)],
     rival: "guaerjia",
     needTwo: true,
-    suppressedStory: "祺贵人原想去皇后面前再告一状，走到景仁宫门口又退了回去。上回碰的钉子还疼着，条陈的事便没人再提。",
     pair: "xianfu",
     resolvedText: "移除事件；与【咸福宫托付·敬妃求助】相连",
     unresolvedText: "清誉 -2；【咸福宫托付·敬妃求助】随之作废",
@@ -1370,7 +1364,6 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     penalty: [q(-2)],
     rival: "qifei",
     needTwo: true,
-    suppressedStory: "齐妃到了延庆殿门口，只让宫人递了盒点心，说身子不便，改日再来探病。上回的教训还在，她没敢再往里闯。",
     pair: "yanqing",
     resolvedText: "移除事件；与【延庆殿夜话·端妃旧话】相连",
     unresolvedText: "清誉 -2；【延庆殿夜话·端妃旧话】随之作废",
@@ -2424,6 +2417,7 @@ export const YIHUA = {
     { name: "引驾", emoji: "🔔", story: "托人在御前递话，说太后凤体欠安，宜往甘露寺祈福。" },
     { name: "偶遇", emoji: "🌸", story: "皇上驾临甘露寺，佛前重逢，二人相对无言，当夜便留宿在了寺中。" },
     { name: "改脉", emoji: "📜", story: "你再三恳求温太医：皇上留宿之后，宫里很快就要传出喜脉的消息，这孩子的月份必须对得上，否则你们几个人都活不成。他沉默了许久，终于长叹一声，答应在脉案上悄悄改写了月份，把这个孩子的来历瞒得严严实实。" },
+    { name: "登门", emoji: "🚪", story: "改脉的第二天，皇上亲自登门，要看你究竟有没有瞒他什么。" },
   ],
   yinjiaCards: ["jinxiXiangzhu"] as readonly CardId3[],
   yinjiaStory: {
@@ -2450,6 +2444,22 @@ export const YIHUA = {
       "暮色四合，皇上不忍就此离去，当夜便留宿甘露寺，与你共对一盏青灯。你面上柔顺，心里却一刻未敢放松：这孩子的月份瞒不过太医，只有早早找温太医商量，在脉案上做些改动，才能让一切合情合理。",
     ],
   } as Record<string, string[]>,
+  /** 登门：能算数的解牌。 */
+  dengmenCards: ["jinxiXiangzhu", "jingchaiBuqun", "chanyuXiushen", "wenTaiyiZhenzhi"] as readonly CardId3[],
+  /** 登门要打的张数：疑点 + 尚未焚毁的遗物 合计 1–2 → 1 张，3–4 → 2 张，5 以上 → 3 张；零则只过剧情；不是体面自请再多 1 张。 */
+  dengmenStory: {
+    jinxiXiangzhu: "槿汐趁皇上在廊下歇脚，托苏培盛递了话：「小主这几年夜里常常惊醒，嘴上不说，枕下压着的还是皇上赏过的那串念珠。」苏培盛躬着身子，把这些话一字不落地回给了皇上。",
+    jingchaiBuqun: "你素衣布裙地迎出门去，袖口磨得起了毛边，手背上还有冻裂的口子。皇上看了许久，才低声问：「怎么瘦成了这样？」你垂着头只说不苦，他的喉头却动了一动。",
+    chanyuXiushen: "你没有提自己的苦，只劝皇上：「前朝事忙，皇上要保重龙体，莫为臣妾这点小事熬坏了眼睛。」皇上怔了怔，接过你递来的热茶，神色缓了下来。",
+    wenTaiyiZhenzhi: "温太医跪在阶下回禀：「小主身子本就虚，山中潮冷，实在不宜在此处养胎，若再拖下去，只怕母子都有闪失。」皇上沉默片刻，道：「那就接回宫里去。」",
+  } as Record<string, string>,
+  dengmenOpen: {
+    none: "天刚擦黑，山门外忽然传来銮铃声。皇上亲自来了，没带多少随从，只吩咐苏培盛在院外候着。他在屋里转了一圈，看见案上摊开的经卷和窗边的旧琴，什么也没问，只说：「朕来看看你。」",
+    some: "山门外忽然传来銮铃声，皇上亲自登门了。他在院中站了许久，目光从你的脸滑到你的腰身，又落在屋角那些不起眼的旧物上，缓缓问：「这些日子，你在山上都想了些什么？」",
+  },
+  dengmenNarrow: "皇上在屋里坐了很久，目光几次停在你身上，又移开。临走时他只说：「有些话，朕今日不问。你先回宫，日后再说。」你伏在地上谢恩，后背的衣衫早已被冷汗浸透。",
+  dengmenDone: "皇上的神色终于松了。他伸手替你掖了掖披风，说：「山里终究清苦，回宫吧。」你俯身谢恩，听见自己的心在胸腔里一下一下地跳。",
+  dengmenNoneDone: "皇上坐了半个时辰，同你说起太后的病，说起胧月学会了走路。临走时他站在门槛上回头：「嬛嬛，回宫吧，朕让人来接你。」",
   ouyuStory: "皇上在佛前看见你，愣住了。「嬛嬛。」他唤你。你第一次明白，可以把“像她”当成手段：这一回，是我借了她的影子。当夜，皇上留宿甘露寺。",
   doubtLabel: "疑点",
   dushuNote: "那件旧物还留在手边，宫里人多眼杂，万一被谁瞧见，便是说不清的麻烦。你一整日都坐立不安。",
@@ -2531,7 +2541,7 @@ export const LINGRONG_FAREWELL: Record<LingrongTier, string> = {
 
 // ---------------------------------------------------------------- popups (§五)
 
-export type PopupId = "opening" | "huanghou" | "tonghuatai" | "chunyuan" | "wanwan" | "confront" | "exit" | "feilao" | "zhoufu" | "ximai" | "ouyu" | "qinse";
+export type PopupId = "opening" | "huanghou" | "tonghuatai" | "chunyuan" | "wanwan" | "confront" | "exit" | "feilao" | "zhoufu" | "ximai" | "ouyu" | "dengmen" | "qinse";
 
 export const POPUP_TEXT = {
   opening: "翊坤宫的门关上了。华妃倒了，六宫都说碎玉轩的莞主子是头一份的恩宠。听说景仁宫也要亲自来贺。",
@@ -2570,7 +2580,7 @@ export const POPUP_TEXT = {
   /** 开局规则说明里的第一幕事件规则。 */
   eventRules: [
     "🤝 盟友事件：第一次把握，获得她的盟友状态。",
-    "⚔️ 对头事件：须同回合打出两张解牌；其中有指定的牌才算打压，获得【打压】状态：她的危机下次出现时自动化解一次。",
+    "⚔️ 对头事件：须同回合打出两张解牌；其中有指定的牌才算打压，获得【打压】状态：她的危机下次出现时少需要 1 张解牌。",
     "🔗 连环事件：先化解危机才能把握机会；危机的两张解牌里有共同牌，可一石二鸟，顺带把握机会。",
   ],
   /** 桐花台初遇：开头与结尾按你的应对（论笛谈诗 / 以礼相待 / 有陵容在侧）而不同，中间介绍他的一段相同。 */
@@ -2639,6 +2649,7 @@ export const POPUP_TEXT = {
     "温太医的手指搭在你腕上，迟迟没有拿开。「嬛妹妹……是喜脉。」你怔怔地坐着，手不自觉地护住了小腹。允礼走了，连尸骨都没有找回来，这是他留在世上唯一的骨血。温太医低声劝你：「这孩子若被人知道，你和他都活不成……」你打断他：「我要留下他。」",
     "凌云峰上，一个带罪修行的人有了身孕，瞒不过三个月。要保住这个孩子，只有一条路：回宫，让皇上相信，这是他的孩子。头一件事，便是想法子把皇上引到甘露寺来。可你如今是带罪出宫的修行人，递不进一句话，更见不到御前的人。你把宫里宫外认得的人想了一遍，能把话递到皇上跟前的，大约只有御前总管苏培盛苏公公了。好在槿汐和他是旧日相识，当年同在宫中当差，多少还有几分情面。这条路能不能走通，还要看槿汐肯不肯、苏公公又愿不愿。",
   ] as readonly string[],
+  dengmenRules: "皇上登门：须打出下列张数的解牌（槿汐相助 / 荆钗布裙 / 禅语修身 / 温太医相助）才算过关：登门当回合与下一回合内打够为大胜，只差 1 张为险胜，再少则失败。",
   ximaiRules: "持续事件【🎎移花接木】开始，详见事件卡。🌱身子归 0 即小产，失败。",
   homecoming: [
     "这几年里，你在甘露寺青灯古佛，几经风波，终于借着佛前重逢，向皇上低头认了错。温太医在脉案上不动声色，替你把月份圆得天衣无缝：你腹中的孩子，就这样成了皇上的骨血。",
@@ -2742,7 +2753,7 @@ export const TAG3_INFO: Record<TagId3, { label: string; lore: string; rules: str
   yiyi: { label: "依依", lore: "缠着姐姐不肯走。", rules: "情分生分时，陵容在回合末留在手牌中；留下几张，下回合就少抓几张。" },
   double: { label: "双牌", lore: "一个人扛不住。", rules: "同一回合内打出两张匹配牌才算解决；回合末不满 2 张则进度清零。" },
   ally: { label: "盟友", lore: "后宫重新站队，总有人愿意站在你这边。", rules: "第一次把握她的事件，获得盟友状态（端妃相护 / 敬妃之谊 / 欣贵人解围）。" },
-  rival: { label: "对头", lore: "她们都是皇后的人。", rules: "危机须同回合打出两张解牌才能化解；其中有卡面标注的牌算打压，获得该对头的【打压】状态：她的危机下次出现时自动化解一次。" },
+  rival: { label: "对头", lore: "她们都是皇后的人。", rules: "危机须同回合打出两张解牌才能化解；其中有卡面标注的牌算打压，获得该对头的【打压】状态：她的危机下次出现时少需要 1 张解牌。" },
   pair: {
     label: "连环",
     lore: "一石二鸟。",
