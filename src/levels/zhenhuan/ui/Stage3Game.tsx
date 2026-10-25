@@ -44,6 +44,7 @@ import {
   type EventId3,
   type PopupId,
   type TagId3,
+  dengmenOpenText,
 } from "../data/stage3Content";
 import {
   blockedByChezhou3,
@@ -1115,7 +1116,7 @@ function PopupBody({ state, id }: { state: Z3State; id: PopupId }) {
       const d = state.yihua?.dengmen;
       return (
         <>
-          <p>{d && d.needed === 0 ? YIHUA.dengmenOpen.none : YIHUA.dengmenOpen.some}</p>
+          <p>{d ? dengmenOpenText(d.doubt, d.relics, state.exitTier) : null}</p>
           <p className={styles.muted}>
             {d && d.needed === 0 ? "皇上没有起疑，只需过完剧情。" : `${POPUP_TEXT.dengmenRules}本次需要 ${d?.needed ?? 0} 张。`}
           </p>
