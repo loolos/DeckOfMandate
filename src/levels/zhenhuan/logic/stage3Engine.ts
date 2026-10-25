@@ -200,7 +200,7 @@ export type Z3State = {
   chunyuanResult: "seen" | "half" | "fail" | null;
   /** 纯元故衣 is behind us: your words to 陵容 turn cold. */
   chunyuanPassed: boolean;
-  confront: { presented: number; needed: number; played: CardId3[]; stories: string[] } | null;
+  confront: { presented: number; needed: number; played: CardId3[]; stories: string[]; rebutted: string[] } | null;
   exitTier: ExitTier | null;
   /** 圣宠 / 位分 the day you left: restored at 偶遇 / used by the ending. */
   exitShengchong: number | null;
@@ -1080,7 +1080,13 @@ function resolvePlay3(s: Z3State, cardUid: string, removeStatusUid?: string): vo
     const c = s.confront;
     const first = !c.played.includes(card.id);
     c.played.push(card.id);
-    if (first && CONFRONT.cardStory[card.id]) c.stories.push(`${def.emoji} ${CONFRONT.cardStory[card.id]}`);
+    if (first) {
+      // 先挑一条这张牌能专门辩解的、还没被驳过的指控；没有就用通用的作证表忠心
+      const target = confrontLines(s).find((l) => !l.withheld && !c.rebutted.includes(l.id) && CONFRONT.pleas[l.id]?.[card.id]);
+      if (target) c.rebutted.push(target.id);
+      const text = target ? CONFRONT.pleas[target.id]![card.id]! : CONFRONT.cardStory[card.id];
+      if (text) c.stories.push(`${def.emoji} ${text}`);
+    }
     log(s, `【景仁宫对质】辩白 ${c.played.length}/${c.needed}`, "good");
   }
   if (alive(s) && s.feilao && feilaoAccepts(s, card.id)) {
@@ -1335,7 +1341,7 @@ function beginTurn3(s: Z3State, turn: number): void {
   if (turn === STAGE3.confrontTurn) {
     const presented = presentedSecrets(s);
     const needed = confrontNeeded(presented) + (s.rank === "guiren" ? 1 : 0);
-    s.confront = { presented, needed, played: [], stories: [] };
+    s.confront = { presented, needed, played: [], stories: [], rebutted: [] };
     popup(s, "confront");
     log(s, `剧情事件：【${CONFRONT.name}】皇后拿出了 ${presented} 件事。本回合须打出 ${needed} 张辩白牌${s.rank === "guiren" ? "（贵人多 1 张）" : ""}。陵容称病没来，她的牌打不出。`, "bad");
   }
@@ -1767,17 +1773,17 @@ export function replay3(seed: number, carry: Carry3 | null, actions: readonly Z3
 }
 
 /** The 把柄 at 对质: what 皇后 brought out, plus the ones a 亲厚 陵容 kept back (`withheld`). */
-export function confrontLines(s: Z3State): { line: string; hint: string; lingrong: boolean; withheld?: boolean }[] {
+export function confrontLines(s: Z3State): { id: string; line: string; hint: string; lingrong: boolean; withheld?: boolean }[] {
   const tier = s.exitTierLingrong ?? lingrongTier(s.relation);
   const held = (Object.keys(s.secrets) as SecretId[]).filter((id) => (s.secrets[id] ?? 0) > 0);
   // a 亲厚 陵容 kept two of hers back
   let hidden = tier === "close" ? 2 : 0;
-  const lines = held.map((id) => {
+  const lines: { id: string; line: string; hint: string; lingrong: boolean; withheld?: boolean }[] = held.map((id) => {
     const withheld = hidden > 0 && SECRETS[id].lingrong;
     if (withheld) hidden--;
-    return { line: SECRETS[id].line, hint: SECRETS[id].hint, lingrong: SECRETS[id].lingrong, ...(withheld ? { withheld } : {}) };
+    return { id, line: SECRETS[id].line, hint: SECRETS[id].hint, lingrong: SECRETS[id].lingrong, ...(withheld ? { withheld } : {}) };
   });
-  if (tier === "resentful") lines.push({ line: FABRICATED_SECRET, hint: FABRICATED_HINT, lingrong: true });
+  if (tier === "resentful") lines.push({ id: "fabricated", line: FABRICATED_SECRET, hint: FABRICATED_HINT, lingrong: true });
   return lines;
 }
 

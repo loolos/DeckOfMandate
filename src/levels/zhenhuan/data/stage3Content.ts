@@ -2018,14 +2018,97 @@ export const CONFRONT = {
   emoji: "⚖️",
   flavor: "皇后请皇上同到景仁宫，当着皇上的面，把一件件“听说的事”拿出来问你。陵容没有来。",
   cards: ["jinyanShenxing", "meizhuangXiangzhu", "wenTaiyiZhenzhi", "jinxiXiangzhu", "shoulongRenxin", "guojunwangXiangzhu"] as readonly CardId3[],
+  /** 没有专门辩词时的通用说法：为小主对皇上的忠心作证。 */
   cardStory: {
-    jinyanShenxing: "你跪得笔直：「臣妾自问无愧于心。娘娘说的这些，臣妾一桩一桩都可以说清楚。」",
-    meizhuangXiangzhu: "眉庄上前一步：「皇上，嬛儿是什么样的人，臣妾最清楚。」",
-    wenTaiyiZhenzhi: "温实初捧着脉案跪下：「小主这些日子的脉案都在此处，每一笔都清清楚楚。」",
-    jinxiXiangzhu: "槿汐跪在你身后，不疾不徐：「小主这些日子做了什么，奴婢寸步不离，都看在眼里。」",
-    shoulongRenxin: "小允子领着碎玉轩的宫人跪了一地：「奴才们愿意作证。」",
-    guojunwangXiangzhu: "果郡王恰在殿外候见，进来替你说了几句公道话：「皇兄，臣弟以为，这些不过是捕风捉影。」",
+    jinyanShenxing: "你重重叩首：「臣妾对皇上的一片心，天地可鉴，从无半点欺瞒。」",
+    meizhuangXiangzhu: "眉庄上前一步：「皇上，嬛儿是什么样的人，臣妾最清楚。她待皇上的赤诚，臣妾愿以位分担保。」",
+    wenTaiyiZhenzhi: "温实初捧着脉案跪下：「小主这些日子的起居言行，臣都看在眼里，对皇上只有忠心，没有半分异志。」",
+    jinxiXiangzhu: "槿汐跪在你身后，不疾不徐：「小主日日念着皇上的安康，奴婢寸步不离，都看在眼里。」",
+    shoulongRenxin: "小允子领着碎玉轩的宫人跪了一地：「奴才们愿意作证，小主对皇上忠心耿耿。」",
+    guojunwangXiangzhu: "果郡王恰在殿外候见，进来替你说了几句公道话：「皇兄，臣弟以为，莞嫔对皇兄的心意，绝无可疑。」",
   } as Record<string, string>,
+  /** 针对某条指控的专门辩词：指控 → 辩白牌 → 说法。 */
+  pleas: {
+    shiqinNeiqing: {
+      jinyanShenxing: "你叩首道：「那几日臣妾确是身子不适，不敢侍奉圣驾，当时已禀过敬事房，并无欺瞒之意。」",
+      wenTaiyiZhenzhi: "温实初叩首：「那几日小主脉象虚浮，不宜承恩，臣的脉案上写得明明白白。」",
+    },
+    zhuangshenNonggui: {
+      jinxiXiangzhu: "槿汐跪下道：「那夜小主一直在碎玉轩，奴婢守在门外，寸步未离，从没见小主出过门。」",
+      shoulongRenxin: "小允子叩头道：「那夜碎玉轩上下都在，门禁是奴才亲手落的锁，没有人出去过。」",
+    },
+    sitanSiqiu: {
+      jinyanShenxing: "你垂泪道：「臣妾只是念着旧识一场，想让她走得安心些，并无传话灭口之意。」",
+      shoulongRenxin: "小允子叩头道：「碎玉轩去冷宫，是领了牌子、记了档的，内务府一查便知。」",
+    },
+    jierenYaochong: {
+      jinyanShenxing: "你轻声道：「那支曲子，不过是姐妹间的消遣。皇上驾临，臣妾事先全然不知。」",
+      shoulongRenxin: "小允子叩头道：「那日皇上是临时改了路，才进的碎玉轩，沿途宫人都看见了。」",
+    },
+    kuitanGongwei: {
+      jinxiXiangzhu: "槿汐道：「碎玉轩的出入归奴婢管，哪个宫人几时出的门、去了何处，一笔一笔都有数。」",
+      shoulongRenxin: "小允子叩头道：「碎玉轩的规矩森严，下人从不私下走动，内务府的账上都有记录。」",
+    },
+    qiuziXinqie: {
+      jinyanShenxing: "你垂首道：「臣妾盼着子嗣，也是盼着替皇上、替皇家添福，并无半点私心。」",
+      wenTaiyiZhenzhi: "温实初叩首：「小主体虚，臣早嘱咐过多礼佛静养，那日不过是遵医嘱去的。」",
+    },
+    wangyeZengwu: {
+      jinyanShenxing: "你不卑不亢：「那日臣妾与王爷只论诗文，隔着回廊，宫人皆在，不曾有半分逾矩。」",
+      guojunwangXiangzhu: "果郡王恰在殿外候见，进来拱手道：「皇兄，那日臣弟奉太后之命办事，同甄嫔说了几句闲话，并无私相授受。」",
+    },
+    guyiYuanyan: {
+      jinyanShenxing: "你伏地道：「那日臣妾不过是一时惶恐，说了不当的话，绝无怨怼皇上之意。」",
+      meizhuangXiangzhu: "眉庄上前一步：「皇上待嬛儿的情分，她心里比谁都清楚，怎会有怨言。」",
+    },
+    xinlengZhiyu: {
+      meizhuangXiangzhu: "眉庄道：「早产之后心绪不宁，说几句丧气话，岂能当真？嬛儿心里从没有怨过皇上。」",
+      wenTaiyiZhenzhi: "温实初叩首：「小主产后体虚，情志郁结，那是病里的话，臣可以作证。」",
+    },
+    yuzhongShuxin: {
+      jinyanShenxing: "你泣道：「臣妾身为人女，只想问一声父亲冷暖，信中只字未提朝政。」",
+      shoulongRenxin: "小允子叩头道：「那封信是先过了狱卒的眼才递进去的，写了什么，一查便知。」",
+      guojunwangXiangzhu: "果郡王恰在殿外候见，进来道：「皇兄，那封信臣弟也看过，不过是问安的家常话。」",
+    },
+    qiciBuyong: {
+      wenTaiyiZhenzhi: "温实初叩首：「小主有孕，饮食用药须经太医过目。那盅补品臣尚未验过，不敢让小主入口。」",
+      jinyanShenxing: "你叩首道：「臣妾不敢辜负娘娘的好意，只是身子金贵，一应入口的东西，都要先请太医验过。」",
+    },
+    xijianSiyu: {
+      jinyanShenxing: "你低头道：「席间不过说些衣裳花样，臣妾并没有议论各宫长短。」",
+      meizhuangXiangzhu: "眉庄道：「那日臣妾也在席上，说的都是家常闲话，哪有什么搬弄是非。」",
+    },
+    chuyanDingzhuang: {
+      jinyanShenxing: "你叩首道：「那日臣妾言辞或有失当，事后已向齐妃娘娘赔过不是。」",
+      meizhuangXiangzhu: "眉庄冷冷道：「齐妃姐姐言语失当在先，嬛儿不过据理分辩，何来顶撞？」",
+    },
+    shanduShide: {
+      jinyanShenxing: "你垂首道：「臣妾待祺贵人向来平和，从没有在人前给她脸色。」",
+      shoulongRenxin: "小允子叩头道：「那日在场的宫人都看见了，小主对祺贵人一直礼数周全。」",
+    },
+    yuanwangJunfu: {
+      jinyanShenxing: "你泣道：「臣妾为父亲喊冤，是盼着皇上明察，不是怨皇上；一片孝心，请皇上明鉴。」",
+      guojunwangXiangzhu: "果郡王恰在殿外候见，进来道：「皇兄，甄大人的案子朝野议论纷纷，不独莞嫔一人心急。」",
+    },
+    "enshang.jingrenHoushang": { jinyanShenxing: "你叩首道：「娘娘的恩赏，臣妾感恩戴德，一应都是循着规矩领受的。」" },
+    "enshang.xieliGongwu": {
+      jinyanShenxing: "你叩首道：「娘娘托付宫务，臣妾不过是替娘娘分忧，一切都请示过娘娘，不敢专擅。」",
+      meizhuangXiangzhu: "眉庄道：「皇后娘娘托付宫务，臣妾也在一旁帮手，每一桩都是回过娘娘的。」",
+    },
+    "enshang.antaiBupin": {
+      jinyanShenxing: "你叩首道：「娘娘送来的安胎补品，臣妾收下，是感念娘娘的体恤。」",
+      wenTaiyiZhenzhi: "温实初叩首：「小主身子金贵，补品入口前，臣都要先验过。」",
+    },
+    "enshang.jiayanXianyi": { jinyanShenxing: "你叩首道：「家宴献艺，是奉了娘娘的懿旨，臣妾岂敢有争宠之心。」" },
+    "enshang.shanghuaXiaoju": {
+      jinyanShenxing: "你叩首道：「赏花小聚是娘娘的美意，臣妾不过随众人叨扰，不敢辜负。」",
+      meizhuangXiangzhu: "眉庄道：「那日赏花，臣妾也在场，大家都是说说笑笑，没有一句不妥。」",
+    },
+    fabricated: {
+      jinyanShenxing: "你抬起头，一字一顿：「这话臣妾从未说过，请皇上明察是谁凭空编造。」",
+      meizhuangXiangzhu: "眉庄道：「嬛儿断不会说这样的话，臣妾愿以性命担保。」",
+    },
+  } as Record<string, Partial<Record<CardId3, string>>>,
 };
 
 /** 第 18 回合【肺痨之诬】。 */
@@ -2232,8 +2315,8 @@ export const POPUP_TEXT = {
   confrontDuanfei: "端妃在一旁淡淡说了一句，皇后便略过了一桩。",
   confrontRealize: {
     exposed:
-      "皇后说一件，你的心便沉一分。那些话，有的是夜里对着一盏孤灯说的，有的是两个人头挨着头、压低了声音说的。碎玉轩的窗纸那样薄，可听见的，从来只有一个人。你想起她替你描眉时微微发颤的手，想起她倚在你肩头唤你“姐姐”的模样。原来这些日子她一直坐在你身边，一针一线绣着荷包，也一字一句，替旁人记着你的话。",
-    withheld: "可皇后手里，终究少了几桩。那几件事她也知道，却到底没有说出去。你不知道该恨她，还是该谢她。",
+      "皇后说一件，你的心便沉一分。那些话，有的是夜里对着一盏孤灯说的，有的是两个人头挨着头、压低了声音说的。碎玉轩的窗纸那样薄，可听见的，从来只有一个人：安陵容。你想起她替你描眉时微微发颤的手，想起她倚在你肩头唤你“姐姐”的模样。原来这些日子，陵容一直坐在你身边，一针一线绣着荷包，也一字一句，替旁人记着你的话。",
+    withheld: "可皇后手里，终究少了几桩。那几件事陵容也知道，却到底没有说出去。你不知道该恨她，还是该谢她。",
     withheldOnly: "你后来才隐约知道，陵容这些日子也替景仁宫留心着碎玉轩的一举一动。只是那几件只有她知道的事，她到底没有说出去。你不知道该恨她，还是该谢她。",
     fabricated: "还有最后那一句，你从来没有说过。可这样的话，这宫里也只有她编得圆。",
   },

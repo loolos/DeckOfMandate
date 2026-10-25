@@ -424,6 +424,17 @@ describe("zhenhuan stage 3 engine", () => {
     expect(s.turn).toBe(11);
   });
 
+  it("景仁宫对质: a card answers the specific charge it can, else falls back to vouching for loyalty", () => {
+    let s = advanceTo(newStage3(4, { ...CARRY, secrets: ["zhuangshenNonggui"], relation: 0 }), 10);
+    s.extraPlays = 3;
+    s.secrets = { zhuangshenNonggui: 1 };
+    const [jx, wt] = setHand(s, ["jinxiXiangzhu", "wenTaiyiZhenzhi"]);
+    s = act(s, { type: "playCard", cardUid: jx! });
+    expect(s.confront!.stories[0]).toContain("寸步未离");
+    s = act(s, { type: "playCard", cardUid: wt! });
+    expect(s.confront!.stories[1]).toContain("忠心");
+  });
+
   it("entering the temple: 修行 identity, temple deck plus the 果郡王 cards, 清誉 capped at 8", () => {
     let s = advanceTo(newStage3(6, CARRY), 10);
     s.qingyu = 15;
