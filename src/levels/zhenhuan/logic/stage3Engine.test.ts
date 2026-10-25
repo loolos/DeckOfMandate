@@ -308,6 +308,18 @@ describe("zhenhuan stage 3 engine", () => {
     expect(t.allies.xin).toBe(true);
   });
 
+  it("佛前供灯: resolving it raises next turn's play limit by 1", () => {
+    let s = advanceTo(newStage3(2, CARRY), 12);
+    clearBoard(s);
+    s.opportunity = ev(s, "foqianGongdeng");
+    const [uid] = setHand(s, ["chanyuXiushen"]);
+    const control = advanceTo(structuredClone(s), 13);
+    s = act(s, { type: "playCard", cardUid: uid! });
+    expect(s.opportunity!.resolved).toBe(true);
+    s = advanceTo(s, 13);
+    expect(playLimit3(s)).toBe(playLimit3(control) + 1);
+  });
+
   it("打压 leaves a status: the crisis stays in the pool and needs one fewer 解牌 the next time it is drawn", () => {
     let s = advanceTo(newStage3(3, CARRY), 3);
     clearBoard(s);
