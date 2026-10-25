@@ -1993,7 +1993,7 @@ export const STORIES3: Record<StoryId3, StoryDef3> = {
     id: "mochou",
     name: "莫愁",
     emoji: "🪷",
-    flavor: "静岸师太为你取法号莫愁。她问你俗家名字，你答「甄嬛」，不提皇上赐的那个“莞”字。",
+    flavor: "甘露寺在凌云峰脚下，是宫里获罪或自请出宫的女眷落发修行的地方，清苦偏僻。住持静岸师太慈和，肯照拂你；可寺里管事的静白师太势利，见你没了位分，脸色先冷了三分。静岸师太为你取法号莫愁，问你俗家名字，你答「甄嬛」，不提皇上赐的那个“莞”字。",
         defaultOptionId: "daifa",
     options: [
       { id: "daifa", name: "带发修行", effects: [], text: "无效果（尘缘未断）", story: "你没有落发。师太看着你，说：「尘缘未断，也是缘法。」" },
