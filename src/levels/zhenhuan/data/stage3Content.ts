@@ -774,8 +774,6 @@ export type SecretDef = {
   readonly hint: string;
 };
 
-const ENSHANG_LINE = "皇后端着茶盏，淡淡说了一句：「本宫赏下的东西，妹妹倒也收得心安。」";
-
 export const SECRETS: Record<SecretId, SecretDef> = {
   shiqinNeiqing: { name: "侍寝内情", emoji: "🌙", lingrong: true, line: "祺贵人拿帕子拭着眼角：「那晚敬事房明明翻的是莞嫔的牌子，进养心殿的却是旁人。莞嫔称病，转头让别人替了去，这是欺瞒圣上，混淆宫闱。」", servant: "敬事房的小太监跪着说：「那晚翻的是莞嫔的牌子，进养心殿的却不是她。称病，转头让旁人顶替，这是欺瞒圣上，混淆宫闱。」", hint: "第二关里，你曾让陵容代你侍寝。" },
   zhuangshenNonggui: { name: "装神弄鬼", emoji: "👻", lingrong: true, line: "祺贵人颤声道：「嫔妾听说，那夜丽嫔姐姐宫里有人喊‘福子来了’，后来才知是人扮的。在宫里装神弄鬼，吓得嫔御失魂，这是扰乱宫闱，欺君不敬。」", servant: "景仁宫的小宫女道：「丽嫔娘娘那夜见的‘福子’，是有人扮的。莞嫔在宫里装神弄鬼，吓得嫔御失魂落魄，这是扰乱宫闱，欺君不敬。」", hint: "丽嫔惊梦那夜，装“福子”吓她，是陵容帮你办的。" },
@@ -792,11 +790,11 @@ export const SECRETS: Record<SecretId, SecretDef> = {
   chuyanDingzhuang: { name: "出言顶撞", emoji: "🗣️", lingrong: false, line: "齐妃红着眼眶抢着开口：「皇上，那日莞嫔当着众人的面顶撞臣妾，一句不让，目无尊卑！」", servant: "景仁宫的小宫女道：「那日请安，奴婢亲眼见莞嫔当着众人顶撞齐妃娘娘，一句不让。这是目无尊卑。」", hint: "齐妃寻衅的事没有压下去，你当面顶过她。" },
   shanduShide: { name: "善妒失德", emoji: "🐍", lingrong: false, line: "祺贵人哭着道：「嫔妾不过说了句话，莞嫔便当众给嫔妾脸色看。嫔妾是新人，容不下新人，这是善妒，有违后宫和睦。」", servant: "御花园的小太监说：「祺小主说话时，莞嫔当众给了脸色。容不下新人，这是善妒，有违后宫和睦。」", hint: "祺贵人争宠的事没有压下去，你给过她脸色。" },
   yuanwangJunfu: { name: "怨望君父", emoji: "⛓️", lingrong: false, line: "祺贵人又道：「嫔妾的父亲在前朝听说，甄大人的案子，莞嫔私下说是冤在皇上。怨怼圣裁，这是对皇上不满，近乎大不敬。」", servant: "前朝传话的小太监战战兢兢：「奴才听人传，莞嫔私下说甄大人这案子是冤在皇上。怨怼圣裁，近乎大不敬。」", hint: "鄂敏参本的事没有压下去，你为父亲的案子流露过怨望。" },
-  "enshang.jingrenHoushang": { name: "恩赏为凭·云锦步摇", emoji: "🎁", lingrong: false, line: ENSHANG_LINE, hint: "你收下了景仁宫赏的云锦和点翠步摇。" },
+  "enshang.jingrenHoushang": { name: "恩赏为凭·云锦步摇", emoji: "🎁", lingrong: false, line: "祺贵人捏着帕子道：「点翠步摇是妃位的份例，云锦是贡品。皇后赏了，莞嫔转头就戴着去给太后请安，这是不知分寸，僭越位分。」", servant: "寿康宫外当差的小宫女说：「莞嫔戴着点翠步摇、穿着云锦来给太后请安。那是妃位的份例，这是不知分寸，僭越位分。」", hint: "你收下了景仁宫赏的云锦和点翠步摇。" },
   "enshang.xieliGongwu": { name: "恩赏为凭·协理宫务", emoji: "📜", lingrong: false, line: "齐妃接口：「娘娘让她帮着打理宫务，她倒真把六宫当成了自己的，越权专擅，眼里没有皇后。」", hint: "" },
-  "enshang.antaiBupin": { name: "恩赏为凭·安胎补品", emoji: "🍲", lingrong: false, line: ENSHANG_LINE, hint: "你收下了景仁宫送来的安胎补品。" },
+  "enshang.antaiBupin": { name: "恩赏为凭·安胎补品", emoji: "🍲", lingrong: false, line: "景仁宫的小宫女道：「补品送去，莞嫔没让太医验过就用了。皇嗣是何等要紧的事，她半点不防备，这是不慎重皇嗣。」", servant: "碎玉轩的小厨房当差的宫人说：「景仁宫送来的补品，没经太医验看就端到了主子跟前。皇嗣要紧，这是不慎重皇嗣。」", hint: "你收下了景仁宫送来的安胎补品。" },
   "enshang.jiayanXianyi": { name: "恩赏为凭·家宴献艺", emoji: "🎵", lingrong: false, line: "祺贵人掩口笑道：「家宴上那一曲，莞嫔是弹给谁听的？当着皇上的面刻意献艺争宠，成什么体统。」", hint: "你应了皇后的话，在家宴上当众献艺。" },
-  "enshang.shanghuaXiaoju": { name: "恩赏为凭·赏花小聚", emoji: "🏮", lingrong: false, line: ENSHANG_LINE, hint: "你随皇后赏花，也收下了她的一番好意。" },
+  "enshang.shanghuaXiaoju": { name: "恩赏为凭·赏花小聚", emoji: "🏮", lingrong: false, line: "皇后端着茶盏，淡淡说了一句：「本宫特意让陵容陪妹妹去赏花，妹妹坦然受了，席上却一直在揣度各宫的心思。窥测宫闱，可不是小事。」", servant: "赏花那日在旁伺候的小宫女说：「莞嫔席上不怎么说话，只一个劲儿打量各宫的神色。这是窥测宫闱。」", hint: "你随皇后赏花，席上留心过各宫的神色。" },
 };
 
 /** 端妃相护：被她挡下的那一桩，指控照常提出，她在一旁出言替你辩护。 */
@@ -2330,18 +2328,18 @@ export const CONFRONT = {
       jinyanShenxing: "你泣道：「臣妾为父亲喊冤，是盼着皇上明察，不是怨皇上；一片孝心，请皇上明鉴。」",
       guojunwangXiangzhu: "果郡王恰在殿外候见，进来道：「皇兄，甄大人的案子朝野议论纷纷，不独莞嫔一人心急。」",
     },
-    "enshang.jingrenHoushang": { jinyanShenxing: "你叩首道：「娘娘的恩赏，臣妾感恩戴德，一应都是循着规矩领受的。」" },
+    "enshang.jingrenHoushang": { jinyanShenxing: "你叩首道：「娘娘赏的步摇，臣妾只在内殿试戴过一回，去寿康宫请安，穿戴的仍是自己的份例。」" },
     "enshang.xieliGongwu": {
       jinyanShenxing: "你叩首道：「娘娘托付宫务，臣妾不过是替娘娘分忧，一切都请示过娘娘，不敢专擅。」",
       meizhuangXiangzhu: "眉庄道：「皇后娘娘托付宫务，臣妾也在一旁帮手，每一桩都是回过娘娘的。」",
     },
     "enshang.antaiBupin": {
-      jinyanShenxing: "你叩首道：「娘娘送来的安胎补品，臣妾收下，是感念娘娘的体恤。」",
+      jinyanShenxing: "你叩首道：「娘娘送来的补品，臣妾不敢擅用，正等着太医来验过。」",
       wenTaiyiZhenzhi: "温实初叩首：「小主身子金贵，补品入口前，臣都要先验过。」",
     },
     "enshang.jiayanXianyi": { jinyanShenxing: "你叩首道：「家宴献艺，是奉了娘娘的懿旨，臣妾岂敢有争宠之心。」" },
     "enshang.shanghuaXiaoju": {
-      jinyanShenxing: "你叩首道：「赏花小聚是娘娘的美意，臣妾不过随众人叨扰，不敢辜负。」",
+      jinyanShenxing: "你叩首道：「赏花小聚是娘娘的美意，臣妾不过随众人叨扰，席上留心的，只是别失了礼数。」",
       meizhuangXiangzhu: "眉庄道：「那日赏花，臣妾也在场，大家都是说说笑笑，没有一句不妥。」",
     },
     fabricated: {
