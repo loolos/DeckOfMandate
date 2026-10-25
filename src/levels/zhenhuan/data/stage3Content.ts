@@ -2481,7 +2481,7 @@ export type ExitTier = 1 | 2 | 3 | 4;
 export function confrontNeeded(presented: number): number {
   if (presented <= 0) return 0;
   if (presented <= 3) return 2;
-  if (presented <= 8) return 3;
+  if (presented <= 6) return 3;
   return 4;
 }
 
@@ -2489,7 +2489,7 @@ export function confrontNeeded(presented: number): number {
 export function confrontOutcome(presented: number, short: number): ExitTier {
   const col = Math.min(2, Math.max(0, short));
   const row: readonly ExitTier[] =
-    presented <= 0 ? [1, 2, 2] : presented <= 3 ? [1, 2, 2] : presented <= 8 ? [1, 2, 3] : presented <= 13 ? [2, 3, 3] : presented <= 18 ? [2, 3, 4] : [3, 4, 4];
+    presented <= 3 ? [1, 2, 2] : presented <= 6 ? [1, 2, 3] : presented <= 11 ? [2, 3, 3] : presented <= 16 ? [2, 3, 4] : [4, 4, 4];
   return row[col]!;
 }
 
