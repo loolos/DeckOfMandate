@@ -820,6 +820,9 @@ function opportunityExtras(s: Z3State, ev: EventInst3, card: CardId3 | "lingrong
     case "gongzhongLaixin":
       if (hasStatus3(s, "jingfeiZhiyi")) applyDelta3(s, { resource: "shenzi", amount: 1 }, "敬妃之谊：胧月的消息");
       break;
+    case "foqianGongdeng":
+      addStatus3(s, "zhushiTuotie");
+      break;
     case "jinganChuilian":
       if (!hasStatus3(s, "shitaiBihu")) addStatus3(s, "shitaiBihu");
       break;

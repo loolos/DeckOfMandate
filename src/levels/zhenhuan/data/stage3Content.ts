@@ -1468,9 +1468,9 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     name: "佛前供灯",
     emoji: "🕯️",
     flavor: "大殿里的长明灯要人夜夜添油，一盏一盏数过去，足有三四十盏。这活儿清苦，却也清净，正好让人把心事沉下来。",
-    reward: [q(1)],
+    reward: NO,
     penalty: NO,
-    resolvedText: "清誉 +1",
+    resolvedText: "下回合出牌 +1",
     unresolvedText: "无额外效果，事件消失",
     resolvedStory: {
       chanyuXiushen: "你跪在佛前，一盏一盏地添灯油。灯火映着佛像的脸，慈悲又遥远。",
