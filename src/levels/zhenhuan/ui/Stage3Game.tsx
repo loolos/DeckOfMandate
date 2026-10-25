@@ -1150,14 +1150,17 @@ function PopupBody({ state, id }: { state: Z3State; id: PopupId }) {
         </>
       );
     }
-    case "wanwan":
+    case "wanwan": {
+      const birth = POPUP_TEXT.wanwanBirth[(state.wanwanOption ?? "shihun") as keyof typeof POPUP_TEXT.wanwanBirth] ?? POPUP_TEXT.wanwanBirth.shihun;
       return (
         <>
           {POPUP_TEXT.wanwan.map((t) => (
             <p key={t}>{t}</p>
           ))}
+          <p>{birth}</p>
         </>
       );
+    }
     case "confront":
       return (
         <>
