@@ -1855,7 +1855,7 @@ export const STORIES3: Record<StoryId3, StoryDef3> = {
     options: [
       { id: "lundi", name: "论笛谈诗", effects: [], drawCards: 1, flag: "di", text: "抽 1 张牌（他记住了你）", compact: "🎴+1", story: "你说他的笛子吹得太急，像是心里有事。他怔了怔，笑着说：「小主是第一个这样说的人。」" },
       { id: "lundiCard", name: "论笛谈诗", card: "yirongZhengsu", effects: [], drawCards: 1, flag: "di", text: "抽 1 张牌（他记住了你）", compact: "🎴+1", story: "你理了理衣裳走上前去，与他说起笛中的曲子。他听得认真，临走时回头看了你一眼。" },
-      { id: "yili", name: "以礼相待", card: "jinyanShenxing", effects: [q(1)], flag: "li", text: "清誉 +1（第 8 回合他只肯递一句话）", story: "你福了福身，只道了一句「王爷安好」，便转身离开了。他站在桐花台上，没有再吹笛子。" },
+      { id: "yili", name: "以礼相待", card: "jinyanShenxing", effects: [q(1)], flag: "li", text: "清誉 +1", story: "你福了福身，只道了一句「王爷安好」，便转身离开了。他站在桐花台上，没有再吹笛子。" },
       {
         id: "lingrongZaice",
         name: "有陵容在侧",
