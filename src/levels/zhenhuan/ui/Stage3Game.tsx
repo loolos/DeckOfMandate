@@ -383,6 +383,11 @@ function StoryCard({ state, inst, dispatch, fold }: { state: Z3State; inst: Stor
           </p>
         );
       })}
+      {!chosen && inst.pendingOptionId ? (
+        <p className={styles.endHint}>
+          ⏳ 【{def.options.find((o) => o.id === inst.pendingOptionId)?.name}】1/2：本回合再打出任意一张牌即可。
+        </p>
+      ) : null}
       {!chosen && !defaultOption.hidden ? <p className={styles.flavor}>未作选择就结束回合时，按默认选项【{defaultOption.name}】处理。</p> : null}
       {!chosen && defaultOption.hidden ? <p className={styles.flavor}>不处理：{defaultOption.text}</p> : null}
     </FoldBox>

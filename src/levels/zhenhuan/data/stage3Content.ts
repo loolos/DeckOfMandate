@@ -1168,13 +1168,14 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
   jingrenHoushang: {
     id: "jingrenHoushang",
     kind: "huanghou",
+    needTwo: true,
     name: "景仁宫厚赏",
     emoji: "🎁",
     flavor: "皇后赏下几匹云锦、一支点翠步摇，说是给碎玉轩添喜。",
     reward: [sc(1)],
     penalty: NO,
     cardReward: { jinyanShenxing: [q(1)], jinxiXiangzhu: [sz(1)] },
-    resolvedText: "谨言慎行：清誉 +1；槿汐相助：身子 +1",
+    resolvedText: "同回合打出两张匹配牌；谨言慎行：清誉 +1；槿汐相助：身子 +1",
     unresolvedText: "圣宠 +1",
     resolvedStory: {
       jinyanShenxing: "你说嫔妾福薄，受不起这样的厚赏，只收下了一匹素缎。皇后笑着说你太过谨慎，这话传到寿康宫，太后倒夸你知道分寸。",
@@ -1184,13 +1185,14 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
   xieliGongwu: {
     id: "xieliGongwu",
     kind: "huanghou",
+    needTwo: true,
     name: "协理宫务",
     emoji: "📜",
     flavor: "皇后说六宫琐事繁杂，请你帮着打理一二。",
     reward: [q(1)],
     penalty: NO,
     cardReward: { jinyanShenxing: [sc(1)], meizhuangXiangzhu: [sz(1)] },
-    resolvedText: "谨言慎行：圣宠 +1；眉庄相助：身子 +1",
+    resolvedText: "同回合打出两张匹配牌；谨言慎行：圣宠 +1；眉庄相助：身子 +1",
     unresolvedText: "清誉 +1",
     resolvedStory: {
       jinyanShenxing: "你推说自己年轻，不懂这些，怕误了娘娘的事。皇上听说了，倒夸你不揽权、识大体。",
@@ -1218,6 +1220,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
   jiayanXianyi: {
     id: "jiayanXianyi",
     kind: "huanghou",
+    needTwo: true,
     name: "家宴献艺",
     emoji: "🎵",
     flavor: "皇后请你在家宴上献艺，说皇上最爱听你弹琴。",
@@ -1225,7 +1228,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     penalty: NO,
     lingrongSecret: "jierenYaochong",
     cardReward: { jingguanQibian: [q(1)], jinyanShenxing: [sz(1)] },
-    resolvedText: "静观其变：清誉 +1；谨言慎行：身子 +1",
+    resolvedText: "同回合打出两张匹配牌；静观其变：清誉 +1；谨言慎行：身子 +1",
     unresolvedText: "圣宠 +1",
     resolvedStory: {
       jingguanQibian: "你推说指上的伤还没好，只在席间安安静静地坐着。太后看在眼里，说你稳重。",
@@ -1600,6 +1603,8 @@ export type StoryOption3 = {
   readonly name: string;
   readonly card?: CardId3;
   readonly hidden?: boolean;
+  /** Needs this card plus one more card (any) in the same turn. */
+  readonly two?: boolean;
   readonly effects: readonly Delta3[];
   readonly text: string;
   readonly compact?: string;
@@ -1798,19 +1803,21 @@ export const STORIES3: Record<StoryId3, StoryDef3> = {
         id: "tuoGuo",
         name: "托果郡王周旋",
         card: "guojunwangXiangzhu",
+        two: true,
         effects: [],
         xiayu: "guo",
-        text: "不扣圣宠，父亲在狱中少受些苦",
+        text: "须再打出一张牌；不扣圣宠，父亲在狱中少受些苦",
         story: "果郡王替你在前朝奔走，又打点了狱卒。父亲在狱里总算少吃了些苦头。",
       },
       {
         id: "tuoLingrong",
         name: "托陵容传信",
         card: "lingrongXiangzhu",
+        two: true,
         effects: [],
         xiayu: "lingrong",
         secret: "yuzhongShuxin",
-        text: "代价同托果郡王",
+        text: "须再打出一张牌；代价同托果郡王",
         story: "陵容替你往狱里递了一封信。",
         tierStory: {
           close: "陵容说她父亲在狱里有旧识，替你把信递了进去。她回来时眼眶红红的，说甄伯父让姐姐保重。",

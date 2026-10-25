@@ -161,13 +161,45 @@ describe("zhenhuan stage 3 engine", () => {
     s.huanghou = ev(s, "jingrenHoushang");
     s.shenzi = 3;
     const sc = s.shengchong;
-    const [jinxi] = setHand(s, ["jinxiXiangzhu"]);
+    const [jinxi, jinyan] = setHand(s, ["jinxiXiangzhu", "jinyanShenxing"]);
     s = act(s, { type: "playCard", cardUid: jinxi! });
+    expect(s.huanghou!.resolved).toBe(false);
+    s = act(s, { type: "playCard", cardUid: jinyan! });
     expect(s.huanghou!.resolved).toBe(true);
     expect(s.shenzi).toBe(4);
     s = act(s, { type: "endTurn" });
     expect(s.shengchong).toBeLessThanOrEqual(sc);
     expect(s.secrets["enshang.jingrenHoushang" as keyof typeof s.secrets]).toBeUndefined();
+  });
+
+  it("皇后事件 with only one card: still 收下 with a hidden 把柄", () => {
+    let s = advanceTo(newStage3(5, CARRY), 3);
+    clearBoard(s);
+    s.huanghou = ev(s, "jingrenHoushang");
+    const [jinxi] = setHand(s, ["jinxiXiangzhu"]);
+    s = act(s, { type: "playCard", cardUid: jinxi! });
+    s = act(s, { type: "endTurn" });
+    expect(s.secrets["enshang.jingrenHoushang" as keyof typeof s.secrets]).toBe(1);
+  });
+
+  it("甄远道下狱: 托果郡王 needs one more card; alone it falls back to 跪求皇上", () => {
+    const base = () => {
+      const s = advanceTo(newStage3(5, CARRY), 8);
+      clearBoard(s);
+      s.stories = [{ id: "zhenYuandaoXiayu", chosenOptionId: null }];
+      return s;
+    };
+    let s = base();
+    const [g, j] = setHand(s, ["guojunwangXiangzhu", "jinyanShenxing"]);
+    s = act(s, { type: "playCard", cardUid: g! });
+    expect(s.stories[0]!.chosenOptionId).toBeNull();
+    s = act(s, { type: "playCard", cardUid: j! });
+    expect(s.stories[0]!.chosenOptionId).toBe("tuoGuo");
+    let u = base();
+    const [g2] = setHand(u, ["guojunwangXiangzhu"]);
+    u = act(u, { type: "playCard", cardUid: g2! });
+    u = act(u, { type: "endTurn" });
+    expect(u.log.some((l) => l.text.includes("跪求皇上"))).toBe(true);
   });
 
   it("海棠春睡 (turn 3) makes a 未孕 player pregnant whatever is chosen", () => {

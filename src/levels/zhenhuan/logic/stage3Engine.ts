@@ -106,7 +106,7 @@ export type EventInst3 = {
   story?: string;
 };
 
-export type StoryInst3 = { readonly id: StoryId3; chosenOptionId: string | null; viaCard?: CardId3; result?: string; story?: string };
+export type StoryInst3 = { readonly id: StoryId3; chosenOptionId: string | null; viaCard?: CardId3; pendingOptionId?: string; result?: string; story?: string };
 export type StatusInst3 = { readonly uid: string; readonly id: StatusId3; readonly appliesFromTurn: number; remaining: number };
 export type LogTone = "info" | "good" | "bad";
 export type LogEntry = { readonly turn: number; readonly text: string; readonly tone: LogTone };
@@ -757,7 +757,9 @@ function resolveEventByCard(s: Z3State, ev: EventInst3, card: CardId3, doubleRew
     }
     opportunityExtras(s, ev, card);
   }
-  if (def.kind === "huanghou") applyDeltas3(s, def.cardReward?.[card] ?? [], def.name);
+  if (def.kind === "huanghou") {
+    for (const c of new Set(ev.progress ?? [card])) applyDeltas3(s, def.cardReward?.[c] ?? [], def.name);
+  }
   if (def.kind === "crisis") {
     if (def.rival && def.suppressCard && (ev.progress ?? [card]).includes(def.suppressCard) && !def.pair) {
       ev.suppressed = true;
@@ -970,9 +972,27 @@ function resolvePlay3(s: Z3State, cardUid: string, removeStatusUid?: string): vo
   let answered = responses.length > 0;
 
   // 1. story responses
+  const startedNow = new Set<StoryInst3>();
   for (const { story, option } of responses) {
     if (!alive(s)) break;
+    if (option.two) {
+      if (!story.pendingOptionId) {
+        story.pendingOptionId = option.id;
+        startedNow.add(story);
+        log(s, `【${STORIES3[story.id].name}】·${option.name} 1/2：还需再打出一张牌。`);
+      }
+      continue;
+    }
     relationDelta += applyStoryOption(s, story, option, `【${STORIES3[story.id].name}】·${option.name}（打出【${def.name}】）`, isLingrong ? tier : null);
+  }
+
+  for (const st of openStories3(s)) {
+    if (!alive(s)) break;
+    if (!st.pendingOptionId || startedNow.has(st)) continue;
+    const opt = STORIES3[st.id].options.find((o) => o.id === st.pendingOptionId)!;
+    st.pendingOptionId = undefined;
+    answered = true;
+    relationDelta += applyStoryOption(s, st, opt, `【${STORIES3[st.id].name}】·${opt.name}（再打出【${def.name}】）`, opt.card === "lingrongXiangzhu" ? lingrongTier(s.relation) : null);
   }
 
   // 2. card's own effect
