@@ -626,33 +626,33 @@ export type SecretDef = {
   readonly hint: string;
 };
 
-const ENSHANG_LINE = "「本宫赏的东西，妹妹收得倒也心安。」";
+const ENSHANG_LINE = "皇后端着茶盏，淡淡说了一句：「本宫赏下的东西，妹妹倒也收得心安。」";
 
 export const SECRETS: Record<SecretId, SecretDef> = {
-  shiqinNeiqing: { name: "侍寝内情", emoji: "🌙", lingrong: true, line: "「那晚妹妹说身子乏，怎么转头就让旁人替了去？」", hint: "第二关里，你曾让陵容代你侍寝。" },
-  zhuangshenNonggui: { name: "装神弄鬼", emoji: "👻", lingrong: true, line: "「丽嫔那夜见的‘福子’，本宫倒想问问是谁扮的。」", hint: "丽嫔惊梦那夜，装“福子”吓她，是陵容帮你办的。" },
-  sitanSiqiu: { name: "私探死囚", emoji: "🥀", lingrong: true, line: "「余氏临死前，碎玉轩还派人去冷宫见过她。」", hint: "余莺儿临死前，你让陵容去探视过她。" },
-  jierenYaochong: { name: "借人邀宠", emoji: "🌺", lingrong: true, line: "「那支曲子唱得巧，皇上偏偏就往碎玉轩去了。」", hint: "欢宜香浓那回，你借陵容的曲子把皇上引到了碎玉轩。" },
-  kuitanGongwei: { name: "窥探宫闱", emoji: "👁️", lingrong: true, line: "「各宫的宫女往哪儿走，妹妹倒比内务府还清楚。」", hint: "隔墙有耳那回，各宫的动静是陵容替你打探的。" },
-  qiuziXinqie: { name: "求子心切", emoji: "🙏", lingrong: true, line: "「妹妹在宝华殿求的，只怕不只是平安。」", hint: "在宝华殿祈福时，你求的是子嗣。" },
-  wangyeZengwu: { name: "王爷赠物", emoji: "🎐", lingrong: true, line: "「桐花台那日，十七弟与妹妹说了好一会子话。」", hint: "桐花台初遇果郡王，你与他说了好一会儿话。" },
-  guyiYuanyan: { name: "故衣怨言", emoji: "👗", lingrong: true, line: "「穿了一回旧衣，妹妹就说皇上看的从来不是你？」", hint: "纯元故衣之后，你对陵容说过皇上看的从来不是你。" },
-  xinlengZhiyu: { name: "心冷之语", emoji: "💔", lingrong: true, line: "「心冷二字，妹妹也说得出口。」", hint: "菀菀类卿之后，你对陵容说过心冷的话。" },
-  yuzhongShuxin: { name: "狱中书信", emoji: "📜", lingrong: true, line: "「往狱里递的那封信，写了什么，皇上不妨问问她。」", hint: "父亲下狱后，你托人往狱里递过信。" },
-  qiciBuyong: { name: "弃赐不用", emoji: "🍲", lingrong: true, line: "「本宫送去的补品，妹妹一口没动，倒是喂了花。」", hint: "皇后送的安胎补品，你没有用。" },
-  xijianSiyu: { name: "席间私语", emoji: "🏮", lingrong: true, line: "「赏花那日，妹妹和人说了好些各宫的长短。」", hint: "赏花小聚上，你与人议论过各宫的长短。" },
-  chuyanDingzhuang: { name: "出言顶撞", emoji: "🗣️", lingrong: false, line: "「齐妃说，那日你当着本宫的面顶了她一句……」", hint: "齐妃寻衅的事没有压下去，你当面顶过她。" },
-  shanduShide: { name: "善妒失德", emoji: "🐍", lingrong: false, line: "「祺贵人哭着来说，你给了她好大的脸色。」", hint: "祺贵人争宠的事没有压下去，你给过她脸色。" },
-  yuanwangJunfu: { name: "怨望君父", emoji: "⛓️", lingrong: false, line: "「听说妹妹私下说，甄大人这案子冤在皇上？」", hint: "鄂敏参本的事没有压下去，你为父亲的案子流露过怨望。" },
+  shiqinNeiqing: { name: "侍寝内情", emoji: "🌙", lingrong: true, line: "祺贵人拿帕子拭着眼角：「那晚敬事房明明翻的是莞嫔的牌子，进养心殿的却是旁人。莞嫔称病，转头让别人替了去，这是欺瞒圣上，混淆宫闱。」", hint: "第二关里，你曾让陵容代你侍寝。" },
+  zhuangshenNonggui: { name: "装神弄鬼", emoji: "👻", lingrong: true, line: "景仁宫的小宫女道：「丽嫔娘娘那夜见的‘福子’，是有人扮的。莞嫔在宫里装神弄鬼，吓得嫔御失魂落魄，这是扰乱宫闱，欺君不敬。」", hint: "丽嫔惊梦那夜，装“福子”吓她，是陵容帮你办的。" },
+  sitanSiqiu: { name: "私探死囚", emoji: "🥀", lingrong: true, line: "齐妃一拍扶手：「余氏临死前，碎玉轩派人去冷宫见过她，旁人都不让进。私见待罪的宫人，难免叫人疑心是在替她传话、灭口，有碍皇上明察。」", hint: "余莺儿临死前，你让陵容去探视过她。" },
+  jierenYaochong: { name: "借人邀宠", emoji: "🌺", lingrong: true, line: "祺贵人轻轻一笑：「那支曲子唱得巧，皇上偏偏就往碎玉轩去了。借旁人的曲子邀宠，把皇上引到自己宫里，这是算计圣驾。」", hint: "欢宜香浓那回，你借陵容的曲子把皇上引到了碎玉轩。" },
+  kuitanGongwei: { name: "窥探宫闱", emoji: "👁️", lingrong: true, line: "一个内务府的小太监说：「各宫的宫女往哪儿走，碎玉轩的人比奴才还清楚。私下打探各宫动静，这是窥探宫闱，有违宫规。」", hint: "隔墙有耳那回，各宫的动静是陵容替你打探的。" },
+  qiuziXinqie: { name: "求子心切", emoji: "🙏", lingrong: true, line: "宝华殿的小宫女道：「莞嫔在佛前跪了半日，嘴里念的不是平安，是求子。身为嫔御，私下谋求子嗣，这是怀着心思觊觎圣恩。」", hint: "在宝华殿祈福时，你求的是子嗣。" },
+  wangyeZengwu: { name: "王爷赠物", emoji: "🎐", lingrong: true, line: "齐妃冷笑一声：「桐花台那日，十七爷与甄嫔说了好一会子话，宫里好些人都瞧见了。妃嫔私下与亲王说话，内外无别，辱及天家体面。」", hint: "桐花台初遇果郡王，你与他说了好一会儿话。" },
+  guyiYuanyan: { name: "故衣怨言", emoji: "👗", lingrong: true, line: "齐妃扬声道：「莞嫔穿了一回旧衣，便说皇上看的从来不是自己。这是怨怼君上，对皇上的恩宠不知足。」", hint: "纯元故衣之后，你对陵容说过皇上看的从来不是你。" },
+  xinlengZhiyu: { name: "心冷之语", emoji: "💔", lingrong: true, line: "祺贵人接过话头：「莞嫔私下说过‘心冷’二字。对着皇上的恩宠说心冷，这是不敬，是怨怼。」", hint: "菀菀类卿之后，你对陵容说过心冷的话。" },
+  yuzhongShuxin: { name: "狱中书信", emoji: "📜", lingrong: true, line: "内务府的小太监说：「甄大人下狱后，碎玉轩托人往狱里递过一封信。私通狱中的钦犯，不知写了些什么，皇上不妨问问。」", hint: "父亲下狱后，你托人往狱里递过信。" },
+  qiciBuyong: { name: "弃赐不用", emoji: "🍲", lingrong: true, line: "景仁宫的小宫女说：「皇后娘娘亲赐的安胎补品，莞嫔一口没动，倒是喂了花。辜负中宫的赏赐，这是对皇后不敬，也不爱惜皇嗣。」", hint: "皇后送的安胎补品，你没有用。" },
+  xijianSiyu: { name: "席间私语", emoji: "🏮", lingrong: true, line: "祺贵人撇着嘴：「赏花那日，莞嫔和人说了好些各宫的长短。背地里议论妃嫔，搬弄是非，这是扰得后宫不和。」", hint: "赏花小聚上，你与人议论过各宫的长短。" },
+  chuyanDingzhuang: { name: "出言顶撞", emoji: "🗣️", lingrong: false, line: "齐妃红着眼眶抢着开口：「皇上，那日莞嫔当着众人的面顶撞臣妾，一句不让，目无尊卑！」", hint: "齐妃寻衅的事没有压下去，你当面顶过她。" },
+  shanduShide: { name: "善妒失德", emoji: "🐍", lingrong: false, line: "祺贵人哭着道：「嫔妾不过说了句话，莞嫔便当众给嫔妾脸色看。嫔妾是新人，容不下新人，这是善妒，有违后宫和睦。」", hint: "祺贵人争宠的事没有压下去，你给过她脸色。" },
+  yuanwangJunfu: { name: "怨望君父", emoji: "⛓️", lingrong: false, line: "祺贵人又道：「嫔妾的父亲在前朝听说，甄大人的案子，莞嫔私下说是冤在皇上。怨怼圣裁，这是对皇上不满，近乎大不敬。」", hint: "鄂敏参本的事没有压下去，你为父亲的案子流露过怨望。" },
   "enshang.jingrenHoushang": { name: "恩赏为凭·云锦步摇", emoji: "🎁", lingrong: false, line: ENSHANG_LINE, hint: "你收下了景仁宫的云锦步摇。" },
-  "enshang.xieliGongwu": { name: "恩赏为凭·协理宫务", emoji: "📜", lingrong: false, line: "「本宫让妹妹帮着打理宫务，妹妹倒真把六宫当成了自己的。」", hint: "你应下了皇后托付的宫务。" },
+  "enshang.xieliGongwu": { name: "恩赏为凭·协理宫务", emoji: "📜", lingrong: false, line: "齐妃接口：「娘娘让她帮着打理宫务，她倒真把六宫当成了自己的，越权专擅，眼里没有皇后。」", hint: "你应下了皇后托付的宫务。" },
   "enshang.antaiBupin": { name: "恩赏为凭·安胎补品", emoji: "🍲", lingrong: false, line: ENSHANG_LINE, hint: "你收下了景仁宫的安胎补品。" },
-  "enshang.jiayanXianyi": { name: "恩赏为凭·家宴献艺", emoji: "🎵", lingrong: false, line: "「家宴上那一曲，妹妹是唱给谁听的？」", hint: "你应了皇后，在家宴上献艺。" },
+  "enshang.jiayanXianyi": { name: "恩赏为凭·家宴献艺", emoji: "🎵", lingrong: false, line: "祺贵人掩口笑道：「家宴上那一曲，莞嫔是弹给谁听的？当着皇上的面刻意献艺争宠，成什么体统。」", hint: "你应了皇后，在家宴上献艺。" },
   "enshang.shanghuaXiaoju": { name: "恩赏为凭·赏花小聚", emoji: "🏮", lingrong: false, line: ENSHANG_LINE, hint: "你随皇后赏花，收下了她的好意。" },
 };
 
 /** 怨怼的陵容编出来的那一条（甄嬛知道是假的，却也知道只有陵容编得出来）。 */
-export const FABRICATED_SECRET = "「还有一桩：妹妹私下说过，这宫里的位分，迟早都是她的。」";
+export const FABRICATED_SECRET = "齐妃扬声道：「还有一桩：莞嫔私下说过，这宫里的位分，迟早都是她的。口出狂言，这是觊觎中宫，目无皇上。」";
 export const FABRICATED_HINT = "这话你从未说过。";
 
 // ---------------------------------------------------------------- 盟友 / 对头
@@ -1168,13 +1168,14 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
   jingrenHoushang: {
     id: "jingrenHoushang",
     kind: "huanghou",
+    needTwo: true,
     name: "景仁宫厚赏",
     emoji: "🎁",
     flavor: "皇后赏下几匹云锦、一支点翠步摇，说是给碎玉轩添喜。",
     reward: [sc(1)],
     penalty: NO,
     cardReward: { jinyanShenxing: [q(1)], jinxiXiangzhu: [sz(1)] },
-    resolvedText: "谨言慎行：清誉 +1；槿汐相助：身子 +1",
+    resolvedText: "同回合打出两张匹配牌；谨言慎行：清誉 +1；槿汐相助：身子 +1",
     unresolvedText: "圣宠 +1",
     resolvedStory: {
       jinyanShenxing: "你说嫔妾福薄，受不起这样的厚赏，只收下了一匹素缎。皇后笑着说你太过谨慎，这话传到寿康宫，太后倒夸你知道分寸。",
@@ -1184,13 +1185,14 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
   xieliGongwu: {
     id: "xieliGongwu",
     kind: "huanghou",
+    needTwo: true,
     name: "协理宫务",
     emoji: "📜",
     flavor: "皇后说六宫琐事繁杂，请你帮着打理一二。",
     reward: [q(1)],
     penalty: NO,
     cardReward: { jinyanShenxing: [sc(1)], meizhuangXiangzhu: [sz(1)] },
-    resolvedText: "谨言慎行：圣宠 +1；眉庄相助：身子 +1",
+    resolvedText: "同回合打出两张匹配牌；谨言慎行：圣宠 +1；眉庄相助：身子 +1",
     unresolvedText: "清誉 +1",
     resolvedStory: {
       jinyanShenxing: "你推说自己年轻，不懂这些，怕误了娘娘的事。皇上听说了，倒夸你不揽权、识大体。",
@@ -1218,6 +1220,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
   jiayanXianyi: {
     id: "jiayanXianyi",
     kind: "huanghou",
+    needTwo: true,
     name: "家宴献艺",
     emoji: "🎵",
     flavor: "皇后请你在家宴上献艺，说皇上最爱听你弹琴。",
@@ -1225,7 +1228,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     penalty: NO,
     lingrongSecret: "jierenYaochong",
     cardReward: { jingguanQibian: [q(1)], jinyanShenxing: [sz(1)] },
-    resolvedText: "静观其变：清誉 +1；谨言慎行：身子 +1",
+    resolvedText: "同回合打出两张匹配牌；静观其变：清誉 +1；谨言慎行：身子 +1",
     unresolvedText: "圣宠 +1",
     resolvedStory: {
       jingguanQibian: "你推说指上的伤还没好，只在席间安安静静地坐着。太后看在眼里，说你稳重。",
@@ -1593,13 +1596,15 @@ export type StoryId3 =
   | "yihuaOuyu";
 
 /** 甄远道下狱: which option, and how heavy it lands (see `xiayuCost`). */
-export type XiayuChoice = "kneel" | "taihou" | "guo" | "lingrong";
+export type XiayuChoice = "kneel" | "taihou" | "guo" | "lingrong" | "shoulong" | "jinyan";
 
 export type StoryOption3 = {
   readonly id: string;
   readonly name: string;
   readonly card?: CardId3;
   readonly hidden?: boolean;
+  /** Needs this card plus one more card (any) in the same turn. */
+  readonly two?: boolean;
   readonly effects: readonly Delta3[];
   readonly text: string;
   readonly compact?: string;
@@ -1798,19 +1803,41 @@ export const STORIES3: Record<StoryId3, StoryDef3> = {
         id: "tuoGuo",
         name: "托果郡王周旋",
         card: "guojunwangXiangzhu",
+        two: true,
         effects: [],
         xiayu: "guo",
-        text: "不扣圣宠，父亲在狱中少受些苦",
+        text: "须再打出一张牌（只打一张则按跪求皇上，惩罚减轻 1）；不扣圣宠，父亲在狱中少受些苦",
         story: "果郡王替你在前朝奔走，又打点了狱卒。父亲在狱里总算少吃了些苦头。",
+      },
+      {
+        id: "tuoRenxin",
+        name: "托人在前朝打点",
+        card: "shoulongRenxin",
+        two: true,
+        effects: [],
+        xiayu: "shoulong",
+        text: "须再打出一张牌（只打一张则按跪求皇上，惩罚减轻 1）；代价同托陵容",
+        story: "你让小允子拿体己银子在前朝四处打点，托人往狱里递话送物。父亲在狱中的日子好过了些。",
+      },
+      {
+        id: "yinrenBuyan",
+        name: "隐忍不言",
+        card: "jinyanShenxing",
+        two: true,
+        effects: [],
+        xiayu: "jinyan",
+        text: "须再打出一张牌（只打一张则按跪求皇上，惩罚减轻 1）；不求人，只损圣宠，损得轻些",
+        story: "你一个字也没有替父亲辩，只称病闭门，等着风头过去。皇上虽未见你，也没有迁怒碎玉轩。",
       },
       {
         id: "tuoLingrong",
         name: "托陵容传信",
         card: "lingrongXiangzhu",
+        two: true,
         effects: [],
         xiayu: "lingrong",
         secret: "yuzhongShuxin",
-        text: "代价同托果郡王",
+        text: "须再打出一张牌（只打一张则按跪求皇上，惩罚减轻 1）；代价同托果郡王",
         story: "陵容替你往狱里递了一封信。",
         tierStory: {
           close: "陵容说她父亲在狱里有旧识，替你把信递了进去。她回来时眼眶红红的，说甄伯父让姐姐保重。",
@@ -2188,7 +2215,13 @@ export const POPUP_TEXT = {
     "「菀菀类卿，暂排苦思，亦除却巫山非云也。」短短一行字，是皇上的亲笔，墨色早就旧了。你忽然想起生辰宴前那件封在库里的旧衣，想起镜子里那个陌生的自己，原来那从来不是巧合：皇上这些年对你青眼有加，只因你生得像纯元皇后。倚梅园里那一句许愿，杏花林下那一回眸，他赐你的那个“莞”字，取的原是她的“菀”。枕边那些温存的话，一句一句，原来都是说给另一个人听的。",
     "那一夜碎玉轩的灯一直亮着。你受了这一场惊动，当夜便动了胎气，孩子早产落了地，哭声细细的，像一只刚出壳的雏鸟。是位公主，皇上隔日赐了名，叫胧月。你抱着她，看窗外的天一点点亮起来，心里却有什么东西，跟着那一夜的月色一起暗了下去。",
   ] as readonly string[],
-  confrontIntro: "皇后把这些日子的事一桩桩拿出来问：",
+  confrontScene: [
+    "孩子才落地没几日，你还躺在榻上，连起身都要人搀着，景仁宫的人就到了：皇后请你过去一趟，说有几句话要当面问。",
+    "你到时，殿里已经坐满了人。皇后端坐正中，皇上在她身侧，各宫妃嫔一个不少，齐妃、祺贵人也在。没有人说话，只有茶盏轻轻搁在案上的声音。",
+    "皇后叹了口气，说本不愿惊扰你养身子，只是宫里近来有些话传得不好听，不当着皇上和姐妹们的面说清楚，反倒委屈了你。话音刚落，齐妃便抢着开了口，祺贵人在一旁帮腔，一桩接一桩，像是早就备好了的。",
+    "你强撑着跪在殿中，小腹还隐隐作痛，眼前一阵一阵发黑。她们要问的每一件，你事先一个字也没听说过。",
+  ] as readonly string[],
+  confrontIntro: "皇后垂着眼，一言不发。站出来的，是一个又一个早就备好了话的人：",
   confrontNone: "皇后手里什么也没有。",
   confrontSummary: {
     exposed: "这里头有几桩，本该只有陵容一个人知道。看来是她透露给了皇后。",

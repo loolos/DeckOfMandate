@@ -106,7 +106,7 @@ export type EventInst3 = {
   story?: string;
 };
 
-export type StoryInst3 = { readonly id: StoryId3; chosenOptionId: string | null; viaCard?: CardId3; result?: string; story?: string };
+export type StoryInst3 = { readonly id: StoryId3; chosenOptionId: string | null; viaCard?: CardId3; pendingOptionId?: string; result?: string; story?: string };
 export type StatusInst3 = { readonly uid: string; readonly id: StatusId3; readonly appliesFromTurn: number; remaining: number };
 export type LogTone = "info" | "good" | "bad";
 export type LogEntry = { readonly turn: number; readonly text: string; readonly tone: LogTone };
@@ -472,6 +472,11 @@ export function xiayuCost(s: Z3State, choice: XiayuChoice): Delta3[] {
       const n = Math.max(0, sev - 1) + (s.guoMeet === "li" ? 1 : 0);
       return n > 0 ? [{ resource: "qingyu", amount: -n }] : [];
     }
+    case "jinyan": {
+      const n = Math.max(0, sev - 1) + 1;
+      return [{ resource: "shengchong", amount: -n }];
+    }
+    case "shoulong":
     case "lingrong": {
       const n = Math.max(0, sev - 1);
       return n > 0 ? [{ resource: "qingyu", amount: -n }] : [];
@@ -757,7 +762,9 @@ function resolveEventByCard(s: Z3State, ev: EventInst3, card: CardId3, doubleRew
     }
     opportunityExtras(s, ev, card);
   }
-  if (def.kind === "huanghou") applyDeltas3(s, def.cardReward?.[card] ?? [], def.name);
+  if (def.kind === "huanghou") {
+    for (const c of new Set(ev.progress ?? [card])) applyDeltas3(s, def.cardReward?.[c] ?? [], def.name);
+  }
   if (def.kind === "crisis") {
     if (def.rival && def.suppressCard && (ev.progress ?? [card]).includes(def.suppressCard) && !def.pair) {
       ev.suppressed = true;
@@ -847,7 +854,7 @@ function shuhenjiao(s: Z3State, tier: LingrongTier): void {
   else log(s, "药膏清凉，伤处好得很快。");
 }
 
-function applyStoryOption(s: Z3State, inst: StoryInst3, option: StoryOption3, source: string, tier: LingrongTier | null): number {
+function applyStoryOption(s: Z3State, inst: StoryInst3, option: StoryOption3, source: string, tier: LingrongTier | null, lighter = false): number {
   const def = STORIES3[inst.id];
   inst.chosenOptionId = option.id;
   if (option.card) inst.viaCard = option.card;
@@ -869,7 +876,9 @@ function applyStoryOption(s: Z3State, inst: StoryInst3, option: StoryOption3, so
   log(s, told);
 
   if (option.xiayu) {
-    const cost = xiayuCost(s, option.xiayu);
+    const cost = xiayuCost(s, option.xiayu)
+      .map((d) => ({ ...d, amount: lighter ? Math.min(0, d.amount + 1) : d.amount }))
+      .filter((d) => d.amount !== 0);
     inst.result = cost.length ? cost.map((d) => `${RESOURCE3_LABEL[d.resource]} ${d.amount}`).join("、") : "没有代价";
     applyDeltas3(s, cost, def.name);
     removeStatusById(s, "fuxiongMengchen");
@@ -970,9 +979,27 @@ function resolvePlay3(s: Z3State, cardUid: string, removeStatusUid?: string): vo
   let answered = responses.length > 0;
 
   // 1. story responses
+  const startedNow = new Set<StoryInst3>();
   for (const { story, option } of responses) {
     if (!alive(s)) break;
+    if (option.two) {
+      if (!story.pendingOptionId) {
+        story.pendingOptionId = option.id;
+        startedNow.add(story);
+        log(s, `【${STORIES3[story.id].name}】·${option.name} 1/2：还需再打出一张牌。`);
+      }
+      continue;
+    }
     relationDelta += applyStoryOption(s, story, option, `【${STORIES3[story.id].name}】·${option.name}（打出【${def.name}】）`, isLingrong ? tier : null);
+  }
+
+  for (const st of openStories3(s)) {
+    if (!alive(s)) break;
+    if (!st.pendingOptionId || startedNow.has(st)) continue;
+    const opt = STORIES3[st.id].options.find((o) => o.id === st.pendingOptionId)!;
+    st.pendingOptionId = undefined;
+    answered = true;
+    relationDelta += applyStoryOption(s, st, opt, `【${STORIES3[st.id].name}】·${opt.name}（再打出【${def.name}】）`, opt.card === "lingrongXiangzhu" ? lingrongTier(s.relation) : null);
   }
 
   // 2. card's own effect
@@ -1411,7 +1438,8 @@ function endTurn3(s: Z3State): void {
     const def = STORIES3[inst.id];
     const option = def.options.find((o) => o.id === def.defaultOptionId)!;
     const msg = option.hidden ? `【${def.name}】未处理，${option.story}` : `未作选择，已按默认选项【${option.name}】处理【${def.name}】。`;
-    const delta = applyStoryOption(s, inst, option, msg, null);
+    const half = inst.pendingOptionId != null && option.xiayu != null;
+    const delta = applyStoryOption(s, inst, option, half ? `只凑了一张牌，【${def.name}】没能周全，按【${option.name}】处理，但皇上的怒气稍缓。` : msg, null, half);
     if (delta) changeRelation(s, delta);
   }
   if (!alive(s)) return;

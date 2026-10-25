@@ -383,6 +383,11 @@ function StoryCard({ state, inst, dispatch, fold }: { state: Z3State; inst: Stor
           </p>
         );
       })}
+      {!chosen && inst.pendingOptionId ? (
+        <p className={styles.endHint}>
+          ⏳ 【{def.options.find((o) => o.id === inst.pendingOptionId)?.name}】1/2：本回合再打出任意一张牌即可。
+        </p>
+      ) : null}
       {!chosen && !defaultOption.hidden ? <p className={styles.flavor}>未作选择就结束回合时，按默认选项【{defaultOption.name}】处理。</p> : null}
       {!chosen && defaultOption.hidden ? <p className={styles.flavor}>不处理：{defaultOption.text}</p> : null}
     </FoldBox>
@@ -1061,7 +1066,9 @@ function PopupBody({ state, id }: { state: Z3State; id: PopupId }) {
     case "confront":
       return (
         <>
-          <p>{CONFRONT.flavor}</p>
+          {POPUP_TEXT.confrontScene.map((line) => (
+            <p key={line}>{line}</p>
+          ))}
           <ConfrontEvidence state={state} />
           <p className={styles.muted}>
             本回合须打出 {state.confront?.needed ?? 0} 张辩白牌{state.rank === "guiren" ? "（贵人多 1 张）" : ""}。陵容称病没来，她的牌本回合打不出。
