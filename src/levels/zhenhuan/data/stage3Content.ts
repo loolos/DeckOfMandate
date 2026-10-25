@@ -824,6 +824,8 @@ export type EventDef3 = {
   readonly rival?: RivalId;
   /** 对头事件: two matching cards in one turn to resolve. */
   readonly needTwo?: boolean;
+  /** 打压状态让这张危机自动化解时的剧情。 */
+  readonly suppressedStory?: string;
   /** 需两张解牌的危机只凑了一张时的惩罚（不写则按完整惩罚）。 */
   readonly halfPenalty?: readonly Delta3[];
   /** 同上：惩罚状态只持续这么多回合。 */
@@ -1100,6 +1102,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     penaltyStatus: "liuyanChanshen",
     rival: "qifei",
     needTwo: true,
+    suppressedStory: "请安那日，齐妃刚张口要提「心尖上的人」，目光落到你身上，又想起上回在三阿哥的功课上吃的亏，讪讪闭了嘴，只低头喝茶。",
     suppressCard: "jinyanShenxing",
     secret: "chuyanDingzhuang",
     resolvedText: "移除事件；两张解牌含谨言慎行即打压齐妃，获得【打压·齐妃】",
@@ -1120,6 +1123,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     penalty: [sc(-2)],
     rival: "qifei",
     needTwo: true,
+    suppressedStory: "长春宫的人来碎玉轩送东西，话说得格外客气。齐妃自上回被你堵得下不来台，这次没再拿三阿哥的功课做文章，皇上也没被扣在长春宫。",
     suppressCard: "yirongZhengsu",
     resolvedText: "移除事件；两张解牌含仪容整肃即打压齐妃，获得【打压·齐妃】",
     unresolvedText: "圣宠 -2",
@@ -1138,6 +1142,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     penalty: [sc(-2)],
     rival: "guaerjia",
     needTwo: true,
+    suppressedStory: "祺贵人在御花园遇见你，笑得有些发僵，福身行礼，一句多的话也没说。她还记着上回被压下去的那场风波，没敢再来“偶遇”。",
     suppressCard: "yirongZhengsu",
     secret: "shanduShide",
     resolvedText: "移除事件；两张解牌含仪容整肃即打压祺贵人，获得【打压·祺贵人】",
@@ -1158,6 +1163,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     penaltyStatus: "fuxiongMengchen",
     rival: "guaerjia",
     needTwo: true,
+    suppressedStory: "鄂敏的折子递到半路，又被祺贵人悄悄劝了回去。她想起上回在皇后面前碰的钉子，生怕再闹出事来，折子到底没敢呈上去。",
     suppressCard: "shoulongRenxin",
     secret: "yuanwangJunfu",
     resolvedText: "移除事件；两张解牌含收拢人心即打压祺贵人，获得【打压·祺贵人】（第 8 回合下狱代价减轻一档）",
@@ -1178,6 +1184,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     penalty: [q(-2)],
     rival: "qifei",
     needTwo: true,
+    suppressedStory: "齐妃远远瞧见你和欣贵人，脚步顿了顿，绕着另一条路走了。上回在这儿吃的亏她还记着，这回连招呼都省了。",
     pair: "yuhuayuan",
     resolvedText: "移除事件；与【御花园赏花·欣贵人邀游】相连",
     unresolvedText: "清誉 -2；【御花园赏花·欣贵人邀游】随之作废",
@@ -1197,6 +1204,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     penalty: [q(-2)],
     rival: "guaerjia",
     needTwo: true,
+    suppressedStory: "祺贵人原想去皇后面前再告一状，走到景仁宫门口又退了回去。上回碰的钉子还疼着，条陈的事便没人再提。",
     pair: "xianfu",
     resolvedText: "移除事件；与【咸福宫托付·敬妃求助】相连",
     unresolvedText: "清誉 -2；【咸福宫托付·敬妃求助】随之作废",
@@ -1216,6 +1224,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     penalty: [q(-2)],
     rival: "qifei",
     needTwo: true,
+    suppressedStory: "齐妃到了延庆殿门口，只让宫人递了盒点心，说身子不便，改日再来探病。上回的教训还在，她没敢再往里闯。",
     pair: "yanqing",
     resolvedText: "移除事件；与【延庆殿夜话·端妃旧话】相连",
     unresolvedText: "清誉 -2；【延庆殿夜话·端妃旧话】随之作废",

@@ -1280,7 +1280,10 @@ function drawEvents(s: Z3State): void {
     if (!daya || !removeStatusById(s, daya)) return;
     ev.resolved = true;
     ev.bySuppress = true;
+    const story = EVENTS3[ev.id].suppressedStory;
+    if (story) ev.story = story;
     log(s, `【${STATUSES3[daya].name}】上回吃了亏，这回没敢闹大：【${EVENTS3[ev.id].name}】自动化解。`, "good");
+    if (story) log(s, story);
   };
   let opp = drawFromPool<OpportunityId3>(s, "opportunityPool", "opportunityUsed");
   let crisis = drawFromPool<CrisisId3>(s, "crisisPool", "crisisUsed");
