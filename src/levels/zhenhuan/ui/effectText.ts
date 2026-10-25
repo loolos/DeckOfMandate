@@ -1,4 +1,5 @@
 import { RESOURCE_EMOJI, STATUSES } from "../data/content";
+import { compactStatusPhrases } from "./statusPhrase";
 
 /**
  * Emoji forms of effect text (events, cards, story options). Compact (略缩) cards show emoji only
@@ -15,7 +16,7 @@ const PLAYS = "🀄";
 /** Emoji-only effect text for 略缩 cards. */
 export function compactEffect(text: string): string {
   return (
-    text
+    compactStatusPhrases(text, RESOURCE_EMOJI)
       .replace(/。$/, "")
       .replace(/无额外效果，事件消失/g, "—")
       .replace(/移除事件(，不产生负面状态)?/g, "✅")

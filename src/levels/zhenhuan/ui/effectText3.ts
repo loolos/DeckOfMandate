@@ -1,4 +1,5 @@
 import { RESOURCE3_EMOJI, STATUSES3 } from "../data/stage3Content";
+import { compactStatusPhrases } from "./statusPhrase";
 
 /** 第三关 effect text in emoji form (略缩 cards) and with emoji added (expanded cards). */
 
@@ -10,7 +11,7 @@ function statusEmoji(name: string): string | undefined {
 }
 
 export function compactEffect3(text: string): string {
-  return text
+  return compactStatusPhrases(text, RESOURCE3_EMOJI)
     .replace(/。$/, "")
     .replace(/无额外效果，事件消失|无效果|无变化|没有效果/g, "—")
     .replace(/获得(?:状态)?【(.+?)】(?:（[^）]*）)?/g, (m, name: string) => statusEmoji(name) ?? m)

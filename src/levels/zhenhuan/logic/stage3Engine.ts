@@ -40,6 +40,8 @@ import {
   RESOURCE3_LABEL,
   RIVALS,
   SECRETS,
+  DUANFEI_DEFAULT,
+  DUANFEI_DEFENSE,
   SHENZI,
   STAGE2_SECRETS,
   STAGE3,
@@ -218,7 +220,6 @@ export type Z3State = {
   gengtie: boolean;
   songxing: boolean;
   /** 温太医探视: the temporary card's uid, and whether 「为女儿撑下去」 was used. */
-  tanshiBonus: boolean;
   changxiangsi: { played: CardId3[]; done: boolean } | null;
   yihua: Yihua | null;
   relicsBurned: number;
@@ -998,6 +999,7 @@ function resolvePlay3(s: Z3State, cardUid: string, removeStatusUid?: string): vo
   for (const st of openStories3(s)) {
     if (!alive(s)) break;
     if (!st.pendingOptionId || startedNow.has(st)) continue;
+    if (!STORIES3[st.id].options.some((o) => o.two && o.card === card.id)) continue;
     // 第二张须是这件事的某个卡牌应对（温太医相助之类不相干的牌不算）
     if (!STORIES3[st.id].options.some((o) => o.card === card.id)) continue;
     const opt = STORIES3[st.id].options.find((o) => o.id === st.pendingOptionId)!;
@@ -1045,7 +1047,11 @@ function resolvePlay3(s: Z3State, cardUid: string, removeStatusUid?: string): vo
       ev.progress = [...(ev.progress ?? []), card.id];
       if (ev.progress.length >= 2) {
         if (isLingrong && tier) relationDelta += resolveEventByLingrong(s, ev, tier);
-        else resolveEventByCard(s, ev, card.id, false);
+        else {
+          // 连环: with the shared card among the two, its story always wins
+          const shared = d.pair ? PAIRS[d.pair].shared : undefined;
+          resolveEventByCard(s, ev, shared && ev.progress.includes(shared) ? shared : card.id, false);
+        }
         if (ev.resolved) resolvedNow.push(ev);
       } else log(s, `【${d.name}】解牌 1/2。`);
       continue;
@@ -1091,7 +1097,8 @@ function resolvePlay3(s: Z3State, cardUid: string, removeStatusUid?: string): vo
       const target = confrontLines(s).find((l) => !l.withheld && !c.rebutted.includes(l.id) && CONFRONT.pleas[l.id]?.[card.id]);
       if (target) c.rebutted.push(target.id);
       const text = target ? CONFRONT.pleas[target.id]![card.id]! : CONFRONT.cardStory[card.id];
-      if (text) c.stories.push(`${def.emoji} ${text}`);
+      const topic = target ? `回应「${target.id === "fabricated" ? "凭空编造的话" : SECRETS[target.id as SecretId].name.replace("恩赏为凭·", "")}」：` : "";
+      if (text) c.stories.push(`${def.emoji} ${topic}${text}`);
     }
     log(s, `【景仁宫对质】辩白 ${c.played.length}/${c.needed}`, "good");
   }
@@ -1106,18 +1113,6 @@ function resolvePlay3(s: Z3State, cardUid: string, removeStatusUid?: string): vo
       log(s, `【${CHANGXIANGSI.name}】笛箫合奏：${CHANGXIANGSI.story}`, "good");
       applyDelta3(s, { resource: "qingyu", amount: 2 }, "笛箫合奏");
     }
-  }
-  const tanshiOpen = openStories3(s).some((st) => st.id === "wentaiyiTanshi");
-  if (alive(s) && tanshiOpen && !s.tanshiBonus && card.id === "meizhuangXiangzhu") {
-    s.tanshiBonus = true;
-    answered = true;
-    log(s, "眉庄在宫里放心不下，远远托温实初带了药材和补给上山。", "good");
-    addStatus3(s, "yuandaoBuji");
-  } else if (alive(s) && tanshiOpen && !s.tanshiBonus && card.id === "jinxiXiangzhu") {
-    s.tanshiBonus = true;
-    answered = true;
-    log(s, "为女儿撑下去：你看着胧月的小像，看了很久。槿汐在一旁默默替你添了一盏灯。", "good");
-    addStatus3(s, "weiNverChengxia");
   }
   if (alive(s) && yihuaStep) advanceYihua(s, card.id);
   if (alive(s) && s.yihua && s.yihua.step < 4 && YIHUA.doubtCards.includes(card.id)) changeDoubt(s, -1, def.name);
@@ -1280,7 +1275,10 @@ function drawEvents(s: Z3State): void {
     if (!daya || !removeStatusById(s, daya)) return;
     ev.resolved = true;
     ev.bySuppress = true;
+    const story = EVENTS3[ev.id].suppressedStory;
+    if (story) ev.story = story;
     log(s, `【${STATUSES3[daya].name}】上回吃了亏，这回没敢闹大：【${EVENTS3[ev.id].name}】自动化解。`, "good");
+    if (story) log(s, story);
   };
   let opp = drawFromPool<OpportunityId3>(s, "opportunityPool", "opportunityUsed");
   let crisis = drawFromPool<CrisisId3>(s, "crisisPool", "crisisUsed");
@@ -1668,7 +1666,6 @@ export function newStage3(seed: number, carry: Carry3 | null): Z3State {
     luofa: false,
     gengtie: false,
     songxing: false,
-    tanshiBonus: false,
     changxiangsi: null,
     yihua: null,
     relicsBurned: 0,
@@ -1772,17 +1769,24 @@ export function replay3(seed: number, carry: Carry3 | null, actions: readonly Z3
 }
 
 /** The 把柄 at 对质: what 皇后 brought out, plus the ones a 亲厚 陵容 kept back (`withheld`). */
-export function confrontLines(s: Z3State): { id: string; line: string; hint: string; lingrong: boolean; withheld?: boolean }[] {
+export function confrontLines(s: Z3State): { id: string; line: string; hint: string; lingrong: boolean; withheld?: boolean; duanfei?: string }[] {
   const tier = s.exitTierLingrong ?? lingrongTier(s.relation);
   const held = (Object.keys(s.secrets) as SecretId[]).filter((id) => (s.secrets[id] ?? 0) > 0);
   // a 亲厚 陵容 kept two of hers back
   let hidden = tier === "close" ? 2 : 0;
-  const lines: { id: string; line: string; hint: string; lingrong: boolean; withheld?: boolean }[] = held.map((id) => {
+  const lines: { id: string; line: string; hint: string; lingrong: boolean; withheld?: boolean; duanfei?: string }[] = held.map((id, i) => {
     const withheld = hidden > 0 && SECRETS[id].lingrong;
     if (withheld) hidden--;
-    return { id, line: SECRETS[id].line, hint: SECRETS[id].hint, lingrong: SECRETS[id].lingrong, ...(withheld ? { withheld } : {}) };
+    // 每隔一条由宫人、小太监说出，保证对质里总有下人开口
+    const line = i % 2 === 1 && SECRETS[id].servant ? SECRETS[id].servant! : SECRETS[id].line;
+    return { id, line, hint: SECRETS[id].hint, lingrong: SECRETS[id].lingrong, ...(withheld ? { withheld } : {}) };
   });
   if (tier === "resentful") lines.push({ id: "fabricated", line: FABRICATED_SECRET, hint: FABRICATED_HINT, lingrong: true });
+  // 端妃相护：挡下最后一条真正提出的指控，指控照常提出，端妃在一旁替你说话
+  if (hasStatus3(s, "duanfeiXianghu")) {
+    const covered = [...lines].reverse().find((l) => !l.withheld && l.id !== "fabricated");
+    if (covered) covered.duanfei = DUANFEI_DEFENSE[covered.id] ?? DUANFEI_DEFAULT[s.seed % DUANFEI_DEFAULT.length]!;
+  }
   return lines;
 }
 

@@ -192,7 +192,7 @@ describe("zhenhuan stage 3 engine", () => {
       return s;
     };
     let s = base();
-    const [g, j] = setHand(s, ["guojunwangXiangzhu", "jinyanShenxing"]);
+    const [g, j] = setHand(s, ["guojunwangXiangzhu", "shoulongRenxin"]);
     s = act(s, { type: "playCard", cardUid: g! });
     expect(s.stories[0]!.chosenOptionId).toBeNull();
     s = act(s, { type: "playCard", cardUid: j! });
@@ -356,6 +356,7 @@ describe("zhenhuan stage 3 engine", () => {
     t = act(t, { type: "playCard", cardUid: uid2! });
     expect(t.statuses.some((st) => st.id === "dayaGuaerjia")).toBe(true);
     expect(t.opportunity!.resolved).toBe(true);
+    expect(t.crisis!.resolvedBy).toBe("meizhuangXiangzhu");
     expect(EVENTS3.xianfuQi.resolvedStory.meizhuangXiangzhu).not.toBe(EVENTS3.xianfuJing.resolvedStory.meizhuangXiangzhu);
   });
 
@@ -383,6 +384,22 @@ describe("zhenhuan stage 3 engine", () => {
     expect(presentedSecrets(s)).toBe(5);
     withStatus(s, "duanfeiXianghu");
     expect(presentedSecrets(s)).toBe(4);
+  });
+
+  it("对质 evidence: every other line is spoken by a 宫人 (the 六条 case always has some)", () => {
+    const s = newStage3(1, { ...CARRY, secrets: ["shiqinNeiqing", "zhuangshenNonggui", "sitanSiqiu", "jierenYaochong", "kuitanGongwei", "qiuziXinqie"] });
+    s.relation = 0;
+    const lines = confrontLines(s).map((l) => l.line);
+    expect(lines.filter((l) => /小太监|小宫女|嬷嬷/.test(l)).length).toBeGreaterThanOrEqual(3);
+  });
+
+  it("端妃相护: the covered accusation is still raised, with 端妃 speaking for her", () => {
+    const s = newStage3(1, { ...CARRY, secrets: ["shiqinNeiqing", "sitanSiqiu"] });
+    s.relation = 0;
+    withStatus(s, "duanfeiXianghu");
+    const lines = confrontLines(s);
+    expect(lines).toHaveLength(2);
+    expect(lines.filter((l) => l.duanfei)).toHaveLength(1);
   });
 
   it("对质 evidence list: 亲厚 marks two of 陵容's as withheld, 怨怼 adds the made-up one", () => {
@@ -457,7 +474,7 @@ describe("zhenhuan stage 3 engine", () => {
     expect(s.statuses.some((x) => x.id === "yuandaoBuji")).toBe(true);
   });
 
-  it("故人来访 (turn 15): 槿汐相助「为女儿撑下去」gives 清誉 +1 for 2 turns, only one of the two bonuses", () => {
+  it("故人来访 (turn 15): 槿汐相助 / 眉庄相助 are exclusive options (and 默认 诊治 is the third)", () => {
     let s = advanceTo(newStage3(6, CARRY), 15);
     s.extraPlays = 3;
     const [jx, mz] = setHand(s, ["jinxiXiangzhu", "meizhuangXiangzhu"]);

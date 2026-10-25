@@ -207,7 +207,7 @@ function EventCard({ state, inst, fold, dispatch }: { state: Z3State; inst: Even
       ) : null}
     </span>
   );
-  const story = inst.resolved && inst.resolvedBy && inst.resolvedBy !== "lingrongXiangzhu" ? (inst.story ?? def.resolvedStory[inst.resolvedBy]) : undefined;
+  const story = inst.bySuppress && inst.story ? inst.story : inst.resolved && inst.resolvedBy && inst.resolvedBy !== "lingrongXiangzhu" ? (inst.story ?? def.resolvedStory[inst.resolvedBy]) : undefined;
   const lingrongStory = inst.lingrong && (!inst.resolved || inst.resolvedBy === "lingrongXiangzhu") ? LINGRONG_EVENT3[inst.id]?.[inst.lingrong]?.story : undefined;
   const resolvedLabel = isOpp ? "已把握" : def.kind === "huanghou" ? "已领受" : "已化解";
   const okLabel = def.kind === "huanghou" ? "打出特定牌：" : "处理：";
@@ -304,6 +304,11 @@ function StoryCard({ state, inst, dispatch, fold }: { state: Z3State; inst: Stor
       <Tag tag="story" tone={styles.kindStory} dispatch={dispatch}>
         剧情
       </Tag>
+      {def.options.some((o) => o.two) ? (
+        <Tag tag="double" tone={styles.kindStory} dispatch={dispatch}>
+          双牌 {inst.pendingOptionId ? 1 : 0}/2
+        </Tag>
+      ) : null}
     </span>
   );
   const costNote = (o: (typeof def.options)[number]) => {
@@ -548,11 +553,7 @@ function FeilaoCard({ state, fold, dispatch }: { state: Z3State; fold: Fold; dis
     <SpecialCard emoji={FEILAO.emoji} name={FEILAO.name} art="feilao" done={t === 0} summary={`${tierDef.name} · ${compactEffect3(tierDef.text)}`} fold={fold} dispatch={dispatch}>
       <p className={styles.flavor}>{FEILAO.flavor}</p>
       <p className={styles.rule}>
-        <span className={styles.ruleLabel}>起始档位：</span>
-        {FEILAO.tiers[f.base]!.name}（静白在寺里越嚣张，档位越重）
-      </p>
-      <p className={styles.rule}>
-        <span className={styles.ruleLabel}>现在：</span>
+        <span className={styles.ruleLabel}>眼下：</span>
         {tierDef.name}：{expandedEffect3(tierDef.text)}
       </p>
       {f.played.map((id, i) => (
@@ -967,19 +968,25 @@ function ConfrontEvidence({ state }: { state: Z3State }) {
   const entry = (l: (typeof lines)[number], i: number) => (
     <p key={`${l.line}-${i}`}>
       {l.line}
-      {l.lingrong && l.line !== FABRICATED_SECRET ? null : (
+      {(l.lingrong && l.line !== FABRICATED_SECRET) || !l.hint ? null : (
         <>
           <br />
           <span className={styles.muted}>（{l.hint}）</span>
         </>
       )}
+      {l.duanfei ? (
+        <>
+          <br />
+          <span className={styles.muted}>端妃在一旁淡淡说道：「{l.duanfei}」皇后便略过了这一桩。</span>
+        </>
+      ) : null}
     </p>
   );
   return (
     <>
       {shown.length > 0 ? <p className={styles.muted}>{POPUP_TEXT.confrontIntro}</p> : null}
       {shown.map(entry)}
-      {hasStatus3(state, "duanfeiXianghu") ? <p className={styles.muted}>{POPUP_TEXT.confrontDuanfei}</p> : null}
+      {hasStatus3(state, "duanfeiXianghu") && !shown.some((l) => l.duanfei) ? <p className={styles.muted}>{POPUP_TEXT.confrontDuanfei}</p> : null}
       {exposed ? <p>{summary.exposed}</p> : null}
       {withheld.length > 0 ? <p>{exposed ? summary.withheld : summary.withheldOnly}</p> : null}
       {withheld.map((l, i) => (

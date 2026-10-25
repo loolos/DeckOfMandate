@@ -1,16 +1,19 @@
 import { RESOURCE2_EMOJI, STATUSES2 } from "../data/stage2Content";
+import { compactStatusPhrases } from "./statusPhrase";
 
 /** 第二关 effect text in emoji form (略缩 cards) and with emoji added (expanded cards). */
 
 const STATUS_BY_NAME = new Map(Object.values(STATUSES2).map((s) => [s.name, s]));
 
 export function compactEffect2(text: string): string {
-  return text
+  return compactStatusPhrases(
+    text.replace(/伤胎：有孕前身子 -1、未来 2 回合不能打仪容整肃、谨言慎行，不能侍寝；有孕后直接小产/g, "⚠️"),
+    RESOURCE2_EMOJI,
+  )
     .replace(/。$/, "")
     .replace(/无额外效果，事件消失（之后还会出现）/g, "🔁")
     .replace(/无额外效果，事件消失|无效果|无变化/g, "—")
     .replace(/移除事件(（[^）]*）)?(，不产生负面状态)?/g, "✅")
-    .replace(/伤胎：有孕前身子 -1、获得【抱恙在身】；有孕后直接小产/g, "⚠️")
     .replace(/获得(?:状态)?【(.+?)】(?:：[^；，、]*)?/g, (m, name: string) => statusEmoji(name) ?? m)
     .replace(/【?(抱恙在身|闭门思过|流言缠身|耳目灵通|眉庄嘱托|温太医留方)】?/g, (m, name: string) => statusEmoji(name) ?? m)
     .replace(/得到罪证【(.+?)】/g, "🗂️$1")

@@ -468,7 +468,7 @@ function TrialCard({ state, fold, dispatch }: { state: Z2State; fold: Fold; disp
         💃 <strong>惊鸿舞</strong>：
         {state.jinghong.done
           ? JINGHONG_STORY
-          : `额外奖励，不影响晋封：考验期间打出过 👭眉庄相助 与 🎶陵容相助（陵容怨怼时不肯帮忙），获得【惊鸿舞】，未来 3 回合每回合圣宠 +1。${state.jinghong.meizhuang || state.jinghong.lingrong ? `已打出：${state.jinghong.meizhuang ? "👭" : ""}${state.jinghong.lingrong ? "🎶" : ""}` : ""}`}
+          : `额外奖励，不影响晋封：考验期间打出过 👭眉庄相助 与 🎶陵容相助（陵容怨怼时不肯帮忙），未来 3 回合每回合圣宠 +1。${state.jinghong.meizhuang || state.jinghong.lingrong ? `已打出：${state.jinghong.meizhuang ? "👭" : ""}${state.jinghong.lingrong ? "🎶" : ""}` : ""}`}
       </p>
       <p className={styles.rule}>
         每回合<strong>回合末</strong>判定，三项全部满足即晋为贵人；第 {GUIREN_TRIAL.lastTurn} 回合末仍未满足则失败。
@@ -1053,7 +1053,7 @@ export function Stage2Game({ state, dispatch, runCode, showRules, onShowRules, o
       {notice === "jinghong" ? (
         <Notice title="💃 惊鸿舞" onClose={() => setNotice(null)}>
           <p>{JINGHONG_STORY}</p>
-          <p className={styles.muted}>获得【💃惊鸿舞】：未来 3 回合，每回合开始时圣宠 +1。这是额外的奖励，不影响晋封考验本身。</p>
+          <p className={styles.muted}>未来 3 回合，每回合开始时圣宠 +1。这是额外的奖励，不影响晋封考验本身。</p>
         </Notice>
       ) : null}
       {notice === "xianyuege" ? (
@@ -1061,7 +1061,7 @@ export function Stage2Game({ state, dispatch, runCode, showRules, onShowRules, o
           {XIANYUEGE.story.map((para) => (
             <p key={para}>{para}</p>
           ))}
-          <p className={styles.muted}>获得【🪤骄焰暂敛】：{STATUSES2.jiaoyanZanlian.effectText}整局只会发生一次。</p>
+          <p className={styles.muted}>{STATUSES2.jiaoyanZanlian.effectText}整局只会发生一次。</p>
         </Notice>
       ) : null}
       {notice === "miscarriage" ? (
