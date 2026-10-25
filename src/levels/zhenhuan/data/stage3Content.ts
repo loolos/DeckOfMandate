@@ -425,7 +425,8 @@ export type StatusId3 =
   | "meizhuangDadian"
   | "yishiWucuo"
   | "dayaQifei"
-  | "dayaGuaerjia";
+  | "dayaGuaerjia"
+  | "yanxianHuansi";
 
 export type StatusDef3 = {
   readonly id: StatusId3;
@@ -469,6 +470,16 @@ function daya(id: StatusId3, rivalName: string, flavor: string): StatusDef3 {
 }
 
 export const STATUSES3: Record<StatusId3, StatusDef3> = {
+  yanxianHuansi: {
+    id: "yanxianHuansi",
+    name: "眼线环伺",
+    emoji: "👀",
+    tag: "negative",
+    duration: 2,
+    drawModifier: -1,
+    effectText: "未来 2 回合，每回合抓牌数 -1（至少抓 1 张）。多个实例分别计时、效果叠加。",
+    flavor: "院墙外总有人影晃动，说话做事都得提着几分小心，哪还有心思多想别的。",
+  },
   liuyanChanshen: {
     id: "liuyanChanshen",
     name: "流言缠身",
@@ -1625,10 +1636,11 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     emoji: "👀",
     flavor: "这几日，有几个寺里的小尼姑总在凌云峰的院墙外转悠，探头探脑，窃窃私语，像是受了什么人的差遣。",
     reward: NO,
-    penalty: [q(-1)],
+    penalty: NO,
+    penaltyStatus: "yanxianHuansi",
     place: "peak",
     resolvedText: "移除事件",
-    unresolvedText: "清誉 -1；本回合若打出过果郡王相助，再清誉 -1（被撞见）",
+    unresolvedText: "获得【眼线环伺】（未来 2 回合，每回合抓牌 -1，至少抓 1 张）；本回合若打出过果郡王相助，再清誉 -1（被撞见）",
     resolvedStory: {
       chanyuXiushen: "你开门请她们进来喝茶，念了一段经给她们听。她们听得无趣，便不再来了。",
       jinxiXiangzhu: "槿汐拿着扫帚迎了出去，笑着问她们是来扫地的还是来看热闹的，几句话就把人打发走了。",
@@ -1702,7 +1714,7 @@ const ACT1_EVENTS: ReadonlySet<EventId3> = new Set<EventId3>([...ACT1_OPPORTUNIT
 
 /** 事件上显示的「没化解」文本：第 25 回合果郡王翻船之后，耳目窥伺不再提「撞见」。 */
 export function unresolvedText3(def: EventDef3, turn: number): string {
-  return def.id === "xianrenKuitan" && turn >= 25 ? "清誉 -1" : def.unresolvedText;
+  return def.id === "xianrenKuitan" && turn >= 25 ? "获得【眼线环伺】（未来 2 回合，每回合抓牌 -1，至少抓 1 张）" : def.unresolvedText;
 }
 
 /** 手牌「匹配事件」只列这一幕（寺中 / 凌云峰）真的会出现的事件。 */

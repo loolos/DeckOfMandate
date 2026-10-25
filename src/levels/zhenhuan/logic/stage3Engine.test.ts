@@ -21,6 +21,8 @@ import {
 } from "../data/stage3Content";
 import {
   canPlayCard3,
+  drawCount3,
+  drawModifier3,
   confrontLines,
   feilaoBaseTier,
   feilaoCurrentTier,
@@ -567,6 +569,19 @@ describe("zhenhuan stage 3 engine", () => {
     expect(none.statuses.some((x) => x.id === "hanzheng" && x.appliesFromTurn === 13)).toBe(true);
   });
 
+  it("耳目窥伺: unresolved gives 眼线环伺 (draw -1, never below 1) and no 清誉 loss", () => {
+    let s = advanceTo(newStage3(6, CARRY), 20);
+    clearBoard(s);
+    s.crisis = ev(s, "xianrenKuitan");
+    const qingyu = s.qingyu;
+    s = act(s, { type: "endTurn" });
+    expect(s.qingyu).toBe(qingyu);
+    const st = s.statuses.find((x) => x.id === "yanxianHuansi" && x.appliesFromTurn === 21);
+    expect(st?.remaining).toBe(2);
+    expect(drawModifier3(s, s.turn)).toBeLessThan(0);
+    expect(drawCount3(s, s.turn)).toBeGreaterThanOrEqual(1);
+  });
+
   it("entering the temple: 修行 identity, temple deck plus the 果郡王 cards, 清誉 capped at 8", () => {
     let s = advanceTo(newStage3(6, CARRY), 10);
     s.qingyu = 15;
@@ -663,6 +678,8 @@ describe("zhenhuan stage 3 engine", () => {
       clearBoard(s);
       s = act(s, { type: "endTurn" });
       clearBoard(s);
+      s.discard.push(...s.hand.filter((c) => c.id.startsWith("yiwu")));
+      s.hand = s.hand.filter((c) => !c.id.startsWith("yiwu"));
       s.extraPlays = 9;
     };
     clearBoard(s);
