@@ -29,6 +29,8 @@ import {
   RIVALS,
   SHENZI,
   STAGE3,
+  matchesInAct,
+  unresolvedText3,
   STATUSES3,
   statusText3,
   STORIES3,
@@ -222,10 +224,10 @@ function EventCard({ state, inst, fold, dispatch }: { state: Z3State; inst: Even
           {inst.resolved
             ? `${isOpp ? "✅" : "🛡️"} ${inst.resolvedBy ? CARDS3[inst.resolvedBy].emoji : ""}`
             : def.kind === "huanghou"
-              ? `⏳ ${compactEffect3(def.unresolvedText)} ｜ 🛡️ ${compactEffect3(def.resolvedText)}`
+              ? `⏳ ${compactEffect3(unresolvedText3(def, state.turn))} ｜ 🛡️ ${compactEffect3(def.resolvedText)}`
               : isOpp
                 ? `✅ ${compactEffect3(def.resolvedText)}${locked ? " 🔒" : ""}`
-                : `❌ ${compactEffect3(def.unresolvedText)}`}
+                : `❌ ${compactEffect3(unresolvedText3(def, state.turn))}`}
         </div>
       </FoldBox>
     );
@@ -252,7 +254,7 @@ function EventCard({ state, inst, fold, dispatch }: { state: Z3State; inst: Even
       </p>
       <p className={styles.rule}>
         <span className={styles.ruleLabel}>{noLabel}</span>
-        {expandedEffect3(def.unresolvedText)}
+        {expandedEffect3(unresolvedText3(def, state.turn))}
       </p>
       {def.note ? <p className={styles.rule}>{def.note}</p> : null}
       {def.rival && def.suppressCard && !def.pair ? (
@@ -385,7 +387,7 @@ function StoryCard({ state, inst, dispatch, fold }: { state: Z3State; inst: Stor
       })}
       {!chosen && inst.pendingOptionId ? (
         <p className={styles.endHint}>
-          ⏳ 【{def.options.find((o) => o.id === inst.pendingOptionId)?.name}】1/2：本回合再打出任意一张牌即可。
+          ⏳ 【{def.options.find((o) => o.id === inst.pendingOptionId)?.name}】1/2：本回合再打出另一张能应对此事的牌。
         </p>
       ) : null}
       {!chosen && !defaultOption.hidden ? <p className={styles.flavor}>未作选择就结束回合时，按默认选项【{defaultOption.name}】处理。</p> : null}
@@ -633,7 +635,7 @@ function YihuaCard({ state, fold, dispatch }: { state: Z3State; fold: Fold; disp
                   {y.yinjiaNeed > 1 ? `（已落发：要打 ${y.yinjiaNeed} 张，至少 1 张槿汐，另一张可以是眉庄；已打 ${y.yinjia.length} 张）` : ""}
                 </>
               ) : null}
-              {relicCount > 0 && (y.step === 2 || y.ouyuTurn === state.turn) ? (n === 2 ? <span className={styles.endHint}> 手里有 {relicCount} 件遗物：偶遇那回合结束时还在手里，疑点 +{relicCount}（睹物生疑）。</span> : null) : null}
+              {relicCount > 0 && y.step >= 2 && y.step < 4 ? (n === 2 ? <span className={styles.endHint}> 手里有 {relicCount} 件遗物：回合结束时还在手里，疑点 +{relicCount}（睹物生疑）。</span> : null) : null}
               {n === 2 && y.step === 2 && y.ouyuDue != null ? (y.ouyuDue === state.turn ? "（皇上今日驾临：本回合解决【圣驾偶遇】）" : `（第 ${y.ouyuDue} 回合皇上驾临）`) : ""}
               {n === 2 && y.step < 2 ? `（引驾完成后第 ${YIHUA.ouyuDelay} 回合；没成隔一回合再来）` : ""}
               {n === 3 ? "（偶遇之后打出温太医相助即完成）" : ""}
@@ -654,7 +656,6 @@ function YihuaCard({ state, fold, dispatch }: { state: Z3State; fold: Fold; disp
       {y.step >= 2 ? (
         <p className={styles.muted}>
           引驾：{y.yinjia.map((id) => CARDS3[id].name).join("、")}
-          {y.duishi ? "（槿汐应下了对食之约）" : ""}
         </p>
       ) : null}
     </SpecialCard>
@@ -695,7 +696,6 @@ function HandCard({ state, card, dispatch, fold }: { state: Z3State; card: CardI
   const responses = storyResponsesFor3(state, card.id);
   const events = matchedEvents3(state, card.id);
   const isPending = state.pending?.cardUid === card.uid;
-  const temp = card.uid === state.tempWenUid;
   const play = () => {
     if (canPlay) dispatch({ type: "playCard", cardUid: card.uid });
   };
@@ -732,7 +732,6 @@ function HandCard({ state, card, dispatch, fold }: { state: Z3State; card: CardI
           🕯️遗物
         </Tag>
       ) : null}
-      {temp ? <span className={styles.muted}>临时</span> : null}
     </span>
   );
   const notes = (
@@ -765,6 +764,7 @@ function HandCard({ state, card, dispatch, fold }: { state: Z3State; card: CardI
       </FoldBox>
     );
   }
+  const shownMatches = matchesInAct(def.matches, state.act, state.turn);
   return (
     <FoldBox fold={fold} className={className} onDouble={play}>
       <div className={styles.cardHead}>
@@ -781,10 +781,10 @@ function HandCard({ state, card, dispatch, fold }: { state: Z3State; card: CardI
           {expandedEffect3(line)}
         </p>
       ))}
-      {def.matches.length > 0 ? (
+      {shownMatches.length > 0 ? (
         <p className={styles.rule}>
           <span className={styles.ruleLabel}>匹配事件：</span>
-          {def.matches.map((id) => (
+          {shownMatches.map((id) => (
             <span key={id} className={[styles.matchChip, events.some((e) => e.id === id) && styles.matchChipInHand].filter(Boolean).join(" ")}>
               {EVENTS3[id].emoji} {EVENTS3[id].name}
             </span>
@@ -927,7 +927,7 @@ function endTurnHints(state: Z3State): string[] {
     const option = def.options.find((o) => o.id === def.defaultOptionId)!;
     hints.push(option.hidden ? `【${def.name}】未处理：${option.text}。` : `【${def.name}】未选择，将按默认【${option.name}】处理。`);
   }
-  if (state.crisis && !state.crisis.resolved) hints.push(`【${EVENTS3[state.crisis.id].name}】未化解：${EVENTS3[state.crisis.id].unresolvedText}。`);
+  if (state.crisis && !state.crisis.resolved) hints.push(`【${EVENTS3[state.crisis.id].name}】未化解：${unresolvedText3(EVENTS3[state.crisis.id], state.turn)}。`);
   if (state.huanghou && !state.huanghou.resolved) hints.push(`【${EVENTS3[state.huanghou.id].name}】回合末按默认结算。`);
   const tier = tierOf3(state);
   const lingrongInHand = state.hand.filter((c) => c.id === "lingrongXiangzhu").length;
@@ -965,8 +965,12 @@ function ConfrontEvidence({ state }: { state: Z3State }) {
   const entry = (l: (typeof lines)[number], i: number) => (
     <p key={`${l.line}-${i}`}>
       {l.line}
-      <br />
-      <span className={styles.muted}>（{l.hint}）</span>
+      {l.lingrong && l.line !== FABRICATED_SECRET ? null : (
+        <>
+          <br />
+          <span className={styles.muted}>（{l.hint}）</span>
+        </>
+      )}
     </p>
   );
   return (
@@ -1012,7 +1016,6 @@ function PopupBody({ state, id }: { state: Z3State; id: PopupId }) {
           <p>{tail}</p>
           <p>{POPUP_TEXT.meizhuang}</p>
           {returned ? <p>{returned}</p> : null}
-          <p>如今的后宫：</p>
           <ul>
             {POPUP_TEXT.people.map((p) => (
               <li key={p.name}>

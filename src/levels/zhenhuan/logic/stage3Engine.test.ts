@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   CARDS3,
   CONFRONT,
+  matchesInAct,
   EVENTS3,
   FABRICATED_SECRET,
   FIXED_STORIES3,
@@ -32,6 +33,7 @@ import {
   replay3,
   storyBasicOptions3,
   xiayuCost,
+  playLimit3,
   type Carry3,
   type EventInst3,
   type Z3Action,
@@ -195,6 +197,14 @@ describe("zhenhuan stage 3 engine", () => {
     expect(s.stories[0]!.chosenOptionId).toBeNull();
     s = act(s, { type: "playCard", cardUid: j! });
     expect(s.stories[0]!.chosenOptionId).toBe("tuoGuo");
+    // 眉庄相助与此事无关，不算第二张
+    let w = base();
+    const [g3, t3, j3] = setHand(w, ["guojunwangXiangzhu", "meizhuangXiangzhu", "jinyanShenxing"]);
+    w = act(w, { type: "playCard", cardUid: g3! });
+    w = act(w, { type: "playCard", cardUid: t3! });
+    expect(w.stories[0]!.chosenOptionId).toBeNull();
+    w = act(w, { type: "playCard", cardUid: j3! });
+    expect(w.stories[0]!.chosenOptionId).toBe("tuoGuo");
     let u = base();
     const [g2] = setHand(u, ["guojunwangXiangzhu"]);
     u = act(u, { type: "playCard", cardUid: g2! });
@@ -416,6 +426,89 @@ describe("zhenhuan stage 3 engine", () => {
     expect(s.turn).toBe(11);
   });
 
+  it("景仁宫对质: a card answers the specific charge it can, else falls back to vouching for loyalty", () => {
+    let s = advanceTo(newStage3(4, { ...CARRY, secrets: ["zhuangshenNonggui"], relation: 0 }), 10);
+    s.extraPlays = 3;
+    s.secrets = { zhuangshenNonggui: 1 };
+    const [jx, wt] = setHand(s, ["jinxiXiangzhu", "wenTaiyiZhenzhi"]);
+    s = act(s, { type: "playCard", cardUid: jx! });
+    expect(s.confront!.stories[0]).toContain("寸步未离");
+    s = act(s, { type: "playCard", cardUid: wt! });
+    expect(s.confront!.stories[1]).toContain("忠心");
+  });
+
+  it("手牌匹配事件只列当前这一幕会出现的", () => {
+    const m = CARDS3.jinxiXiangzhu.matches;
+    expect(matchesInAct(m, 1, 3)).toContain("gongzhongLiuyan");
+    expect(matchesInAct(m, 1, 3)).not.toContain("foqianGongdeng");
+    expect(matchesInAct(m, 2, 12)).toContain("foqianGongdeng");
+    expect(matchesInAct(m, 2, 12)).not.toContain("gongzhongLiuyan");
+    expect(matchesInAct(m, 2, 12)).not.toContain("xianrenKuitan");
+    expect(matchesInAct(m, 2, 20)).toContain("xianrenKuitan");
+  });
+
+  it("故人来访 (turn 15): no temporary 温太医 card; 眉庄相助 brings 远道补给 (身子 +1 for 3 turns)", () => {
+    let s = advanceTo(newStage3(6, CARRY), 15);
+    expect(s.stories.map((x) => x.id)).toContain("wentaiyiTanshi");
+    expect(s.hand.some((c) => c.id === "wenTaiyiZhenzhi" && c.uid.startsWith("w"))).toBe(false);
+    s.extraPlays = 3;
+    const [mz] = setHand(s, ["meizhuangXiangzhu"]);
+    s = act(s, { type: "playCard", cardUid: mz! });
+    expect(s.statuses.some((x) => x.id === "yuandaoBuji")).toBe(true);
+  });
+
+  it("故人来访 (turn 15): 槿汐相助「为女儿撑下去」gives 清誉 +1 for 2 turns, only one of the two bonuses", () => {
+    let s = advanceTo(newStage3(6, CARRY), 15);
+    s.extraPlays = 3;
+    const [jx, mz] = setHand(s, ["jinxiXiangzhu", "meizhuangXiangzhu"]);
+    s = act(s, { type: "playCard", cardUid: jx! });
+    s = act(s, { type: "playCard", cardUid: mz! });
+    expect(s.statuses.some((x) => x.id === "weiNverChengxia")).toBe(true);
+    expect(s.statuses.some((x) => x.id === "yuandaoBuji")).toBe(false);
+  });
+
+  it("第二幕危机需两张解牌: 杂役磋磨 -2 none / -1 one card / cleared with two; 断炭缺粮 half = 寒疾缠身 1 turn", () => {
+    const run = (id: "fazuoCuhuo" | "tanhuoLiangmi", ids: CardId3[]) => {
+      let s = advanceTo(newStage3(6, CARRY), 12);
+      clearBoard(s);
+      s.shenzi = 4;
+      s.crisis = ev(s, id);
+      s.extraPlays = 5;
+      for (const uid of setHand(s, ids)) s = act(s, { type: "playCard", cardUid: uid });
+      s = act(s, { type: "endTurn" });
+      return s;
+    };
+    const fBoth = run("fazuoCuhuo", ["jinxiXiangzhu", "jingxinRennai"]).shenzi;
+    expect([run("fazuoCuhuo", []).shenzi, run("fazuoCuhuo", ["jinxiXiangzhu"]).shenzi]).toEqual([fBoth - 2, fBoth - 1]);
+    const t1 = run("tanhuoLiangmi", ["jinxiXiangzhu"]).statuses.find((x) => x.id === "hanzheng" && x.appliesFromTurn === 13)?.remaining;
+    const t0 = run("tanhuoLiangmi", []).statuses.find((x) => x.id === "hanzheng" && x.appliesFromTurn === 13)?.remaining;
+    expect([t0, t1]).toEqual([2, 1]);
+  });
+
+  it("果郡王相助: draws 1, +1 play this turn, 王爷挂念 gives +1 draw next turn", () => {
+    let s = advanceTo(newStage3(6, CARRY), 12);
+    clearBoard(s);
+    const [g] = setHand(s, ["guojunwangXiangzhu"]);
+    const before = playLimit3(s);
+    s = act(s, { type: "playCard", cardUid: g! });
+    expect(playLimit3(s)).toBe(before + 1);
+    expect(s.statuses.some((x) => x.id === "wangyeGuaNian")).toBe(true);
+  });
+
+  it("睹物生疑: from the turn after 引驾 until 回宫, each 遗物 in hand at turn end adds 疑点 (not only on the 偶遇 turn)", () => {
+    const doubtAfter = (hand: CardId3[]) => {
+      let s = advanceTo(newStage3(12, CARRY), 27);
+      clearBoard(s);
+      s.yihua!.step = 2;
+      s.yihua!.yinjiaTurn = 26;
+      s.yihua!.ouyuDue = 99;
+      setHand(s, hand);
+      s = act(s, { type: "endTurn" });
+      return s.yihua!.doubt;
+    };
+    expect(doubtAfter(["yiwuDi", "yiwuPifeng"]) - doubtAfter([])).toBe(2);
+  });
+
   it("entering the temple: 修行 identity, temple deck plus the 果郡王 cards, 清誉 capped at 8", () => {
     let s = advanceTo(newStage3(6, CARRY), 10);
     s.qingyu = 15;
@@ -451,6 +544,7 @@ describe("zhenhuan stage 3 engine", () => {
     expect([0, 1, 2, 3, 4, 7].map(feilaoBaseTier)).toEqual([0, 0, 1, 1, 2, 2]);
     let s = advanceTo(newStage3(9, CARRY), 18);
     s.feilao = { base: 2, played: [] };
+    s.shenzi = 6;
     const ids = setHand(s, ["jinxiXiangzhu", "chanyuXiushen"]);
     s.extraPlays = 2;
     s = act(s, { type: "playCard", cardUid: ids[0]! });

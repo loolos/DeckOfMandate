@@ -20,6 +20,7 @@ import {
   EVENTS3,
   EXIT,
   FABRICATED_HINT,
+  unresolvedText3,
   FABRICATED_SECRET,
   FEILAO,
   FIXED_STORIES3,
@@ -150,8 +151,10 @@ export type Yihua = {
   doneTurn: number | null;
   /** ② 偶遇 can be done on this turn only (引驾 + 2; missed → 2 turns later). */
   ouyuDue: number | null;
-  /** The turn ② 偶遇 was done: 遗物 still in hand at its end raise 疑点. */
+  /** The turn ② 偶遇 was done (its end always checks 遗物 in hand). */
   ouyuTurn: number | null;
+  /** The turn ① 引驾 was done: from the next turn on until 回宫, 遗物 in hand at each turn's end raise 疑点. */
+  yinjiaTurn: number | null;
   dushu: boolean;
 };
 
@@ -200,7 +203,7 @@ export type Z3State = {
   chunyuanResult: "seen" | "half" | "fail" | null;
   /** 纯元故衣 is behind us: your words to 陵容 turn cold. */
   chunyuanPassed: boolean;
-  confront: { presented: number; needed: number; played: CardId3[]; stories: string[] } | null;
+  confront: { presented: number; needed: number; played: CardId3[]; stories: string[]; rebutted: string[] } | null;
   exitTier: ExitTier | null;
   /** 圣宠 / 位分 the day you left: restored at 偶遇 / used by the ending. */
   exitShengchong: number | null;
@@ -215,7 +218,6 @@ export type Z3State = {
   gengtie: boolean;
   songxing: boolean;
   /** 温太医探视: the temporary card's uid, and whether 「为女儿撑下去」 was used. */
-  tempWenUid: string | null;
   tanshiBonus: boolean;
   changxiangsi: { played: CardId3[]; done: boolean } | null;
   yihua: Yihua | null;
@@ -996,6 +998,8 @@ function resolvePlay3(s: Z3State, cardUid: string, removeStatusUid?: string): vo
   for (const st of openStories3(s)) {
     if (!alive(s)) break;
     if (!st.pendingOptionId || startedNow.has(st)) continue;
+    // 第二张须是这件事的某个卡牌应对（温太医相助之类不相干的牌不算）
+    if (!STORIES3[st.id].options.some((o) => o.card === card.id)) continue;
     const opt = STORIES3[st.id].options.find((o) => o.id === st.pendingOptionId)!;
     st.pendingOptionId = undefined;
     answered = true;
@@ -1078,7 +1082,13 @@ function resolvePlay3(s: Z3State, cardUid: string, removeStatusUid?: string): vo
     const c = s.confront;
     const first = !c.played.includes(card.id);
     c.played.push(card.id);
-    if (first && CONFRONT.cardStory[card.id]) c.stories.push(`${def.emoji} ${CONFRONT.cardStory[card.id]}`);
+    if (first) {
+      // 先挑一条这张牌能专门辩解的、还没被驳过的指控；没有就用通用的作证表忠心
+      const target = confrontLines(s).find((l) => !l.withheld && !c.rebutted.includes(l.id) && CONFRONT.pleas[l.id]?.[card.id]);
+      if (target) c.rebutted.push(target.id);
+      const text = target ? CONFRONT.pleas[target.id]![card.id]! : CONFRONT.cardStory[card.id];
+      if (text) c.stories.push(`${def.emoji} ${text}`);
+    }
     log(s, `【景仁宫对质】辩白 ${c.played.length}/${c.needed}`, "good");
   }
   if (alive(s) && s.feilao && feilaoAccepts(s, card.id)) {
@@ -1093,12 +1103,17 @@ function resolvePlay3(s: Z3State, cardUid: string, removeStatusUid?: string): vo
       applyDelta3(s, { resource: "qingyu", amount: 2 }, "笛箫合奏");
     }
   }
-  if (alive(s) && s.tempWenUid != null && !s.tanshiBonus && (card.id === "meizhuangXiangzhu" || card.id === "jinxiXiangzhu")) {
+  const tanshiOpen = openStories3(s).some((st) => st.id === "wentaiyiTanshi");
+  if (alive(s) && tanshiOpen && !s.tanshiBonus && card.id === "meizhuangXiangzhu") {
     s.tanshiBonus = true;
     answered = true;
-    log(s, "为女儿撑下去：你看着胧月的小像，看了很久。", "good");
-    applyDelta3(s, { resource: "qingyu", amount: 1 }, "为女儿撑下去");
-    if (alive(s)) removeNegatives(s, 1, "为女儿撑下去");
+    log(s, "眉庄在宫里放心不下，远远托温实初带了药材和补给上山。", "good");
+    addStatus3(s, "yuandaoBuji");
+  } else if (alive(s) && tanshiOpen && !s.tanshiBonus && card.id === "jinxiXiangzhu") {
+    s.tanshiBonus = true;
+    answered = true;
+    log(s, "为女儿撑下去：你看着胧月的小像，看了很久。槿汐在一旁默默替你添了一盏灯。", "good");
+    addStatus3(s, "weiNverChengxia");
   }
   if (alive(s) && yihuaStep) advanceYihua(s, card.id);
   if (alive(s) && s.yihua && s.yihua.step < 4 && YIHUA.doubtCards.includes(card.id)) changeDoubt(s, -1, def.name);
@@ -1116,10 +1131,7 @@ function resolvePlay3(s: Z3State, cardUid: string, removeStatusUid?: string): vo
   if (alive(s) && relationDelta !== 0) changeRelation(s, relationDelta);
 
   // 6. where the card goes
-  if (card.uid === s.tempWenUid) {
-    s.tempWenUid = null;
-    log(s, "临时的【温太医相助】用掉了。");
-  } else if (isRelic(card.id)) {
+  if (isRelic(card.id)) {
     s.departed.push(card);
     s.relicsBurned++;
     log(s, `🕯️ 焚毁【${def.name}】：${RELIC_TEXT[card.id]}`);
@@ -1169,6 +1181,7 @@ function advanceYihua(s: Z3State, card: CardId3): void {
     if (card === "jinxiXiangzhu") y.duishi = true;
     if (y.yinjia.length >= y.yinjiaNeed && y.yinjia.includes("jinxiXiangzhu")) {
       y.step = 2;
+      y.yinjiaTurn = s.turn;
       y.ouyuDue = s.turn + YIHUA.ouyuDelay;
       log(s, `引驾完成：皇上要来甘露寺了（第 ${y.ouyuDue} 回合偶遇）。`, "good");
     } else log(s, `你已落发，皇上未必肯来：引驾还差 ${y.yinjiaNeed - y.yinjia.length} 张${y.yinjia.includes("jinxiXiangzhu") ? "（槿汐相助或眉庄相助）" : "槿汐相助"}。`);
@@ -1251,7 +1264,7 @@ function enterYihua(s: Z3State): void {
     s.crisisPool = shuffleInto(s, [...s.crisisPool, "jingrenLairen"]);
     log(s, "景仁宫还在打听你的消息：【景仁宫来人】洗入危机池。", "bad");
   }
-  s.yihua = { step: 1, yinjia: [], yinjiaNeed: s.luofa ? 2 : 1, duishi: false, doubt: DOUBT.start, doneTurn: null, ouyuDue: null, ouyuTurn: null, dushu: false };
+  s.yihua = { step: 1, yinjia: [], yinjiaNeed: s.luofa ? 2 : 1, duishi: false, doubt: DOUBT.start, doneTurn: null, ouyuDue: null, ouyuTurn: null, yinjiaTurn: null, dushu: false };
   log(s, "—— 第三幕 · 移花接木 —— 温太医诊出喜脉，牌库加入 1 张【温太医相助】。持续事件【🎎移花接木】开始，📜疑点为 1。", "info");
   popup(s, "ximai");
 }
@@ -1332,7 +1345,7 @@ function beginTurn3(s: Z3State, turn: number): void {
   if (turn === STAGE3.confrontTurn) {
     const presented = presentedSecrets(s);
     const needed = confrontNeeded(presented) + (s.rank === "guiren" ? 1 : 0);
-    s.confront = { presented, needed, played: [], stories: [] };
+    s.confront = { presented, needed, played: [], stories: [], rebutted: [] };
     popup(s, "confront");
     log(s, `剧情事件：【${CONFRONT.name}】皇后拿出了 ${presented} 件事。本回合须打出 ${needed} 张辩白牌${s.rank === "guiren" ? "（贵人多 1 张）" : ""}。陵容称病没来，她的牌打不出。`, "bad");
   }
@@ -1360,12 +1373,6 @@ function beginTurn3(s: Z3State, turn: number): void {
   const n = Math.max(0, base - kept);
   drawCards3(s, n);
   log(s, `抓 ${n} 张牌${kept > 0 ? `（依依留下 ${kept} 张陵容，少抓 ${base - n} 张）` : ""}。`);
-  if (turn === 15) {
-    const card: CardInst3 = { uid: `w${s.nextUid++}`, id: "wenTaiyiZhenzhi" };
-    s.hand.push(card);
-    s.tempWenUid = card.uid;
-    log(s, "温实初上山来了：手牌加入一张临时的【温太医相助】（回合末离场）。", "good");
-  }
 }
 
 function drawHuanghou(s: Z3State): void {
@@ -1389,12 +1396,15 @@ function settleCrisis(s: Z3State, ev: EventInst3): void {
     if (def.pair) log(s, `连环：【${EVENTS3[PAIRS[def.pair].opportunity].name}】随之作废。`, "bad");
     return;
   }
-  log(s, `危机事件【${def.name}】未化解：${def.unresolvedText}。`, "bad");
-  applyDeltas3(s, def.penalty, def.name);
+  log(s, `危机事件【${def.name}】未化解：${unresolvedText3(def, s.turn)}。`, "bad");
+  const half = def.needTwo === true && (ev.progress ?? []).length === 1;
+  if (half) log(s, `只凑了一张解牌，【${def.name}】的惩罚减轻了。`, "info");
+  applyDeltas3(s, half && def.halfPenalty ? def.halfPenalty : def.penalty, def.name);
   if (ev.id === "xianrenKuitan" && s.playedThisTurn.includes("guojunwangXiangzhu")) applyDelta3(s, { resource: "qingyu", amount: -1 }, "被撞见");
   if (def.penaltyStatus && alive(s)) {
-    addStatus3(s, def.penaltyStatus);
-    if (ev.aggravated && alive(s)) addStatus3(s, def.penaltyStatus);
+    const turns = half ? def.halfStatusTurns : undefined;
+    addStatus3(s, def.penaltyStatus, turns);
+    if (ev.aggravated && alive(s)) addStatus3(s, def.penaltyStatus, turns);
   }
   if (def.secret) addSecret(s, def.secret, null);
   if (ev.id === "jingrenLairen") changeDoubt(s, 1, "景仁宫来人");
@@ -1470,13 +1480,13 @@ function endTurn3(s: Z3State): void {
   }
   if (!alive(s)) return;
 
-  // 睹物生疑: every 遗物 still in hand at the end of the 偶遇 turn
+  // 睹物生疑: every 遗物 still in hand at the end of any turn between 引驾 and 回宫 (and the 偶遇 turn itself)
   const yh = s.yihua;
-  if (yh && yh.ouyuTurn === s.turn) {
+  if (yh && ((yh.yinjiaTurn != null && yh.step < 4 && s.turn > yh.yinjiaTurn) || yh.ouyuTurn === s.turn)) {
     const n = s.hand.filter((c) => isRelic(c.id)).length;
     if (n > 0) {
       yh.dushu = true;
-      log(s, `睹物生疑：${YIHUA.dushuStory}`, "bad");
+      log(s, `睹物生疑：${yh.ouyuTurn === s.turn ? YIHUA.dushuStory : YIHUA.dushuNote}`, "bad");
       changeDoubt(s, n, `睹物生疑（手里 ${n} 件遗物）`);
       if (!alive(s)) return;
     }
@@ -1497,11 +1507,6 @@ function endTurn3(s: Z3State): void {
   s.stories = [];
 
   // hand: 依依 keeps 陵容 (生分); 冷落
-  if (s.tempWenUid) {
-    s.hand = s.hand.filter((c) => c.uid !== s.tempWenUid);
-    s.tempWenUid = null;
-    log(s, "临时的【温太医相助】随温实初下山了。");
-  }
   const tier = tierOf3(s);
   const lingrongLeft = s.hand.some((c) => c.id === "lingrongXiangzhu");
   const keep = tier === "distant" && s.turn < STAGE3.confrontTurn ? s.hand.filter((c) => c.id === "lingrongXiangzhu") : [];
@@ -1659,7 +1664,6 @@ export function newStage3(seed: number, carry: Carry3 | null): Z3State {
     luofa: false,
     gengtie: false,
     songxing: false,
-    tempWenUid: null,
     tanshiBonus: false,
     changxiangsi: null,
     yihua: null,
@@ -1764,17 +1768,17 @@ export function replay3(seed: number, carry: Carry3 | null, actions: readonly Z3
 }
 
 /** The 把柄 at 对质: what 皇后 brought out, plus the ones a 亲厚 陵容 kept back (`withheld`). */
-export function confrontLines(s: Z3State): { line: string; hint: string; lingrong: boolean; withheld?: boolean }[] {
+export function confrontLines(s: Z3State): { id: string; line: string; hint: string; lingrong: boolean; withheld?: boolean }[] {
   const tier = s.exitTierLingrong ?? lingrongTier(s.relation);
   const held = (Object.keys(s.secrets) as SecretId[]).filter((id) => (s.secrets[id] ?? 0) > 0);
   // a 亲厚 陵容 kept two of hers back
   let hidden = tier === "close" ? 2 : 0;
-  const lines = held.map((id) => {
+  const lines: { id: string; line: string; hint: string; lingrong: boolean; withheld?: boolean }[] = held.map((id) => {
     const withheld = hidden > 0 && SECRETS[id].lingrong;
     if (withheld) hidden--;
-    return { line: SECRETS[id].line, hint: SECRETS[id].hint, lingrong: SECRETS[id].lingrong, ...(withheld ? { withheld } : {}) };
+    return { id, line: SECRETS[id].line, hint: SECRETS[id].hint, lingrong: SECRETS[id].lingrong, ...(withheld ? { withheld } : {}) };
   });
-  if (tier === "resentful") lines.push({ line: FABRICATED_SECRET, hint: FABRICATED_HINT, lingrong: true });
+  if (tier === "resentful") lines.push({ id: "fabricated", line: FABRICATED_SECRET, hint: FABRICATED_HINT, lingrong: true });
   return lines;
 }
 
