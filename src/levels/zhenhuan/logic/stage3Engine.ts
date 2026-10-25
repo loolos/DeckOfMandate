@@ -1785,10 +1785,12 @@ export function confrontLines(s: Z3State): { id: string; line: string; hint: str
   const held = (Object.keys(s.secrets) as SecretId[]).filter((id) => (s.secrets[id] ?? 0) > 0);
   // a 亲厚 陵容 kept two of hers back
   let hidden = tier === "close" ? 2 : 0;
-  const lines: { id: string; line: string; hint: string; lingrong: boolean; withheld?: boolean }[] = held.map((id) => {
+  const lines: { id: string; line: string; hint: string; lingrong: boolean; withheld?: boolean }[] = held.map((id, i) => {
     const withheld = hidden > 0 && SECRETS[id].lingrong;
     if (withheld) hidden--;
-    return { id, line: SECRETS[id].line, hint: SECRETS[id].hint, lingrong: SECRETS[id].lingrong, ...(withheld ? { withheld } : {}) };
+    // 每隔一条由宫人、小太监说出，保证对质里总有下人开口
+    const line = i % 2 === 1 && SECRETS[id].servant ? SECRETS[id].servant! : SECRETS[id].line;
+    return { id, line, hint: SECRETS[id].hint, lingrong: SECRETS[id].lingrong, ...(withheld ? { withheld } : {}) };
   });
   if (tier === "resentful") lines.push({ id: "fabricated", line: FABRICATED_SECRET, hint: FABRICATED_HINT, lingrong: true });
   return lines;

@@ -386,6 +386,13 @@ describe("zhenhuan stage 3 engine", () => {
     expect(presentedSecrets(s)).toBe(4);
   });
 
+  it("对质 evidence: every other line is spoken by a 宫人 (the 六条 case always has some)", () => {
+    const s = newStage3(1, { ...CARRY, secrets: ["shiqinNeiqing", "zhuangshenNonggui", "sitanSiqiu", "jierenYaochong", "kuitanGongwei", "qiuziXinqie"] });
+    s.relation = 0;
+    const lines = confrontLines(s).map((l) => l.line);
+    expect(lines.filter((l) => /小太监|小宫女|嬷嬷/.test(l)).length).toBeGreaterThanOrEqual(3);
+  });
+
   it("对质 evidence list: 亲厚 marks two of 陵容's as withheld, 怨怼 adds the made-up one", () => {
     const s = newStage3(1, { ...CARRY, secrets: ["shiqinNeiqing", "zhuangshenNonggui", "sitanSiqiu"] });
     s.secrets.chuyanDingzhuang = 1;
