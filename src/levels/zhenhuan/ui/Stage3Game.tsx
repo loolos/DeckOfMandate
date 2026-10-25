@@ -1032,6 +1032,14 @@ function PopupBody({ state, id }: { state: Z3State; id: PopupId }) {
       return (
         <>
           <p>{POPUP_TEXT.huanghou}</p>
+          <p>{POPUP_TEXT.huanghouIntro}</p>
+          <ul>
+            {POPUP_TEXT.huanghouPeople.map((p) => (
+              <li key={p.name}>
+                <strong>{p.name}</strong>：{p.text}
+              </li>
+            ))}
+          </ul>
           {POPUP_TEXT.huanghouRules.map((l) => (
             <p key={l}>{l}</p>
           ))}
