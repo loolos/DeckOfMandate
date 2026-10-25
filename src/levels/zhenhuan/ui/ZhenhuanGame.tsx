@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
-import { CardArt, FoldBox, GameHeader, LogView, Pile, PileGroup, ResolvedBanner, ScrollRow, StatChip, activateOnKey, countBy, isTypingTarget, type Fold } from "./common";
+import { CardArt, FoldBox, GameHeader, LogView, Pile, PileGroup, ResolvedBanner, ScrollRow, StatChip, activateOnKey, countBy, groupStatuses, isTypingTarget, type Fold } from "./common";
 import { RunCodePanel } from "../../../components/RunCodePanel";
 import { useSmallScreen } from "../../../logic/useSmallScreen";
 import {
@@ -540,7 +540,7 @@ function Statuses({ state, dispatch }: { state: ZhState; dispatch: Dispatch }) {
       {state.statuses.length === 0 ? <span className={styles.muted}>无</span> : null}
       {state.statuses.length > 0 ? (
         <ScrollRow className={styles.statuses}>
-          {state.statuses.map((st) => {
+          {groupStatuses(state.statuses).map(({ st, count }) => {
             const def = STATUSES[st.id];
             const notYet = st.appliesFromTurn > state.turn;
             const expanded = open.has(st.uid);
@@ -565,6 +565,7 @@ function Statuses({ state, dispatch }: { state: ZhState; dispatch: Dispatch }) {
                   <span>
                     {def.emoji}
                     <span className={styles.statusFull}> {def.name}</span>
+{count > 1 ? <span>×{count}</span> : null}
                   </span>
                   <span className={styles.statusBrief}>
                     ⏳{st.remaining}
