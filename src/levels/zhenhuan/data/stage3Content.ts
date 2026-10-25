@@ -2462,7 +2462,7 @@ export const EXIT: Record<ExitTier, { name: string; emoji: string; effects: read
   2: {
     name: "被劝出宫",
     emoji: "🚪",
-    effects: [q(-2)],
+    effects: [],
     story: "皇上没有发落你，只说：「你既心不在此，便去佛前静一静。」",
     longyue: "你跪着求了皇上许久，他终于点头，许你把胧月托付给敬妃。",
     emperor: "皇上看着你，目光一点一点冷下去：「朕原以为，你是不一样的。」",
@@ -2470,7 +2470,7 @@ export const EXIT: Record<ExitTier, { name: string; emoji: string; effects: read
   3: {
     name: "被废出宫",
     emoji: "⛓️",
-    effects: [q(-4), sz(-1)],
+    effects: [sz(-1)],
     story: "皇上下旨褫夺封号，废为庶人，你只带了随身几件衣物，即日被送出宫门。",
     longyue: "嬷嬷当场把胧月从你怀里抱走。没有人告诉你，她被送去了哪里。",
     emperor: "「朕待你如何，你心里清楚。」你心里接了一句：你待的，本就不是我。",

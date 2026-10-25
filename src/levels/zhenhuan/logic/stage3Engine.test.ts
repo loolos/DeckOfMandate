@@ -867,8 +867,8 @@ describe("zhenhuan stage 3 engine", () => {
   });
 });
 
-describe("出宫扣减不被修行上限吞掉", () => {
-  it("宫中清誉高于修行上限时，被废出宫仍从上限 8 起扣", () => {
+describe("出宫清誉按把柄条数扣", () => {
+  it("宫中清誉高于修行上限时，从上限 8 起扣呈上的把柄条数", () => {
     const code =
       "ZH3-MyA3MjE1MjQ5MjcgLSBwYzcgcGMzIHBjMTYgcGMxNyBwYzUgZSBwYzEgcGMyIHBjOSBlIHBjMyBwYzYgcGM4IHBjNyBwYzE3IHBjOSBlIHBjMTUgcGMxNCBwYzEzIGUgcGMyIHBjNSBwYzE1IHBjNyBwYzQgcGM2IHBjMTYgZSBwYzggcGM3IHBjMTMgcGMxMiBwYzQwIHBjNSBwYzkgZSBwYzYgcGM0MCBwYzE1IHBjOSBwYzIgcGMxNyBlIHBjNyBwYzggcGM0MCBwYzIgcGM0IHBjMTMgcGMxNyBlIHBjNiBwYzQgcGM5IHBjOCBwYzE1IHBjNSBlIHBjNDAgcGM3IHBjMTIgcGMxMyBwYzMgZSBwYzczIHBjNzc";
     const r = decodeSessionCode(code);
@@ -880,6 +880,6 @@ describe("出宫扣减不被修行上限吞掉", () => {
     // 第 10 回合一张辩白牌都不打：缺 3 张，被废出宫
     const after = replay3(s0.seed, s0.carry, [...s0.actions.slice(0, 59), { type: "endTurn" }]);
     expect(after.exitTier).toBe(3);
-    expect(after.qingyu).toBe(4);
+    expect(after.qingyu).toBe(8 - 4); // 呈上 4 条
   });
 });
