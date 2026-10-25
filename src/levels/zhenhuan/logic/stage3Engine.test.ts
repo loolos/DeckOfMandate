@@ -356,6 +356,7 @@ describe("zhenhuan stage 3 engine", () => {
     t = act(t, { type: "playCard", cardUid: uid2! });
     expect(t.statuses.some((st) => st.id === "dayaGuaerjia")).toBe(true);
     expect(t.opportunity!.resolved).toBe(true);
+    expect(t.crisis!.resolvedBy).toBe("meizhuangXiangzhu");
     expect(EVENTS3.xianfuQi.resolvedStory.meizhuangXiangzhu).not.toBe(EVENTS3.xianfuJing.resolvedStory.meizhuangXiangzhu);
   });
 

@@ -1045,7 +1045,11 @@ function resolvePlay3(s: Z3State, cardUid: string, removeStatusUid?: string): vo
       ev.progress = [...(ev.progress ?? []), card.id];
       if (ev.progress.length >= 2) {
         if (isLingrong && tier) relationDelta += resolveEventByLingrong(s, ev, tier);
-        else resolveEventByCard(s, ev, card.id, false);
+        else {
+          // 连环: with the shared card among the two, its story always wins
+          const shared = d.pair ? PAIRS[d.pair].shared : undefined;
+          resolveEventByCard(s, ev, shared && ev.progress.includes(shared) ? shared : card.id, false);
+        }
         if (ev.resolved) resolvedNow.push(ev);
       } else log(s, `【${d.name}】解牌 1/2。`);
       continue;
