@@ -549,6 +549,24 @@ describe("zhenhuan stage 3 engine", () => {
     expect(s.qingyu).toBeGreaterThanOrEqual(qingyu);
   });
 
+  it("断炭缺粮: cleared with two cards still costs 🌱1; unresolved costs 🌱1 now plus 寒疾缠身", () => {
+    const run = (ids: CardId3[]) => {
+      let s = advanceTo(newStage3(6, CARRY), 12);
+      clearBoard(s);
+      s.shenzi = 5;
+      s.crisis = ev(s, "tanhuoLiangmi");
+      s.extraPlays = 5;
+      for (const uid of setHand(s, ids)) s = act(s, { type: "playCard", cardUid: uid });
+      s = act(s, { type: "endTurn" });
+      return s;
+    };
+    const both = run(["jingchaiBuqun", "jinxiXiangzhu"]);
+    const none = run([]);
+    expect(both.statuses.some((x) => x.id === "hanzheng" && x.appliesFromTurn === 13)).toBe(false);
+    expect(both.shenzi).toBe(none.shenzi);
+    expect(none.statuses.some((x) => x.id === "hanzheng" && x.appliesFromTurn === 13)).toBe(true);
+  });
+
   it("entering the temple: 修行 identity, temple deck plus the 果郡王 cards, 清誉 capped at 8", () => {
     let s = advanceTo(newStage3(6, CARRY), 10);
     s.qingyu = 15;

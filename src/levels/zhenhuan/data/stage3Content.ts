@@ -921,6 +921,8 @@ export type EventDef3 = {
   readonly suppressedStory?: string;
   /** 需两张解牌的危机只凑了一张时的惩罚（不写则按完整惩罚）。 */
   readonly halfPenalty?: readonly Delta3[];
+  /** 危机被化解时也要付的代价（断炭缺粮：熬过去也伤身子）。 */
+  readonly resolveCost?: readonly Delta3[];
   /** 同上：惩罚状态只持续这么多回合。 */
   readonly halfStatusTurns?: number;
   /** 对头事件: resolving with this card is 打压. */
@@ -1543,13 +1545,14 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     flavor: "静白又克扣了你屋里的炭火，说寺里清苦，修行之人不该贪暖，转身却让自己屋里的炭盆烧得旺旺的。",
     peakFlavor: "大雪封了山路，凌云峰上缺炭少粮，屋里的水缸结了一层冰，被褥又薄又潮，冷得像冰窖。",
     reward: NO,
-    penalty: NO,
+    penalty: [sz(-1)],
+    resolveCost: [sz(-1)],
     penaltyStatus: "hanzheng",
     jingbai: true,
     needTwo: true,
     halfStatusTurns: 1,
-    resolvedText: "移除事件；需打出两张解牌",
-    unresolvedText: "未来 2 回合，每回合末身子 -1；只打出一张解牌则只持续 1 回合",
+    resolvedText: "移除事件；需打出两张解牌；熬过去也要身子 -1",
+    unresolvedText: "身子 -1，并获得【寒疾缠身】（未来 2 回合，每回合末身子 -1）；只打出一张解牌则寒疾缠身只持续 1 回合",
     note: "寺中算静白刁难（🧹）；凌云峰上是风雪断粮。",
     resolvedStory: {
       jingchaiBuqun: "你自己上山拾了一捆柴，手上磨出了血泡。屋里总算有了点暖气。",
