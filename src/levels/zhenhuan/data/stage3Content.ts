@@ -1567,6 +1567,11 @@ export const PEAK_ADD_CRISES: readonly CrisisId3[] = ["yebanJingrao", "xianrenKu
 
 const ACT1_EVENTS: ReadonlySet<EventId3> = new Set<EventId3>([...ACT1_OPPORTUNITIES, ...ACT1_CRISES, ...HUANGHOU_EVENTS, "wangyeXiantan", "qingmaiBaoxi"]);
 
+/** 事件上显示的「没化解」文本：第 25 回合果郡王翻船之后，耳目窥伺不再提「撞见」。 */
+export function unresolvedText3(def: EventDef3, turn: number): string {
+  return def.id === "xianrenKuitan" && turn >= 25 ? "清誉 -1" : def.unresolvedText;
+}
+
 /** 手牌「匹配事件」只列这一幕（寺中 / 凌云峰）真的会出现的事件。 */
 export function matchesInAct(matches: readonly EventId3[], act: Act, turn: number): EventId3[] {
   const onPeak = turn > STAGE3.templeLastTurn;

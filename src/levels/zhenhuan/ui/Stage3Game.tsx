@@ -30,6 +30,7 @@ import {
   SHENZI,
   STAGE3,
   matchesInAct,
+  unresolvedText3,
   STATUSES3,
   statusText3,
   STORIES3,
@@ -223,10 +224,10 @@ function EventCard({ state, inst, fold, dispatch }: { state: Z3State; inst: Even
           {inst.resolved
             ? `${isOpp ? "✅" : "🛡️"} ${inst.resolvedBy ? CARDS3[inst.resolvedBy].emoji : ""}`
             : def.kind === "huanghou"
-              ? `⏳ ${compactEffect3(def.unresolvedText)} ｜ 🛡️ ${compactEffect3(def.resolvedText)}`
+              ? `⏳ ${compactEffect3(unresolvedText3(def, state.turn))} ｜ 🛡️ ${compactEffect3(def.resolvedText)}`
               : isOpp
                 ? `✅ ${compactEffect3(def.resolvedText)}${locked ? " 🔒" : ""}`
-                : `❌ ${compactEffect3(def.unresolvedText)}`}
+                : `❌ ${compactEffect3(unresolvedText3(def, state.turn))}`}
         </div>
       </FoldBox>
     );
@@ -253,7 +254,7 @@ function EventCard({ state, inst, fold, dispatch }: { state: Z3State; inst: Even
       </p>
       <p className={styles.rule}>
         <span className={styles.ruleLabel}>{noLabel}</span>
-        {expandedEffect3(def.unresolvedText)}
+        {expandedEffect3(unresolvedText3(def, state.turn))}
       </p>
       {def.note ? <p className={styles.rule}>{def.note}</p> : null}
       {def.rival && def.suppressCard && !def.pair ? (
@@ -926,7 +927,7 @@ function endTurnHints(state: Z3State): string[] {
     const option = def.options.find((o) => o.id === def.defaultOptionId)!;
     hints.push(option.hidden ? `【${def.name}】未处理：${option.text}。` : `【${def.name}】未选择，将按默认【${option.name}】处理。`);
   }
-  if (state.crisis && !state.crisis.resolved) hints.push(`【${EVENTS3[state.crisis.id].name}】未化解：${EVENTS3[state.crisis.id].unresolvedText}。`);
+  if (state.crisis && !state.crisis.resolved) hints.push(`【${EVENTS3[state.crisis.id].name}】未化解：${unresolvedText3(EVENTS3[state.crisis.id], state.turn)}。`);
   if (state.huanghou && !state.huanghou.resolved) hints.push(`【${EVENTS3[state.huanghou.id].name}】回合末按默认结算。`);
   const tier = tierOf3(state);
   const lingrongInHand = state.hand.filter((c) => c.id === "lingrongXiangzhu").length;
