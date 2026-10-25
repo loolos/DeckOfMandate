@@ -235,6 +235,8 @@ export type Z3State = {
   changxiangsiDone?: boolean;
   /** 踏雪问疾 was resolved by playing a card (the story is gone from the board by turn 23). */
   taxueByCard?: boolean;
+  /** 菀菀类卿当回合所选的应对（弹窗按此分剧情）。 */
+  wanwanOption?: string;
   yihua: Yihua | null;
   relicsBurned: number;
   statuses: StatusInst3[];
@@ -972,7 +974,10 @@ function applyStoryOption(s: Z3State, inst: StoryInst3, option: StoryOption3, so
     addCardToDeck(s, "guojunwangXiangzhu");
     log(s, "牌库加入 1 张【果郡王相助】。", "good");
   }
-  if (inst.id === "wanwanLeiqing") birth(s);
+  if (inst.id === "wanwanLeiqing") {
+    s.wanwanOption = option.id;
+    birth(s);
+  }
   return 0;
 }
 
