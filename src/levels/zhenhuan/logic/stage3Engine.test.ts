@@ -21,6 +21,8 @@ import {
 } from "../data/stage3Content";
 import {
   canPlayCard3,
+  drawCount3,
+  drawModifier3,
   confrontLines,
   feilaoBaseTier,
   feilaoCurrentTier,
@@ -549,6 +551,50 @@ describe("zhenhuan stage 3 engine", () => {
     expect(s.qingyu).toBeGreaterThanOrEqual(qingyu);
   });
 
+  it("断炭缺粮: cleared with two cards still costs 🌱1; unresolved costs 🌱1 now plus 寒疾缠身", () => {
+    const run = (ids: CardId3[]) => {
+      let s = advanceTo(newStage3(6, CARRY), 12);
+      clearBoard(s);
+      s.shenzi = 5;
+      s.crisis = ev(s, "tanhuoLiangmi");
+      s.extraPlays = 5;
+      for (const uid of setHand(s, ids)) s = act(s, { type: "playCard", cardUid: uid });
+      s = act(s, { type: "endTurn" });
+      return s;
+    };
+    const both = run(["jingchaiBuqun", "jinxiXiangzhu"]);
+    const none = run([]);
+    expect(both.statuses.some((x) => x.id === "hanzheng" && x.appliesFromTurn === 13)).toBe(false);
+    expect(both.shenzi).toBe(none.shenzi);
+    expect(none.statuses.some((x) => x.id === "hanzheng" && x.appliesFromTurn === 13)).toBe(true);
+  });
+
+  it("圣驾偶遇: 荆钗布裙 also completes step ②", () => {
+    let s = advanceTo(newStage3(12, CARRY), 27);
+    clearBoard(s);
+    s.yihua = { step: 2, yinjia: ["jinxiXiangzhu"], yinjiaNeed: 1, duishi: true, doubt: 1, doneTurn: null, ouyuDue: s.turn, ouyuTurn: s.turn, yinjiaTurn: s.turn - 2, dushu: false };
+    s.stories.push({ id: "yihuaOuyu", chosenOptionId: null });
+    s.extraPlays = 3;
+    const [bu] = setHand(s, ["jingchaiBuqun"]);
+    s = act(s, { type: "playCard", cardUid: bu! });
+    expect(s.yihua!.step).toBe(3);
+    expect(s.yihua!.ouyuCard).toBe("jingchaiBuqun");
+    expect(s.popups).toContain("ouyu");
+  });
+
+  it("耳目窥伺: unresolved gives 眼线环伺 (draw -1, never below 1) and no 清誉 loss", () => {
+    let s = advanceTo(newStage3(6, CARRY), 20);
+    clearBoard(s);
+    s.crisis = ev(s, "xianrenKuitan");
+    const qingyu = s.qingyu;
+    s = act(s, { type: "endTurn" });
+    expect(s.qingyu).toBe(qingyu);
+    const st = s.statuses.find((x) => x.id === "yanxianHuansi" && x.appliesFromTurn === 21);
+    expect(st?.remaining).toBe(2);
+    expect(drawModifier3(s, s.turn)).toBeLessThan(0);
+    expect(drawCount3(s, s.turn)).toBeGreaterThanOrEqual(1);
+  });
+
   it("entering the temple: 修行 identity, temple deck plus the 果郡王 cards, 清誉 capped at 8", () => {
     let s = advanceTo(newStage3(6, CARRY), 10);
     s.qingyu = 15;
@@ -645,6 +691,8 @@ describe("zhenhuan stage 3 engine", () => {
       clearBoard(s);
       s = act(s, { type: "endTurn" });
       clearBoard(s);
+      s.discard.push(...s.hand.filter((c) => c.id.startsWith("yiwu")));
+      s.hand = s.hand.filter((c) => !c.id.startsWith("yiwu"));
       s.extraPlays = 9;
     };
     clearBoard(s);

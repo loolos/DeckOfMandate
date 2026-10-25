@@ -425,7 +425,8 @@ export type StatusId3 =
   | "meizhuangDadian"
   | "yishiWucuo"
   | "dayaQifei"
-  | "dayaGuaerjia";
+  | "dayaGuaerjia"
+  | "yanxianHuansi";
 
 export type StatusDef3 = {
   readonly id: StatusId3;
@@ -469,6 +470,16 @@ function daya(id: StatusId3, rivalName: string, flavor: string): StatusDef3 {
 }
 
 export const STATUSES3: Record<StatusId3, StatusDef3> = {
+  yanxianHuansi: {
+    id: "yanxianHuansi",
+    name: "眼线环伺",
+    emoji: "👀",
+    tag: "negative",
+    duration: 2,
+    drawModifier: -1,
+    effectText: "未来 2 回合，每回合抓牌数 -1（至少抓 1 张）。多个实例分别计时、效果叠加。",
+    flavor: "院墙外总有人影晃动，说话做事都得提着几分小心，哪还有心思多想别的。",
+  },
   liuyanChanshen: {
     id: "liuyanChanshen",
     name: "流言缠身",
@@ -921,6 +932,8 @@ export type EventDef3 = {
   readonly suppressedStory?: string;
   /** 需两张解牌的危机只凑了一张时的惩罚（不写则按完整惩罚）。 */
   readonly halfPenalty?: readonly Delta3[];
+  /** 危机被化解时也要付的代价（断炭缺粮：熬过去也伤身子）。 */
+  readonly resolveCost?: readonly Delta3[];
   /** 同上：惩罚状态只持续这么多回合。 */
   readonly halfStatusTurns?: number;
   /** 对头事件: resolving with this card is 打压. */
@@ -1127,7 +1140,8 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     reward: NO,
     penalty: NO,
     penaltyStatus: "liuyanChanshen",
-    resolvedText: "移除事件",
+    resolveCost: [q(-1)],
+    resolvedText: "移除事件；化解也要清誉 -1",
     unresolvedText: "未来 3 回合每回合抓牌 -1",
     resolvedStory: {
       jinyanShenxing: "你闭门不出，见了谁都只说些天气花草。流言找不到新的话柄，几日便散了。",
@@ -1144,7 +1158,8 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     flavor: "这个月的份例迟迟没有送来，去问时，内务府的人只说账目还没理清，让碎玉轩再等等。",
     reward: NO,
     penalty: [q(-1)],
-    resolvedText: "移除事件",
+    resolveCost: [sc(-1)],
+    resolvedText: "移除事件；化解也要圣宠 -1",
     unresolvedText: "清誉 -1",
     note: "用收拢人心解决时额外抽 1 张。",
     resolvedStory: {
@@ -1199,7 +1214,8 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     suppressedStory: "请安那日，齐妃刚张口要提「心尖上的人」，目光落到你身上，又想起上回在三阿哥的功课上吃的亏，讪讪闭了嘴，只低头喝茶。",
     suppressCard: "jinyanShenxing",
     secret: "chuyanDingzhuang",
-    resolvedText: "移除事件；两张解牌含谨言慎行即打压齐妃，获得【打压·齐妃】",
+    resolveCost: [sz(-1)],
+    resolvedText: "移除事件；两张解牌含谨言慎行即打压齐妃，获得【打压·齐妃】；化解也要身子 -1",
     unresolvedText: "清誉 -2、未来 3 回合每回合抓牌 -1",
     resolvedStory: {
       jinyanShenxing: "你笑着回了一句：「娘娘说笑了，三阿哥的功课，皇上才是放在心尖上的。」齐妃一时下不来台，再没敢开口。",
@@ -1220,7 +1236,8 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     needTwo: true,
     suppressedStory: "长春宫的人来碎玉轩送东西，话说得格外客气。齐妃自上回被你堵得下不来台，这次没再拿三阿哥的功课做文章，皇上也没被扣在长春宫。",
     suppressCard: "yirongZhengsu",
-    resolvedText: "移除事件；两张解牌含仪容整肃即打压齐妃，获得【打压·齐妃】",
+    resolveCost: [q(-1)],
+    resolvedText: "移除事件；两张解牌含仪容整肃即打压齐妃，获得【打压·齐妃】；化解也要清誉 -1",
     unresolvedText: "圣宠 -2",
     resolvedStory: {
       yirongZhengsu: "你换了一身新裁的衣裳，在皇上回养心殿的路上候着。皇上远远看见，便不往长春宫去了。",
@@ -1543,13 +1560,14 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     flavor: "静白又克扣了你屋里的炭火，说寺里清苦，修行之人不该贪暖，转身却让自己屋里的炭盆烧得旺旺的。",
     peakFlavor: "大雪封了山路，凌云峰上缺炭少粮，屋里的水缸结了一层冰，被褥又薄又潮，冷得像冰窖。",
     reward: NO,
-    penalty: NO,
+    penalty: [sz(-1)],
+    resolveCost: [sz(-1)],
     penaltyStatus: "hanzheng",
     jingbai: true,
     needTwo: true,
     halfStatusTurns: 1,
-    resolvedText: "移除事件；需打出两张解牌",
-    unresolvedText: "未来 2 回合，每回合末身子 -1；只打出一张解牌则只持续 1 回合",
+    resolvedText: "移除事件；需打出两张解牌；熬过去也要身子 -1",
+    unresolvedText: "身子 -1，未来 2 回合每回合末身子 -1；只打出一张解牌则只持续 1 回合",
     note: "寺中算静白刁难（🧹）；凌云峰上是风雪断粮。",
     resolvedStory: {
       jingchaiBuqun: "你自己上山拾了一捆柴，手上磨出了血泡。屋里总算有了点暖气。",
@@ -1622,10 +1640,11 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     emoji: "👀",
     flavor: "这几日，有几个寺里的小尼姑总在凌云峰的院墙外转悠，探头探脑，窃窃私语，像是受了什么人的差遣。",
     reward: NO,
-    penalty: [q(-1)],
+    penalty: NO,
+    penaltyStatus: "yanxianHuansi",
     place: "peak",
     resolvedText: "移除事件",
-    unresolvedText: "清誉 -1；本回合若打出过果郡王相助，再清誉 -1（被撞见）",
+    unresolvedText: "未来 2 回合每回合抓牌 -1（至少 1 张）；本回合若打出过果郡王相助，再清誉 -1（被撞见）",
     resolvedStory: {
       chanyuXiushen: "你开门请她们进来喝茶，念了一段经给她们听。她们听得无趣，便不再来了。",
       jinxiXiangzhu: "槿汐拿着扫帚迎了出去，笑着问她们是来扫地的还是来看热闹的，几句话就把人打发走了。",
@@ -1699,7 +1718,7 @@ const ACT1_EVENTS: ReadonlySet<EventId3> = new Set<EventId3>([...ACT1_OPPORTUNIT
 
 /** 事件上显示的「没化解」文本：第 25 回合果郡王翻船之后，耳目窥伺不再提「撞见」。 */
 export function unresolvedText3(def: EventDef3, turn: number): string {
-  return def.id === "xianrenKuitan" && turn >= 25 ? "清誉 -1" : def.unresolvedText;
+  return def.id === "xianrenKuitan" && turn >= 25 ? "未来 2 回合每回合抓牌 -1（至少 1 张）" : def.unresolvedText;
 }
 
 /** 手牌「匹配事件」只列这一幕（寺中 / 凌云峰）真的会出现的事件。 */
@@ -2163,11 +2182,12 @@ export const STORIES3: Record<StoryId3, StoryDef3> = {
     name: "圣驾偶遇",
     emoji: "🌸",
     flavor: "皇上驾临甘露寺，正往佛堂这边来。你若不在佛前相见，这一回便又错过了。",
-    note: "打出【禅语修身】才算偶遇成功；没成就隔一回合再来。",
+    note: "打出【禅语修身】或【荆钗布裙】才算偶遇成功；没成就隔一回合再来。",
     defaultOptionId: "cuoguo",
     options: [
       { id: "cuoguo", name: "错失圣驾", effects: [], text: "偶遇没成，隔一回合再来", story: "皇上在山门外立了片刻，终究没有见到你，由苏培盛扶着回了銮驾。" },
       { id: "foqianChongfeng", name: "佛前重逢", card: "chanyuXiushen", effects: [], flag: "ouyu", text: "偶遇成功", story: "你在佛前念着经，听见身后的脚步声停了下来。皇上望着你的背影，许久，轻轻唤了一声你的名字。" },
+      { id: "bunqunChongfeng", name: "布裙重逢", card: "jingchaiBuqun", effects: [], flag: "ouyu", text: "偶遇成功", story: "你荆钗布裙，正蹲在廊下捡拾落叶，听见身后的脚步声停了下来。皇上望着你素净的侧影，许久，轻轻唤了一声你的名字。" },
     ],
   },
 };
@@ -2367,6 +2387,19 @@ export const YIHUA = {
   ouyuRetry: 2,
   /** 移花接木开始后，每打出一张 📜疑点 -1。 */
   doubtCards: ["jinxiXiangzhu", "meizhuangXiangzhu"] as readonly CardId3[],
+  /** 偶遇成功的弹窗：求皇上原谅，暗中盘算下一步改脉；按解牌略有不同。 */
+  ouyuPopup: {
+    chanyuXiushen: [
+      "你在佛前合十，缓缓转过身，在皇上面前跪了下去：「臣妾有罪，求皇上原谅。」皇上沉默了很久，终究伸手扶你起来，说他这些年也想过你。",
+      "你垂着眼，把这几年的委屈与思念一句一句说得很轻，说到最后，眼泪落在他的袖口。皇上叹了口气，没有再责怪你。",
+      "可你心里清楚，这个孩子藏不了多久。你一边应着他的话，一边暗暗盘算：待他留宿之后，只有请温太医在脉案上动手脚，把月份改得对得上。",
+    ],
+    jingchaiBuqun: [
+      "你一身荆钗布裙，手上还沾着落叶的碎屑，见了皇上也不躲，只缓缓跪下：「臣妾有罪，求皇上原谅。」皇上看着你素净的模样，眼眶竟有些红了。",
+      "他伸手扶你起来，指尖触到你粗糙的手背，问你在山上吃了多少苦。你摇摇头，只说能再见皇上一面，便不觉得苦。",
+      "你面上柔顺，心里却一刻没有放松：这孩子的月份瞒不过太医，只有早早找温太医商量，在脉案上做些改动，才能让一切合情合理。",
+    ],
+  } as Record<string, string[]>,
   ouyuStory: "皇上在佛前看见你，愣住了。「嬛嬛。」他唤你。你第一次明白，可以把“像她”当成手段：这一回，是我借了她的影子。当夜，皇上留宿甘露寺。",
   doubtLabel: "疑点",
   dushuNote: "那件旧物还留在手边，宫里人多眼杂，万一被谁瞧见，便是说不清的麻烦。你一整日都坐立不安。",
@@ -2448,7 +2481,7 @@ export const LINGRONG_FAREWELL: Record<LingrongTier, string> = {
 
 // ---------------------------------------------------------------- popups (§五)
 
-export type PopupId = "opening" | "huanghou" | "tonghuatai" | "chunyuan" | "wanwan" | "confront" | "exit" | "feilao" | "zhoufu" | "ximai";
+export type PopupId = "opening" | "huanghou" | "tonghuatai" | "chunyuan" | "wanwan" | "confront" | "exit" | "feilao" | "zhoufu" | "ximai" | "ouyu";
 
 export const POPUP_TEXT = {
   opening: "翊坤宫的门关上了。华妃倒了，六宫都说碎玉轩的莞主子是头一份的恩宠。听说景仁宫也要亲自来贺。",
@@ -2626,7 +2659,7 @@ export const TAG3_INFO: Record<TagId3, { label: string; lore: string; rules: str
   yihua: {
     label: "持续",
     lore: "唯一的活路。",
-    rules: "① 引驾（槿汐相助；落发的再加 1 张槿汐或眉庄）→ 两回合后 ② 偶遇（打出禅语修身；没成隔一回合再来）→ ③ 改脉（温太医相助），即回宫。",
+    rules: "① 引驾（槿汐相助；落发的再加 1 张槿汐或眉庄）→ 两回合后 ② 偶遇（打出禅语修身或荆钗布裙；没成隔一回合再来）→ ③ 改脉（温太医相助），即回宫。",
   },
   doubt: {
     label: "疑点",

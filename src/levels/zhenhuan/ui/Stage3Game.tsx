@@ -600,7 +600,7 @@ function YihuaCard({ state, fold, dispatch }: { state: Z3State; fold: Fold; disp
   const y = state.yihua;
   if (!y) return null;
   const inHand = (id: CardId3) => state.hand.some((x) => x.id === id && yihuaAccepts(state, id));
-  const stepCards: readonly (readonly CardId3[])[] = [y.yinjiaNeed > 1 ? [...YIHUA.yinjiaCards, YIHUA.luofaExtra] : YIHUA.yinjiaCards, ["chanyuXiushen"], ["wenTaiyiZhenzhi"]];
+  const stepCards: readonly (readonly CardId3[])[] = [y.yinjiaNeed > 1 ? [...YIHUA.yinjiaCards, YIHUA.luofaExtra] : YIHUA.yinjiaCards, ["chanyuXiushen", "jingchaiBuqun"], ["wenTaiyiZhenzhi"]];
   const relicCount = state.hand.filter((c) => isRelic(c.id)).length;
   return (
     <SpecialCard
@@ -630,7 +630,7 @@ function YihuaCard({ state, fold, dispatch }: { state: Z3State; fold: Fold; disp
               {mark(state_ === "done")} <strong>
                 {["①", "②", "③"][i]} {s.emoji} {s.name}
               </strong>
-              ：{s.story}
+              ：{n === 1 && state_ === "done" ? y.yinjia.map((id) => YIHUA.yinjiaStory[id] ?? "").join("") || s.story : s.story}
               {n === 1 ? (
                 <>
                   {" "}
@@ -655,11 +655,6 @@ function YihuaCard({ state, fold, dispatch }: { state: Z3State; fold: Fold; disp
         <span className={styles.ruleLabel}>📜 疑点 {y.doubt}/{DOUBT.max}：</span>
         {y.step < 3 ? "偶遇完成之前每回合末 +1。" : "已止住上涨。"}每打出一张槿汐相助或眉庄相助 -1。到 {DOUBT.max} 即失败；第 {STAGE3.totalTurns} 回合末仍未完成也失败。
       </p>
-      {y.step >= 2 ? (
-        <p className={styles.muted}>
-          引驾：{y.yinjia.map((id) => CARDS3[id].name).join("、")}
-        </p>
-      ) : null}
     </SpecialCard>
   );
 }
@@ -1053,6 +1048,16 @@ function PopupBody({ state, id }: { state: Z3State; id: PopupId }) {
           ))}
         </>
       );
+    case "ouyu": {
+      const lines = YIHUA.ouyuPopup[state.yihua?.ouyuCard ?? "chanyuXiushen"] ?? YIHUA.ouyuPopup.chanyuXiushen!;
+      return (
+        <>
+          {lines.map((l) => (
+            <p key={l}>{l}</p>
+          ))}
+        </>
+      );
+    }
     case "tonghuatai": {
       const meet = state.guoMeet ?? "di";
       return (
@@ -1153,6 +1158,7 @@ const POPUP_TITLE: Record<PopupId, string> = {
   feilao: "🤒 迁居凌云峰",
   zhoufu: "🌊 舟覆噩耗",
   ximai: "💗 喜脉惊心",
+  ouyu: "🌸 圣驾偶遇",
 };
 
 function OutcomeModal({ state, onRestart, onMenu }: { state: Z3State; onRestart: () => void; onMenu: () => void }) {
