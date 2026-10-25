@@ -1278,7 +1278,8 @@ function beginTurn3(s: Z3State, turn: number): void {
   }
 
   const fixed = FIXED_STORIES3[turn];
-  if (fixed) openStory(s, fixed);
+  // 嫔位已报过喜脉：海棠春睡只是留宿夜谈
+  if (fixed) openStory(s, fixed === "haitangChunshui" && s.pregnant && s.rank === "pin" ? "haitangYeyu" : fixed);
   if (turn === 6) {
     s.chunyuan = { first: null, second: null };
     log(s, `剧情事件：【${CHUNYUAN.name}】${CHUNYUAN.rule}`);
@@ -1503,7 +1504,7 @@ function endTurn3(s: Z3State): void {
   // scheduled additions
   if (s.turn === 2) {
     s.huanghouPool = shuffleInto(s, HUANGHOU_EVENTS);
-    log(s, "🦚 从下一回合起，每回合会有一张皇后事件。");
+    log(s, "🏵️ 从下一回合起，每回合会有一张皇后事件。");
     popup(s, "huanghou");
   }
   if (s.turn === 5) {

@@ -143,8 +143,8 @@ function Chips({ ids, lit }: { ids: readonly CardId3[]; lit: (id: CardId3) => bo
   );
 }
 
-const KIND_TONE = { opportunity: styles.kindOpportunity, crisis: styles.kindCrisis, huanghou: styles.kindEnvy };
-const CARD_TONE = { opportunity: styles.cardOpportunity, crisis: styles.cardCrisis, huanghou: styles.cardEnvy };
+const KIND_TONE = { opportunity: styles.kindOpportunity, crisis: styles.kindCrisis, huanghou: styles.kindHuanghou };
+const CARD_TONE = { opportunity: styles.cardOpportunity, crisis: styles.cardCrisis, huanghou: styles.cardHuanghou };
 
 // 连环事件标题是「连环名·事件名」，说明里连环名已在前面，只引事件名。
 const shortEventName = (name: string) => name.split("·").pop() ?? name;
@@ -1119,7 +1119,7 @@ function PopupBody({ state, id }: { state: Z3State; id: PopupId }) {
 
 const POPUP_TITLE: Record<PopupId, string> = {
   opening: "🏮 第一幕 · 凤仪之下",
-  huanghou: "🦚 皇后笑意",
+  huanghou: "🏵️ 皇后笑意",
   tonghuatai: "🎐 桐花台",
   chunyuan: "👗 纯元故衣",
   wanwan: "💔 菀菀类卿",
@@ -1244,11 +1244,7 @@ export function Stage3Game({ state, dispatch, runCode, showRules, onShowRules, o
   const draw = state.act === 1 ? RANKS[state.turnRank].draw : XIUXING.draw;
   const plays = state.act === 1 ? RANKS[state.turnRank].plays : XIUXING.plays;
   const shengchongShown = state.act === 1 || (state.yihua != null && state.yihua.step >= 3);
-  const badges = [
-    { text: ACT_TITLE[state.act], brief: ["", "一", "二", "三"][state.act] },
-    ...(state.pregnant ? [{ text: "👶 身怀龙裔", brief: "👶", gold: true }] : []),
-    ...(state.childBorn && state.act === 1 ? [{ text: "🎀 胧月", brief: "🎀" }] : []),
-  ];
+  const badges = compact ? [] : [{ text: ACT_TITLE[state.act] }];
   const boardCount = [state.crisis, state.opportunity, state.huanghou].filter((e) => e != null);
   const unresolved = boardCount.filter((e) => !e.resolved).length + openStories3(state).length;
 
@@ -1313,7 +1309,7 @@ export function Stage3Game({ state, dispatch, runCode, showRules, onShowRules, o
               <EventList ids={state.crisis ? [...state.crisisUsed, state.crisis.id] : state.crisisUsed} empty="无" />
             </Pile>
             {state.act === 1 && state.turn >= 2 ? (
-              <Pile icon="🦚" label="皇后事件" tag={TAG3_INFO.huanghou} count={state.huanghouPool.length}>
+              <Pile icon="🏵️" label="皇后事件" tag={TAG3_INFO.huanghou} count={state.huanghouPool.length}>
                 <p className={styles.popoverTitle}>本轮还没出现</p>
                 <EventList ids={state.huanghouPool} empty="已轮过一遍。" />
                 <p className={styles.popoverTitle}>本轮已出现</p>

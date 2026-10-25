@@ -1464,7 +1464,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     id: "jingrenLairen",
     kind: "crisis",
     name: "景仁宫来人",
-    emoji: "🦚",
+    emoji: "🏵️",
     flavor: "景仁宫的人借着送香油钱的名头上了山，眼睛一直往你身上瞟。",
     reward: NO,
     penalty: NO,
@@ -1587,6 +1587,7 @@ export type StoryId3 =
   | "zhaoxing"
   | "huanghouXiaoyi"
   | "haitangChunshui"
+  | "haitangYeyu"
   | "tonghuataiChuyu"
   | "zhenYuandaoXiayu"
   | "wanwanLeiqing"
@@ -1675,7 +1676,7 @@ export const STORIES3: Record<StoryId3, StoryDef3> = {
   huanghouXiaoyi: {
     id: "huanghouXiaoyi",
     name: "皇后笑意",
-    emoji: "🦚",
+    emoji: "🏵️",
     flavor: "华妃倒后，皇后亲自来碎玉轩道贺，赏下一对玉镯。她笑得温和，你却想起翊坤宫倒下那日，她站在廊下一言不发的样子。",
     note: "皇后第一次登门。怎么接这份赏，各有各的好处。",
     defaultOptionId: "xieen",
@@ -1733,6 +1734,33 @@ export const STORIES3: Record<StoryId3, StoryDef3> = {
         pregnancy: true,
         text: "清誉 +1；未孕时必定有孕",
         story: "你在灯下陪皇上读诗，读到「只恐夜深花睡去」，他笑着接了下一句。",
+      },
+    ],
+  },
+  haitangYeyu: {
+    id: "haitangYeyu",
+    name: "海棠春睡",
+    emoji: "🌸",
+    flavor: "太医的喜脉早已报到了御前。皇上这几日仍常往碎玉轩来，只在海棠树下坐坐，陪你说说话。",
+    note: "只是一段恩宠。",
+    defaultOptionId: "chengen",
+    options: [
+      { id: "chengen", name: "承恩", effects: [sc(1)], text: "圣宠 +1", story: "海棠树下，皇上扶你坐下，只问腹中孩子今日闹不闹。那一夜他宿在碎玉轩，什么也没做，只听你絮絮说了半宿的话。" },
+      {
+        id: "haitangXinzhuang",
+        name: "海棠新妆",
+        card: "yirongZhengsu",
+        effects: [sc(2)],
+        text: "圣宠 +2",
+        story: "你簪了一朵新开的海棠。皇上看了你很久，笑说等孩子落了地，要带他来看这满树的花。",
+      },
+      {
+        id: "dengxiaDushi",
+        name: "灯下读诗",
+        card: "jinyanShenxing",
+        effects: [q(1)],
+        text: "清誉 +1",
+        story: "你在灯下陪皇上读诗，读到「只恐夜深花睡去」，他笑着把你肩上的披风拢了拢，不许你熬夜。",
       },
     ],
   },
@@ -2136,7 +2164,7 @@ export const POPUP_TEXT = {
   } as Record<string, string>,
   openingRules: [
     "👭 眉庄冤屈洗刷、复了位分，说话更有分量：本关【眉庄相助】打出时，除了原有效果，还立刻抓 1 张牌。",
-    "🦚 皇后会在第 2 回合亲自登门。",
+    "🏵️ 皇后会在第 2 回合亲自登门。",
   ],
   huanghou:
     "皇后亲自来碎玉轩道贺，赏下一对玉镯：「华妃之事，妹妹受委屈了。往后六宫和睦，还要靠妹妹帮衬。」她笑得温和，你却想起翊坤宫倒下那日，她站在廊下一言不发的样子。",
@@ -2151,7 +2179,7 @@ export const POPUP_TEXT = {
     { name: "齐妃", text: "三阿哥的生母，王府时就跟着皇上，却不大有心计。她是皇后的旧人，向来唯景仁宫马首是瞻，见你得宠，心里早不痛快。" },
     { name: "祺贵人", text: "瓜尔佳氏，华妃倒后新近得宠，年轻娇纵。父亲鄂敏在前朝颇有势力，和甄家素来不睦。她进宫没多久，就常往景仁宫走动。" },
   ] as readonly { readonly name: string; readonly text: string }[],
-  huanghouRules: ["🦚 皇后事件：回合末按默认结算；打出卡面所列的牌，换成对应的赏赐。"],
+  huanghouRules: ["🏵️ 皇后事件：回合末按默认结算；打出卡面所列的牌，换成对应的赏赐。"],
   /** 开局规则说明里的第一幕事件规则。 */
   eventRules: [
     "🤝 盟友事件：第一次把握，获得她的盟友状态。",

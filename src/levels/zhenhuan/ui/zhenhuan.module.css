@@ -12,6 +12,7 @@
   --zh-crisis: #d9706a;
   --zh-story: #c49ad9;
   --zh-envy: #e08cb4;
+  --zh-huanghou: #e8a23c;
   min-height: 100vh;
   min-height: 100dvh;
   background:
@@ -670,6 +671,10 @@
   color: var(--zh-envy);
 }
 
+.kindHuanghou {
+  color: var(--zh-huanghou);
+}
+
 .tagGroup {
   display: inline-flex;
   flex-wrap: wrap;
@@ -697,6 +702,10 @@
   border-top: 3px solid var(--zh-envy);
 }
 
+.cardHuanghou {
+  border-top: 3px solid var(--zh-huanghou);
+}
+
 .cardStory {
   border-top: 3px solid var(--zh-story);
 }
@@ -714,9 +723,10 @@
 }
 
 .cardLocked {
-  border-color: var(--zh-muted);
-  --zh-edge: var(--zh-muted);
-  filter: saturate(0.3) brightness(0.88);
+  border-color: #3d5a80;
+  border-top-color: #3d5a80;
+  --zh-edge: #3d5a80;
+  filter: saturate(0.6) brightness(0.85);
 }
 
 .flavor {
