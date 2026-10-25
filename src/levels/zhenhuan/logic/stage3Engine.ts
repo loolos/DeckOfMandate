@@ -219,6 +219,8 @@ export type Z3State = {
   luofa: boolean;
   gengtie: boolean;
   songxing: boolean;
+  /** 与果郡王有过的往来，舟覆后变成遗物。 */
+  keepsakes: RelicId[];
   /** 温太医探视: the temporary card's uid, and whether 「为女儿撑下去」 was used. */
   changxiangsi: { played: CardId3[]; done: boolean } | null;
   yihua: Yihua | null;
@@ -910,6 +912,7 @@ function applyStoryOption(s: Z3State, inst: StoryInst3, option: StoryOption3, so
     summonSuccess(s);
   }
   if (option.secret && tier) addSecret(s, option.secret, tier);
+  if (option.relic && !s.keepsakes.includes(option.relic)) s.keepsakes.push(option.relic);
   switch (option.flag) {
     case "li":
     case "di":
@@ -1240,9 +1243,10 @@ function moveToPeak(s: Z3State): void {
 }
 
 function zhoufu(s: Z3State): void {
-  const relics: RelicId[] = [];
-  if (s.gengtie) relics.push("yiwuGengtie");
-  if (s.songxing) relics.push("yiwuDi");
+  const have = new Set<RelicId>(s.keepsakes);
+  if (s.gengtie) have.add("yiwuGengtie");
+  if (s.songxing) have.add("yiwuDi");
+  const relics = RELICS.filter((r) => have.has(r));
   let i = 0;
   const convert = (pile: CardInst3[]): CardInst3[] =>
     pile.map((c) => (c.id === "guojunwangXiangzhu" ? { uid: c.uid, id: relics[i++] ?? "yiwuPifeng" } : c));
@@ -1666,6 +1670,7 @@ export function newStage3(seed: number, carry: Carry3 | null): Z3State {
     luofa: false,
     gengtie: false,
     songxing: false,
+    keepsakes: [],
     changxiangsi: null,
     yihua: null,
     relicsBurned: 0,
