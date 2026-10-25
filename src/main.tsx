@@ -5,7 +5,6 @@ import ReactDOM from "react-dom/client";
 import { CampaignShell } from "./app/CampaignShell";
 import { I18nProvider } from "./locales";
 import "./styles/global.css";
-import { startVersionCheck } from "./app/versionCheck";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
@@ -14,4 +13,3 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
     </I18nProvider>
   </React.StrictMode>,
 );
-startVersionCheck();
