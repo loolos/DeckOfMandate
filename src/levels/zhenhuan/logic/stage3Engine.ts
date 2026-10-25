@@ -854,7 +854,7 @@ function shuhenjiao(s: Z3State, tier: LingrongTier): void {
   else log(s, "药膏清凉，伤处好得很快。");
 }
 
-function applyStoryOption(s: Z3State, inst: StoryInst3, option: StoryOption3, source: string, tier: LingrongTier | null): number {
+function applyStoryOption(s: Z3State, inst: StoryInst3, option: StoryOption3, source: string, tier: LingrongTier | null, lighter = false): number {
   const def = STORIES3[inst.id];
   inst.chosenOptionId = option.id;
   if (option.card) inst.viaCard = option.card;
@@ -876,7 +876,9 @@ function applyStoryOption(s: Z3State, inst: StoryInst3, option: StoryOption3, so
   log(s, told);
 
   if (option.xiayu) {
-    const cost = xiayuCost(s, option.xiayu);
+    const cost = xiayuCost(s, option.xiayu)
+      .map((d) => ({ ...d, amount: lighter ? Math.min(0, d.amount + 1) : d.amount }))
+      .filter((d) => d.amount !== 0);
     inst.result = cost.length ? cost.map((d) => `${RESOURCE3_LABEL[d.resource]} ${d.amount}`).join("、") : "没有代价";
     applyDeltas3(s, cost, def.name);
     removeStatusById(s, "fuxiongMengchen");
@@ -1436,7 +1438,8 @@ function endTurn3(s: Z3State): void {
     const def = STORIES3[inst.id];
     const option = def.options.find((o) => o.id === def.defaultOptionId)!;
     const msg = option.hidden ? `【${def.name}】未处理，${option.story}` : `未作选择，已按默认选项【${option.name}】处理【${def.name}】。`;
-    const delta = applyStoryOption(s, inst, option, msg, null);
+    const half = inst.pendingOptionId != null && option.xiayu != null;
+    const delta = applyStoryOption(s, inst, option, half ? `只凑了一张牌，【${def.name}】没能周全，按【${option.name}】处理，但皇上的怒气稍缓。` : msg, null, half);
     if (delta) changeRelation(s, delta);
   }
   if (!alive(s)) return;

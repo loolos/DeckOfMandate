@@ -200,6 +200,7 @@ describe("zhenhuan stage 3 engine", () => {
     u = act(u, { type: "playCard", cardUid: g2! });
     u = act(u, { type: "endTurn" });
     expect(u.log.some((l) => l.text.includes("跪求皇上"))).toBe(true);
+    expect(u.shengchong).toBeGreaterThan(base().shengchong - 2);
   });
 
   it("海棠春睡 (turn 3) makes a 未孕 player pregnant whatever is chosen", () => {

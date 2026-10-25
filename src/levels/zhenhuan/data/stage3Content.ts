@@ -1806,7 +1806,7 @@ export const STORIES3: Record<StoryId3, StoryDef3> = {
         two: true,
         effects: [],
         xiayu: "guo",
-        text: "须再打出一张牌；不扣圣宠，父亲在狱中少受些苦",
+        text: "须再打出一张牌（只打一张则按跪求皇上，惩罚减轻 1）；不扣圣宠，父亲在狱中少受些苦",
         story: "果郡王替你在前朝奔走，又打点了狱卒。父亲在狱里总算少吃了些苦头。",
       },
       {
@@ -1816,7 +1816,7 @@ export const STORIES3: Record<StoryId3, StoryDef3> = {
         two: true,
         effects: [],
         xiayu: "shoulong",
-        text: "须再打出一张牌；代价同托陵容",
+        text: "须再打出一张牌（只打一张则按跪求皇上，惩罚减轻 1）；代价同托陵容",
         story: "你让小允子拿体己银子在前朝四处打点，托人往狱里递话送物。父亲在狱中的日子好过了些。",
       },
       {
@@ -1826,7 +1826,7 @@ export const STORIES3: Record<StoryId3, StoryDef3> = {
         two: true,
         effects: [],
         xiayu: "jinyan",
-        text: "须再打出一张牌；不求人，只损圣宠，损得轻些",
+        text: "须再打出一张牌（只打一张则按跪求皇上，惩罚减轻 1）；不求人，只损圣宠，损得轻些",
         story: "你一个字也没有替父亲辩，只称病闭门，等着风头过去。皇上虽未见你，也没有迁怒碎玉轩。",
       },
       {
@@ -1837,7 +1837,7 @@ export const STORIES3: Record<StoryId3, StoryDef3> = {
         effects: [],
         xiayu: "lingrong",
         secret: "yuzhongShuxin",
-        text: "须再打出一张牌；代价同托果郡王",
+        text: "须再打出一张牌（只打一张则按跪求皇上，惩罚减轻 1）；代价同托果郡王",
         story: "陵容替你往狱里递了一封信。",
         tierStory: {
           close: "陵容说她父亲在狱里有旧识，替你把信递了进去。她回来时眼眶红红的，说甄伯父让姐姐保重。",
