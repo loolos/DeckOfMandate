@@ -144,8 +144,8 @@ export type Z3Action =
 export type Z3Outcome = "playing" | "won" | "lost";
 
 export type Yihua = {
-  /** The step now lit: 1 引驾, 2 偶遇, 3 改脉; 4 = all done. */
-  step: 1 | 2 | 3 | 4;
+  /** The step now lit: 1 引驾, 2 偶遇, 3 改脉, 4 登门; 5 = all done. */
+  step: 1 | 2 | 3 | 4 | 5;
   /** 引驾 cards played so far / needed (落发 needs 2). */
   yinjia: CardId3[];
   yinjiaNeed: number;
@@ -163,6 +163,8 @@ export type Yihua = {
   /** The card that made the 偶遇 succeed (picks the 偶遇 popup text). */
   ouyuCard?: CardId3;
   dushu: boolean;
+  /** 登门 opens the turn after 改脉: solve cards needed (fixed then) and played so far. */
+  dengmen: { doubt: number; relics: number; needed: number; played: CardId3[]; openTurn: number } | null;
 };
 
 export type Z3State = {
@@ -240,7 +242,7 @@ export type Z3State = {
   outcome: Z3Outcome;
   lossReason: string | null;
   lossKind: Loss3Kind | null;
-  victory: "return" | "perfect" | null;
+  victory: "return" | "perfect" | "narrow" | null;
   log: LogEntry[];
   actions: Z3Action[];
   turnStartActionCount: number;
@@ -463,10 +465,18 @@ export function yihuaAccepts(s: Z3State, cardId: CardId3): boolean {
   }
   if (y.step === 2) return false; // 偶遇 is its own 剧情事件【圣驾偶遇】
   if (y.step === 3) return cardId === "wenTaiyiZhenzhi";
+  if (y.step === 4) return y.dengmen != null && YIHUA.dengmenCards.includes(cardId);
   return false;
 }
 
 /** 甄远道下狱: how heavy it lands (0 light … 2 heavy). */
+/** 登门 needs: 疑点 + unburned 遗物 → 0 / 1 / 2 / 3 cards, +1 when you did not leave 体面自请. */
+export function dengmenNeeded(s: Z3State, doubt: number, relics: number): number {
+  const score = doubt + relics;
+  if (score <= 0) return 0;
+  return (score <= 2 ? 1 : score <= 4 ? 2 : 3) + (s.exitTier === 1 ? 0 : 1);
+}
+
 export function xiayuSeverity(s: Z3State): number {
   return Math.max(0, Math.min(2, 1 + (hasStatus3(s, "fuxiongMengchen") ? 1 : 0) - (s.suppressed.guaerjia ? 1 : 0)));
 }
@@ -1124,8 +1134,14 @@ function resolvePlay3(s: Z3State, cardUid: string, removeStatusUid?: string): vo
       applyDelta3(s, { resource: "qingyu", amount: 2 }, "笛箫合奏");
     }
   }
-  if (alive(s) && yihuaStep) advanceYihua(s, card.id);
-  if (alive(s) && s.yihua && s.yihua.step < 4 && YIHUA.doubtCards.includes(card.id)) changeDoubt(s, -1, def.name);
+  if (alive(s) && yihuaStep && s.yihua!.step !== 4) advanceYihua(s, card.id);
+  if (alive(s) && yihuaStep && s.yihua?.step === 4 && s.yihua.dengmen) {
+    const d = s.yihua.dengmen;
+    d.played.push(card.id);
+    log(s, `④ 登门：${YIHUA.dengmenStory[card.id]}（解牌 ${Math.min(d.played.length, d.needed)}/${d.needed}）`, "good");
+    if (d.played.length >= d.needed) finishDengmen(s);
+  }
+  if (alive(s) && s.yihua && s.yihua.step < 5 && YIHUA.doubtCards.includes(card.id)) changeDoubt(s, -1, def.name);
 
   // 5. 陵容 with nothing to answer: her company, 情分 +1 (after 纯元故衣, a cold word)
   if (alive(s) && isLingrong && tier && !answered) {
@@ -1210,9 +1226,26 @@ function advanceYihua(s: Z3State, card: CardId3): void {
   }
   if (y.step === 3) {
     y.step = 4;
-    y.doneTurn = s.turn;
-    log(s, `③ 改脉：${YIHUA.steps[2]!.story}脉案上的月份对上了。移花接木，三步俱成。`, "good");
+    log(s, `③ 改脉：${YIHUA.steps[2]!.story}脉案上的月份对上了。只是皇上明日要亲自登门。`, "good");
   }
+}
+
+function finishDengmen(s: Z3State): void {
+  const y = s.yihua!;
+  y.step = 5;
+  y.doneTurn = s.turn;
+  log(s, `④ 登门：${y.dengmen!.needed === 0 ? YIHUA.dengmenNoneDone : s.exitTier === 3 ? YIHUA.dengmenNarrow : YIHUA.dengmenDone}移花接木，四步俱成。`, "good");
+}
+
+function openDengmen(s: Z3State): void {
+  const y = s.yihua!;
+  const relics = relicsKept(s);
+  const needed = dengmenNeeded(s, y.doubt, relics);
+  y.dengmen = { doubt: y.doubt, relics, needed, played: [], openTurn: s.turn };
+  popup(s, "dengmen");
+  log(s, `皇上亲自登门：${needed === 0 ? YIHUA.dengmenOpen.none : YIHUA.dengmenOpen.some}`, "info");
+  if (needed === 0) finishDengmen(s);
+  else log(s, `登门需打出 ${needed} 张解牌（📜疑点 ${y.doubt}、遗物 ${relics} 件${s.exitTier === 1 ? "" : "，非体面自请多 1 张"}），须在本回合与下一回合内打够（一回合内打够才可能完胜，少 1 张为险胜）。`, "info");
 }
 
 // ---------------------------------------------------------------- turn flow
@@ -1276,7 +1309,7 @@ function enterYihua(s: Z3State): void {
     s.crisisPool = shuffleInto(s, [...s.crisisPool, "jingrenLairen"]);
     log(s, "景仁宫还在打听你的消息：【景仁宫来人】洗入危机池。", "bad");
   }
-  s.yihua = { step: 1, yinjia: [], yinjiaNeed: s.luofa ? 2 : 1, duishi: false, doubt: DOUBT.start, doneTurn: null, ouyuDue: null, ouyuTurn: null, yinjiaTurn: null, dushu: false };
+  s.yihua = { step: 1, yinjia: [], yinjiaNeed: s.luofa ? 2 : 1, duishi: false, doubt: DOUBT.start, doneTurn: null, ouyuDue: null, ouyuTurn: null, yinjiaTurn: null, dushu: false, dengmen: null };
   log(s, "—— 第三幕 · 移花接木 —— 温太医诊出喜脉，牌库加入 1 张【温太医相助】。持续事件【🎎移花接木】开始，📜疑点为 1。", "info");
   popup(s, "ximai");
 }
@@ -1349,6 +1382,8 @@ function beginTurn3(s: Z3State, turn: number): void {
     log(s, "皇上驾临甘露寺：本回合解决【圣驾偶遇】才算偶遇成功。", "info");
     openStory(s, "yihuaOuyu");
   }
+
+  if (s.yihua?.step === 4 && !s.yihua.dengmen) openDengmen(s);
 
   const fixed = FIXED_STORIES3[turn];
   // 嫔位已报过喜脉：海棠春睡只是留宿夜谈
@@ -1501,7 +1536,7 @@ function endTurn3(s: Z3State): void {
 
   // 睹物生疑: every 遗物 still in hand at the end of any turn between 引驾 and 回宫 (and the 偶遇 turn itself)
   const yh = s.yihua;
-  if (yh && ((yh.yinjiaTurn != null && yh.step < 4 && s.turn > yh.yinjiaTurn) || yh.ouyuTurn === s.turn)) {
+  if (yh && ((yh.yinjiaTurn != null && yh.step < 5 && s.turn > yh.yinjiaTurn) || yh.ouyuTurn === s.turn)) {
     const n = s.hand.filter((c) => isRelic(c.id)).length;
     if (n > 0) {
       yh.dushu = true;
@@ -1591,11 +1626,24 @@ function endTurn3(s: Z3State): void {
   // 移花接木
   const y = s.yihua;
   if (y) {
-    if (y.step === 4) {
+    if (y.step === 5) {
       s.outcome = "won";
-      const perfect = y.doneTurn != null && y.doneTurn < STAGE3.perfectBefore && relicsKept(s) === 0 && s.exitTier === 1;
-      s.victory = perfect ? "perfect" : "return";
-      log(s, perfect ? "凤阙归来：完美结局！" : "凤阙归来：钮祜禄氏，封熹妃，即日回宫。", "good");
+      const perfect = y.doneTurn != null && y.doneTurn < STAGE3.perfectBefore && relicsKept(s) === 0 && s.exitTier === 1 && y.dengmen?.openTurn === y.doneTurn;
+      const narrow = s.exitTier === 3;
+      s.victory = narrow ? "narrow" : perfect ? "perfect" : "return";
+      log(s, narrow ? "凤阙归来（险胜）：皇上心存疑虑，仍下旨接你回宫。" : perfect ? "凤阙归来：完胜！" : "凤阙归来：钮祜禄氏，封熹妃，即日回宫。", "good");
+      return;
+    }
+    const dm = y.dengmen;
+    if (y.step === 4 && dm && s.turn >= Math.min(dm.openTurn + 1, STAGE3.totalTurns)) {
+      if (dm.needed - dm.played.length === 1) {
+        y.step = 5;
+        y.doneTurn = s.turn;
+        s.outcome = "won";
+        s.victory = "narrow";
+        log(s, `④ 登门：${YIHUA.dengmenNarrow}`, "good");
+        log(s, "凤阙归来（险胜）：皇上心存疑虑，仍下旨接你回宫。", "good");
+      } else lose(s, "登门两回合内解牌不足，皇上拂袖而去", "deadline");
       return;
     }
     if (y.step === 2 && y.ouyuDue === s.turn) {
@@ -1824,6 +1872,7 @@ export function endingStory3(s: Z3State): string[] {
   else if (s.relicsBurned > 0) lines.push(ENDING.relicsBurned);
   lines.push(ENDING.ximai);
   if (s.yihua?.duishi) lines.push(ENDING.duishi);
+  if (s.victory === "narrow") lines.push(YIHUA.dengmenNarrow);
   lines.push(...POPUP_TEXT.homecoming);
   if (s.exitTier) lines.push(POPUP_TEXT.homecomingTier[s.exitTier]!);
   if (s.exitTierLingrong) lines.push(ENDING.lingrong[s.exitTierLingrong]);

@@ -620,14 +620,14 @@ function YihuaCard({ state, fold, dispatch }: { state: Z3State; fold: Fold; disp
   const y = state.yihua;
   if (!y) return null;
   const inHand = (id: CardId3) => state.hand.some((x) => x.id === id && yihuaAccepts(state, id));
-  const stepCards: readonly (readonly CardId3[])[] = [y.yinjiaNeed > 1 ? [...YIHUA.yinjiaCards, YIHUA.luofaExtra] : YIHUA.yinjiaCards, ["chanyuXiushen", "jingchaiBuqun"], ["wenTaiyiZhenzhi"]];
+  const stepCards: readonly (readonly CardId3[])[] = [y.yinjiaNeed > 1 ? [...YIHUA.yinjiaCards, YIHUA.luofaExtra] : YIHUA.yinjiaCards, ["chanyuXiushen", "jingchaiBuqun"], ["wenTaiyiZhenzhi"], YIHUA.dengmenCards];
   const relicCount = state.hand.filter((c) => isRelic(c.id)).length;
   return (
     <SpecialCard
       emoji={YIHUA.emoji}
       name={YIHUA.name}
       art="yihua"
-      done={y.step === 4}
+      done={y.step === 5}
       tag={
         <>
           <Tag tag="yihua" tone={styles.kindTrial} dispatch={dispatch}>
@@ -639,7 +639,7 @@ function YihuaCard({ state, fold, dispatch }: { state: Z3State; fold: Fold; disp
       fold={fold}
       dispatch={dispatch}
     >
-      {y.step === 4 ? <ResolvedBanner icon="👑" label="三步俱成" detail="回合末回宫。" /> : null}
+      {y.step === 5 ? <ResolvedBanner icon="👑" label="四步俱成" detail="回合末回宫。" /> : null}
       <p className={styles.flavor}>{YIHUA.flavor}</p>
       {YIHUA.steps.map((s, i) => {
         const n = i + 1;
@@ -648,7 +648,7 @@ function YihuaCard({ state, fold, dispatch }: { state: Z3State; fold: Fold; disp
           <div key={s.name} className={[styles.option, state_ === "now" && styles.optionChosen, state_ === "done" && styles.stepStory].filter(Boolean).join(" ")}>
             <span>
               {mark(state_ === "done")} <strong>
-                {["①", "②", "③"][i]} {s.emoji} {s.name}
+                {["①", "②", "③", "④"][i]} {s.emoji} {s.name}
               </strong>
               ：{n === 1 && state_ === "done" ? y.yinjia.map((id) => YIHUA.yinjiaStory[id] ?? "").join("") || s.story : s.story}
               {n === 1 ? (
@@ -657,10 +657,11 @@ function YihuaCard({ state, fold, dispatch }: { state: Z3State; fold: Fold; disp
                   {y.yinjiaNeed > 1 ? `（已落发：要打 ${y.yinjiaNeed} 张，至少 1 张槿汐，另一张可以是眉庄；已打 ${y.yinjia.length} 张）` : ""}
                 </>
               ) : null}
-              {relicCount > 0 && y.step >= 2 && y.step < 4 ? (n === 2 ? <span className={styles.endHint}> 手里有 {relicCount} 件遗物：回合结束时还在手里，疑点 +{relicCount}（睹物生疑）。</span> : null) : null}
+              {relicCount > 0 && y.step >= 2 && y.step < 5 ? (n === 2 ? <span className={styles.endHint}> 手里有 {relicCount} 件遗物：回合结束时还在手里，疑点 +{relicCount}（睹物生疑）。</span> : null) : null}
               {n === 2 && y.step === 2 && y.ouyuDue != null ? (y.ouyuDue === state.turn ? "（皇上今日驾临：本回合解决【圣驾偶遇】）" : `（第 ${y.ouyuDue} 回合皇上驾临）`) : ""}
               {n === 2 && y.step < 2 ? `（引驾完成后第 ${YIHUA.ouyuDelay} 回合；没成隔一回合再来）` : ""}
               {n === 3 ? "（偶遇之后打出温太医相助即完成）" : ""}
+              {n === 4 ? (y.dengmen ? `（皇上已登门：须在第 ${y.dengmen.openTurn}–${y.dengmen.openTurn + 1} 回合内打出 ${y.dengmen.needed} 张解牌${y.dengmen.needed === 0 ? "，只需过剧情" : `，已打 ${Math.min(y.dengmen.played.length, y.dengmen.needed)} 张；疑点 ${y.dengmen.doubt}、遗物 ${y.dengmen.relics} 件${state.exitTier === 1 ? "" : "，非体面自请多 1 张"}`}）` : "（改脉的下一回合皇上登门：按当时的疑点与未焚的遗物定张数，两回合内打够）") : ""}
               {state_ !== "done" ? (
                 <>
                   <br />
@@ -1081,6 +1082,17 @@ function PopupBody({ state, id }: { state: Z3State; id: PopupId }) {
         </>
       );
     }
+    case "dengmen": {
+      const d = state.yihua?.dengmen;
+      return (
+        <>
+          <p>{d && d.needed === 0 ? YIHUA.dengmenOpen.none : YIHUA.dengmenOpen.some}</p>
+          <p className={styles.muted}>
+            {d && d.needed === 0 ? "皇上没有起疑，只需过完剧情。" : `${POPUP_TEXT.dengmenRules}本次需要 ${d?.needed ?? 0} 张。`}
+          </p>
+        </>
+      );
+    }
     case "tonghuatai": {
       const meet = state.guoMeet ?? "di";
       return (
@@ -1183,6 +1195,7 @@ const POPUP_TITLE: Record<PopupId, string> = {
   zhoufu: "🌊 舟覆噩耗",
   ximai: "💗 喜脉惊心",
   ouyu: "🌸 圣驾偶遇",
+  dengmen: "🚪 皇上登门",
 };
 
 function OutcomeModal({ state, onRestart, onMenu }: { state: Z3State; onRestart: () => void; onMenu: () => void }) {
@@ -1192,7 +1205,7 @@ function OutcomeModal({ state, onRestart, onMenu }: { state: Z3State; onRestart:
   return (
     <div className={styles.overlay} role="dialog" aria-modal="true" aria-labelledby="zh3-outcome-title">
       <div className={styles.modal}>
-        <h2 id="zh3-outcome-title">{won ? (state.victory === "perfect" ? `🌟 完美结局：${HOMECOMING.name}` : `${HOMECOMING.emoji} ${HOMECOMING.name}`) : "🥀 功亏一篑"}</h2>
+        <h2 id="zh3-outcome-title">{won ? (state.victory === "perfect" ? `🌟 完胜：${HOMECOMING.name}` : state.victory === "narrow" ? `${HOMECOMING.emoji} 险胜：${HOMECOMING.name}` : `${HOMECOMING.emoji} 大胜：${HOMECOMING.name}`) : "🥀 功亏一篑"}</h2>
         {won ? (
           <>
             {endingStory3(state).map((line) => (
