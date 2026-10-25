@@ -472,11 +472,11 @@ function ChunyuanCard({ state, fold, dispatch }: { state: Z3State; fold: Fold; d
       <p className={styles.check}>
         {mark(c.first != null)} ① 起疑：<Chips ids={CHUNYUAN.firstCards} lit={inHand} />
       </p>
-      {c.first ? <p className={styles.rule}>{CHUNYUAN.firstStory[c.first]}</p> : null}
+      {c.first ? <p className={styles.stepStory}>{CHUNYUAN.firstStory[c.first]}</p> : null}
       <p className={styles.check}>
         {mark(c.second != null)} ② 查实（须先起疑）：<Chips ids={CHUNYUAN.checkCards} lit={inHand} />
       </p>
-      {c.second ? <p className={styles.rule}>{CHUNYUAN.checkStory[c.second]}</p> : null}
+      {c.second ? <p className={styles.stepStory}>{CHUNYUAN.checkStory[c.second]}</p> : null}
       <p className={styles.rule}>
         <span className={styles.ruleLabel}>照现在：</span>
         {done ? "识破，免祸。" : c.first ? `只起疑，回合末圣宠 -${CHUNYUAN.halfPenalty}。` : `没识破，回合末圣宠 -${CHUNYUAN.failPenalty}。`}
@@ -518,7 +518,7 @@ function ConfrontCard({ state, fold, dispatch }: { state: Z3State; fold: Fold; d
         {exit.name === EXIT[4].name ? "：关卡失败" : ""}
       </p>
       {c.stories.map((line) => (
-        <p key={line} className={styles.rule}>
+        <p key={line} className={styles.stepStory}>
           {line}
         </p>
       ))}
@@ -548,7 +548,7 @@ function FeilaoCard({ state, fold, dispatch }: { state: Z3State; fold: Fold; dis
         {tierDef.name}：{expandedEffect3(tierDef.text)}
       </p>
       {f.played.map((id, i) => (
-        <p key={`${id}-${i}`} className={styles.rule}>
+        <p key={`${id}-${i}`} className={styles.stepStory}>
           {FEILAO.cardStory[id]}
         </p>
       ))}
@@ -616,7 +616,7 @@ function YihuaCard({ state, fold, dispatch }: { state: Z3State; fold: Fold; disp
         const n = i + 1;
         const state_ = y.step > n ? "done" : y.step === n ? "now" : "later";
         return (
-          <div key={s.name} className={[styles.option, state_ === "now" && styles.optionChosen].filter(Boolean).join(" ")}>
+          <div key={s.name} className={[styles.option, state_ === "now" && styles.optionChosen, state_ === "done" && styles.stepStory].filter(Boolean).join(" ")}>
             <span>
               {mark(state_ === "done")} <strong>
                 {["①", "②", "③"][i]} {s.emoji} {s.name}
