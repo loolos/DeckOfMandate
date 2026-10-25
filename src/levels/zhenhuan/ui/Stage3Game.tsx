@@ -553,11 +553,7 @@ function FeilaoCard({ state, fold, dispatch }: { state: Z3State; fold: Fold; dis
     <SpecialCard emoji={FEILAO.emoji} name={FEILAO.name} art="feilao" done={t === 0} summary={`${tierDef.name} · ${compactEffect3(tierDef.text)}`} fold={fold} dispatch={dispatch}>
       <p className={styles.flavor}>{FEILAO.flavor}</p>
       <p className={styles.rule}>
-        <span className={styles.ruleLabel}>起始档位：</span>
-        {FEILAO.tiers[f.base]!.name}（静白在寺里越嚣张，档位越重）
-      </p>
-      <p className={styles.rule}>
-        <span className={styles.ruleLabel}>现在：</span>
+        <span className={styles.ruleLabel}>眼下：</span>
         {tierDef.name}：{expandedEffect3(tierDef.text)}
       </p>
       {f.played.map((id, i) => (
