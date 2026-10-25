@@ -113,7 +113,7 @@ export type EventInst3 = {
   story?: string;
 };
 
-export type StoryInst3 = { readonly id: StoryId3; chosenOptionId: string | null; viaCard?: CardId3; pendingOptionId?: string; result?: string; story?: string };
+export type StoryInst3 = { readonly id: StoryId3; chosenOptionId: string | null; viaCard?: CardId3; pendingOptionId?: string; result?: string; story?: string; /** 甄远道下狱: 已打出的解牌数与逐张剧情。 */ solved?: number; steps?: string[] };
 export type StatusInst3 = { readonly uid: string; readonly id: StatusId3; readonly appliesFromTurn: number; remaining: number };
 export type LogTone = "info" | "good" | "bad";
 export type LogEntry = { readonly turn: number; readonly text: string; readonly tone: LogTone };
@@ -487,31 +487,20 @@ export function dengmenNeeded(s: Z3State, doubt: number, relics: number): number
   return (score <= 2 ? 1 : score <= 4 ? 2 : 3) + (s.exitTier === 1 ? 0 : 1);
 }
 
-export function xiayuSeverity(s: Z3State): number {
-  return Math.max(0, Math.min(2, 1 + (hasStatus3(s, "fuxiongMengchen") ? 1 : 0) - (s.suppressed.guaerjia ? 1 : 0)));
+/** 甄远道下狱的局势 s：起始 3，【父兄蒙尘】+1，打压过祺贵人 -1，每打出一张解牌 -1；0 即完美解决。 */
+export function xiayuS(s: Z3State, solved: number): number {
+  return Math.max(0, 3 + (hasStatus3(s, "fuxiongMengchen") ? 1 : 0) - (s.suppressed.guaerjia ? 1 : 0) - solved);
 }
 
-export function xiayuCost(s: Z3State, choice: XiayuChoice): Delta3[] {
-  const sev = xiayuSeverity(s);
-  switch (choice) {
-    case "kneel":
-      return [{ resource: "shengchong", amount: -(sev + 1) }];
-    case "taihou":
-      return [{ resource: "qingyu", amount: -(sev + 1) }];
-    case "guo": {
-      const n = Math.max(0, sev - 1) + (s.guoMeet === "li" ? 1 : 0);
-      return n > 0 ? [{ resource: "qingyu", amount: -n }] : [];
-    }
-    case "jinyan": {
-      const n = Math.max(0, sev - 1) + 1;
-      return [{ resource: "shengchong", amount: -n }];
-    }
-    case "shoulong":
-    case "lingrong": {
-      const n = Math.max(0, sev - 1);
-      return n > 0 ? [{ resource: "qingyu", amount: -n }] : [];
-    }
-  }
+/** 未解决时扣圣宠与清誉各 2s；求太后少扣 2 圣宠，跪求皇上少扣 2 清誉。 */
+export function xiayuCost(s: Z3State, choice: XiayuChoice, solved = 0): Delta3[] {
+  const n = 2 * xiayuS(s, solved);
+  const sc = choice === "taihou" ? Math.max(0, n - 2) : n;
+  const qy = choice === "kneel" ? Math.max(0, n - 2) : n;
+  const cost: Delta3[] = [];
+  if (sc > 0) cost.push({ resource: "shengchong", amount: -sc });
+  if (qy > 0) cost.push({ resource: "qingyu", amount: -qy });
+  return cost;
 }
 
 /** 把柄 held (hidden): 第二关带入 + 第一幕记下。 */
@@ -888,7 +877,29 @@ function shuhenjiao(s: Z3State, tier: LingrongTier): void {
   else log(s, "药膏清凉，伤处好得很快。");
 }
 
-function applyStoryOption(s: Z3State, inst: StoryInst3, option: StoryOption3, source: string, tier: LingrongTier | null, lighter = false): number {
+/** 甄远道下狱：每打出一张解牌局势 s -1，并给出这张牌的剧情；s 归零即完美解决。 */
+function xiayuStep(s: Z3State, inst: StoryInst3, option: StoryOption3, tier: LingrongTier | null, name: string): number {
+  inst.solved = (inst.solved ?? 0) + 1;
+  const told = option.tierStory && tier ? option.tierStory[tier] : option.story;
+  (inst.steps ??= []).push(told);
+  log(s, `【${name}】·${option.name}`);
+  log(s, told);
+  if (option.secret && tier) addSecret(s, option.secret, tier);
+  const left = xiayuS(s, inst.solved);
+  if (left > 0) {
+    log(s, `【${name}】尚未了结，局势还差 ${left} 档。`, "info");
+    return 0;
+  }
+  inst.chosenOptionId = option.id;
+  inst.viaCard = option.card;
+  inst.story = told;
+  inst.result = "完美解决，没有代价";
+  log(s, `【${name}】完美解决。`, "good");
+  removeStatusById(s, "fuxiongMengchen");
+  return 0;
+}
+
+function applyStoryOption(s: Z3State, inst: StoryInst3, option: StoryOption3, source: string, tier: LingrongTier | null): number {
   const def = STORIES3[inst.id];
   inst.chosenOptionId = option.id;
   if (option.card) inst.viaCard = option.card;
@@ -910,9 +921,7 @@ function applyStoryOption(s: Z3State, inst: StoryInst3, option: StoryOption3, so
   log(s, told);
 
   if (option.xiayu) {
-    const cost = xiayuCost(s, option.xiayu)
-      .map((d) => ({ ...d, amount: lighter ? Math.min(0, d.amount + 1) : d.amount }))
-      .filter((d) => d.amount !== 0);
+    const cost = xiayuCost(s, option.xiayu, inst.solved ?? 0);
     inst.result = cost.length ? cost.map((d) => `${RESOURCE3_LABEL[d.resource]} ${d.amount}`).join("、") : "没有代价";
     applyDeltas3(s, cost, def.name);
     removeStatusById(s, "fuxiongMengchen");
@@ -1023,6 +1032,10 @@ function resolvePlay3(s: Z3State, cardUid: string, removeStatusUid?: string): vo
   const startedNow = new Set<StoryInst3>();
   for (const { story, option } of responses) {
     if (!alive(s)) break;
+    if (option.xiayu && option.card) {
+      relationDelta += xiayuStep(s, story, option, isLingrong ? tier : null, STORIES3[story.id].name);
+      continue;
+    }
     if (option.two) {
       if (!story.pendingOptionId) {
         story.pendingOptionId = option.id;
@@ -1524,8 +1537,7 @@ function endTurn3(s: Z3State): void {
     const def = STORIES3[inst.id];
     const option = def.options.find((o) => o.id === def.defaultOptionId)!;
     const msg = option.hidden ? `【${def.name}】未处理，${option.story}` : `未作选择，已按默认选项【${option.name}】处理【${def.name}】。`;
-    const half = inst.pendingOptionId != null && option.xiayu != null;
-    const delta = applyStoryOption(s, inst, option, half ? `只凑了一张牌，【${def.name}】没能周全，按【${option.name}】处理，但皇上的怒气稍缓。` : msg, null, half);
+    const delta = applyStoryOption(s, inst, option, msg, null);
     if (delta) changeRelation(s, delta);
   }
   if (!alive(s)) return;

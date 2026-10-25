@@ -41,6 +41,7 @@ import {
   replay3,
   storyBasicOptions3,
   xiayuCost,
+  xiayuS,
   playLimit3,
   type Carry3,
   type EventInst3,
@@ -91,8 +92,8 @@ function takeToHand(s: Z3State, uid: string): void {
 /** Ends turns with default choices until `turn` begins, keeping 清誉 / 圣宠 / 身子 topped up so nothing is lost on the way. */
 function advanceTo(s: Z3State, turn: number): Z3State {
   while (s.turn < turn) {
-    s.qingyu = Math.max(s.qingyu, 6);
-    if (s.act === 1) s.shengchong = Math.max(s.shengchong, 6);
+    s.qingyu = Math.max(s.qingyu, 12);
+    if (s.act === 1) s.shengchong = Math.max(s.shengchong, 12);
     s.shenzi = 6;
     if (s.yihua) s.yihua.doubt = 1;
     s = act(s, { type: "endTurn" });
@@ -194,7 +195,7 @@ describe("zhenhuan stage 3 engine", () => {
     expect(s.secrets["enshang.jingrenHoushang" as keyof typeof s.secrets]).toBe(1);
   });
 
-  it("甄远道下狱: 托果郡王 needs one more card; alone it falls back to 跪求皇上", () => {
+  it("甄远道下狱: 每张解牌局势 -1，归零完美解决；未了结按默认跪求皇上扣 2s", () => {
     const base = () => {
       const s = advanceTo(newStage3(5, CARRY), 8);
       clearBoard(s);
@@ -202,25 +203,29 @@ describe("zhenhuan stage 3 engine", () => {
       return s;
     };
     let s = base();
-    const [g, j] = setHand(s, ["guojunwangXiangzhu", "shoulongRenxin"]);
+    const [g, j, k] = setHand(s, ["guojunwangXiangzhu", "shoulongRenxin", "jinyanShenxing"]);
     s = act(s, { type: "playCard", cardUid: g! });
-    expect(s.stories[0]!.chosenOptionId).toBeNull();
     s = act(s, { type: "playCard", cardUid: j! });
-    expect(s.stories[0]!.chosenOptionId).toBe("tuoGuo");
-    // 眉庄相助与此事无关，不算第二张
+    expect(s.stories[0]!.chosenOptionId).toBeNull();
+    expect(s.stories[0]!.steps).toHaveLength(2);
+    s = act(s, { type: "playCard", cardUid: k! });
+    expect(s.stories[0]!.chosenOptionId).toBe("yinrenBuyan");
+    expect(s.stories[0]!.result).toContain("完美解决");
+    // 眉庄相助与此事无关，不算解牌
     let w = base();
-    const [g3, t3, j3] = setHand(w, ["guojunwangXiangzhu", "meizhuangXiangzhu", "jinyanShenxing"]);
-    w = act(w, { type: "playCard", cardUid: g3! });
+    const [t3] = setHand(w, ["meizhuangXiangzhu"]);
     w = act(w, { type: "playCard", cardUid: t3! });
-    expect(w.stories[0]!.chosenOptionId).toBeNull();
-    w = act(w, { type: "playCard", cardUid: j3! });
-    expect(w.stories[0]!.chosenOptionId).toBe("tuoGuo");
+    expect(w.stories[0]!.solved).toBeUndefined();
+    // 一张都没打：默认跪求皇上，s=3 → 圣宠 -6、清誉 -4
+    expect(xiayuCost(base(), "kneel", 0)).toEqual([
+      { resource: "shengchong", amount: -6 },
+      { resource: "qingyu", amount: -4 },
+    ]);
     let u = base();
     const [g2] = setHand(u, ["guojunwangXiangzhu"]);
     u = act(u, { type: "playCard", cardUid: g2! });
     u = act(u, { type: "endTurn" });
     expect(u.log.some((l) => l.text.includes("跪求皇上"))).toBe(true);
-    expect(u.shengchong).toBeGreaterThan(base().shengchong - 2);
   });
 
   it("海棠春睡 (turn 3) makes a 未孕 player pregnant whatever is chosen", () => {
@@ -442,15 +447,23 @@ describe("zhenhuan stage 3 engine", () => {
     expect(resentful.at(-1)!.line).toBe(FABRICATED_SECRET);
   });
 
-  it("甄远道下狱 cost: 父兄蒙尘 heavier, 打压祺贵人 lighter", () => {
+  it("甄远道下狱 cost: s 起始 3，父兄蒙尘 +1，打压祺贵人 -1，每张解牌 -1", () => {
     const s = newStage3(1, CARRY);
-    expect(xiayuCost(s, "kneel")).toEqual([{ resource: "shengchong", amount: -2 }]);
-    expect(xiayuCost(s, "lingrong")).toEqual([]);
+    expect(xiayuS(s, 0)).toBe(3);
+    expect(xiayuS(s, 1)).toBe(2);
+    expect(xiayuS(s, 5)).toBe(0);
+    expect(xiayuCost(s, "taihou", 0)).toEqual([
+      { resource: "shengchong", amount: -4 },
+      { resource: "qingyu", amount: -6 },
+    ]);
     withStatus(s, "fuxiongMengchen");
-    expect(xiayuCost(s, "kneel")).toEqual([{ resource: "shengchong", amount: -3 }]);
-    expect(xiayuCost(s, "guo")).toEqual([{ resource: "qingyu", amount: -1 }]);
+    expect(xiayuS(s, 0)).toBe(4);
     s.suppressed.guaerjia = true;
-    expect(xiayuCost(s, "taihou")).toEqual([{ resource: "qingyu", amount: -2 }]);
+    expect(xiayuS(s, 0)).toBe(3);
+    expect(xiayuCost(s, "kneel", 2)).toEqual([
+      { resource: "shengchong", amount: -2 },
+    ]);
+    expect(xiayuCost(s, "kneel", 3)).toEqual([]);
   });
 
   it("鄂敏参本: 没化解 清誉 -4 + 父兄蒙尘; 一张解牌 清誉 -1 + 父兄蒙尘; 化解也 清誉 -1", () => {
