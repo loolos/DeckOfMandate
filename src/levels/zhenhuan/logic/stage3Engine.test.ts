@@ -851,6 +851,19 @@ describe("zhenhuan stage 3 engine", () => {
     expect(s.outcome).toBe("won");
   });
 
+  it("皇上登门: one card short at the deadline is a 险胜, two short is a loss", () => {
+    const run = (played: CardId3[]) => {
+      let s = advanceTo(newStage3(16, CARRY), 33);
+      clearBoard(s);
+      s.yihua = { step: 4, yinjia: ["jinxiXiangzhu"], yinjiaNeed: 1, duishi: true, doubt: 0, doneTurn: null, ouyuDue: null, ouyuTurn: 27, yinjiaTurn: 25, dushu: false, dengmen: { doubt: 3, relics: 0, needed: 3, played } };
+      return act(s, { type: "endTurn" });
+    };
+    const narrow = run(["chanyuXiushen", "jingchaiBuqun"]);
+    expect(narrow.outcome).toBe("won");
+    expect(narrow.victory).toBe("narrow");
+    expect(run(["chanyuXiushen"]).outcome).toBe("lost");
+  });
+
   it("皇上登门: 温太医相助 counts, and the step spans turns", () => {
     let s = advanceTo(newStage3(15, CARRY), 29);
     clearBoard(s);

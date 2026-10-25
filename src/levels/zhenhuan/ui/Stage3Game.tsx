@@ -1205,7 +1205,7 @@ function OutcomeModal({ state, onRestart, onMenu }: { state: Z3State; onRestart:
   return (
     <div className={styles.overlay} role="dialog" aria-modal="true" aria-labelledby="zh3-outcome-title">
       <div className={styles.modal}>
-        <h2 id="zh3-outcome-title">{won ? (state.victory === "perfect" ? `🌟 完美结局：${HOMECOMING.name}` : `${HOMECOMING.emoji} ${HOMECOMING.name}`) : "🥀 功亏一篑"}</h2>
+        <h2 id="zh3-outcome-title">{won ? (state.victory === "perfect" ? `🌟 完胜：${HOMECOMING.name}` : state.victory === "narrow" ? `${HOMECOMING.emoji} 险胜：${HOMECOMING.name}` : `${HOMECOMING.emoji} 大胜：${HOMECOMING.name}`) : "🥀 功亏一篑"}</h2>
         {won ? (
           <>
             {endingStory3(state).map((line) => (

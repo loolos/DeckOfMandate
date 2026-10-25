@@ -242,7 +242,7 @@ export type Z3State = {
   outcome: Z3Outcome;
   lossReason: string | null;
   lossKind: Loss3Kind | null;
-  victory: "return" | "perfect" | null;
+  victory: "return" | "perfect" | "narrow" | null;
   log: LogEntry[];
   actions: Z3Action[];
   turnStartActionCount: number;
@@ -1640,6 +1640,16 @@ function endTurn3(s: Z3State): void {
     if (y.step < 3) changeDoubt(s, 1, "召幸迟迟未成，月份越差越多");
     if (!alive(s)) return;
     if (s.turn >= STAGE3.totalTurns) {
+      const d = y.dengmen;
+      if (y.step === 4 && d && d.needed - d.played.length === 1) {
+        y.step = 5;
+        y.doneTurn = s.turn;
+        s.outcome = "won";
+        s.victory = "narrow";
+        log(s, `④ 登门：${YIHUA.dengmenNarrow}`, "good");
+        log(s, "凤阙归来（险胜）：皇上心存疑虑，仍下旨接你回宫。", "good");
+        return;
+      }
       lose(s, "第 33 回合末移花接木仍未完成", "deadline");
       return;
     }
@@ -1859,6 +1869,7 @@ export function endingStory3(s: Z3State): string[] {
   else if (s.relicsBurned > 0) lines.push(ENDING.relicsBurned);
   lines.push(ENDING.ximai);
   if (s.yihua?.duishi) lines.push(ENDING.duishi);
+  if (s.victory === "narrow") lines.push(YIHUA.dengmenNarrow);
   lines.push(...POPUP_TEXT.homecoming);
   if (s.exitTier) lines.push(POPUP_TEXT.homecomingTier[s.exitTier]!);
   if (s.exitTierLingrong) lines.push(ENDING.lingrong[s.exitTierLingrong]);
