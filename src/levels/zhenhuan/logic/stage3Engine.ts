@@ -1242,7 +1242,7 @@ function advanceYihua(s: Z3State, card: CardId3): void {
   }
   if (y.step === 3) {
     y.step = 4;
-    log(s, `③ 改脉：${YIHUA.steps[2]!.story}脉案上的月份对上了。只是皇上明日要亲自登门。`, "good");
+    log(s, `③ 改脉：${YIHUA.maiDone}脉案上的月份对上了。只是皇上明日要亲自登门。`, "good");
   }
 }
 
