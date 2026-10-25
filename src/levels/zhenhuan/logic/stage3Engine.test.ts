@@ -578,6 +578,8 @@ describe("zhenhuan stage 3 engine", () => {
     const [bu] = setHand(s, ["jingchaiBuqun"]);
     s = act(s, { type: "playCard", cardUid: bu! });
     expect(s.yihua!.step).toBe(3);
+    expect(s.yihua!.ouyuCard).toBe("jingchaiBuqun");
+    expect(s.popups).toContain("ouyu");
   });
 
   it("耳目窥伺: unresolved gives 眼线环伺 (draw -1, never below 1) and no 清誉 loss", () => {

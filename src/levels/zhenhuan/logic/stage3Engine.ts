@@ -157,6 +157,8 @@ export type Yihua = {
   ouyuTurn: number | null;
   /** The turn ① 引驾 was done: from the next turn on until 回宫, 遗物 in hand at each turn's end raise 疑点. */
   yinjiaTurn: number | null;
+  /** The card that made the 偶遇 succeed (picks the 偶遇 popup text). */
+  ouyuCard?: CardId3;
   dushu: boolean;
 };
 
@@ -930,7 +932,7 @@ function applyStoryOption(s: Z3State, inst: StoryInst3, option: StoryOption3, so
       s.songxing = true;
       break;
     case "ouyu":
-      if (s.yihua?.step === 2) advanceYihua(s, "chanyuXiushen");
+      if (s.yihua?.step === 2) advanceYihua(s, option.card ?? "chanyuXiushen");
       break;
   }
   if (inst.id === "tonghuataiChuyu") afterTonghuatai(s);
@@ -1192,6 +1194,8 @@ function advanceYihua(s: Z3State, card: CardId3): void {
   }
   if (y.step === 2) {
     y.step = 3;
+    y.ouyuCard = card;
+    popup(s, "ouyu");
     log(s, `② 偶遇：${YIHUA.ouyuStory}`, "good");
     if (s.exitShengchong != null) {
       s.shengchong = s.exitShengchong;

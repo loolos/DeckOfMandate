@@ -2383,6 +2383,19 @@ export const YIHUA = {
   ouyuRetry: 2,
   /** 移花接木开始后，每打出一张 📜疑点 -1。 */
   doubtCards: ["jinxiXiangzhu", "meizhuangXiangzhu"] as readonly CardId3[],
+  /** 偶遇成功的弹窗：求皇上原谅，暗中盘算下一步改脉；按解牌略有不同。 */
+  ouyuPopup: {
+    chanyuXiushen: [
+      "你在佛前合十，缓缓转过身，在皇上面前跪了下去：「臣妾有罪，求皇上原谅。」皇上沉默了很久，终究伸手扶你起来，说他这些年也想过你。",
+      "你垂着眼，把这几年的委屈与思念一句一句说得很轻，说到最后，眼泪落在他的袖口。皇上叹了口气，没有再责怪你。",
+      "可你心里清楚，这个孩子藏不了多久。你一边应着他的话，一边暗暗盘算：待他留宿之后，只有请温太医在脉案上动手脚，把月份改得对得上。",
+    ],
+    jingchaiBuqun: [
+      "你一身荆钗布裙，手上还沾着落叶的碎屑，见了皇上也不躲，只缓缓跪下：「臣妾有罪，求皇上原谅。」皇上看着你素净的模样，眼眶竟有些红了。",
+      "他伸手扶你起来，指尖触到你粗糙的手背，问你在山上吃了多少苦。你摇摇头，只说能再见皇上一面，便不觉得苦。",
+      "你面上柔顺，心里却一刻没有放松：这孩子的月份瞒不过太医，只有早早找温太医商量，在脉案上做些改动，才能让一切合情合理。",
+    ],
+  } as Record<string, string[]>,
   ouyuStory: "皇上在佛前看见你，愣住了。「嬛嬛。」他唤你。你第一次明白，可以把“像她”当成手段：这一回，是我借了她的影子。当夜，皇上留宿甘露寺。",
   doubtLabel: "疑点",
   dushuNote: "那件旧物还留在手边，宫里人多眼杂，万一被谁瞧见，便是说不清的麻烦。你一整日都坐立不安。",
@@ -2464,7 +2477,7 @@ export const LINGRONG_FAREWELL: Record<LingrongTier, string> = {
 
 // ---------------------------------------------------------------- popups (§五)
 
-export type PopupId = "opening" | "huanghou" | "tonghuatai" | "chunyuan" | "wanwan" | "confront" | "exit" | "feilao" | "zhoufu" | "ximai";
+export type PopupId = "opening" | "huanghou" | "tonghuatai" | "chunyuan" | "wanwan" | "confront" | "exit" | "feilao" | "zhoufu" | "ximai" | "ouyu";
 
 export const POPUP_TEXT = {
   opening: "翊坤宫的门关上了。华妃倒了，六宫都说碎玉轩的莞主子是头一份的恩宠。听说景仁宫也要亲自来贺。",

@@ -1048,6 +1048,16 @@ function PopupBody({ state, id }: { state: Z3State; id: PopupId }) {
           ))}
         </>
       );
+    case "ouyu": {
+      const lines = YIHUA.ouyuPopup[state.yihua?.ouyuCard ?? "chanyuXiushen"] ?? YIHUA.ouyuPopup.chanyuXiushen!;
+      return (
+        <>
+          {lines.map((l) => (
+            <p key={l}>{l}</p>
+          ))}
+        </>
+      );
+    }
     case "tonghuatai": {
       const meet = state.guoMeet ?? "di";
       return (
@@ -1148,6 +1158,7 @@ const POPUP_TITLE: Record<PopupId, string> = {
   feilao: "🤒 迁居凌云峰",
   zhoufu: "🌊 舟覆噩耗",
   ximai: "💗 喜脉惊心",
+  ouyu: "🌸 圣驾偶遇",
 };
 
 function OutcomeModal({ state, onRestart, onMenu }: { state: Z3State; onRestart: () => void; onMenu: () => void }) {
