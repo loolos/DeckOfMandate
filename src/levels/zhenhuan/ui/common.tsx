@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, type KeyboardEvent, type ReactNode } from "react";
+import { checkForUpdate } from "../../../app/versionCheck";
 import { CompactModeToggle } from "./CompactModeToggle";
 import { MusicToggle } from "./useBgm";
 import styles from "./zhenhuan.module.css";
@@ -348,7 +349,17 @@ function HeaderMenu({
   onMenu: () => void;
 }) {
   const [open, setOpen] = useState(false);
+  const [updateNote, setUpdateNote] = useState("");
   const ref = useRef<HTMLDivElement>(null);
+  const onCheckUpdate = async () => {
+    setUpdateNote("检查中…");
+    const status = await checkForUpdate();
+    if (status === "outdated") {
+      window.location.reload();
+      return;
+    }
+    setUpdateNote(status === "latest" ? "已是最新版本" : "检查失败，请稍后再试");
+  };
   useEffect(() => {
     if (!open) return;
     const onDown = (e: PointerEvent) => {
@@ -407,6 +418,9 @@ function HeaderMenu({
             }}
           >
             主菜单
+          </button>
+          <button type="button" className={styles.btn} onClick={() => void onCheckUpdate()}>
+            {updateNote || "检查更新"}
           </button>
         </div>
       ) : null}

@@ -1,5 +1,5 @@
 import react from "@vitejs/plugin-react";
-import { defineConfig } from "vite";
+import { defineConfig, type Plugin } from "vite";
 
 /** GitHub Pages: project sites need /<repo>/; user/org pages use /. */
 function githubPagesBase(): string {
@@ -11,9 +11,27 @@ function githubPagesBase(): string {
   return `/${name}/`;
 }
 
+/** Unique per build; the page compares it with /version.json to detect a newer deploy. */
+const BUILD_ID = String(Date.now());
+
+/** Emits version.json (never hashed, fetched with cache-busting) next to index.html. */
+function versionFile(): Plugin {
+  return {
+    name: "version-file",
+    generateBundle() {
+      this.emitFile({
+        type: "asset",
+        fileName: "version.json",
+        source: JSON.stringify({ id: BUILD_ID }),
+      });
+    },
+  };
+}
+
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react(), versionFile()],
   base: githubPagesBase(),
+  define: { __BUILD_ID__: JSON.stringify(BUILD_ID) },
   test: {
     globals: true,
     environment: "node",
