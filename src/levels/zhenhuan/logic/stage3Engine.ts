@@ -55,6 +55,7 @@ import {
   STORIES3,
   SUMMON_THRESHOLD3,
   TAG3_INFO,
+  RELIC_DOUBT_RULE,
   TEMPLE_CRISES,
   TEMPLE_OPPORTUNITIES,
   XIUXING,
@@ -1755,7 +1756,8 @@ export function reduce3(state: Z3State, action: Z3Action): Z3State {
     case "explainTag": {
       const info = TAG3_INFO[action.tag];
       s.log.push({ turn: s.turn, text: `【${info.label}】${info.lore}`, tone: "info" });
-      s.log.push({ turn: s.turn, text: `机制：${info.rules}`, tone: "info" });
+      const relicDoubt = action.tag === "relic" && s.yihua ? RELIC_DOUBT_RULE : "";
+      s.log.push({ turn: s.turn, text: `机制：${info.rules}${relicDoubt}`, tone: "info" });
       return s;
     }
     case "endTurn": {

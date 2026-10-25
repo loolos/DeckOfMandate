@@ -132,7 +132,10 @@ function palace(id: Exclude<CardId3, "lingrongXiangzhu" | "jinxiXiangzhu" | "guo
   return { id, name: c.name, emoji: c.emoji, flavor: c.flavor, base: c.base, baseDraw: c.baseDraw, baseStatus: c.baseStatus as StatusId3 | undefined, matches: [], rulesText: c.rulesText, ...o };
 }
 
-const RELIC_RULES = ["打出即焚毁，没有别的效果。", "引驾之后、回宫之前，每回合末手里每有 1 件遗物，疑点 +1。"];
+const RELIC_RULES = ["打出即焚毁，没有别的效果。"];
+
+/** 移花接木开始（引驾）之后才在遗物上显示，之前不剧透。 */
+export const RELIC_DOUBT_RULE = "引驾之后、回宫之前，每回合末手里每有 1 件遗物，📜疑点 +1。";
 
 export const CARDS3: Record<CardId3, CardDef3> = {
   yirongZhengsu: palace("yirongZhengsu", {
@@ -2574,7 +2577,7 @@ export const POPUP_TEXT = {
     "静白咬定你得了肺痨，当着满寺师父的面，说要把你挪出去，免得过了病气给旁人。你知道那是诬陷，可这样的话一旦说出口，便没有人敢替你争辩。于是你只带了几件随身的衣物，由槿汐扶着，踩着雪往后山走。身后，甘露寺的门「砰」地关上了。山路又陡又滑，你却渐渐觉得心里松了一口气：凌云峰上没有人盯着你的一举一动，没有刁难，也没有闲话，只有风声、雪声和一间清冷的小屋。名声是被人糟蹋了，日子，倒也算落得个清净。",
   feilaoRules: "杂役磋磨、功德箱失窃移出；月下对谈、夜半惊扰、耳目窥伺加入。",
   zhoufu: "消息是夜里传来的：果郡王的船在江上翻了，尸骨无存。他留给你的那些东西，如今只剩下念想。",
-  zhoufuRules: "3 张【果郡王相助】变成 🕯️遗物：打出即焚毁，没有别的效果；留在手里，日后恐惹人生疑。",
+  zhoufuRules: "3 张【果郡王相助】变成 🕯️遗物：打出即焚毁，没有别的效果。",
   ximaiRecall: {
     1: "当初你自请出宫，临行前亲手把胧月交给了敬妃，原想从此清清静静，在佛前了此残生。",
     2: "当初你被劝出宫，跪着求了皇上许久，才许你把胧月托付给敬妃。你原想从此在佛前了此残生。",
@@ -2695,7 +2698,7 @@ export const TAG3_INFO: Record<TagId3, { label: string; lore: string; rules: str
     rules: "机会与危机成对出现。先化解危机才能把握机会；危机的两张解牌里有共同牌，机会顺带解决并算打压，否则机会要另外解。危机没化解，机会随之作废。",
   },
   jingbai: { label: "静白刁难", lore: "静白师太管着甘露寺的杂务，最讲寺规。在她眼里，你不过是躲来避祸的带罪之人，非磨磨性子不可：克扣炭火，杂役磋磨，甚至诬你偷香油钱。", rules: "第 11–18 回合的刁难没化解，静白就更嚣张，决定第 18 回合被赶走时有多狼狈。" },
-  relic: { label: "遗物", lore: "他留下的东西。", rules: "打出即焚毁，没有别的效果。引驾之后、回宫之前，每回合末手里每有 1 件，疑点 +1（睹物生疑）。" },
+  relic: { label: "遗物", lore: "他留下的东西。", rules: "打出即焚毁，没有别的效果。" },
   chengbing: { label: "称病", lore: "陵容身子不适，告了假。", rules: "景仁宫对质这一回合，陵容称病没有来，她的牌打不出。" },
   yihua: {
     label: "持续",
