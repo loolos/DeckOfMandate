@@ -152,6 +152,19 @@ const KIND_TONE = { opportunity: styles.kindOpportunity, crisis: styles.kindCris
 const CARD_TONE = { opportunity: styles.cardOpportunity, crisis: styles.cardCrisis, huanghou: styles.cardHuanghou };
 
 // 连环事件标题是「连环名·事件名」，说明里连环名已在前面，只引事件名。
+/** 连环事件的两半在手牌上只列一项：共同前缀（如「御花园赏花」）。 */
+function collapsePairs<T extends { id: EventId3 }>(items: readonly T[]): { key: string; emoji: string; name: string; items: T[] }[] {
+  const out: { key: string; emoji: string; name: string; items: T[] }[] = [];
+  for (const it of items) {
+    const pair = EVENTS3[it.id].pair;
+    const key = pair ? `pair:${pair}` : it.id;
+    const hit = out.find((o) => o.key === key);
+    if (hit) hit.items.push(it);
+    else out.push({ key, emoji: pair ? PAIRS[pair].emoji : EVENTS3[it.id].emoji, name: pair ? PAIRS[pair].name : EVENTS3[it.id].name, items: [it] });
+  }
+  return out;
+}
+
 const shortEventName = (name: string) => name.split("·").pop() ?? name;
 
 function answeringCards(id: EventId3): CardId3[] {
@@ -745,7 +758,9 @@ function HandCard({ state, card, dispatch, fold }: { state: Z3State; card: CardI
   const className = [styles.handCard, isPending && styles.handCardPending, fold.compact && !canPlay && !isPending && styles.handCardDisabled].filter(Boolean).join(" ");
   const answers = [
     ...responses.map((r) => `${STORIES3[r.story.id].name}·${r.option.name}`),
-    ...events.map((e) => EVENTS3[e.id].name + (EVENTS3[e.id].double && !def.matches.includes(e.id) ? "（双牌）" : "")),
+    ...collapsePairs(events).map((g) =>
+      g.key.startsWith("pair:") ? g.name : EVENTS3[g.items[0]!.id].name + (EVENTS3[g.items[0]!.id].double && !def.matches.includes(g.items[0]!.id) ? "（双牌）" : ""),
+    ),
     ...(confrontAccepts(state, card.id) ? ["景仁宫对质"] : []),
     ...(feilaoAccepts(state, card.id) ? [FEILAO.name] : []),
     ...(chunyuanAccepts(state, card.id) ? [`${CHUNYUAN.name}·${chunyuanAccepts(state, card.id) === 1 ? "起疑" : "查实"}`] : []),
@@ -784,9 +799,9 @@ function HandCard({ state, card, dispatch, fold }: { state: Z3State; card: CardI
       {shownMatches.length > 0 ? (
         <p className={styles.rule}>
           <span className={styles.ruleLabel}>匹配事件：</span>
-          {shownMatches.map((id) => (
-            <span key={id} className={[styles.matchChip, events.some((e) => e.id === id) && styles.matchChipInHand].filter(Boolean).join(" ")}>
-              {EVENTS3[id].emoji} {EVENTS3[id].name}
+          {collapsePairs(shownMatches.map((id) => ({ id }))).map((g) => (
+            <span key={g.key} className={[styles.matchChip, g.items.some((m) => events.some((e) => e.id === m.id)) && styles.matchChipInHand].filter(Boolean).join(" ")}>
+              {g.emoji} {g.name}
             </span>
           ))}
         </p>
