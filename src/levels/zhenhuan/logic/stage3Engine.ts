@@ -1398,7 +1398,7 @@ function settleCrisis(s: Z3State, ev: EventInst3): void {
   }
   if (def.rival && removeStatusById(s, "xinGuirenZhangyi")) {
     ev.byXin = true;
-    log(s, `【欣贵人解围】【${def.name}】没化解，欣贵人当众顶了回去，替你挡下了惩罚。`, "good");
+    log(s, `【欣贵人解围】【${def.name}】没化解，欣贵人替你挡下了惩罚。${def.xinCover ?? "她当众顶了回去。"}`, "good");
     if (def.pair) log(s, `连环：【${EVENTS3[PAIRS[def.pair].opportunity].name}】随之作废。`, "bad");
     return;
   }

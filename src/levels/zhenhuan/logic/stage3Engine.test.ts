@@ -538,6 +538,17 @@ describe("zhenhuan stage 3 engine", () => {
     expect(s.statuses.find((x) => x.id === "meizhuangDadian")?.remaining).toBe(3);
   });
 
+  it("欣贵人解围: an unresolved 对头 crisis is blocked with a crisis-specific log", () => {
+    let s = advanceTo(newStage3(6, CARRY), 6);
+    clearBoard(s);
+    withStatus(s, "xinGuirenZhangyi");
+    s.crisis = ev(s, "yuhuayuanQi");
+    const qingyu = s.qingyu;
+    s = act(s, { type: "endTurn" });
+    expect(s.log.some((l) => l.text.includes("欣贵人解围") && l.text.includes("三阿哥的功课"))).toBe(true);
+    expect(s.qingyu).toBeGreaterThanOrEqual(qingyu);
+  });
+
   it("entering the temple: 修行 identity, temple deck plus the 果郡王 cards, 清誉 capped at 8", () => {
     let s = advanceTo(newStage3(6, CARRY), 10);
     s.qingyu = 15;

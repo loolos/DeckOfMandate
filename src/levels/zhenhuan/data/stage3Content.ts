@@ -915,6 +915,8 @@ export type EventDef3 = {
   readonly rival?: RivalId;
   /** 对头事件: two matching cards in one turn to resolve. */
   readonly needTwo?: boolean;
+  /** 对头事件没化解、欣贵人替你挡下惩罚时的日志。 */
+  readonly xinCover?: string;
   /** 打压状态让这张危机自动化解时的剧情。 */
   readonly suppressedStory?: string;
   /** 需两张解牌的危机只凑了一张时的惩罚（不写则按完整惩罚）。 */
@@ -1187,6 +1189,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     kind: "crisis",
     name: "齐妃寻衅",
     emoji: "🌰",
+    xinCover: "齐妃那句讥讽还没落地，欣贵人先笑出了声：「齐妃姐姐这话酸的，莫不是昨夜没睡好？」满殿的人都低头憋着笑，齐妃脸上挂不住，那桩事也就这么揭过去了。",
     flavor: "景仁宫请安时，齐妃当着众人的面讥讽你：「莞嫔如今可是皇上心尖上的人了。」",
     reward: NO,
     penalty: [q(-2)],
@@ -1209,6 +1212,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     kind: "crisis",
     name: "三阿哥邀宠",
     emoji: "📚",
+    xinCover: "欣贵人见皇上连着几日都在长春宫，大大方方进去请安，借口自己公主的功课求皇上指点，三言两语又把话头引回了六宫，齐妃的小算盘没能得逞。",
     flavor: "齐妃拿三阿哥的功课做由头，把皇上请进了长春宫，一连几日都没放人出来，六宫的风向悄悄变了。",
     reward: NO,
     penalty: [sc(-2)],
@@ -1228,6 +1232,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     kind: "crisis",
     name: "新人争宠",
     emoji: "💃",
+    xinCover: "欣贵人在一旁看得直撇嘴，当着皇上的面说：「新人鲜亮，咱们这些老人也不差呀。」又拉着你坐到皇上近前，祺贵人那点抢风头的心思，白费了。",
     flavor: "祺贵人新近入宫，在御花园里“偶遇”了皇上，笑得比花还艳，皇上当晚便翻了她的牌子。",
     reward: NO,
     penalty: [sc(-2)],
@@ -1248,6 +1253,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     kind: "crisis",
     name: "鄂敏参本",
     emoji: "📜",
+    xinCover: "欣贵人在殿上直言：「甄大人的事前朝自有公断，哪有拿后宫姐妹的家世说嘴的道理。」祺贵人被噎得说不出话，那道折子的分量也就轻了几分。",
     flavor: "祺贵人的父亲鄂敏在前朝递了一道折子，参甄远道平日文字轻狂、结交不慎，字字句句都冲着甄家而来。",
     reward: NO,
     penalty: [q(-1)],
@@ -1270,6 +1276,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     kind: "crisis",
     name: "御花园赏花·齐妃讥讽",
     emoji: "🌸",
+    xinCover: "欣贵人嗓门一提，笑着堵了回去：「齐妃姐姐这是羡慕咱们说话投缘吧？风光不风光的，姐姐先把三阿哥的功课看紧些。」满园宫人都憋着笑，齐妃讪讪地走了。",
     flavor: "齐妃带着宫人在御花园里迎面撞上你和欣贵人，上下打量了你一番，阴阳怪气地说：「莞嫔如今有欣贵人作陪，好大的风光。只是这宫里的风光，从来都是一阵一阵的。」当着满园宫人的面，句句带刺。",
     reward: NO,
     penalty: [q(-2)],
@@ -1290,6 +1297,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     kind: "crisis",
     name: "咸福宫托付·祺贵人告状",
     emoji: "🧵",
+    xinCover: "欣贵人立刻替你分辩：「敬妃姐姐托人写条陈，是帮忙，哪里谈得上越权？祺贵人要是看不惯，下回也替敬妃姐姐写一份呀。」皇后听了，只好笑着把这事放下。",
     flavor: "祺贵人在皇后面前告了你一状，说你一个后宫嫔御，竟越权替敬妃拟宫务条陈，「眼里怕是没有中宫了」。",
     reward: NO,
     penalty: [q(-2)],
@@ -1310,6 +1318,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     kind: "crisis",
     name: "延庆殿夜话·齐妃探病",
     emoji: "🍵",
+    xinCover: "欣贵人恰巧也来看端妃，一进门便大着嗓门道：「齐妃姐姐也来了？正好，一起坐下说说话。」她拉着齐妃东拉西扯，齐妃探不出半点口风，只能悻悻地回去复命。",
     flavor: "齐妃奉皇后之命来延庆殿“探病”，正撞见你和端妃说话，眼神在你们两人之间转了好几个来回。",
     reward: NO,
     penalty: [q(-2)],
