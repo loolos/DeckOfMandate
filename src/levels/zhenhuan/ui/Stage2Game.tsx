@@ -395,11 +395,11 @@ function FinaleCard({ state, fold, dispatch }: { state: Z2State; fold: Fold; dis
       <CardArt src={specialArtUrl("finale")} emoji={FINALE.emoji} />
       {done ? <ResolvedBanner icon="👑" label="大局已定" detail={finaleDoneStory(state.evidence.length)} /> : null}
       <p className={styles.flavor}>{FINALE.flavor[tier]}</p>
-      {f.stories.map((line) => (
-        <p key={line} className={styles.rule}>
-          {line}
-        </p>
-      ))}
+      {f.stories.length > 0 ? (
+        f.stories.map((line) => <ResolvedBanner key={line} icon="⚖️" label="控诉罪证" detail={line} />)
+      ) : (
+        <ResolvedBanner icon="⚖️" label="控诉罪证" detail="尚无人出面作证。" />
+      )}
       <p className={styles.rule}>
         <span className={styles.ruleLabel}>扳倒华妃：</span>本回合打出 <strong>{f.needed}</strong> 张解牌（罪证越多，需要的越少；多打也行，每种牌各有一段剧情）。回合末仍未凑够即关卡失败。
       </p>
