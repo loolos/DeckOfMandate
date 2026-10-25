@@ -1504,7 +1504,7 @@ function endTurn3(s: Z3State): void {
   // scheduled additions
   if (s.turn === 2) {
     s.huanghouPool = shuffleInto(s, HUANGHOU_EVENTS);
-    log(s, "🦚 从下一回合起，每回合会有一张皇后事件。");
+    log(s, "🏵️ 从下一回合起，每回合会有一张皇后事件。");
     popup(s, "huanghou");
   }
   if (s.turn === 5) {

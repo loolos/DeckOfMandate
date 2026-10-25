@@ -1119,7 +1119,7 @@ function PopupBody({ state, id }: { state: Z3State; id: PopupId }) {
 
 const POPUP_TITLE: Record<PopupId, string> = {
   opening: "🏮 第一幕 · 凤仪之下",
-  huanghou: "🦚 皇后笑意",
+  huanghou: "🏵️ 皇后笑意",
   tonghuatai: "🎐 桐花台",
   chunyuan: "👗 纯元故衣",
   wanwan: "💔 菀菀类卿",
@@ -1309,7 +1309,7 @@ export function Stage3Game({ state, dispatch, runCode, showRules, onShowRules, o
               <EventList ids={state.crisis ? [...state.crisisUsed, state.crisis.id] : state.crisisUsed} empty="无" />
             </Pile>
             {state.act === 1 && state.turn >= 2 ? (
-              <Pile icon="🦚" label="皇后事件" tag={TAG3_INFO.huanghou} count={state.huanghouPool.length}>
+              <Pile icon="🏵️" label="皇后事件" tag={TAG3_INFO.huanghou} count={state.huanghouPool.length}>
                 <p className={styles.popoverTitle}>本轮还没出现</p>
                 <EventList ids={state.huanghouPool} empty="已轮过一遍。" />
                 <p className={styles.popoverTitle}>本轮已出现</p>

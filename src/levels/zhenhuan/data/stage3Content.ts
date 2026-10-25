@@ -1464,7 +1464,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     id: "jingrenLairen",
     kind: "crisis",
     name: "景仁宫来人",
-    emoji: "🦚",
+    emoji: "🏵️",
     flavor: "景仁宫的人借着送香油钱的名头上了山，眼睛一直往你身上瞟。",
     reward: NO,
     penalty: NO,
@@ -1676,7 +1676,7 @@ export const STORIES3: Record<StoryId3, StoryDef3> = {
   huanghouXiaoyi: {
     id: "huanghouXiaoyi",
     name: "皇后笑意",
-    emoji: "🦚",
+    emoji: "🏵️",
     flavor: "华妃倒后，皇后亲自来碎玉轩道贺，赏下一对玉镯。她笑得温和，你却想起翊坤宫倒下那日，她站在廊下一言不发的样子。",
     note: "皇后第一次登门。怎么接这份赏，各有各的好处。",
     defaultOptionId: "xieen",
@@ -2164,7 +2164,7 @@ export const POPUP_TEXT = {
   } as Record<string, string>,
   openingRules: [
     "👭 眉庄冤屈洗刷、复了位分，说话更有分量：本关【眉庄相助】打出时，除了原有效果，还立刻抓 1 张牌。",
-    "🦚 皇后会在第 2 回合亲自登门。",
+    "🏵️ 皇后会在第 2 回合亲自登门。",
   ],
   huanghou:
     "皇后亲自来碎玉轩道贺，赏下一对玉镯：「华妃之事，妹妹受委屈了。往后六宫和睦，还要靠妹妹帮衬。」她笑得温和，你却想起翊坤宫倒下那日，她站在廊下一言不发的样子。",
@@ -2179,7 +2179,7 @@ export const POPUP_TEXT = {
     { name: "齐妃", text: "三阿哥的生母，王府时就跟着皇上，却不大有心计。她是皇后的旧人，向来唯景仁宫马首是瞻，见你得宠，心里早不痛快。" },
     { name: "祺贵人", text: "瓜尔佳氏，华妃倒后新近得宠，年轻娇纵。父亲鄂敏在前朝颇有势力，和甄家素来不睦。她进宫没多久，就常往景仁宫走动。" },
   ] as readonly { readonly name: string; readonly text: string }[],
-  huanghouRules: ["🦚 皇后事件：回合末按默认结算；打出卡面所列的牌，换成对应的赏赐。"],
+  huanghouRules: ["🏵️ 皇后事件：回合末按默认结算；打出卡面所列的牌，换成对应的赏赐。"],
   /** 开局规则说明里的第一幕事件规则。 */
   eventRules: [
     "🤝 盟友事件：第一次把握，获得她的盟友状态。",
