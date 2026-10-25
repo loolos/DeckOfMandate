@@ -773,7 +773,7 @@ function resolveEventByCard(s: Z3State, ev: EventInst3, card: CardId3, doubleRew
     for (const c of new Set(ev.progress ?? [card])) applyDeltas3(s, def.cardReward?.[c] ?? [], def.name);
   }
   if (def.kind === "crisis") {
-    if (def.resolveCost && alive(s)) applyDeltas3(s, def.resolveCost, `${def.name}（熬过去了，也伤了身子）`);
+    if (def.resolveCost && alive(s)) applyDeltas3(s, def.resolveCost, `${def.name}（化解了，仍有些折损）`);
     if (def.rival && def.suppressCard && (ev.progress ?? [card]).includes(def.suppressCard) && !def.pair) {
       ev.suppressed = true;
       suppress(s, def.rival);

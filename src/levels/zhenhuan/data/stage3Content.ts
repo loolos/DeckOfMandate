@@ -1140,7 +1140,8 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     reward: NO,
     penalty: NO,
     penaltyStatus: "liuyanChanshen",
-    resolvedText: "移除事件",
+    resolveCost: [q(-1)],
+    resolvedText: "移除事件；化解也要清誉 -1",
     unresolvedText: "未来 3 回合每回合抓牌 -1",
     resolvedStory: {
       jinyanShenxing: "你闭门不出，见了谁都只说些天气花草。流言找不到新的话柄，几日便散了。",
@@ -1157,7 +1158,8 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     flavor: "这个月的份例迟迟没有送来，去问时，内务府的人只说账目还没理清，让碎玉轩再等等。",
     reward: NO,
     penalty: [q(-1)],
-    resolvedText: "移除事件",
+    resolveCost: [sc(-1)],
+    resolvedText: "移除事件；化解也要圣宠 -1",
     unresolvedText: "清誉 -1",
     note: "用收拢人心解决时额外抽 1 张。",
     resolvedStory: {
@@ -1212,7 +1214,8 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     suppressedStory: "请安那日，齐妃刚张口要提「心尖上的人」，目光落到你身上，又想起上回在三阿哥的功课上吃的亏，讪讪闭了嘴，只低头喝茶。",
     suppressCard: "jinyanShenxing",
     secret: "chuyanDingzhuang",
-    resolvedText: "移除事件；两张解牌含谨言慎行即打压齐妃，获得【打压·齐妃】",
+    resolveCost: [sz(-1)],
+    resolvedText: "移除事件；两张解牌含谨言慎行即打压齐妃，获得【打压·齐妃】；化解也要身子 -1",
     unresolvedText: "清誉 -2、未来 3 回合每回合抓牌 -1",
     resolvedStory: {
       jinyanShenxing: "你笑着回了一句：「娘娘说笑了，三阿哥的功课，皇上才是放在心尖上的。」齐妃一时下不来台，再没敢开口。",
@@ -1233,7 +1236,8 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     needTwo: true,
     suppressedStory: "长春宫的人来碎玉轩送东西，话说得格外客气。齐妃自上回被你堵得下不来台，这次没再拿三阿哥的功课做文章，皇上也没被扣在长春宫。",
     suppressCard: "yirongZhengsu",
-    resolvedText: "移除事件；两张解牌含仪容整肃即打压齐妃，获得【打压·齐妃】",
+    resolveCost: [q(-1)],
+    resolvedText: "移除事件；两张解牌含仪容整肃即打压齐妃，获得【打压·齐妃】；化解也要清誉 -1",
     unresolvedText: "圣宠 -2",
     resolvedStory: {
       yirongZhengsu: "你换了一身新裁的衣裳，在皇上回养心殿的路上候着。皇上远远看见，便不往长春宫去了。",
