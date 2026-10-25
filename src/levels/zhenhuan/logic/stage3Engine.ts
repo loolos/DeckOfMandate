@@ -996,6 +996,8 @@ function resolvePlay3(s: Z3State, cardUid: string, removeStatusUid?: string): vo
   for (const st of openStories3(s)) {
     if (!alive(s)) break;
     if (!st.pendingOptionId || startedNow.has(st)) continue;
+    // 第二张须是这件事的某个卡牌应对（温太医相助之类不相干的牌不算）
+    if (!STORIES3[st.id].options.some((o) => o.card === card.id)) continue;
     const opt = STORIES3[st.id].options.find((o) => o.id === st.pendingOptionId)!;
     st.pendingOptionId = undefined;
     answered = true;

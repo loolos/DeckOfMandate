@@ -195,6 +195,14 @@ describe("zhenhuan stage 3 engine", () => {
     expect(s.stories[0]!.chosenOptionId).toBeNull();
     s = act(s, { type: "playCard", cardUid: j! });
     expect(s.stories[0]!.chosenOptionId).toBe("tuoGuo");
+    // 眉庄相助与此事无关，不算第二张
+    let w = base();
+    const [g3, t3, j3] = setHand(w, ["guojunwangXiangzhu", "meizhuangXiangzhu", "jinyanShenxing"]);
+    w = act(w, { type: "playCard", cardUid: g3! });
+    w = act(w, { type: "playCard", cardUid: t3! });
+    expect(w.stories[0]!.chosenOptionId).toBeNull();
+    w = act(w, { type: "playCard", cardUid: j3! });
+    expect(w.stories[0]!.chosenOptionId).toBe("tuoGuo");
     let u = base();
     const [g2] = setHand(u, ["guojunwangXiangzhu"]);
     u = act(u, { type: "playCard", cardUid: g2! });
