@@ -309,12 +309,32 @@ export function GameHeader({
           <button type="button" className={styles.btn} onClick={onMenu}>
             主菜单
           </button>
+          <UpdateButton />
           <MusicToggle />
           <CompactModeToggle />
         </div>
       </header>
       {confirmModal}
     </>
+  );
+}
+
+/** Checks for a newer deploy: reloads if there is one, otherwise says so in the button label. */
+function UpdateButton() {
+  const [note, setNote] = useState("");
+  const onClick = async () => {
+    setNote("检查中…");
+    const status = await checkForUpdate();
+    if (status === "outdated") {
+      window.location.reload();
+      return;
+    }
+    setNote(status === "latest" ? "已是最新版本" : "检查失败，请稍后再试");
+  };
+  return (
+    <button type="button" className={styles.btn} onClick={() => void onClick()}>
+      {note || "检查更新"}
+    </button>
   );
 }
 
@@ -363,17 +383,7 @@ function HeaderMenu({
   onMenu: () => void;
 }) {
   const [open, setOpen] = useState(false);
-  const [updateNote, setUpdateNote] = useState("");
   const ref = useRef<HTMLDivElement>(null);
-  const onCheckUpdate = async () => {
-    setUpdateNote("检查中…");
-    const status = await checkForUpdate();
-    if (status === "outdated") {
-      window.location.reload();
-      return;
-    }
-    setUpdateNote(status === "latest" ? "已是最新版本" : "检查失败，请稍后再试");
-  };
   useEffect(() => {
     if (!open) return;
     const onDown = (e: PointerEvent) => {
@@ -433,9 +443,7 @@ function HeaderMenu({
           >
             主菜单
           </button>
-          <button type="button" className={styles.btn} onClick={() => void onCheckUpdate()}>
-            {updateNote || "检查更新"}
-          </button>
+          <UpdateButton />
         </div>
       ) : null}
     </div>
