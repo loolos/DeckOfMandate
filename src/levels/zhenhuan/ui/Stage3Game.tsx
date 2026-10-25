@@ -36,6 +36,7 @@ import {
   statusText3,
   STORIES3,
   TAG3_INFO,
+  RELIC_DOUBT_RULE,
   XIUXING,
   YIHUA,
   confrontOutcome,
@@ -775,7 +776,7 @@ function HandCard({ state, card, dispatch, fold }: { state: Z3State; card: CardI
       </div>
       <CardArt src={cardArtUrl(card.id, state.act === 1 ? undefined : "temple")} emoji={def.emoji} />
       <p className={styles.flavor}>{def.flavor}</p>
-      {rules.rulesText.map((line) => (
+      {[...rules.rulesText, ...(relic && state.yihua ? [RELIC_DOUBT_RULE] : [])].map((line) => (
         <p key={line} className={styles.rule}>
           {expandedEffect3(line)}
         </p>
