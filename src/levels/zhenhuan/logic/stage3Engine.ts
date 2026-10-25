@@ -215,7 +215,6 @@ export type Z3State = {
   gengtie: boolean;
   songxing: boolean;
   /** 温太医探视: the temporary card's uid, and whether 「为女儿撑下去」 was used. */
-  tempWenUid: string | null;
   tanshiBonus: boolean;
   changxiangsi: { played: CardId3[]; done: boolean } | null;
   yihua: Yihua | null;
@@ -1101,7 +1100,13 @@ function resolvePlay3(s: Z3State, cardUid: string, removeStatusUid?: string): vo
       applyDelta3(s, { resource: "qingyu", amount: 2 }, "笛箫合奏");
     }
   }
-  if (alive(s) && s.tempWenUid != null && !s.tanshiBonus && (card.id === "meizhuangXiangzhu" || card.id === "jinxiXiangzhu")) {
+  const tanshiOpen = openStories3(s).some((st) => st.id === "wentaiyiTanshi");
+  if (alive(s) && tanshiOpen && !s.tanshiBonus && card.id === "meizhuangXiangzhu") {
+    s.tanshiBonus = true;
+    answered = true;
+    log(s, "眉庄在宫里放心不下，远远托温实初带了药材和补给上山。", "good");
+    addStatus3(s, "yuandaoBuji");
+  } else if (alive(s) && tanshiOpen && !s.tanshiBonus && card.id === "jinxiXiangzhu") {
     s.tanshiBonus = true;
     answered = true;
     log(s, "为女儿撑下去：你看着胧月的小像，看了很久。", "good");
@@ -1124,10 +1129,7 @@ function resolvePlay3(s: Z3State, cardUid: string, removeStatusUid?: string): vo
   if (alive(s) && relationDelta !== 0) changeRelation(s, relationDelta);
 
   // 6. where the card goes
-  if (card.uid === s.tempWenUid) {
-    s.tempWenUid = null;
-    log(s, "临时的【温太医相助】用掉了。");
-  } else if (isRelic(card.id)) {
+  if (isRelic(card.id)) {
     s.departed.push(card);
     s.relicsBurned++;
     log(s, `🕯️ 焚毁【${def.name}】：${RELIC_TEXT[card.id]}`);
@@ -1369,12 +1371,6 @@ function beginTurn3(s: Z3State, turn: number): void {
   const n = Math.max(0, base - kept);
   drawCards3(s, n);
   log(s, `抓 ${n} 张牌${kept > 0 ? `（依依留下 ${kept} 张陵容，少抓 ${base - n} 张）` : ""}。`);
-  if (turn === 15) {
-    const card: CardInst3 = { uid: `w${s.nextUid++}`, id: "wenTaiyiZhenzhi" };
-    s.hand.push(card);
-    s.tempWenUid = card.uid;
-    log(s, "温实初上山来了：手牌加入一张临时的【温太医相助】（回合末离场）。", "good");
-  }
 }
 
 function drawHuanghou(s: Z3State): void {
@@ -1506,11 +1502,6 @@ function endTurn3(s: Z3State): void {
   s.stories = [];
 
   // hand: 依依 keeps 陵容 (生分); 冷落
-  if (s.tempWenUid) {
-    s.hand = s.hand.filter((c) => c.uid !== s.tempWenUid);
-    s.tempWenUid = null;
-    log(s, "临时的【温太医相助】随温实初下山了。");
-  }
   const tier = tierOf3(s);
   const lingrongLeft = s.hand.some((c) => c.id === "lingrongXiangzhu");
   const keep = tier === "distant" && s.turn < STAGE3.confrontTurn ? s.hand.filter((c) => c.id === "lingrongXiangzhu") : [];
@@ -1668,7 +1659,6 @@ export function newStage3(seed: number, carry: Carry3 | null): Z3State {
     luofa: false,
     gengtie: false,
     songxing: false,
-    tempWenUid: null,
     tanshiBonus: false,
     changxiangsi: null,
     yihua: null,

@@ -446,6 +446,16 @@ describe("zhenhuan stage 3 engine", () => {
     expect(matchesInAct(m, 2, 20)).toContain("xianrenKuitan");
   });
 
+  it("故人来访 (turn 15): no temporary 温太医 card; 眉庄相助 brings 远道补给 (身子 +1 for 3 turns)", () => {
+    let s = advanceTo(newStage3(6, CARRY), 15);
+    expect(s.stories.map((x) => x.id)).toContain("wentaiyiTanshi");
+    expect(s.hand.some((c) => c.id === "wenTaiyiZhenzhi" && c.uid.startsWith("w"))).toBe(false);
+    s.extraPlays = 3;
+    const [mz] = setHand(s, ["meizhuangXiangzhu"]);
+    s = act(s, { type: "playCard", cardUid: mz! });
+    expect(s.statuses.some((x) => x.id === "yuandaoBuji")).toBe(true);
+  });
+
   it("entering the temple: 修行 identity, temple deck plus the 果郡王 cards, 清誉 capped at 8", () => {
     let s = advanceTo(newStage3(6, CARRY), 10);
     s.qingyu = 15;

@@ -696,7 +696,6 @@ function HandCard({ state, card, dispatch, fold }: { state: Z3State; card: CardI
   const responses = storyResponsesFor3(state, card.id);
   const events = matchedEvents3(state, card.id);
   const isPending = state.pending?.cardUid === card.uid;
-  const temp = card.uid === state.tempWenUid;
   const play = () => {
     if (canPlay) dispatch({ type: "playCard", cardUid: card.uid });
   };
@@ -733,7 +732,6 @@ function HandCard({ state, card, dispatch, fold }: { state: Z3State; card: CardI
           🕯️遗物
         </Tag>
       ) : null}
-      {temp ? <span className={styles.muted}>临时</span> : null}
     </span>
   );
   const notes = (

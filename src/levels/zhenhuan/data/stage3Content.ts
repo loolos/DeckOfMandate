@@ -354,6 +354,7 @@ export type StatusId3 =
   | "jingji"
   | "xinruZhishui"
   | "jingfeiZhouji"
+  | "yuandaoBuji"
   | "yishiWucuo"
   | "dayaQifei"
   | "dayaGuaerjia";
@@ -581,6 +582,17 @@ export const STATUSES3: Record<StatusId3, StatusDef3> = {
     drawModifier: 1,
     effectText: "未来 3 回合，每回合抓牌数 +1。",
     flavor: "敬妃托温太医捎上山的衣物药材和米面，替你把山居的日子打点得宽裕了些。",
+  },
+  yuandaoBuji: {
+    id: "yuandaoBuji",
+    name: "远道补给",
+    emoji: "📦",
+    tag: "positive",
+    duration: 3,
+    drawModifier: 0,
+    turnEnd: [{ resource: "shenzi", amount: 1 }],
+    effectText: "未来 3 回合，每回合末 🌱身子 +1。",
+    flavor: "眉庄人在宫里，却托温实初把药材、棉衣和米面一样样捎上了山，替你调养身子。",
   },
   yishiWucuo: {
     id: "yishiWucuo",
@@ -1909,7 +1921,7 @@ export const STORIES3: Record<StoryId3, StoryDef3> = {
     name: "故人来访",
     emoji: "🩺",
     flavor: "温实初上山来了，捎来胧月的一张小像，是敬妃托他带的。画上的孩子胖乎乎的，眉眼像你。",
-    note: "本回合手牌加入临时的【温太医相助】（回合末离场）。另可打出眉庄或槿汐相助「为女儿撑下去」：清誉 +1、移除 1 个负面状态。有【敬妃之谊】时另获【敬妃周济】。",
+    note: "本回合可另打出眉庄相助：她远远托温太医捎来补给，获得【远道补给】；或槿汐相助「为女儿撑下去」：清誉 +1、移除 1 个负面状态。有【敬妃之谊】时另获【敬妃周济】。",
     defaultOptionId: "zhenzhi",
     options: [
       { id: "zhenzhi", name: "请他诊治", effects: [sz(2)], removeNegatives: "all", text: "移除全部负面状态；身子 +2", story: "温实初替你诊了脉，开了方子，又留下许多药材。临走时他说：「嬛妹妹，你要好好的。」" },
