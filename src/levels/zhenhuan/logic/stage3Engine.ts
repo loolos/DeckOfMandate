@@ -230,6 +230,8 @@ export type Z3State = {
   keepsakes: RelicId[];
   /** 温太医探视: the temporary card's uid, and whether 「为女儿撑下去」 was used. */
   changxiangsi: { played: CardId3[]; done: boolean } | null;
+  /** 月下琴笛 was completed (the event card itself is gone by turn 23). */
+  changxiangsiDone?: boolean;
   yihua: Yihua | null;
   relicsBurned: number;
   statuses: StatusInst3[];
@@ -945,6 +947,11 @@ function applyStoryOption(s: Z3State, inst: StoryInst3, option: StoryOption3, so
       break;
     case "gengtie":
       s.gengtie = true;
+      if (qinseReady(s)) {
+        s.statuses.push({ uid: `s${s.nextUid++}`, id: "qinseHeming", appliesFromTurn: ZHOUFU_TURN + 1, remaining: 0 });
+        log(s, `获得状态【${STATUSES3.qinseHeming.name}】（${statusText3(STATUSES3.qinseHeming, s.turn).effectText}）`, "good");
+        popup(s, "qinse");
+      }
       break;
     case "songxing":
       s.songxing = true;
@@ -1135,6 +1142,7 @@ function resolvePlay3(s: Z3State, cardUid: string, removeStatusUid?: string): vo
     s.changxiangsi.played.push(card.id);
     if (s.changxiangsi.played.includes("guojunwangXiangzhu") && s.changxiangsi.played.includes("chanyuXiushen")) {
       s.changxiangsi.done = true;
+      s.changxiangsiDone = true;
       log(s, `【${CHANGXIANGSI.name}】笛箫合奏：${CHANGXIANGSI.story}`, "good");
       applyDelta3(s, { resource: "qingyu", amount: 2 }, "笛箫合奏");
     }
@@ -1289,6 +1297,14 @@ function moveToPeak(s: Z3State): void {
   log(s, "迁居凌云峰：杂役磋磨、功德箱失窃移出；月下对谈、夜半惊扰、耳目窥伺加入。");
 }
 
+const ZHOUFU_TURN = 25;
+
+/** 踏雪问疾（打牌化解）与月下琴笛都已完成，合婚庚帖写下时才有琴瑟同心。 */
+export function qinseReady(s: Z3State): boolean {
+  const taxue = s.stories.find((st) => st.id === "taxueWenji");
+  return s.changxiangsiDone === true && taxue?.viaCard != null;
+}
+
 function zhoufu(s: Z3State): void {
   const have = new Set<RelicId>(s.keepsakes);
   if (s.gengtie) have.add("yiwuGengtie");
@@ -1411,7 +1427,7 @@ function beginTurn3(s: Z3State, turn: number): void {
     s.changxiangsi = { played: [], done: false };
     log(s, `剧情事件：【${CHANGXIANGSI.name}】${CHANGXIANGSI.rule}`);
   }
-  if (turn === 25) zhoufu(s);
+  if (turn === ZHOUFU_TURN) zhoufu(s);
 
   if (turn !== STAGE3.confrontTurn) {
     drawEvents(s);

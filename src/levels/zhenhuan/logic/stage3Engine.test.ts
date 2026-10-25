@@ -27,6 +27,7 @@ import {
   yihuaAccepts,
   drawCount3,
   drawModifier3,
+  hasStatus3,
   confrontLines,
   feilaoBaseTier,
   feilaoCurrentTier,
@@ -728,6 +729,29 @@ describe("zhenhuan stage 3 engine", () => {
     s = act(s, { type: "playCard", cardUid: g! });
     expect(s.gengtie).toBe(true);
     expect(s.keepsakes).toContain("yiwuGengtie");
+  });
+
+  it("合婚庚帖 grants 琴瑟同心 only after 踏雪问疾 (by a card) and 月下琴笛 are both done; draw +1 starts after 舟覆", () => {
+    const run = (taxueByCard: boolean, qinDone: boolean) => {
+      let s = advanceTo(newStage3(12, CARRY), 3);
+      clearBoard(s);
+      s.stories.push({ id: "taxueWenji", chosenOptionId: taxueByCard ? "bingzhongXiangshou" : "yangbing", viaCard: taxueByCard ? "guojunwangXiangzhu" : undefined });
+      s.changxiangsiDone = qinDone;
+      s.stories.push({ id: "hehunGengtie", chosenOptionId: null });
+      const [g, j] = setHand(s, ["guojunwangXiangzhu", "jingchaiBuqun"]);
+      s.extraPlays = 3;
+      s = act(s, { type: "playCard", cardUid: j! });
+      s = act(s, { type: "playCard", cardUid: g! });
+      return s;
+    };
+    expect(hasStatus3(run(true, false), "qinseHeming")).toBe(false);
+    expect(hasStatus3(run(false, true), "qinseHeming")).toBe(false);
+    const s = run(true, true);
+    expect(hasStatus3(s, "qinseHeming")).toBe(true);
+    expect(s.popups).toContain("qinse");
+    const base = run(true, false);
+    expect(drawModifier3(s, 25)).toBe(drawModifier3(base, 25));
+    expect(drawModifier3(s, 26)).toBe(drawModifier3(base, 26) + 1);
   });
 
   it("舟覆噩耗 turns the 果郡王 cards into relics; 移花接木 starts on turn 26 with 疑点 1", () => {

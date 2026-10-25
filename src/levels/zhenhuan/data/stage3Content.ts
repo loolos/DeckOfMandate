@@ -402,6 +402,7 @@ export type StatusId3 =
   | "duanfeiXianghu"
   | "jingfeiZhiyi"
   | "songxingBieyi"
+  | "qinseHeming"
   | "xinGuirenZhangyi"
   | "fuxiongMengchen"
   | "lingrongDeXiang"
@@ -695,6 +696,18 @@ export const STATUSES3: Record<StatusId3, StatusDef3> = {
     drawModifier: 1,
     effectText: "未来 3 回合，每回合抓牌数 +1。",
     flavor: "他走后，山风里似乎还留着那支笛子的余音，叫人心里踏实了些。",
+  },
+  qinseHeming: {
+    id: "qinseHeming",
+    name: "琴瑟同心",
+    emoji: "🎼",
+    tag: "positive",
+    duration: 0,
+    permanent: true,
+    drawModifier: 1,
+    effectText: "此后每回合抓牌数 +1。",
+    flavor: "他走了，那一夜的琴声笛声却还留在心里。你比从前更稳，日子再难，也撑得住。",
+    veiled: { untilTurn: 26, effectText: "山中月夜，琴笛相和，庚帖并放，你的心里多了几分笃定。", flavor: "往后无论如何，这些都是你的底气。" },
   },
   jingfeiZhouji: {
     id: "jingfeiZhouji",
@@ -2137,11 +2150,12 @@ export const STORIES3: Record<StoryId3, StoryDef3> = {
     id: "taxueWenji",
     name: "踏雪问疾",
     emoji: "🌨️",
-    flavor: "果郡王带着阿晋冒雪赶上凌云峰，把你接到清凉台养病。病一好，你便执意回了凌云峰。",
+    flavor:
+      "凌云峰上落了三天的雪，屋顶压得吱呀作响，你的咳疾也愈发重了，夜里连灯都懒得点。这日晌午，门被人叩响，开门一看，果郡王披着一身雪站在门外，身后跟着牵马的阿晋。他低头看了看你苍白的脸，眉头皱得很紧：「山下的清凉台是我的别业，暖和，也清静。你不必谢我，今日必须跟我走。」风卷着雪花扑进屋里，你扶着门框，一时竟答不上话。",
     note: "无论怎样结算，牌库再加入 1 张【果郡王相助】。",
     defaultOptionId: "yangbing",
     options: [
-      { id: "yangbing", name: "清凉台养病", effects: [sz(2)], removeNegatives: "all", text: "移除全部负面状态；身子 +2", story: "清凉台很暖。你病得迷迷糊糊，只记得有人一直守在床边，替你换额上的帕子。" },
+      { id: "yangbing", name: "清凉台养病", effects: [sz(2)], removeNegatives: "all", text: "移除全部负面状态；身子 +2", story: "清凉台很暖，炭火烧得旺旺的，窗上糊着新纸，一点风也不漏。你病得迷迷糊糊，睡了醒、醒了睡，只记得汤药总是温的，帕子总是凉的，有人一直守在床边，替你换额上的帕子，你一睁眼，他便不动声色地把手收了回去。养了十来日，你的气色渐渐回转。临走那天，阿晋把你的旧包袱收拾得整整齐齐，你谢过他，仍旧回了凌云峰。" },
       {
         id: "bingzhongXiangshou",
         name: "病中相守",
@@ -2151,7 +2165,18 @@ export const STORIES3: Record<StoryId3, StoryDef3> = {
         removeNegatives: "all",
         flag: "xiangshou",
         text: "移除全部负面状态；身子 +3",
-        story: "他守了你几天几夜，你好了，他自己却病倒了。你坐在他床边，第一次叫了他的名字：「允礼。」",
+        story:
+          "他守了你几天几夜，药要亲自尝过才肯端来，帕子换了一盆又一盆，连阿晋劝他去歇歇，他也只摆摆手。你烧退的那个清晨，睁眼便看见他靠在床边睡着了，眼下一片青黑。可你好了，他自己却倒下了，咳得一声重过一声。你坐在他床边，替他掖好被角，第一次叫了他的名字：「允礼。」他睁开眼，怔了许久，才低低地「嗯」了一声，像是怕惊散了什么。",
+      },
+      {
+        id: "jinxiZhaoliao",
+        name: "槿汐照料",
+        card: "jinxiXiangzhu",
+        effects: [sz(3)],
+        removeNegatives: "all",
+        text: "移除全部负面状态；身子 +3",
+        story:
+          "槿汐听说有人要接你下山，一句话也没多问，先把你的旧棉袄、药罐和那卷抄了一半的经书收进包袱。到了清凉台，她不肯让旁人近身，煎药、喂汤、擦身，事事亲力亲为，夜里就在脚踏上和衣而卧，你一动她便醒。你烧得糊涂时拉着她的手喊冷，她只一遍遍说：「小主别怕，奴婢在呢，天亮了就好。」果郡王立在帘外，听着里头的动静，终究没有进来，只吩咐阿晋再添两盆炭。",
       },
     ],
   },
@@ -2516,7 +2541,7 @@ export const LINGRONG_FAREWELL: Record<LingrongTier, string> = {
 
 // ---------------------------------------------------------------- popups (§五)
 
-export type PopupId = "opening" | "huanghou" | "tonghuatai" | "chunyuan" | "wanwan" | "confront" | "exit" | "feilao" | "zhoufu" | "ximai" | "ouyu" | "dengmen";
+export type PopupId = "opening" | "huanghou" | "tonghuatai" | "chunyuan" | "wanwan" | "confront" | "exit" | "feilao" | "zhoufu" | "ximai" | "ouyu" | "dengmen" | "qinse";
 
 export const POPUP_TEXT = {
   opening: "翊坤宫的门关上了。华妃倒了，六宫都说碎玉轩的莞主子是头一份的恩宠。听说景仁宫也要亲自来贺。",
@@ -2606,6 +2631,13 @@ export const POPUP_TEXT = {
     "静白咬定你得了肺痨，当着满寺师父的面，说要把你挪出去，免得过了病气给旁人。你知道那是诬陷，可这样的话一旦说出口，便没有人敢替你争辩。于是你只带了几件随身的衣物，由槿汐扶着，踩着雪往后山走。身后，甘露寺的门「砰」地关上了。山路又陡又滑，你却渐渐觉得心里松了一口气：凌云峰上没有人盯着你的一举一动，没有刁难，也没有闲话，只有风声、雪声和一间清冷的小屋。名声是被人糟蹋了，日子，倒也算落得个清净。",
   feilaoRules: "杂役磋磨、功德箱失窃移出；月下对谈、夜半惊扰、耳目窥伺加入。",
   zhoufu: "消息是夜里传来的：果郡王的船在江上翻了，尸骨无存。他留给你的那些东西，如今只剩下念想。",
+  qinse: [
+    "庚帖上，两个名字并排立着，墨迹一点点干了。你忽然想起前些日子，雪夜里他赶来的身影，月色下他吹起的那支长相思，想起你抚琴时他低头含笑的样子。琴瑟和鸣，原不过是这样的光景：你不必说，他也懂；他不必问，你也应。",
+    "这几件事，一桩一桩，都像是在心里种下了什么。你只觉得，往后不论山风再冷、日子再长，心里总有一处是暖的、定的。",
+  ],
+  zhoufuQinse:
+    "只是那夜琴笛相和的光景还在眼前，你竟没有倒下。你把他留下的东西一件一件收好，心里空得发疼，却也有什么东西在这疼里慢慢沉了下来：他不在了，你更要好好活着，把日子一步一步走下去。",
+  zhoufuQinseRules: "【琴瑟同心】生效：此后每回合抓牌数 +1。",
   zhoufuRules: "3 张【果郡王相助】变成 🕯️遗物：打出即焚毁，没有别的效果。",
   ximaiRecall: {
     1: "当初你自请出宫，临行前亲手把胧月交给了敬妃，原想从此清清静静，在佛前了此残生。",
