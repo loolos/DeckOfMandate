@@ -85,7 +85,7 @@ import {
   type Z3State,
 } from "../logic/stage3Engine";
 import { cardArtUrl, eventArtUrl, specialArtUrl, storyArtUrl } from "./art";
-import { CardArt, FoldBox, GameHeader, LogView, Pile, PileGroup, ResolvedBanner, ScrollRow, StatChip, TagChip, activateOnKey, countBy, isTypingTarget, type Fold } from "./common";
+import { CardArt, FoldBox, GameHeader, LogView, Pile, PileGroup, ResolvedBanner, ScrollRow, StatChip, TagChip, activateOnKey, countBy, groupStatuses, isTypingTarget, type Fold } from "./common";
 import { compactEffect3, expandedEffect3 } from "./effectText3";
 import styles from "./zhenhuan.module.css";
 
@@ -841,7 +841,7 @@ function Statuses({ state, dispatch }: { state: Z3State; dispatch: Dispatch }) {
       <span className={styles.muted}>状态：</span>
       <ScrollRow className={styles.statuses}>
         {state.statuses.length === 0 && !state.yihua ? <span className={styles.muted}>无</span> : null}
-        {state.statuses.map((st) => {
+        {groupStatuses(state.statuses).map(({ st, count }) => {
           const def = STATUSES3[st.id];
           const notYet = !def.permanent && st.appliesFromTurn > state.turn;
           const expanded = open.has(st.uid);
@@ -858,6 +858,7 @@ function Statuses({ state, dispatch }: { state: Z3State; dispatch: Dispatch }) {
                 <span>
                   {def.emoji}
                   <span className={styles.statusFull}> {def.name}</span>
+{count > 1 ? <span>×{count}</span> : null}
                 </span>
                 <span className={styles.statusBrief}>
                   {def.permanent ? "" : `⏳${st.remaining}`}

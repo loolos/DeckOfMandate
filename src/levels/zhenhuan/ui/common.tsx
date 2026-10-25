@@ -12,6 +12,20 @@ export function countBy<T extends string>(ids: readonly T[]): [T, number][] {
   return [...m.entries()];
 }
 
+/** Merge identical status instances (same id, remaining rounds and start turn) into one chip with a count. */
+export function groupStatuses<T extends { id: string; uid: string; remaining: number; appliesFromTurn: number }>(
+  list: readonly T[],
+): { st: T; count: number }[] {
+  const groups = new Map<string, { st: T; count: number }>();
+  for (const st of list) {
+    const key = `${st.id}|${st.remaining}|${st.appliesFromTurn}`;
+    const g = groups.get(key);
+    if (g) g.count += 1;
+    else groups.set(key, { st, count: 1 });
+  }
+  return [...groups.values()];
+}
+
 /**
  * Hover / focus popover for a tile (tap focuses it on touch screens). The popover is
  * `position: fixed` (placed from the tile's rect) so the sideways-scrolling strip cannot clip it;
