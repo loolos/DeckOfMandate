@@ -1640,7 +1640,8 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     needTwo: true,
     halfStatusTurns: 1,
     place: "peak",
-    resolvedText: "移除事件；需打出两张解牌",
+    resolveCost: [q(-1)],
+    resolvedText: "移除事件；需打出两张解牌；化解也要清誉 -1",
     unresolvedText: "未来 2 回合不能打出禅语修身；只打出一张解牌则只持续 1 回合",
     resolvedStory: {
       jingxinRennai: "你把油灯拨亮了些，坐着念了一夜的经。天亮时，狼嚎声也远了。",
