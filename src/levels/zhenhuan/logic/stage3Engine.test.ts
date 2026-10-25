@@ -32,6 +32,7 @@ import {
   presentedSecrets,
   reduce3,
   relicsKept,
+  endingStory3,
   replay3,
   storyBasicOptions3,
   xiayuCost,
@@ -705,6 +706,7 @@ describe("zhenhuan stage 3 engine", () => {
   it("移花接木: 槿汐引驾 → 两回合后偶遇 (圣宠 restored) → 温太医改脉; perfect needs all relics burned", () => {
     let s = advanceTo(newStage3(15, CARRY), 26);
     s.exitShengchong = 9;
+    s.exitTier = 1;
     s.shenzi = 6;
     const next = () => {
       clearBoard(s);
@@ -756,6 +758,11 @@ describe("zhenhuan stage 3 engine", () => {
     s = act(s, { type: "endTurn" });
     expect(s.outcome).toBe("won");
     expect(s.victory).toBe("perfect");
+    const story = endingStory3(s).join("\n");
+    expect(story).toContain("自请去甘露寺");
+    expect(story).not.toContain("还活着");
+    expect(story.indexOf("景仁宫那一日")).toBeLessThan(story.indexOf("甘露寺"));
+    expect(story.indexOf("凌云峰")).toBeLessThan(story.indexOf("钮祜禄氏"));
   });
 
   it("移花接木: a missed 偶遇 comes back two turns later; 眉庄 lowers 疑点", () => {

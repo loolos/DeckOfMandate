@@ -54,6 +54,7 @@ import {
   confrontAccepts,
   confrontLines,
   endingLines3,
+  endingStory3,
   feilaoAccepts,
   feilaoCurrentTier,
   hasStatus3,
@@ -1172,11 +1173,9 @@ function OutcomeModal({ state, onRestart, onMenu }: { state: Z3State; onRestart:
         <h2 id="zh3-outcome-title">{won ? (state.victory === "perfect" ? `🌟 完美结局：${HOMECOMING.name}` : `${HOMECOMING.emoji} ${HOMECOMING.name}`) : "🥀 功亏一篑"}</h2>
         {won ? (
           <>
-            {POPUP_TEXT.homecoming.map((l) => (
-              <p key={l}>{l}</p>
+            {endingStory3(state).map((line) => (
+              <p key={line}>{line}</p>
             ))}
-            {state.exitTier ? <p>{POPUP_TEXT.homecomingTier[state.exitTier]}</p> : null}
-            {state.victory === "perfect" ? <p>{POPUP_TEXT.perfect}</p> : null}
           </>
         ) : (
           <>
@@ -1190,9 +1189,11 @@ function OutcomeModal({ state, onRestart, onMenu }: { state: Z3State; onRestart:
             ) : null}
           </>
         )}
-        {endingLines3(state).map((line) => (
-          <p key={line}>{line}</p>
-        ))}
+        {won
+          ? null
+          : endingLines3(state).map((line) => (
+              <p key={line}>{line}</p>
+            ))}
         <p className={styles.muted}>
           最终：第 {state.turn} 回合 · {won ? "熹妃" : rankName3(state)} · 清誉 {state.qingyu} · 身子 {state.shenzi}
           {state.yihua ? ` · 疑点 ${state.yihua.doubt}` : ""}
