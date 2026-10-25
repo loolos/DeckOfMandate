@@ -723,9 +723,10 @@
 }
 
 .cardLocked {
-  border-color: var(--zh-muted);
-  --zh-edge: var(--zh-muted);
-  filter: saturate(0.3) brightness(0.88);
+  border-color: #3d5a80;
+  border-top-color: #3d5a80;
+  --zh-edge: #3d5a80;
+  filter: saturate(0.6) brightness(0.85);
 }
 
 .flavor {
