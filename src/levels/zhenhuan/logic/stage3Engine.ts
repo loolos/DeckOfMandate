@@ -1440,6 +1440,10 @@ function settleConfront(s: Z3State): void {
     return;
   }
   log(s, `${exit.emoji} ${exit.name}：${exit.story}${exit.longyue}`, tier === 1 ? "good" : "bad");
+  // 出宫清誉按皇后呈上的把柄条数扣，从修行上限起算（先封顶，否则宫中攒的高清誉会把扣减吞掉）；至少留 1
+  if (s.qingyu > XIUXING.cap) s.qingyu = XIUXING.cap;
+  const loss = Math.min(c.presented, s.qingyu - 1);
+  if (loss > 0) applyDelta3(s, { resource: "qingyu", amount: -loss }, `皇后呈上 ${c.presented} 条把柄`);
   applyDeltas3(s, exit.effects, exit.name);
   if (!alive(s)) {
     s.lossKind = "lenggong";
