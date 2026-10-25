@@ -229,7 +229,7 @@ export type Z3State = {
   songxing: boolean;
   /** 与果郡王有过的往来，舟覆后变成遗物。 */
   keepsakes: RelicId[];
-  /** 温太医探视: the temporary card's uid, and whether 「为女儿撑下去」 was used. */
+  /** 温太医探视: the temporary card's uid, and whether 槿汐相助 was used. */
   changxiangsi: { played: CardId3[]; done: boolean } | null;
   /** 月下琴笛 was completed (the event card itself is gone by turn 23). */
   changxiangsiDone?: boolean;
