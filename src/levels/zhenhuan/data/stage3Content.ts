@@ -629,15 +629,15 @@ export type SecretDef = {
 const ENSHANG_LINE = "皇后端着茶盏，淡淡说了一句：「本宫赏下的东西，妹妹倒也收得心安。」";
 
 export const SECRETS: Record<SecretId, SecretDef> = {
-  shiqinNeiqing: { name: "侍寝内情", emoji: "🌙", lingrong: true, line: "景仁宫的小宫女跪着说：「那晚敬事房明明翻的是莞嫔的牌子，进养心殿的却是旁人。莞嫔称病，转头让别人替了去，这是欺瞒圣上，混淆宫闱。」", hint: "第二关里，你曾让陵容代你侍寝。" },
+  shiqinNeiqing: { name: "侍寝内情", emoji: "🌙", lingrong: true, line: "祺贵人拿帕子拭着眼角：「那晚敬事房明明翻的是莞嫔的牌子，进养心殿的却是旁人。莞嫔称病，转头让别人替了去，这是欺瞒圣上，混淆宫闱。」", hint: "第二关里，你曾让陵容代你侍寝。" },
   zhuangshenNonggui: { name: "装神弄鬼", emoji: "👻", lingrong: true, line: "景仁宫的小宫女道：「丽嫔娘娘那夜见的‘福子’，是有人扮的。莞嫔在宫里装神弄鬼，吓得嫔御失魂落魄，这是扰乱宫闱，欺君不敬。」", hint: "丽嫔惊梦那夜，装“福子”吓她，是陵容帮你办的。" },
-  sitanSiqiu: { name: "私探死囚", emoji: "🥀", lingrong: true, line: "内务府的小太监战战兢兢：「余氏临死前，碎玉轩派人去冷宫见过她，旁人都不让进。私见待罪的宫人，难免叫人疑心是在替她传话、灭口，有碍皇上明察。」", hint: "余莺儿临死前，你让陵容去探视过她。" },
-  jierenYaochong: { name: "借人邀宠", emoji: "🌺", lingrong: true, line: "翊坤宫旧日的宫女说：「那支曲子唱得巧，皇上偏偏就往碎玉轩去了。借旁人的曲子邀宠，把皇上引到自己宫里，这是算计圣驾。」", hint: "欢宜香浓那回，你借陵容的曲子把皇上引到了碎玉轩。" },
+  sitanSiqiu: { name: "私探死囚", emoji: "🥀", lingrong: true, line: "齐妃一拍扶手：「余氏临死前，碎玉轩派人去冷宫见过她，旁人都不让进。私见待罪的宫人，难免叫人疑心是在替她传话、灭口，有碍皇上明察。」", hint: "余莺儿临死前，你让陵容去探视过她。" },
+  jierenYaochong: { name: "借人邀宠", emoji: "🌺", lingrong: true, line: "祺贵人轻轻一笑：「那支曲子唱得巧，皇上偏偏就往碎玉轩去了。借旁人的曲子邀宠，把皇上引到自己宫里，这是算计圣驾。」", hint: "欢宜香浓那回，你借陵容的曲子把皇上引到了碎玉轩。" },
   kuitanGongwei: { name: "窥探宫闱", emoji: "👁️", lingrong: true, line: "一个内务府的小太监说：「各宫的宫女往哪儿走，碎玉轩的人比奴才还清楚。私下打探各宫动静，这是窥探宫闱，有违宫规。」", hint: "隔墙有耳那回，各宫的动静是陵容替你打探的。" },
   qiuziXinqie: { name: "求子心切", emoji: "🙏", lingrong: true, line: "宝华殿的小宫女道：「莞嫔在佛前跪了半日，嘴里念的不是平安，是求子。身为嫔御，私下谋求子嗣，这是怀着心思觊觎圣恩。」", hint: "在宝华殿祈福时，你求的是子嗣。" },
   wangyeZengwu: { name: "王爷赠物", emoji: "🎐", lingrong: true, line: "齐妃冷笑一声：「桐花台那日，十七爷与甄嫔说了好一会子话，宫里好些人都瞧见了。妃嫔私下与亲王说话，内外无别，辱及天家体面。」", hint: "桐花台初遇果郡王，你与他说了好一会儿话。" },
-  guyiYuanyan: { name: "故衣怨言", emoji: "👗", lingrong: true, line: "景仁宫的小宫女说：「莞嫔穿了一回旧衣，便说皇上看的从来不是自己。这是怨怼君上，对皇上的恩宠不知足。」", hint: "纯元故衣之后，你对陵容说过皇上看的从来不是你。" },
-  xinlengZhiyu: { name: "心冷之语", emoji: "💔", lingrong: true, line: "碎玉轩外洒扫的小太监低着头：「莞嫔私下说过‘心冷’二字。对着皇上的恩宠说心冷，这是不敬，是怨怼。」", hint: "菀菀类卿之后，你对陵容说过心冷的话。" },
+  guyiYuanyan: { name: "故衣怨言", emoji: "👗", lingrong: true, line: "齐妃扬声道：「莞嫔穿了一回旧衣，便说皇上看的从来不是自己。这是怨怼君上，对皇上的恩宠不知足。」", hint: "纯元故衣之后，你对陵容说过皇上看的从来不是你。" },
+  xinlengZhiyu: { name: "心冷之语", emoji: "💔", lingrong: true, line: "祺贵人接过话头：「莞嫔私下说过‘心冷’二字。对着皇上的恩宠说心冷，这是不敬，是怨怼。」", hint: "菀菀类卿之后，你对陵容说过心冷的话。" },
   yuzhongShuxin: { name: "狱中书信", emoji: "📜", lingrong: true, line: "内务府的小太监说：「甄大人下狱后，碎玉轩托人往狱里递过一封信。私通狱中的钦犯，不知写了些什么，皇上不妨问问。」", hint: "父亲下狱后，你托人往狱里递过信。" },
   qiciBuyong: { name: "弃赐不用", emoji: "🍲", lingrong: true, line: "景仁宫的小宫女说：「皇后娘娘亲赐的安胎补品，莞嫔一口没动，倒是喂了花。辜负中宫的赏赐，这是对皇后不敬，也不爱惜皇嗣。」", hint: "皇后送的安胎补品，你没有用。" },
   xijianSiyu: { name: "席间私语", emoji: "🏮", lingrong: true, line: "祺贵人撇着嘴：「赏花那日，莞嫔和人说了好些各宫的长短。背地里议论妃嫔，搬弄是非，这是扰得后宫不和。」", hint: "赏花小聚上，你与人议论过各宫的长短。" },
