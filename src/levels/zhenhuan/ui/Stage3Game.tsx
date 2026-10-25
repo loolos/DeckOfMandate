@@ -1053,15 +1053,17 @@ function PopupBody({ state, id }: { state: Z3State; id: PopupId }) {
           ))}
         </>
       );
-    case "tonghuatai":
+    case "tonghuatai": {
+      const meet = state.guoMeet ?? "di";
       return (
         <>
-          {POPUP_TEXT.tonghuatai.map((t) => (
-            <p key={t}>{t}</p>
-          ))}
+          <p>{POPUP_TEXT.tonghuatai.open[meet]}</p>
+          <p>{POPUP_TEXT.tonghuatai.bio}</p>
+          <p>{POPUP_TEXT.tonghuatai.close[meet]}</p>
           <p className={styles.muted}>{POPUP_TEXT.tonghuataiRules}</p>
         </>
       );
+    }
     case "chunyuan": {
       const r = state.chunyuanResult ?? "fail";
       return (
