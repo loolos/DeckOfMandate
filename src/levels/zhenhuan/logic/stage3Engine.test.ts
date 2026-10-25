@@ -681,6 +681,30 @@ describe("zhenhuan stage 3 engine", () => {
     expect(s.statuses.some((x) => x.id === "hanzheng")).toBe(true);
   });
 
+  it("合婚庚帖 is a 双牌 story: 果郡王相助 + 荆钗布裙 once each; the same card twice does not count", () => {
+    const start = (): Z3State => {
+      const s = advanceTo(newStage3(12, CARRY), 3);
+      clearBoard(s);
+      s.stories.push({ id: "hehunGengtie", chosenOptionId: null });
+      return s;
+    };
+    let s = start();
+    let [g1, g2] = setHand(s, ["guojunwangXiangzhu", "guojunwangXiangzhu"]);
+    s.extraPlays = 3;
+    s = act(s, { type: "playCard", cardUid: g1! });
+    s = act(s, { type: "playCard", cardUid: g2! });
+    expect(s.gengtie).toBe(false);
+    expect(s.stories[0]!.chosenOptionId).toBeNull();
+
+    s = start();
+    const [g, j] = setHand(s, ["guojunwangXiangzhu", "jingchaiBuqun"]);
+    s.extraPlays = 3;
+    s = act(s, { type: "playCard", cardUid: j! });
+    s = act(s, { type: "playCard", cardUid: g! });
+    expect(s.gengtie).toBe(true);
+    expect(s.keepsakes).toContain("yiwuGengtie");
+  });
+
   it("舟覆噩耗 turns the 果郡王 cards into relics; 移花接木 starts on turn 26 with 疑点 1", () => {
     let s = advanceTo(newStage3(12, CARRY), 24);
     s.gengtie = true;
