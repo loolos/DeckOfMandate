@@ -18,6 +18,7 @@ import {
   DOUBT,
   EVENT_KIND3_LABEL,
   EVENTS3,
+  ENDING,
   EXIT,
   FABRICATED_HINT,
   unresolvedText3,
@@ -31,6 +32,7 @@ import {
   LINGRONG_IDLE_TEXT3,
   LINGRONG_SUMMON,
   LINGRONG_TRUTH,
+  POPUP_TEXT,
   PAIRS,
   PEAK_ADD_CRISES,
   PEAK_ADD_OPPORTUNITIES,
@@ -1585,7 +1587,7 @@ function endTurn3(s: Z3State): void {
   if (y) {
     if (y.step === 4) {
       s.outcome = "won";
-      const perfect = y.doneTurn != null && y.doneTurn < STAGE3.perfectBefore && relicsKept(s) === 0 && s.relicsBurned > 0 && y.duishi;
+      const perfect = y.doneTurn != null && y.doneTurn < STAGE3.perfectBefore && relicsKept(s) === 0 && s.exitTier === 1;
       s.victory = perfect ? "perfect" : "return";
       log(s, perfect ? "凤阙归来：完美结局！" : "凤阙归来：钮祜禄氏，封熹妃，即日回宫。", "good");
       return;
@@ -1800,19 +1802,32 @@ export function confrontLines(s: Z3State): { id: string; line: string; hint: str
   return lines;
 }
 
-/** Ending lines for the outcome screen. */
+/** 胜利结局，按剧情顺序：景仁宫对质 → 出宫 → 静白污蔑 → 凌云峰 → 移花接木 → 回宫 → 陵容。 */
+export function endingStory3(s: Z3State): string[] {
+  const lines: string[] = [];
+  const exposed = confrontLines(s).some((l) => l.lingrong && !l.withheld);
+  lines.push(exposed ? ENDING.confront.exposed : ENDING.confront.plain);
+  if (s.exitTier && s.exitTier <= 3) {
+    lines.push(ENDING.exit[s.exitTier]!, ENDING.gate[s.exitTier]!);
+  }
+  if (s.feilaoTier != null) lines.push(ENDING.feilao[s.feilaoTier]!);
+  lines.push(ENDING.lingyun);
+  const kept = relicsKept(s);
+  if (kept > 0) lines.push(ENDING.relicsKept(kept));
+  else if (s.relicsBurned > 0) lines.push(ENDING.relicsBurned);
+  lines.push(ENDING.ximai);
+  if (s.yihua?.duishi) lines.push(ENDING.duishi);
+  lines.push(...POPUP_TEXT.homecoming);
+  if (s.exitTier) lines.push(POPUP_TEXT.homecomingTier[s.exitTier]!);
+  if (s.exitTierLingrong) lines.push(ENDING.lingrong[s.exitTierLingrong]);
+  return lines;
+}
+
+/** Ending lines for the 失败 outcome screen. */
 export function endingLines3(s: Z3State): string[] {
   const lines: string[] = [];
   if (s.exitTier) lines.push(`出宫：${EXIT[s.exitTier].emoji} ${EXIT[s.exitTier].name}。`);
-  if (s.outcome === "won") {
-    if (s.yihua?.duishi) lines.push("槿汐应下了苏培盛的对食之约。她说，这是她心甘情愿的。");
-    const kept = relicsKept(s);
-    if (kept > 0) lines.push(`他留下的东西，你还留着 ${kept} 件。有些念想，终究舍不得烧。`);
-    else if (s.relicsBurned > 0) lines.push("他留下的东西，你一件一件都烧了。从此心里只剩下要走的路。");
-  }
   const t = s.exitTierLingrong;
-  if (t === "close") lines.push("陵容瞒下的那几件事，后来再也没有人提起过。");
-  else if (t === "distant") lines.push("陵容如今在宫里过得很好。只是你们再也没有说过体己话。");
-  else if (t === "resentful") lines.push("陵容一直替皇后留意着甘露寺的消息。这笔账，你记下了。");
+  if (t) lines.push(ENDING.lingrong[t]);
   return lines;
 }
