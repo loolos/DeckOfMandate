@@ -1006,11 +1006,12 @@ function resolvePlay3(s: Z3State, cardUid: string, removeStatusUid?: string): vo
       else log(s, `【${d.name}】双牌进度 1/2。`);
       continue;
     }
-    if (d.needTwo && !(isLingrong && tier)) {
+    if (d.needTwo) {
       ev.progress = [...(ev.progress ?? []), card.id];
       if (ev.progress.length >= 2) {
-        resolveEventByCard(s, ev, card.id, false);
-        resolvedNow.push(ev);
+        if (isLingrong && tier) relationDelta += resolveEventByLingrong(s, ev, tier);
+        else resolveEventByCard(s, ev, card.id, false);
+        if (ev.resolved) resolvedNow.push(ev);
       } else log(s, `【${d.name}】解牌 1/2。`);
       continue;
     }
