@@ -393,14 +393,21 @@ function StoryCard({ state, inst, dispatch, fold }: { state: Z3State; inst: Stor
           <span className={styles.ruleLabel}>可由手牌打出解决：</span>
         </p>
       ) : null}
-      {cardResponses.map((option) => {
-        const inHand = state.hand.some((c) => c.id === option.card);
+      {cardResponses.map((option, i) => {
+        // 双牌各打一张的选项合写一行
+        if (option.distinct && cardResponses.findIndex((o) => o.distinct) !== i) return null;
+        const partners = option.distinct ? cardResponses.filter((o) => o.distinct) : [option];
         const lingrongNote = option.card === "lingrongXiangzhu" && tier ? `（当前情分：${TIER_EMOJI[tier]}${TIER_LABEL[tier]}）` : "";
         return (
-          <p key={option.id} className={[styles.rule, chosen === option.id && styles.optionChosen].filter(Boolean).join(" ")}>
-            <span className={[styles.matchChip, inHand && !locked && styles.matchChipInHand].filter(Boolean).join(" ")}>
-              {CARDS3[option.card!].emoji} {CARDS3[option.card!].name}
-            </span>
+          <p key={option.id} className={[styles.rule, partners.some((o) => chosen === o.id) && styles.optionChosen].filter(Boolean).join(" ")}>
+            {partners.map((o) => {
+              const inHand = state.hand.some((c) => c.id === o.card);
+              return (
+                <span key={o.id} className={[styles.matchChip, inHand && !locked && styles.matchChipInHand].filter(Boolean).join(" ")}>
+                  {CARDS3[o.card!].emoji} {CARDS3[o.card!].name}
+                </span>
+              );
+            })}
             {option.name}：{expandedEffect3(option.text)}
             {chosen == null ? qinseNote(state, option) : ""}
             {chosen == null ? costNote(option) : ""}
