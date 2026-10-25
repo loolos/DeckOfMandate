@@ -20,6 +20,7 @@ import {
   EVENTS3,
   EXIT,
   FABRICATED_HINT,
+  unresolvedText3,
   FABRICATED_SECRET,
   FEILAO,
   FIXED_STORIES3,
@@ -1396,7 +1397,7 @@ function settleCrisis(s: Z3State, ev: EventInst3): void {
     if (def.pair) log(s, `连环：【${EVENTS3[PAIRS[def.pair].opportunity].name}】随之作废。`, "bad");
     return;
   }
-  log(s, `危机事件【${def.name}】未化解：${def.unresolvedText}。`, "bad");
+  log(s, `危机事件【${def.name}】未化解：${unresolvedText3(def, s.turn)}。`, "bad");
   const half = def.needTwo === true && (ev.progress ?? []).length === 1;
   if (half) log(s, `只凑了一张解牌，【${def.name}】的惩罚减轻了。`, "info");
   applyDeltas3(s, half && def.halfPenalty ? def.halfPenalty : def.penalty, def.name);
