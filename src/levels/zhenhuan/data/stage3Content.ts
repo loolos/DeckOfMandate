@@ -1519,6 +1519,19 @@ export const TEMPLE_CRISES: readonly CrisisId3[] = ["tanhuoLiangmi", "tanhuoLian
 export const PEAK_ADD_OPPORTUNITIES: readonly OpportunityId3[] = ["yuexiaDuitan"];
 export const PEAK_ADD_CRISES: readonly CrisisId3[] = ["yebanJingrao", "xianrenKuitan"];
 
+const ACT1_EVENTS: ReadonlySet<EventId3> = new Set<EventId3>([...ACT1_OPPORTUNITIES, ...ACT1_CRISES, ...HUANGHOU_EVENTS, "wangyeXiantan", "qingmaiBaoxi"]);
+
+/** 手牌「匹配事件」只列这一幕（寺中 / 凌云峰）真的会出现的事件。 */
+export function matchesInAct(matches: readonly EventId3[], act: Act, turn: number): EventId3[] {
+  const onPeak = turn > STAGE3.templeLastTurn;
+  return matches.filter((id) => {
+    if (act === 1) return ACT1_EVENTS.has(id);
+    if (ACT1_EVENTS.has(id)) return false;
+    const place = EVENTS3[id].place;
+    return !(place === "temple" && onPeak) && !(place === "peak" && !onPeak);
+  });
+}
+
 // ---------------------------------------------------------------- 陵容（第一幕）
 
 type TierTable = Record<LingrongTier, LingrongOutcome>;

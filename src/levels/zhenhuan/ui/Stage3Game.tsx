@@ -29,6 +29,7 @@ import {
   RIVALS,
   SHENZI,
   STAGE3,
+  matchesInAct,
   STATUSES3,
   statusText3,
   STORIES3,
@@ -765,6 +766,7 @@ function HandCard({ state, card, dispatch, fold }: { state: Z3State; card: CardI
       </FoldBox>
     );
   }
+  const shownMatches = matchesInAct(def.matches, state.act, state.turn);
   return (
     <FoldBox fold={fold} className={className} onDouble={play}>
       <div className={styles.cardHead}>
@@ -781,10 +783,10 @@ function HandCard({ state, card, dispatch, fold }: { state: Z3State; card: CardI
           {expandedEffect3(line)}
         </p>
       ))}
-      {def.matches.length > 0 ? (
+      {shownMatches.length > 0 ? (
         <p className={styles.rule}>
           <span className={styles.ruleLabel}>匹配事件：</span>
-          {def.matches.map((id) => (
+          {shownMatches.map((id) => (
             <span key={id} className={[styles.matchChip, events.some((e) => e.id === id) && styles.matchChipInHand].filter(Boolean).join(" ")}>
               {EVENTS3[id].emoji} {EVENTS3[id].name}
             </span>

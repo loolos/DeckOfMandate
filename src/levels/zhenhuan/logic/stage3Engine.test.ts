@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   CARDS3,
   CONFRONT,
+  matchesInAct,
   EVENTS3,
   FABRICATED_SECRET,
   FIXED_STORIES3,
@@ -433,6 +434,16 @@ describe("zhenhuan stage 3 engine", () => {
     expect(s.confront!.stories[0]).toContain("寸步未离");
     s = act(s, { type: "playCard", cardUid: wt! });
     expect(s.confront!.stories[1]).toContain("忠心");
+  });
+
+  it("手牌匹配事件只列当前这一幕会出现的", () => {
+    const m = CARDS3.jinxiXiangzhu.matches;
+    expect(matchesInAct(m, 1, 3)).toContain("gongzhongLiuyan");
+    expect(matchesInAct(m, 1, 3)).not.toContain("foqianGongdeng");
+    expect(matchesInAct(m, 2, 12)).toContain("foqianGongdeng");
+    expect(matchesInAct(m, 2, 12)).not.toContain("gongzhongLiuyan");
+    expect(matchesInAct(m, 2, 12)).not.toContain("xianrenKuitan");
+    expect(matchesInAct(m, 2, 20)).toContain("xianrenKuitan");
   });
 
   it("entering the temple: 修行 identity, temple deck plus the 果郡王 cards, 清誉 capped at 8", () => {
