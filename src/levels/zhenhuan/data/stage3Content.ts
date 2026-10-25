@@ -357,6 +357,7 @@ export type StatusId3 =
   | "shenhuaiLongyi"
   | "duanfeiXianghu"
   | "jingfeiZhiyi"
+  | "songxingBieyi"
   | "xinGuirenZhangyi"
   | "fuxiongMengchen"
   | "lingrongDeXiang"
@@ -606,6 +607,16 @@ export const STATUSES3: Record<StatusId3, StatusDef3> = {
     drawModifier: 1,
     effectText: "未来 3 回合，每回合抓牌数 +1。",
     flavor: "一卷经抄完，心里那些翻来覆去的念头，竟也平了。",
+  },
+  songxingBieyi: {
+    id: "songxingBieyi",
+    name: "临别笛声",
+    emoji: "🍃",
+    tag: "positive",
+    duration: 3,
+    drawModifier: 1,
+    effectText: "未来 3 回合，每回合抓牌数 +1。",
+    flavor: "他走后，山风里似乎还留着那支笛子的余音，叫人心里踏实了些。",
   },
   jingfeiZhouji: {
     id: "jingfeiZhouji",
@@ -2065,7 +2076,7 @@ export const STORIES3: Record<StoryId3, StoryDef3> = {
     defaultOptionId: "wuyan",
     options: [
       { id: "wuyan", name: "不去相送", effects: [], text: "无效果", story: "你没有去送他。那一夜，你坐在窗前，听着山风一阵紧似一阵，直到天边泛白。" },
-      { id: "songxing", name: "送行", card: "guojunwangXiangzhu", effects: [], flag: "songxing", text: "他留下一件信物，日后或许用得上", story: "你送他到山下。他翻身下马，把那支随身多年的笛子塞进你手里：「等我回来。」" },
+      { id: "songxing", name: "送行", card: "guojunwangXiangzhu", effects: [], flag: "songxing", status: "songxingBieyi", text: "未来 3 回合每回合抓牌 +1", story: "你送他到山下。他翻身下马，把那支随身多年的笛子塞进你手里：「等我回来。」" },
     ],
   },
   zhoufuEHao: {
