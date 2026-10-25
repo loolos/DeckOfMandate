@@ -732,7 +732,7 @@ export const STATUSES3: Record<StatusId3, StatusDef3> = {
   },
   weiNverChengxia: {
     id: "weiNverChengxia",
-    name: "青灯慈念",
+    name: "慈烛长明",
     emoji: "🕯️",
     tag: "positive",
     duration: 2,
