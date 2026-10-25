@@ -302,7 +302,7 @@ describe("zhenhuan stage 3 engine", () => {
     expect(t.allies.xin).toBe(true);
   });
 
-  it("打压 leaves a status: the crisis stays in the pool and is auto-resolved the next time it is drawn", () => {
+  it("打压 leaves a status: the crisis stays in the pool and needs one fewer 解牌 the next time it is drawn", () => {
     let s = advanceTo(newStage3(3, CARRY), 3);
     clearBoard(s);
     s.crisis = ev(s, "qifeiXunxin");
@@ -318,8 +318,12 @@ describe("zhenhuan stage 3 engine", () => {
     s.opportunityUsed = [];
     s = act(s, { type: "endTurn" });
     expect(s.crisis?.id).toBe("qifeiXunxin");
-    expect(s.crisis!.resolved && s.crisis!.bySuppress).toBe(true);
+    expect(s.crisis!.eased).toBe(true);
+    expect(s.crisis!.resolved).toBe(false);
     expect(s.statuses.some((st) => st.id === "dayaQifei")).toBe(false);
+    const [one] = setHand(s, ["jinyanShenxing"]);
+    s = act(s, { type: "playCard", cardUid: one! });
+    expect(s.crisis!.resolved).toBe(true);
   });
 
   it("连环: two cards without the shared one clear the crisis only; the opportunity unlocks but stays open", () => {
@@ -336,7 +340,7 @@ describe("zhenhuan stage 3 engine", () => {
     expect(t.statuses.some((st) => st.id === "dayaGuaerjia")).toBe(false);
   });
 
-  it("打压 is per rival: 齐妃寻衅 suppressed → 三阿哥邀宠 (also 齐妃) is auto-resolved next", () => {
+  it("打压 is per rival: 齐妃寻衅 suppressed → 三阿哥邀宠 (also 齐妃) is eased next", () => {
     let s = advanceTo(newStage3(3, CARRY), 3);
     clearBoard(s);
     withStatus(s, "dayaQifei");
@@ -346,7 +350,7 @@ describe("zhenhuan stage 3 engine", () => {
     s.opportunityUsed = [];
     s = act(s, { type: "endTurn" });
     expect(s.crisis?.id).toBe("sanAgeYaochong");
-    expect(s.crisis!.resolved && s.crisis!.bySuppress).toBe(true);
+    expect(s.crisis!.eased).toBe(true);
     expect(s.statuses.some((st) => st.id === "dayaQifei")).toBe(false);
   });
 
