@@ -965,8 +965,12 @@ function ConfrontEvidence({ state }: { state: Z3State }) {
   const entry = (l: (typeof lines)[number], i: number) => (
     <p key={`${l.line}-${i}`}>
       {l.line}
-      <br />
-      <span className={styles.muted}>（{l.hint}）</span>
+      {l.lingrong && l.line !== FABRICATED_SECRET ? null : (
+        <>
+          <br />
+          <span className={styles.muted}>（{l.hint}）</span>
+        </>
+      )}
     </p>
   );
   return (
