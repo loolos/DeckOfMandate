@@ -569,6 +569,17 @@ describe("zhenhuan stage 3 engine", () => {
     expect(none.statuses.some((x) => x.id === "hanzheng" && x.appliesFromTurn === 13)).toBe(true);
   });
 
+  it("圣驾偶遇: 荆钗布裙 also completes step ②", () => {
+    let s = advanceTo(newStage3(12, CARRY), 27);
+    clearBoard(s);
+    s.yihua = { step: 2, yinjia: ["jinxiXiangzhu"], yinjiaNeed: 1, duishi: true, doubt: 1, doneTurn: null, ouyuDue: s.turn, ouyuTurn: s.turn, yinjiaTurn: s.turn - 2, dushu: false };
+    s.stories.push({ id: "yihuaOuyu", chosenOptionId: null });
+    s.extraPlays = 3;
+    const [bu] = setHand(s, ["jingchaiBuqun"]);
+    s = act(s, { type: "playCard", cardUid: bu! });
+    expect(s.yihua!.step).toBe(3);
+  });
+
   it("耳目窥伺: unresolved gives 眼线环伺 (draw -1, never below 1) and no 清誉 loss", () => {
     let s = advanceTo(newStage3(6, CARRY), 20);
     clearBoard(s);

@@ -600,7 +600,7 @@ function YihuaCard({ state, fold, dispatch }: { state: Z3State; fold: Fold; disp
   const y = state.yihua;
   if (!y) return null;
   const inHand = (id: CardId3) => state.hand.some((x) => x.id === id && yihuaAccepts(state, id));
-  const stepCards: readonly (readonly CardId3[])[] = [y.yinjiaNeed > 1 ? [...YIHUA.yinjiaCards, YIHUA.luofaExtra] : YIHUA.yinjiaCards, ["chanyuXiushen"], ["wenTaiyiZhenzhi"]];
+  const stepCards: readonly (readonly CardId3[])[] = [y.yinjiaNeed > 1 ? [...YIHUA.yinjiaCards, YIHUA.luofaExtra] : YIHUA.yinjiaCards, ["chanyuXiushen", "jingchaiBuqun"], ["wenTaiyiZhenzhi"]];
   const relicCount = state.hand.filter((c) => isRelic(c.id)).length;
   return (
     <SpecialCard

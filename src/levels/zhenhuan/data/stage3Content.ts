@@ -2178,11 +2178,12 @@ export const STORIES3: Record<StoryId3, StoryDef3> = {
     name: "圣驾偶遇",
     emoji: "🌸",
     flavor: "皇上驾临甘露寺，正往佛堂这边来。你若不在佛前相见，这一回便又错过了。",
-    note: "打出【禅语修身】才算偶遇成功；没成就隔一回合再来。",
+    note: "打出【禅语修身】或【荆钗布裙】才算偶遇成功；没成就隔一回合再来。",
     defaultOptionId: "cuoguo",
     options: [
       { id: "cuoguo", name: "错失圣驾", effects: [], text: "偶遇没成，隔一回合再来", story: "皇上在山门外立了片刻，终究没有见到你，由苏培盛扶着回了銮驾。" },
       { id: "foqianChongfeng", name: "佛前重逢", card: "chanyuXiushen", effects: [], flag: "ouyu", text: "偶遇成功", story: "你在佛前念着经，听见身后的脚步声停了下来。皇上望着你的背影，许久，轻轻唤了一声你的名字。" },
+      { id: "bunqunChongfeng", name: "布裙重逢", card: "jingchaiBuqun", effects: [], flag: "ouyu", text: "偶遇成功", story: "你荆钗布裙，正蹲在廊下捡拾落叶，听见身后的脚步声停了下来。皇上望着你素净的侧影，许久，轻轻唤了一声你的名字。" },
     ],
   },
 };
@@ -2641,7 +2642,7 @@ export const TAG3_INFO: Record<TagId3, { label: string; lore: string; rules: str
   yihua: {
     label: "持续",
     lore: "唯一的活路。",
-    rules: "① 引驾（槿汐相助；落发的再加 1 张槿汐或眉庄）→ 两回合后 ② 偶遇（打出禅语修身；没成隔一回合再来）→ ③ 改脉（温太医相助），即回宫。",
+    rules: "① 引驾（槿汐相助；落发的再加 1 张槿汐或眉庄）→ 两回合后 ② 偶遇（打出禅语修身或荆钗布裙；没成隔一回合再来）→ ③ 改脉（温太医相助），即回宫。",
   },
   doubt: {
     label: "疑点",
