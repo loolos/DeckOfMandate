@@ -509,6 +509,18 @@ describe("zhenhuan stage 3 engine", () => {
     expect(doubtAfter(["yiwuDi", "yiwuPifeng"]) - doubtAfter([])).toBe(2);
   });
 
+  it("眉庄相助 in the temple: 清誉/抽牌 replaced by 眉庄打点 (抓牌 +1 for 3 turns)", () => {
+    let s = advanceTo(newStage3(6, CARRY), 12);
+    clearBoard(s);
+    const [mz] = setHand(s, ["meizhuangXiangzhu"]);
+    const qingyu = s.qingyu;
+    const handBefore = s.hand.length;
+    s = act(s, { type: "playCard", cardUid: mz! });
+    expect(s.qingyu).toBe(qingyu);
+    expect(s.hand.length).toBe(handBefore - 1);
+    expect(s.statuses.find((x) => x.id === "meizhuangDadian")?.remaining).toBe(3);
+  });
+
   it("entering the temple: 修行 identity, temple deck plus the 果郡王 cards, 清誉 capped at 8", () => {
     let s = advanceTo(newStage3(6, CARRY), 10);
     s.qingyu = 15;
