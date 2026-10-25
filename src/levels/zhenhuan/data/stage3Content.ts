@@ -98,11 +98,11 @@ export type CardId3 =
   | "yiwuDipu"
   | "yiwuTonghua"
   | "yiwuHehua"
-  | "yiwuZitiao";
+ ;
 
-export type RelicId = "yiwuGengtie" | "yiwuDi" | "yiwuPifeng" | "yiwuDipu" | "yiwuTonghua" | "yiwuHehua" | "yiwuZitiao";
+export type RelicId = "yiwuGengtie" | "yiwuDi" | "yiwuPifeng" | "yiwuDipu" | "yiwuTonghua" | "yiwuHehua";
 /** 舟覆后果郡王相助变成的遗物，按先后取用（有的剧情选择才有）。 */
-export const RELICS: readonly RelicId[] = ["yiwuGengtie", "yiwuDi", "yiwuPifeng", "yiwuZitiao", "yiwuHehua", "yiwuDipu", "yiwuTonghua"];
+export const RELICS: readonly RelicId[] = ["yiwuGengtie", "yiwuDi", "yiwuPifeng", "yiwuHehua", "yiwuDipu", "yiwuTonghua"];
 
 export type CardDef3 = {
   readonly id: CardId3;
@@ -341,17 +341,6 @@ export const CARDS3: Record<CardId3, CardDef3> = {
     rulesText: RELIC_RULES,
     rulesCompact: "🕯️🔥",
   },
-  yiwuZitiao: {
-    id: "yiwuZitiao",
-    name: "果郡王遗物",
-    emoji: "🎐",
-    flavor: "一张隔窗字条。你父亲在狱里的那些日子，他奔走回来，隔着门缝递给你的几行字。",
-    base: [],
-    baseDraw: 0,
-    matches: [],
-    rulesText: RELIC_RULES,
-    rulesCompact: "🕯️🔥",
-  },
 };
 
 export const RELIC_TEXT: Record<RelicId, string> = {
@@ -361,7 +350,6 @@ export const RELIC_TEXT: Record<RelicId, string> = {
   yiwuDipu: "谱子卷起了边，那支没有名字的曲子，在火里一个音一个音地没了。",
   yiwuTonghua: "桐花早已干枯，一碰就碎。火舌卷过去，只剩一缕淡淡的香。",
   yiwuHehua: "花籽在火里炸开一声轻响。安栖观外的合欢，再也没有人等它开花了。",
-  yiwuZitiao: "字条上的墨迹被火舔过，他的字一行一行浮出来，又一行一行暗下去。",
 };
 
 /** 第一幕牌库：第二关因【惜别】离场的眉庄 / 温太医回来了，各 2 张。 */
@@ -1990,7 +1978,6 @@ export const STORIES3: Record<StoryId3, StoryDef3> = {
         name: "托果郡王周旋",
         card: "guojunwangXiangzhu",
         two: true,
-        relic: "yiwuZitiao",
         effects: [],
         xiayu: "guo",
         text: "不扣圣宠",
