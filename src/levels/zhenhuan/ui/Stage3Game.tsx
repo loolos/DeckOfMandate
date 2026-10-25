@@ -630,7 +630,7 @@ function YihuaCard({ state, fold, dispatch }: { state: Z3State; fold: Fold; disp
               {mark(state_ === "done")} <strong>
                 {["①", "②", "③"][i]} {s.emoji} {s.name}
               </strong>
-              ：{s.story}
+              ：{n === 1 && state_ === "done" ? y.yinjia.map((id) => YIHUA.yinjiaStory[id] ?? "").join("") || s.story : s.story}
               {n === 1 ? (
                 <>
                   {" "}
@@ -655,11 +655,6 @@ function YihuaCard({ state, fold, dispatch }: { state: Z3State; fold: Fold; disp
         <span className={styles.ruleLabel}>📜 疑点 {y.doubt}/{DOUBT.max}：</span>
         {y.step < 3 ? "偶遇完成之前每回合末 +1。" : "已止住上涨。"}每打出一张槿汐相助或眉庄相助 -1。到 {DOUBT.max} 即失败；第 {STAGE3.totalTurns} 回合末仍未完成也失败。
       </p>
-      {y.step >= 2 ? (
-        <p className={styles.muted}>
-          引驾：{y.yinjia.map((id) => CARDS3[id].name).join("、")}
-        </p>
-      ) : null}
     </SpecialCard>
   );
 }
