@@ -733,11 +733,21 @@ describe("zhenhuan stage 3 engine", () => {
     expect(s.keepsakes).toContain("yiwuGengtie");
   });
 
+  it("踏雪问疾 resolved by a card is remembered after the story leaves the board", () => {
+    let s = advanceTo(newStage3(12, CARRY), 19);
+    const [g] = setHand(s, ["guojunwangXiangzhu"]);
+    s = act(s, { type: "playCard", cardUid: g! });
+    expect(s.taxueByCard).toBe(true);
+    s = advanceTo(s, 23);
+    expect(s.stories.some((st) => st.id === "taxueWenji")).toBe(false);
+    expect(s.taxueByCard).toBe(true);
+  });
+
   it("合婚庚帖 grants 琴瑟同心 only after 踏雪问疾 (by a card) and 月下琴笛 are both done; draw +1 starts after 舟覆", () => {
     const run = (taxueByCard: boolean, qinDone: boolean) => {
       let s = advanceTo(newStage3(12, CARRY), 3);
       clearBoard(s);
-      s.stories.push({ id: "taxueWenji", chosenOptionId: taxueByCard ? "bingzhongXiangshou" : "yangbing", viaCard: taxueByCard ? "guojunwangXiangzhu" : undefined });
+      s.taxueByCard = taxueByCard;
       s.changxiangsiDone = qinDone;
       s.stories.push({ id: "hehunGengtie", chosenOptionId: null });
       const [g, j] = setHand(s, ["guojunwangXiangzhu", "jingchaiBuqun"]);
