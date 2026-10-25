@@ -6,7 +6,7 @@ import { indexByBasename } from "./art";
  * `assets/music/<mood>.mp3` (or .ogg / .m4a / .wav) into place is all it takes;
  * a missing file means "silence for that mood".
  */
-export const MUSIC_MOODS = ["victory", "calm", "tension", "sorrow", "climax", "tender"] as const;
+export const MUSIC_MOODS = ["victory", "calm", "tension", "sorrow", "climax", "tender", "fengyi", "confront", "temple", "snow", "graft", "return"] as const;
 export type MusicMood = (typeof MUSIC_MOODS)[number];
 
 const MUSIC = indexByBasename(
@@ -42,34 +42,31 @@ const MUSIC_SCHEDULE: Record<1 | 2 | 3, readonly (readonly [fromTurn: number, mo
     [20, "tension"],
     [24, "climax"],
   ],
-  // 第三关：1 皇后笑意；5 桐花台；8 甄远道下狱；9 婉婉类卿；10 景仁宫对质；11 甘露寺；12 山门偶遇；18 肺痨之诬；
-  // 19 踏雪问疾；25 舟覆噩耗；26 移花接木；30 起到截止
+  // 第三关：1 皇后笑意；3 海棠春睡；5 桐花台；6 纯元故衣；8 甄远道下狱 / 婉婉类卿 / 景仁宫对质；11 甘露寺；
+  // 18 肺痨之诬、凌云峰；25 舟覆噩耗；26 移花接木
   3: [
     [1, "calm"],
-    [3, "tension"],
+    [3, "fengyi"],
     [5, "tender"],
-    [8, "sorrow"],
-    [10, "climax"],
-    [11, "sorrow"],
-    [12, "calm"],
-    [18, "tension"],
-    [19, "tender"],
+    [6, "fengyi"],
+    [8, "confront"],
+    [11, "temple"],
+    [18, "snow"],
     [25, "sorrow"],
-    [26, "tension"],
-    [30, "climax"],
+    [26, "graft"],
   ],
 };
 
 /**
  * The track to start next, given the turn the game is on *when the previous track ends*
- * (events are ignored); `null` session = start menu (`calm`). Once 第二关 is won with 大胜 or 完美胜利, or 第三关
- * is won, the next track is `victory`: it only plays if the player is still on the cleared screen when the
+ * (events are ignored); `null` session = start menu (`calm`). Once 第二关 is won with 大胜 or 完美胜利 the next track is
+ * `victory`, and once 第三关 is won it is `return`: they only play if the player is still on the cleared screen when the
  * previous track ends. Every other outcome (第一关 win, 险胜, loss) follows the schedule.
  */
 export function musicMood(session: Session | null): MusicMood {
   if (!session) return "calm";
   if (session.stage === 2 && session.state.outcome === "won" && session.state.victory !== "narrow") return "victory";
-  if (session.stage === 3 && session.state.outcome === "won") return "victory";
+  if (session.stage === 3 && session.state.outcome === "won") return "return";
   let mood: MusicMood = "calm";
   for (const [fromTurn, m] of MUSIC_SCHEDULE[session.stage]) {
     if (session.state.turn >= fromTurn) mood = m;
