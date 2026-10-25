@@ -707,7 +707,7 @@ export const STATUSES3: Record<StatusId3, StatusDef3> = {
     drawModifier: 1,
     effectText: "此后每回合抓牌数 +1。",
     flavor: "他走了，那一夜的琴声笛声却还留在心里。你比从前更稳，日子再难，也撑得住。",
-    veiled: { untilTurn: 26, effectText: "日后或许用得上。", flavor: "山中月夜，琴笛相和，庚帖并放。往后无论如何，这些都是你的底气。" },
+    veiled: { untilTurn: 26, effectText: "山中月夜，琴笛相和，庚帖并放，你的心里多了几分笃定。", flavor: "往后无论如何，这些都是你的底气。" },
   },
   jingfeiZhouji: {
     id: "jingfeiZhouji",
@@ -2627,6 +2627,7 @@ export const POPUP_TEXT = {
   ],
   zhoufuQinse:
     "只是那夜琴笛相和的光景还在眼前，你竟没有倒下。你把他留下的东西一件一件收好，心里空得发疼，却也有什么东西在这疼里慢慢沉了下来：他不在了，你更要好好活着，把日子一步一步走下去。",
+  zhoufuQinseRules: "【琴瑟同心】生效：此后每回合抓牌数 +1。",
   zhoufuRules: "3 张【果郡王相助】变成 🕯️遗物：打出即焚毁，没有别的效果。",
   ximaiRecall: {
     1: "当初你自请出宫，临行前亲手把胧月交给了敬妃，原想从此清清静静，在佛前了此残生。",

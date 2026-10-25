@@ -1163,6 +1163,7 @@ function PopupBody({ state, id }: { state: Z3State; id: PopupId }) {
           <p>{POPUP_TEXT.zhoufu}</p>
           {hasStatus3(state, "qinseHeming") ? <p>{POPUP_TEXT.zhoufuQinse}</p> : null}
           <p className={styles.muted}>{POPUP_TEXT.zhoufuRules}</p>
+          {hasStatus3(state, "qinseHeming") ? <p className={styles.muted}>{POPUP_TEXT.zhoufuQinseRules}</p> : null}
         </>
       );
     case "qinse":
