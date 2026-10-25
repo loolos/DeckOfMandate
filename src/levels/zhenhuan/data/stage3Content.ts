@@ -2190,8 +2190,8 @@ export const STORIES3: Record<StoryId3, StoryDef3> = {
     defaultOptionId: "buxie",
     options: [
       { id: "buxie", name: "不写", effects: [q(1)], text: "清誉 +1", story: "你把红纸推了回去。他没有说什么，只把它仔细折好，收进了袖子里。" },
-      { id: "xiexia", name: "写下庚帖", card: "guojunwangXiangzhu", two: true, distinct: true, relic: "yiwuGengtie", effects: [], flag: "gengtie", text: "他收好了庚帖，日后或许用得上", story: "你换了一身素净的布衣，提笔写下自己的生辰。他在旁边写的是「嬛嬛」，一笔一画，写得极慢。写罢他把两张红纸并在一起，轻轻吹干了墨，低声说：「我不求名分，只求你的名字，在我这里有个着落。」你没有应声，只看着那两行字在灯下并排立着，像是两个本不该相遇的人。" },
-      { id: "xiexiaBuqun", name: "素衣写帖", card: "jingchaiBuqun", two: true, distinct: true, relic: "yiwuGengtie", effects: [], flag: "gengtie", text: "他收好了庚帖，日后或许用得上", story: "你换了一身素净的布衣，提笔写下自己的生辰。他在旁边写的是「嬛嬛」，一笔一画，写得极慢。写罢他把两张红纸并在一起，轻轻吹干了墨，低声说：「我不求名分，只求你的名字，在我这里有个着落。」你没有应声，只看着那两行字在灯下并排立着，像是两个本不该相遇的人。" },
+      { id: "xiexia", name: "写下庚帖", card: "guojunwangXiangzhu", two: true, distinct: true, relic: "yiwuGengtie", effects: [], flag: "gengtie", text: "他收好了庚帖", story: "你换了一身素净的布衣，提笔写下自己的生辰。他在旁边写的是「嬛嬛」，一笔一画，写得极慢。写罢他把两张红纸并在一起，轻轻吹干了墨，低声说：「我不求名分，只求你的名字，在我这里有个着落。」你没有应声，只看着那两行字在灯下并排立着，像是两个本不该相遇的人。" },
+      { id: "xiexiaBuqun", name: "写下庚帖", card: "jingchaiBuqun", two: true, distinct: true, relic: "yiwuGengtie", effects: [], flag: "gengtie", text: "他收好了庚帖", story: "你换了一身素净的布衣，提笔写下自己的生辰。他在旁边写的是「嬛嬛」，一笔一画，写得极慢。写罢他把两张红纸并在一起，轻轻吹干了墨，低声说：「我不求名分，只求你的名字，在我这里有个着落。」你没有应声，只看着那两行字在灯下并排立着，像是两个本不该相遇的人。" },
     ],
   },
   diannanZhixing: {

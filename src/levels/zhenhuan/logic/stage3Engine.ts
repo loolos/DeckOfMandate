@@ -232,6 +232,8 @@ export type Z3State = {
   changxiangsi: { played: CardId3[]; done: boolean } | null;
   /** 月下琴笛 was completed (the event card itself is gone by turn 23). */
   changxiangsiDone?: boolean;
+  /** 踏雪问疾 was resolved by playing a card (the story is gone from the board by turn 23). */
+  taxueByCard?: boolean;
   yihua: Yihua | null;
   relicsBurned: number;
   statuses: StatusInst3[];
@@ -961,6 +963,7 @@ function applyStoryOption(s: Z3State, inst: StoryInst3, option: StoryOption3, so
       break;
   }
   if (inst.id === "tonghuataiChuyu") afterTonghuatai(s);
+  if (inst.id === "taxueWenji" && option.card) s.taxueByCard = true;
   if (inst.id === "shanmenOuyu" || inst.id === "taxueWenji") {
     addCardToDeck(s, "guojunwangXiangzhu");
     log(s, "牌库加入 1 张【果郡王相助】。", "good");
@@ -1301,8 +1304,7 @@ const ZHOUFU_TURN = 25;
 
 /** 踏雪问疾（打牌化解）与月下琴笛都已完成，合婚庚帖写下时才有琴瑟同心。 */
 export function qinseReady(s: Z3State): boolean {
-  const taxue = s.stories.find((st) => st.id === "taxueWenji");
-  return s.changxiangsiDone === true && taxue?.viaCard != null;
+  return s.changxiangsiDone === true && s.taxueByCard === true;
 }
 
 function zhoufu(s: Z3State): void {
