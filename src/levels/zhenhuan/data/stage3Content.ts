@@ -2140,7 +2140,7 @@ export const STORIES3: Record<StoryId3, StoryDef3> = {
     options: [
       { id: "zhenzhi", name: "请他诊治", effects: [sz(2)], removeNegatives: "all", text: "移除全部负面状态；身子 +2", story: "温实初替你诊了脉，开了方子，又留下许多药材。临走时他说：「嬛妹妹，你要好好的。」" },
       { id: "yuandaoBuji", name: "眉庄捎来补给", card: "meizhuangXiangzhu", effects: [], status: "yuandaoBuji", text: "未来 3 回合每回合末身子 +1", compact: "🌱+1×3", story: "眉庄在宫里放心不下，远远托温实初带了药材和补给上山。" },
-      { id: "weiNver", name: "为女儿撑下去", card: "jinxiXiangzhu", effects: [], status: "weiNverChengxia", text: "未来 2 回合每回合末清誉 +1", compact: "🪷+1×2", story: "你看着胧月的小像，看了很久。槿汐在一旁默默替你添了一盏灯。" },
+      { id: "weiNver", name: "槿汐相伴", card: "jinxiXiangzhu", effects: [], status: "weiNverChengxia", text: "未来 2 回合每回合末清誉 +1", compact: "🪷+1×2", story: "你看着胧月的小像，看了很久。槿汐在一旁默默替你添了一盏灯。" },
     ],
   },
   taxueWenji: {
