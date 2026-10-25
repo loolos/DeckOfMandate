@@ -1160,8 +1160,11 @@ function resolvePlay3(s: Z3State, cardUid: string, removeStatusUid?: string): vo
     log(s, `【景仁宫对质】辩白 ${c.played.length}/${c.needed}`, "good");
   }
   if (alive(s) && s.feilao && feilaoAccepts(s, card.id)) {
+    const seen = s.feilao.played.includes(card.id);
     s.feilao.played.push(card.id);
-    log(s, `【${FEILAO.name}】${FEILAO.cardStory[card.id]}（减轻一档，现为 ${FEILAO.tiers[feilaoCurrentTier(s)]!.name}）`, "good");
+    // 同一张解牌再打出时不重复整段剧情，只记减轻一档
+    const story = seen ? `又一张「${FEILAO.cardStory[card.id]!.slice(1, FEILAO.cardStory[card.id]!.indexOf("」"))}」。` : FEILAO.cardStory[card.id];
+    log(s, `【${FEILAO.name}】${story}（减轻一档，现为 ${FEILAO.tiers[feilaoCurrentTier(s)]!.name}）`, "good");
   }
   if (alive(s) && s.changxiangsi && !s.changxiangsi.done) {
     s.changxiangsi.played.push(card.id);

@@ -593,8 +593,8 @@ function FeilaoCard({ state, fold, dispatch }: { state: Z3State; fold: Fold; dis
         <span className={styles.ruleLabel}>眼下：</span>
         {tierDef.name}：{expandedEffect3(tierDef.text)}
       </p>
-      {f.played.map((id, i) => (
-        <p key={`${id}-${i}`} className={styles.stepStory}>
+      {f.played.filter((id, i) => f.played.indexOf(id) === i).map((id) => (
+        <p key={id} className={styles.stepStory}>
           {FEILAO.cardStory[id]}
         </p>
       ))}
