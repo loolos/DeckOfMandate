@@ -490,8 +490,8 @@ describe("zhenhuan stage 3 engine", () => {
     expect(s.confront).not.toBeNull();
     expect(s.popups).toContain("confront");
     const need = s.confront!.needed;
-    const ids = setHand(s, ["lingrongXiangzhu", ...CONFRONT.cards.slice(0, 3)]);
-    s.extraPlays = 3;
+    const ids = setHand(s, ["lingrongXiangzhu", ...CONFRONT.cards.slice(0, need)]);
+    s.extraPlays = need;
     expect(canPlayCard3(s, ids[0]!)).toBe(false);
     for (const uid of ids.slice(1, 1 + need)) s = act(s, { type: "playCard", cardUid: uid });
     const presented = s.confront!.presented;

@@ -772,6 +772,7 @@ export type SecretId =
   | "chuyanDingzhuang"
   | "shanduShide"
   | "yuanwangJunfu"
+  | "dingmanZhonggong"
   | `enshang.${HuanghouId}`;
 
 export type SecretDef = {
@@ -803,6 +804,7 @@ export const SECRETS: Record<SecretId, SecretDef> = {
   chuyanDingzhuang: { name: "出言顶撞", emoji: "🗣️", lingrong: false, line: "齐妃红着眼眶抢着开口：「皇上，那日莞嫔当着众人的面顶撞臣妾，一句不让，目无尊卑！」", servant: "景仁宫的小宫女道：「那日请安，奴婢亲眼见莞嫔当着众人顶撞齐妃娘娘，一句不让。这是目无尊卑。」", hint: "齐妃寻衅的事没有压下去，你当面顶过她。" },
   shanduShide: { name: "善妒失德", emoji: "🐍", lingrong: false, line: "祺贵人哭着道：「嫔妾不过说了句话，莞嫔便当众给嫔妾脸色看。嫔妾是新人，容不下新人，这是善妒，有违后宫和睦。」", servant: "御花园的小太监说：「祺小主说话时，莞嫔当众给了脸色。容不下新人，这是善妒，有违后宫和睦。」", hint: "祺贵人争宠的事没有压下去，你给过她脸色。" },
   yuanwangJunfu: { name: "怨望君父", emoji: "⛓️", lingrong: false, line: "祺贵人又道：「嫔妾的父亲在前朝听说，甄大人的案子，莞嫔私下说是冤在皇上。怨怼圣裁，这是对皇上不满，近乎大不敬。」", servant: "前朝传话的小太监战战兢兢：「奴才听人传，莞嫔私下说甄大人这案子是冤在皇上。怨怼圣裁，近乎大不敬。」", hint: "鄂敏参本的事没有压下去，你为父亲的案子流露过怨望。" },
+  dingmanZhonggong: { name: "怠慢中宫", emoji: "🏮", lingrong: false, line: "皇后端着茶盏，笑吟吟地说：「那日晨省，本宫问起碎玉轩的饮食起居，妹妹只含糊应了两句。本宫一片心意，倒被妹妹当成了客套。」", servant: "景仁宫的小宫女道：「那日晨省，皇后娘娘问起碎玉轩近况，莞嫔答得极敷衍，连眼皮都没抬。这是怠慢中宫。」", hint: "皇后在晨省上问起碎玉轩近况，你没有好好应对。" },
   "enshang.jingrenHoushang": { name: "恩赏为凭·云锦步摇", emoji: "🎁", lingrong: false, line: "祺贵人捏着帕子道：「点翠步摇是妃位的份例，云锦是贡品。皇后赏了，莞嫔转头就戴着去给太后请安，这是不知分寸，僭越位分。」", servant: "寿康宫外当差的小宫女说：「莞嫔戴着点翠步摇、穿着云锦来给太后请安。那是妃位的份例，这是不知分寸，僭越位分。」", hint: "你收下了景仁宫赏的云锦和点翠步摇。" },
   "enshang.xieliGongwu": { name: "恩赏为凭·协理宫务", emoji: "📜", lingrong: false, line: "齐妃接口：「娘娘让她帮着打理宫务，她倒真把六宫当成了自己的，越权专擅，眼里没有皇后。」", hint: "" },
   "enshang.antaiBupin": { name: "恩赏为凭·安胎补品", emoji: "🍲", lingrong: false, line: "景仁宫的小宫女道：「补品送去，莞嫔没让太医验过就用了。皇嗣是何等要紧的事，她半点不防备，这是不慎重皇嗣。」", servant: "碎玉轩的小厨房当差的宫人说：「景仁宫送来的补品，没经太医验看就端到了主子跟前。皇嗣要紧，这是不慎重皇嗣。」", hint: "你收下了景仁宫送来的安胎补品。" },
@@ -993,11 +995,12 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     flavor: "景仁宫晨省，皇后当着众人的面温温地问起碎玉轩近来可好，又问饮食起居，一桩桩问得比谁都细。",
     reward: [sc(1)],
     penalty: NO,
+    secret: "dingmanZhonggong",
     resolvedText: "圣宠 +1",
     unresolvedText: "无额外效果，事件消失",
     resolvedStory: {
-      yirongZhengsu: "你衣饰得体、进退有度。皇后赏了你一对玉镯，又在皇上跟前提了你一句。",
-      jinyanShenxing: "皇后问起宫务，你答得周全又不逾矩。皇后笑着说你懂事。你垂着眼，看不见她眼底的神色。",
+      yirongZhengsu: "你穿了身素净的月白衣裳，鬓边只簪一朵绒花，进退一丝不乱。皇后拉着你的手说了好些体己话，又在皇上跟前提了你一句。你谢了恩，只觉得她掌心很凉。",
+      jinyanShenxing: "皇后问起六宫近事，你只拣些无关痛痒的回话，一句也不多。皇后笑着说你懂事，端起茶盏，半晌没有再开口。",
     },
   },
   taihouChuixun: {
@@ -1764,7 +1767,11 @@ type TierTable = Record<LingrongTier, LingrongOutcome>;
 
 /** Stage-2 tables reused for the shared events; stage-3 events get their own. */
 export const LINGRONG_EVENT3: Partial<Record<EventId3, TierTable>> = {
-  huanghouShangshi: LINGRONG_EVENT.huanghouShangshi,
+  huanghouShangshi: {
+    close: { resolves: true, effects: [sc(1)], story: "陵容陪你去景仁宫晨省。皇后拉着你们俩问长问短，又各赏了一对玉镯。出来时陵容挽着你，说这镯子最衬姐姐。" },
+    distant: { resolves: true, effects: [sc(1)], story: "陵容随你去了景仁宫，皇后温言问了几句，各赏了东西。一路回来，她话不多，只说了句「姐姐受累了」。" },
+    resentful: { resolves: false, story: "晨省时皇后的话头多半落在陵容身上，你只在一旁坐着。出来后她站了片刻，没有说话，各自回宫去了。" },
+  },
   gongzhongLiuyan: LINGRONG_EVENT.gongzhongLiuyan,
   neiwufuDiaonan: LINGRONG_EVENT.neiwufuDiaonan,
   liyiShiwu: LINGRONG_EVENT.liyiShiwu,
