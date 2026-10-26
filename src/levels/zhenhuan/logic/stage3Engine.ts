@@ -1567,6 +1567,10 @@ function endTurn3(s: Z3State): void {
 
   // events
   if (s.opportunity && !s.opportunity.resolved) log(s, `机会事件【${EVENTS3[s.opportunity.id].name}】未把握，直接离场。`);
+  if (s.opportunity && !s.opportunity.resolved) {
+    const secret = EVENTS3[s.opportunity.id].secret;
+    if (secret) addSecret(s, secret, null);
+  }
   if (s.crisis && !s.crisis.resolved) settleCrisis(s, s.crisis);
   if (!alive(s)) return;
   if (s.huanghou && !s.huanghou.resolved) {
