@@ -18,6 +18,7 @@ import {
   DOUBT,
   EVENT_KIND3_LABEL,
   EVENTS3,
+  GONGZHONG_LAIXIN_JINGFEI_STORY,
   ENDING,
   EXIT,
   FABRICATED_HINT,
@@ -769,7 +770,7 @@ function resolveEventByCard(s: Z3State, ev: EventInst3, card: CardId3, doubleRew
   ev.resolved = true;
   ev.resolvedBy = card;
   log(s, `${verb(def.kind)}${EVENT_KIND3_LABEL[def.kind]}事件【${def.name}】`, "good");
-  const story = def.resolvedStory[card];
+  const story = (ev.id === "gongzhongLaixin" && hasStatus3(s, "jingfeiZhiyi") ? GONGZHONG_LAIXIN_JINGFEI_STORY[card] : undefined) ?? def.resolvedStory[card];
   if (story) {
     ev.story = story;
     log(s, story);
@@ -803,6 +804,16 @@ function resolveEventByCard(s: Z3State, ev: EventInst3, card: CardId3, doubleRew
   }
 }
 
+const JINGFEI_LETTER_NOTE =
+  "山下捎来的信里，另夹着敬妃的小笺：她让人送了米面、炭火和补药，又说胧月在她身边养得很好，前几日会叫「额娘」了。你把小笺看了又看，悬了许久的心总算落下一半。";
+
+/** 敬妃之谊: the 宫中来信 bonus lands whether or not the letter itself was taken up. */
+function jingfeiLetter(s: Z3State, ev: EventInst3): void {
+  if (!hasStatus3(s, "jingfeiZhiyi")) return;
+  if (!ev.resolved || !ev.story) log(s, JINGFEI_LETTER_NOTE);
+  applyDelta3(s, { resource: "shenzi", amount: 1 }, "敬妃之谊：胧月的消息");
+}
+
 function opportunityExtras(s: Z3State, ev: EventInst3, card: CardId3 | "lingrong"): void {
   if (!alive(s)) return;
   const def = EVENTS3[ev.id];
@@ -812,7 +823,7 @@ function opportunityExtras(s: Z3State, ev: EventInst3, card: CardId3 | "lingrong
       promoteToPin(s);
       break;
     case "gongzhongLaixin":
-      if (hasStatus3(s, "jingfeiZhiyi")) applyDelta3(s, { resource: "shenzi", amount: 1 }, "敬妃之谊：胧月的消息");
+      jingfeiLetter(s, ev);
       break;
     case "foqianGongdeng":
       addStatus3(s, "zhushiTuotie");
@@ -1568,6 +1579,7 @@ function endTurn3(s: Z3State): void {
   // events
   if (s.opportunity && !s.opportunity.resolved) log(s, `机会事件【${EVENTS3[s.opportunity.id].name}】未把握，直接离场。`);
   if (s.opportunity && !s.opportunity.resolved) {
+    if (s.opportunity.id === "gongzhongLaixin") jingfeiLetter(s, s.opportunity);
     const secret = EVENTS3[s.opportunity.id].secret;
     if (secret) addSecret(s, secret, null);
   }
