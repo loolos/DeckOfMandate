@@ -18,6 +18,7 @@ import {
   DOUBT,
   EVENT_KIND3_LABEL,
   EVENTS3,
+  GONGZHONG_LAIXIN_JINGFEI_STORY,
   ENDING,
   EXIT,
   FABRICATED_HINT,
@@ -769,7 +770,7 @@ function resolveEventByCard(s: Z3State, ev: EventInst3, card: CardId3, doubleRew
   ev.resolved = true;
   ev.resolvedBy = card;
   log(s, `${verb(def.kind)}${EVENT_KIND3_LABEL[def.kind]}事件【${def.name}】`, "good");
-  const story = def.resolvedStory[card];
+  const story = (ev.id === "gongzhongLaixin" && hasStatus3(s, "jingfeiZhiyi") ? GONGZHONG_LAIXIN_JINGFEI_STORY[card] : undefined) ?? def.resolvedStory[card];
   if (story) {
     ev.story = story;
     log(s, story);
@@ -803,14 +804,13 @@ function resolveEventByCard(s: Z3State, ev: EventInst3, card: CardId3, doubleRew
   }
 }
 
-const JINGFEI_LETTER_STORY =
-  "信里还夹着一张小笺，是敬妃的笔迹：她让人随信一并捎来了米面、炭火和几味补药，又说胧月在她身边养得很好，前几日会叫「额娘」了，夜里睡得安稳，只是偶尔睁着眼睛朝门口望。你把那张小笺看了又看，攥在手心里，悬了许久的心总算落下一半。";
+const JINGFEI_LETTER_NOTE =
+  "山下捎来的信里，另夹着敬妃的小笺：她让人送了米面、炭火和补药，又说胧月在她身边养得很好，前几日会叫「额娘」了。你把小笺看了又看，悬了许久的心总算落下一半。";
 
 /** 敬妃之谊: the 宫中来信 bonus lands whether or not the letter itself was taken up. */
 function jingfeiLetter(s: Z3State, ev: EventInst3): void {
   if (!hasStatus3(s, "jingfeiZhiyi")) return;
-  if (ev.resolved) ev.story = ev.story ? `${ev.story}${JINGFEI_LETTER_STORY}` : JINGFEI_LETTER_STORY;
-  log(s, JINGFEI_LETTER_STORY);
+  if (!ev.resolved || !ev.story) log(s, JINGFEI_LETTER_NOTE);
   applyDelta3(s, { resource: "shenzi", amount: 1 }, "敬妃之谊：胧月的消息");
 }
 

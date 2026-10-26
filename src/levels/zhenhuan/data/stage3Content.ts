@@ -2836,3 +2836,11 @@ export const TAG3_INFO: Record<TagId3, { label: string; lore: string; rules: str
     rules: "从 1 起算。偶遇前每回合末 +1；睹物生疑（引驾后每回合末手里每件遗物）+1；景仁宫来人没应对 +1。槿汐相助、眉庄相助各 -1。到 5 即失败。",
   },
 };
+
+/** 宫中来信: with 敬妃之谊, the 解牌 story reads differently (敬妃 also sent supplies and news of 胧月). */
+export const GONGZHONG_LAIXIN_JINGFEI_STORY: Partial<Record<CardId3, string>> = {
+  meizhuangXiangzhu:
+    "你拆开信，是眉庄的字迹，写得很长，足足三页。她说：「宫里一切都好，你不必挂心。这回的冬衣和药材，是我与敬妃姐姐一同备下的，她比我还操心，连炭火都亲自挑过。」信末另夹着一张小笺，是敬妃的笔迹：胧月在她身边养得很好，前几日会叫「额娘」了，夜里睡得安稳，只是偶尔睁着眼睛朝门口望。你把小笺看了又看，攥在手心里，悬了许久的心总算落下一半。",
+  jinxiXiangzhu:
+    "槿汐托人去山下取了信，一路藏在怀里带回来，还带着她的体温。你拆开一看，是眉庄的字迹，问你冷不冷、病好了没有。包袱里除了眉庄备的衣物，还有米面、炭火和几味补药，是敬妃托人一并捎来的。信里夹着敬妃的小笺，说胧月在她身边养得很好，前几日会叫「额娘」了。槿汐在一旁抹着眼泪：「娘娘，宫里还有人惦记着您和公主呢。」",
+};
