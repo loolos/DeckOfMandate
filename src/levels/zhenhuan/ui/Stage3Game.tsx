@@ -155,7 +155,6 @@ function Chips({ ids, lit }: { ids: readonly CardId3[]; lit: (id: CardId3) => bo
 const KIND_TONE = { opportunity: styles.kindOpportunity, crisis: styles.kindCrisis, huanghou: styles.kindHuanghou };
 const CARD_TONE = { opportunity: styles.cardOpportunity, crisis: styles.cardCrisis, huanghou: styles.cardHuanghou };
 
-// 连环事件标题是「连环名·事件名」，说明里连环名已在前面，只引事件名。
 /** 连环事件的两半在手牌上只列一项：共同前缀（如「御花园赏花」）。 */
 function collapsePairs<T extends { id: EventId3 }>(items: readonly T[]): { key: string; emoji: string; name: string; items: T[] }[] {
   const out: { key: string; emoji: string; name: string; items: T[] }[] = [];
@@ -169,7 +168,6 @@ function collapsePairs<T extends { id: EventId3 }>(items: readonly T[]): { key: 
   return out;
 }
 
-const shortEventName = (name: string) => name.split("·").pop() ?? name;
 
 function answeringCards(id: EventId3): CardId3[] {
   const def = EVENTS3[id];
@@ -287,9 +285,8 @@ function EventCard({ state, inst, fold, dispatch }: { state: Z3State; inst: Even
       ) : null}
       {def.pair ? (
         <p className={styles.rule}>
-          🔗 {PAIRS[def.pair].name}：{isOpp ? `须先化解【${shortEventName(EVENTS3[PAIRS[def.pair].crisis].name)}】才能把握。` : `没化解，【${shortEventName(EVENTS3[PAIRS[def.pair].opportunity].name)}】随之作废。`}
-          危机须两张解牌；其中有【{CARDS3[PAIRS[def.pair].shared].emoji}
-          {CARDS3[PAIRS[def.pair].shared].name}】可一石二鸟：结交盟友并打压{RIVALS[PAIRS[def.pair].rival].name}（她的危机下次出现时少需要 1 张解牌）。
+          🔗 一石二鸟：【{CARDS3[PAIRS[def.pair].shared].emoji}
+          {CARDS3[PAIRS[def.pair].shared].name}】
         </p>
       ) : null}
       {locked ? <p className={styles.endHint}>🔒 连环危机还没化解，这张机会暂时锁着。</p> : null}
