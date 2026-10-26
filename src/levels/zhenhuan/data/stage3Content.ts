@@ -1012,7 +1012,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     unresolvedText: "无额外效果，事件消失",
     resolvedStory: {
       jinyanShenxing: "太后问你近来读什么书，你答得谦逊稳妥。太后捻着佛珠，说这孩子沉静。",
-      meizhuangXiangzhu: "眉庄陪你一同前去，你们一唱一和，太后听得开怀，赏了你们一人一串佛珠。",
+      meizhuangXiangzhu: "眉庄陪你一同前去。太后问起闲月阁那一年，眉庄只淡淡说：「都过去了，多亏嬛儿。」转头又把你夸了一遍。你们一唱一和，太后听得开怀，赏了你们一人一串佛珠。",
     },
   },
   wangyeXiantan: {
@@ -1079,7 +1079,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     resolvedText: "清誉 +1；第一次把握时获得【敬妃之谊】",
     unresolvedText: "无额外效果，事件消失",
     resolvedStory: {
-      meizhuangXiangzhu: "眉庄陪你去咸福宫回礼。敬妃抱着你送的小衣裳，眼圈都红了：「往后这孩子，我也替你看顾着。」",
+      meizhuangXiangzhu: "眉庄陪你去咸福宫回礼。她经过假孕那一场风波，看着敬妃抱着小衣裳红了眼圈，轻声说：「有孩子是福气，嬛儿要好好护着。」敬妃握着你们的手：「往后这孩子，我也替你看顾着。」",
       jinyanShenxing: "你亲自去咸福宫道谢，与敬妃说了半日孩子的事。她说话慢慢的，叫人心里踏实。",
     },
   },
@@ -1130,7 +1130,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     resolvedText: "清誉 +1；第一次把握时获得【敬妃之谊】",
     unresolvedText: "无额外效果，事件消失",
     resolvedStory: {
-      meizhuangXiangzhu: "眉庄陪你在咸福宫把条陈一字一字斟酌定了。敬妃拉着你们俩的手说：「往后咸福宫的门，你们随时来。」",
+      meizhuangXiangzhu: "眉庄陪你在咸福宫把条陈一字一字斟酌定了。她落笔极稳，笑道：「闲月阁里无事可做，我把宫规从头抄了一遍，今日倒派上用场。」敬妃拉着你们俩的手说：「往后咸福宫的门，你们随时来。」",
       shoulongRenxin: "你托小允子去内务府问清了各处的规矩，条陈写得周周全全。敬妃拿着看了三遍。",
       jinxiXiangzhu: "槿汐对宫里的规矩比谁都熟，一条一条替你核过。敬妃说，这份情她记下了。",
     },
@@ -1168,7 +1168,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     unresolvedText: "未来 3 回合每回合抓牌 -1",
     resolvedStory: {
       jinyanShenxing: "你闭门不出，见了谁都只说些天气花草。流言找不到新的话柄，几日便散了。",
-      meizhuangXiangzhu: "眉庄在各宫走动时替你分说清楚，又寻出了嚼舌根的宫女。流言一夜之间没了声息。",
+      meizhuangXiangzhu: "眉庄在各宫走动，不急不恼，只说一句：「我是被流言害过的人，最知道它怎么起。」她顺藤摸瓜寻出了嚼舌根的宫女，当着众人处置了。流言一夜之间没了声息。",
       shoulongRenxin: "你让小允子拿了些碎银子，在各宫的宫人间打点了一圈。流言渐渐没人再提。",
       jinxiXiangzhu: "槿汐暗中寻到了传话的源头，把几个碎嘴的宫人敲打了一番。流言没了下文。",
     },
@@ -1187,7 +1187,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     note: "用收拢人心解决时额外抽 1 张。",
     resolvedStory: {
       shoulongRenxin: "小允子拿了银子去内务府打点，当天下午份例便一样不少地送到了碎玉轩。",
-      meizhuangXiangzhu: "眉庄把自己宫里的份例分了一半送来，又托人敲打内务府，没过两日便补齐了。",
+      meizhuangXiangzhu: "眉庄想起闲月阁那个冬天，炭火也是这样被克扣的，冷笑道：「这套把戏，我早领教过。」她把自己宫里的份例分了一半送来，又让采月去敲打内务府，没过两日便补齐了。",
       jinxiXiangzhu: "槿汐拿着份例单子去内务府对账，一笔一笔说得清清楚楚，管事太监只得赔着笑补齐。",
     },
   },
@@ -1245,7 +1245,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     unresolvedText: "清誉 -2、未来 3 回合每回合抓牌 -1",
     resolvedStory: {
       jinyanShenxing: "你笑着回了一句：「娘娘说笑了，三阿哥的功课，皇上才是放在心尖上的。」齐妃一时下不来台，再没敢开口。",
-      meizhuangXiangzhu: "眉庄不咸不淡地接过话头，把齐妃的话轻轻挡了回去。",
+      meizhuangXiangzhu: "眉庄不咸不淡地接过话头：「齐妃娘娘说得是。只是口舌之祸最伤人，我从前吃过这个亏，娘娘还是慎言些好。」一句话把齐妃的讥讽轻轻挡了回去。",
       jinxiXiangzhu: "槿汐适时上前回话，说皇后宫里的茶凉了，替你把话岔开了。",
     },
   },
@@ -1310,7 +1310,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     note: "第 5 回合起洗入危机池，甄远道下狱后不再出现。",
     resolvedStory: {
       shoulongRenxin: "你托人在前朝周旋，鄂敏的折子被压了下来，留中不发。",
-      meizhuangXiangzhu: "眉庄托沈家在前朝替甄家说了几句话，折子到底没掀起什么风浪。",
+      meizhuangXiangzhu: "眉庄托沈家在前朝替甄家说了几句话，又对你说：「我家虽不得势，递句话的人情还有。当年你为我奔走，如今轮到我了。」折子到底没掀起什么风浪。",
     },
   },
   yuhuayuanQi: {
@@ -1348,7 +1348,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     resolvedText: "移除事件；与【咸福宫托付·敬妃求助】相连",
     unresolvedText: "清誉 -2；【咸福宫托付·敬妃求助】随之作废",
     resolvedStory: {
-      meizhuangXiangzhu: "皇后召你去问越权的事，眉庄陪着同去。她把条陈一页页摊开：「这是敬妃娘娘的意思，嫔妾们不过代笔。」祺贵人被问得答不上话来。",
+      meizhuangXiangzhu: "皇后召你去问越权的事，眉庄陪着同去。她把条陈一页页摊开：「这是敬妃娘娘的意思，嫔妾们不过代笔。」她从容不迫，神气竟和当年洗冤那日一般无二。祺贵人被问得答不上话来。",
       jinyanShenxing: "你在皇后面前只说是替敬妃抄写，一个字也没多说。皇后挑不出错，只得罢了。",
       jingguanQibian: "你按下不动，等皇后自己去问敬妃。敬妃一句话，便把这事揭过去了。",
     },
@@ -1405,7 +1405,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     unresolvedText: "清誉 +1",
     resolvedStory: {
       jinyanShenxing: "你推说自己年轻，不懂这些，怕误了娘娘的事。皇上听说了，倒夸你不揽权、识大体。",
-      meizhuangXiangzhu: "眉庄替你说了几句，说你身子要紧，不如由她来帮衬。皇后笑着应了，你也落得清闲，好好歇了几日。",
+      meizhuangXiangzhu: "眉庄替你说了几句：「嬛儿如今身子要紧，宫务不如由嫔妾来帮衬。」她笑得很淡，像是真的不把这些权柄放在心上。皇后笑着应了，你也落得清闲，好好歇了几日。",
     },
   },
   antaiBupin: {
@@ -1458,7 +1458,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     unresolvedText: "清誉 +1",
     resolvedStory: {
       shoulongRenxin: "你托人告了假，说身子不适，在屋里安安静静歇了一日。第二日让小允子给各宫送了些点心赔礼。",
-      meizhuangXiangzhu: "眉庄陪你去坐了一会儿，便借口要去太后宫里，把你一起带了出来。正巧皇上也来寿康宫请安，留你们说了好一会儿话。",
+      meizhuangXiangzhu: "眉庄陪你去坐了一会儿，便借口要去太后宫里，在你耳边低声说：「这种场面，听一半就够了。」她把你一起带了出来。正巧皇上也来寿康宫请安，留你们说了好一会儿话。",
     },
   },
   // ---- 第二、三幕 · 机会
@@ -1488,7 +1488,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     resolvedText: "清誉 +1（眉庄解决时翻倍；有【敬妃之谊】时另身子 +1）",
     unresolvedText: "无额外效果，事件消失",
     resolvedStory: {
-      meizhuangXiangzhu: "是眉庄的信，还捎来了衣物和药材。她说宫里一切都好，叫你千万保重。",
+      meizhuangXiangzhu: "是眉庄的信，还捎来了衣物和药材。她写道：「闲月阁的那些夜里，是你偷偷来看我。如今换我惦记着你。宫里一切都好，千万保重。」",
       jinxiXiangzhu: "槿汐托人去山下取了信，一路藏在怀里带回来，还带着她的体温。",
     },
   },
@@ -1594,7 +1594,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     resolvedStory: {
       jingchaiBuqun: "你自己上山拾了一捆柴，手上磨出了血泡。屋里总算有了点暖气。",
       jinxiXiangzhu: "槿汐不知从哪里弄来半篓炭，只说是跟厨房的师父讨的。",
-      meizhuangXiangzhu: "眉庄托人送来的包裹里，有炭、有米，还有一件厚厚的棉袍。",
+      meizhuangXiangzhu: "眉庄托人送来的包裹里，有炭、有米，还有一件厚厚的棉袍。夹着一张字条，只有一行：「闲月阁的冷我受过，知道有多难熬。」",
       guojunwangXiangzhu: "阿晋趁夜送来两大车炭和米，说是王爷的意思，别的一句也不肯多说。",
     },
   },
@@ -1769,23 +1769,23 @@ export const LINGRONG_EVENT3: Partial<Record<EventId3, TierTable>> = {
   neiwufuDiaonan: LINGRONG_EVENT.neiwufuDiaonan,
   liyiShiwu: LINGRONG_EVENT.liyiShiwu,
   wangyeXiantan: {
-    close: { resolves: true, effects: [q(1)], story: "陵容替你收下了王爷送来的诗集，笑着说王爷的字写得真好。又陪你挑了几句诗回赠。" },
+    close: { resolves: true, effects: [q(1)], story: "陵容替你收下了王爷送来的诗集，笑着说王爷的字写得真好。她陪你在窗下挑了半日，选了几句诗回赠，说：「姐姐的回礼，总要配得上这字。」" },
     distant: { resolves: true, effects: [q(1)], story: "陵容替你去回了王爷的礼，回来只说东西送到了。" },
     resentful: { resolves: true, effects: [q(1)], story: "陵容替你把东西送回了王爷那里，淡淡说了句「送到了」，便回自己宫里去了。" },
   },
   yanqingTanbing: {
-    close: { resolves: true, effects: [q(1)], story: "陵容陪你去延庆殿，调了一味安神的香给端妃。端妃看了她一眼，淡淡道了声谢。" },
-    distant: { resolves: true, effects: [q(1)], story: "陵容陪你去了一趟延庆殿，一路上没怎么说话。" },
+    close: { resolves: true, effects: [q(1)], story: "陵容陪你去延庆殿，调了一味安神的香给端妃。端妃闻了闻，淡淡道：「这香调得清。」陵容红了脸，回来的路上还在念叨方子里的火候。" },
+    distant: { resolves: true, effects: [q(1)], story: "陵容陪你去了一趟延庆殿，一路上没怎么说话。到了端妃跟前，也只说了几句规规矩矩的请安话，礼数周全，却不肯多说一句。" },
     resentful: { resolves: false, story: "陵容说延庆殿药味重，熏得她头疼，走到半路便回去了。" },
   },
   xianfuXianhua: {
-    close: { resolves: true, effects: [q(1)], story: "陵容绣了一个小小的肚兜，同你一起送去咸福宫。敬妃拉着她的手，夸她手巧。" },
-    distant: { resolves: true, effects: [q(1)], story: "陵容陪你去了咸福宫，坐在一旁安安静静的，偶尔替你们添茶。" },
+    close: { resolves: true, effects: [q(1)], story: "陵容绣了一个小小的肚兜，同你一起送去咸福宫。敬妃拉着她的手夸她手巧，她低着头笑：「在家时跟母亲学的，不值什么。」" },
+    distant: { resolves: true, effects: [q(1)], story: "陵容陪你去了咸福宫，坐在一旁安安静静的，偶尔替你们添茶。敬妃问她话，她答得极简短，只是笑笑，再没有从前那样叽叽喳喳的了。" },
     resentful: { resolves: false, story: "陵容推说手头有事，没去。敬妃问起她，你只得替她圆了几句。" },
   },
   kuairenKuaiyu: {
-    close: { resolves: true, effects: [sc(1)], story: "陵容唱了一支江南小调，欣贵人听得直拍手，说碎玉轩真是热闹。" },
-    distant: { resolves: true, effects: [sc(1)], story: "陵容陪着说了几句话，欣贵人嘴快，她插不上话，便只是笑。" },
+    close: { resolves: true, effects: [sc(1)], story: "陵容唱了一支江南小调，软软的吴侬腔调，欣贵人听得直拍手：「安妹妹这嗓子，比戏班子还好！」碎玉轩里一下子热闹起来。" },
+    distant: { resolves: true, effects: [sc(1)], story: "陵容陪着说了几句话，欣贵人嘴快，她插不上话，便只是笑，手里的帕子绞得紧紧的。" },
     resentful: { resolves: false, story: "欣贵人说话没轻没重，陵容听了几句便沉了脸，起身走了。" },
   },
   antaiBupin: {
@@ -1799,7 +1799,7 @@ export const LINGRONG_EVENT3: Partial<Record<EventId3, TierTable>> = {
     resentful: { resolves: true, effects: [sc(1)], story: "临上场前，陵容说嗓子哑了。你只好独自弹了一曲。皇上很喜欢，陵容在席间看着你，脸上没有表情。" },
   },
   shanghuaXiaoju: {
-    close: { resolves: true, effects: [q(1)], relation: 1, story: "陵容陪你在花下应酬各宫，替你挡了几句不好接的话。两人说说笑笑，一下午过得飞快。" },
+    close: { resolves: true, effects: [q(1)], relation: 1, story: "陵容陪你在花下应酬各宫，替你挡了几句不好接的话，笑着低声说：「姐姐只管喝茶，这些话我来答。」两人说说笑笑，一下午过得飞快。" },
     distant: { resolves: true, effects: [q(1)], relation: 1, story: "陵容陪你在花下坐了半日。你说起各宫的趣事，她也跟着笑了笑。" },
     resentful: { resolves: true, effects: [q(1)], relation: 1, story: "陵容陪你去了。席间她话不多，倒也替你周全了礼数。" },
   },
@@ -1809,8 +1809,8 @@ export { LINGRONG_SUMMON };
 
 /** 陵容 played with nothing on the table: just keeping her company, 情分 +1. After 纯元故衣 your words turn cold. */
 export const LINGRONG_IDLE_TEXT3: Record<LingrongTier, string> = {
-  close: "你留陵容在碎玉轩喝茶，两人说了半日体己话。临走时她拉着你的袖子，说下回再来。",
-  distant: "你请陵容过来坐坐。她起初拘谨得很，后来也说了几句心里话。",
+  close: "你留陵容在碎玉轩喝茶，两人从延禧宫的旧事说到眼下的日子，说了半日体己话。临走时她拉着你的袖子，说下回再来。",
+  distant: "你请陵容过来坐坐。她起初拘谨得很，捧着茶盏半天没喝，后来才说了几句心里话。",
   resentful: "你请陵容过来坐坐，她句句带刺。可坐得久了，语气也松了些。",
 };
 export const LINGRONG_COLD_TEXT = "你留陵容说话，说着说着，竟说了一句「心冷了」。陵容握着你的手，柔声劝了许久。";
@@ -1910,7 +1910,7 @@ export const STORIES3: Record<StoryId3, StoryDef3> = {
       },
       { id: "shengzhuangChengen", name: "盛装承恩", card: "yirongZhengsu", effects: [], summon: true, text: "侍寝成功", story: "你盛装梳妆、含笑承恩，皇上见了心情大好，留你说话直到天明。" },
       { id: "shiciDechong", name: "以诗词得宠", card: "jinyanShenxing", effects: [], summon: true, text: "侍寝成功", story: "你与皇上对诗到深夜，他笑着说你是解语花。" },
-      { id: "lingrongXiezhuang", name: "陵容相助", card: "lingrongXiangzhu", effects: [], text: "效果视你与陵容的情分而定", story: "陵容来了碎玉轩，替你梳妆更衣，又陪你说了会儿话，才送你出门。" },
+      { id: "lingrongXiezhuang", name: "陵容相助", card: "lingrongXiangzhu", effects: [], text: "效果视你与陵容的情分而定", story: "陵容来了碎玉轩，替你梳妆更衣，把鬓边的花一朵朵插稳，又陪你说了会儿话，才送你出门。" },
     ],
   },
   huanghouXiaoyi: {
@@ -2076,7 +2076,7 @@ export const STORIES3: Record<StoryId3, StoryDef3> = {
         xiayu: "lingrong",
         secret: "yuzhongShuxin",
         text: "解牌：局势降一档",
-        story: "陵容听完，低头想了想，轻声说：「姐姐别急，我家里在刑部有几分旧情，让我试试。」她当天便托人把你写的信递了进去，临走前又细细嘱咐了一句：「信里的话，姐姐可写得妥当？」",
+        story: "陵容听完，低头想了想，轻声说：「姐姐别急，我家里在刑部有几分旧情，让我试试。」她当天便托人把你写的信递了进去，回来说了句：「姐姐放心，人已经打点过了。」",
         tierStory: {
           close: "陵容说她父亲在狱里有旧识，亲自替你把信递了进去。她回来时眼眶红红的，握着你的手说：「甄伯父让姐姐保重，说他在里头一切都好，只盼姐姐莫要为他失了分寸。」",
           distant: "陵容替你把信送了进去，回来时说一切都好：「甄伯父让姐姐别挂心。」她说得客气周全，你却看不出她心里是怎么想的。",
@@ -2104,7 +2104,7 @@ export const STORIES3: Record<StoryId3, StoryDef3> = {
         text: "身子不扣；移除 1 个负面状态",
         story: "温实初连夜赶来，施针开方，额上的汗也顾不得擦。天亮时终于传出一声啼哭，母女平安。",
       },
-      { id: "shouhou", name: "守在产房外", card: "meizhuangXiangzhu", effects: [sz(-1), q(1)], shenziFloor: 1, text: "身子 -1、清誉 +1", story: "眉庄连夜赶到碎玉轩，在产房外守了一夜，谁来都不让进。天亮时她抱着孩子进来，眼睛红红的：「是个公主，长得像你。」" },
+      { id: "shouhou", name: "守在产房外", card: "meizhuangXiangzhu", effects: [sz(-1), q(1)], shenziFloor: 1, text: "身子 -1、清誉 +1", story: "眉庄连夜赶到碎玉轩，在产房外守了一夜，谁来都不让进。天亮时她抱着孩子进来，眼睛红红的：「是个公主，长得像你。当年闲月阁里是你来陪我，这回换我守着你。」" },
     ],
   },
   mochou: {
@@ -2139,7 +2139,7 @@ export const STORIES3: Record<StoryId3, StoryDef3> = {
     defaultOptionId: "zhenzhi",
     options: [
       { id: "zhenzhi", name: "请他诊治", effects: [sz(2)], removeNegatives: "all", text: "移除全部负面状态；身子 +2", story: "温实初替你诊了脉，开了方子，又留下许多药材。临走时他说：「嬛妹妹，你要好好的。」" },
-      { id: "yuandaoBuji", name: "眉庄捎来补给", card: "meizhuangXiangzhu", effects: [], status: "yuandaoBuji", text: "未来 3 回合每回合末身子 +1", compact: "🌱+1×3", story: "眉庄在宫里放心不下，远远托温实初带了药材和补给上山。" },
+      { id: "yuandaoBuji", name: "眉庄捎来补给", card: "meizhuangXiangzhu", effects: [], status: "yuandaoBuji", text: "未来 3 回合每回合末身子 +1", compact: "🌱+1×3", story: "眉庄在宫里放心不下，远远托温实初带了药材和补给上山，附了一句：「当年你为我受的累，我都记着，这点东西不算什么。」" },
       { id: "weiNver", name: "槿汐相伴", card: "jinxiXiangzhu", effects: [], status: "weiNverChengxia", text: "未来 2 回合每回合末清誉 +1", compact: "🪷+1×2", story: "你看着胧月的小像，看了很久。槿汐在一旁默默替你添了一盏灯。" },
     ],
   },
