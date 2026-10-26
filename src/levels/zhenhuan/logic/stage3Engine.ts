@@ -1659,6 +1659,8 @@ function endTurn3(s: Z3State): void {
     s.crisisPool = shuffleInto(s, [...s.crisisPool, "emingCanben"]);
     log(s, "前朝起了风波：【鄂敏参本】洗入危机池。", "bad");
   }
+  // 甄远道已在第 8 回合下狱，折子的事有了定论，不会再出现。
+  if (s.turn === 9) removeFromPools(s, ["emingCanben"]);
 
   // 景仁宫对质
   if (s.confront) {

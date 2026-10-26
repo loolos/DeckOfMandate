@@ -1307,7 +1307,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     secret: "yuanwangJunfu",
     resolvedText: "移除事件；化解也要清誉 -1；两张解牌含收拢人心即打压祺贵人，获得【打压·祺贵人】",
     unresolvedText: "清誉 -4、获得【父兄蒙尘】；只打出一张解牌则清誉 -1、仍获得【父兄蒙尘】",
-    note: "第 5 回合后洗入危机池。",
+    note: "第 5 回合起洗入危机池，甄远道下狱后不再出现。",
     resolvedStory: {
       shoulongRenxin: "你托人在前朝周旋，鄂敏的折子被压了下来，留中不发。",
       meizhuangXiangzhu: "眉庄托沈家在前朝替甄家说了几句话，折子到底没掀起什么风浪。",
