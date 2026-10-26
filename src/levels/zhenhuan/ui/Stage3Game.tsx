@@ -372,9 +372,9 @@ function StoryCard({ state, inst, dispatch, fold }: { state: Z3State; inst: Stor
       {def.options.some((o) => o.xiayu) && !chosen ? (
         <p className={styles.rule}>局势 {xiayuS(state, inst.solved ?? 0)}：再打出 {xiayuS(state, inst.solved ?? 0)} 张解牌即可完美解决。</p>
       ) : null}
-      {(inst.steps ?? []).map((t, i) => (
-        <p key={i} className={styles.flavor}>{t}</p>
-      ))}
+      {(inst.steps ?? []).map((t, i, all) =>
+        chosenOption && i === all.length - 1 && t === inst.story ? null : <ResolvedBanner key={i} icon="🛡️" label="已打出解牌" detail="" story={t} />,
+      )}
       {unwell ? <p className={styles.endHint}>{unwell}，不能侍寝。</p> : null}
       {storyBasicOptions3(def).map((option) => (
         <div key={option.id} className={[styles.option, chosen === option.id && styles.optionChosen].filter(Boolean).join(" ")}>
@@ -519,11 +519,11 @@ function ChunyuanCard({ state, fold, dispatch }: { state: Z3State; fold: Fold; d
       <p className={styles.check}>
         {mark(c.first != null)} ① 起疑：<Chips ids={CHUNYUAN.firstCards} lit={inHand} />
       </p>
-      {c.first ? <p className={styles.stepStory}>{CHUNYUAN.firstStory[c.first]}</p> : null}
+      {c.first ? <ResolvedBanner icon="🛡️" label="已打出解牌" detail="" story={CHUNYUAN.firstStory[c.first]} /> : null}
       <p className={styles.check}>
         {mark(c.second != null)} ② 查实（须先起疑）：<Chips ids={CHUNYUAN.checkCards} lit={inHand} />
       </p>
-      {c.second ? <p className={styles.stepStory}>{CHUNYUAN.checkStory[c.second]}</p> : null}
+      {c.second ? <ResolvedBanner icon="🛡️" label="已打出解牌" detail="" story={CHUNYUAN.checkStory[c.second]} /> : null}
       <p className={styles.rule}>
         <span className={styles.ruleLabel}>照现在：</span>
         {done ? "识破，免祸。" : c.first ? `只起疑，回合末圣宠 -${CHUNYUAN.halfPenalty}。` : `没识破，回合末圣宠 -${CHUNYUAN.failPenalty}。`}
@@ -565,9 +565,7 @@ function ConfrontCard({ state, fold, dispatch }: { state: Z3State; fold: Fold; d
         {exit.name === EXIT[4].name ? "：关卡失败" : ""}
       </p>
       {c.stories.map((line) => (
-        <p key={line} className={styles.stepStory}>
-          {line}
-        </p>
+        <ResolvedBanner key={line} icon="🛡️" label="已打出解牌" detail="" story={line} />
       ))}
       <p className={styles.rule}>
         <span className={styles.ruleLabel}>辩白牌：</span>
@@ -591,9 +589,7 @@ function FeilaoCard({ state, fold, dispatch }: { state: Z3State; fold: Fold; dis
         {tierDef.name}：{expandedEffect3(tierDef.text)}
       </p>
       {f.played.filter((id, i) => f.played.indexOf(id) === i).map((id) => (
-        <p key={id} className={styles.stepStory}>
-          {FEILAO.cardStory[id]}
-        </p>
+        <ResolvedBanner key={id} icon="🛡️" label="已打出解牌" detail="" story={FEILAO.cardStory[id]} />
       ))}
       <p className={styles.rule}>
         <span className={styles.ruleLabel}>每张减轻一档：</span>
@@ -683,13 +679,16 @@ function YihuaCard({ state, fold, dispatch }: { state: Z3State; fold: Fold; disp
         const n = i + 1;
         if (y.step < n) return null;
         const state_ = y.step > n ? "done" : "now";
+        if (state_ === "done") {
+          return <ResolvedBanner key={s.name} icon="✅" label={`${["①", "②", "③", "④"][i]} ${s.emoji} ${s.name}`} detail="" story={yihuaDoneText(state, n)} />;
+        }
         return (
-          <div key={s.name} className={[styles.option, state_ === "now" && styles.optionChosen, state_ === "done" && styles.stepStory].filter(Boolean).join(" ")}>
+          <div key={s.name} className={`${styles.option} ${styles.optionChosen}`}>
             <span>
-              {mark(state_ === "done")} <strong>
+              {mark(false)} <strong>
                 {["①", "②", "③", "④"][i]} {s.emoji} {s.name}
               </strong>
-              ：{state_ === "done" ? yihuaDoneText(state, n) : s.todo}
+              ：{s.todo}
               {state_ === "now" && n === 1 && y.yinjiaNeed > 1 ? ` （已落发：要打 ${y.yinjiaNeed} 张，至少 1 张槿汐，另一张可以是眉庄；已打 ${y.yinjia.length} 张）` : ""}
               {state_ === "now" && n === 2 && y.ouyuDue != null ? (y.ouyuDue === state.turn ? "（皇上今日驾临：本回合解决【圣驾偶遇】）" : `（第 ${y.ouyuDue} 回合皇上驾临）`) : ""}
               {state_ === "now" && n === 4 ? (y.dengmen ? `（皇上已登门：须在第 ${y.dengmen.openTurn}–${y.dengmen.openTurn + 1} 回合内打出 ${y.dengmen.needed} 张解牌${y.dengmen.needed === 0 ? "，只需过剧情" : `，已打 ${Math.min(y.dengmen.played.length, y.dengmen.needed)} 张；疑点 ${y.dengmen.doubt}、遗物 ${y.dengmen.relics} 件${state.exitTier === 1 ? "" : "，非体面自请多 1 张"}`}）` : "（下一回合到来：按当时的疑点与未焚的遗物定解牌张数，两回合内打够）") : ""}
