@@ -594,7 +594,7 @@ export const STATUSES3: Record<StatusId3, StatusDef3> = {
     duration: 0,
     permanent: true,
     drawModifier: 0,
-    effectText: "【宫中来信】解决时另 🌱身子 +1。",
+    effectText: "【宫中来信】离场时另 🌱身子 +1（无论是否把握）。",
     flavor: "敬妃膝下无子，最盼着你的孩子。她托人捎话：胧月有她看顾，你只管保重自己。",
     veiled: { untilTurn: 11, effectText: "日后或许用得上。", flavor: "敬妃拉着你的手说，往后有什么难处，只管来咸福宫找她。" },
   },
@@ -1013,8 +1013,8 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     flavor: "寿康宫请你过去说说话。太后近来身子不大好，却还惦记着碎玉轩。",
     reward: [q(1)],
     penalty: NO,
-    resolvedText: "清誉 +1（眉庄解决时翻倍）",
-    unresolvedText: "无额外效果，事件消失",
+    resolvedText: "清誉 +1（眉庄解决时翻倍）；有【敬妃之谊】时另身子 +1",
+    unresolvedText: "有【敬妃之谊】时仍身子 +1，事件消失",
     resolvedStory: {
       jinyanShenxing: "太后问你近来读什么书，你答得谦逊稳妥。太后捻着佛珠，说这孩子沉静。",
       meizhuangXiangzhu: "眉庄陪你一同前去。太后问起闲月阁那一年，眉庄只淡淡说：「都过去了，多亏嬛儿。」转头又把你夸了一遍。你们一唱一和，太后听得开怀，赏了你们一人一串佛珠。",
@@ -1487,14 +1487,16 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     kind: "opportunity",
     name: "宫中来信",
     emoji: "✉️",
-    flavor: "有人托山下的小贩捎来一封信。信封上没有落款，你却认得那字迹。",
+    flavor: "有人托山下的小贩捎来一封信。信封上没有落款，你却认得那字迹——笔锋瘦劲，收尾处总带一点倔强，是沈眉庄的手笔。",
     reward: [q(1)],
     penalty: NO,
-    resolvedText: "清誉 +1（眉庄解决时翻倍；有【敬妃之谊】时另身子 +1）",
-    unresolvedText: "无额外效果，事件消失",
+    resolvedText: "清誉 +1（眉庄解决时翻倍）；有【敬妃之谊】时另身子 +1",
+    unresolvedText: "有【敬妃之谊】时仍身子 +1，事件消失",
     resolvedStory: {
-      meizhuangXiangzhu: "是眉庄的信，还捎来了衣物和药材。她说宫里一切都好，叫你千万保重。",
-      jinxiXiangzhu: "槿汐托人去山下取了信，一路藏在怀里带回来，还带着她的体温。",
+      meizhuangXiangzhu:
+        "你拆开信，是眉庄的字迹，写得很长，足足三页。她说：「宫里一切都好，你不必挂心，只管保重自己。」信末又添一句：「胧月的事，我时时托人打听，一有准信，立刻写给你。」包袱里是厚实的冬衣和几包药材，药包上还压着一张她亲笔写的服法。你读到最后，眼眶发热，把信折了又折，贴身收好。",
+      jinxiXiangzhu:
+        "槿汐托人去山下取了信，一路藏在怀里带回来，还带着她的体温。你拆开一看，是眉庄的字迹，劈头便问你冷不冷、病好了没有，说宫里一切都好，叫你千万保重。末了一句：「胧月的事，我时时托人打听，一有准信，立刻写给你。」槿汐在一旁抹着眼泪，说：「娘娘，眉庄小主心里一直惦记着您呢。」",
     },
   },
   jinganChuilian: {
