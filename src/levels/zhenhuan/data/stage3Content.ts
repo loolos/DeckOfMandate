@@ -1768,19 +1768,19 @@ type TierTable = Record<LingrongTier, LingrongOutcome>;
 export const LINGRONG_EVENT3: Partial<Record<EventId3, TierTable>> = {
   huanghouShangshi: LINGRONG_EVENT.huanghouShangshi,
   gongzhongLiuyan: {
-    close: { ...LINGRONG_EVENT.gongzhongLiuyan!.close, story: "陵容在各宫替你辟谣：「姐姐的为人，我最清楚。」说这话时，她的声音比平日都响亮些，连一向不爱搭腔的宫人也点了头。" },
-    distant: { ...LINGRONG_EVENT.gongzhongLiuyan!.distant, story: "「姐姐何必在意这些闲话，清者自清嘛。」陵容嘴上这么说，倒也在几处宫里替你分辩了几句，话不多，却很周全。" },
-    resentful: { ...LINGRONG_EVENT.gongzhongLiuyan!.resentful, story: "陵容去各宫走了一圈，话却说得含含糊糊，流言反倒越传越凶。到了夜里，宝鹊又悄悄送来一盏安神汤，说是她家小主吩咐的。" },
+    close: { ...LINGRONG_EVENT.gongzhongLiuyan!.close, story: "陵容在各宫替你说话，句句圆融：「姐姐如今是什么身份，谁不知道？旁人嚼舌根，不过是眼红罢了。」她笑盈盈的，三两句便把几个碎嘴的宫人说得讪讪低了头。" },
+    distant: { ...LINGRONG_EVENT.gongzhongLiuyan!.distant, story: "「姐姐何必在意这些闲话，清者自清。」陵容在几处宫里替你分辩，话说得滴水不漏，既没得罪谁，也没落下你的不是。" },
+    resentful: { ...LINGRONG_EVENT.gongzhongLiuyan!.resentful, story: "陵容去各宫走了一圈，话说得阴阳怪气：「姐姐如今恩宠正盛，招人说两句，也是该的。」流言反倒越传越凶。到了夜里，宝鹊又悄悄送来一盏安神汤，说是她家小主吩咐的。" },
   },
   neiwufuDiaonan: {
-    close: { ...LINGRONG_EVENT.neiwufuDiaonan!.close, story: "陵容出身寒微，最懂怎么跟内务府的人打交道。她陪笑脸、塞碎银，没两日便替你把份例要了回来，回来还笑说：「这些人的脾气，我摸得透透的。」" },
-    distant: { ...LINGRONG_EVENT.neiwufuDiaonan!.distant, story: "「妹妹出身寒微，跟奴才们打交道倒是在行。」陵容说得平平淡淡，跑了两趟内务府，份例总算补齐了。" },
-    resentful: { ...LINGRONG_EVENT.neiwufuDiaonan!.resentful, story: "陵容出面去要份例，话说得又急又硬，把事情闹得人尽皆知，倒显得你斤斤计较。" },
+    close: { ...LINGRONG_EVENT.neiwufuDiaonan!.close, story: "陵容笑着往内务府走了一趟，几句体面话、一包碎银，管事太监便点头哈腰。她回来笑说：「这些人的心思，我最清楚，给足了面子，没有办不成的事。」" },
+    distant: { ...LINGRONG_EVENT.neiwufuDiaonan!.distant, story: "「内务府的差事，妹妹跑一趟便是。」陵容话说得客气周到，当日便把份例补齐了，走时还笑道：「姐姐有事，只管吩咐。」" },
+    resentful: { ...LINGRONG_EVENT.neiwufuDiaonan!.resentful, story: "陵容出面去要份例，话里带刺：「姐姐如今金贵，连份例都要旁人跑腿。」这话传开，倒显得你斤斤计较。" },
   },
   liyiShiwu: {
-    close: { ...LINGRONG_EVENT.liyiShiwu!.close, story: "陵容扶你起来，替你整好衣裳，轻声说：「姐姐别恼，回头我送药膏来，保管看不出痕迹。」" },
-    distant: { ...LINGRONG_EVENT.liyiShiwu!.distant, story: "「姐姐素来最重仪态，这回可要仔细些。」陵容替你把场面遮掩过去，说回头送药来。" },
-    resentful: { ...LINGRONG_EVENT.liyiShiwu!.resentful, story: "陵容上前替你圆了场，一句话也没多说，只在临走时丢下一句：「回头我让人送药来。」" },
+    close: { ...LINGRONG_EVENT.liyiShiwu!.close, story: "陵容不慌不忙扶你起来，替你把衣裳理得妥妥帖帖，笑道：「姐姐放心，回头送药膏来，保管看不出一丝痕迹。」" },
+    distant: { ...LINGRONG_EVENT.liyiShiwu!.distant, story: "「姐姐素来最重仪态，这回可得留神些。」陵容三言两语把场面遮掩过去，才说回头送药来。" },
+    resentful: { ...LINGRONG_EVENT.liyiShiwu!.resentful, story: "陵容上前替你圆了场，话却带着刺：「姐姐一向端庄，原来也有出岔子的时候。」说罢才淡淡补了一句：「回头我让人送药来。」" },
   },
   wangyeXiantan: {
     close: { resolves: true, effects: [q(1)], story: "陵容替你收下了王爷送来的诗集，笑着说王爷的字写得真好。又陪你挑了几句诗回赠。" },
@@ -1823,9 +1823,9 @@ export { LINGRONG_SUMMON };
 
 /** 陵容 played with nothing on the table: just keeping her company, 情分 +1. After 纯元故衣 your words turn cold. */
 export const LINGRONG_IDLE_TEXT3: Record<LingrongTier, string> = {
-  close: "你留陵容在碎玉轩喝茶，两人说了半日体己话。临走时她拉着你的袖子，说下回再来。",
-  distant: "你请陵容过来坐坐。她起初拘谨得很，后来也说了几句心里话。",
-  resentful: "你请陵容过来坐坐，她句句带刺。可坐得久了，语气也松了些。",
+  close: "你留陵容在碎玉轩喝茶。她如今应对得体，三言两语便把话说得熨帖，连延禧宫的旧事也只挑好听的讲。临走时她拉着你的袖子，说下回再来。",
+  distant: "你请陵容过来坐坐。她言谈周全，客客气气，茶盏放得端端正正，坐久了才多说了几句心里话。",
+  resentful: "你请陵容过来坐坐，她句句冷嘲热讽：「姐姐如今忙得很，难为还记得妹妹。」可坐得久了，语气也松了些。",
 };
 export const LINGRONG_COLD_TEXT = "你留陵容说话，说着说着，竟说了一句「心冷了」。陵容握着你的手，柔声劝了许久。";
 
