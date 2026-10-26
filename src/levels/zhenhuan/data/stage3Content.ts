@@ -1767,7 +1767,11 @@ type TierTable = Record<LingrongTier, LingrongOutcome>;
 
 /** Stage-2 tables reused for the shared events; stage-3 events get their own. */
 export const LINGRONG_EVENT3: Partial<Record<EventId3, TierTable>> = {
-  huanghouShangshi: LINGRONG_EVENT.huanghouShangshi,
+  huanghouShangshi: {
+    close: { resolves: true, effects: [sc(1)], story: "陵容陪你去景仁宫晨省。皇后拉着你们俩问长问短，又各赏了一对玉镯。出来时陵容挽着你，说这镯子最衬姐姐。" },
+    distant: { resolves: true, effects: [sc(1)], story: "陵容随你去了景仁宫，皇后温言问了几句，各赏了东西。一路回来，她话不多，只说了句「姐姐受累了」。" },
+    resentful: { resolves: false, story: "晨省时皇后的话头多半落在陵容身上，你只在一旁坐着。出来后她站了片刻，没有说话，各自回宫去了。" },
+  },
   gongzhongLiuyan: LINGRONG_EVENT.gongzhongLiuyan,
   neiwufuDiaonan: LINGRONG_EVENT.neiwufuDiaonan,
   liyiShiwu: LINGRONG_EVENT.liyiShiwu,
