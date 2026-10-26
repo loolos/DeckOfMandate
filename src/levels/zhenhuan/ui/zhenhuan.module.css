@@ -930,6 +930,7 @@
 }
 
 .modal {
+  box-sizing: border-box;
   width: min(560px, 100%);
   max-height: 90vh;
   max-height: calc(100dvh - 32px);
@@ -957,27 +958,20 @@
   gap: 0.5rem;
   justify-content: flex-end;
   margin-top: 1rem;
-  /* 文字过长时弹窗内部滚动，按钮始终钉在底部可见。 */
-  position: sticky;
-  bottom: -1.25rem;
-  padding: 0.75rem 0 1.25rem;
-  margin-bottom: -1.25rem;
-  background: linear-gradient(to bottom, transparent, var(--zh-panel) 0.75rem);
 }
 
-/* 手机屏：弹窗最高占满整屏，文字区域在内部上下滑动。 */
+/* 手机屏：弹窗最高占满一屏（上下留小边距），两侧留出边缘；内容过长时手指上下拖动滚动。 */
 @media (max-width: 640px) {
   .overlay {
-    padding: 0;
+    padding: 12px;
   }
 
   .modal {
-    width: 100%;
-    max-height: 100vh;
-    max-height: 100dvh;
-    border-radius: 0;
-    border-left: 0;
-    border-right: 0;
+    max-height: calc(100dvh - 24px);
+    padding: 1rem 1rem;
+    overflow-x: hidden;
+    overflow-wrap: anywhere;
+    touch-action: pan-y;
   }
 }
 
