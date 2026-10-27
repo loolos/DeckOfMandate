@@ -1502,7 +1502,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
   jinganChuilian: {
     id: "jinganChuilian",
     kind: "opportunity",
-    name: "静岸师太垂怜",
+    name: "慈云覆荫",
     emoji: "🍵",
     flavor: "静岸师太在廊下遇见你，停下来问了一句：「近来可还住得惯？」",
     peakFlavor: "静岸师太拄着拐杖，一步一步爬上了凌云峰，说是放心不下，要亲眼来看看你的病好些没有。",
@@ -1549,7 +1549,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
   moyanYuanshou: {
     id: "moyanYuanshou",
     kind: "opportunity",
-    name: "莫言援手",
+    name: "默然分劳",
     emoji: "🤲",
     flavor: "寺里的莫言师父看不惯静白，悄悄走过来：「这活儿我替你担半天。」",
     peakFlavor: "莫言师父背着一捆柴、一袋米，沿着陡峭的山路一声不吭地上了凌云峰，放下东西就要走。",
