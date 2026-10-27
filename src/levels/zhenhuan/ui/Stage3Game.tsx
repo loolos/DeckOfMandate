@@ -1020,12 +1020,6 @@ function ConfrontEvidence({ state }: { state: Z3State }) {
   const entry = (l: (typeof lines)[number], i: number) => (
     <p key={`${l.line}-${i}`}>
       {l.line}
-      {(l.lingrong && l.line !== FABRICATED_SECRET) || !l.hint ? null : (
-        <>
-          <br />
-          <span className={styles.muted}>（{l.hint}）</span>
-        </>
-      )}
       {l.duanfei ? (
         <>
           <br />
