@@ -1063,6 +1063,7 @@ function ConfrontRealize({ state }: { state: Z3State }) {
       {exposed ? <p>{text.exposed}</p> : withheld ? <p>{text.withheldOnly}</p> : null}
       {exposed && withheld ? <p>{text.withheld}</p> : null}
       {fabricated ? <p>{text.fabricated}</p> : null}
+      {state.lizigao ? <p>{text.lizigao}</p> : null}
     </>
   );
 }
