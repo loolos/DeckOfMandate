@@ -1020,6 +1020,12 @@ function ConfrontEvidence({ state }: { state: Z3State }) {
   const entry = (l: (typeof lines)[number], i: number) => (
     <p key={`${l.line}-${i}`}>
       {l.line}
+      {l.qifei ? (
+        <>
+          <br />
+          <span className={styles.muted}>{POPUP_TEXT.confrontQifeiTail}</span>
+        </>
+      ) : null}
       {l.duanfei ? (
         <>
           <br />
@@ -1032,6 +1038,7 @@ function ConfrontEvidence({ state }: { state: Z3State }) {
     <>
       {shown.length > 0 ? <p className={styles.muted}>{POPUP_TEXT.confrontIntro}</p> : null}
       {shown.map(entry)}
+      {state.lizigao && !shown.some((l) => l.qifei) ? <p className={styles.muted}>{POPUP_TEXT.confrontQifei}</p> : null}
       {hasStatus3(state, "duanfeiXianghu") && !shown.some((l) => l.duanfei) ? <p className={styles.muted}>{POPUP_TEXT.confrontDuanfei}</p> : null}
       {exposed ? <p>{summary.exposed}</p> : null}
       {withheld.length > 0 ? <p>{exposed ? summary.withheld : summary.withheldOnly}</p> : null}
@@ -1201,6 +1208,15 @@ function PopupBody({ state, id }: { state: Z3State; id: PopupId }) {
           {hasStatus3(state, "qinseHeming") ? <p className={styles.muted}>{POPUP_TEXT.zhoufuQinseRules}</p> : null}
         </>
       );
+    case "lizigao":
+      return (
+        <>
+          {POPUP_TEXT.lizigao.map((t) => (
+            <p key={t}>{t}</p>
+          ))}
+          <p className={styles.muted}>{POPUP_TEXT.lizigaoRules}</p>
+        </>
+      );
     case "qinse":
       return (
         <>
@@ -1237,6 +1253,7 @@ const POPUP_TITLE: Record<PopupId, string> = {
   ximai: "💗 喜脉惊心",
   ouyu: "🌸 圣驾偶遇",
   dengmen: "🚪 皇上登门",
+  lizigao: "🥮 栗糕清苦",
 };
 
 function OutcomeModal({ state, onRestart, onMenu }: { state: Z3State; onRestart: () => void; onMenu: () => void }) {

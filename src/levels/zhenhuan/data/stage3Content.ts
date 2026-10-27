@@ -421,6 +421,7 @@ export type StatusId3 =
   | "yishiWucuo"
   | "dayaQifei"
   | "dayaGuaerjia"
+  | "dayaQifeiLizi"
   | "yanxianHuansi"
   | "xianhuaChuanKai";
 
@@ -623,6 +624,19 @@ export const STATUSES3: Record<StatusId3, StatusDef3> = {
   },
   dayaQifei: daya("dayaQifei", "齐妃", "齐妃在众人面前下不来台，往后见了你都收敛了许多。"),
   dayaGuaerjia: daya("dayaGuaerjia", "祺贵人", "祺贵人吃了一回亏，在人前不敢再那么张扬。"),
+  /** 栗糕清苦之后：齐妃的把柄落在皇后手里，打压不再用掉。 */
+  dayaQifeiLizi: {
+    id: "dayaQifeiLizi",
+    name: "打压·齐妃",
+    emoji: "⚔️",
+    tag: "positive",
+    duration: 0,
+    permanent: true,
+    drawModifier: 0,
+    effectText: "齐妃的危机每次出现都少需要 1 张解牌，不会用掉；景仁宫对质时，齐妃的指控少一桩。",
+    flavor: "那盘栗子糕之后，齐妃见了你总是远远避开，在人前再不敢多说一句。",
+    veiled: { untilTurn: 10, effectText: "齐妃的危机每次出现都少需要 1 张解牌，不会用掉。日后或许还用得上。", flavor: "那盘栗子糕之后，齐妃见了你总是远远避开，在人前再不敢多说一句。" },
+  },
   lingrongDeXiang: {
     id: "lingrongDeXiang",
     name: "暗香盈袖",
@@ -1771,6 +1785,12 @@ type TierTable = Record<LingrongTier, LingrongOutcome>;
 
 /** Stage-2 tables reused for the shared events; stage-3 events get their own. */
 export const LINGRONG_EVENT3: Partial<Record<EventId3, TierTable>> = {
+  /** 只在栗糕清苦的条件下陵容才接得了（见 lizigaoOpen）；无论情分都能化解。 */
+  sanAgeYaochong: {
+    close: { resolves: true, relation: 1, story: "陵容听说皇上一连几日歇在长春宫，便抱着琵琶去了养心殿外的廊下，唱的是你从前教她的那支小曲。皇上循声出来，问她怎么不在碎玉轩陪着莞嫔，当晚便摆驾来看你，摸着你的肚子笑了好一会儿。" },
+    distant: { resolves: true, relation: 1, story: "「姐姐如今身子重，这些事交给妹妹便是。」陵容往养心殿送了一回新调的安神香，顺口提了句碎玉轩夜里不大安稳。皇上第二日便离了长春宫，过来陪你坐了半晌。" },
+    resentful: { resolves: true, relation: 1, story: "陵容低着头应了，隔了两日才来回话，说长春宫那边已经消停了。皇上果然不往长春宫去了，只来碎玉轩坐了不到一盏茶的工夫，又说要去听陵容新学的曲子。" },
+  },
   huanghouShangshi: {
     close: { resolves: true, effects: [sc(1)], story: "陵容陪你去景仁宫晨省。皇后拉着你们俩问长问短，又各赏了一对玉镯。出来时陵容挽着你，说这镯子最衬姐姐。" },
     distant: { resolves: true, effects: [sc(1)], story: "陵容随你去了景仁宫，皇后温言问了几句，各赏了东西。一路回来，她话不多，只说了句「姐姐受累了」。" },
@@ -2592,7 +2612,7 @@ export const LINGRONG_FAREWELL: Record<LingrongTier, string> = {
 
 // ---------------------------------------------------------------- popups (§五)
 
-export type PopupId = "opening" | "huanghou" | "tonghuatai" | "chunyuan" | "wanwan" | "confront" | "exit" | "feilao" | "zhoufu" | "ximai" | "ouyu" | "dengmen" | "qinse";
+export type PopupId = "opening" | "huanghou" | "tonghuatai" | "chunyuan" | "wanwan" | "confront" | "exit" | "feilao" | "zhoufu" | "ximai" | "ouyu" | "dengmen" | "qinse" | "lizigao";
 
 export const POPUP_TEXT = {
   opening: "翊坤宫的门关上了。华妃倒了，六宫都说碎玉轩的莞主子是头一份的恩宠。听说景仁宫也要亲自来贺。",
@@ -2679,6 +2699,20 @@ export const POPUP_TEXT = {
   confrontDuanfeiLead: "端妃想起你往日去延庆殿陪她说话、问药问安的情分，缓缓抬眸，在一旁轻声说道：「",
   confrontDuanfeiTail: "」皇后看了她一眼，终是略过了这一桩。",
   confrontDuanfei: "端妃想起你往日去延庆殿陪她说话、问药问安的情分，缓缓抬眸，在一旁轻声说道：「妹妹侍奉君前，向来谨慎。宫里的事查来查去，查不出什么，反倒伤了和气。」皇后看了她一眼，终是略过了一桩。",
+  confrontQifeiTail: "说到这里，齐妃的目光落到你身上，忽然想起那盘栗子糕，后半句话硬生生咽了回去，脸色白了几分。皇后看了她一眼，这一桩便没有再问下去。",
+  confrontQifei: "齐妃几次要开口，目光落到你身上，想起那盘栗子糕，突然语塞，到底一个字也没说出来。皇后手里的事，便少了一桩。",
+  /** 栗糕清苦（隐藏事件）：甄嬛眼里的经过；陵容教齐妃的那一层，她此时并不知道。 */
+  lizigao: [
+    "自你有了身孕，齐妃在景仁宫请安时便总是心神不宁，眼睛有意无意往你小腹上落。她早已不得宠，满心的指望都压在三阿哥身上；你年轻得宠，若再添一位皇子，在她看来，弘时往后的路便窄了。这些，你那时只当是她小家子气，并没往心里去。",
+    "这日长春宫的翠果捧来一盘栗子糕，说是齐妃娘娘亲手做的，给莞嫔补补身子。陵容正巧在碎玉轩陪你说话。你拈起一块刚要入口，她忽然按住你的手：「姐姐且慢。」她把糕凑到鼻尖闻了闻，脸色一变：「这糕里有一股清苦味，是夹竹桃，花粉和汁液都掺进去了。」",
+    "她说你这几日胸闷，太医开的是桂枝汤；夹竹桃本就伤胎，与桂枝一同入口，活血祛瘀的药力更猛，若是吃下去，这孩子只怕保不住。你后背一阵发凉，回过神来，紧紧握住了她的手。那一刻你只觉得，这宫里肯这样护着你的，除了眉姐姐，便是她了。",
+    "陵容走后，槿汐收拾着那盘糕，迟疑了半晌才开口：「小主，奴婢多一句嘴。夹竹桃的气味那样淡，安小主一闻便知，连桂枝汤的事也说得一清二楚，未免太巧了些。」你只当她多心，摆摆手说陵容是懂香料的人，鼻子自然灵些。槿汐垂下眼，没有再说什么。",
+    "你本想当晚便去养心殿回禀皇上，陵容却拉住了你：「姐姐三思。齐妃是三阿哥的生母，三阿哥又是皇上最年长的皇子。姐姐若把事情闹大，齐妃固然获罪，可三阿哥心里会怎么想？将来……」她没有说下去。你想了一夜，终究没有去养心殿，那盘栗子糕辗转到了皇后手里。",
+    "后来的事，是槿汐从景仁宫的宫人那里辗转听来的。皇后把齐妃单独叫去，章太医当着她的面验出了糕里的夹竹桃。齐妃起初咬定不知道夹竹桃会伤胎，皇后却慢慢说出一件事：前些日子，长春宫的人去太医院打听过碎玉轩的安胎方子，早知道你在喝桂枝汤。齐妃当场瘫软在地，只说自己一时糊涂。",
+    "皇后没有把这件事报给皇上。她只告诉齐妃，谋害皇嗣是死罪，传出去，三阿哥也要受牵连。齐妃跪着求了许久，皇后才叹了口气，说三阿哥往后就挪到景仁宫，由她亲自教养。没过几日，三阿哥的东西便搬出了长春宫。从此齐妃见了你总是远远避开，在景仁宫里，皇后说一句，她便应一句。",
+    "这一局就这样收了场：齐妃再不能把你怎样，皇后得了三阿哥，又捏住了齐妃的命门；而你，欠下了陵容一份救命的情。那时的你，只顾着庆幸。",
+  ] as readonly string[],
+  lizigaoRules: "⚔️【打压·齐妃】从此不会用掉：齐妃的危机每次出现都少需要 1 张解牌。📚 三阿哥邀宠不再出现。",
   confrontRealize: {
     exposed:
       "一件件被揭出来，你的心便沉一分。那些事，有的是夜里对着一盏孤灯说的，有的是两个人头挨着头、压低了声音说的。碎玉轩的窗纸那样薄，可听见的，从来只有一个人：安陵容。你想起她替你描眉时微微发颤的手，想起她倚在你肩头唤你“姐姐”的模样。原来这些日子，陵容一直坐在你身边，一针一线绣着荷包，也一字一句，替旁人记着你的话。而能把这些零碎的旧事串成一张网、等到今日才一并抖出来的，只有端坐在上首、一直不动声色的皇后。这一局，是她早就布好的。",
