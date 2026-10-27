@@ -1029,7 +1029,7 @@ function ConfrontEvidence({ state }: { state: Z3State }) {
       {l.duanfei ? (
         <>
           <br />
-          <span className={styles.muted}>端妃在一旁淡淡说道：「{l.duanfei}」皇后便略过了这一桩。</span>
+          <span className={styles.muted}>{POPUP_TEXT.confrontDuanfeiLead}{l.duanfei}{POPUP_TEXT.confrontDuanfeiTail}</span>
         </>
       ) : null}
     </p>
