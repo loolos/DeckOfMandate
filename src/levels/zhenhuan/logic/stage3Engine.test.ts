@@ -434,6 +434,16 @@ describe("zhenhuan stage 3 engine", () => {
     expect(s.lizigao).toBe(true);
   });
 
+  it("栗糕清苦 afterwards: 齐妃寻衅's 谨言慎行 story speaks of 景仁宫 tutoring", () => {
+    let s = advanceTo(newStage3(3, CARRY), 3);
+    clearBoard(s);
+    s.lizigao = true;
+    s.crisis = { ...ev(s, "qifeiXunxin"), eased: true };
+    const [uid] = setHand(s, ["jinyanShenxing"]);
+    s = act(s, { type: "playCard", cardUid: uid! });
+    expect(s.crisis!.story).toContain("景仁宫");
+  });
+
   it("栗糕清苦 at 对质: one fewer 把柄, and 齐妃 falls silent on one of hers", () => {
     const s = newStage3(1, { ...CARRY, secrets: ["shiqinNeiqing", "sitanSiqiu"] });
     s.relation = 0;

@@ -792,7 +792,10 @@ function resolveEventByCard(s: Z3State, ev: EventInst3, card: CardId3, doubleRew
   ev.resolved = true;
   ev.resolvedBy = card;
   log(s, `${verb(def.kind)}${EVENT_KIND3_LABEL[def.kind]}事件【${def.name}】`, "good");
-  const story = (ev.id === "gongzhongLaixin" && hasStatus3(s, "jingfeiZhiyi") ? GONGZHONG_LAIXIN_JINGFEI_STORY[card] : undefined) ?? def.resolvedStory[card];
+  const story =
+    (ev.id === "gongzhongLaixin" && hasStatus3(s, "jingfeiZhiyi") ? GONGZHONG_LAIXIN_JINGFEI_STORY[card] : undefined) ??
+    (s.lizigao ? POPUP_TEXT.lizigaoStory[ev.id]?.[card] : undefined) ??
+    def.resolvedStory[card];
   if (story) {
     ev.story = story;
     log(s, story);
@@ -1527,7 +1530,7 @@ function settleCrisis(s: Z3State, ev: EventInst3): void {
   }
   if (def.rival && removeStatusById(s, "xinGuirenZhangyi")) {
     ev.byXin = true;
-    log(s, `【欣贵人解围】【${def.name}】没化解，欣贵人替你挡下了惩罚。${def.xinCover ?? "她当众顶了回去。"}`, "good");
+    log(s, `【欣贵人解围】【${def.name}】没化解，欣贵人替你挡下了惩罚。${(s.lizigao ? POPUP_TEXT.lizigaoXinCover[ev.id] : undefined) ?? def.xinCover ?? "她当众顶了回去。"}`, "good");
     if (def.pair) log(s, `连环：【${EVENTS3[PAIRS[def.pair].opportunity].name}】随之作废。`, "bad");
     return;
   }
