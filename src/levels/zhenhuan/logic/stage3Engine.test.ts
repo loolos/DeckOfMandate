@@ -253,12 +253,12 @@ describe("zhenhuan stage 3 engine", () => {
       return s;
     };
     const base = run();
-    expect([base.qingyu, base.shenzi]).toEqual([9, 5]);
+    expect([base.qingyu, base.shenzi]).toEqual([7, 4]);
     expect(base.shengchong).toBe(7);
     expect(hasStatus3(base, "liuyanChanshen")).toBe(true);
     const zhuang = run("yirongZhengsu");
     expect(zhuang.qingyu).toBe(10);
-    expect(zhuang.shenzi).toBe(5);
+    expect(zhuang.shenzi).toBe(4);
     expect(hasStatus3(zhuang, "liuyanChanshen")).toBe(true);
     const xi = run("jinxiXiangzhu");
     expect(xi.shenzi).toBe(6);
