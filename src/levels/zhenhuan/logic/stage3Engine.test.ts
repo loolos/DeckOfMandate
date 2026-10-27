@@ -409,6 +409,92 @@ describe("zhenhuan stage 3 engine", () => {
     expect(s.statuses.some((st) => st.id === "dayaQifei")).toBe(false);
   });
 
+  it("栗糕清苦: eased 三阿哥邀宠 + pregnant → 陵容 alone resolves it, 打压·齐妃 stays, 三阿哥邀宠 leaves the pools", () => {
+    let s = advanceTo(newStage3(3, CARRY), 3);
+    clearBoard(s);
+    s.crisis = { ...ev(s, "sanAgeYaochong"), eased: true };
+    s.relation = -3;
+    s.crisisPool = ["sanAgeYaochong", "qifeiXunxin"];
+    s.crisisUsed = ["sanAgeYaochong"];
+    expect(matchedEvents3(s, "lingrongXiangzhu").map((e) => e.id)).toContain("sanAgeYaochong");
+    const [uid] = setHand(s, ["lingrongXiangzhu"]);
+    s = act(s, { type: "playCard", cardUid: uid! });
+    expect(s.crisis!.resolved).toBe(true);
+    expect(s.lizigao).toBe(true);
+    expect(s.popups).toContain("lizigao");
+    expect(hasStatus3(s, "dayaQifeiLizi")).toBe(true);
+    expect(s.crisisPool).not.toContain("sanAgeYaochong");
+    expect(s.crisisUsed).not.toContain("sanAgeYaochong");
+    s.opportunityPool = [];
+    s.opportunityUsed = [];
+    s.crisisPool = ["qifeiXunxin"];
+    s = act(s, { type: "endTurn" });
+    expect(s.crisisUsed).not.toContain("sanAgeYaochong");
+    expect(s.crisis?.id).toBe("qifeiXunxin");
+    expect(s.crisis!.eased).toBe(true);
+    expect(hasStatus3(s, "dayaQifeiLizi")).toBe(true);
+  });
+
+  it("栗糕清苦 needs 陵容 among the 解牌, 打压, and a child on the way", () => {
+    const base = advanceTo(newStage3(3, CARRY), 3);
+    clearBoard(base);
+    // 不是陵容解的：不触发
+    let s = structuredClone(base);
+    s.crisis = { ...ev(s, "sanAgeYaochong"), eased: true };
+    let [uid] = setHand(s, ["yirongZhengsu"]);
+    s = act(s, { type: "playCard", cardUid: uid! });
+    expect(s.crisis!.resolved).toBe(true);
+    expect(s.lizigao).toBe(false);
+    // 没有打压：陵容接不了
+    s = structuredClone(base);
+    s.crisis = ev(s, "sanAgeYaochong");
+    expect(matchedEvents3(s, "lingrongXiangzhu")).toHaveLength(0);
+    // 未孕：陵容接不了
+    s = structuredClone(base);
+    s.pregnant = false;
+    s.crisis = { ...ev(s, "sanAgeYaochong"), eased: true };
+    expect(matchedEvents3(s, "lingrongXiangzhu")).toHaveLength(0);
+    // 菀菀类卿那一回合起不再触发（孩子要落地了）
+    s = advanceTo(newStage3(3, CARRY), 9);
+    clearBoard(s);
+    s.crisis = { ...ev(s, "sanAgeYaochong"), eased: true };
+    expect(s.pregnant).toBe(true);
+    expect(matchedEvents3(s, "lingrongXiangzhu")).toHaveLength(0);
+    // 打压还在、要两张：陵容先出、仪容整肃补上，同样触发
+    s = structuredClone(base);
+    s.crisis = ev(s, "sanAgeYaochong");
+    withStatus(s, "dayaQifei");
+    const [a, b] = setHand(s, ["lingrongXiangzhu", "yirongZhengsu"]);
+    s = act(s, { type: "playCard", cardUid: a! });
+    expect(s.crisis!.resolved).toBe(false);
+    s = act(s, { type: "playCard", cardUid: b! });
+    expect(s.crisis!.resolved).toBe(true);
+    expect(s.lizigao).toBe(true);
+  });
+
+  it("栗糕清苦 afterwards: 齐妃寻衅's 谨言慎行 story speaks of 景仁宫 tutoring", () => {
+    let s = advanceTo(newStage3(3, CARRY), 3);
+    clearBoard(s);
+    s.lizigao = true;
+    s.crisis = { ...ev(s, "qifeiXunxin"), eased: true };
+    const [uid] = setHand(s, ["jinyanShenxing"]);
+    s = act(s, { type: "playCard", cardUid: uid! });
+    expect(s.crisis!.story).toContain("景仁宫");
+  });
+
+  it("栗糕清苦 at 对质: one fewer 把柄, and 齐妃 falls silent on one of hers", () => {
+    const s = newStage3(1, { ...CARRY, secrets: ["shiqinNeiqing", "sitanSiqiu"] });
+    s.relation = 0;
+    expect(presentedSecrets(s)).toBe(2);
+    s.lizigao = true;
+    expect(presentedSecrets(s)).toBe(1);
+    const lines = confrontLines(s);
+    const silent = lines.filter((l) => l.qifei);
+    expect(silent).toHaveLength(1);
+    expect(silent[0]!.id).toBe("sitanSiqiu");
+    expect(silent[0]!.line.startsWith("齐妃")).toBe(true);
+  });
+
   it("连环 shared card: 打压 status for the pair crisis, and each half shows its own story", () => {
     const s = newStage3(2, CARRY);
     clearBoard(s);
