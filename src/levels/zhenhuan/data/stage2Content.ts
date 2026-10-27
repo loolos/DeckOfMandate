@@ -1646,12 +1646,12 @@ export const STORIES2: Record<StoryId2, StoryDef2> = {
       },
       {
         id: "feibaoHuangshangPlain",
-        name: "宫人飞报皇上",
+        name: "宫人求见太后",
         card: "shoulongRenxin",
         effects: [{ resource: "shenzi", amount: -2 }, { resource: "shengchong", amount: 1 }],
         status: "baoyangZaishen",
         text: "身子 -2；圣宠 +1（免去清誉 -1）；抱恙在身",
-        story: "小允子拼死跑去养心殿报信，皇上赶到时你已经跪了许久。他当场免了余下的时辰，亲自扶你起身，又斥了周宁海几句。你膝上虽疼，这份心疼却记在了他心里。",
+        story: "皇上与皇后都去宫外祈福，宫中无人能替你做主。小允子拼死跑去寿康宫求见太后，太后赶到时你已经跪了许久。她当场免了余下的时辰，命人扶你起身，又斥了周宁海几句。待皇上回宫，这份委屈自会有人替你说到他耳边。",
       },
       {
         id: "huTiTangyao",
@@ -1683,7 +1683,7 @@ export const STORIES2: Record<StoryId2, StoryDef2> = {
     options: [
       { id: "yingcheng", name: "硬撑到底", effects: [{ resource: "qingyu", amount: -2 }], fakuiShenzi: 2, miscarriageStory: "你一直跪到日影西斜，起身时眼前一黑，裙下已洇开一片殷红。周宁海站在廊下，连眼皮也没抬一下。太医赶到时，孩子早已保不住了。", text: "小产；身子 -2；清誉 -2", story: "你咬牙跪到最后，起身时裙下已是一片殷红。" },
       { id: "jizhaoTaiyi", name: "急召太医", card: "wenTaiyiZhenzhi", effects: [], fakuiShenzi: 2, miscarriageStory: "温实初冒死闯到翊坤宫外，跪地诊脉，良久才哑声道：「小主，臣……来迟了。」孩子没能保住，他却硬是替你挡下了周宁海的呵斥，保全了你的性命。", text: "小产；身子 -2", story: "温实初冒死闯到翊坤宫外，孩子终究没能保住，但他保住了你。" },
-      { id: "feibaoHuangshang", name: "宫人飞报皇上", card: "shoulongRenxin", effects: [{ resource: "shengchong", amount: 1 }], fakuiShenzi: 2, miscarriageStory: "皇上赶到翊坤宫外时，你已倒在青砖上，裙裾尽染。他一把将你抱起，怒斥华妃，可腹中的孩子已经听不见了。「是朕来迟了。」他的声音在发抖。", text: "小产；身子 -2；圣宠 +1", story: "小允子拼死跑去养心殿报信，皇上赶到时，一切已经晚了。" },
+      { id: "feibaoHuangshang", name: "宫人求见太后", card: "shoulongRenxin", effects: [{ resource: "shengchong", amount: 1 }], fakuiShenzi: 2, miscarriageStory: "太后赶到翊坤宫外时，你已倒在青砖上，裙裾尽染。她一面命人抬你回宫，一面厉声斥责华妃，可腹中的孩子已经听不见了。「是哀家来迟了。」她的声音沉得发颤。", text: "小产；身子 -2；圣宠 +1", story: "皇上与皇后都去宫外祈福，小允子拼死跑去寿康宫求见太后，太后赶到时，一切已经晚了。" },
       { id: "anzhongLiuxin", name: "暗中留心", card: "jingguanQibian", effects: [], fakuiShenzi: 2, miscarriageStory: "你含着参片，硬是撑到了太医赶来。脉案递到眼前时，你只轻轻合了合眼：参片保得住你，却保不住它。这一口气，你记下了。", status: "baoyangZaishen", text: "小产；身子 -2；抱恙在身", story: "你早有防备，备了参片含在口中，总算撑住了一口气，孩子却终究没能保住。" },
       { id: "jinxiHuchi", name: "槿汐护持", card: "jinxiXiangzhu", effects: [{ resource: "qingyu", amount: -1 }], fakuiShenzi: 2, miscarriageStory: "你倒下时，槿汐一把将你抱住，一面高声唤太医，一面用身子替你挡住了周遭窥探的目光。孩子没了，你伏在她肩头，终于没有在人前落一滴泪。", text: "小产；身子 -2；清誉 -1", story: "槿汐一直跪在你身侧扶着你。你倒下时，是她一把将你抱住，一路喊着太医。" },
       {
