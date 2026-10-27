@@ -1,5 +1,4 @@
 import { describe, expect, it } from "vitest";
-import { decodeSessionCode } from "./session";
 import { musicMood } from "../ui/music";
 import {
   CARDS3,
@@ -409,9 +408,10 @@ describe("zhenhuan stage 3 engine", () => {
     expect(s.statuses.some((st) => st.id === "dayaQifei")).toBe(false);
   });
 
-  it("栗糕清苦: eased 三阿哥邀宠 + pregnant → 陵容 alone resolves it, 打压·齐妃 stays, 三阿哥邀宠 leaves the pools", () => {
+  it("栗糕清苦: 齐妃 once suppressed + eased 三阿哥邀宠 + pregnant → 陵容 alone resolves it, 打压·齐妃 stays, 三阿哥邀宠 leaves the pools", () => {
     let s = advanceTo(newStage3(3, CARRY), 3);
     clearBoard(s);
+    s.suppressed.qifei = true;
     s.crisis = { ...ev(s, "sanAgeYaochong"), eased: true };
     s.relation = -3;
     s.crisisPool = ["sanAgeYaochong", "qifeiXunxin"];
@@ -438,6 +438,7 @@ describe("zhenhuan stage 3 engine", () => {
   it("栗糕清苦 needs 陵容 among the 解牌, 打压, and a child on the way", () => {
     const base = advanceTo(newStage3(3, CARRY), 3);
     clearBoard(base);
+    base.suppressed.qifei = true;
     // 不是陵容解的：不触发
     let s = structuredClone(base);
     s.crisis = { ...ev(s, "sanAgeYaochong"), eased: true };
@@ -445,9 +446,10 @@ describe("zhenhuan stage 3 engine", () => {
     s = act(s, { type: "playCard", cardUid: uid! });
     expect(s.crisis!.resolved).toBe(true);
     expect(s.lizigao).toBe(false);
-    // 没有打压：陵容接不了
+    // 从没打压过齐妃：陵容接不了
     s = structuredClone(base);
-    s.crisis = ev(s, "sanAgeYaochong");
+    s.suppressed.qifei = false;
+    s.crisis = { ...ev(s, "sanAgeYaochong"), eased: true };
     expect(matchedEvents3(s, "lingrongXiangzhu")).toHaveLength(0);
     // 未孕：陵容接不了
     s = structuredClone(base);
@@ -457,13 +459,13 @@ describe("zhenhuan stage 3 engine", () => {
     // 菀菀类卿那一回合起不再触发（孩子要落地了）
     s = advanceTo(newStage3(3, CARRY), 9);
     clearBoard(s);
+    s.suppressed.qifei = true;
     s.crisis = { ...ev(s, "sanAgeYaochong"), eased: true };
     expect(s.pregnant).toBe(true);
     expect(matchedEvents3(s, "lingrongXiangzhu")).toHaveLength(0);
-    // 打压还在、要两张：陵容先出、仪容整肃补上，同样触发
+    // 打压早已用掉、这回要两张：陵容先出、仪容整肃补上，同样触发
     s = structuredClone(base);
     s.crisis = ev(s, "sanAgeYaochong");
-    withStatus(s, "dayaQifei");
     const [a, b] = setHand(s, ["lingrongXiangzhu", "yirongZhengsu"]);
     s = act(s, { type: "playCard", cardUid: a! });
     expect(s.crisis!.resolved).toBe(false);
@@ -1200,16 +1202,11 @@ describe("zhenhuan stage 3 engine", () => {
 
 describe("出宫清誉按把柄条数扣", () => {
   it("宫中清誉高于修行上限时，从上限 8 起扣呈上的把柄条数", () => {
-    const code =
-      "ZH3-MyA3MjE1MjQ5MjcgLSBwYzcgcGMzIHBjMTYgcGMxNyBwYzUgZSBwYzEgcGMyIHBjOSBlIHBjMyBwYzYgcGM4IHBjNyBwYzE3IHBjOSBlIHBjMTUgcGMxNCBwYzEzIGUgcGMyIHBjNSBwYzE1IHBjNyBwYzQgcGM2IHBjMTYgZSBwYzggcGM3IHBjMTMgcGMxMiBwYzQwIHBjNSBwYzkgZSBwYzYgcGM0MCBwYzE1IHBjOSBwYzIgcGMxNyBlIHBjNyBwYzggcGM0MCBwYzIgcGM0IHBjMTMgcGMxNyBlIHBjNiBwYzQgcGM5IHBjOCBwYzE1IHBjNSBlIHBjNDAgcGM3IHBjMTIgcGMxMyBwYzMgZSBwYzczIHBjNzc";
-    const r = decodeSessionCode(code);
-    if (!r.ok || r.session.stage !== 3) throw new Error("decode failed");
-    const s0 = r.session.state;
-    const before = replay3(s0.seed, s0.carry, s0.actions.slice(0, 59));
-    expect(before.turn).toBe(10);
-    expect(before.qingyu).toBe(18);
+    const s = advanceTo(newStage3(3, CARRY), 10);
+    s.confront = { ...s.confront!, presented: 4, needed: confrontNeeded(4) };
+    s.qingyu = 18;
     // 第 10 回合一张辩白牌都不打：缺 3 张，被废出宫
-    const after = replay3(s0.seed, s0.carry, [...s0.actions.slice(0, 59), { type: "endTurn" }]);
+    const after = act(s, { type: "endTurn" });
     expect(after.exitTier).toBe(3);
     expect(after.qingyu).toBe(8 - 4); // 呈上 4 条
   });
