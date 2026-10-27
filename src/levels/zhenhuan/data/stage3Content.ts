@@ -241,7 +241,7 @@ export const CARDS3: Record<CardId3, CardDef3> = {
     flavor: "允礼总在你最难的时候出现，笑意淡淡的，像是一切都不值一提。",
     base: [],
     baseDraw: 1,
-    baseStatus: "wangyeGuaNian",
+    baseStatus: "diyunYinghuai",
     extraPlays: 1,
     matches: ["wangyeXiantan", "tanhuoLiangmi", "shanzhongCaiyao", "yuexiaDuitan", "yebanJingrao"],
     rulesText: ["抽 1 张牌；本回合出牌 +1；下回合抓牌 +1。"],
@@ -416,7 +416,7 @@ export type StatusId3 =
   | "jingfeiZhouji"
   | "yuandaoBuji"
   | "weiNverChengxia"
-  | "wangyeGuaNian"
+  | "diyunYinghuai"
   | "meizhuangDadian"
   | "yishiWucuo"
   | "dayaQifei"
@@ -531,15 +531,15 @@ export const STATUSES3: Record<StatusId3, StatusDef3> = {
     effectText: "未来 2 回合，不能打出【仪容整肃】和【谨言慎行】，也不能侍寝。",
     flavor: "身子一阵阵发虚，连起身梳妆都勉强，太医嘱咐这几日不宜操劳，更不可侍寝。",
   },
-  wangyeGuaNian: {
-    id: "wangyeGuaNian",
-    name: "王爷挂念",
+  diyunYinghuai: {
+    id: "diyunYinghuai",
+    name: "笛韵萦怀",
     emoji: "🎐",
     tag: "positive",
     duration: 1,
     drawModifier: 1,
     effectText: "下回合抓牌数 +1。多个实例效果叠加。",
-    flavor: "他把你的难处都记在了心上，转头便着手替你一件件周旋，下回合你便能轻省些。",
+    flavor: "他把你的难处都记在了心上，转头便着手替你一件件周旋，那笛声似还萦在耳畔，心上也松快了几分。",
   },
   meizhuangDadian: {
     id: "meizhuangDadian",

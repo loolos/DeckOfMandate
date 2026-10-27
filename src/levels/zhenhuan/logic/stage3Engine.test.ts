@@ -561,14 +561,14 @@ describe("zhenhuan stage 3 engine", () => {
     expect([t0, t1]).toEqual([2, 1]);
   });
 
-  it("果郡王相助: draws 1, +1 play this turn, 王爷挂念 gives +1 draw next turn", () => {
+  it("果郡王相助: draws 1, +1 play this turn, 笛韵萦怀 gives +1 draw next turn", () => {
     let s = advanceTo(newStage3(6, CARRY), 12);
     clearBoard(s);
     const [g] = setHand(s, ["guojunwangXiangzhu"]);
     const before = playLimit3(s);
     s = act(s, { type: "playCard", cardUid: g! });
     expect(playLimit3(s)).toBe(before + 1);
-    expect(s.statuses.some((x) => x.id === "wangyeGuaNian")).toBe(true);
+    expect(s.statuses.some((x) => x.id === "diyunYinghuai")).toBe(true);
   });
 
   it("睹物生疑: from the turn after 引驾 until 回宫, each 遗物 in hand at turn end adds 疑点 (not only on the 偶遇 turn)", () => {
