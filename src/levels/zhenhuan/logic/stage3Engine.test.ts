@@ -96,6 +96,8 @@ function advanceTo(s: Z3State, turn: number): Z3State {
     if (s.act === 1) s.shengchong = Math.max(s.shengchong, 12);
     s.shenzi = 6;
     if (s.yihua) s.yihua.doubt = 1;
+    // 海棠春睡的默认结算会留下抓牌 -1，改变后续牌序；快进时跳过
+    if (s.pregnant) s.stories = s.stories.filter((x) => x.id !== "haitangChunshui" && x.id !== "haitangYeyu");
     s = act(s, { type: "endTurn" });
     expect(s.outcome, s.lossReason ?? "").toBe("playing");
   }
@@ -233,6 +235,36 @@ describe("zhenhuan stage 3 engine", () => {
     expect(s.stories.map((x) => x.id)).toContain(FIXED_STORIES3[3]);
     s = act(s, { type: "endTurn" });
     expect(s.pregnant).toBe(true);
+  });
+
+  it("海棠春睡: 默认全扣，三张牌各免一项", () => {
+    const run = (id?: CardId3) => {
+      let s = advanceTo(newStage3(8, CARRY), 3);
+      clearBoard(s);
+      s.stories = [{ id: "haitangYeyu", chosenOptionId: null }];
+      s.qingyu = 10;
+      s.shengchong = 5;
+      s.shenzi = 6;
+      if (id) {
+        const [uid] = setHand(s, [id]);
+        s = act(s, { type: "playCard", cardUid: uid! });
+      }
+      s = act(s, { type: "endTurn" });
+      return s;
+    };
+    const base = run();
+    expect([base.qingyu, base.shenzi]).toEqual([7, 4]);
+    expect(base.shengchong).toBe(7);
+    expect(hasStatus3(base, "liuyanChanshen")).toBe(true);
+    const zhuang = run("yirongZhengsu");
+    expect(zhuang.qingyu).toBe(10);
+    expect(zhuang.shenzi).toBe(4);
+    expect(hasStatus3(zhuang, "liuyanChanshen")).toBe(true);
+    const xi = run("jinxiXiangzhu");
+    expect(xi.shenzi).toBe(6);
+    expect(hasStatus3(xi, "liuyanChanshen")).toBe(true);
+    const shi = run("jinyanShenxing");
+    expect(hasStatus3(shi, "liuyanChanshen")).toBe(false);
   });
 
   it("皇后笑意 (turn 2): each answering card has its own reward, none leaves a 把柄", () => {
