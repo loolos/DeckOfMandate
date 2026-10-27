@@ -930,9 +930,13 @@
 }
 
 .modal {
+  box-sizing: border-box;
   width: min(560px, 100%);
   max-height: 90vh;
+  max-height: calc(100dvh - 32px);
   overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
   background: var(--zh-panel);
   border: 1px solid var(--zh-gold);
   border-radius: 14px;
@@ -954,6 +958,21 @@
   gap: 0.5rem;
   justify-content: flex-end;
   margin-top: 1rem;
+}
+
+/* 手机屏：弹窗最高占满一屏（上下留小边距），两侧留出边缘；内容过长时手指上下拖动滚动。 */
+@media (max-width: 640px) {
+  .overlay {
+    padding: 12px;
+  }
+
+  .modal {
+    max-height: calc(100dvh - 24px);
+    padding: 1rem 1rem;
+    overflow-x: hidden;
+    overflow-wrap: anywhere;
+    touch-action: pan-y;
+  }
 }
 
 /* ---------------------------------------------------------------- 略缩模式 */
