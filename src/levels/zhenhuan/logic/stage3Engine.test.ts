@@ -422,6 +422,12 @@ describe("zhenhuan stage 3 engine", () => {
     s.pregnant = false;
     s.crisis = { ...ev(s, "sanAgeYaochong"), eased: true };
     expect(matchedEvents3(s, "lingrongXiangzhu")).toHaveLength(0);
+    // 菀菀类卿那一回合起不再触发（孩子要落地了）
+    s = advanceTo(newStage3(3, CARRY), 9);
+    clearBoard(s);
+    s.crisis = { ...ev(s, "sanAgeYaochong"), eased: true };
+    expect(s.pregnant).toBe(true);
+    expect(matchedEvents3(s, "lingrongXiangzhu")).toHaveLength(0);
     // 打压还在、要两张：陵容先出、仪容整肃补上，同样触发
     s = structuredClone(base);
     s.crisis = ev(s, "sanAgeYaochong");

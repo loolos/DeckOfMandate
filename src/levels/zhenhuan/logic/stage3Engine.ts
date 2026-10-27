@@ -383,8 +383,11 @@ export function solveCount(ev: EventInst3): number {
  * whatever her 情分; once she does, the 栗糕 event follows.
  */
 export function lizigaoOpen(s: Z3State, ev: EventInst3): boolean {
-  return ev.id === "sanAgeYaochong" && !ev.resolved && !s.lizigao && s.act === 1 && s.pregnant && (ev.eased === true || hasStatus3(s, "dayaQifei"));
+  return ev.id === "sanAgeYaochong" && !ev.resolved && !s.lizigao && s.act === 1 && s.pregnant && s.turn < WANWAN_TURN && (ev.eased === true || hasStatus3(s, "dayaQifei"));
 }
+
+/** 菀菀类卿那一回合孩子就要落地：栗糕清苦只在这之前。 */
+const WANWAN_TURN = Number(Object.keys(FIXED_STORIES3).find((t) => FIXED_STORIES3[Number(t)] === "wanwanLeiqing"));
 
 /** Does `cardId` count toward this unresolved event right now (single match or 双牌 progress)? */
 export function cardAffectsEvent3(s: Z3State, ev: EventInst3, cardId: CardId3): boolean {
