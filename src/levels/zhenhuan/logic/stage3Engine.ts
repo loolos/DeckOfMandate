@@ -379,11 +379,11 @@ export function solveCount(ev: EventInst3): number {
 }
 
 /**
- * 栗糕清苦 (hidden): with 打压·齐妃 in effect and a child on the way, 陵容 can take on 三阿哥邀宠
+ * 栗糕清苦 (hidden): once 齐妃 has been put down (打压) at least once, with a child on the way, 陵容 can take on 三阿哥邀宠
  * whatever her 情分; once she does, the 栗糕 event follows.
  */
 export function lizigaoOpen(s: Z3State, ev: EventInst3): boolean {
-  return ev.id === "sanAgeYaochong" && !ev.resolved && !s.lizigao && s.act === 1 && s.pregnant && s.turn < WANWAN_TURN && (ev.eased === true || hasStatus3(s, "dayaQifei"));
+  return ev.id === "sanAgeYaochong" && !ev.resolved && !s.lizigao && s.act === 1 && s.pregnant && s.turn < WANWAN_TURN && s.suppressed.qifei;
 }
 
 /** 菀菀类卿那一回合孩子就要落地：栗糕清苦只在这之前。 */
