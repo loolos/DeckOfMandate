@@ -3,6 +3,7 @@ import { musicMood } from "../ui/music";
 import {
   CARDS3,
   CONFRONT,
+  EXIT,
   matchesInAct,
   EVENTS3,
   FABRICATED_SECRET,
@@ -1253,6 +1254,14 @@ describe("出宫清誉按把柄条数扣", () => {
     const after = act(s, { type: "endTurn" });
     expect(after.exitTier).toBe(3);
     expect(after.qingyu).toBe(8 - 4); // 呈上 4 条
+  });
+
+  it("对质卡名不预设出宫方式（被废出宫时不应显示“自请出宫”）", () => {
+    expect(CONFRONT.name).not.toContain("自请");
+    const s = advanceTo(newStage3(3, CARRY), 10);
+    const after = act(s, { type: "endTurn" });
+    expect(after.exitTier).toBeGreaterThan(1);
+    expect(EXIT[after.exitTier!].name).not.toBe(EXIT[1].name);
   });
 });
 
