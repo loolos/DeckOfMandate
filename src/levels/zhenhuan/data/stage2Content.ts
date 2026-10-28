@@ -1214,8 +1214,8 @@ export const LINGRONG_EVENT: Partial<Record<EventId2, TierTable>> = {
   },
   neiwufuDiaonan: {
     close: { resolves: true, relation: 1, extraDraw: 1, story: "陵容出身寒微，最懂怎么跟内务府打交道，没两日便替你把份例要了回来。" },
-    distant: { resolves: true, relation: 1, story: "「妹妹出身寒微，跟奴才们打交道倒是在行。」份例总算补齐了。" },
-    resentful: { resolves: true, relation: 1, effects: [{ resource: "qingyu", amount: -1 }], story: "陵容出面去要份例，却把事情闹得人尽皆知，倒显得你斤斤计较。" },
+    distant: { resolves: true, story: "「妹妹出身寒微，跟奴才们打交道倒是在行。」份例总算补齐了。" },
+    resentful: { resolves: true, effects: [{ resource: "qingyu", amount: -1 }], story: "陵容出面去要份例，却把事情闹得人尽皆知，倒显得你斤斤计较。" },
   },
   liyiShiwu: {
     close: { resolves: true, relation: 1, shuhenjiao: true, story: "陵容扶你起来，替你整好衣裳，又说回头送药来。" },
