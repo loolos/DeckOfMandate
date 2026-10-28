@@ -4,7 +4,7 @@ import { describe, expect, it } from "vitest";
 import { CARDS, EVENTS, STORIES } from "../data/content";
 import { CARDS2, EVENTS2, STORIES2 } from "../data/stage2Content";
 import { CARDS3, EVENTS3, STORIES3 } from "../data/stage3Content";
-import { SPECIAL_ART_KEYS, TEMPLE_CARD_ART, indexByBasename } from "./art";
+import { SHARED_RELIC_ART, SPECIAL_ART_KEYS, TEMPLE_CARD_ART, indexByBasename } from "./art";
 
 /** Art files that aren't named after a real id would silently never show (docs/art-spec.md §2). */
 function strayFiles(folder: string, ids: readonly string[]): string[] {
@@ -16,7 +16,7 @@ function strayFiles(folder: string, ids: readonly string[]): string[] {
 describe("zhenhuan art files", () => {
   it("card art is named <CardId>.webp (or <CardId>_temple.webp for 第三关寺中版)", () => {
     const temple = TEMPLE_CARD_ART.map((id) => `${id}_temple`);
-    expect(strayFiles("cards", [...Object.keys(CARDS), ...Object.keys(CARDS2), ...Object.keys(CARDS3), ...temple])).toEqual([]);
+    expect(strayFiles("cards", [...Object.keys(CARDS), ...Object.keys(CARDS2), ...Object.keys(CARDS3), ...temple, SHARED_RELIC_ART])).toEqual([]);
   });
 
   it("event art is named <EventId>.webp", () => {
