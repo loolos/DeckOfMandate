@@ -1243,14 +1243,17 @@ describe("出宫清誉按把柄条数扣", () => {
   });
 });
 
-describe("stage 3 陵容相助 events all move 情分", () => {
-  it("every tier of every 陵容 event table sets a relation delta", () => {
+describe("stage 3 陵容相助 情分", () => {
+  it("a 陵容 outcome that fails to resolve the event never changes 情分", () => {
     for (const [id, table] of Object.entries(LINGRONG_EVENT3)) {
       for (const tier of ["close", "distant", "resentful"] as const) {
         const o = table![tier];
-        const skip = id === "liyiShiwu" || id === "neiwufuDiaonan";
-        if (!skip) expect(o.relation, `${id}.${tier}`).toBeTypeOf("number");
+        if (!o.resolves) expect(o.relation ?? 0, `${id}.${tier}`).toBe(0);
       }
     }
+  });
+
+  it("中宫垂青 with 亲厚 陵容 raises 情分", () => {
+    expect(LINGRONG_EVENT3.huanghouShangshi!.close.relation).toBe(1);
   });
 });
