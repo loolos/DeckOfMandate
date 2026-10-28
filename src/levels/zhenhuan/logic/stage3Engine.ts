@@ -30,6 +30,7 @@ import {
   LINGRONG_COLD_TEXT,
   LINGRONG_EVENT3,
   LINGRONG_FAREWELL,
+  HAITANG_COOL_TEXT,
   LINGRONG_IDLE_TEXT3,
   LINGRONG_SUMMON,
   LINGRONG_TRUTH,
@@ -945,7 +946,12 @@ function xiayuStep(s: Z3State, inst: StoryInst3, option: StoryOption3, tier: Lin
 function applyStoryOption(s: Z3State, inst: StoryInst3, option: StoryOption3, source: string, tier: LingrongTier | null): number {
   const def = STORIES3[inst.id];
   // 海棠春睡：陵容暗中心冷，情分 -2，不写进日志
-  if (!inst.chosenOptionId && (inst.id === "haitangChunshui" || inst.id === "haitangYeyu")) changeRelation(s, -2, true);
+  if (!inst.chosenOptionId && (inst.id === "haitangChunshui" || inst.id === "haitangYeyu")) {
+    const before = lingrongTier(s.relation);
+    changeRelation(s, -2, true);
+    const after = lingrongTier(s.relation);
+    if (after !== before && after !== "close" && !s.lingrongGone) log(s, HAITANG_COOL_TEXT[after], "bad");
+  }
   inst.chosenOptionId = option.id;
   if (option.card) inst.viaCard = option.card;
   log(s, source);

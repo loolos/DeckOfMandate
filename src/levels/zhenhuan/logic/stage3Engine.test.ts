@@ -246,6 +246,7 @@ describe("zhenhuan stage 3 engine", () => {
     s = act(s, { type: "endTurn" });
     expect(s.relation).toBe(Math.max(-4, before - 2));
     expect(s.log.slice(logged).some((l) => l.text.includes("陵容待你亲近") || l.text.includes("陵容与你生分"))).toBe(false);
+    expect(s.log.slice(logged).some((l) => l.text.includes("海棠树下的石凳"))).toBe(true);
   });
 
   it("海棠春睡: 默认全扣，三张牌各免一项", () => {

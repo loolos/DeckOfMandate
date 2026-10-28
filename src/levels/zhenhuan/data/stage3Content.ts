@@ -1894,6 +1894,12 @@ export const LINGRONG_EVENT3: Partial<Record<EventId3, TierTable>> = {
   },
 };
 
+/** 海棠春睡之后陵容情分暗中降档时补的一句剧情（不写数字）。 */
+export const HAITANG_COOL_TEXT: Record<"distant" | "resentful", string> = {
+  distant: "海棠花期过后，陵容来碎玉轩请安，只在门口站了站，福了福身便说宫里还有绣活要赶。你留她坐坐，她笑着应了一声，却始终没有走进来。",
+  resentful: "陵容再来碎玉轩时，海棠树下的石凳她看也没看。你递过茶，她接了，却放在一旁没喝，淡淡说了句：「姐姐如今忙，我就不多叨扰了。」",
+};
+
 export { LINGRONG_SUMMON };
 
 /** 陵容 played with nothing on the table: just keeping her company, 情分 +1. After 纯元故衣 your words turn cold. */
