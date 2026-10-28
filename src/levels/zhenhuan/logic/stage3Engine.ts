@@ -979,12 +979,12 @@ function applyStoryOption(s: Z3State, inst: StoryInst3, option: StoryOption3, so
   } else applyDeltas3(s, option.effects, `${def.name}·${option.name}`);
   if (!alive(s)) return 0;
 
-  if (option.status) addStatus3(s, option.status);
   if (def.id === "wentaiyiTanshi" && hasStatus3(s, "jingfeiZhiyi")) {
     log(s, "敬妃托温太医带来了不少物资，山居的日子打点得宽裕了些。", "good");
     addStatus3(s, "jingfeiZhouji");
   }
   if (option.removeNegatives) removeNegatives(s, option.removeNegatives, option.name);
+  if (option.status) addStatus3(s, option.status);
   if (option.drawCards) drawCards3(s, option.drawCards);
   if (option.pregnancy) becomePregnant(s, def.name);
   if (option.summon) {
@@ -1018,8 +1018,8 @@ function applyStoryOption(s: Z3State, inst: StoryInst3, option: StoryOption3, so
       break;
   }
   if (inst.id === "tonghuataiChuyu") afterTonghuatai(s);
-  if (inst.id === "taxueWenji" && option.card) s.taxueByCard = true;
-  if (inst.id === "shanmenOuyu" || inst.id === "taxueWenji") {
+  if (inst.id === "taxueWenji" && option.card && option.id !== "bimenXieke") s.taxueByCard = true;
+  if (inst.id === "shanmenOuyu" || (inst.id === "taxueWenji" && option.id !== "bimenXieke")) {
     addCardToDeck(s, "guojunwangXiangzhu");
     log(s, "牌库加入 1 张【果郡王相助】。", "good");
   }

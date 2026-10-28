@@ -890,6 +890,32 @@ describe("zhenhuan stage 3 engine", () => {
     expect(s.taxueByCard).toBe(true);
   });
 
+  it("踏雪问疾: 默认 🌱+1 🪷-1 且加牌; 相助牌 🌱+1 并留下下回合抓牌 -1; 闭门谢客只移除 1 个负面且不加牌", () => {
+    const run = (hand: CardId3[]) => {
+      let s = advanceTo(newStage3(12, CARRY), 19);
+      s.statuses.push({ uid: `s${s.nextUid++}`, id: "hanzheng", appliesFromTurn: s.turn, remaining: 2 });
+      s.statuses.push({ uid: `s${s.nextUid++}`, id: "jingji", appliesFromTurn: s.turn, remaining: 2 });
+      const sz = s.shenzi;
+      const q = s.qingyu;
+      const gjw = () => [...s.drawPile, ...s.hand, ...s.discard].filter((c) => c.id === "guojunwangXiangzhu").length;
+      const uids = hand.length ? setHand(s, hand) : [];
+      const g0 = gjw();
+      if (uids[0]) s = act(s, { type: "playCard", cardUid: uids[0] });
+      else s = act(s, { type: "endTurn" });
+      return { s, dsz: s.shenzi - sz, dq: s.qingyu - q, dg: gjw() - g0 };
+    };
+    const card = run(["guojunwangXiangzhu"]);
+    expect(card.s.statuses.some((x) => x.id === "bingzhongXinyou")).toBe(true);
+    expect(card.s.statuses.some((x) => x.id === "hanzheng" || x.id === "jingji")).toBe(false);
+    const jin = run(["jinxiXiangzhu"]);
+    expect(jin.s.statuses.some((x) => x.id === "jinxiLeikua")).toBe(true);
+    const bimen = run(["jingxinRennai"]);
+    expect(bimen.s.log.filter((l) => l.text.startsWith("闭门谢客：移除状态"))).toHaveLength(1);
+    expect(bimen.s.statuses.some((x) => x.id === "hanzheng")).toBe(true);
+    expect(bimen.s.taxueByCard).toBeFalsy();
+    expect(bimen.dg).toBe(0);
+  });
+
   it("合婚庚帖 grants 琴瑟同心 only after 踏雪问疾 (by a card) and 月下琴笛 are both done; draw +1 starts after 舟覆", () => {
     const run = (taxueByCard: boolean, qinDone: boolean) => {
       let s = advanceTo(newStage3(12, CARRY), 3);

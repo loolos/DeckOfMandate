@@ -425,7 +425,9 @@ export type StatusId3 =
   | "dayaGuaerjia"
   | "dayaQifeiLizi"
   | "yanxianHuansi"
-  | "xianhuaChuanKai";
+  | "xianhuaChuanKai"
+  | "bingzhongXinyou"
+  | "jinxiLeikua";
 
 export type StatusDef3 = {
   readonly id: StatusId3;
@@ -757,6 +759,26 @@ export const STATUSES3: Record<StatusId3, StatusDef3> = {
     drawModifier: 1,
     effectText: "未来 3 回合，每回合抓牌数 +1。",
     flavor: "敬妃托温太医捎上山的衣物药材和米面，替你把山居的日子打点得宽裕了些。",
+  },
+  bingzhongXinyou: {
+    id: "bingzhongXinyou",
+    name: "挂念成忧",
+    emoji: "😮‍💨",
+    tag: "negative",
+    duration: 1,
+    drawModifier: -1,
+    effectText: "下回合，抓牌数 -1（至少抓 1 张）。",
+    flavor: "他为照顾你病倒了，你坐立难安，满心都是清凉台那头的动静。",
+  },
+  jinxiLeikua: {
+    id: "jinxiLeikua",
+    name: "槿汐累倒",
+    emoji: "🥱",
+    tag: "negative",
+    duration: 1,
+    drawModifier: -1,
+    effectText: "下回合，抓牌数 -1（至少抓 1 张）。",
+    flavor: "槿汐连着几夜没合眼，累倒了，许多事你只能自己动手。",
   },
   yuandaoBuji: {
     id: "yuandaoBuji",
@@ -2253,19 +2275,20 @@ export const STORIES3: Record<StoryId3, StoryDef3> = {
     emoji: "🌨️",
     flavor:
       "凌云峰上落了三天的雪，屋顶压得吱呀作响，你的咳疾也愈发重了，夜里连灯都懒得点。这日晌午，门被人叩响，开门一看，果郡王披着一身雪站在门外，身后跟着牵马的阿晋。他低头看了看你苍白的脸，眉头皱得很紧：「山下的清凉台是我的别业，暖和，也清静。你不必谢我，今日必须跟我走。」风卷着雪花扑进屋里，你扶着门框，一时竟答不上话。",
-    note: "无论怎样结算，牌库再加入 1 张【果郡王相助】。",
+    note: "下山养病、果郡王相助、槿汐相助这三种结算，牌库再加入 1 张【果郡王相助】。",
     defaultOptionId: "yangbing",
     options: [
-      { id: "yangbing", name: "清凉台养病", effects: [sz(2)], removeNegatives: "all", text: "移除全部负面状态；身子 +2", story: "清凉台很暖，炭火烧得旺旺的，窗上糊着新纸，一点风也不漏。你病得迷迷糊糊，睡了醒、醒了睡，只记得汤药总是温的，帕子总是凉的，有人一直守在床边，替你换额上的帕子，你一睁眼，他便不动声色地把手收了回去。养了十来日，你的气色渐渐回转。临走那天，阿晋把你的旧包袱收拾得整整齐齐，你谢过他，仍旧回了凌云峰。" },
+      { id: "yangbing", name: "清凉台养病", effects: [sz(1), q(-1)], removeNegatives: "all", text: "移除全部负面状态；身子 +1；清誉 -1", story: "清凉台很暖，炭火烧得旺旺的，窗上糊着新纸，一点风也不漏。你病得迷迷糊糊，睡了醒、醒了睡，只记得汤药总是温的，帕子总是凉的，有人一直守在床边，替你换额上的帕子，你一睁眼，他便不动声色地把手收了回去。养了十来日，你的气色渐渐回转。临走那天，阿晋把你的旧包袱收拾得整整齐齐，你谢过他，仍旧回了凌云峰。可山下的闲话也跟着传开了，都说果郡王亲自把一个出家的人接进了别业，一住就是十来日。" },
       {
         id: "bingzhongXiangshou",
         name: "病中相守",
         card: "guojunwangXiangzhu",
         relic: "yiwuPifeng",
-        effects: [sz(3)],
+        effects: [sz(1)],
         removeNegatives: "all",
         flag: "xiangshou",
-        text: "移除全部负面状态；身子 +3",
+        status: "bingzhongXinyou",
+        text: "移除全部负面状态；身子 +1；下回合抓牌数 -1",
         story:
           "他守了你几天几夜，药要亲自尝过才肯端来，帕子换了一盆又一盆，连阿晋劝他去歇歇，他也只摆摆手。你烧退的那个清晨，睁眼便看见他靠在床边睡着了，眼下一片青黑。可你好了，他自己却倒下了，咳得一声重过一声。你坐在他床边，替他掖好被角，第一次叫了他的名字：「允礼。」他睁开眼，怔了许久，才低低地「嗯」了一声，像是怕惊散了什么。",
       },
@@ -2273,11 +2296,22 @@ export const STORIES3: Record<StoryId3, StoryDef3> = {
         id: "jinxiZhaoliao",
         name: "槿汐照料",
         card: "jinxiXiangzhu",
-        effects: [sz(3)],
+        effects: [sz(1)],
         removeNegatives: "all",
-        text: "移除全部负面状态；身子 +3",
+        status: "jinxiLeikua",
+        text: "移除全部负面状态；身子 +1；下回合抓牌数 -1",
         story:
           "槿汐听说有人要接你下山，一句话也没多问，先把你的旧棉袄、药罐和那卷抄了一半的经书收进包袱。到了清凉台，她不肯让旁人近身，煎药、喂汤、擦身，事事亲力亲为，夜里就在脚踏上和衣而卧，你一动她便醒。你烧得糊涂时拉着她的手喊冷，她只一遍遍说：「小主别怕，奴婢在呢，天亮了就好。」果郡王立在帘外，听着里头的动静，终究没有进来，只吩咐阿晋再添两盆炭。",
+      },
+      {
+        id: "bimenXieke",
+        name: "闭门谢客",
+        card: "jingxinRennai",
+        effects: [],
+        removeNegatives: 1,
+        text: "移除 1 个负面状态",
+        story:
+          "你隔着门谢了他的好意，只说山上清净，养几日便好。他在雪地里立了很久，终究没有再叩门，只让阿晋把药包和一篓银炭搁在了门槛外。你守着那点炭火，一碗一碗地熬药，咳声断断续续，捱了好些日子，才勉强缓过来一些。",
       },
     ],
   },
