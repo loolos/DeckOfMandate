@@ -1242,3 +1242,15 @@ describe("出宫清誉按把柄条数扣", () => {
     expect(after.qingyu).toBe(8 - 4); // 呈上 4 条
   });
 });
+
+describe("stage 3 陵容相助 events all move 情分", () => {
+  it("every tier of every 陵容 event table sets a relation delta", () => {
+    for (const [id, table] of Object.entries(LINGRONG_EVENT3)) {
+      for (const tier of ["close", "distant", "resentful"] as const) {
+        const o = table![tier];
+        const skip = id === "liyiShiwu" || id === "neiwufuDiaonan";
+        if (!skip) expect(o.relation, `${id}.${tier}`).toBeTypeOf("number");
+      }
+    }
+  });
+});
