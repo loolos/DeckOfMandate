@@ -1639,11 +1639,13 @@ function endTurn3(s: Z3State): void {
     s.feilaoTier = t;
     const tierDef = FEILAO.tiers[t]!;
     log(s, `【${FEILAO.name}】${tierDef.name}：${tierDef.story}`, t === 0 ? "info" : "bad");
-    if (t === 0) {
-      if (!hasStatus3(s, "shitaiBihu")) addStatus3(s, "shitaiBihu");
-    } else {
-      applyDeltas3(s, t === 1 ? [{ resource: "shenzi", amount: -1 }] : [{ resource: "shenzi", amount: -2 }, { resource: "qingyu", amount: -1 }], tierDef.name);
-      if (alive(s)) addStatus3(s, "hanzheng");
+    // 清誉 -(档位+1)：甲 -1、乙 -2、丙 -3
+    const shenzi = t === 0 ? [] : [{ resource: "shenzi" as const, amount: t === 1 ? -1 : -2 }];
+    applyDeltas3(s, [...shenzi, { resource: "qingyu", amount: -(t + 1) }], tierDef.name);
+    if (alive(s)) {
+      if (t === 0) {
+        if (!hasStatus3(s, "shitaiBihu")) addStatus3(s, "shitaiBihu");
+      } else addStatus3(s, "hanzheng");
     }
     if (!alive(s)) return;
     moveToPeak(s);
