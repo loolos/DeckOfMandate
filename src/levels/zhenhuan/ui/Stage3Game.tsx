@@ -689,7 +689,7 @@ function YihuaCard({ state, fold, dispatch }: { state: Z3State; fold: Fold; disp
                 {["①", "②", "③", "④"][i]} {s.emoji} {s.name}
               </strong>
               ：{s.todo}
-              {state_ === "now" && n === 1 && y.yinjiaNeed > 1 ? ` （已落发：要打 ${y.yinjiaNeed} 张，至少 1 张槿汐，另一张可以是眉庄；已打 ${y.yinjia.length} 张）` : ""}
+              {state_ === "now" && n === 1 && y.yinjiaNeed > 1 ? ` （因此前已落发，皇上未必肯为出家人动身：要打 ${y.yinjiaNeed} 张，至少 1 张槿汐，另一张可以是眉庄；已打 ${y.yinjia.length} 张）` : ""}
               {state_ === "now" && n === 2 && y.ouyuDue != null ? (y.ouyuDue === state.turn ? "（皇上今日驾临：本回合解决【圣驾偶遇】）" : `（第 ${y.ouyuDue} 回合皇上驾临）`) : ""}
               {state_ === "now" && n === 4 ? (y.dengmen ? `（皇上已登门：须在第 ${y.dengmen.openTurn}–${y.dengmen.openTurn + 1} 回合内打出 ${y.dengmen.needed} 张解牌${y.dengmen.needed === 0 ? "，只需过剧情" : `，已打 ${Math.min(y.dengmen.played.length, y.dengmen.needed)} 张；疑点 ${y.dengmen.doubt}、遗物 ${y.dengmen.relics} 件${state.exitTier === 1 ? "" : "，非体面自请多 1 张"}`}）` : "（下一回合到来：按当时的疑点与未焚的遗物定解牌张数，两回合内打够）") : ""}
               {state_ === "now" ? (
