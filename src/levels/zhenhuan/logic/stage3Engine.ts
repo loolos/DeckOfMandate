@@ -979,12 +979,12 @@ function applyStoryOption(s: Z3State, inst: StoryInst3, option: StoryOption3, so
   } else applyDeltas3(s, option.effects, `${def.name}·${option.name}`);
   if (!alive(s)) return 0;
 
-  if (option.status) addStatus3(s, option.status);
   if (def.id === "wentaiyiTanshi" && hasStatus3(s, "jingfeiZhiyi")) {
     log(s, "敬妃托温太医带来了不少物资，山居的日子打点得宽裕了些。", "good");
     addStatus3(s, "jingfeiZhouji");
   }
   if (option.removeNegatives) removeNegatives(s, option.removeNegatives, option.name);
+  if (option.status) addStatus3(s, option.status);
   if (option.drawCards) drawCards3(s, option.drawCards);
   if (option.pregnancy) becomePregnant(s, def.name);
   if (option.summon) {
@@ -1019,7 +1019,7 @@ function applyStoryOption(s: Z3State, inst: StoryInst3, option: StoryOption3, so
   }
   if (inst.id === "tonghuataiChuyu") afterTonghuatai(s);
   if (inst.id === "taxueWenji" && option.card) s.taxueByCard = true;
-  if (inst.id === "shanmenOuyu" || inst.id === "taxueWenji") {
+  if (inst.id === "shanmenOuyu" || (inst.id === "taxueWenji" && option.id !== "bimenXieke")) {
     addCardToDeck(s, "guojunwangXiangzhu");
     log(s, "牌库加入 1 张【果郡王相助】。", "good");
   }
@@ -1369,7 +1369,7 @@ function moveToPeak(s: Z3State): void {
 
 const ZHOUFU_TURN = 25;
 
-/** 踏雪问疾（打牌化解）与月下琴笛都已完成，合婚庚帖写下时才有琴瑟同心。 */
+/** 踏雪问疾（本回合打牌化解，不走默认）与月下琴笛都已完成，合婚庚帖写下时才有琴瑟同心。 */
 export function qinseReady(s: Z3State): boolean {
   return s.changxiangsiDone === true && s.taxueByCard === true;
 }
@@ -1982,6 +1982,7 @@ export function endingStory3(s: Z3State): string[] {
   else if (s.relicsBurned > 0) lines.push(ENDING.relicsBurned);
   lines.push(ENDING.ximai);
   if (s.yihua?.duishi) lines.push(ENDING.duishi);
+  if (hasStatus3(s, "qinseHeming")) lines.push(ENDING.qinse);
   if (s.victory === "narrow") lines.push(YIHUA.dengmenNarrow);
   lines.push(...POPUP_TEXT.homecoming);
   if (s.exitTier) lines.push(POPUP_TEXT.homecomingTier[s.exitTier]!);

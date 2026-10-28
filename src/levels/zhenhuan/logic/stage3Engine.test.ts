@@ -800,6 +800,7 @@ describe("zhenhuan stage 3 engine", () => {
   it("耳目窥伺: unresolved gives 眼线环伺 (draw -1, never below 1) and no 清誉 loss", () => {
     let s = advanceTo(newStage3(6, CARRY), 20);
     clearBoard(s);
+    s.statuses = [];
     s.crisis = ev(s, "xianrenKuitan");
     const qingyu = s.qingyu;
     s = act(s, { type: "endTurn" });
@@ -889,6 +890,35 @@ describe("zhenhuan stage 3 engine", () => {
     s = advanceTo(s, 23);
     expect(s.stories.some((st) => st.id === "taxueWenji")).toBe(false);
     expect(s.taxueByCard).toBe(true);
+  });
+
+  it("踏雪问疾: 默认 🌱-2 🪷-1; 果郡王相助下回合抓牌 -1; 槿汐相助下两回合打不出槿汐相助; 闭门谢客不移除负面且不加牌", () => {
+    const run = (hand: CardId3[]) => {
+      let s = advanceTo(newStage3(12, CARRY), 19);
+      s.statuses.push({ uid: `s${s.nextUid++}`, id: "hanzheng", appliesFromTurn: s.turn, remaining: 2 });
+      s.statuses.push({ uid: `s${s.nextUid++}`, id: "jingji", appliesFromTurn: s.turn, remaining: 2 });
+      const sz = s.shenzi;
+      const q = s.qingyu;
+      const gjw = () => [...s.drawPile, ...s.hand, ...s.discard].filter((c) => c.id === "guojunwangXiangzhu").length;
+      const uids = hand.length ? setHand(s, hand) : [];
+      const g0 = gjw();
+      if (uids[0]) s = act(s, { type: "playCard", cardUid: uids[0] });
+      else s = act(s, { type: "endTurn" });
+      return { s, dsz: s.shenzi - sz, dq: s.qingyu - q, dg: gjw() - g0 };
+    };
+    const bimen = run(["jingxinRennai"]);
+    const card = run(["guojunwangXiangzhu"]);
+    expect(card.s.statuses.some((x) => x.id === "bingzhongXinyou")).toBe(true);
+    expect(card.s.statuses.some((x) => x.id === "hanzheng")).toBe(true);
+    const jin = run(["jinxiXiangzhu"]);
+    expect(jin.s.statuses.some((x) => x.id === "jinxiLeikua" && x.remaining === 2)).toBe(true);
+    expect(card.dsz).toBe(0);
+    expect(jin.dsz).toBe(0);
+    expect(bimen.dsz).toBe(-1);
+    expect(bimen.s.log.some((l) => l.text.startsWith("闭门谢客：移除状态"))).toBe(false);
+    expect(bimen.s.statuses.some((x) => x.id === "hanzheng")).toBe(true);
+    expect(bimen.s.taxueByCard).toBe(true);
+    expect(bimen.dg).toBe(0);
   });
 
   it("合婚庚帖 grants 琴瑟同心 only after 踏雪问疾 (by a card) and 月下琴笛 are both done; draw +1 starts after 舟覆", () => {
