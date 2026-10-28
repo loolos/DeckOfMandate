@@ -405,6 +405,7 @@ export type StatusId3 =
   | "jingfeiZhiyi"
   | "songxingBieyi"
   | "chenyuanYiduan"
+  | "fuyaoTiaoyang"
   | "qinseHeming"
   | "xinGuirenZhangyi"
   | "fuxiongMengchen"
@@ -723,6 +724,17 @@ export const STATUSES3: Record<StatusId3, StatusDef3> = {
     drawModifier: 1,
     effectText: "未来 2 回合，每回合抓牌数 +1。",
     flavor: "青丝落尽，从前的牵挂也像随着断了，心里空明了许多。",
+  },
+  fuyaoTiaoyang: {
+    id: "fuyaoTiaoyang",
+    name: "敷药调养",
+    emoji: "🌿",
+    tag: "positive",
+    duration: 2,
+    drawModifier: 0,
+    turnEnd: [{ resource: "shenzi", amount: 1 }],
+    effectText: "未来 2 回合，每回合末 🌱身子 +1。",
+    flavor: "冻裂的手敷上了药，隔夜便不那么疼了，人也松快了些。",
   },
   qinseHeming: {
     id: "qinseHeming",
@@ -2207,6 +2219,7 @@ export const STORIES3: Record<StoryId3, StoryDef3> = {
       { id: "daifa", name: "带发修行", effects: [], text: "无效果（尘缘未断）", story: "你没有落发。师太看着你，说：「尘缘未断，也是缘法。」" },
       { id: "luofa", name: "落发", card: "chanyuXiushen", effects: [q(2)], flag: "luofa", status: "chenyuanYiduan", text: "清誉 +2；未来 2 回合每回合抓牌 +1", story: "青丝一缕一缕落在地上。你闭着眼，听见剪刀的声音，像是什么东西断了。" },
       { id: "buqunXiuxing", name: "布裙修行", card: "jingchaiBuqun", effects: [q(1)], drawCards: 1, text: "清誉 +1，抽 1 张牌", story: "你换了粗布衣裳，不落发，只把钗环尽数收进箱底。每日挑水扫地，与寺里的姑子们一同做早晚课。静岸师太见你肯吃苦，点头道：「心净，不在发上。」" },
+      { id: "shangyaoZhaoliao", name: "敷药诊视", card: "wenTaiyiZhenzhi", effects: [], status: "fuyaoTiaoyang", text: "未来 2 回合每回合末身子 +1", story: "温实初上山来，一进院子就愣住了：你正挑着水从井边回来，手上全是冻疮。他慌忙放下药箱去接扁担，拉过你的手细看，声音都发颤：「你每天都要做这些？」你把手抽回去，笑着说不过是寺里的寻常活计，早惯了。他却不再听，低头一点一点替你上药。" },
     ],
   },
   shanmenOuyu: {
