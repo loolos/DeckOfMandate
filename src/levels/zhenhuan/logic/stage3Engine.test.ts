@@ -857,7 +857,7 @@ describe("zhenhuan stage 3 engine", () => {
   });
 
   it("肺痨之诬: 静白嚣张 sets the tier; each 槿汐 / 禅语 / 眉庄 lightens it", () => {
-    expect([0, 1, 2, 3, 4, 7].map(feilaoBaseTier)).toEqual([0, 0, 1, 1, 2, 2]);
+    expect([0, 1, 2, 3, 4, 7].map(feilaoBaseTier)).toEqual([0, 1, 1, 2, 2, 2]);
     let s = advanceTo(newStage3(9, CARRY), 18);
     s.feilao = { base: 2, played: [] };
     s.shenzi = 6;
