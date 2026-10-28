@@ -69,10 +69,10 @@
 | E43 | 赏花小聚 | 皇后 | shanghuaXiaoju |
 | E44 | 佛前供灯 | 机会 | foqianGongdeng |
 | E45 | 宫中来信 | 机会 | gongzhongLaixin |
-| E46 | 静岸师太垂怜 | 机会 | jinganChuilian |
+| E46 | 慈云覆荫 | 机会 | jinganChuilian |
 | E47 | 山中采药 | 机会 | shanzhongCaiyao |
 | E48 | 禅房抄经 | 机会 | chanfangChaojing |
-| E49 | 莫言援手 | 机会 | moyanYuanshou |
+| E49 | 默然分劳 | 机会 | moyanYuanshou |
 | E50 | 月下对谈 | 机会 | yuexiaDuitan |
 | E51 | 断炭缺粮 | 危机 | tanhuoLiangmi |
 | E52 | 杂役磋磨 | 危机 | fazuoCuhuo |

@@ -867,7 +867,7 @@ function opportunityExtras(s: Z3State, ev: EventInst3, card: CardId3 | "lingrong
       break;
     case "moyanYuanshou":
       s.extraPlays++;
-      log(s, `莫言援手：本回合出牌 +1（现为 ${playLimit3(s)}）。`, "good");
+      log(s, `默然分劳：本回合出牌 +1（现为 ${playLimit3(s)}）。`, "good");
       break;
     case "yuexiaDuitan":
       if (card === "guojunwangXiangzhu") drawCards3(s, 1);
