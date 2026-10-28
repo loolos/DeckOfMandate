@@ -852,6 +852,7 @@ describe("zhenhuan stage 3 engine", () => {
     expect(feilaoCurrentTier(s)).toBe(1);
     s = act(s, { type: "endTurn" });
     expect(s.feilaoTier).toBe(1);
+    expect(s.log.some((l) => String(l.text ?? l).includes("仓皇出寺：清誉 -2"))).toBe(true);
     expect(s.atPeak).toBe(true);
     expect(s.statuses.some((x) => x.id === "hanzheng")).toBe(true);
   });
