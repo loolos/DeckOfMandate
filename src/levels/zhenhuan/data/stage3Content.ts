@@ -1868,7 +1868,7 @@ export const LINGRONG_EVENT3: Partial<Record<EventId3, TierTable>> = {
     resentful: { resolves: false, story: "陵容说延庆殿药味重，熏得她头疼，走到半路便回去了。" },
   },
   xianfuXianhua: {
-    close: { resolves: true, relation: 1, effects: [q(1)], story: "陵容绣了一方素帕，同你一起送去咸福宫。敬妃拉着她的手，夸她手巧。" },
+    close: { resolves: true, effects: [q(1)], story: "陵容绣了一方素帕，同你一起送去咸福宫。敬妃拉着她的手，夸她手巧。" },
     distant: { resolves: true, effects: [q(1)], story: "陵容陪你去了咸福宫，坐在一旁安安静静的，偶尔替你们添茶。" },
     resentful: { resolves: false, story: "陵容推说手头有事，没去。敬妃问起她，你只得替她圆了几句。" },
   },
