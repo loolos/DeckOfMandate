@@ -1840,15 +1840,15 @@ export const LINGRONG_EVENT3: Partial<Record<EventId3, TierTable>> = {
   huanghouShangshi: {
     close: { resolves: true, relation: 1, effects: [sc(1)], story: "陵容陪你去景仁宫晨省。皇后拉着你们俩问长问短，又各赏了一对玉镯。出来时陵容挽着你，说这镯子最衬姐姐。" },
     distant: { resolves: true, relation: 1, effects: [sc(1)], story: "陵容随你去了景仁宫，皇后温言问了几句，各赏了东西。一路回来，她话不多，只说了句「姐姐受累了」。" },
-    resentful: { resolves: false, story: "晨省时皇后的话头多半落在陵容身上，你只在一旁坐着。出来后她站了片刻，没有说话，各自回宫去了。" },
+    resentful: { resolves: false, relation: 1, story: "晨省时皇后的话头多半落在陵容身上，你只在一旁坐着。出来后她站了片刻，没有说话，各自回宫去了。" },
   },
   gongzhongLiuyan: {
     close: { ...LINGRONG_EVENT.gongzhongLiuyan!.close, story: "陵容在各宫替你说话，句句圆融：「姐姐如今是什么身份，谁不知道？旁人嚼舌根，不过是眼红罢了。」她笑盈盈的，三两句便把几个碎嘴的宫人说得讪讪低了头。" },
     distant: { ...LINGRONG_EVENT.gongzhongLiuyan!.distant, story: "「姐姐何必在意这些闲话，清者自清。」陵容在几处宫里替你分辩，话说得滴水不漏，既没得罪谁，也没落下你的不是。" },
-    resentful: { ...LINGRONG_EVENT.gongzhongLiuyan!.resentful, relation: 0, story: "陵容去各宫走了一圈，话说得阴阳怪气：「姐姐如今恩宠正盛，招人说两句，也是该的。」流言反倒越传越凶。到了夜里，宝鹊又悄悄送来一盏安神汤，说是她家小主吩咐的。" },
+    resentful: { ...LINGRONG_EVENT.gongzhongLiuyan!.resentful, relation: 1, story: "陵容去各宫走了一圈，话说得阴阳怪气：「姐姐如今恩宠正盛，招人说两句，也是该的。」流言反倒越传越凶。到了夜里，宝鹊又悄悄送来一盏安神汤，说是她家小主吩咐的。" },
   },
   neiwufuDiaonan: {
-    close: { ...LINGRONG_EVENT.neiwufuDiaonan!.close, story: "陵容笑着往内务府走了一趟，几句体面话、一包碎银，管事太监便点头哈腰。她回来笑说：「这些人的心思，我最清楚，给足了面子，没有办不成的事。」" },
+    close: { ...LINGRONG_EVENT.neiwufuDiaonan!.close, relation: 0, story: "陵容笑着往内务府走了一趟，几句体面话、一包碎银，管事太监便点头哈腰。她回来笑说：「这些人的心思，我最清楚，给足了面子，没有办不成的事。」" },
     distant: { ...LINGRONG_EVENT.neiwufuDiaonan!.distant, story: "「内务府的差事，妹妹跑一趟便是。」陵容话说得客气周到，当日便把份例补齐了，走时还笑道：「姐姐有事，只管吩咐。」" },
     resentful: { ...LINGRONG_EVENT.neiwufuDiaonan!.resentful, story: "陵容出面去要份例，话里带刺：「姐姐如今金贵，连份例都要旁人跑腿。」这话传开，倒显得你斤斤计较。" },
   },
