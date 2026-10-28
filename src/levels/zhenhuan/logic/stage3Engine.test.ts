@@ -891,7 +891,7 @@ describe("zhenhuan stage 3 engine", () => {
     expect(s.taxueByCard).toBe(true);
   });
 
-  it("踏雪问疾: 默认 🌱-2 🪷-1; 果郡王相助下回合抓牌 -1; 槿汐相助下两回合打不出槿汐相助; 闭门谢客只移除 1 个负面且不加牌", () => {
+  it("踏雪问疾: 默认 🌱-2 🪷-1; 果郡王相助下回合抓牌 -1; 槿汐相助下两回合打不出槿汐相助; 闭门谢客不移除负面且不加牌", () => {
     const run = (hand: CardId3[]) => {
       let s = advanceTo(newStage3(12, CARRY), 19);
       s.statuses.push({ uid: `s${s.nextUid++}`, id: "hanzheng", appliesFromTurn: s.turn, remaining: 2 });
@@ -914,7 +914,7 @@ describe("zhenhuan stage 3 engine", () => {
     expect(card.dsz).toBe(0);
     expect(jin.dsz).toBe(0);
     expect(bimen.dsz).toBe(-1);
-    expect(bimen.s.log.filter((l) => l.text.startsWith("闭门谢客：移除状态"))).toHaveLength(1);
+    expect(bimen.s.log.some((l) => l.text.startsWith("闭门谢客：移除状态"))).toBe(false);
     expect(bimen.s.statuses.some((x) => x.id === "hanzheng")).toBe(true);
     expect(bimen.s.taxueByCard).toBe(true);
     expect(bimen.dg).toBe(0);

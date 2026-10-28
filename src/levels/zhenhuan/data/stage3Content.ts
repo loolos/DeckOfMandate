@@ -2308,8 +2308,7 @@ export const STORIES3: Record<StoryId3, StoryDef3> = {
         card: "jingxinRennai",
         effects: [sz(-1)],
         shenziFloor: 1,
-        removeNegatives: 1,
-        text: "移除 1 个负面状态；身子 -1（最少扣到 1）",
+        text: "身子 -1（最少扣到 1）",
         story:
           "你隔着门谢了他的好意，只说山上清净，养几日便好。他在雪地里立了很久，终究没有再叩门，只让阿晋把药包和一篓银炭搁在了门槛外。你守着那点炭火，一碗一碗地熬药，咳声断断续续，捱了好些日子，才勉强缓过来一些。",
       },
