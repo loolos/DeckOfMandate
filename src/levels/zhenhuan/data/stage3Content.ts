@@ -1865,17 +1865,17 @@ export const LINGRONG_EVENT3: Partial<Record<EventId3, TierTable>> = {
   yanqingTanbing: {
     close: { resolves: true, effects: [q(1)], story: "陵容陪你去延庆殿，调了一味安神的香给端妃。端妃看了她一眼，淡淡道了声谢。" },
     distant: { resolves: true, effects: [q(1)], story: "陵容陪你去了一趟延庆殿，一路上没怎么说话。" },
-    resentful: { resolves: false, story: "陵容说延庆殿药味重，熏得她头疼，走到半路便回去了。" },
+    resentful: { resolves: false, relation: 1, story: "陵容说延庆殿药味重，熏得她头疼，走到半路便回去了。" },
   },
   xianfuXianhua: {
     close: { resolves: true, effects: [q(1)], story: "陵容绣了一方素帕，同你一起送去咸福宫。敬妃拉着她的手，夸她手巧。" },
     distant: { resolves: true, effects: [q(1)], story: "陵容陪你去了咸福宫，坐在一旁安安静静的，偶尔替你们添茶。" },
-    resentful: { resolves: false, story: "陵容推说手头有事，没去。敬妃问起她，你只得替她圆了几句。" },
+    resentful: { resolves: false, relation: 1, story: "陵容推说手头有事，没去。敬妃问起她，你只得替她圆了几句。" },
   },
   kuairenKuaiyu: {
     close: { resolves: true, effects: [sc(1)], story: "陵容唱了一支江南小调，欣贵人听得直拍手，说碎玉轩真是热闹。" },
     distant: { resolves: true, effects: [sc(1)], story: "陵容陪着说了几句话，欣贵人嘴快，她插不上话，便只是笑。" },
-    resentful: { resolves: false, story: "欣贵人说话没轻没重，陵容听了几句便沉了脸，起身走了。" },
+    resentful: { resolves: false, relation: 1, story: "欣贵人说话没轻没重，陵容听了几句便沉了脸，起身走了。" },
   },
   antaiBupin: {
     close: { resolves: true, relation: 1, story: "陵容尝了尝那盅补品，说炖得偏燥，不如先搁着，另让小厨房炖了盅清淡的给你。她替你掖好被角，又陪你说了一会儿话。" },
