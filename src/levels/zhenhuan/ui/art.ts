@@ -21,7 +21,7 @@ const BACKDROPS = indexByBasename(import.meta.glob<string>("../assets/backdrops/
 export const TEMPLE_CARD_ART = ["jinxiXiangzhu", "meizhuangXiangzhu", "wenTaiyiZhenzhi"] as const satisfies readonly CardId3[];
 
 /** 第三关的各种果郡王遗物共用一张图：`cards/yiwuGuojunwang.webp`；有各自的图就用各自的。 */
-const SHARED_RELIC_ART = "yiwuGuojunwang";
+export const SHARED_RELIC_ART = "yiwuGuojunwang";
 
 export function cardArtUrl(id: CardId | CardId2 | CardId3, variant?: "temple"): string | null {
   const own = (variant ? CARD_ART.get(`${id}_${variant}`) : undefined) ?? CARD_ART.get(id);
