@@ -378,7 +378,7 @@ export const STAGE3_ACT1_DECK: readonly CardId3[] = [
   "lingrongXiangzhu",
 ];
 
-/** 第二幕寺中牌库（第 11 回合开局；第一幕的果郡王相助另带进来）。被废出宫时槿汐只剩 1 张。 */
+/** 第二幕寺中牌库（第 11 回合开局；第一幕的果郡王相助另带进来）。 */
 export const STAGE3_TEMPLE_DECK: readonly CardId3[] = [
   "chanyuXiushen",
   "chanyuXiushen",
