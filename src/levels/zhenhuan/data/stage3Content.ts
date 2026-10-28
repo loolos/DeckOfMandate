@@ -2205,7 +2205,7 @@ export const STORIES3: Record<StoryId3, StoryDef3> = {
         defaultOptionId: "daifa",
     options: [
       { id: "daifa", name: "带发修行", effects: [], text: "无效果（尘缘未断）", story: "你没有落发。师太看着你，说：「尘缘未断，也是缘法。」" },
-      { id: "luofa", name: "落发", card: "chanyuXiushen", effects: [q(2)], flag: "luofa", status: "chenyuanYiduan", text: "清誉 +2；未来 2 回合每回合抓牌 +1；日后引驾要多打 1 张槿汐或眉庄", story: "青丝一缕一缕落在地上。你闭着眼，听见剪刀的声音，像是什么东西断了。" },
+      { id: "luofa", name: "落发", card: "chanyuXiushen", effects: [q(2)], flag: "luofa", status: "chenyuanYiduan", text: "清誉 +2；未来 2 回合每回合抓牌 +1", story: "青丝一缕一缕落在地上。你闭着眼，听见剪刀的声音，像是什么东西断了。" },
       { id: "buqunXiuxing", name: "布裙修行", card: "jingchaiBuqun", effects: [q(1)], drawCards: 1, text: "清誉 +1，抽 1 张牌", story: "你换了粗布衣裳，不落发，只把钗环尽数收进箱底。每日挑水扫地，与寺里的姑子们一同做早晚课。静岸师太见你肯吃苦，点头道：「心净，不在发上。」" },
     ],
   },
