@@ -1347,7 +1347,7 @@ function enterTemple(s: Z3State): void {
   s.lingrongGone = true;
   const guo = [...s.hand, ...s.drawPile, ...s.discard].filter((c) => c.id === "guojunwangXiangzhu");
   s.departed.push(...[...s.hand, ...s.drawPile, ...s.discard].filter((c) => c.id !== "guojunwangXiangzhu"));
-  const ids = s.exitTier === 3 ? STAGE3_TEMPLE_DECK.filter((id, i, all) => !(id === "jinxiXiangzhu" && all.indexOf(id) === i)) : [...STAGE3_TEMPLE_DECK];
+  const ids = [...STAGE3_TEMPLE_DECK];
   const deck: CardInst3[] = [...ids.map((id) => ({ uid: `c${s.nextUid++}`, id })), ...guo];
   s.hand = [];
   s.discard = [];

@@ -838,7 +838,7 @@ describe("zhenhuan stage 3 engine", () => {
     const all = [...s.hand, ...s.drawPile, ...s.discard].map((c) => c.id);
     expect(all.filter((id) => id === "guojunwangXiangzhu")).toHaveLength(guo);
     expect(all.filter((id) => id !== "guojunwangXiangzhu").sort()).toEqual(
-      (s.exitTier === 3 ? STAGE3_TEMPLE_DECK.filter((id, i, a) => !(id === "jinxiXiangzhu" && a.indexOf(id) === i)) : [...STAGE3_TEMPLE_DECK]).sort(),
+      [...STAGE3_TEMPLE_DECK].sort(),
     );
     expect(s.hand).toHaveLength(XIUXING.draw);
     expect(s.lingrongGone).toBe(true);
@@ -909,6 +909,7 @@ describe("zhenhuan stage 3 engine", () => {
   it("踏雪问疾: 默认 🌱-2 🪷-1; 果郡王相助下回合抓牌 -1; 槿汐相助下两回合打不出槿汐相助; 闭门谢客不移除负面且不加牌", () => {
     const run = (hand: CardId3[]) => {
       let s = advanceTo(newStage3(12, CARRY), 19);
+      s.shenzi = Math.max(s.shenzi, 4);
       s.statuses.push({ uid: `s${s.nextUid++}`, id: "hanzheng", appliesFromTurn: s.turn, remaining: 2 });
       s.statuses.push({ uid: `s${s.nextUid++}`, id: "jingji", appliesFromTurn: s.turn, remaining: 2 });
       const sz = s.shenzi;
