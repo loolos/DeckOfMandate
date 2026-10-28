@@ -237,6 +237,19 @@ describe("zhenhuan stage 3 engine", () => {
     expect(s.pregnant).toBe(true);
   });
 
+  it("海棠春睡 quietly lowers 陵容情分 by 2 without a log line", () => {
+    let s = advanceTo(newStage3(8, CARRY), 3);
+    clearBoard(s);
+    s.stories = [{ id: "haitangYeyu", chosenOptionId: null }];
+    s.hand = [];
+    const before = s.relation;
+    const logged = s.log.length;
+    s = act(s, { type: "endTurn" });
+    expect(s.relation).toBe(Math.max(-4, before - 2));
+    expect(s.log.slice(logged).some((l) => l.text.includes("陵容待你亲近") || l.text.includes("陵容与你生分"))).toBe(false);
+    expect(s.log.slice(logged).some((l) => l.text.includes("海棠树下的石凳"))).toBe(true);
+  });
+
   it("海棠春睡: 默认全扣，三张牌各免一项", () => {
     const run = (id?: CardId3) => {
       let s = advanceTo(newStage3(8, CARRY), 3);
@@ -1252,3 +1265,17 @@ describe("出宫清誉按把柄条数扣", () => {
   });
 });
 
+describe("stage 3 陵容相助 情分", () => {
+  it("a 陵容 outcome that fails to resolve the event still raises 情分", () => {
+    for (const [id, table] of Object.entries(LINGRONG_EVENT3)) {
+      for (const tier of ["close", "distant", "resentful"] as const) {
+        const o = table![tier];
+        if (!o.resolves) expect(o.relation, `${id}.${tier}`).toBe(1);
+      }
+    }
+  });
+
+  it("中宫垂青 with 亲厚 陵容 raises 情分", () => {
+    expect(LINGRONG_EVENT3.huanghouShangshi!.close.relation).toBe(1);
+  });
+});

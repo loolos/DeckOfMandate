@@ -30,6 +30,7 @@ import {
   LINGRONG_COLD_TEXT,
   LINGRONG_EVENT3,
   LINGRONG_FAREWELL,
+  HAITANG_COOL_TEXT,
   LINGRONG_IDLE_TEXT3,
   LINGRONG_SUMMON,
   LINGRONG_TRUTH,
@@ -632,12 +633,13 @@ function removeNegatives(s: Z3State, n: "all" | 1, source: string): void {
   for (const st of n === "all" ? negs : negs.slice(0, 1)) removeStatus3(s, st.uid, source);
 }
 
-function changeRelation(s: Z3State, delta: number): void {
+function changeRelation(s: Z3State, delta: number, quiet = false): void {
   if (s.lingrongGone || delta === 0) return;
   const before = s.relation;
   const next = Math.max(-4, Math.min(4, before + delta));
   if (next === before) return;
   s.relation = next;
+  if (quiet) return;
   const label = { close: "亲厚", distant: "生分", resentful: "怨怼" } as const;
   const tierChange = lingrongTier(before) !== lingrongTier(next) ? `，情分 ${label[lingrongTier(before)]} → ${label[lingrongTier(next)]}` : "";
   log(s, `${delta > 0 ? "陵容待你亲近了些" : "陵容与你生分了些"}${tierChange}`, delta > 0 ? "good" : "bad");
@@ -943,6 +945,13 @@ function xiayuStep(s: Z3State, inst: StoryInst3, option: StoryOption3, tier: Lin
 
 function applyStoryOption(s: Z3State, inst: StoryInst3, option: StoryOption3, source: string, tier: LingrongTier | null): number {
   const def = STORIES3[inst.id];
+  // 海棠春睡：陵容暗中心冷，情分 -2，不写进日志
+  if (!inst.chosenOptionId && (inst.id === "haitangChunshui" || inst.id === "haitangYeyu")) {
+    const before = lingrongTier(s.relation);
+    changeRelation(s, -2, true);
+    const after = lingrongTier(s.relation);
+    if (after !== before && after !== "close" && !s.lingrongGone) log(s, HAITANG_COOL_TEXT[after], "bad");
+  }
   inst.chosenOptionId = option.id;
   if (option.card) inst.viaCard = option.card;
   log(s, source);
