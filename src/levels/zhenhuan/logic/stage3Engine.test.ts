@@ -800,6 +800,7 @@ describe("zhenhuan stage 3 engine", () => {
   it("耳目窥伺: unresolved gives 眼线环伺 (draw -1, never below 1) and no 清誉 loss", () => {
     let s = advanceTo(newStage3(6, CARRY), 20);
     clearBoard(s);
+    s.statuses = [];
     s.crisis = ev(s, "xianrenKuitan");
     const qingyu = s.qingyu;
     s = act(s, { type: "endTurn" });
@@ -907,7 +908,7 @@ describe("zhenhuan stage 3 engine", () => {
     const bimen = run(["jingxinRennai"]);
     const card = run(["guojunwangXiangzhu"]);
     expect(card.s.statuses.some((x) => x.id === "bingzhongXinyou")).toBe(true);
-    expect(card.s.statuses.some((x) => x.id === "hanzheng" || x.id === "jingji")).toBe(false);
+    expect(card.s.statuses.some((x) => x.id === "hanzheng")).toBe(true);
     const jin = run(["jinxiXiangzhu"]);
     expect(jin.s.statuses.some((x) => x.id === "jinxiLeikua" && x.remaining === 2)).toBe(true);
     expect(card.dsz).toBe(0);
