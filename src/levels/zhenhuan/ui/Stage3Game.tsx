@@ -1247,7 +1247,7 @@ const POPUP_TITLE: Record<PopupId, string> = {
   chunyuan: "👗 纯元故衣",
   wanwan: "💔 菀菀类卿",
   confront: "⚖️ 景仁宫对质",
-  exit: "⚖️ 景仁宫对质 · 自请出宫",
+  exit: "⚖️ 景仁宫对质",
   feilao: "🤒 迁居凌云峰",
   zhoufu: "🌊 舟覆噩耗",
   qinse: "🎼 琴瑟和鸣",
@@ -1256,6 +1256,11 @@ const POPUP_TITLE: Record<PopupId, string> = {
   dengmen: "🚪 皇上登门",
   lizigao: "🥮 栗糕清苦",
 };
+
+function popupTitle(state: Z3State, id: PopupId): string {
+  if (id === "exit" && state.exitTier) return `${POPUP_TITLE.exit} · ${EXIT[state.exitTier].name}`;
+  return POPUP_TITLE[id];
+}
 
 function OutcomeModal({ state, onRestart, onMenu }: { state: Z3State; onRestart: () => void; onMenu: () => void }) {
   if (state.outcome === "playing") return null;
@@ -1503,7 +1508,7 @@ export function Stage3Game({ state, dispatch, runCode, showRules, onShowRules, o
         </Notice>
       ) : null}
       {!showRules && popup ? (
-        <Notice title={POPUP_TITLE[popup]} onClose={() => setQueue((q) => q.slice(1))}>
+        <Notice title={popupTitle(state, popup)} onClose={() => setQueue((q) => q.slice(1))}>
           <PopupBody state={state} id={popup} />
         </Notice>
       ) : null}
