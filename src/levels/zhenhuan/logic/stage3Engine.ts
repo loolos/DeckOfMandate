@@ -462,7 +462,7 @@ export function feilaoAccepts(s: Z3State, cardId: CardId3): boolean {
 }
 
 export function feilaoBaseTier(arrogance: number): 0 | 1 | 2 {
-  return arrogance >= 4 ? 2 : arrogance >= 2 ? 1 : 0;
+  return arrogance >= 3 ? 2 : arrogance >= 1 ? 1 : 0;
 }
 
 export function feilaoCurrentTier(s: Z3State): 0 | 1 | 2 {
