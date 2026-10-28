@@ -1858,12 +1858,12 @@ export const LINGRONG_EVENT3: Partial<Record<EventId3, TierTable>> = {
     resentful: { ...LINGRONG_EVENT.liyiShiwu!.resentful, story: "陵容上前替你圆了场，话却带着刺：「姐姐一向端庄，原来也有出岔子的时候。」说罢才淡淡补了一句：「回头我让人送药来。」" },
   },
   wangyeXiantan: {
-    close: { resolves: true, relation: 1, effects: [q(1)], story: "陵容替你收下了王爷送来的诗集，笑着说王爷的字写得真好。又陪你挑了几句诗回赠。" },
+    close: { resolves: true, effects: [q(1)], story: "陵容替你收下了王爷送来的诗集，笑着说王爷的字写得真好。又陪你挑了几句诗回赠。" },
     distant: { resolves: true, effects: [q(1)], story: "陵容替你去回了王爷的礼，回来只说东西送到了。" },
     resentful: { resolves: true, effects: [q(1)], story: "陵容替你把东西送回了王爷那里，淡淡说了句「送到了」，便回自己宫里去了。" },
   },
   yanqingTanbing: {
-    close: { resolves: true, relation: 1, effects: [q(1)], story: "陵容陪你去延庆殿，调了一味安神的香给端妃。端妃看了她一眼，淡淡道了声谢。" },
+    close: { resolves: true, effects: [q(1)], story: "陵容陪你去延庆殿，调了一味安神的香给端妃。端妃看了她一眼，淡淡道了声谢。" },
     distant: { resolves: true, effects: [q(1)], story: "陵容陪你去了一趟延庆殿，一路上没怎么说话。" },
     resentful: { resolves: false, story: "陵容说延庆殿药味重，熏得她头疼，走到半路便回去了。" },
   },
