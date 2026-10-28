@@ -236,6 +236,18 @@ describe("zhenhuan stage 3 engine", () => {
     expect(s.pregnant).toBe(true);
   });
 
+  it("海棠春睡 quietly lowers 陵容情分 by 2 without a log line", () => {
+    let s = advanceTo(newStage3(8, CARRY), 3);
+    clearBoard(s);
+    s.stories = [{ id: "haitangYeyu", chosenOptionId: null }];
+    s.hand = [];
+    const before = s.relation;
+    const logged = s.log.length;
+    s = act(s, { type: "endTurn" });
+    expect(s.relation).toBe(Math.max(-4, before - 2));
+    expect(s.log.slice(logged).some((l) => l.text.includes("陵容待你亲近") || l.text.includes("陵容与你生分"))).toBe(false);
+  });
+
   it("海棠春睡: 默认全扣，三张牌各免一项", () => {
     const run = (id?: CardId3) => {
       let s = advanceTo(newStage3(8, CARRY), 3);
