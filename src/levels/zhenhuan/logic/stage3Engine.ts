@@ -1980,6 +1980,7 @@ export function endingStory3(s: Z3State): string[] {
   else if (s.relicsBurned > 0) lines.push(ENDING.relicsBurned);
   lines.push(ENDING.ximai);
   if (s.yihua?.duishi) lines.push(ENDING.duishi);
+  if (hasStatus3(s, "qinseHeming")) lines.push(ENDING.qinse);
   if (s.victory === "narrow") lines.push(YIHUA.dengmenNarrow);
   lines.push(...POPUP_TEXT.homecoming);
   if (s.exitTier) lines.push(POPUP_TEXT.homecomingTier[s.exitTier]!);
