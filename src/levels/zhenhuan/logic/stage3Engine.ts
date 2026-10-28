@@ -1018,7 +1018,7 @@ function applyStoryOption(s: Z3State, inst: StoryInst3, option: StoryOption3, so
       break;
   }
   if (inst.id === "tonghuataiChuyu") afterTonghuatai(s);
-  if (inst.id === "taxueWenji" && option.card && option.id !== "bimenXieke") s.taxueByCard = true;
+  if (inst.id === "taxueWenji" && option.card) s.taxueByCard = true;
   if (inst.id === "shanmenOuyu" || (inst.id === "taxueWenji" && option.id !== "bimenXieke")) {
     addCardToDeck(s, "guojunwangXiangzhu");
     log(s, "牌库加入 1 张【果郡王相助】。", "good");
@@ -1369,7 +1369,7 @@ function moveToPeak(s: Z3State): void {
 
 const ZHOUFU_TURN = 25;
 
-/** 踏雪问疾（打牌化解）与月下琴笛都已完成，合婚庚帖写下时才有琴瑟同心。 */
+/** 踏雪问疾（本回合打牌化解，不走默认）与月下琴笛都已完成，合婚庚帖写下时才有琴瑟同心。 */
 export function qinseReady(s: Z3State): boolean {
   return s.changxiangsiDone === true && s.taxueByCard === true;
 }
