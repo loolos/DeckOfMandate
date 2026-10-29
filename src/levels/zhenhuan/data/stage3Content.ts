@@ -1977,6 +1977,8 @@ export type StoryOption3 = {
   /** 陵容 answers: she notes this (hidden). */
   readonly secret?: SecretId;
   readonly drawCards?: number;
+  /** 本回合出牌次数 +N（立即生效）。 */
+  readonly extraPlays?: number;
   readonly removeNegatives?: "all" | 1;
   /** 菀菀类卿: 身子 never drops below 1 here. */
   readonly shenziFloor?: number;
@@ -2168,16 +2170,17 @@ export const STORIES3: Record<StoryId3, StoryDef3> = {
     defaultOptionId: "lundi",
     options: [
       { id: "lundi", name: "论笛谈诗", relic: "yiwuDipu", effects: [], drawCards: 1, flag: "di", text: "抽 1 张牌（他记住了你）", compact: "🎴+1", story: "你说他的笛子吹得太急，像是心里有事。他怔了怔，笑着说：「小主是第一个这样说的人。」" },
-      { id: "lundiCard", name: "论笛谈诗", card: "yirongZhengsu", relic: "yiwuDipu", effects: [], drawCards: 1, flag: "di", text: "抽 1 张牌（他记住了你）", compact: "🎴+1", story: "你理了理衣裳走上前去，与他说起笛中的曲子。他听得认真，临走时回头看了你一眼。" },
+      { id: "lundiCard", name: "论笛谈诗", card: "yirongZhengsu", relic: "yiwuDipu", effects: [], drawCards: 2, flag: "di", text: "抽 2 张牌（他记住了你）", compact: "🎴+2", story: "你理了理衣裳走上前去，与他说起笛中的曲子。他听得认真，临走时回头看了你一眼。" },
       { id: "yili", name: "以礼相待", card: "jinyanShenxing", relic: "yiwuTonghua", effects: [q(1)], flag: "li", text: "清誉 +1", story: "你福了福身，只道了一句「王爷安好」，便转身离开了。他站在桐花台上，没有再吹笛子。" },
       {
         id: "lingrongZaice",
         name: "有陵容在侧",
         card: "lingrongXiangzhu",
         effects: [],
+        extraPlays: 1,
         flag: "lingrong",
         secret: "wangyeZengwu",
-        text: "她替你圆场",
+        text: "她替你圆场，本回合出牌 +1",
         story: "陵容在一旁笑着替你圆了场，三言两语便把话头岔了开去。",
         tierStory: {
           close: "陵容笑盈盈地替你挡在前头，说姐姐走累了，拉着你便走。回去的路上，她挽着你的胳膊，说桐花台的花开得真好。",

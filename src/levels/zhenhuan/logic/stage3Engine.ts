@@ -1011,6 +1011,10 @@ function applyStoryOption(s: Z3State, inst: StoryInst3, option: StoryOption3, so
   if (option.removeNegatives) removeNegatives(s, option.removeNegatives, option.name);
   if (option.status) addStatus3(s, option.status);
   if (option.drawCards) drawCards3(s, option.drawCards);
+  if (option.extraPlays) {
+    s.extraPlays += option.extraPlays;
+    log(s, `${def.name}·${option.name}：本回合出牌 +${option.extraPlays}（现为 ${playLimit3(s)}）。`, "good");
+  }
   if (option.pregnancy) becomePregnant(s, def.name);
   if (option.summon) {
     inst.result = "侍寝成功";
