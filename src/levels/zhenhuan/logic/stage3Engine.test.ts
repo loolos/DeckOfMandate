@@ -187,6 +187,24 @@ describe("zhenhuan stage 3 engine", () => {
     expect(s.secrets["enshang.jingrenHoushang" as keyof typeof s.secrets]).toBeUndefined();
   });
 
+  it("桐花台初遇: 仪容整肃论笛多抽 1 张，陵容在侧本回合出牌 +1", () => {
+    const setup = (card: CardId3) => {
+      const s = advanceTo(newStage3(5, CARRY), 5);
+      clearBoard(s);
+      s.stories = [{ id: "tonghuataiChuyu", chosenOptionId: null }];
+      const [uid] = setHand(s, [card]);
+      return { s, uid: uid! };
+    };
+    const a = setup("yirongZhengsu");
+    const handBefore = a.s.hand.length;
+    const t = act(a.s, { type: "playCard", cardUid: a.uid });
+    expect(t.hand.length).toBe(handBefore - 1 + 2);
+    const b = setup("lingrongXiangzhu");
+    const limit = playLimit3(b.s);
+    const u = act(b.s, { type: "playCard", cardUid: b.uid });
+    expect(playLimit3(u)).toBe(limit + 1);
+  });
+
   it("皇后事件 with only one card: still 收下 with a hidden 把柄", () => {
     let s = advanceTo(newStage3(5, CARRY), 3);
     clearBoard(s);
@@ -1013,7 +1031,7 @@ describe("zhenhuan stage 3 engine", () => {
     s.drawPile.push({ uid: "g1", id: "guojunwangXiangzhu" }, { uid: "g2", id: "guojunwangXiangzhu" });
     s = advanceTo(s, 25);
     const relics = [...s.hand, ...s.drawPile, ...s.discard].map((c) => c.id).filter((id) => id.startsWith("yiwu"));
-    // 桐花台默认「论笛谈诗」留下旧笛谱；庚帖优先，其余按往来取用
+    // 桐花台默认「驻足听笛」留下旧笛谱；庚帖优先，其余按往来取用
     expect(relics.sort()).toEqual(["yiwuDipu", "yiwuGengtie"]);
     expect([...s.hand, ...s.drawPile, ...s.discard].some((c) => c.id === "guojunwangXiangzhu")).toBe(false);
     s = act(s, { type: "endTurn" });
