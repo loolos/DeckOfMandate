@@ -62,7 +62,7 @@
 | E36 | 齐妃讥讽 | 对头 | yuhuayuanQi |
 | E37 | 祺贵人告状 | 对头 | xianfuQi |
 | E38 | 齐妃探病 | 对头 | yanqingQi |
-| E39 | 景仁宫厚赏 | 皇后 | jingrenHoushang |
+| E39 | 景仁赐锦 | 皇后 | jingrenHoushang |
 | E40 | 协理宫务 | 皇后 | xieliGongwu |
 | E41 | 安胎补品 | 皇后 | antaiBupin |
 | E42 | 家宴献艺 | 皇后 | jiayanXianyi |

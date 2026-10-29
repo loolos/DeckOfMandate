@@ -1383,7 +1383,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     id: "jingrenHoushang",
     kind: "huanghou",
     needTwo: true,
-    name: "景仁宫厚赏",
+    name: "景仁赐锦",
     emoji: "🎁",
     flavor: "景仁宫的剪秋亲自送来几匹云锦和一支点翠步摇，说是皇后特意挑的，给碎玉轩添喜，言语间满是体恤。",
     reward: [sc(1)],
