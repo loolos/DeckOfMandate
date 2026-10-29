@@ -1519,7 +1519,7 @@ function beginTurn3(s: Z3State, turn: number): void {
     const needed = confrontNeeded(presented) + (s.rank === "guiren" ? 1 : 0);
     s.confront = { presented, needed, played: [], stories: [], rebutted: [] };
     popup(s, "confront");
-    log(s, `剧情事件：【${CONFRONT.name}】皇后拿出了 ${presented} 件事。本回合须打出 ${needed} 张辩白牌${s.rank === "guiren" ? "（贵人多 1 张）" : ""}。陵容称病没来，她的牌打不出。`, "bad");
+    log(s, `剧情事件：【${CONFRONT.name}】被人抓住的把柄有 ${presented} 项。本回合须打出 ${needed} 张辩白牌${s.rank === "guiren" ? "（贵人多 1 张）" : ""}。陵容称病没来，她的牌打不出。`, "bad");
   }
   if (turn === STAGE3.templeLastTurn) {
     if (hasStatus3(s, "hanzheng")) applyDelta3(s, { resource: "shenzi", amount: -1 }, "带着寒疾缠身病倒");

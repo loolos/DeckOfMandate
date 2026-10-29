@@ -556,7 +556,7 @@ function ConfrontCard({ state, fold, dispatch }: { state: Z3State; fold: Fold; d
     >
       <p className={styles.flavor}>{CONFRONT.flavor}</p>
       <p className={styles.rule}>
-        <span className={styles.ruleLabel}>皇后拿出了 {c.presented} 件事：</span>本回合须打出 <strong>{c.needed}</strong> 张辩白牌
+        <span className={styles.ruleLabel}>被人抓住的把柄有 {c.presented} 项：</span>本回合须打出 <strong>{c.needed}</strong> 张辩白牌
         {state.rank === "guiren" ? "（贵人位分低，多 1 张）" : ""}。少打一张，结果就差一档。陵容称病没来，她的牌打不出。
       </p>
       <p className={styles.rule}>
