@@ -30,6 +30,7 @@ import {
   SHENZI,
   STAGE3,
   matchesInAct,
+  answeringCards3,
   cardFlavor3,
   cardRules3,
   unresolvedText3,
@@ -171,12 +172,6 @@ function collapsePairs<T extends { id: EventId3 }>(items: readonly T[]): { key: 
 }
 
 
-function answeringCards(id: EventId3): CardId3[] {
-  const def = EVENTS3[id];
-  const singles = (Object.keys(CARDS3) as CardId3[]).filter((c) => CARDS3[c].matches.includes(id));
-  return [...singles, ...(def.double ?? []).filter((c) => !singles.includes(c))];
-}
-
 function resolvedDetail(inst: EventInst3): string {
   const def = EVENTS3[inst.id];
   const by = inst.resolvedBy ? `由【${CARDS3[inst.resolvedBy].name}】` : "";
@@ -294,7 +289,7 @@ function EventCard({ state, inst, fold, dispatch }: { state: Z3State; inst: Even
       {locked ? <p className={styles.endHint}>🔒 连环危机还没化解，这张机会暂时锁着。</p> : null}
       <p className={styles.rule}>
         <span className={styles.ruleLabel}>匹配牌：</span>
-        <Chips ids={answeringCards(inst.id)} lit={(id) => handIds.has(id)} />
+        <Chips ids={answeringCards3(inst.id, state.turn)} lit={(id) => handIds.has(id)} />
       </p>
       {lingrongTable && tier ? (
         <p className={styles.rule}>
