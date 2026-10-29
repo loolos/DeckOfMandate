@@ -109,6 +109,8 @@ export type CardDef3 = {
   readonly name: string;
   readonly emoji: string;
   readonly flavor: string;
+  /** 第二幕起（甘露寺、凌云峰）换成寺中情景的剧情文本。 */
+  readonly templeFlavor?: string;
   readonly base: readonly Delta3[];
   readonly baseDraw: number;
   readonly baseStatus?: StatusId3;
@@ -130,6 +132,11 @@ export function cardRules3(def: CardDef3, act: Act): { rulesText: readonly strin
 function palace(id: Exclude<CardId3, "lingrongXiangzhu" | "jinxiXiangzhu" | "guojunwangXiangzhu" | "chanyuXiushen" | "jingchaiBuqun" | "jingxinRennai" | RelicId>, o: Partial<CardDef3>): CardDef3 {
   const c = STAGE1_CARDS[id];
   return { id, name: c.name, emoji: c.emoji, flavor: c.flavor, base: c.base, baseDraw: c.baseDraw, baseStatus: c.baseStatus as StatusId3 | undefined, matches: [], rulesText: c.rulesText, ...o };
+}
+
+/** 这张牌在第 `act` 幕的剧情文本。 */
+export function cardFlavor3(def: CardDef3, act: Act): string {
+  return act >= 2 && def.templeFlavor ? def.templeFlavor : def.flavor;
 }
 
 const RELIC_RULES = ["打出即焚毁，没有别的效果。"];
@@ -161,6 +168,7 @@ export const CARDS3: Record<CardId3, CardDef3> = {
     ],
   }),
   wenTaiyiZhenzhi: palace("wenTaiyiZhenzhi", {
+    templeFlavor: "温实初冒着雪从后山小路上来，药箱上落了一层薄雪。他怕宫里起疑，只说是顺路替人采药，转身却把方子悄悄塞进你手里。",
     base: [],
     matches: ["liyiShiwu", "yanqingTanbing", "antaiBupin", "yanqingDuan", "yanqingQi", "shanzhongCaiyao", "yebanJingrao", "jingrenLairen"],
     rulesText: ["移除 1 个【负面】状态；没有负面状态时身子 +1。"],
@@ -172,6 +180,7 @@ export const CARDS3: Record<CardId3, CardDef3> = {
   }),
   jingguanQibian: palace("jingguanQibian", { extraPlays: 1, rulesCompact: "🎴+2 🀄+1", matches: ["sanAgeYaochong", "jiayanXianyi", "yuhuayuanQi", "xianfuQi", "yanqingDuan"] }),
   meizhuangXiangzhu: palace("meizhuangXiangzhu", {
+    templeFlavor: "山寺清苦，眉姐姐身在宫中，却托家里人一趟趟往山上送衣食药材。隔着宫墙与山路，她仍是第一个想着你的人。",
     flavor: "闲月阁的风雪里，眉姐姐没有倒下。如今她洗冤复位，风浪再大，仍是第一个站到你身边的人。",
     matches: [
       "taihouChuixun",
@@ -212,6 +221,7 @@ export const CARDS3: Record<CardId3, CardDef3> = {
   } as CardDef3,
   jinxiXiangzhu: {
     ...CARDS2.jinxiXiangzhu,
+    templeFlavor: "槿汐陪你住进了寺里的小屋，生炉子、补窗纸、叠被褥，样样不用你开口。清苦的日子被她打理得井井有条，叫人心里踏实。",
     baseStatus: "zhushiTuotie",
     rulesCompact: "🗝️⏭️🀄+1",
     matches: [
@@ -863,7 +873,7 @@ export const SECRETS: Record<SecretId, SecretDef> = {
   yuzhongShuxin: { name: "狱中书信", emoji: "📜", lingrong: true, line: "齐妃道：「甄大人下狱后，碎玉轩托人往狱里递过一封信。私通狱中钦犯，信里写了什么，皇上不妨问问。」", servant: "内务府的小太监说：「甄大人下狱后，碎玉轩托人往狱里递过一封信。私通狱中的钦犯，不知写了些什么，皇上不妨问问。」", hint: "父亲下狱后，你曾托人往狱里递过一封信。" },
   qiciBuyong: { name: "弃赐不用", emoji: "🍲", lingrong: true, line: "祺贵人道：「皇后娘娘亲赐的安胎补品，莞嫔一口没动，倒是喂了花。辜负中宫的赏赐，既是不敬皇后，也不爱惜皇嗣。」", servant: "景仁宫的小宫女说：「皇后娘娘亲赐的安胎补品，莞嫔一口没动，倒是喂了花。辜负中宫的赏赐，这是对皇后不敬，也不爱惜皇嗣。」", hint: "皇后送来的安胎补品，你一口也没有用。" },
   xijianSiyu: { name: "席间私语", emoji: "🏮", lingrong: true, line: "祺贵人撇着嘴：「赏花那日，莞嫔和人说了好些各宫的长短。背地里议论妃嫔，搬弄是非，这是扰得后宫不和。」", servant: "赏花那日在旁伺候的小宫女说：「莞嫔和人说了好些各宫的长短，奴婢听得真真的。背地里议论妃嫔、搬弄是非，这是扰得后宫不和。」", hint: "赏花小聚上，你与人议论过各宫的长短。" },
-  chuyanDingzhuang: { name: "出言顶撞", emoji: "🗣️", lingrong: false, line: "齐妃红着眼眶抢着开口：「皇上，那日请安，臣妾不过提醒莞嫔几句宫里的规矩，她当着众姐妹的面顶撞臣妾，一句不让。臣妾好歹是妃位，这般目无尊卑，往后六宫还怎么服众！」", servant: "景仁宫的小宫女道：「那日请安，齐妃娘娘提点了莞嫔几句，奴婢亲眼见莞嫔当着众人顶撞回去，一句不让。这是目无尊卑。」", hint: "齐妃寻衅的事没有压下去，你当面顶过她。" },
+  chuyanDingzhuang: { name: "出言顶撞", emoji: "🗣️", lingrong: false, line: "齐妃红着眼眶抢着开口：「皇上，那日请安，臣妾不过提醒莞嫔几句宫里的规矩，她当着众姐妹的面顶撞臣妾，一句不让。臣妾好歹是妃位，这般目无尊卑，往后六宫还怎么服众！」", servant: "景仁宫的小宫女道：「那日请安，齐妃娘娘提点了莞嫔几句，奴婢亲眼见莞嫔当着众人顶撞回去，一句不让。这是目无尊卑。」", hint: "晨省讥语的事没有压下去，你当面顶过她。" },
   shanduShide: { name: "善妒失德", emoji: "🐍", lingrong: false, line: "祺贵人哭着道：「前些日子嫔妾不过说了句话，莞嫔便当着众人的面给嫔妾脸色看。嫔妾是新人，怕是容不下嫔妾，这是善妒，有违后宫和睦。」", servant: "御花园的小太监说：「那日祺小主刚说了一句话，莞嫔当着众人就给了脸色。容不下新人，这是善妒，有违后宫和睦。」", hint: "祺贵人争宠的事没有压下去，你给过她脸色。" },
   yuanwangJunfu: { name: "怨望君父", emoji: "⛓️", lingrong: false, line: "祺贵人又道：「嫔妾的父亲在前朝当差，早前上过一道折子，参的正是甄大人。后来听说，莞嫔私下里说，甄大人这案子是冤在皇上。怨怼圣裁，这是对皇上不满，近乎大不敬。」", servant: "前朝传话的小太监战战兢兢：「鄂大人参了甄大人的本之后，奴才听人传，莞嫔私下说甄大人这案子是冤在皇上。怨怼圣裁，近乎大不敬。」", hint: "鄂敏参本的事没有压下去，你为父亲的案子流露过怨望。" },
   dingmanZhonggong: { name: "怠慢中宫", emoji: "🏮", lingrong: false, line: "皇后端着茶盏，笑吟吟地说：「那日晨省，本宫问起碎玉轩的饮食起居，妹妹只含糊应了两句，连头也没抬。本宫一片心意，倒被妹妹当成了客套。」", servant: "景仁宫的小宫女道：「那日晨省，皇后娘娘问起碎玉轩近况，莞嫔答得极敷衍，连眼皮都没抬。这是怠慢中宫。」", hint: "皇后在晨省上问起碎玉轩近况，你没有好好应对。" },
@@ -932,7 +942,7 @@ export const PAIRS: Record<PairId, { name: string; emoji: string; opportunity: O
     rival: "qifei",
   },
   xianfu: {
-    name: "咸福宫托付",
+    name: "咸福代笔",
     emoji: "🧵",
     opportunity: "xianfuJing",
     crisis: "xianfuQi",
@@ -1185,7 +1195,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
   xianfuJing: {
     id: "xianfuJing",
     kind: "opportunity",
-    name: "咸福宫托付·敬妃求助",
+    name: "咸福代笔·敬妃求助",
     emoji: "🧵",
     flavor: "敬妃请你帮着拟一份宫务条陈，说你识字明理，比她自己写得好。",
     reward: [q(1)],
@@ -1275,7 +1285,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
   suiyuxuanXianhua: {
     id: "suiyuxuanXianhua",
     kind: "crisis",
-    name: "碎玉轩闲话",
+    name: "碎玉私语",
     emoji: "🗣️",
     flavor: "碎玉轩里有人嚼舌根，说小主如今眼里只有皇上，待下人越发冷淡了。",
     reward: NO,
@@ -1294,7 +1304,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
   qifeiXunxin: {
     id: "qifeiXunxin",
     kind: "crisis",
-    name: "齐妃寻衅",
+    name: "晨省讥语",
     emoji: "🌰",
     xinCover: "齐妃那句讥讽还没落地，欣贵人先笑出了声：「齐妃姐姐这话酸的，莫不是昨夜没睡好？」满殿的人都低头憋着笑，齐妃脸上挂不住，那桩事也就这么揭过去了。",
     flavor: "景仁宫请安时，齐妃当着众人的面讥讽你：「莞嫔如今可是皇上心尖上的人了。」",
@@ -1337,7 +1347,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
   xinrenZhengchong: {
     id: "xinrenZhengchong",
     kind: "crisis",
-    name: "新人争宠",
+    name: "御苑邀宠",
     emoji: "💃",
     xinCover: "欣贵人在一旁看得直撇嘴，当着皇上的面说：「新人鲜亮，咱们这些老人也不差呀。」又拉着你坐到皇上近前，祺贵人那点抢风头的心思，白费了。",
     flavor: "祺贵人新近入宫，在御花园里“偶遇”了皇上，笑得比花还艳，皇上当晚便翻了她的牌子。",
@@ -1401,7 +1411,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
   xianfuQi: {
     id: "xianfuQi",
     kind: "crisis",
-    name: "咸福宫托付·祺贵人告状",
+    name: "咸福代笔·祺贵人告状",
     emoji: "🧵",
     xinCover: "欣贵人立刻替你分辩：「敬妃姐姐托人写条陈，是帮忙，哪里谈得上越权？祺贵人要是看不惯，下回也替敬妃姐姐写一份呀。」皇后听了，只好笑着把这事放下。",
     flavor: "祺贵人在皇后面前告了你一状，说你一个后宫嫔御，竟越权替敬妃拟宫务条陈，「眼里怕是没有中宫了」。",
@@ -1410,8 +1420,8 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     rival: "guaerjia",
     needTwo: true,
     pair: "xianfu",
-    resolvedText: "移除事件；与【咸福宫托付·敬妃求助】相连",
-    unresolvedText: "清誉 -2；【咸福宫托付·敬妃求助】随之作废",
+    resolvedText: "移除事件；与【咸福代笔·敬妃求助】相连",
+    unresolvedText: "清誉 -2；【咸福代笔·敬妃求助】随之作废",
     resolvedStory: {
       meizhuangXiangzhu: "皇后召你去问越权的事，眉庄陪着同去。她把条陈一页页摊开：「这是敬妃娘娘的意思，嫔妾们不过代笔。」祺贵人被问得答不上话来。",
       jinyanShenxing: "你在皇后面前只说是替敬妃抄写，一个字也没多说。皇后挑不出错，只得罢了。",
@@ -1443,7 +1453,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     id: "jingrenHoushang",
     kind: "huanghou",
     needTwo: true,
-    name: "景仁宫厚赏",
+    name: "景仁赐锦",
     emoji: "🎁",
     flavor: "景仁宫的剪秋亲自送来几匹云锦和一支点翠步摇，说是皇后特意挑的，给碎玉轩添喜，言语间满是体恤。",
     reward: [sc(1)],
@@ -1689,7 +1699,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
   wutouXiangyou: {
     id: "wutouXiangyou",
     kind: "crisis",
-    name: "功德箱失窃",
+    name: "功德蒙尘",
     emoji: "📿",
     flavor: "功德箱里少了几吊香油钱，静白一口咬定是你拿的，当着满寺的师父要你给个交代。",
     reward: NO,
@@ -2837,7 +2847,7 @@ export const POPUP_TEXT = {
   exitRules: "第二幕：失去位分，每回合抓 2 打 1，清誉上限 8，换成寺中牌库；🌱身子归 0 即病死寺中。",
   feilao:
     "静白咬定你得了肺痨，当着满寺师父的面，说要把你挪出去，免得过了病气给旁人。你知道那是诬陷，可这样的话一旦说出口，便没有人敢替你争辩。于是你只带了几件随身的衣物，由槿汐扶着，踩着雪往后山走。身后，甘露寺的门「砰」地关上了。山路又陡又滑，你却渐渐觉得心里松了一口气：凌云峰上没有人盯着你的一举一动，没有刁难，也没有闲话，只有风声、雪声和一间清冷的小屋。名声是被人糟蹋了，日子，倒也算落得个清净。",
-  feilaoRules: "杂役磋磨、功德箱失窃移出；月下对谈、夜半惊扰、耳目窥伺加入。",
+  feilaoRules: "杂役磋磨、功德蒙尘移出；月下对谈、夜半惊扰、耳目窥伺加入。",
   zhoufu: "消息是夜里传来的：果郡王的船在江上翻了，尸骨无存。他留给你的那些东西，如今只剩下念想。",
   qinse: [
     "庚帖上，两个名字并排立着，墨迹一点点干了。你忽然想起前些日子，雪夜里他赶来的身影，月色下他吹起的那支长相思，想起你抚琴时他低头含笑的样子。琴瑟和鸣，原不过是这样的光景：你不必说，他也懂；他不必问，你也应。",
