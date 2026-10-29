@@ -213,6 +213,8 @@ export type Z3State = {
   suppressed: Record<RivalId, boolean>;
   /** 栗糕清苦（隐藏事件）已经发生。 */
   lizigao: boolean;
+  /** 第一幕对质前打出【收拢人心】的次数（隐藏，满 4 次记一条把柄）。 */
+  renxinPlays: number;
   guoMeet: "li" | "di" | "lingrong" | null;
   /** 纯元故衣 (turn 6): ① 起疑 card, then ② 查实 card. */
   chunyuan: { first: CardId3 | null; second: CardId3 | null } | null;
@@ -522,6 +524,9 @@ export function xiayuCost(s: Z3State, choice: XiayuChoice, solved = 0): Delta3[]
   if (qy > 0) cost.push({ resource: "qingyu", amount: -qy });
   return cost;
 }
+
+/** 第一幕对质前打出这么多次【收拢人心】，记下【收买人心】把柄。 */
+const RENXIN_SECRET_PLAYS = 4;
 
 /** 把柄 held (hidden): 第二关带入 + 第一幕记下。 */
 export function secretsHeld(s: Z3State): number {
@@ -1099,6 +1104,7 @@ function resolvePlay3(s: Z3State, cardUid: string, removeStatusUid?: string): vo
     log(s, `打出【${def.name}】`);
   }
   s.playedThisTurn.push(card.id);
+  if (card.id === "shoulongRenxin" && s.act === 1 && s.turn < STAGE3.confrontTurn && ++s.renxinPlays === RENXIN_SECRET_PLAYS) addSecret(s, "shoulongMairen", null);
   let relationDelta = 0;
   let answered = responses.length > 0;
 
@@ -1847,6 +1853,7 @@ export function newStage3(seed: number, carry: Carry3 | null): Z3State {
     allies: { duanfei: false, jingfei: false, xin: false },
     suppressed: { qifei: false, guaerjia: false },
     lizigao: false,
+    renxinPlays: 0,
     guoMeet: null,
     chunyuan: null,
     chunyuanPassed: false,
