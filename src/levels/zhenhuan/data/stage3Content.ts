@@ -2286,6 +2286,7 @@ export const STORIES3: Record<StoryId3, StoryDef3> = {
     options: [
       { id: "huibi", name: "回避", effects: [q(1)], text: "清誉 +1", story: "你低着头从他身边走过去。他怔了一下，低声叫了一句「莫愁师父」。你没有回头。" },
       { id: "yichanXiangtan", name: "以禅相谈", card: "chanyuXiushen", relic: "yiwuHehua", effects: [], drawCards: 1, text: "抽 1 张牌", story: "你站在山门下，与他说了几句禅语。他说：「我在安栖观外种了一片合欢，等开了花，请你来看。」" },
+      { id: "buqunXiangyu", name: "布裙相遇", card: "jingchaiBuqun", effects: [q(1)], text: "清誉 +1", story: "你荆钗布裙，正提着木桶从山门下经过，迎面撞见了他。他一时怔住，目光落在你冻红的手上，半晌才低声道：「在这里……可还好？」你福了一福，只答一句「多谢施主挂怀」，便提着桶继续往里走。" },
     ],
   },
   wentaiyiTanshi: {

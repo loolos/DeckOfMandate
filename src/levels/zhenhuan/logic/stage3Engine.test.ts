@@ -724,6 +724,19 @@ describe("zhenhuan stage 3 engine", () => {
     expect(s.statuses.some((x) => x.id === "yishiWucuo")).toBe(true);
   });
 
+  it("山门偶遇: 荆钗布裙可解（清誉 +1），仍加入果郡王相助", () => {
+    let s = advanceTo(newStage3(6, CARRY), 12);
+    s.qingyu = 5;
+    const [b] = setHand(s, ["jingchaiBuqun"]);
+    const gjw = () => [...s.drawPile, ...s.hand, ...s.discard].filter((c) => c.id === "guojunwangXiangzhu").length;
+    const q0 = s.qingyu;
+    const g0 = gjw();
+    s = act(s, { type: "playCard", cardUid: b! });
+    expect(s.stories.find((st) => st.id === "shanmenOuyu")?.viaCard).toBe("jingchaiBuqun");
+    expect(s.qingyu).toBe(q0 + 1);
+    expect(gjw()).toBe(g0 + 1);
+  });
+
   it("睹物生疑: from the turn after 引驾 until 回宫, each 遗物 in hand at turn end adds 疑点 (not only on the 偶遇 turn)", () => {
     const doubtAfter = (hand: CardId3[]) => {
       let s = advanceTo(newStage3(12, CARRY), 27);
