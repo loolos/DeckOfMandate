@@ -156,7 +156,7 @@ function Chips({ ids, lit }: { ids: readonly CardId3[]; lit: (id: CardId3) => bo
 const KIND_TONE = { opportunity: styles.kindOpportunity, crisis: styles.kindCrisis, huanghou: styles.kindHuanghou };
 const CARD_TONE = { opportunity: styles.cardOpportunity, crisis: styles.cardCrisis, huanghou: styles.cardHuanghou };
 
-/** 连环事件的两半在手牌上只列一项：共同前缀（如「御花园赏花」）。 */
+/** 连环事件的两半在手牌上只列一项：共同前缀（如「花苑观芳」）。 */
 function collapsePairs<T extends { id: EventId3 }>(items: readonly T[]): { key: string; emoji: string; name: string; items: T[] }[] {
   const out: { key: string; emoji: string; name: string; items: T[] }[] = [];
   for (const it of items) {

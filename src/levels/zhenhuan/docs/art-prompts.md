@@ -49,7 +49,7 @@
 | C18 | 温太医相助（寺中版） | 手牌 | wenTaiyiZhenzhi_temple |
 | E24 | 王爷闲谈 | 机会 | wangyeXiantan |
 | E25 | 延庆殿探病 | 机会 | yanqingTanbing |
-| E26 | 咸福宫闲话 | 机会 | xianfuXianhua |
+| E26 | 虎头寄情 | 机会 | xianfuXianhua |
 | E27 | 快人快语 | 机会 | kuairenKuaiyu |
 | E28 | 欣贵人邀游 | 机会 | yuhuayuanXin |
 | E29 | 敬妃托付 | 机会 | xianfuJing |

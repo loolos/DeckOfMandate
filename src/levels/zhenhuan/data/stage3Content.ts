@@ -933,7 +933,7 @@ export type PairId = "yuhuayuan" | "xianfu" | "yanqing";
 
 export const PAIRS: Record<PairId, { name: string; emoji: string; opportunity: OpportunityId3; crisis: CrisisId3; shared: CardId3; ally: AllyId; rival: RivalId }> = {
   yuhuayuan: {
-    name: "御花园赏花",
+    name: "花苑观芳",
     emoji: "🌸",
     opportunity: "yuhuayuanXin",
     crisis: "yuhuayuanQi",
@@ -951,7 +951,7 @@ export const PAIRS: Record<PairId, { name: string; emoji: string; opportunity: O
     rival: "guaerjia",
   },
   yanqing: {
-    name: "延庆殿夜话",
+    name: "烛影旧话",
     emoji: "🍵",
     opportunity: "yanqingDuan",
     crisis: "yanqingQi",
@@ -1145,7 +1145,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
   xianfuXianhua: {
     id: "xianfuXianhua",
     kind: "opportunity",
-    name: "咸福宫闲话",
+    name: "虎头寄情",
     emoji: "🧵",
     flavor: "敬妃膝下无子，最盼着你的孩子。她做了一双小小的虎头鞋送来。",
     reward: [q(1)],
@@ -1177,7 +1177,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
   yuhuayuanXin: {
     id: "yuhuayuanXin",
     kind: "opportunity",
-    name: "御花园赏花·欣贵人邀游",
+    name: "花苑观芳·欣贵人邀游",
     emoji: "🌸",
     flavor: "欣贵人兴冲冲邀你同游御花园，说牡丹开得正好。不巧走到半路，远远瞧见齐妃也带着人在园子里赏花。",
     reward: [sc(1)],
@@ -1213,7 +1213,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
   yanqingDuan: {
     id: "yanqingDuan",
     kind: "opportunity",
-    name: "延庆殿夜话·端妃旧话",
+    name: "烛影旧话·端妃旧话",
     emoji: "🍵",
     flavor: "夜里你去延庆殿探望端妃。她屏退了所有宫人，只留一盏孤灯，几次欲言又止，像是有积压多年的话要对你说。",
     reward: [q(1)],
@@ -1391,7 +1391,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
   yuhuayuanQi: {
     id: "yuhuayuanQi",
     kind: "crisis",
-    name: "御花园赏花·齐妃讥讽",
+    name: "花苑观芳·齐妃讥讽",
     emoji: "🌸",
     xinCover: "欣贵人嗓门一提，笑着堵了回去：「齐妃姐姐这是羡慕咱们说话投缘吧？风光不风光的，姐姐先把三阿哥的功课看紧些。」满园宫人都憋着笑，齐妃讪讪地走了。",
     flavor: "齐妃带着宫人在御花园里迎面撞上你和欣贵人，上下打量了你一番，阴阳怪气地说：「莞嫔如今有欣贵人作陪，好大的风光。只是这宫里的风光，从来都是一阵一阵的。」当着满园宫人的面，句句带刺。",
@@ -1400,8 +1400,8 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     rival: "qifei",
     needTwo: true,
     pair: "yuhuayuan",
-    resolvedText: "移除事件；与【御花园赏花·欣贵人邀游】相连",
-    unresolvedText: "清誉 -2；【御花园赏花·欣贵人邀游】随之作废",
+    resolvedText: "移除事件；与【花苑观芳·欣贵人邀游】相连",
+    unresolvedText: "清誉 -2；【花苑观芳·欣贵人邀游】随之作废",
     resolvedStory: {
       jinyanShenxing: "你只淡淡回了一句「娘娘教训的是」，欣贵人立刻接过话头，三言两语说得齐妃面红耳赤，拂袖走了。",
       jingguanQibian: "你不接她的话，只顾着赏花。齐妃自讨没趣，悻悻地走了。",
@@ -1431,7 +1431,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
   yanqingQi: {
     id: "yanqingQi",
     kind: "crisis",
-    name: "延庆殿夜话·齐妃探病",
+    name: "烛影旧话·齐妃探病",
     emoji: "🍵",
     xinCover: "欣贵人恰巧也来看端妃，一进门便大着嗓门道：「齐妃姐姐也来了？正好，一起坐下说说话。」她拉着齐妃东拉西扯，齐妃探不出半点口风，只能悻悻地回去复命。",
     flavor: "齐妃奉皇后之命来延庆殿“探病”，正撞见你和端妃说话，眼神在你们两人之间转了好几个来回。",
@@ -1440,8 +1440,8 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     rival: "qifei",
     needTwo: true,
     pair: "yanqing",
-    resolvedText: "移除事件；与【延庆殿夜话·端妃旧话】相连",
-    unresolvedText: "清誉 -2；【延庆殿夜话·端妃旧话】随之作废",
+    resolvedText: "移除事件；与【烛影旧话·端妃旧话】相连",
+    unresolvedText: "清誉 -2；【烛影旧话·端妃旧话】随之作废",
     resolvedStory: {
       wenTaiyiZhenzhi: "温实初提着药箱进来，说该给端妃请脉了，病人须得静养。齐妃坐不住，客客气气地被请了出去。",
       jinxiXiangzhu: "槿汐引着齐妃去偏殿喝茶，絮絮叨叨说了好些闲话，齐妃什么也没听着。",
@@ -1524,7 +1524,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     kind: "huanghou",
     name: "赏花小聚",
     emoji: "🏮",
-    flavor: "皇后召各宫去御花园赏花，特意吩咐让陵容陪你同去，说你们姐妹一向亲厚。",
+    flavor: "皇后召各宫去花苑观芳，特意吩咐让陵容陪你同去，说你们姐妹一向亲厚。",
     reward: [q(1)],
     penalty: NO,
     lingrongSecret: "xijianSiyu",
@@ -2531,7 +2531,7 @@ export const FEILAO = {
   cardStory: {
     jinxiXiangzhu: "「背你上山」：槿汐一句话不说，蹲下身把你背了起来。静白的人伸手来拦，她只回头看了一眼：「我家小主的身子，轮不到你们碰。」山路上积着雪，她一步一步踩得很稳，背上的你听见她的喘息，一声比一声重，却始终没有放下你。",
     chanyuXiushen: "「佛前陈情」：你整了整衣襟，在静岸师太面前跪下，把病了多久、咳在何时、帕上有无血色，一桩一桩平平静静地说清楚。师太闭着眼捻了许久佛珠，终究没有驳回静白，却对身边的小尼说：「去，把今日的话记在簿上。」",
-    meizhuangXiangzhu: "「宫中送药」：天黑透了，山门外有人叩门，是眉庄托人连夜送来的包袱：几味润肺的药材，一件厚厚的狐裘，夹层里还缝着一张字条，只有八个字：「咳是真的，肺痨是假的。」你把字条在灯上烧了，药材却收得很小心。",
+    meizhuangXiangzhu: "「宫中送药」：天黑透了，山门外有人叩门，是眉庄托人连夜送来的包袱：几味润肺的药材，一件厚厚的狐裘，夹层里还缝着一张字条，只有八个字：「听闻你病，万望珍重。」不知是她信了山上的传言，还是宁可信其真。你把字条在灯上烧了，药材却收得很小心。",
   } as Record<string, string>,
   tiers: [
     { name: "师太暗护", text: "清誉 -1；下一次危机未化解时免罚", story: "静岸师太拦不住静白，当着众人只说了句「依规办吧」，转过身却吩咐小尼：把后山空屋的炭盆生起来，被褥晒透了，再送一罐熬好的汤药上去。你踏进那间屋子时，屋里竟是暖的，案上还摆着一碟尚温的素点。" },
