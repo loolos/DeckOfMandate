@@ -855,7 +855,7 @@ describe("zhenhuan stage 3 engine", () => {
       return act(s, { type: "playCard", cardUid: uid! });
     };
     expect(run(14).qingyu).toBe(9);
-    expect(run(12).qingyu).toBe(10);
+    expect(run(11).qingyu).toBe(10);
   });
 
   it("圣宠 is frozen at the temple", () => {
