@@ -872,7 +872,7 @@ export const PAIRS: Record<PairId, { name: string; emoji: string; opportunity: O
     rival: "qifei",
   },
   xianfu: {
-    name: "咸福宫托付",
+    name: "咸福代笔",
     emoji: "🧵",
     opportunity: "xianfuJing",
     crisis: "xianfuQi",
@@ -1125,7 +1125,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
   xianfuJing: {
     id: "xianfuJing",
     kind: "opportunity",
-    name: "咸福宫托付·敬妃求助",
+    name: "咸福代笔·敬妃求助",
     emoji: "🧵",
     flavor: "敬妃请你帮着拟一份宫务条陈，说你识字明理，比她自己写得好。",
     reward: [q(1)],
@@ -1341,7 +1341,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
   xianfuQi: {
     id: "xianfuQi",
     kind: "crisis",
-    name: "咸福宫托付·祺贵人告状",
+    name: "咸福代笔·祺贵人告状",
     emoji: "🧵",
     xinCover: "欣贵人立刻替你分辩：「敬妃姐姐托人写条陈，是帮忙，哪里谈得上越权？祺贵人要是看不惯，下回也替敬妃姐姐写一份呀。」皇后听了，只好笑着把这事放下。",
     flavor: "祺贵人在皇后面前告了你一状，说你一个后宫嫔御，竟越权替敬妃拟宫务条陈，「眼里怕是没有中宫了」。",
@@ -1350,8 +1350,8 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     rival: "guaerjia",
     needTwo: true,
     pair: "xianfu",
-    resolvedText: "移除事件；与【咸福宫托付·敬妃求助】相连",
-    unresolvedText: "清誉 -2；【咸福宫托付·敬妃求助】随之作废",
+    resolvedText: "移除事件；与【咸福代笔·敬妃求助】相连",
+    unresolvedText: "清誉 -2；【咸福代笔·敬妃求助】随之作废",
     resolvedStory: {
       meizhuangXiangzhu: "皇后召你去问越权的事，眉庄陪着同去。她把条陈一页页摊开：「这是敬妃娘娘的意思，嫔妾们不过代笔。」祺贵人被问得答不上话来。",
       jinyanShenxing: "你在皇后面前只说是替敬妃抄写，一个字也没多说。皇后挑不出错，只得罢了。",
