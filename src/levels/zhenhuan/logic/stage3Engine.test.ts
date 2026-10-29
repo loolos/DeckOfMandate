@@ -408,7 +408,7 @@ describe("zhenhuan stage 3 engine", () => {
     expect(t.statuses.some((st) => st.id === "dayaGuaerjia")).toBe(false);
   });
 
-  it("打压 is per rival: 齐妃寻衅 suppressed → 三阿哥邀宠 (also 齐妃) is eased next", () => {
+  it("打压 is per rival: 晨省讥语 suppressed → 三阿哥邀宠 (also 齐妃) is eased next", () => {
     let s = advanceTo(newStage3(3, CARRY), 3);
     clearBoard(s);
     withStatus(s, "dayaQifei");
@@ -488,7 +488,7 @@ describe("zhenhuan stage 3 engine", () => {
     expect(s.lizigao).toBe(true);
   });
 
-  it("栗糕清苦 afterwards: 齐妃寻衅's 谨言慎行 story speaks of 景仁宫 tutoring", () => {
+  it("栗糕清苦 afterwards: 晨省讥语's 谨言慎行 story speaks of 景仁宫 tutoring", () => {
     let s = advanceTo(newStage3(3, CARRY), 3);
     clearBoard(s);
     s.lizigao = true;
@@ -760,7 +760,7 @@ describe("zhenhuan stage 3 engine", () => {
     expect(none.statuses.some((x) => x.id === "hanzheng" && x.appliesFromTurn === 13)).toBe(true);
   });
 
-  it("功德箱失窃: cleared still costs 🪷1; unresolved gives 香油疑云 (🪷-1 at each of the next 3 turn ends)", () => {
+  it("功德蒙尘: cleared still costs 🪷1; unresolved gives 香油疑云 (🪷-1 at each of the next 3 turn ends)", () => {
     const run = (ids: CardId3[]) => {
       let s = advanceTo(newStage3(6, CARRY), 12);
       clearBoard(s);
@@ -792,7 +792,7 @@ describe("zhenhuan stage 3 engine", () => {
     expect(s.popups).toContain("ouyu");
   });
 
-  it("碎玉轩闲话: two cards, cleared costs 🪷1; one card = 闲话传开 1 turn, none = 2 turns", () => {
+  it("碎玉私语: two cards, cleared costs 🪷1; one card = 闲话传开 1 turn, none = 2 turns", () => {
     const run = (ids: CardId3[]) => {
       let s = advanceTo(newStage3(6, CARRY), 8);
       clearBoard(s);
