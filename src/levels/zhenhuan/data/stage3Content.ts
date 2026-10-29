@@ -2169,7 +2169,7 @@ export const STORIES3: Record<StoryId3, StoryDef3> = {
     note: "无论怎样结算，之后牌库加入第 1 张【果郡王相助】，机会池洗入【王爷闲谈】。",
     defaultOptionId: "lundi",
     options: [
-      { id: "lundi", name: "论笛谈诗", relic: "yiwuDipu", effects: [], drawCards: 1, flag: "di", text: "抽 1 张牌（他记住了你）", compact: "🎴+1", story: "你说他的笛子吹得太急，像是心里有事。他怔了怔，笑着说：「小主是第一个这样说的人。」" },
+      { id: "lundi", name: "驻足听笛", relic: "yiwuDipu", effects: [], drawCards: 1, flag: "di", text: "抽 1 张牌（他记住了你）", compact: "🎴+1", story: "你说他的笛子吹得太急，像是心里有事。他怔了怔，笑着说：「小主是第一个这样说的人。」" },
       { id: "lundiCard", name: "论笛谈诗", card: "yirongZhengsu", relic: "yiwuDipu", effects: [], drawCards: 2, flag: "di", text: "抽 2 张牌（他记住了你）", compact: "🎴+2", story: "你理了理衣裳走上前去，与他说起笛中的曲子。他听得认真，临走时回头看了你一眼。" },
       { id: "yili", name: "以礼相待", card: "jinyanShenxing", relic: "yiwuTonghua", effects: [q(1)], flag: "li", text: "清誉 +1", story: "你福了福身，只道了一句「王爷安好」，便转身离开了。他站在桐花台上，没有再吹笛子。" },
       {
@@ -2783,7 +2783,7 @@ export const POPUP_TEXT = {
     "⚔️ 对头事件：须同回合打出两张解牌；其中有指定的牌才算打压，获得【打压】状态：她的危机下次出现时少需要 1 张解牌。",
     "🔗 连环事件：一对危机与机会。须先化解危机，才能把握机会；危机没化解，机会随之作废。危机须两张解牌，其中标明的那张可一石二鸟：一张牌同时化解危机、把握机会，既结交盟友，又打压对头（她的危机下次出现时少需要 1 张解牌）。",
   ],
-  /** 桐花台初遇：开头与结尾按你的应对（论笛谈诗 / 以礼相待 / 有陵容在侧）而不同，中间介绍他的一段相同。 */
+  /** 桐花台初遇：开头与结尾按你的应对（驻足听笛 / 论笛谈诗 / 以礼相待 / 有陵容在侧）而不同，中间介绍他的一段相同。 */
   tonghuatai: {
     open: {
       di: "笛声停了。那人回过身来，朝你一揖：「允礼唐突，惊扰小主了。」你却笑着说，他的笛子吹得太急，像是心里有事。",
