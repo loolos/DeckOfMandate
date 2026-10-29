@@ -74,6 +74,7 @@ import {
   playsLeft3,
   rankCap3,
   rankName3,
+  isSpentStatus3,
   removableNegatives3,
   storyBasicOptions3,
   storyCardResponses3,
@@ -868,6 +869,9 @@ function HandCard({ state, card, dispatch, fold }: { state: Z3State; card: CardI
 
 function Statuses({ state, dispatch }: { state: Z3State; dispatch: Dispatch }) {
   const [open, setOpen] = useState<ReadonlySet<string>>(() => new Set());
+  const [showSpent, setShowSpent] = useState(false);
+  const spentCount = state.statuses.filter((st) => isSpentStatus3(state, st)).length;
+  const shown = showSpent ? state.statuses : state.statuses.filter((st) => !isSpentStatus3(state, st));
   const removable = new Set(state.pending?.kind === "wentaiyi" ? removableNegatives3(state).map((s) => s.uid) : []);
   const toggle = (uid: string) =>
     setOpen((cur) => {
@@ -880,8 +884,13 @@ function Statuses({ state, dispatch }: { state: Z3State; dispatch: Dispatch }) {
     <div className={styles.statusRow}>
       <span className={styles.muted}>状态：</span>
       <ScrollRow className={styles.statuses}>
-        {state.statuses.length === 0 && !state.yihua ? <span className={styles.muted}>无</span> : null}
-        {groupStatuses(state.statuses).map(({ st, count }) => {
+        {shown.length === 0 && !state.yihua ? <span className={styles.muted}>无</span> : null}
+        {spentCount > 0 ? (
+          <button type="button" className={`${styles.btn} ${styles.btnSmall}`} onClick={() => setShowSpent((v) => !v)}>
+            {showSpent ? "收起已生效" : `已生效 ${spentCount} ▸`}
+          </button>
+        ) : null}
+        {groupStatuses(shown).map(({ st, count }) => {
           const def = STATUSES3[st.id];
           const notYet = !def.permanent && st.appliesFromTurn > state.turn;
           const expanded = open.has(st.uid);
@@ -915,7 +924,7 @@ function Statuses({ state, dispatch }: { state: Z3State; dispatch: Dispatch }) {
                   {def.unremovable ? "·不可移除" : ""}
                 </button>
                 <span className={`${styles.muted} ${styles.statusFull}`}>
-                  {def.permanent ? "触发 / 结束前一直保留" : notYet ? `下回合起生效，共 ${st.remaining} 回合` : `剩余 ${st.remaining} 回合`}
+                  {def.permanent ? "触发 / 结束前一直保留" : notYet ? `下回合起生效，共 ${st.remaining} 回合` : isSpentStatus3(state, st) ? "本回合已生效，回合末结束" : `剩余 ${st.remaining} 回合`}
                 </span>
                 {removable.has(st.uid) ? (
                   <button

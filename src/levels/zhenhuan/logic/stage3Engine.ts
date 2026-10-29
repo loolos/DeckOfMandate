@@ -317,8 +317,19 @@ export function drawCount3(s: Z3State, turn: number): number {
   return Math.max(1, baseDraw(s) + drawModifier3(s, turn));
 }
 
+/**
+ * 本回合已生效且今天就到期的纯抓牌 / 出牌上限状态：抓牌已在回合开头结算，不会再有后续影响，
+ * 状态栏不再显示，温太医也不必（无法）移除它。
+ */
+export function isSpentStatus3(s: Z3State, st: StatusInst3): boolean {
+  const def = STATUSES3[st.id];
+  if (def.permanent || st.appliesFromTurn > s.turn || st.remaining > 1) return false;
+  if (def.turnEnd || def.blocksCards || def.noSummon || def.playCap != null) return false;
+  return def.drawModifier !== 0 || (def.playBonus ?? 0) !== 0;
+}
+
 export function removableNegatives3(s: Z3State): StatusInst3[] {
-  return s.statuses.filter((st) => STATUSES3[st.id].tag === "negative" && !STATUSES3[st.id].unremovable);
+  return s.statuses.filter((st) => STATUSES3[st.id].tag === "negative" && !STATUSES3[st.id].unremovable && !isSpentStatus3(s, st));
 }
 
 export function blockingStatusName3(s: Z3State, cardId: CardId3): string | null {

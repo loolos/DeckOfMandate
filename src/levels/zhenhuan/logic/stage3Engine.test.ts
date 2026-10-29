@@ -28,6 +28,8 @@ import {
   drawCount3,
   drawModifier3,
   hasStatus3,
+  isSpentStatus3,
+  removableNegatives3,
   confrontLines,
   feilaoBaseTier,
   feilaoCurrentTier,
@@ -1342,5 +1344,38 @@ describe("stage 3 陵容相助 情分", () => {
 
   it("中宫垂青 with 亲厚 陵容 raises 情分", () => {
     expect(LINGRONG_EVENT3.huanghouShangshi!.close.relation).toBe(1);
+  });
+});
+
+describe("stage 3 状态栏：本回合已用尽的状态", () => {
+  const fresh = () => newStage3(1, CARRY);
+  const spent = (s: Z3State, id: StatusId3, remaining: number, appliesFromTurn = s.turn) => {
+    s.statuses.push({ uid: `s${s.nextUid++}`, id, appliesFromTurn, remaining });
+    return isSpentStatus3(s, s.statuses[s.statuses.length - 1]!);
+  };
+
+  it("已生效、今天到期的纯抓牌 / 出牌上限状态视为已用尽", () => {
+    const s = fresh();
+    expect(spent(s, "ermuLingtong", 1)).toBe(true);
+    expect(spent(s, "meizhuangDadian", 1)).toBe(true);
+    expect(spent(s, "zhushiTuotie", 1)).toBe(true);
+    expect(spent(s, "liuyanChanshen", 1)).toBe(true);
+  });
+
+  it("还有后续回合、尚未生效、带回合末效果或限制出牌的状态仍显示", () => {
+    const s = fresh();
+    expect(spent(s, "meizhuangDadian", 2)).toBe(false);
+    expect(spent(s, "ermuLingtong", 1, s.turn + 1)).toBe(false);
+    expect(spent(s, "hanzheng", 1)).toBe(false);
+    expect(spent(s, "jingji", 1)).toBe(false);
+    expect(spent(s, "qinseHeming", 1)).toBe(false);
+  });
+
+  it("已用尽的负面状态不再作为温太医的移除目标", () => {
+    const s = fresh();
+    spent(s, "liuyanChanshen", 1);
+    expect(removableNegatives3(s)).toHaveLength(0);
+    spent(s, "liuyanChanshen", 2);
+    expect(removableNegatives3(s)).toHaveLength(1);
   });
 });
