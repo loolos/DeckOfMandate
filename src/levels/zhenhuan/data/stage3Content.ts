@@ -1277,7 +1277,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
   xinrenZhengchong: {
     id: "xinrenZhengchong",
     kind: "crisis",
-    name: "新人争宠",
+    name: "御苑邀宠",
     emoji: "💃",
     xinCover: "欣贵人在一旁看得直撇嘴，当着皇上的面说：「新人鲜亮，咱们这些老人也不差呀。」又拉着你坐到皇上近前，祺贵人那点抢风头的心思，白费了。",
     flavor: "祺贵人新近入宫，在御花园里“偶遇”了皇上，笑得比花还艳，皇上当晚便翻了她的牌子。",

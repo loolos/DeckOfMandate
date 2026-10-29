@@ -57,7 +57,7 @@
 | E31 | 碎玉私语 | 危机 | suiyuxuanXianhua |
 | E32 | 齐妃寻衅 | 对头 | qifeiXunxin |
 | E33 | 三阿哥邀宠 | 对头 | sanAgeYaochong |
-| E34 | 新人争宠 | 对头 | xinrenZhengchong |
+| E34 | 御苑邀宠 | 对头 | xinrenZhengchong |
 | E35 | 鄂敏参本 | 对头 | emingCanben |
 | E36 | 齐妃讥讽 | 对头 | yuhuayuanQi |
 | E37 | 祺贵人告状 | 对头 | xianfuQi |
