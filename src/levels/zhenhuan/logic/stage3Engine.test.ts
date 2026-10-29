@@ -363,7 +363,7 @@ describe("zhenhuan stage 3 engine", () => {
     expect(t.statuses.some((st) => st.id === "dayaGuaerjia")).toBe(false);
   });
 
-  it("打压 is per rival: 齐妃寻衅 suppressed → 三阿哥邀宠 (also 齐妃) is eased next", () => {
+  it("打压 is per rival: 晨省讥语 suppressed → 三阿哥邀宠 (also 齐妃) is eased next", () => {
     let s = advanceTo(newStage3(3, CARRY), 3);
     clearBoard(s);
     withStatus(s, "dayaQifei");
