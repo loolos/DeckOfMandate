@@ -54,7 +54,7 @@
 | E28 | 欣贵人邀游 | 机会 | yuhuayuanXin |
 | E29 | 敬妃托付 | 机会 | xianfuJing |
 | E30 | 端妃旧话 | 机会 | yanqingDuan |
-| E31 | 阶前蜚语 | 危机 | suiyuxuanXianhua |
+| E31 | 碎玉私语 | 危机 | suiyuxuanXianhua |
 | E32 | 齐妃寻衅 | 对头 | qifeiXunxin |
 | E33 | 三阿哥邀宠 | 对头 | sanAgeYaochong |
 | E34 | 新人争宠 | 对头 | xinrenZhengchong |

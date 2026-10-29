@@ -1215,7 +1215,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
   suiyuxuanXianhua: {
     id: "suiyuxuanXianhua",
     kind: "crisis",
-    name: "阶前蜚语",
+    name: "碎玉私语",
     emoji: "🗣️",
     flavor: "碎玉轩里有人嚼舌根，说小主如今眼里只有皇上，待下人越发冷淡了。",
     reward: NO,
