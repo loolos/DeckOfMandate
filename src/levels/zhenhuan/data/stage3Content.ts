@@ -43,6 +43,9 @@ export const STAGE3 = {
 
 export const ACT_TITLE: Record<Act, string> = { 1: "第一幕 · 凤仪之下", 2: "第二幕 · 青灯古佛", 3: "第三幕 · 移花接木" };
 
+/** 第一幕「盛宠招妒」线：圣宠不低于它时，部分事件了结后另扣清誉。 */
+export const ENVY_LINE3 = 14;
+
 /** 修行身份（第二、三幕）：比答应还低。 */
 export const XIUXING = { name: "修行", draw: 2, plays: 1, cap: 8 };
 
@@ -1029,6 +1032,8 @@ export type EventDef3 = {
   readonly xinCover?: string;
   /** 需两张解牌的危机只凑了一张时的惩罚（不写则按完整惩罚）。 */
   readonly halfPenalty?: readonly Delta3[];
+  /** 第一幕「盛宠招妒」：圣宠达到 ENVY_LINE3 时，这件事无论怎么了结都要付的清誉。 */
+  readonly envyCost?: readonly Delta3[];
   /** 危机被化解时也要付的代价（断炭缺粮：熬过去也伤身子）。 */
   readonly resolveCost?: readonly Delta3[];
   /** 同上：惩罚状态只持续这么多回合。 */
@@ -1065,11 +1070,12 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     name: "中宫垂青",
     emoji: "🏮",
     flavor: "景仁宫晨省，皇后当着众人的面温温地问起碎玉轩近来可好，又问饮食起居，一桩桩问得比谁都细。",
+    envyCost: [q(-1)],
     reward: [sc(1)],
     penalty: NO,
     secret: "dingmanZhonggong",
-    resolvedText: "圣宠 +1",
-    unresolvedText: "无额外效果，事件消失",
+    resolvedText: "圣宠 +1；圣宠 ≥ 14 时另清誉 -1",
+    unresolvedText: "无额外效果，事件消失；圣宠 ≥ 14 时另清誉 -1",
     resolvedStory: {
       yirongZhengsu: "你穿了身素净的月白衣裳，鬓边只簪一朵绒花，进退一丝不乱。皇后拉着你的手说了好些体己话，又在皇上跟前提了你一句。你谢了恩，只觉得她掌心很凉。",
       jinyanShenxing: "皇后问起六宫近事，你只拣些无关痛痒的回话，一句也不多。皇后笑着说你懂事，端起茶盏，半晌没有再开口。",
@@ -1272,9 +1278,10 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     name: "仪态微瑕",
     emoji: "🎎",
     flavor: "景仁宫请安时，你一时头晕，起身时碰翻了案上的茶盏，滚烫的茶水溅在手背上，红了一片，满殿的人都看了过来。",
+    envyCost: [q(-1)],
     reward: NO,
     penalty: [q(-1), sc(-1)],
-    resolvedText: "移除事件",
+    resolvedText: "移除事件；圣宠 ≥ 14 时另清誉 -1",
     unresolvedText: "清誉 -1、圣宠 -1",
     note: "用陵容相助解决时，她会送来舒痕胶（🧴）；有害时改为未来 2 回合不能打仪容整肃、谨言慎行，不能侍寝，不伤胎。",
     resolvedStory: {
@@ -1288,13 +1295,14 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     name: "碎玉私语",
     emoji: "🗣️",
     flavor: "碎玉轩里有人嚼舌根，说小主如今眼里只有皇上，待下人越发冷淡了。",
+    envyCost: [q(-1)],
     reward: NO,
     penalty: NO,
     penaltyStatus: "xianhuaChuanKai",
     halfStatusTurns: 1,
     needTwo: true,
     resolveCost: [q(-1)],
-    resolvedText: "移除事件；需打出两张解牌；化解也要清誉 -1",
+    resolvedText: "移除事件；需打出两张解牌；化解也要清誉 -1；圣宠 ≥ 14 时另清誉 -1",
     unresolvedText: "未来 2 回合每回合抓牌 -1（至少 1 张）；只打出一张解牌则只持续 1 回合",
     resolvedStory: {
       jinxiXiangzhu: "槿汐把碎玉轩上下叫到一处，不轻不重地说了几句。往后再没人敢乱说话。",
@@ -1308,6 +1316,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     emoji: "🌰",
     xinCover: "齐妃那句讥讽还没落地，欣贵人先笑出了声：「齐妃姐姐这话酸的，莫不是昨夜没睡好？」满殿的人都低头憋着笑，齐妃脸上挂不住，那桩事也就这么揭过去了。",
     flavor: "景仁宫请安时，齐妃当着众人的面讥讽你：「莞嫔如今可是皇上心尖上的人了。」",
+    envyCost: [q(-1)],
     reward: NO,
     penalty: [q(-2)],
     penaltyStatus: "liuyanChanshen",
@@ -1316,7 +1325,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     suppressCard: "jinyanShenxing",
     secret: "chuyanDingzhuang",
     resolveCost: [sz(-1)],
-    resolvedText: "移除事件；两张解牌含谨言慎行即打压齐妃，获得【打压·齐妃】；化解也要身子 -1",
+    resolvedText: "移除事件；两张解牌含谨言慎行即打压齐妃，获得【打压·齐妃】；化解也要身子 -1；圣宠 ≥ 14 时另清誉 -1",
     unresolvedText: "清誉 -2、未来 3 回合每回合抓牌 -1",
     resolvedStory: {
       jinyanShenxing: "你笑着回了一句：「娘娘说笑了，三阿哥的功课，皇上才是放在心尖上的。」齐妃一时下不来台，再没敢开口。",
@@ -1331,13 +1340,14 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     emoji: "📚",
     xinCover: "欣贵人见皇上连着几日都在长春宫，大大方方进去请安，借口自己公主的功课求皇上指点，三言两语又把话头引回了六宫，齐妃的小算盘没能得逞。",
     flavor: "齐妃拿三阿哥的功课做由头，把皇上请进了长春宫，一连几日都没放人出来，六宫的风向悄悄变了。",
+    envyCost: [q(-1)],
     reward: NO,
     penalty: [sc(-2)],
     rival: "qifei",
     needTwo: true,
     suppressCard: "yirongZhengsu",
     resolveCost: [q(-1)],
-    resolvedText: "移除事件；两张解牌含仪容整肃即打压齐妃，获得【打压·齐妃】；化解也要清誉 -1",
+    resolvedText: "移除事件；两张解牌含仪容整肃即打压齐妃，获得【打压·齐妃】；化解也要清誉 -1；圣宠 ≥ 14 时另清誉 -1",
     unresolvedText: "圣宠 -2",
     resolvedStory: {
       yirongZhengsu: "你换了一身新裁的衣裳，在皇上回养心殿的路上候着。皇上远远看见，便不往长春宫去了。",
@@ -1351,13 +1361,14 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     emoji: "💃",
     xinCover: "欣贵人在一旁看得直撇嘴，当着皇上的面说：「新人鲜亮，咱们这些老人也不差呀。」又拉着你坐到皇上近前，祺贵人那点抢风头的心思，白费了。",
     flavor: "祺贵人新近入宫，在御花园里“偶遇”了皇上，笑得比花还艳，皇上当晚便翻了她的牌子。",
+    envyCost: [q(-1)],
     reward: NO,
     penalty: [sc(-2)],
     rival: "guaerjia",
     needTwo: true,
     suppressCard: "yirongZhengsu",
     secret: "shanduShide",
-    resolvedText: "移除事件；两张解牌含仪容整肃即打压祺贵人，获得【打压·祺贵人】",
+    resolvedText: "移除事件；两张解牌含仪容整肃即打压祺贵人，获得【打压·祺贵人】；圣宠 ≥ 14 时另清誉 -1",
     unresolvedText: "圣宠 -2",
     resolvedStory: {
       yirongZhengsu: "你在同一处园子里赏花，一身素净，倒衬得祺贵人过于艳丽。皇上看了你们一眼，携了你的手走了。",
@@ -1456,11 +1467,12 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     name: "景仁赐锦",
     emoji: "🎁",
     flavor: "景仁宫的剪秋亲自送来几匹云锦和一支点翠步摇，说是皇后特意挑的，给碎玉轩添喜，言语间满是体恤。",
+    envyCost: [q(-1)],
     reward: [sc(1)],
     penalty: NO,
     cardReward: { jinyanShenxing: [q(1)], jinxiXiangzhu: [sz(1)] },
-    resolvedText: "同回合打出两张匹配牌；谨言慎行：清誉 +1；槿汐相助：身子 +1",
-    unresolvedText: "圣宠 +1",
+    resolvedText: "同回合打出两张匹配牌；谨言慎行：清誉 +1；槿汐相助：身子 +1；圣宠 ≥ 14 时另清誉 -1",
+    unresolvedText: "圣宠 +1；圣宠 ≥ 14 时另清誉 -1",
     resolvedStory: {
       jinyanShenxing: "你说嫔妾福薄，受不起这样的厚赏，只收下了一匹素缎。皇后笑着说你太过谨慎，这话传到寿康宫，太后倒夸你知道分寸。",
       jinxiXiangzhu: "槿汐替你回了话，说小主素来不爱鲜亮的颜色。皇后便改赏了几盒燕窝，槿汐把燕窝收进小厨房，每日炖好了给你送去。",
@@ -1508,12 +1520,13 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     name: "家宴献艺",
     emoji: "🎵",
     flavor: "家宴将近，皇后特意把你唤去，说皇上最爱听你弹琴，请你在席上弹一曲，也好让太后高兴高兴。",
+    envyCost: [q(-1)],
     reward: [sc(1)],
     penalty: NO,
     lingrongSecret: "jierenYaochong",
     cardReward: { jingguanQibian: [q(1)], jinyanShenxing: [sz(1)] },
-    resolvedText: "同回合打出两张匹配牌；静观其变：清誉 +1；谨言慎行：身子 +1",
-    unresolvedText: "圣宠 +1",
+    resolvedText: "同回合打出两张匹配牌；静观其变：清誉 +1；谨言慎行：身子 +1；圣宠 ≥ 14 时另清誉 -1",
+    unresolvedText: "圣宠 +1；圣宠 ≥ 14 时另清誉 -1",
     resolvedStory: {
       jingguanQibian: "你推说指上的伤还没好，只在席间安安静静地坐着。太后看在眼里，说你稳重。",
       jinyanShenxing: "你说近来身子乏，不宜劳神，请皇后另择他人。皇后点点头，说你懂事。你早早回宫歇下了。",

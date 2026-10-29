@@ -844,6 +844,20 @@ describe("zhenhuan stage 3 engine", () => {
     expect(s.lingrongGone).toBe(true);
   });
 
+  it("盛宠招妒: 第一幕圣宠够高时，中宫垂青了结后另扣清誉", () => {
+    const run = (shengchong: number) => {
+      const s = newStage3(1, CARRY);
+      clearBoard(s);
+      s.shengchong = shengchong;
+      s.qingyu = 10;
+      s.opportunity = ev(s, "huanghouShangshi");
+      const [uid] = setHand(s, ["yirongZhengsu"]);
+      return act(s, { type: "playCard", cardUid: uid! });
+    };
+    expect(run(14).qingyu).toBe(9);
+    expect(run(12).qingyu).toBe(10);
+  });
+
   it("圣宠 is frozen at the temple", () => {
     const s = newStage3(1, CARRY);
     s.act = 2;

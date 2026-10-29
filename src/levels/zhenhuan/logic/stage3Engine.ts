@@ -49,6 +49,8 @@ import {
   SHENZI,
   STAGE2_SECRETS,
   STAGE3,
+  ENVY_LINE3,
+  type EventDef3,
   STAGE3_ACT1_DECK,
   STAGE3_TEMPLE_DECK,
   STATUSES3,
@@ -792,6 +794,12 @@ function verb(kind: string): string {
   return kind === "opportunity" ? "把握" : kind === "huanghou" ? "领受" : "化解";
 }
 
+/** 第一幕盛宠招妒：圣宠不低于 ENVY_LINE3 时，带 envyCost 的事件了结后另扣清誉。 */
+function applyEnvy(s: Z3State, def: EventDef3): void {
+  if (s.act !== 1 || !def.envyCost || !alive(s) || s.shengchong < ENVY_LINE3) return;
+  applyDeltas3(s, def.envyCost, `${def.name}（盛宠招妒）`);
+}
+
 function resolveEventByCard(s: Z3State, ev: EventInst3, card: CardId3, doubleReward: boolean): void {
   const def = EVENTS3[ev.id];
   ev.resolved = true;
@@ -817,6 +825,7 @@ function resolveEventByCard(s: Z3State, ev: EventInst3, card: CardId3, doubleRew
   if (def.kind === "huanghou") {
     for (const c of new Set(ev.progress ?? [card])) applyDeltas3(s, def.cardReward?.[c] ?? [], def.name);
   }
+  applyEnvy(s, def);
   if (def.kind === "crisis") {
     if (def.resolveCost && alive(s)) applyDeltas3(s, def.resolveCost, `${def.name}（化解了，仍有些折损）`);
     if (def.rival && def.suppressCard && (ev.progress ?? [card]).includes(def.suppressCard) && !def.pair) {
@@ -1634,6 +1643,7 @@ function endTurn3(s: Z3State): void {
     const def = EVENTS3[s.huanghou.id];
     log(s, `皇后事件【${def.name}】按默认结算。`);
     applyDeltas3(s, def.reward, def.name);
+    applyEnvy(s, def);
     addSecret(s, `enshang.${s.huanghou.id as HuanghouId}`, null);
   }
   if (!alive(s)) return;
