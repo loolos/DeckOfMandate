@@ -1115,7 +1115,7 @@ function PopupBody({ state, id }: { state: Z3State; id: PopupId }) {
         <>
           <p>{d ? dengmenOpenText(d.doubt, d.relics, state.exitTier) : null}</p>
           <p className={styles.muted}>
-            {d && d.needed === 0 ? "皇上没有起疑，只需过完剧情。" : `${POPUP_TEXT.dengmenRules}本次需要 ${d?.needed ?? 0} 张。`}
+            {d && d.needed === 0 ? "你的安排天衣无缝，只需过完剧情。" : `${POPUP_TEXT.dengmenRules}本次需要 ${d?.needed ?? 0} 张。`}
           </p>
         </>
       );
