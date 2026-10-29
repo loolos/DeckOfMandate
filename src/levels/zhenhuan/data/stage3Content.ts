@@ -71,7 +71,7 @@ export const PLAYS_INFO3: ResourceInfo = {
   lore: "一日里能办的事有限，先办哪件、留哪件，全凭你拿主意。",
   rules: [
     "第一幕由位分决定（贵人 2、嫔 3）；进寺后修行身份只能打 1 张。",
-    "【静观其变】【静心忍耐】【果郡王相助】本回合 +1；【槿汐相助】的【诸事妥帖】下回合 +1。",
+    "【静观其变】【静心忍耐】本回合 +1；【果郡王相助】作为事件的解牌打出时本回合 +1；【槿汐相助】的【诸事妥帖】下回合 +1。",
   ],
 };
 
@@ -116,6 +116,8 @@ export type CardDef3 = {
   readonly baseStatus?: StatusId3;
   /** This turn's play limit +N. */
   readonly extraPlays?: number;
+  /** extraPlays 只在这张牌作为本回合某个未解决事件的解牌打出时生效。 */
+  readonly extraPlaysOnlyWhenSolving?: boolean;
   readonly matches: readonly EventId3[];
   readonly rulesText: readonly string[];
   readonly rulesCompact?: string;
@@ -253,9 +255,10 @@ export const CARDS3: Record<CardId3, CardDef3> = {
     baseDraw: 1,
     baseStatus: "diyunYinghuai",
     extraPlays: 1,
+    extraPlaysOnlyWhenSolving: true,
     matches: ["wangyeXiantan", "tanhuoLiangmi", "shanzhongCaiyao", "yuexiaDuitan", "yebanJingrao"],
-    rulesText: ["抽 1 张牌；本回合出牌 +1；下回合抓牌 +1。"],
-    rulesCompact: "🎴+1 🀄+1 ⏭️🎴+1",
+    rulesText: ["抽 1 张牌；若作为本回合某个事件的解牌打出，本回合出牌 +1；下回合抓牌 +1。"],
+    rulesCompact: "🎴+1 解事件🀄+1 ⏭️🎴+1",
   },
   chanyuXiushen: {
     id: "chanyuXiushen",
@@ -275,8 +278,8 @@ export const CARDS3: Record<CardId3, CardDef3> = {
     base: [],
     baseDraw: 0,
     matches: ["tanhuoLiangmi", "fazuoCuhuo", "jinganChuilian", "shanzhongCaiyao", "moyanYuanshou"],
-    rulesText: ["无基础效果。", "联动：用它化解危机时，下回合抓牌 +1（静白一时挑不出错）。"],
-    rulesCompact: "⚡→🎴+1",
+    rulesText: ["无基础效果。", "联动：作为任何事件的解牌打出时，下回合抓牌 +1（静白一时挑不出错）。"],
+    rulesCompact: "解事件→⏭️🎴+1",
   },
   jingxinRennai: {
     id: "jingxinRennai",
@@ -2777,7 +2780,7 @@ export const POPUP_TEXT = {
       lingrong: "陵容说你们是来赏花的，三言两语便把话头岔开了。他笑了笑，也不多问，折了一枝桐花递过来，说是唐突了小主，权当赔个不是。",
     },
   } as { readonly open: Record<"di" | "li" | "lingrong", string>; readonly bio: string; readonly close: Record<"di" | "li" | "lingrong", string> },
-  tonghuataiRules: "往后他会不时在你最难的时候伸手帮你：牌库里加入【🎐果郡王相助】，打出可抽 1 张牌，本回合出牌 +1，下回合再多抽 1 张；日后还会有几次相逢，每次再添一张。",
+  tonghuataiRules: "往后他会不时在你最难的时候伸手帮你：牌库里加入【🎐果郡王相助】，打出可抽 1 张牌，下回合再多抽 1 张；若是用来解本回合的事件，还能多出 1 张牌；日后还会有几次相逢，每次再添一张。",
   wanwan: [
     "「菀菀类卿，暂排苦思，亦除却巫山非云也。」短短一行字，是皇上的亲笔，墨色早就旧了。你忽然想起生辰宴前那件封在库里的旧衣，想起镜子里那个陌生的自己，原来那从来不是巧合：皇上这些年对你青眼有加，只因你生得像纯元皇后。倚梅园里那一句许愿，杏花林下那一回眸，他赐你的那个“莞”字，取的原是她的“菀”。枕边那些温存的话，一句一句，原来都是说给另一个人听的。",
   ] as readonly string[],

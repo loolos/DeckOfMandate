@@ -823,10 +823,10 @@ function resolveEventByCard(s: Z3State, ev: EventInst3, card: CardId3, doubleRew
       ev.suppressed = true;
       suppress(s, def.rival);
     }
-    if (card === "jingchaiBuqun" && alive(s)) {
-      log(s, "荆钗布裙联动：静白一时挑不出错。", "good");
-      addStatus3(s, "yishiWucuo");
-    }
+  }
+  if (card === "jingchaiBuqun" && alive(s)) {
+    log(s, "荆钗布裙联动：静白一时挑不出错。", "good");
+    addStatus3(s, "yishiWucuo");
   }
   if (card === "shoulongRenxin" && ev.id === "neiwufuDiaonan" && alive(s)) {
     log(s, "收拢人心联动：额外抽 1 张牌。", "good");
@@ -1123,7 +1123,7 @@ function resolvePlay3(s: Z3State, cardUid: string, removeStatusUid?: string): vo
       if (def.baseStatus && alive(s)) addStatus3(s, def.baseStatus);
       if (def.baseDraw > 0 && alive(s)) drawCards3(s, def.baseDraw);
     }
-    if (def.extraPlays && alive(s)) {
+    if (def.extraPlays && alive(s) && (!def.extraPlaysOnlyWhenSolving || events.length > 0)) {
       s.extraPlays += def.extraPlays;
       log(s, `${def.name}：本回合出牌 +${def.extraPlays}（现为 ${playLimit3(s)}）。`, "good");
     }
