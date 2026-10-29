@@ -658,7 +658,7 @@ describe("zhenhuan stage 3 engine", () => {
     expect(s.popups).toContain("ouyu");
   });
 
-  it("碎玉轩闲话: two cards, cleared costs 🪷1; one card = 闲话传开 1 turn, none = 2 turns", () => {
+  it("阶前蜚语: two cards, cleared costs 🪷1; one card = 闲话传开 1 turn, none = 2 turns", () => {
     const run = (ids: CardId3[]) => {
       let s = advanceTo(newStage3(6, CARRY), 8);
       clearBoard(s);
