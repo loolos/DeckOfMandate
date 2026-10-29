@@ -794,10 +794,17 @@ function verb(kind: string): string {
   return kind === "opportunity" ? "把握" : kind === "huanghou" ? "领受" : "化解";
 }
 
+const ENVY_STORIES = [
+  "皇上又只往碎玉轩去，各宫的灯一盏盏暗下去。有人在背后说你狐媚专宠，这话一传十、十传百，你的名声难免受了些累。",
+  "请安散后，几位嫔妃凑在廊下低声议论碎玉轩的恩宠，话里话外都是酸意。传到你耳中，已不大好听。",
+  "宫里都说莞嫔如今风头太盛，连赏赐都比旁人多一份。树大招风，你的清誉在人言里又薄了一层。",
+] as const;
+
 /** 第一幕盛宠招妒：圣宠不低于 ENVY_LINE3 时，带 envyCost 的事件了结后另扣清誉。 */
 function applyEnvy(s: Z3State, def: EventDef3): void {
   if (s.act !== 1 || !def.envyCost || !alive(s) || s.shengchong < ENVY_LINE3) return;
-  applyDeltas3(s, def.envyCost, `${def.name}（盛宠招妒）`);
+  log(s, ENVY_STORIES[s.turn % ENVY_STORIES.length]!);
+  applyDeltas3(s, def.envyCost, `盛宠招妒（圣宠 ≥ ${ENVY_LINE3}，${def.name}了结后另有折损）`);
 }
 
 function resolveEventByCard(s: Z3State, ev: EventInst3, card: CardId3, doubleReward: boolean): void {
