@@ -1,5 +1,4 @@
 import { describe, expect, it } from "vitest";
-import { decodeSessionCode } from "./session";
 import { musicMood } from "../ui/music";
 import {
   CARDS3,
@@ -561,14 +560,33 @@ describe("zhenhuan stage 3 engine", () => {
     expect([t0, t1]).toEqual([2, 1]);
   });
 
-  it("果郡王相助: draws 1, +1 play this turn, 王爷挂念 gives +1 draw next turn", () => {
+  it("果郡王相助: 作为未解决事件的解牌打出才本回合出牌 +1; 王爷挂念 gives +1 draw next turn", () => {
     let s = advanceTo(newStage3(6, CARRY), 12);
     clearBoard(s);
     const [g] = setHand(s, ["guojunwangXiangzhu"]);
     const before = playLimit3(s);
     s = act(s, { type: "playCard", cardUid: g! });
-    expect(playLimit3(s)).toBe(before + 1);
+    expect(playLimit3(s)).toBe(before);
     expect(s.statuses.some((x) => x.id === "wangyeGuaNian")).toBe(true);
+
+    let s2 = advanceTo(newStage3(6, CARRY), 12);
+    clearBoard(s2);
+    s2.opportunity = ev(s2, "shanzhongCaiyao");
+    const [g2] = setHand(s2, ["guojunwangXiangzhu"]);
+    const before2 = playLimit3(s2);
+    s2 = act(s2, { type: "playCard", cardUid: g2! });
+    expect(s2.opportunity?.resolved).toBe(true);
+    expect(playLimit3(s2)).toBe(before2 + 1);
+  });
+
+  it("荆钗布裙: 作为任何事件（不只是危机）的解牌打出，都获得滴水不漏", () => {
+    let s = advanceTo(newStage3(6, CARRY), 12);
+    clearBoard(s);
+    s.opportunity = ev(s, "shanzhongCaiyao");
+    const [b] = setHand(s, ["jingchaiBuqun"]);
+    s = act(s, { type: "playCard", cardUid: b! });
+    expect(s.opportunity?.resolved).toBe(true);
+    expect(s.statuses.some((x) => x.id === "yishiWucuo")).toBe(true);
   });
 
   it("睹物生疑: from the turn after 引驾 until 回宫, each 遗物 in hand at turn end adds 疑点 (not only on the 偶遇 turn)", () => {
@@ -1082,17 +1100,14 @@ describe("zhenhuan stage 3 engine", () => {
 
 describe("出宫清誉按把柄条数扣", () => {
   it("宫中清誉高于修行上限时，从上限 8 起扣呈上的把柄条数", () => {
-    const code =
-      "ZH3-MyA3MjE1MjQ5MjcgLSBwYzcgcGMzIHBjMTYgcGMxNyBwYzUgZSBwYzEgcGMyIHBjOSBlIHBjMyBwYzYgcGM4IHBjNyBwYzE3IHBjOSBlIHBjMTUgcGMxNCBwYzEzIGUgcGMyIHBjNSBwYzE1IHBjNyBwYzQgcGM2IHBjMTYgZSBwYzggcGM3IHBjMTMgcGMxMiBwYzQwIHBjNSBwYzkgZSBwYzYgcGM0MCBwYzE1IHBjOSBwYzIgcGMxNyBlIHBjNyBwYzggcGM0MCBwYzIgcGM0IHBjMTMgcGMxNyBlIHBjNiBwYzQgcGM5IHBjOCBwYzE1IHBjNSBlIHBjNDAgcGM3IHBjMTIgcGMxMyBwYzMgZSBwYzczIHBjNzc";
-    const r = decodeSessionCode(code);
-    if (!r.ok || r.session.stage !== 3) throw new Error("decode failed");
-    const s0 = r.session.state;
-    const before = replay3(s0.seed, s0.carry, s0.actions.slice(0, 59));
-    expect(before.turn).toBe(10);
-    expect(before.qingyu).toBe(18);
-    // 第 10 回合一张辩白牌都不打：缺 3 张，被废出宫
-    const after = replay3(s0.seed, s0.carry, [...s0.actions.slice(0, 59), { type: "endTurn" }]);
-    expect(after.exitTier).toBe(3);
-    expect(after.qingyu).toBe(8 - 4); // 呈上 4 条
+    let s = advanceTo(newStage3(7, CARRY), 10);
+    expect(s.confront).not.toBeNull();
+    s.confront!.presented = 4;
+    s.qingyu = 18;
+    // 一张辩白牌都不打：缺 3 张，被废出宫
+    s.confront!.needed = 3;
+    s = act(s, { type: "endTurn" });
+    expect(s.exitTier).toBe(3);
+    expect(s.qingyu).toBe(8 - 4); // 呈上 4 条
   });
 });
