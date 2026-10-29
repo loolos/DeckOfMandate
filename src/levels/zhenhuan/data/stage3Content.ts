@@ -109,6 +109,8 @@ export type CardDef3 = {
   readonly name: string;
   readonly emoji: string;
   readonly flavor: string;
+  /** 第二幕起（甘露寺、凌云峰）换成寺中情景的剧情文本。 */
+  readonly templeFlavor?: string;
   readonly base: readonly Delta3[];
   readonly baseDraw: number;
   readonly baseStatus?: StatusId3;
@@ -130,6 +132,11 @@ export function cardRules3(def: CardDef3, act: Act): { rulesText: readonly strin
 function palace(id: Exclude<CardId3, "lingrongXiangzhu" | "jinxiXiangzhu" | "guojunwangXiangzhu" | "chanyuXiushen" | "jingchaiBuqun" | "jingxinRennai" | RelicId>, o: Partial<CardDef3>): CardDef3 {
   const c = STAGE1_CARDS[id];
   return { id, name: c.name, emoji: c.emoji, flavor: c.flavor, base: c.base, baseDraw: c.baseDraw, baseStatus: c.baseStatus as StatusId3 | undefined, matches: [], rulesText: c.rulesText, ...o };
+}
+
+/** 这张牌在第 `act` 幕的剧情文本。 */
+export function cardFlavor3(def: CardDef3, act: Act): string {
+  return act >= 2 && def.templeFlavor ? def.templeFlavor : def.flavor;
 }
 
 const RELIC_RULES = ["打出即焚毁，没有别的效果。"];
@@ -161,6 +168,7 @@ export const CARDS3: Record<CardId3, CardDef3> = {
     ],
   }),
   wenTaiyiZhenzhi: palace("wenTaiyiZhenzhi", {
+    templeFlavor: "温实初冒着雪从后山小路上来，药箱上落了一层薄雪。他怕宫里起疑，只说是顺路替人采药，转身却把方子悄悄塞进你手里。",
     base: [],
     matches: ["liyiShiwu", "yanqingTanbing", "antaiBupin", "yanqingDuan", "yanqingQi", "shanzhongCaiyao", "yebanJingrao", "jingrenLairen"],
     rulesText: ["移除 1 个【负面】状态；没有负面状态时身子 +1。"],
@@ -172,6 +180,7 @@ export const CARDS3: Record<CardId3, CardDef3> = {
   }),
   jingguanQibian: palace("jingguanQibian", { extraPlays: 1, rulesCompact: "🎴+2 🀄+1", matches: ["sanAgeYaochong", "jiayanXianyi", "yuhuayuanQi", "xianfuQi", "yanqingDuan"] }),
   meizhuangXiangzhu: palace("meizhuangXiangzhu", {
+    templeFlavor: "山寺清苦，眉姐姐身在宫中，却托家里人一趟趟往山上送衣食药材。隔着宫墙与山路，她仍是第一个想着你的人。",
     flavor: "闲月阁的风雪里，眉姐姐没有倒下。如今她洗冤复位，风浪再大，仍是第一个站到你身边的人。",
     matches: [
       "taihouChuixun",
@@ -212,6 +221,7 @@ export const CARDS3: Record<CardId3, CardDef3> = {
   } as CardDef3,
   jinxiXiangzhu: {
     ...CARDS2.jinxiXiangzhu,
+    templeFlavor: "槿汐陪你住进了寺里的小屋，生炉子、补窗纸、叠被褥，样样不用你开口。清苦的日子被她打理得井井有条，叫人心里踏实。",
     baseStatus: "zhushiTuotie",
     rulesCompact: "🗝️⏭️🀄+1",
     matches: [

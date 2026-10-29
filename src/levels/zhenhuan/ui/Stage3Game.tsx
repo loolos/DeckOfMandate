@@ -30,6 +30,7 @@ import {
   SHENZI,
   STAGE3,
   matchesInAct,
+  cardFlavor3,
   cardRules3,
   unresolvedText3,
   STATUSES3,
@@ -829,7 +830,7 @@ function HandCard({ state, card, dispatch, fold }: { state: Z3State; card: CardI
         {tags}
       </div>
       <CardArt src={cardArtUrl(card.id, state.act === 1 ? undefined : "temple")} emoji={def.emoji} />
-      <p className={styles.flavor}>{def.flavor}</p>
+      <p className={styles.flavor}>{cardFlavor3(def, state.act)}</p>
       {[...rules.rulesText, ...(relic && state.yihua ? [RELIC_DOUBT_RULE] : [])].map((line) => (
         <p key={line} className={styles.rule}>
           {expandedEffect3(line)}
