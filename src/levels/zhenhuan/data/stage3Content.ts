@@ -119,7 +119,7 @@ export type CardDef3 = {
   readonly baseStatus?: StatusId3;
   /** This turn's play limit +N. */
   readonly extraPlays?: number;
-  /** extraPlays 只在这张牌作为本回合某个未解决事件的解牌打出时生效。 */
+  /** extraPlays 只在这张牌作为本回合某个未解决事件（含剧情事件、景仁宫对质等）的解牌打出时生效。 */
   readonly extraPlaysOnlyWhenSolving?: boolean;
   readonly matches: readonly EventId3[];
   readonly rulesText: readonly string[];

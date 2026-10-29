@@ -1143,7 +1143,9 @@ function resolvePlay3(s: Z3State, cardUid: string, removeStatusUid?: string): vo
       if (def.baseStatus && alive(s)) addStatus3(s, def.baseStatus);
       if (def.baseDraw > 0 && alive(s)) drawCards3(s, def.baseDraw);
     }
-    if (def.extraPlays && alive(s) && (!def.extraPlaysOnlyWhenSolving || events.length > 0)) {
+    const solving =
+      events.length > 0 || answered || yihuaStep || (!!s.confront && confrontAccepts(s, card.id)) || (!!s.feilao && feilaoAccepts(s, card.id));
+    if (def.extraPlays && alive(s) && (!def.extraPlaysOnlyWhenSolving || solving)) {
       s.extraPlays += def.extraPlays;
       log(s, `${def.name}：本回合出牌 +${def.extraPlays}（现为 ${playLimit3(s)}）。`, "good");
     }
