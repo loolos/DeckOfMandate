@@ -49,6 +49,8 @@ import {
   SHENZI,
   STAGE2_SECRETS,
   STAGE3,
+  ENVY_LINE3,
+  type EventDef3,
   STAGE3_ACT1_DECK,
   STAGE3_TEMPLE_DECK,
   STATUSES3,
@@ -792,6 +794,19 @@ function verb(kind: string): string {
   return kind === "opportunity" ? "把握" : kind === "huanghou" ? "领受" : "化解";
 }
 
+const ENVY_STORIES = [
+  "皇上又只往碎玉轩去，各宫的灯一盏盏暗下去。有人在背后说你狐媚专宠，这话一传十、十传百，你的名声难免受了些累。",
+  "请安散后，几位嫔妃凑在廊下低声议论碎玉轩的恩宠，话里话外都是酸意。传到你耳中，已不大好听。",
+  "宫里都说莞嫔如今风头太盛，连赏赐都比旁人多一份。树大招风，你的清誉在人言里又薄了一层。",
+] as const;
+
+/** 第一幕盛宠招妒：圣宠不低于 ENVY_LINE3 时，带 envyCost 的事件了结后另扣清誉。 */
+function applyEnvy(s: Z3State, def: EventDef3): void {
+  if (s.act !== 1 || !def.envyCost || !alive(s) || s.shengchong < ENVY_LINE3) return;
+  log(s, ENVY_STORIES[s.turn % ENVY_STORIES.length]!);
+  applyDeltas3(s, def.envyCost, `盛宠招妒（圣宠 ≥ ${ENVY_LINE3}，${def.name}了结后另有折损）`);
+}
+
 function resolveEventByCard(s: Z3State, ev: EventInst3, card: CardId3, doubleReward: boolean): void {
   const def = EVENTS3[ev.id];
   ev.resolved = true;
@@ -817,16 +832,17 @@ function resolveEventByCard(s: Z3State, ev: EventInst3, card: CardId3, doubleRew
   if (def.kind === "huanghou") {
     for (const c of new Set(ev.progress ?? [card])) applyDeltas3(s, def.cardReward?.[c] ?? [], def.name);
   }
+  applyEnvy(s, def);
   if (def.kind === "crisis") {
     if (def.resolveCost && alive(s)) applyDeltas3(s, def.resolveCost, `${def.name}（化解了，仍有些折损）`);
     if (def.rival && def.suppressCard && (ev.progress ?? [card]).includes(def.suppressCard) && !def.pair) {
       ev.suppressed = true;
       suppress(s, def.rival);
     }
-    if (card === "jingchaiBuqun" && alive(s)) {
-      log(s, "荆钗布裙联动：静白一时挑不出错。", "good");
-      addStatus3(s, "yishiWucuo");
-    }
+  }
+  if (card === "jingchaiBuqun" && alive(s)) {
+    log(s, "荆钗布裙联动：静白一时挑不出错。", "good");
+    addStatus3(s, "yishiWucuo");
   }
   if (card === "shoulongRenxin" && ev.id === "neiwufuDiaonan" && alive(s)) {
     log(s, "收拢人心联动：额外抽 1 张牌。", "good");
@@ -1123,7 +1139,7 @@ function resolvePlay3(s: Z3State, cardUid: string, removeStatusUid?: string): vo
       if (def.baseStatus && alive(s)) addStatus3(s, def.baseStatus);
       if (def.baseDraw > 0 && alive(s)) drawCards3(s, def.baseDraw);
     }
-    if (def.extraPlays && alive(s)) {
+    if (def.extraPlays && alive(s) && (!def.extraPlaysOnlyWhenSolving || events.length > 0)) {
       s.extraPlays += def.extraPlays;
       log(s, `${def.name}：本回合出牌 +${def.extraPlays}（现为 ${playLimit3(s)}）。`, "good");
     }
@@ -1634,6 +1650,7 @@ function endTurn3(s: Z3State): void {
     const def = EVENTS3[s.huanghou.id];
     log(s, `皇后事件【${def.name}】按默认结算。`);
     applyDeltas3(s, def.reward, def.name);
+    applyEnvy(s, def);
     addSecret(s, `enshang.${s.huanghou.id as HuanghouId}`, null);
   }
   if (!alive(s)) return;

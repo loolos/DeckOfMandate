@@ -695,14 +695,33 @@ describe("zhenhuan stage 3 engine", () => {
     expect([t0, t1]).toEqual([2, 1]);
   });
 
-  it("果郡王相助: draws 1, +1 play this turn, 笛韵萦怀 gives +1 draw next turn", () => {
+  it("果郡王相助: 作为未解决事件的解牌打出才本回合出牌 +1; 笛韵萦怀 gives +1 draw next turn", () => {
     let s = advanceTo(newStage3(6, CARRY), 12);
     clearBoard(s);
     const [g] = setHand(s, ["guojunwangXiangzhu"]);
     const before = playLimit3(s);
     s = act(s, { type: "playCard", cardUid: g! });
-    expect(playLimit3(s)).toBe(before + 1);
+    expect(playLimit3(s)).toBe(before);
     expect(s.statuses.some((x) => x.id === "diyunYinghuai")).toBe(true);
+
+    let s2 = advanceTo(newStage3(6, CARRY), 12);
+    clearBoard(s2);
+    s2.opportunity = ev(s2, "shanzhongCaiyao");
+    const [g2] = setHand(s2, ["guojunwangXiangzhu"]);
+    const before2 = playLimit3(s2);
+    s2 = act(s2, { type: "playCard", cardUid: g2! });
+    expect(s2.opportunity?.resolved).toBe(true);
+    expect(playLimit3(s2)).toBe(before2 + 1);
+  });
+
+  it("荆钗布裙: 作为任何事件（不只是危机）的解牌打出，都获得滴水不漏", () => {
+    let s = advanceTo(newStage3(6, CARRY), 12);
+    clearBoard(s);
+    s.opportunity = ev(s, "shanzhongCaiyao");
+    const [b] = setHand(s, ["jingchaiBuqun"]);
+    s = act(s, { type: "playCard", cardUid: b! });
+    expect(s.opportunity?.resolved).toBe(true);
+    expect(s.statuses.some((x) => x.id === "yishiWucuo")).toBe(true);
   });
 
   it("睹物生疑: from the turn after 引驾 until 回宫, each 遗物 in hand at turn end adds 疑点 (not only on the 偶遇 turn)", () => {
@@ -842,6 +861,20 @@ describe("zhenhuan stage 3 engine", () => {
     );
     expect(s.hand).toHaveLength(XIUXING.draw);
     expect(s.lingrongGone).toBe(true);
+  });
+
+  it("盛宠招妒: 第一幕圣宠够高时，中宫垂青了结后另扣清誉", () => {
+    const run = (shengchong: number) => {
+      const s = newStage3(1, CARRY);
+      clearBoard(s);
+      s.shengchong = shengchong;
+      s.qingyu = 10;
+      s.opportunity = ev(s, "huanghouShangshi");
+      const [uid] = setHand(s, ["yirongZhengsu"]);
+      return act(s, { type: "playCard", cardUid: uid! });
+    };
+    expect(run(14).qingyu).toBe(9);
+    expect(run(11).qingyu).toBe(10);
   });
 
   it("圣宠 is frozen at the temple", () => {
