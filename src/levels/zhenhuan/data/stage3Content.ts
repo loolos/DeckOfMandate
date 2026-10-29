@@ -1092,8 +1092,8 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     flavor: "寿康宫请你过去说说话。太后近来身子不大好，却还惦记着碎玉轩。",
     reward: [q(1)],
     penalty: NO,
-    resolvedText: "清誉 +1（眉庄解决时翻倍）；有【敬妃之谊】时另身子 +1",
-    unresolvedText: "有【敬妃之谊】时仍身子 +1，事件消失",
+    resolvedText: "清誉 +1（眉庄解决时翻倍）",
+    unresolvedText: "无额外效果，事件消失",
     resolvedStory: {
       jinyanShenxing: "太后问你近来读什么书，你答得谦逊稳妥。太后捻着佛珠，说这孩子沉静。",
       meizhuangXiangzhu: "眉庄陪你一同前去。太后问起闲月阁那一年，眉庄只淡淡说：「都过去了，多亏嬛儿。」转头又把你夸了一遍。你们一唱一和，太后听得开怀，赏了你们一人一串佛珠。",
