@@ -119,7 +119,7 @@ export type CardDef3 = {
   readonly baseStatus?: StatusId3;
   /** This turn's play limit +N. */
   readonly extraPlays?: number;
-  /** extraPlays 只在这张牌作为本回合某个未解决事件的解牌打出时生效。 */
+  /** extraPlays 只在这张牌作为本回合某个未解决事件（含剧情事件、景仁宫对质等）的解牌打出时生效。 */
   readonly extraPlaysOnlyWhenSolving?: boolean;
   readonly matches: readonly EventId3[];
   readonly rulesText: readonly string[];
@@ -1934,7 +1934,7 @@ export const LINGRONG_IDLE_TEXT3: Record<LingrongTier, string> = {
   distant: "你请陵容过来坐坐。她言谈周全，客客气气，茶盏放得端端正正，坐久了才多说了几句心里话。",
   resentful: "你请陵容过来坐坐，她句句冷嘲热讽：「姐姐如今忙得很，难为还记得妹妹。」可坐得久了，语气也松了些。",
 };
-export const LINGRONG_COLD_TEXT = "你留陵容说话，说着说着，竟说了一句「心冷了」。陵容握着你的手，柔声劝了许久。";
+export const LINGRONG_COLD_TEXT = "你留陵容说话。自纯元故衣那一日后，你心里总横着一根刺，说着说着，话头竟绕回了那件旧衣上。你望着窗外，低低说了一句：「陵容，我这心，是冷了。」陵容一怔，忙握住你的手，柔声劝了许久。";
 
 // ---------------------------------------------------------------- stories
 
