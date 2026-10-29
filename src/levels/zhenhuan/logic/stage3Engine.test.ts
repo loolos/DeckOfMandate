@@ -760,7 +760,7 @@ describe("zhenhuan stage 3 engine", () => {
     expect(none.statuses.some((x) => x.id === "hanzheng" && x.appliesFromTurn === 13)).toBe(true);
   });
 
-  it("功德箱失窃: cleared still costs 🪷1; unresolved gives 香油疑云 (🪷-1 at each of the next 3 turn ends)", () => {
+  it("功德蒙尘: cleared still costs 🪷1; unresolved gives 香油疑云 (🪷-1 at each of the next 3 turn ends)", () => {
     const run = (ids: CardId3[]) => {
       let s = advanceTo(newStage3(6, CARRY), 12);
       clearBoard(s);

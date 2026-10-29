@@ -1373,7 +1373,7 @@ function moveToPeak(s: Z3State): void {
   removeFromPools(s, ["fazuoCuhuo", "wutouXiangyou"]);
   s.opportunityPool = shuffleInto(s, [...s.opportunityPool, ...PEAK_ADD_OPPORTUNITIES]);
   s.crisisPool = shuffleInto(s, [...s.crisisPool, ...PEAK_ADD_CRISES]);
-  log(s, "迁居凌云峰：杂役磋磨、功德箱失窃移出；月下对谈、夜半惊扰、耳目窥伺加入。");
+  log(s, "迁居凌云峰：杂役磋磨、功德蒙尘移出；月下对谈、夜半惊扰、耳目窥伺加入。");
 }
 
 const ZHOUFU_TURN = 25;
