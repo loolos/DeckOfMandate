@@ -27,6 +27,8 @@ export const STAGE3 = {
   confrontTurn: 10,
   /** 寺中阶段（静白嚣张计数、静白刁难）到这一回合为止。 */
   templeLastTurn: 18,
+  /** 果郡王翻船（舟覆噩耗）这一回合起，果郡王相助不再是任何事件的解牌。 */
+  zhoufuTurn: 25,
   /** 单独开始第三关：嫔、已有孕。 */
   standaloneRank: "pin" as RankId,
   standalonePregnant: true,
@@ -1839,7 +1841,14 @@ const ACT1_EVENTS: ReadonlySet<EventId3> = new Set<EventId3>([...ACT1_OPPORTUNIT
 
 /** 事件上显示的「没化解」文本：第 25 回合果郡王翻船之后，耳目窥伺不再提「撞见」。 */
 export function unresolvedText3(def: EventDef3, turn: number): string {
-  return def.id === "xianrenKuitan" && turn >= 25 ? "未来 2 回合每回合抓牌 -1（至少 1 张）" : def.unresolvedText;
+  return def.id === "xianrenKuitan" && turn >= STAGE3.zhoufuTurn ? "未来 2 回合每回合抓牌 -1（至少 1 张）" : def.unresolvedText;
+}
+
+/** 事件的解牌：果郡王翻船之后，果郡王相助不再算。 */
+export function answeringCards3(id: EventId3, turn: number): CardId3[] {
+  const def = EVENTS3[id];
+  const singles = (Object.keys(CARDS3) as CardId3[]).filter((c) => CARDS3[c].matches.includes(id));
+  return [...singles, ...(def.double ?? []).filter((c) => !singles.includes(c))].filter((c) => !(c === "guojunwangXiangzhu" && turn >= STAGE3.zhoufuTurn));
 }
 
 /** 手牌「匹配事件」只列这一幕（寺中 / 凌云峰）真的会出现的事件。 */

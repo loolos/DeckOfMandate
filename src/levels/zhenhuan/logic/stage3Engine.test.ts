@@ -5,6 +5,7 @@ import {
   CONFRONT,
   EXIT,
   matchesInAct,
+  answeringCards3,
   EVENTS3,
   FABRICATED_SECRET,
   FIXED_STORIES3,
@@ -742,6 +743,13 @@ describe("zhenhuan stage 3 engine", () => {
     s = act(s, { type: "playCard", cardUid: b! });
     expect(s.opportunity?.resolved).toBe(true);
     expect(s.statuses.some((x) => x.id === "yishiWucuo")).toBe(true);
+  });
+
+  it("果郡王翻船后: 夜半惊扰 / 耳目窥伺的解牌不再列果郡王相助", () => {
+    expect(answeringCards3("yebanJingrao", 24)).toContain("guojunwangXiangzhu");
+    expect(answeringCards3("yebanJingrao", 25)).not.toContain("guojunwangXiangzhu");
+    expect(answeringCards3("xianrenKuitan", 25)).not.toContain("guojunwangXiangzhu");
+    expect(answeringCards3("yebanJingrao", 25)).toContain("jingxinRennai");
   });
 
   it("山门偶遇: 荆钗布裙可解（清誉 +1），仍加入果郡王相助", () => {

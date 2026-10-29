@@ -409,6 +409,7 @@ const WANWAN_TURN = Number(Object.keys(FIXED_STORIES3).find((t) => FIXED_STORIES
 export function cardAffectsEvent3(s: Z3State, ev: EventInst3, cardId: CardId3): boolean {
   if (ev.resolved) return false;
   const def = EVENTS3[ev.id];
+  if (cardId === "guojunwangXiangzhu" && s.turn >= STAGE3.zhoufuTurn) return false;
   if (cardId === "lingrongXiangzhu" && lizigaoOpen(s, ev)) return true;
   if (def.double) return def.double.includes(cardId) && !(ev.progress ?? []).includes(cardId);
   if (!CARDS3[cardId].matches.includes(ev.id)) return false;
@@ -1415,7 +1416,7 @@ function moveToPeak(s: Z3State): void {
   log(s, "迁居凌云峰：杂役磋磨、功德蒙尘移出；月下对谈、夜半惊扰、耳目窥伺加入。");
 }
 
-const ZHOUFU_TURN = 25;
+const ZHOUFU_TURN = STAGE3.zhoufuTurn;
 
 /** 踏雪问疾（本回合打牌化解，不走默认）与月下琴笛都已完成，合婚庚帖写下时才有琴瑟同心。 */
 export function qinseReady(s: Z3State): boolean {
