@@ -141,5 +141,5 @@ src/levels/zhenhuan/assets/
 
 ## 6. 出图
 
-- 用 ChatGPT 逐张生成，风格设定、每张图的 prompt 与短编号（C01–C18、E01–E56、S01–S32、B1–B3）见 [art-prompts.md](./art-prompts.md)；第三关给 ChatGPT 直接读取的设定和 prompt 在 [art-prompts-stage3.md](./art-prompts-stage3.md)。
+- 用 ChatGPT 逐张生成，风格设定、每张图的 prompt 与短编号（C01–C18、E01–E56、S01–S34、B1–B3）见 [art-prompts.md](./art-prompts.md)；第三关给 ChatGPT 直接读取的设定和 prompt 在 [art-prompts-stage3.md](./art-prompts-stage3.md)。
 - 选定的原图按短编号命名放进 `art-inbox/`，导入时改名为游戏 id、裁切并压缩到本文第 2 节的位置。
