@@ -1,6 +1,6 @@
 # 甄嬛传 · ChatGPT 出图 Prompt
 
-这次只画第三关「青灯凤阙」的 60 张图：手牌 C09–C13、C16–C18（其中 C16–C18 是三张旧手牌的寺中版）、事件 E24–E56、剧情 S17–S32（含 S27b、S27c）、背景 B3。设定、出图格式和全部 prompt 都在 [art-prompts-stage3.md](./art-prompts-stage3.md)，ChatGPT 直接从仓库读这份文件。前两关的 49 张已经入库，不再改动，它们的 prompt 存档在本文末尾。比例、尺寸与入库方式见 [art-spec.md](./art-spec.md)。
+这次只画第三关「青灯凤阙」的 60 张图：手牌 C09–C13、C16–C18（其中 C16–C18 是三张旧手牌的寺中版）、事件 E24–E56、剧情 S17–S34、背景 B3。设定、出图格式和全部 prompt 都在 [art-prompts-stage3.md](./art-prompts-stage3.md)，ChatGPT 直接从仓库读这份文件。前两关的 49 张已经入库，不再改动，它们的 prompt 存档在本文末尾。比例、尺寸与入库方式见 [art-spec.md](./art-spec.md)。
 
 第三关沿用的旧图不用重画：仪容整肃、谨言慎行、温太医相助、收拢人心、静观其变、眉庄相助、陵容相助、槿汐相助 8 张手牌（第一幕用；后三张在第二、三幕换成寺中版），中宫垂青、太后垂询、请脉报喜、蜚语盈廊、内务府刁难、仪态微瑕 6 个事件，以及剧情凤鸾承恩。
 
@@ -69,10 +69,10 @@
 | E43 | 赏花小聚 | 皇后 | shanghuaXiaoju |
 | E44 | 佛前供灯 | 机会 | foqianGongdeng |
 | E45 | 宫中来信 | 机会 | gongzhongLaixin |
-| E46 | 静岸师太垂怜 | 机会 | jinganChuilian |
+| E46 | 慈云覆荫 | 机会 | jinganChuilian |
 | E47 | 山中采药 | 机会 | shanzhongCaiyao |
 | E48 | 禅房抄经 | 机会 | chanfangChaojing |
-| E49 | 莫言援手 | 机会 | moyanYuanshou |
+| E49 | 默然分劳 | 机会 | moyanYuanshou |
 | E50 | 月下对谈 | 机会 | yuexiaDuitan |
 | E51 | 断炭缺粮 | 危机 | tanhuoLiangmi |
 | E52 | 杂役磋磨 | 危机 | fazuoCuhuo |
@@ -91,13 +91,13 @@
 | S25 | 踏雪问疾 | 剧情 | taxueWenji |
 | S26 | 合婚庚帖 | 剧情 | hehunGengtie |
 | S27 | 滇南之行 | 剧情 | diannanZhixing |
-| S27b | 舟覆噩耗 | 剧情 | zhoufuEHao |
-| S27c | 圣驾偶遇 | 剧情 | yihuaOuyu |
-| S28 | 纯元故衣 | 特殊剧情 | chunyuan |
-| S29 | 景仁宫对质 | 特殊剧情 | confront |
-| S30 | 肺痨之诬 | 特殊剧情 | feilao |
-| S31 | 月下琴笛 | 特殊剧情 | changxiangsi |
-| S32 | 移花接木 | 特殊剧情 | yihua |
+| S28 | 舟覆噩耗 | 剧情 | zhoufuEHao |
+| S29 | 圣驾偶遇 | 剧情 | yihuaOuyu |
+| S30 | 纯元故衣 | 特殊剧情 | chunyuan |
+| S31 | 景仁宫对质 | 特殊剧情 | confront |
+| S32 | 肺痨之诬 | 特殊剧情 | feilao |
+| S33 | 月下琴笛 | 特殊剧情 | changxiangsi |
+| S34 | 移花接木 | 特殊剧情 | yihua |
 | B3 | 第三关背景 | 背景 | stage3 |
 
 ## 存档：前两关（已完成）
