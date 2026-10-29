@@ -43,6 +43,9 @@ export const STAGE3 = {
 
 export const ACT_TITLE: Record<Act, string> = { 1: "第一幕 · 凤仪之下", 2: "第二幕 · 青灯古佛", 3: "第三幕 · 移花接木" };
 
+/** 第一幕「盛宠招妒」线：圣宠不低于它时，部分事件了结后另扣清誉。 */
+export const ENVY_LINE3 = 14;
+
 /** 修行身份（第二、三幕）：比答应还低。 */
 export const XIUXING = { name: "修行", draw: 2, plays: 1, cap: 8 };
 
@@ -1032,6 +1035,8 @@ export type EventDef3 = {
   readonly xinCover?: string;
   /** 需两张解牌的危机只凑了一张时的惩罚（不写则按完整惩罚）。 */
   readonly halfPenalty?: readonly Delta3[];
+  /** 第一幕「盛宠招妒」：圣宠达到 ENVY_LINE3 时，这件事无论怎么了结都要付的清誉。 */
+  readonly envyCost?: readonly Delta3[];
   /** 危机被化解时也要付的代价（断炭缺粮：熬过去也伤身子）。 */
   readonly resolveCost?: readonly Delta3[];
   /** 同上：惩罚状态只持续这么多回合。 */
@@ -1068,6 +1073,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     name: "中宫垂青",
     emoji: "🏮",
     flavor: "景仁宫晨省，皇后当着众人的面温温地问起碎玉轩近来可好，又问饮食起居，一桩桩问得比谁都细。",
+    envyCost: [q(-1)],
     reward: [sc(1)],
     penalty: NO,
     secret: "dingmanZhonggong",
@@ -1275,6 +1281,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     name: "仪态微瑕",
     emoji: "🎎",
     flavor: "景仁宫请安时，你一时头晕，起身时碰翻了案上的茶盏，滚烫的茶水溅在手背上，红了一片，满殿的人都看了过来。",
+    envyCost: [q(-1)],
     reward: NO,
     penalty: [q(-1), sc(-1)],
     resolvedText: "移除事件",
@@ -1291,6 +1298,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     name: "碎玉私语",
     emoji: "🗣️",
     flavor: "碎玉轩里有人嚼舌根，说小主如今眼里只有皇上，待下人越发冷淡了。",
+    envyCost: [q(-1)],
     reward: NO,
     penalty: NO,
     penaltyStatus: "xianhuaChuanKai",
@@ -1311,6 +1319,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     emoji: "🌰",
     xinCover: "齐妃那句讥讽还没落地，欣贵人先笑出了声：「齐妃姐姐这话酸的，莫不是昨夜没睡好？」满殿的人都低头憋着笑，齐妃脸上挂不住，那桩事也就这么揭过去了。",
     flavor: "景仁宫请安时，齐妃当着众人的面讥讽你：「莞嫔如今可是皇上心尖上的人了。」",
+    envyCost: [q(-1)],
     reward: NO,
     penalty: [q(-2)],
     penaltyStatus: "liuyanChanshen",
@@ -1334,6 +1343,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     emoji: "📚",
     xinCover: "欣贵人见皇上连着几日都在长春宫，大大方方进去请安，借口自己公主的功课求皇上指点，三言两语又把话头引回了六宫，齐妃的小算盘没能得逞。",
     flavor: "齐妃拿三阿哥的功课做由头，把皇上请进了长春宫，一连几日都没放人出来，六宫的风向悄悄变了。",
+    envyCost: [q(-1)],
     reward: NO,
     penalty: [sc(-2)],
     rival: "qifei",
@@ -1354,6 +1364,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     emoji: "💃",
     xinCover: "欣贵人在一旁看得直撇嘴，当着皇上的面说：「新人鲜亮，咱们这些老人也不差呀。」又拉着你坐到皇上近前，祺贵人那点抢风头的心思，白费了。",
     flavor: "祺贵人新近入宫，在御花园里“偶遇”了皇上，笑得比花还艳，皇上当晚便翻了她的牌子。",
+    envyCost: [q(-1)],
     reward: NO,
     penalty: [sc(-2)],
     rival: "guaerjia",
@@ -1459,6 +1470,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     name: "景仁赐锦",
     emoji: "🎁",
     flavor: "景仁宫的剪秋亲自送来几匹云锦和一支点翠步摇，说是皇后特意挑的，给碎玉轩添喜，言语间满是体恤。",
+    envyCost: [q(-1)],
     reward: [sc(1)],
     penalty: NO,
     cardReward: { jinyanShenxing: [q(1)], jinxiXiangzhu: [sz(1)] },
@@ -1511,6 +1523,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     name: "家宴献艺",
     emoji: "🎵",
     flavor: "家宴将近，皇后特意把你唤去，说皇上最爱听你弹琴，请你在席上弹一曲，也好让太后高兴高兴。",
+    envyCost: [q(-1)],
     reward: [sc(1)],
     penalty: NO,
     lingrongSecret: "jierenYaochong",
