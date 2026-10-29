@@ -933,7 +933,7 @@ export type PairId = "yuhuayuan" | "xianfu" | "yanqing";
 
 export const PAIRS: Record<PairId, { name: string; emoji: string; opportunity: OpportunityId3; crisis: CrisisId3; shared: CardId3; ally: AllyId; rival: RivalId }> = {
   yuhuayuan: {
-    name: "御花园赏花",
+    name: "花苑观芳",
     emoji: "🌸",
     opportunity: "yuhuayuanXin",
     crisis: "yuhuayuanQi",
@@ -1177,7 +1177,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
   yuhuayuanXin: {
     id: "yuhuayuanXin",
     kind: "opportunity",
-    name: "御花园赏花·欣贵人邀游",
+    name: "花苑观芳·欣贵人邀游",
     emoji: "🌸",
     flavor: "欣贵人兴冲冲邀你同游御花园，说牡丹开得正好。不巧走到半路，远远瞧见齐妃也带着人在园子里赏花。",
     reward: [sc(1)],
@@ -1391,7 +1391,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
   yuhuayuanQi: {
     id: "yuhuayuanQi",
     kind: "crisis",
-    name: "御花园赏花·齐妃讥讽",
+    name: "花苑观芳·齐妃讥讽",
     emoji: "🌸",
     xinCover: "欣贵人嗓门一提，笑着堵了回去：「齐妃姐姐这是羡慕咱们说话投缘吧？风光不风光的，姐姐先把三阿哥的功课看紧些。」满园宫人都憋着笑，齐妃讪讪地走了。",
     flavor: "齐妃带着宫人在御花园里迎面撞上你和欣贵人，上下打量了你一番，阴阳怪气地说：「莞嫔如今有欣贵人作陪，好大的风光。只是这宫里的风光，从来都是一阵一阵的。」当着满园宫人的面，句句带刺。",
@@ -1400,8 +1400,8 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     rival: "qifei",
     needTwo: true,
     pair: "yuhuayuan",
-    resolvedText: "移除事件；与【御花园赏花·欣贵人邀游】相连",
-    unresolvedText: "清誉 -2；【御花园赏花·欣贵人邀游】随之作废",
+    resolvedText: "移除事件；与【花苑观芳·欣贵人邀游】相连",
+    unresolvedText: "清誉 -2；【花苑观芳·欣贵人邀游】随之作废",
     resolvedStory: {
       jinyanShenxing: "你只淡淡回了一句「娘娘教训的是」，欣贵人立刻接过话头，三言两语说得齐妃面红耳赤，拂袖走了。",
       jingguanQibian: "你不接她的话，只顾着赏花。齐妃自讨没趣，悻悻地走了。",
@@ -1524,7 +1524,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     kind: "huanghou",
     name: "赏花小聚",
     emoji: "🏮",
-    flavor: "皇后召各宫去御花园赏花，特意吩咐让陵容陪你同去，说你们姐妹一向亲厚。",
+    flavor: "皇后召各宫去花苑观芳，特意吩咐让陵容陪你同去，说你们姐妹一向亲厚。",
     reward: [q(1)],
     penalty: NO,
     lingrongSecret: "xijianSiyu",
