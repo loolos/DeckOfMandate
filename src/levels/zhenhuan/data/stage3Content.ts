@@ -951,7 +951,7 @@ export const PAIRS: Record<PairId, { name: string; emoji: string; opportunity: O
     rival: "guaerjia",
   },
   yanqing: {
-    name: "延庆殿夜话",
+    name: "延庆烛话",
     emoji: "🍵",
     opportunity: "yanqingDuan",
     crisis: "yanqingQi",
@@ -1213,7 +1213,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
   yanqingDuan: {
     id: "yanqingDuan",
     kind: "opportunity",
-    name: "延庆殿夜话·端妃旧话",
+    name: "延庆烛话·端妃旧话",
     emoji: "🍵",
     flavor: "夜里你去延庆殿探望端妃。她屏退了所有宫人，只留一盏孤灯，几次欲言又止，像是有积压多年的话要对你说。",
     reward: [q(1)],
@@ -1431,7 +1431,7 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
   yanqingQi: {
     id: "yanqingQi",
     kind: "crisis",
-    name: "延庆殿夜话·齐妃探病",
+    name: "延庆烛话·齐妃探病",
     emoji: "🍵",
     xinCover: "欣贵人恰巧也来看端妃，一进门便大着嗓门道：「齐妃姐姐也来了？正好，一起坐下说说话。」她拉着齐妃东拉西扯，齐妃探不出半点口风，只能悻悻地回去复命。",
     flavor: "齐妃奉皇后之命来延庆殿“探病”，正撞见你和端妃说话，眼神在你们两人之间转了好几个来回。",
@@ -1440,8 +1440,8 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     rival: "qifei",
     needTwo: true,
     pair: "yanqing",
-    resolvedText: "移除事件；与【延庆殿夜话·端妃旧话】相连",
-    unresolvedText: "清誉 -2；【延庆殿夜话·端妃旧话】随之作废",
+    resolvedText: "移除事件；与【延庆烛话·端妃旧话】相连",
+    unresolvedText: "清誉 -2；【延庆烛话·端妃旧话】随之作废",
     resolvedStory: {
       wenTaiyiZhenzhi: "温实初提着药箱进来，说该给端妃请脉了，病人须得静养。齐妃坐不住，客客气气地被请了出去。",
       jinxiXiangzhu: "槿汐引着齐妃去偏殿喝茶，絮絮叨叨说了好些闲话，齐妃什么也没听着。",
