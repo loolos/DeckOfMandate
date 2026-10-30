@@ -434,7 +434,6 @@ export type StatusId3 =
   | "xiangyouYiyun"
   | "xinruZhishui"
   | "jingfeiZhouji"
-  | "yuandaoBuji"
   | "weiNverChengxia"
   | "diyunYinghuai"
   | "meizhuangDadian"
@@ -810,17 +809,6 @@ export const STATUSES3: Record<StatusId3, StatusDef3> = {
     blocksCards: ["jinxiXiangzhu"],
     effectText: "未来 2 回合，不能打出【槿汐相助】。",
     flavor: "槿汐连着几夜没合眼，累倒了，得歇上几日才能再近身伺候。",
-  },
-  yuandaoBuji: {
-    id: "yuandaoBuji",
-    name: "远道补给",
-    emoji: "📦",
-    tag: "positive",
-    duration: 3,
-    drawModifier: 0,
-    turnEnd: [{ resource: "shenzi", amount: 1 }],
-    effectText: "未来 3 回合，每回合末 🌱身子 +1。",
-    flavor: "眉庄人在宫里，却托温实初把药材、棉衣和米面一样样捎上了山，替你调养身子。",
   },
   weiNverChengxia: {
     id: "weiNverChengxia",
@@ -2321,10 +2309,11 @@ export const STORIES3: Record<StoryId3, StoryDef3> = {
     emoji: "🩺",
     flavor: "温实初上山来了，捎来胧月的一张小像，是敬妃托他带的。画上的孩子胖乎乎的，眉眼像你。",
     note: "有【敬妃之谊】时，另得未来 3 回合每回合抓牌 +1。",
-    defaultOptionId: "zhenzhi",
+    defaultOptionId: "shouxia",
     options: [
-      { id: "zhenzhi", name: "请他诊治", effects: [sz(2)], removeNegatives: "all", text: "移除全部负面状态；身子 +2", story: "温实初替你诊了脉，开了方子，又留下许多药材。临走时他说：「嬛妹妹，你要好好的。」" },
-      { id: "yuandaoBuji", name: "眉庄捎来补给", card: "meizhuangXiangzhu", effects: [], status: "yuandaoBuji", text: "未来 3 回合每回合末身子 +1", compact: "🌱+1×3", story: "眉庄在宫里放心不下，远远托温实初带了药材和补给上山。" },
+      { id: "shouxia", name: "收下小像", effects: [sz(1)], drawCards: 1, text: "抽 1 张牌；身子 +1", story: "你把小像贴在心口看了许久，画上的孩子胖乎乎的，笑得没心没肺。温实初在一旁欲言又止，终是只留下一句：「嬛妹妹，你要好好的。」这一夜，你睡得比往日踏实些。" },
+      { id: "zhenzhi", name: "请他诊治", card: "wenTaiyiZhenzhi", effects: [sz(2)], removeNegatives: "all", text: "移除全部负面状态；身子 +2", story: "温实初替你诊了脉，开了方子，又留下许多药材。临走时他说：「嬛妹妹，你要好好的。」" },
+      { id: "yuandaoBuji", name: "眉庄捎来补给", card: "meizhuangXiangzhu", effects: [], status: "meizhuangDadian", text: "未来 3 回合每回合抓牌 +1", story: "眉庄在宫里放心不下，远远托温实初带了药材和补给上山，又托沈家在宫里宫外替你四处打点，日子渐渐宽裕了些。" },
       { id: "weiNver", name: "槿汐相伴", card: "jinxiXiangzhu", effects: [], status: "weiNverChengxia", text: "未来 2 回合每回合末清誉 +1", compact: "🪷+1×2", story: "你看着胧月的小像，看了很久。槿汐在一旁默默替你添了一盏灯。" },
     ],
   },

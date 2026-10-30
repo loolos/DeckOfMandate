@@ -680,24 +680,24 @@ describe("zhenhuan stage 3 engine", () => {
     expect(matchesInAct(m, 2, 20)).toContain("xianrenKuitan");
   });
 
-  it("故人来访 (turn 15): no temporary 温太医 card; 眉庄相助 brings 远道补给 (身子 +1 for 3 turns)", () => {
+  it("故人来访 (turn 15): no temporary 温太医 card; 眉庄相助 stacks a second 眉庄打点 (抽牌 +1 for 3 turns)", () => {
     let s = advanceTo(newStage3(6, CARRY), 15);
     expect(s.stories.map((x) => x.id)).toContain("wentaiyiTanshi");
     expect(s.hand.some((c) => c.id === "wenTaiyiZhenzhi" && c.uid.startsWith("w"))).toBe(false);
     s.extraPlays = 3;
     const [mz] = setHand(s, ["meizhuangXiangzhu"]);
     s = act(s, { type: "playCard", cardUid: mz! });
-    expect(s.statuses.some((x) => x.id === "yuandaoBuji")).toBe(true);
+    expect(s.statuses.filter((x) => x.id === "meizhuangDadian")).toHaveLength(2);
   });
 
-  it("故人来访 (turn 15): 槿汐相助 / 眉庄相助 are exclusive options (and 默认 诊治 is the third)", () => {
+  it("故人来访 (turn 15): 槿汐相助 / 眉庄相助 are exclusive options (默认 收下小像 / 温太医诊治 are the others)", () => {
     let s = advanceTo(newStage3(6, CARRY), 15);
     s.extraPlays = 3;
     const [jx, mz] = setHand(s, ["jinxiXiangzhu", "meizhuangXiangzhu"]);
     s = act(s, { type: "playCard", cardUid: jx! });
     s = act(s, { type: "playCard", cardUid: mz! });
     expect(s.statuses.some((x) => x.id === "weiNverChengxia")).toBe(true);
-    expect(s.statuses.some((x) => x.id === "yuandaoBuji")).toBe(false);
+    expect(s.statuses.filter((x) => x.id === "meizhuangDadian")).toHaveLength(1);
   });
 
   it("第二幕危机需两张解牌: 杂役磋磨 -2 none / -1 one card / cleared with two; 断炭缺粮 half = 寒疾缠身 1 turn", () => {
