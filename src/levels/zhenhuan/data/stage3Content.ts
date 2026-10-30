@@ -466,11 +466,15 @@ export type StatusDef3 = {
   readonly flavor: string;
   /** Before this turn the player only sees the veiled text (盟友状态的效果日后才揭晓). */
   readonly veiled?: { readonly untilTurn: number; readonly effectText: string; readonly flavor: string };
+  /** From this turn on the status shows a different story text (效果文字不变). */
+  readonly lateFlavor?: { readonly fromTurn: number; readonly flavor: string };
 };
 
 /** What the player is shown of a status on `turn`. */
 export function statusText3(def: StatusDef3, turn: number): { effectText: string; flavor: string } {
-  return def.veiled && turn < def.veiled.untilTurn ? def.veiled : def;
+  if (def.veiled && turn < def.veiled.untilTurn) return def.veiled;
+  if (def.lateFlavor && turn >= def.lateFlavor.fromTurn) return { effectText: def.effectText, flavor: def.lateFlavor.flavor };
+  return def;
 }
 
 /** 打压 leaves one of these per rival: her next crisis needs one fewer 解牌. */
@@ -596,6 +600,10 @@ export const STATUSES3: Record<StatusId3, StatusDef3> = {
     drawModifier: 0,
     effectText: "不再出现召幸。第一幕没有伤胎类事件，孩子一定能平安出生。",
     flavor: "太医跪地道喜：小主有喜了。你抚着小腹，一时竟不知该喜还是该忧。",
+    lateFlavor: {
+      fromTurn: STAGE3.act3Start,
+      flavor: "腹中这个孩子并不是皇上的，可万万不能叫皇上知道，只能让他深信不疑，这是他的骨肉。月份、脉案、人前人后的一言一行，都不能出半点差错。",
+    },
   },
   duanfeiXianghu: {
     id: "duanfeiXianghu",
@@ -681,6 +689,10 @@ export const STATUSES3: Record<StatusId3, StatusDef3> = {
     drawModifier: 0,
     effectText: "下一次危机事件没化解时免罚（静白刁难仍算没化解）。用掉后消失。",
     flavor: "静岸师太嘴上不说，心里却是护着你的，真遇上为难事，她总会替你拦上一拦。",
+    lateFlavor: {
+      fromTurn: STAGE3.templeLastTurn + 1,
+      flavor: "上了凌云峰，静白的手伸不到这里了。山下这份庇护还在，师太没有忘了你，真遇上为难事，仍会托人替你拦上一拦。",
+    },
   },
   hanzheng: {
     id: "hanzheng",
@@ -2574,7 +2586,7 @@ export const FEILAO = {
   cardStory: {
     jinxiXiangzhu: "「背你上山」：槿汐一句话不说，蹲下身把你背了起来。静白的人伸手来拦，她只回头看了一眼：「我家小主的身子，轮不到你们碰。」山路上积着雪，她一步一步踩得很稳，背上的你听见她的喘息，一声比一声重，却始终没有放下你。",
     chanyuXiushen: "「佛前陈情」：你整了整衣襟，在静岸师太面前跪下，把病了多久、咳在何时、帕上有无血色，一桩一桩平平静静地说清楚。师太闭着眼捻了许久佛珠，终究没有驳回静白，却对身边的小尼说：「去，把今日的话记在簿上。」",
-    meizhuangXiangzhu: "「宫中送药」：天黑透了，山门外有人叩门，是眉庄托人连夜送来的包袱：几味润肺的药材，一件厚厚的狐裘，夹层里还缝着一张字条，只有八个字：「听闻你病，万望珍重。」不知是她信了山上的传言，还是宁可信其真。你把字条在灯上烧了，药材却收得很小心。",
+    meizhuangXiangzhu: "「宫中送药」：天黑透了，山门外有人叩门，是眉庄托人连夜送来的包袱：几味润肺的药材，一件厚厚的狐裘，夹层里还缝着一张字条，只有八个字：「听闻你病，万望珍重。」她向来心细，山上清寒、你身子又弱，缺什么她都一样样替你想到了。你把字条在灯上烧了，药材却收得很小心。",
   } as Record<string, string>,
   tiers: [
     { name: "师太暗护", text: "清誉 -1；下一次危机未化解时免罚", story: "静岸师太拦不住静白，当着众人只说了句「依规办吧」，转过身却吩咐小尼：把后山空屋的炭盆生起来，被褥晒透了，再送一罐熬好的汤药上去。你踏进那间屋子时，屋里竟是暖的，案上还摆着一碟尚温的素点。" },
