@@ -1243,6 +1243,7 @@ function PopupBody({ state, id }: { state: Z3State; id: PopupId }) {
           {POPUP_TEXT.ximai.map((t) => (
             <p key={t}>{t}</p>
           ))}
+          {state.exitTier === 2 || state.exitTier === 3 ? <p>{POPUP_TEXT.ximaiTierHint[state.exitTier]}</p> : null}
           <p className={styles.muted}>{POPUP_TEXT.ximaiRules}</p>
         </>
       );
