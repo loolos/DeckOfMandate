@@ -2040,6 +2040,7 @@ export function endingStory3(s: Z3State): string[] {
   if (s.exitTier) lines.push(POPUP_TEXT.homecomingTier[s.exitTier]!);
   if (s.exitTierLingrong) lines.push(ENDING.lingrong[s.exitTierLingrong]);
   if (s.victory === "perfect") lines.push(...ENDING.perfect);
+  if (s.victory === "return") lines.push(ENDING.perfectHint);
   return lines;
 }
 
