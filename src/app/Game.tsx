@@ -635,7 +635,7 @@ export function Game() {
             </h2>
             <LanguageToggle />
           </div>
-          <div className={styles.levelIntroBody}>{t(introLevelDef.introBodyKey as MessageKey)}</div>
+          <div className={styles.levelIntroBody} data-auto-scroll="">{t(introLevelDef.introBodyKey as MessageKey)}</div>
           <button type="button" className={`${styles.btn} ${styles.btnPrimary}`} onClick={confirmLevelIntro}>
             {t("menu.introContinue")}
           </button>

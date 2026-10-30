@@ -30,6 +30,8 @@ import {
   SHENZI,
   STAGE3,
   matchesInAct,
+  answeringCards3,
+  cardFlavor3,
   cardRules3,
   unresolvedText3,
   STATUSES3,
@@ -73,6 +75,7 @@ import {
   playsLeft3,
   rankCap3,
   rankName3,
+  isSpentStatus3,
   removableNegatives3,
   storyBasicOptions3,
   storyCardResponses3,
@@ -155,7 +158,7 @@ function Chips({ ids, lit }: { ids: readonly CardId3[]; lit: (id: CardId3) => bo
 const KIND_TONE = { opportunity: styles.kindOpportunity, crisis: styles.kindCrisis, huanghou: styles.kindHuanghou };
 const CARD_TONE = { opportunity: styles.cardOpportunity, crisis: styles.cardCrisis, huanghou: styles.cardHuanghou };
 
-/** 连环事件的两半在手牌上只列一项：共同前缀（如「御花园赏花」）。 */
+/** 连环事件的两半在手牌上只列一项：共同前缀（如「花苑观芳」）。 */
 function collapsePairs<T extends { id: EventId3 }>(items: readonly T[]): { key: string; emoji: string; name: string; items: T[] }[] {
   const out: { key: string; emoji: string; name: string; items: T[] }[] = [];
   for (const it of items) {
@@ -168,12 +171,6 @@ function collapsePairs<T extends { id: EventId3 }>(items: readonly T[]): { key: 
   return out;
 }
 
-
-function answeringCards(id: EventId3): CardId3[] {
-  const def = EVENTS3[id];
-  const singles = (Object.keys(CARDS3) as CardId3[]).filter((c) => CARDS3[c].matches.includes(id));
-  return [...singles, ...(def.double ?? []).filter((c) => !singles.includes(c))];
-}
 
 function resolvedDetail(inst: EventInst3): string {
   const def = EVENTS3[inst.id];
@@ -292,7 +289,7 @@ function EventCard({ state, inst, fold, dispatch }: { state: Z3State; inst: Even
       {locked ? <p className={styles.endHint}>🔒 连环危机还没化解，这张机会暂时锁着。</p> : null}
       <p className={styles.rule}>
         <span className={styles.ruleLabel}>匹配牌：</span>
-        <Chips ids={answeringCards(inst.id)} lit={(id) => handIds.has(id)} />
+        <Chips ids={answeringCards3(inst.id, state.turn)} lit={(id) => handIds.has(id)} />
       </p>
       {lingrongTable && tier ? (
         <p className={styles.rule}>
@@ -555,7 +552,7 @@ function ConfrontCard({ state, fold, dispatch }: { state: Z3State; fold: Fold; d
     >
       <p className={styles.flavor}>{CONFRONT.flavor}</p>
       <p className={styles.rule}>
-        <span className={styles.ruleLabel}>皇后拿出了 {c.presented} 件事：</span>本回合须打出 <strong>{c.needed}</strong> 张辩白牌
+        <span className={styles.ruleLabel}>被人抓住的把柄有 {c.presented} 项：</span>本回合须打出 <strong>{c.needed}</strong> 张辩白牌
         {state.rank === "guiren" ? "（贵人位分低，多 1 张）" : ""}。少打一张，结果就差一档。陵容称病没来，她的牌打不出。
       </p>
       <p className={styles.rule}>
@@ -689,7 +686,7 @@ function YihuaCard({ state, fold, dispatch }: { state: Z3State; fold: Fold; disp
                 {["①", "②", "③", "④"][i]} {s.emoji} {s.name}
               </strong>
               ：{s.todo}
-              {state_ === "now" && n === 1 && y.yinjiaNeed > 1 ? ` （已落发：要打 ${y.yinjiaNeed} 张，至少 1 张槿汐，另一张可以是眉庄；已打 ${y.yinjia.length} 张）` : ""}
+              {state_ === "now" && n === 1 && y.yinjiaNeed > 1 ? ` （因此前已落发，皇上未必肯为出家人动身：要打 ${y.yinjiaNeed} 张，至少 1 张槿汐，另一张可以是眉庄；已打 ${y.yinjia.length} 张）` : ""}
               {state_ === "now" && n === 2 && y.ouyuDue != null ? (y.ouyuDue === state.turn ? "（皇上今日驾临：本回合解决【圣驾偶遇】）" : `（第 ${y.ouyuDue} 回合皇上驾临）`) : ""}
               {state_ === "now" && n === 4 ? (y.dengmen ? `（皇上已登门：须在第 ${y.dengmen.openTurn}–${y.dengmen.openTurn + 1} 回合内打出 ${y.dengmen.needed} 张解牌${y.dengmen.needed === 0 ? "，只需过剧情" : `，已打 ${Math.min(y.dengmen.played.length, y.dengmen.needed)} 张；疑点 ${y.dengmen.doubt}、遗物 ${y.dengmen.relics} 件${state.exitTier === 1 ? "" : "，非体面自请多 1 张"}`}）` : "（下一回合到来：按当时的疑点与未焚的遗物定解牌张数，两回合内打够）") : ""}
               {state_ === "now" ? (
@@ -829,7 +826,7 @@ function HandCard({ state, card, dispatch, fold }: { state: Z3State; card: CardI
         {tags}
       </div>
       <CardArt src={cardArtUrl(card.id, state.act === 1 ? undefined : "temple")} emoji={def.emoji} />
-      <p className={styles.flavor}>{def.flavor}</p>
+      <p className={styles.flavor}>{cardFlavor3(def, state.act)}</p>
       {[...rules.rulesText, ...(relic && state.yihua ? [RELIC_DOUBT_RULE] : [])].map((line) => (
         <p key={line} className={styles.rule}>
           {expandedEffect3(line)}
@@ -867,6 +864,10 @@ function HandCard({ state, card, dispatch, fold }: { state: Z3State; card: CardI
 
 function Statuses({ state, dispatch }: { state: Z3State; dispatch: Dispatch }) {
   const [open, setOpen] = useState<ReadonlySet<string>>(() => new Set());
+  const [showSpent, setShowSpent] = useState(false);
+  const spentCount = state.statuses.filter((st) => isSpentStatus3(state, st)).length;
+  const live = state.statuses.filter((st) => !isSpentStatus3(state, st));
+  const shown = showSpent ? [...live, ...state.statuses.filter((st) => isSpentStatus3(state, st))] : live;
   const removable = new Set(state.pending?.kind === "wentaiyi" ? removableNegatives3(state).map((s) => s.uid) : []);
   const toggle = (uid: string) =>
     setOpen((cur) => {
@@ -879,8 +880,8 @@ function Statuses({ state, dispatch }: { state: Z3State; dispatch: Dispatch }) {
     <div className={styles.statusRow}>
       <span className={styles.muted}>状态：</span>
       <ScrollRow className={styles.statuses}>
-        {state.statuses.length === 0 && !state.yihua ? <span className={styles.muted}>无</span> : null}
-        {groupStatuses(state.statuses).map(({ st, count }) => {
+        {shown.length === 0 && !state.yihua ? <span className={styles.muted}>无</span> : null}
+        {groupStatuses(shown).map(({ st, count }) => {
           const def = STATUSES3[st.id];
           const notYet = !def.permanent && st.appliesFromTurn > state.turn;
           const expanded = open.has(st.uid);
@@ -914,7 +915,7 @@ function Statuses({ state, dispatch }: { state: Z3State; dispatch: Dispatch }) {
                   {def.unremovable ? "·不可移除" : ""}
                 </button>
                 <span className={`${styles.muted} ${styles.statusFull}`}>
-                  {def.permanent ? "触发 / 结束前一直保留" : notYet ? `下回合起生效，共 ${st.remaining} 回合` : `剩余 ${st.remaining} 回合`}
+                  {def.permanent ? "触发 / 结束前一直保留" : notYet ? `下回合起生效，共 ${st.remaining} 回合` : isSpentStatus3(state, st) ? "本回合已生效，回合末结束" : `剩余 ${st.remaining} 回合`}
                 </span>
                 {removable.has(st.uid) ? (
                   <button
@@ -959,6 +960,11 @@ function Statuses({ state, dispatch }: { state: Z3State; dispatch: Dispatch }) {
               <span className={`${styles.muted} ${styles.statusFull}`}>到 {DOUBT.max} 即失败</span>
             </div>
           </div>
+        ) : null}
+        {spentCount > 0 ? (
+          <button type="button" className={`${styles.btn} ${styles.btnSmall}`} onClick={() => setShowSpent((v) => !v)}>
+            {showSpent ? "收起已生效" : `已生效 ${spentCount} ▸`}
+          </button>
         ) : null}
       </ScrollRow>
     </div>
@@ -1020,6 +1026,12 @@ function ConfrontEvidence({ state }: { state: Z3State }) {
   const entry = (l: (typeof lines)[number], i: number) => (
     <p key={`${l.line}-${i}`}>
       {l.line}
+      {l.qifei ? (
+        <>
+          <br />
+          <span className={styles.muted}>{POPUP_TEXT.confrontQifeiTail}</span>
+        </>
+      ) : null}
       {l.duanfei ? (
         <>
           <br />
@@ -1032,6 +1044,7 @@ function ConfrontEvidence({ state }: { state: Z3State }) {
     <>
       {shown.length > 0 ? <p className={styles.muted}>{POPUP_TEXT.confrontIntro}</p> : null}
       {shown.map(entry)}
+      {state.lizigao && !shown.some((l) => l.qifei) ? <p className={styles.muted}>{POPUP_TEXT.confrontQifei}</p> : null}
       {hasStatus3(state, "duanfeiXianghu") && !shown.some((l) => l.duanfei) ? <p className={styles.muted}>{POPUP_TEXT.confrontDuanfei}</p> : null}
       {exposed ? <p>{summary.exposed}</p> : null}
       {withheld.length > 0 ? <p>{exposed ? summary.withheld : summary.withheldOnly}</p> : null}
@@ -1056,6 +1069,7 @@ function ConfrontRealize({ state }: { state: Z3State }) {
       {exposed ? <p>{text.exposed}</p> : withheld ? <p>{text.withheldOnly}</p> : null}
       {exposed && withheld ? <p>{text.withheld}</p> : null}
       {fabricated ? <p>{text.fabricated}</p> : null}
+      {state.lizigao ? <p>{text.lizigao}</p> : null}
     </>
   );
 }
@@ -1115,7 +1129,7 @@ function PopupBody({ state, id }: { state: Z3State; id: PopupId }) {
         <>
           <p>{d ? dengmenOpenText(d.doubt, d.relics, state.exitTier) : null}</p>
           <p className={styles.muted}>
-            {d && d.needed === 0 ? "皇上没有起疑，只需过完剧情。" : `${POPUP_TEXT.dengmenRules}本次需要 ${d?.needed ?? 0} 张。`}
+            {d && d.needed === 0 ? "你的安排天衣无缝，只需过完剧情。" : `${POPUP_TEXT.dengmenRules}本次需要 ${d?.needed ?? 0} 张。`}
           </p>
         </>
       );
@@ -1135,7 +1149,9 @@ function PopupBody({ state, id }: { state: Z3State; id: PopupId }) {
       const r = state.chunyuanResult ?? "fail";
       return (
         <>
-          <p>{CHUNYUAN.popup[r]}</p>
+          {CHUNYUAN.popup[r].map((para, i) => (
+            <p key={i}>{para}</p>
+          ))}
           <p className={styles.muted}>{CHUNYUAN.popupRules[r]}</p>
         </>
       );
@@ -1201,6 +1217,15 @@ function PopupBody({ state, id }: { state: Z3State; id: PopupId }) {
           {hasStatus3(state, "qinseHeming") ? <p className={styles.muted}>{POPUP_TEXT.zhoufuQinseRules}</p> : null}
         </>
       );
+    case "lizigao":
+      return (
+        <>
+          {POPUP_TEXT.lizigao.map((t) => (
+            <p key={t}>{t}</p>
+          ))}
+          <p className={styles.muted}>{POPUP_TEXT.lizigaoRules}</p>
+        </>
+      );
     case "qinse":
       return (
         <>
@@ -1230,14 +1255,20 @@ const POPUP_TITLE: Record<PopupId, string> = {
   chunyuan: "👗 纯元故衣",
   wanwan: "💔 菀菀类卿",
   confront: "⚖️ 景仁宫对质",
-  exit: "⚖️ 景仁宫对质 · 自请出宫",
+  exit: "⚖️ 景仁宫对质",
   feilao: "🤒 迁居凌云峰",
   zhoufu: "🌊 舟覆噩耗",
   qinse: "🎼 琴瑟和鸣",
   ximai: "💗 喜脉惊心",
   ouyu: "🌸 圣驾偶遇",
   dengmen: "🚪 皇上登门",
+  lizigao: "🥮 栗糕清苦",
 };
+
+function popupTitle(state: Z3State, id: PopupId): string {
+  if (id === "exit" && state.exitTier) return `${POPUP_TITLE.exit} · ${EXIT[state.exitTier].name}`;
+  return POPUP_TITLE[id];
+}
 
 function OutcomeModal({ state, onRestart, onMenu }: { state: Z3State; onRestart: () => void; onMenu: () => void }) {
   if (state.outcome === "playing") return null;
@@ -1290,9 +1321,6 @@ function OutcomeModal({ state, onRestart, onMenu }: { state: Z3State; onRestart:
 export function Stage3Rules() {
   return (
     <ul>
-      <li>
-        🚧 <strong>试玩版</strong>：本关还在开发中，机制和数值都可能还不完善，之后也可能调整。
-      </li>
       <li>
         华妃倒了，翊坤宫的门关上了。你在碎玉轩，是六宫里最得宠的那一个；眉庄的冤屈也洗清了，复了位分。可景仁宫的<strong>皇后</strong>，从来不是表面上那样温和。
       </li>
@@ -1485,7 +1513,7 @@ export function Stage3Game({ state, dispatch, runCode, showRules, onShowRules, o
         </Notice>
       ) : null}
       {!showRules && popup ? (
-        <Notice title={POPUP_TITLE[popup]} onClose={() => setQueue((q) => q.slice(1))}>
+        <Notice title={popupTitle(state, popup)} onClose={() => setQueue((q) => q.slice(1))}>
           <PopupBody state={state} id={popup} />
         </Notice>
       ) : null}

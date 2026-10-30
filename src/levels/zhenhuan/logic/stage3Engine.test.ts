@@ -1,10 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { decodeSessionCode } from "./session";
 import { musicMood } from "../ui/music";
 import {
   CARDS3,
   CONFRONT,
+  EXIT,
   matchesInAct,
+  answeringCards3,
   EVENTS3,
   FABRICATED_SECRET,
   FIXED_STORIES3,
@@ -28,6 +29,8 @@ import {
   drawCount3,
   drawModifier3,
   hasStatus3,
+  isSpentStatus3,
+  removableNegatives3,
   confrontLines,
   feilaoBaseTier,
   feilaoCurrentTier,
@@ -98,6 +101,8 @@ function advanceTo(s: Z3State, turn: number): Z3State {
     if (s.yihua) s.yihua.doubt = 1;
     // 对质：本帮助函数不出辩白牌，视为全部打够，免得高把柄数直接落到冷宫
     if (s.confront) s.confront.needed = 0;
+    // 海棠春睡的默认结算会留下抓牌 -1，改变后续牌序；快进时跳过
+    if (s.pregnant) s.stories = s.stories.filter((x) => x.id !== "haitangChunshui" && x.id !== "haitangYeyu");
     s = act(s, { type: "endTurn" });
     expect(s.outcome, s.lossReason ?? "").toBe("playing");
   }
@@ -188,6 +193,24 @@ describe("zhenhuan stage 3 engine", () => {
     expect(s.secrets["enshang.jingrenHoushang" as keyof typeof s.secrets]).toBeUndefined();
   });
 
+  it("桐花台初遇: 仪容整肃论笛多抽 1 张，陵容在侧本回合出牌 +1", () => {
+    const setup = (card: CardId3) => {
+      const s = advanceTo(newStage3(5, CARRY), 5);
+      clearBoard(s);
+      s.stories = [{ id: "tonghuataiChuyu", chosenOptionId: null }];
+      const [uid] = setHand(s, [card]);
+      return { s, uid: uid! };
+    };
+    const a = setup("yirongZhengsu");
+    const handBefore = a.s.hand.length;
+    const t = act(a.s, { type: "playCard", cardUid: a.uid });
+    expect(t.hand.length).toBe(handBefore - 1 + 2);
+    const b = setup("lingrongXiangzhu");
+    const limit = playLimit3(b.s);
+    const u = act(b.s, { type: "playCard", cardUid: b.uid });
+    expect(playLimit3(u)).toBe(limit + 1);
+  });
+
   it("皇后事件 with only one card: still 收下 with a hidden 把柄", () => {
     let s = advanceTo(newStage3(5, CARRY), 3);
     clearBoard(s);
@@ -206,11 +229,12 @@ describe("zhenhuan stage 3 engine", () => {
       return s;
     };
     let s = base();
-    const [g, j, k] = setHand(s, ["guojunwangXiangzhu", "shoulongRenxin", "jinyanShenxing"]);
+    const [g, g1, j, k] = setHand(s, ["guojunwangXiangzhu", "guojunwangXiangzhu", "shoulongRenxin", "jinyanShenxing"]);
     s = act(s, { type: "playCard", cardUid: g! });
+    s = act(s, { type: "playCard", cardUid: g1! });
     s = act(s, { type: "playCard", cardUid: j! });
     expect(s.stories[0]!.chosenOptionId).toBeNull();
-    expect(s.stories[0]!.steps).toHaveLength(2);
+    expect(s.stories[0]!.steps).toHaveLength(3);
     s = act(s, { type: "playCard", cardUid: k! });
     expect(s.stories[0]!.chosenOptionId).toBe("yinrenBuyan");
     expect(s.stories[0]!.result).toContain("完美解决");
@@ -219,10 +243,10 @@ describe("zhenhuan stage 3 engine", () => {
     const [t3] = setHand(w, ["meizhuangXiangzhu"]);
     w = act(w, { type: "playCard", cardUid: t3! });
     expect(w.stories[0]!.solved).toBeUndefined();
-    // 一张都没打：默认跪求皇上，s=3 → 圣宠 -6、清誉 -4
+    // 一张都没打：默认跪求皇上，s=4 → 圣宠 -8、清誉 -6
     expect(xiayuCost(base(), "kneel", 0)).toEqual([
-      { resource: "shengchong", amount: -6 },
-      { resource: "qingyu", amount: -4 },
+      { resource: "shengchong", amount: -8 },
+      { resource: "qingyu", amount: -6 },
     ]);
     let u = base();
     const [g2] = setHand(u, ["guojunwangXiangzhu"]);
@@ -236,6 +260,49 @@ describe("zhenhuan stage 3 engine", () => {
     expect(s.stories.map((x) => x.id)).toContain(FIXED_STORIES3[3]);
     s = act(s, { type: "endTurn" });
     expect(s.pregnant).toBe(true);
+  });
+
+  it("海棠春睡 quietly lowers 陵容情分 by 2 without a log line", () => {
+    let s = advanceTo(newStage3(8, CARRY), 3);
+    clearBoard(s);
+    s.stories = [{ id: "haitangYeyu", chosenOptionId: null }];
+    s.hand = [];
+    const before = s.relation;
+    const logged = s.log.length;
+    s = act(s, { type: "endTurn" });
+    expect(s.relation).toBe(Math.max(-4, before - 2));
+    expect(s.log.slice(logged).some((l) => l.text.includes("陵容待你亲近") || l.text.includes("陵容与你生分"))).toBe(false);
+    expect(s.log.slice(logged).some((l) => l.text.includes("海棠树下的石凳"))).toBe(true);
+  });
+
+  it("海棠春睡: 默认全扣，三张牌各免一项", () => {
+    const run = (id?: CardId3) => {
+      let s = advanceTo(newStage3(8, CARRY), 3);
+      clearBoard(s);
+      s.stories = [{ id: "haitangYeyu", chosenOptionId: null }];
+      s.qingyu = 10;
+      s.shengchong = 5;
+      s.shenzi = 6;
+      if (id) {
+        const [uid] = setHand(s, [id]);
+        s = act(s, { type: "playCard", cardUid: uid! });
+      }
+      s = act(s, { type: "endTurn" });
+      return s;
+    };
+    const base = run();
+    expect([base.qingyu, base.shenzi]).toEqual([7, 4]);
+    expect(base.shengchong).toBe(7);
+    expect(hasStatus3(base, "liuyanChanshen")).toBe(true);
+    const zhuang = run("yirongZhengsu");
+    expect(zhuang.qingyu).toBe(10);
+    expect(zhuang.shenzi).toBe(4);
+    expect(hasStatus3(zhuang, "liuyanChanshen")).toBe(true);
+    const xi = run("jinxiXiangzhu");
+    expect(xi.shenzi).toBe(6);
+    expect(hasStatus3(xi, "liuyanChanshen")).toBe(true);
+    const shi = run("jinyanShenxing");
+    expect(hasStatus3(shi, "liuyanChanshen")).toBe(false);
   });
 
   it("皇后笑意 (turn 2): each answering card has its own reward, none leaves a 把柄", () => {
@@ -366,7 +433,7 @@ describe("zhenhuan stage 3 engine", () => {
     expect(t.statuses.some((st) => st.id === "dayaGuaerjia")).toBe(false);
   });
 
-  it("打压 is per rival: 齐妃寻衅 suppressed → 三阿哥邀宠 (also 齐妃) is eased next", () => {
+  it("打压 is per rival: 晨省讥语 suppressed → 三阿哥邀宠 (also 齐妃) is eased next", () => {
     let s = advanceTo(newStage3(3, CARRY), 3);
     clearBoard(s);
     withStatus(s, "dayaQifei");
@@ -378,6 +445,95 @@ describe("zhenhuan stage 3 engine", () => {
     expect(s.crisis?.id).toBe("sanAgeYaochong");
     expect(s.crisis!.eased).toBe(true);
     expect(s.statuses.some((st) => st.id === "dayaQifei")).toBe(false);
+  });
+
+  it("栗糕清苦: 齐妃 once suppressed + eased 三阿哥邀宠 + pregnant → 陵容 alone resolves it, 打压·齐妃 stays, 三阿哥邀宠 leaves the pools", () => {
+    let s = advanceTo(newStage3(3, CARRY), 3);
+    clearBoard(s);
+    s.suppressed.qifei = true;
+    s.crisis = { ...ev(s, "sanAgeYaochong"), eased: true };
+    s.relation = -3;
+    s.crisisPool = ["sanAgeYaochong", "qifeiXunxin"];
+    s.crisisUsed = ["sanAgeYaochong"];
+    expect(matchedEvents3(s, "lingrongXiangzhu").map((e) => e.id)).toContain("sanAgeYaochong");
+    const [uid] = setHand(s, ["lingrongXiangzhu"]);
+    s = act(s, { type: "playCard", cardUid: uid! });
+    expect(s.crisis!.resolved).toBe(true);
+    expect(s.lizigao).toBe(true);
+    expect(s.popups).toContain("lizigao");
+    expect(hasStatus3(s, "dayaQifeiLizi")).toBe(true);
+    expect(s.crisisPool).not.toContain("sanAgeYaochong");
+    expect(s.crisisUsed).not.toContain("sanAgeYaochong");
+    s.opportunityPool = [];
+    s.opportunityUsed = [];
+    s.crisisPool = ["qifeiXunxin"];
+    s = act(s, { type: "endTurn" });
+    expect(s.crisisUsed).not.toContain("sanAgeYaochong");
+    expect(s.crisis?.id).toBe("qifeiXunxin");
+    expect(s.crisis!.eased).toBe(true);
+    expect(hasStatus3(s, "dayaQifeiLizi")).toBe(true);
+  });
+
+  it("栗糕清苦 needs 陵容 among the 解牌, 打压, and a child on the way", () => {
+    const base = advanceTo(newStage3(3, CARRY), 3);
+    clearBoard(base);
+    base.suppressed.qifei = true;
+    // 不是陵容解的：不触发
+    let s = structuredClone(base);
+    s.crisis = { ...ev(s, "sanAgeYaochong"), eased: true };
+    let [uid] = setHand(s, ["yirongZhengsu"]);
+    s = act(s, { type: "playCard", cardUid: uid! });
+    expect(s.crisis!.resolved).toBe(true);
+    expect(s.lizigao).toBe(false);
+    // 从没打压过齐妃：陵容接不了
+    s = structuredClone(base);
+    s.suppressed.qifei = false;
+    s.crisis = { ...ev(s, "sanAgeYaochong"), eased: true };
+    expect(matchedEvents3(s, "lingrongXiangzhu")).toHaveLength(0);
+    // 未孕：陵容接不了
+    s = structuredClone(base);
+    s.pregnant = false;
+    s.crisis = { ...ev(s, "sanAgeYaochong"), eased: true };
+    expect(matchedEvents3(s, "lingrongXiangzhu")).toHaveLength(0);
+    // 菀菀类卿那一回合起不再触发（孩子要落地了）
+    s = advanceTo(newStage3(3, CARRY), 9);
+    clearBoard(s);
+    s.suppressed.qifei = true;
+    s.crisis = { ...ev(s, "sanAgeYaochong"), eased: true };
+    expect(s.pregnant).toBe(true);
+    expect(matchedEvents3(s, "lingrongXiangzhu")).toHaveLength(0);
+    // 打压早已用掉、这回要两张：陵容先出、仪容整肃补上，同样触发
+    s = structuredClone(base);
+    s.crisis = ev(s, "sanAgeYaochong");
+    const [a, b] = setHand(s, ["lingrongXiangzhu", "yirongZhengsu"]);
+    s = act(s, { type: "playCard", cardUid: a! });
+    expect(s.crisis!.resolved).toBe(false);
+    s = act(s, { type: "playCard", cardUid: b! });
+    expect(s.crisis!.resolved).toBe(true);
+    expect(s.lizigao).toBe(true);
+  });
+
+  it("栗糕清苦 afterwards: 晨省讥语's 谨言慎行 story speaks of 景仁宫 tutoring", () => {
+    let s = advanceTo(newStage3(3, CARRY), 3);
+    clearBoard(s);
+    s.lizigao = true;
+    s.crisis = { ...ev(s, "qifeiXunxin"), eased: true };
+    const [uid] = setHand(s, ["jinyanShenxing"]);
+    s = act(s, { type: "playCard", cardUid: uid! });
+    expect(s.crisis!.story).toContain("景仁宫");
+  });
+
+  it("栗糕清苦 at 对质: one fewer 把柄, and 齐妃 falls silent on one of hers", () => {
+    const s = newStage3(1, { ...CARRY, secrets: ["shiqinNeiqing", "sitanSiqiu"] });
+    s.relation = 0;
+    expect(presentedSecrets(s)).toBe(2);
+    s.lizigao = true;
+    expect(presentedSecrets(s)).toBe(1);
+    const lines = confrontLines(s);
+    const silent = lines.filter((l) => l.qifei);
+    expect(silent).toHaveLength(1);
+    expect(silent[0]!.id).toBe("sitanSiqiu");
+    expect(silent[0]!.line.startsWith("齐妃")).toBe(true);
   });
 
   it("连环 shared card: 打压 status for the pair crisis, and each half shows its own story", () => {
@@ -450,23 +606,23 @@ describe("zhenhuan stage 3 engine", () => {
     expect(resentful.at(-1)!.line).toBe(FABRICATED_SECRET);
   });
 
-  it("甄远道下狱 cost: s 起始 3，父兄蒙尘 +1，打压祺贵人 -1，每张解牌 -1", () => {
+  it("甄远道下狱 cost: s 起始 4，父兄蒙尘 +1，打压祺贵人 -1，每张解牌 -1", () => {
     const s = newStage3(1, CARRY);
-    expect(xiayuS(s, 0)).toBe(3);
-    expect(xiayuS(s, 1)).toBe(2);
+    expect(xiayuS(s, 0)).toBe(4);
+    expect(xiayuS(s, 1)).toBe(3);
     expect(xiayuS(s, 5)).toBe(0);
     expect(xiayuCost(s, "taihou", 0)).toEqual([
-      { resource: "shengchong", amount: -4 },
-      { resource: "qingyu", amount: -6 },
+      { resource: "shengchong", amount: -6 },
+      { resource: "qingyu", amount: -8 },
     ]);
     withStatus(s, "fuxiongMengchen");
-    expect(xiayuS(s, 0)).toBe(4);
+    expect(xiayuS(s, 0)).toBe(5);
     s.suppressed.guaerjia = true;
-    expect(xiayuS(s, 0)).toBe(3);
-    expect(xiayuCost(s, "kneel", 2)).toEqual([
+    expect(xiayuS(s, 0)).toBe(4);
+    expect(xiayuCost(s, "kneel", 3)).toEqual([
       { resource: "shengchong", amount: -2 },
     ]);
-    expect(xiayuCost(s, "kneel", 3)).toEqual([]);
+    expect(xiayuCost(s, "kneel", 4)).toEqual([]);
   });
 
   it("鄂敏参本: 没化解 清誉 -4 + 父兄蒙尘; 一张解牌 清誉 -1 + 父兄蒙尘; 化解也 清誉 -1", () => {
@@ -564,14 +720,53 @@ describe("zhenhuan stage 3 engine", () => {
     expect([t0, t1]).toEqual([2, 1]);
   });
 
-  it("果郡王相助: draws 1, +1 play this turn, 王爷挂念 gives +1 draw next turn", () => {
+  it("果郡王相助: 作为未解决事件的解牌打出才本回合出牌 +1; 笛韵萦怀 gives +1 draw next turn", () => {
     let s = advanceTo(newStage3(6, CARRY), 12);
     clearBoard(s);
     const [g] = setHand(s, ["guojunwangXiangzhu"]);
     const before = playLimit3(s);
     s = act(s, { type: "playCard", cardUid: g! });
-    expect(playLimit3(s)).toBe(before + 1);
-    expect(s.statuses.some((x) => x.id === "wangyeGuaNian")).toBe(true);
+    expect(playLimit3(s)).toBe(before);
+    expect(s.statuses.some((x) => x.id === "diyunYinghuai")).toBe(true);
+
+    let s2 = advanceTo(newStage3(6, CARRY), 12);
+    clearBoard(s2);
+    s2.opportunity = ev(s2, "shanzhongCaiyao");
+    const [g2] = setHand(s2, ["guojunwangXiangzhu"]);
+    const before2 = playLimit3(s2);
+    s2 = act(s2, { type: "playCard", cardUid: g2! });
+    expect(s2.opportunity?.resolved).toBe(true);
+    expect(playLimit3(s2)).toBe(before2 + 1);
+  });
+
+  it("荆钗布裙: 作为任何事件（不只是危机）的解牌打出，都获得滴水不漏", () => {
+    let s = advanceTo(newStage3(6, CARRY), 12);
+    clearBoard(s);
+    s.opportunity = ev(s, "shanzhongCaiyao");
+    const [b] = setHand(s, ["jingchaiBuqun"]);
+    s = act(s, { type: "playCard", cardUid: b! });
+    expect(s.opportunity?.resolved).toBe(true);
+    expect(s.statuses.some((x) => x.id === "yishiWucuo")).toBe(true);
+  });
+
+  it("果郡王翻船后: 夜半惊扰 / 耳目窥伺的解牌不再列果郡王相助", () => {
+    expect(answeringCards3("yebanJingrao", 24)).toContain("guojunwangXiangzhu");
+    expect(answeringCards3("yebanJingrao", 25)).not.toContain("guojunwangXiangzhu");
+    expect(answeringCards3("xianrenKuitan", 25)).not.toContain("guojunwangXiangzhu");
+    expect(answeringCards3("yebanJingrao", 25)).toContain("jingxinRennai");
+  });
+
+  it("山门偶遇: 荆钗布裙可解（清誉 +1），仍加入果郡王相助", () => {
+    let s = advanceTo(newStage3(6, CARRY), 12);
+    s.qingyu = 5;
+    const [b] = setHand(s, ["jingchaiBuqun"]);
+    const gjw = () => [...s.drawPile, ...s.hand, ...s.discard].filter((c) => c.id === "guojunwangXiangzhu").length;
+    const q0 = s.qingyu;
+    const g0 = gjw();
+    s = act(s, { type: "playCard", cardUid: b! });
+    expect(s.stories.find((st) => st.id === "shanmenOuyu")?.viaCard).toBe("jingchaiBuqun");
+    expect(s.qingyu).toBe(q0 + 1);
+    expect(gjw()).toBe(g0 + 1);
   });
 
   it("睹物生疑: from the turn after 引驾 until 回宫, each 遗物 in hand at turn end adds 疑点 (not only on the 偶遇 turn)", () => {
@@ -629,7 +824,7 @@ describe("zhenhuan stage 3 engine", () => {
     expect(none.statuses.some((x) => x.id === "hanzheng" && x.appliesFromTurn === 13)).toBe(true);
   });
 
-  it("功德箱失窃: cleared still costs 🪷1; unresolved gives 香油疑云 (🪷-1 at each of the next 3 turn ends)", () => {
+  it("功德蒙尘: cleared still costs 🪷1; unresolved gives 香油疑云 (🪷-1 at each of the next 3 turn ends)", () => {
     const run = (ids: CardId3[]) => {
       let s = advanceTo(newStage3(6, CARRY), 12);
       clearBoard(s);
@@ -661,7 +856,7 @@ describe("zhenhuan stage 3 engine", () => {
     expect(s.popups).toContain("ouyu");
   });
 
-  it("碎玉轩闲话: two cards, cleared costs 🪷1; one card = 闲话传开 1 turn, none = 2 turns", () => {
+  it("碎玉私语: two cards, cleared costs 🪷1; one card = 闲话传开 1 turn, none = 2 turns", () => {
     const run = (ids: CardId3[]) => {
       let s = advanceTo(newStage3(6, CARRY), 8);
       clearBoard(s);
@@ -683,6 +878,7 @@ describe("zhenhuan stage 3 engine", () => {
   it("耳目窥伺: unresolved gives 眼线环伺 (draw -1, never below 1) and no 清誉 loss", () => {
     let s = advanceTo(newStage3(6, CARRY), 20);
     clearBoard(s);
+    s.statuses = [];
     s.crisis = ev(s, "xianrenKuitan");
     const qingyu = s.qingyu;
     s = act(s, { type: "endTurn" });
@@ -707,10 +903,24 @@ describe("zhenhuan stage 3 engine", () => {
     const all = [...s.hand, ...s.drawPile, ...s.discard].map((c) => c.id);
     expect(all.filter((id) => id === "guojunwangXiangzhu")).toHaveLength(guo);
     expect(all.filter((id) => id !== "guojunwangXiangzhu").sort()).toEqual(
-      (s.exitTier === 3 ? STAGE3_TEMPLE_DECK.filter((id, i, a) => !(id === "jinxiXiangzhu" && a.indexOf(id) === i)) : [...STAGE3_TEMPLE_DECK]).sort(),
+      [...STAGE3_TEMPLE_DECK].sort(),
     );
     expect(s.hand).toHaveLength(XIUXING.draw);
     expect(s.lingrongGone).toBe(true);
+  });
+
+  it("盛宠招妒: 第一幕圣宠够高时，中宫垂青了结后另扣清誉", () => {
+    const run = (shengchong: number) => {
+      const s = newStage3(1, CARRY);
+      clearBoard(s);
+      s.shengchong = shengchong;
+      s.qingyu = 10;
+      s.opportunity = ev(s, "huanghouShangshi");
+      const [uid] = setHand(s, ["yirongZhengsu"]);
+      return act(s, { type: "playCard", cardUid: uid! });
+    };
+    expect(run(14).qingyu).toBe(9);
+    expect(run(11).qingyu).toBe(10);
   });
 
   it("圣宠 is frozen at the temple", () => {
@@ -726,7 +936,7 @@ describe("zhenhuan stage 3 engine", () => {
   });
 
   it("肺痨之诬: 静白嚣张 sets the tier; each 槿汐 / 禅语 / 眉庄 lightens it", () => {
-    expect([0, 1, 2, 3, 4, 7].map(feilaoBaseTier)).toEqual([0, 0, 1, 1, 2, 2]);
+    expect([0, 1, 2, 3, 4, 7].map(feilaoBaseTier)).toEqual([0, 1, 1, 2, 2, 2]);
     let s = advanceTo(newStage3(9, CARRY), 18);
     s.feilao = { base: 2, played: [] };
     s.shenzi = 6;
@@ -736,6 +946,7 @@ describe("zhenhuan stage 3 engine", () => {
     expect(feilaoCurrentTier(s)).toBe(1);
     s = act(s, { type: "endTurn" });
     expect(s.feilaoTier).toBe(1);
+    expect(s.log.some((l) => String(l.text ?? l).includes("仓皇出寺：清誉 -2"))).toBe(true);
     expect(s.atPeak).toBe(true);
     expect(s.statuses.some((x) => x.id === "hanzheng")).toBe(true);
   });
@@ -774,6 +985,36 @@ describe("zhenhuan stage 3 engine", () => {
     expect(s.taxueByCard).toBe(true);
   });
 
+  it("踏雪问疾: 默认 🌱-2 🪷-1; 果郡王相助下回合抓牌 -1; 槿汐相助下两回合打不出槿汐相助; 闭门谢客不移除负面且不加牌", () => {
+    const run = (hand: CardId3[]) => {
+      let s = advanceTo(newStage3(12, CARRY), 19);
+      s.shenzi = Math.max(s.shenzi, 4);
+      s.statuses.push({ uid: `s${s.nextUid++}`, id: "hanzheng", appliesFromTurn: s.turn, remaining: 2 });
+      s.statuses.push({ uid: `s${s.nextUid++}`, id: "jingji", appliesFromTurn: s.turn, remaining: 2 });
+      const sz = s.shenzi;
+      const q = s.qingyu;
+      const gjw = () => [...s.drawPile, ...s.hand, ...s.discard].filter((c) => c.id === "guojunwangXiangzhu").length;
+      const uids = hand.length ? setHand(s, hand) : [];
+      const g0 = gjw();
+      if (uids[0]) s = act(s, { type: "playCard", cardUid: uids[0] });
+      else s = act(s, { type: "endTurn" });
+      return { s, dsz: s.shenzi - sz, dq: s.qingyu - q, dg: gjw() - g0 };
+    };
+    const bimen = run(["jingxinRennai"]);
+    const card = run(["guojunwangXiangzhu"]);
+    expect(card.s.statuses.some((x) => x.id === "bingzhongXinyou")).toBe(true);
+    expect(card.s.statuses.some((x) => x.id === "hanzheng")).toBe(true);
+    const jin = run(["jinxiXiangzhu"]);
+    expect(jin.s.statuses.some((x) => x.id === "jinxiLeikua" && x.remaining === 2)).toBe(true);
+    expect(card.dsz).toBe(0);
+    expect(jin.dsz).toBe(0);
+    expect(bimen.dsz).toBe(-1);
+    expect(bimen.s.log.some((l) => l.text.startsWith("闭门谢客：移除状态"))).toBe(false);
+    expect(bimen.s.statuses.some((x) => x.id === "hanzheng")).toBe(true);
+    expect(bimen.s.taxueByCard).toBe(true);
+    expect(bimen.dg).toBe(0);
+  });
+
   it("合婚庚帖 grants 琴瑟同心 only after 踏雪问疾 (by a card) and 月下琴笛 are both done; draw +1 starts after 舟覆", () => {
     const run = (taxueByCard: boolean, qinDone: boolean) => {
       let s = advanceTo(newStage3(12, CARRY), 3);
@@ -805,7 +1046,7 @@ describe("zhenhuan stage 3 engine", () => {
     s.drawPile.push({ uid: "g1", id: "guojunwangXiangzhu" }, { uid: "g2", id: "guojunwangXiangzhu" });
     s = advanceTo(s, 25);
     const relics = [...s.hand, ...s.drawPile, ...s.discard].map((c) => c.id).filter((id) => id.startsWith("yiwu"));
-    // 桐花台默认「论笛谈诗」留下旧笛谱；庚帖优先，其余按往来取用
+    // 桐花台默认「驻足听笛」留下旧笛谱；庚帖优先，其余按往来取用
     expect(relics.sort()).toEqual(["yiwuDipu", "yiwuGengtie"]);
     expect([...s.hand, ...s.drawPile, ...s.discard].some((c) => c.id === "guojunwangXiangzhu")).toBe(false);
     s = act(s, { type: "endTurn" });
@@ -1086,17 +1327,68 @@ describe("zhenhuan stage 3 engine", () => {
 
 describe("出宫清誉按把柄条数扣", () => {
   it("宫中清誉高于修行上限时，从上限 8 起扣呈上的把柄条数", () => {
-    const code =
-      "ZH3-MyA3MjE1MjQ5MjcgLSBwYzcgcGMzIHBjMTYgcGMxNyBwYzUgZSBwYzEgcGMyIHBjOSBlIHBjMyBwYzYgcGM4IHBjNyBwYzE3IHBjOSBlIHBjMTUgcGMxNCBwYzEzIGUgcGMyIHBjNSBwYzE1IHBjNyBwYzQgcGM2IHBjMTYgZSBwYzggcGM3IHBjMTMgcGMxMiBwYzQwIHBjNSBwYzkgZSBwYzYgcGM0MCBwYzE1IHBjOSBwYzIgcGMxNyBlIHBjNyBwYzggcGM0MCBwYzIgcGM0IHBjMTMgcGMxNyBlIHBjNiBwYzQgcGM5IHBjOCBwYzE1IHBjNSBlIHBjNDAgcGM3IHBjMTIgcGMxMyBwYzMgZSBwYzczIHBjNzc";
-    const r = decodeSessionCode(code);
-    if (!r.ok || r.session.stage !== 3) throw new Error("decode failed");
-    const s0 = r.session.state;
-    const before = replay3(s0.seed, s0.carry, s0.actions.slice(0, 59));
-    expect(before.turn).toBe(10);
-    expect(before.qingyu).toBe(18);
+    const s = advanceTo(newStage3(3, CARRY), 10);
+    s.confront = { ...s.confront!, presented: 4, needed: confrontNeeded(4) };
+    s.qingyu = 18;
     // 第 10 回合一张辩白牌都不打：缺 3 张，被废出宫
-    const after = replay3(s0.seed, s0.carry, [...s0.actions.slice(0, 59), { type: "endTurn" }]);
+    const after = act(s, { type: "endTurn" });
     expect(after.exitTier).toBe(3);
-    expect(after.qingyu).toBe(8 - 4); // 呈上 4 条
+    expect(after.qingyu).toBe(8 - 4); // 呈上 4 条（上面手动指定）
+  });
+
+  it("对质卡名不预设出宫方式（被废出宫时不应显示“自请出宫”）", () => {
+    expect(CONFRONT.name).not.toContain("自请");
+    const s = advanceTo(newStage3(3, CARRY), 10);
+    const after = act(s, { type: "endTurn" });
+    expect(after.exitTier).toBeGreaterThan(1);
+    expect(EXIT[after.exitTier!].name).not.toBe(EXIT[1].name);
+  });
+});
+
+describe("stage 3 陵容相助 情分", () => {
+  it("a 陵容 outcome that fails to resolve the event still raises 情分", () => {
+    for (const [id, table] of Object.entries(LINGRONG_EVENT3)) {
+      for (const tier of ["close", "distant", "resentful"] as const) {
+        const o = table![tier];
+        if (!o.resolves) expect(o.relation, `${id}.${tier}`).toBe(1);
+      }
+    }
+  });
+
+  it("中宫垂青 with 亲厚 陵容 raises 情分", () => {
+    expect(LINGRONG_EVENT3.huanghouShangshi!.close.relation).toBe(1);
+  });
+});
+
+describe("stage 3 状态栏：本回合已用尽的状态", () => {
+  const fresh = () => newStage3(1, CARRY);
+  const spent = (s: Z3State, id: StatusId3, remaining: number, appliesFromTurn = s.turn) => {
+    s.statuses.push({ uid: `s${s.nextUid++}`, id, appliesFromTurn, remaining });
+    return isSpentStatus3(s, s.statuses[s.statuses.length - 1]!);
+  };
+
+  it("已生效、今天到期的纯抓牌 / 出牌上限状态视为已用尽", () => {
+    const s = fresh();
+    expect(spent(s, "ermuLingtong", 1)).toBe(true);
+    expect(spent(s, "meizhuangDadian", 1)).toBe(true);
+    expect(spent(s, "zhushiTuotie", 1)).toBe(true);
+    expect(spent(s, "liuyanChanshen", 1)).toBe(true);
+  });
+
+  it("还有后续回合、尚未生效、带回合末效果或限制出牌的状态仍显示", () => {
+    const s = fresh();
+    expect(spent(s, "meizhuangDadian", 2)).toBe(false);
+    expect(spent(s, "ermuLingtong", 1, s.turn + 1)).toBe(false);
+    expect(spent(s, "hanzheng", 1)).toBe(false);
+    expect(spent(s, "jingji", 1)).toBe(false);
+    expect(spent(s, "qinseHeming", 1)).toBe(false);
+  });
+
+  it("已用尽的负面状态不再作为温太医的移除目标", () => {
+    const s = fresh();
+    spent(s, "liuyanChanshen", 1);
+    expect(removableNegatives3(s)).toHaveLength(0);
+    spent(s, "liuyanChanshen", 2);
+    expect(removableNegatives3(s)).toHaveLength(1);
   });
 });

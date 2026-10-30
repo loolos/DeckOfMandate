@@ -1193,9 +1193,9 @@ export const LINGRONG_EVENT: Partial<Record<EventId2, TierTable>> = {
     resentful: { resolves: false, relation: 1, story: "皇后的赏赐落到了陵容头上。她从景仁宫出来，在碎玉轩门口站了好一会儿，终究还是进来坐了坐。" },
   },
   jingxinTiaoyang: {
-    close: { resolves: true, effects: [{ resource: "qingyu", amount: 1 }, { resource: "shenzi", amount: 1 }], story: "陵容亲手制了安神香送来，你一夜好眠。" },
-    distant: { resolves: true, effects: [{ resource: "qingyu", amount: 1 }, { resource: "shenzi", amount: 1 }], story: "陵容送来安神香。「这香方子金贵，姐姐省着些用。」" },
-    resentful: { resolves: true, effects: [{ resource: "qingyu", amount: 1 }, { resource: "shenzi", amount: 1 }], story: "陵容送来的安神香气味清冽，你倒也睡得安稳。" },
+    close: { resolves: true, relation: 1, effects: [{ resource: "qingyu", amount: 1 }, { resource: "shenzi", amount: 1 }], story: "陵容亲手制了安神香送来，你一夜好眠。" },
+    distant: { resolves: true, relation: 1, effects: [{ resource: "qingyu", amount: 1 }, { resource: "shenzi", amount: 1 }], story: "陵容送来安神香。「这香方子金贵，姐姐省着些用。」" },
+    resentful: { resolves: true, relation: 1, effects: [{ resource: "qingyu", amount: 1 }, { resource: "shenzi", amount: 1 }], story: "陵容送来的安神香气味清冽，你倒也睡得安稳。" },
   },
   baohuadianQifu: {
     close: { resolves: true, effects: [{ resource: "qingyu", amount: 1 }, { resource: "shenzi", amount: 1 }], relation: 1, story: "你与陵容并肩跪在佛前，她替你多磕了三个头。起身时，她悄悄握了握你的手。" },
@@ -1208,19 +1208,19 @@ export const LINGRONG_EVENT: Partial<Record<EventId2, TierTable>> = {
     resentful: { resolves: false, relation: 1, effects: [{ resource: "hate", amount: 1 }], story: "消息不知怎么走漏到了翊坤宫，丽嫔那边一下子没了动静。陵容低着头来见你，绞着帕子说是自己嘴不严。" },
   },
   gongzhongLiuyan: {
-    close: { resolves: true, relation: 1, story: "陵容在各宫替你辟谣：「姐姐的为人，我最清楚。」说这话时，她的声音比平日都响亮些。" },
-    distant: { resolves: true, relation: 1, story: "「姐姐何必在意这些闲话，清者自清嘛。」陵容嘴上这么说，倒也替你分辩了几句，走前还回头看了你一眼。" },
+    close: { resolves: true, story: "陵容在各宫替你辟谣：「姐姐的为人，我最清楚。」说这话时，她的声音比平日都响亮些。" },
+    distant: { resolves: true, story: "「姐姐何必在意这些闲话，清者自清嘛。」陵容嘴上这么说，倒也替你分辩了几句，走前还回头看了你一眼。" },
     resentful: { resolves: false, relation: 1, aggravate: true, story: "陵容在别人跟前添油加醋，流言越传越凶。可到了夜里，宝鹊又悄悄送来一盏安神汤，说是她家小主吩咐的。" },
   },
   neiwufuDiaonan: {
-    close: { resolves: true, extraDraw: 1, story: "陵容出身寒微，最懂怎么跟内务府打交道，没两日便替你把份例要了回来。" },
+    close: { resolves: true, relation: 1, extraDraw: 1, story: "陵容出身寒微，最懂怎么跟内务府打交道，没两日便替你把份例要了回来。" },
     distant: { resolves: true, story: "「妹妹出身寒微，跟奴才们打交道倒是在行。」份例总算补齐了。" },
     resentful: { resolves: true, effects: [{ resource: "qingyu", amount: -1 }], story: "陵容出面去要份例，却把事情闹得人尽皆知，倒显得你斤斤计较。" },
   },
   liyiShiwu: {
-    close: { resolves: true, shuhenjiao: true, story: "陵容扶你起来，替你整好衣裳，又说回头送药来。" },
-    distant: { resolves: true, shuhenjiao: true, story: "「姐姐素来最重仪态，这回可要仔细些。」陵容替你遮掩过去，说回头送药来。" },
-    resentful: { resolves: true, shuhenjiao: true, story: "陵容上前替你圆了场，低头时嘴角却像是笑了一下。她说回头送药来。" },
+    close: { resolves: true, relation: 1, shuhenjiao: true, story: "陵容扶你起来，替你整好衣裳，又说回头送药来。" },
+    distant: { resolves: true, relation: 1, shuhenjiao: true, story: "「姐姐素来最重仪态，这回可要仔细些。」陵容替你遮掩过去，说回头送药来。" },
+    resentful: { resolves: true, relation: 1, shuhenjiao: true, story: "陵容上前替你圆了场，低头时嘴角却像是笑了一下。她说回头送药来。" },
   },
   hanliangZhiwu: {
     close: { resolves: true, relation: 1, story: "陵容抢先端走了那碗冰果：「姐姐身子要紧，这个我替姐姐吃了。」" },
@@ -1646,12 +1646,12 @@ export const STORIES2: Record<StoryId2, StoryDef2> = {
       },
       {
         id: "feibaoHuangshangPlain",
-        name: "宫人飞报皇上",
+        name: "宫人求见太后",
         card: "shoulongRenxin",
         effects: [{ resource: "shenzi", amount: -2 }, { resource: "shengchong", amount: 1 }],
         status: "baoyangZaishen",
         text: "身子 -2；圣宠 +1（免去清誉 -1）；抱恙在身",
-        story: "小允子拼死跑去养心殿报信，皇上赶到时你已经跪了许久。他当场免了余下的时辰，亲自扶你起身，又斥了周宁海几句。你膝上虽疼，这份心疼却记在了他心里。",
+        story: "皇上与皇后都去宫外祈福，宫中无人能替你做主。小允子拼死跑去寿康宫求见太后，太后赶到时你已经跪了许久。她当场免了余下的时辰，命人扶你起身，又斥了周宁海几句。待皇上回宫，这份委屈自会有人替你说到他耳边。",
       },
       {
         id: "huTiTangyao",
@@ -1683,7 +1683,7 @@ export const STORIES2: Record<StoryId2, StoryDef2> = {
     options: [
       { id: "yingcheng", name: "硬撑到底", effects: [{ resource: "qingyu", amount: -2 }], fakuiShenzi: 2, miscarriageStory: "你一直跪到日影西斜，起身时眼前一黑，裙下已洇开一片殷红。周宁海站在廊下，连眼皮也没抬一下。太医赶到时，孩子早已保不住了。", text: "小产；身子 -2；清誉 -2", story: "你咬牙跪到最后，起身时裙下已是一片殷红。" },
       { id: "jizhaoTaiyi", name: "急召太医", card: "wenTaiyiZhenzhi", effects: [], fakuiShenzi: 2, miscarriageStory: "温实初冒死闯到翊坤宫外，跪地诊脉，良久才哑声道：「小主，臣……来迟了。」孩子没能保住，他却硬是替你挡下了周宁海的呵斥，保全了你的性命。", text: "小产；身子 -2", story: "温实初冒死闯到翊坤宫外，孩子终究没能保住，但他保住了你。" },
-      { id: "feibaoHuangshang", name: "宫人飞报皇上", card: "shoulongRenxin", effects: [{ resource: "shengchong", amount: 1 }], fakuiShenzi: 2, miscarriageStory: "皇上赶到翊坤宫外时，你已倒在青砖上，裙裾尽染。他一把将你抱起，怒斥华妃，可腹中的孩子已经听不见了。「是朕来迟了。」他的声音在发抖。", text: "小产；身子 -2；圣宠 +1", story: "小允子拼死跑去养心殿报信，皇上赶到时，一切已经晚了。" },
+      { id: "feibaoHuangshang", name: "宫人求见太后", card: "shoulongRenxin", effects: [{ resource: "shengchong", amount: 1 }], fakuiShenzi: 2, miscarriageStory: "太后赶到翊坤宫外时，你已倒在青砖上，裙裾尽染。她一面命人抬你回宫，一面厉声斥责华妃，可腹中的孩子已经听不见了。「是哀家来迟了。」她的声音沉得发颤。", text: "小产；身子 -2；圣宠 +1", story: "皇上与皇后都去宫外祈福，小允子拼死跑去寿康宫求见太后，太后赶到时，一切已经晚了。" },
       { id: "anzhongLiuxin", name: "暗中留心", card: "jingguanQibian", effects: [], fakuiShenzi: 2, miscarriageStory: "你含着参片，硬是撑到了太医赶来。脉案递到眼前时，你只轻轻合了合眼：参片保得住你，却保不住它。这一口气，你记下了。", status: "baoyangZaishen", text: "小产；身子 -2；抱恙在身", story: "你早有防备，备了参片含在口中，总算撑住了一口气，孩子却终究没能保住。" },
       { id: "jinxiHuchi", name: "槿汐护持", card: "jinxiXiangzhu", effects: [{ resource: "qingyu", amount: -1 }], fakuiShenzi: 2, miscarriageStory: "你倒下时，槿汐一把将你抱住，一面高声唤太医，一面用身子替你挡住了周遭窥探的目光。孩子没了，你伏在她肩头，终于没有在人前落一滴泪。", text: "小产；身子 -2；清誉 -1", story: "槿汐一直跪在你身侧扶着你。你倒下时，是她一把将你抱住，一路喊着太医。" },
       {

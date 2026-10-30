@@ -30,6 +30,7 @@ import {
   LINGRONG_COLD_TEXT,
   LINGRONG_EVENT3,
   LINGRONG_FAREWELL,
+  HAITANG_COOL_TEXT,
   LINGRONG_IDLE_TEXT3,
   LINGRONG_SUMMON,
   LINGRONG_TRUTH,
@@ -48,6 +49,8 @@ import {
   SHENZI,
   STAGE2_SECRETS,
   STAGE3,
+  ENVY_LINE3,
+  type EventDef3,
   STAGE3_ACT1_DECK,
   STAGE3_TEMPLE_DECK,
   STATUSES3,
@@ -208,6 +211,10 @@ export type Z3State = {
   secrets: Partial<Record<SecretId, number>>;
   allies: Record<AllyId, boolean>;
   suppressed: Record<RivalId, boolean>;
+  /** 栗糕清苦（隐藏事件）已经发生。 */
+  lizigao: boolean;
+  /** 第一幕对质前打出【收拢人心】的次数（隐藏，满 4 次记一条把柄）。 */
+  renxinPlays: number;
   guoMeet: "li" | "di" | "lingrong" | null;
   /** 纯元故衣 (turn 6): ① 起疑 card, then ② 查实 card. */
   chunyuan: { first: CardId3 | null; second: CardId3 | null } | null;
@@ -310,8 +317,19 @@ export function drawCount3(s: Z3State, turn: number): number {
   return Math.max(1, baseDraw(s) + drawModifier3(s, turn));
 }
 
+/**
+ * 本回合已生效且今天就到期的纯抓牌 / 出牌上限状态：抓牌已在回合开头结算，不会再有后续影响，
+ * 状态栏不再显示，温太医也不必（无法）移除它。
+ */
+export function isSpentStatus3(s: Z3State, st: StatusInst3): boolean {
+  const def = STATUSES3[st.id];
+  if (def.permanent || st.appliesFromTurn > s.turn || st.remaining > 1) return false;
+  if (def.turnEnd || def.blocksCards || def.noSummon || def.playCap != null) return false;
+  return def.drawModifier !== 0 || (def.playBonus ?? 0) !== 0;
+}
+
 export function removableNegatives3(s: Z3State): StatusInst3[] {
-  return s.statuses.filter((st) => STATUSES3[st.id].tag === "negative" && !STATUSES3[st.id].unremovable);
+  return s.statuses.filter((st) => STATUSES3[st.id].tag === "negative" && !STATUSES3[st.id].unremovable && !isSpentStatus3(s, st));
 }
 
 export function blockingStatusName3(s: Z3State, cardId: CardId3): string | null {
@@ -376,10 +394,23 @@ export function solveCount(ev: EventInst3): number {
   return ev.eased ? 1 : 2;
 }
 
+/**
+ * 栗糕清苦 (hidden): once 齐妃 has been put down (打压) at least once, with a child on the way, 陵容 can take on 三阿哥邀宠
+ * whatever her 情分; once she does, the 栗糕 event follows.
+ */
+export function lizigaoOpen(s: Z3State, ev: EventInst3): boolean {
+  return ev.id === "sanAgeYaochong" && !ev.resolved && !s.lizigao && s.act === 1 && s.pregnant && s.turn < WANWAN_TURN && s.suppressed.qifei;
+}
+
+/** 菀菀类卿那一回合孩子就要落地：栗糕清苦只在这之前。 */
+const WANWAN_TURN = Number(Object.keys(FIXED_STORIES3).find((t) => FIXED_STORIES3[Number(t)] === "wanwanLeiqing"));
+
 /** Does `cardId` count toward this unresolved event right now (single match or 双牌 progress)? */
 export function cardAffectsEvent3(s: Z3State, ev: EventInst3, cardId: CardId3): boolean {
   if (ev.resolved) return false;
   const def = EVENTS3[ev.id];
+  if (cardId === "guojunwangXiangzhu" && s.turn >= STAGE3.zhoufuTurn) return false;
+  if (cardId === "lingrongXiangzhu" && lizigaoOpen(s, ev)) return true;
   if (def.double) return def.double.includes(cardId) && !(ev.progress ?? []).includes(cardId);
   if (!CARDS3[cardId].matches.includes(ev.id)) return false;
   // 连环 opportunity stays locked until its crisis is cleared (the shared card among the crisis's two cards takes it afterwards)
@@ -447,7 +478,7 @@ export function feilaoAccepts(s: Z3State, cardId: CardId3): boolean {
 }
 
 export function feilaoBaseTier(arrogance: number): 0 | 1 | 2 {
-  return arrogance >= 4 ? 2 : arrogance >= 2 ? 1 : 0;
+  return arrogance >= 3 ? 2 : arrogance >= 1 ? 1 : 0;
 }
 
 export function feilaoCurrentTier(s: Z3State): 0 | 1 | 2 {
@@ -490,9 +521,9 @@ export function dengmenNeeded(s: Z3State, doubt: number, relics: number): number
   return (score <= 2 ? 1 : score <= 4 ? 2 : 3) + (s.exitTier === 1 ? 0 : 1);
 }
 
-/** 甄远道下狱的局势 s：起始 3，【父兄蒙尘】+1，打压过祺贵人 -1，每打出一张解牌 -1；0 即完美解决。 */
+/** 甄远道下狱的局势 s：起始 4，【父兄蒙尘】+1，打压过祺贵人 -1，每打出一张解牌 -1；0 即完美解决。 */
 export function xiayuS(s: Z3State, solved: number): number {
-  return Math.max(0, 3 + (hasStatus3(s, "fuxiongMengchen") ? 1 : 0) - (s.suppressed.guaerjia ? 1 : 0) - solved);
+  return Math.max(0, 4 + (hasStatus3(s, "fuxiongMengchen") ? 1 : 0) - (s.suppressed.guaerjia ? 1 : 0) - solved);
 }
 
 /** 未解决时扣圣宠与清誉各 2s；求太后少扣 2 圣宠，跪求皇上少扣 2 清誉。 */
@@ -506,6 +537,9 @@ export function xiayuCost(s: Z3State, choice: XiayuChoice, solved = 0): Delta3[]
   return cost;
 }
 
+/** 第一幕对质前打出这么多次【收拢人心】，记下【收买人心】把柄。 */
+const RENXIN_SECRET_PLAYS = 4;
+
 /** 把柄 held (hidden): 第二关带入 + 第一幕记下。 */
 export function secretsHeld(s: Z3State): number {
   return Object.values(s.secrets).reduce((a, b) => a + (b ?? 0), 0);
@@ -515,7 +549,7 @@ export function secretsHeld(s: Z3State): number {
 export function presentedSecrets(s: Z3State): number {
   const tier = lingrongTier(s.relation);
   const adj = tier === "close" ? -2 : tier === "resentful" ? 1 : 0;
-  return Math.max(0, secretsHeld(s) + adj - (hasStatus3(s, "duanfeiXianghu") ? 1 : 0));
+  return Math.max(0, secretsHeld(s) + adj - (hasStatus3(s, "duanfeiXianghu") ? 1 : 0) - (s.lizigao ? 1 : 0));
 }
 
 // ---------------------------------------------------------------- mutation helpers
@@ -618,12 +652,13 @@ function removeNegatives(s: Z3State, n: "all" | 1, source: string): void {
   for (const st of n === "all" ? negs : negs.slice(0, 1)) removeStatus3(s, st.uid, source);
 }
 
-function changeRelation(s: Z3State, delta: number): void {
+function changeRelation(s: Z3State, delta: number, quiet = false): void {
   if (s.lingrongGone || delta === 0) return;
   const before = s.relation;
   const next = Math.max(-4, Math.min(4, before + delta));
   if (next === before) return;
   s.relation = next;
+  if (quiet) return;
   const label = { close: "亲厚", distant: "生分", resentful: "怨怼" } as const;
   const tierChange = lingrongTier(before) !== lingrongTier(next) ? `，情分 ${label[lingrongTier(before)]} → ${label[lingrongTier(next)]}` : "";
   log(s, `${delta > 0 ? "陵容待你亲近了些" : "陵容与你生分了些"}${tierChange}`, delta > 0 ? "good" : "bad");
@@ -756,7 +791,18 @@ function suppress(s: Z3State, rival: RivalId): void {
   s.suppressed[rival] = true;
   log(s, `⚔️ 打压${RIVALS[rival].name}${first && rival === "guaerjia" ? "：第 8 回合父亲下狱的代价减轻一档" : ""}。`, "good");
   const status = SUPPRESS_STATUS[rival];
+  if (rival === "qifei" && hasStatus3(s, "dayaQifeiLizi")) return;
   if (!s.statuses.some((st) => st.id === status)) addStatus3(s, status);
+}
+
+/** 栗糕清苦: 齐妃's 把柄 lands in 皇后's hands — 打压·齐妃 stays for the rest of 第一幕, 三阿哥邀宠 is gone. */
+function lizigao(s: Z3State): void {
+  s.lizigao = true;
+  removeStatusById(s, "dayaQifei");
+  addStatus3(s, "dayaQifeiLizi");
+  removeFromPools(s, ["sanAgeYaochong"]);
+  log(s, "🥮 栗糕清苦：齐妃送来的栗子糕里掺了夹竹桃，幸而陵容闻了出来。皇后得了三阿哥，齐妃从此只能听命于景仁宫。", "good");
+  popup(s, "lizigao");
 }
 
 // ---------------------------------------------------------------- resolution
@@ -765,12 +811,28 @@ function verb(kind: string): string {
   return kind === "opportunity" ? "把握" : kind === "huanghou" ? "领受" : "化解";
 }
 
+const ENVY_STORIES = [
+  "皇上又只往碎玉轩去，各宫的灯一盏盏暗下去。有人在背后说你狐媚专宠，这话一传十、十传百，你的名声难免受了些累。",
+  "请安散后，几位嫔妃凑在廊下低声议论碎玉轩的恩宠，话里话外都是酸意。传到你耳中，已不大好听。",
+  "宫里都说莞嫔如今风头太盛，连赏赐都比旁人多一份。树大招风，你的清誉在人言里又薄了一层。",
+] as const;
+
+/** 第一幕盛宠招妒：圣宠不低于 ENVY_LINE3 时，带 envyCost 的事件了结后另扣清誉。 */
+function applyEnvy(s: Z3State, def: EventDef3): void {
+  if (s.act !== 1 || !def.envyCost || !alive(s) || s.shengchong < ENVY_LINE3) return;
+  log(s, ENVY_STORIES[s.turn % ENVY_STORIES.length]!);
+  applyDeltas3(s, def.envyCost, `盛宠招妒（圣宠 ≥ ${ENVY_LINE3}，${def.name}了结后另有折损）`);
+}
+
 function resolveEventByCard(s: Z3State, ev: EventInst3, card: CardId3, doubleReward: boolean): void {
   const def = EVENTS3[ev.id];
   ev.resolved = true;
   ev.resolvedBy = card;
   log(s, `${verb(def.kind)}${EVENT_KIND3_LABEL[def.kind]}事件【${def.name}】`, "good");
-  const story = (ev.id === "gongzhongLaixin" && hasStatus3(s, "jingfeiZhiyi") ? GONGZHONG_LAIXIN_JINGFEI_STORY[card] : undefined) ?? def.resolvedStory[card];
+  const story =
+    (ev.id === "gongzhongLaixin" && hasStatus3(s, "jingfeiZhiyi") ? GONGZHONG_LAIXIN_JINGFEI_STORY[card] : undefined) ??
+    (s.lizigao ? POPUP_TEXT.lizigaoStory[ev.id]?.[card] : undefined) ??
+    def.resolvedStory[card];
   if (story) {
     ev.story = story;
     log(s, story);
@@ -787,16 +849,17 @@ function resolveEventByCard(s: Z3State, ev: EventInst3, card: CardId3, doubleRew
   if (def.kind === "huanghou") {
     for (const c of new Set(ev.progress ?? [card])) applyDeltas3(s, def.cardReward?.[c] ?? [], def.name);
   }
+  applyEnvy(s, def);
   if (def.kind === "crisis") {
     if (def.resolveCost && alive(s)) applyDeltas3(s, def.resolveCost, `${def.name}（化解了，仍有些折损）`);
     if (def.rival && def.suppressCard && (ev.progress ?? [card]).includes(def.suppressCard) && !def.pair) {
       ev.suppressed = true;
       suppress(s, def.rival);
     }
-    if (card === "jingchaiBuqun" && alive(s)) {
-      log(s, "荆钗布裙联动：静白一时挑不出错。", "good");
-      addStatus3(s, "yishiWucuo");
-    }
+  }
+  if (card === "jingchaiBuqun" && alive(s)) {
+    log(s, "荆钗布裙联动：静白一时挑不出错。", "good");
+    addStatus3(s, "yishiWucuo");
   }
   if (card === "shoulongRenxin" && ev.id === "neiwufuDiaonan" && alive(s)) {
     log(s, "收拢人心联动：额外抽 1 张牌。", "good");
@@ -839,7 +902,7 @@ function opportunityExtras(s: Z3State, ev: EventInst3, card: CardId3 | "lingrong
       break;
     case "moyanYuanshou":
       s.extraPlays++;
-      log(s, `莫言援手：本回合出牌 +1（现为 ${playLimit3(s)}）。`, "good");
+      log(s, `默然分劳：本回合出牌 +1（现为 ${playLimit3(s)}）。`, "good");
       break;
     case "yuexiaDuitan":
       if (card === "guojunwangXiangzhu") drawCards3(s, 1);
@@ -869,6 +932,7 @@ function resolveEventByLingrong(s: Z3State, ev: EventInst3, tier: LingrongTier):
   if (o.shuhenjiao) shuhenjiao(s, tier);
   if (def.lingrongSecret) addSecret(s, def.lingrongSecret, tier);
   if (def.kind === "opportunity") opportunityExtras(s, ev, "lingrong");
+  if (ev.id === "sanAgeYaochong") lizigao(s);
   return o.relation ?? 0;
 }
 
@@ -914,6 +978,13 @@ function xiayuStep(s: Z3State, inst: StoryInst3, option: StoryOption3, tier: Lin
 
 function applyStoryOption(s: Z3State, inst: StoryInst3, option: StoryOption3, source: string, tier: LingrongTier | null): number {
   const def = STORIES3[inst.id];
+  // 海棠春睡：陵容暗中心冷，情分 -2，不写进日志
+  if (!inst.chosenOptionId && (inst.id === "haitangChunshui" || inst.id === "haitangYeyu")) {
+    const before = lingrongTier(s.relation);
+    changeRelation(s, -2, true);
+    const after = lingrongTier(s.relation);
+    if (after !== before && after !== "close" && !s.lingrongGone) log(s, HAITANG_COOL_TEXT[after], "bad");
+  }
   inst.chosenOptionId = option.id;
   if (option.card) inst.viaCard = option.card;
   log(s, source);
@@ -950,13 +1021,17 @@ function applyStoryOption(s: Z3State, inst: StoryInst3, option: StoryOption3, so
   } else applyDeltas3(s, option.effects, `${def.name}·${option.name}`);
   if (!alive(s)) return 0;
 
-  if (option.status) addStatus3(s, option.status);
   if (def.id === "wentaiyiTanshi" && hasStatus3(s, "jingfeiZhiyi")) {
     log(s, "敬妃托温太医带来了不少物资，山居的日子打点得宽裕了些。", "good");
     addStatus3(s, "jingfeiZhouji");
   }
   if (option.removeNegatives) removeNegatives(s, option.removeNegatives, option.name);
+  if (option.status) addStatus3(s, option.status);
   if (option.drawCards) drawCards3(s, option.drawCards);
+  if (option.extraPlays) {
+    s.extraPlays += option.extraPlays;
+    log(s, `${def.name}·${option.name}：本回合出牌 +${option.extraPlays}（现为 ${playLimit3(s)}）。`, "good");
+  }
   if (option.pregnancy) becomePregnant(s, def.name);
   if (option.summon) {
     inst.result = "侍寝成功";
@@ -990,7 +1065,7 @@ function applyStoryOption(s: Z3State, inst: StoryInst3, option: StoryOption3, so
   }
   if (inst.id === "tonghuataiChuyu") afterTonghuatai(s);
   if (inst.id === "taxueWenji" && option.card) s.taxueByCard = true;
-  if (inst.id === "shanmenOuyu" || inst.id === "taxueWenji") {
+  if (inst.id === "shanmenOuyu" || (inst.id === "taxueWenji" && option.id !== "bimenXieke")) {
     addCardToDeck(s, "guojunwangXiangzhu");
     log(s, "牌库加入 1 张【果郡王相助】。", "good");
   }
@@ -1041,6 +1116,7 @@ function resolvePlay3(s: Z3State, cardUid: string, removeStatusUid?: string): vo
     log(s, `打出【${def.name}】`);
   }
   s.playedThisTurn.push(card.id);
+  if (card.id === "shoulongRenxin" && s.act === 1 && s.turn < STAGE3.confrontTurn && ++s.renxinPlays === RENXIN_SECRET_PLAYS) addSecret(s, "shoulongMairen", null);
   let relationDelta = 0;
   let answered = responses.length > 0;
 
@@ -1085,7 +1161,9 @@ function resolvePlay3(s: Z3State, cardUid: string, removeStatusUid?: string): vo
       if (def.baseStatus && alive(s)) addStatus3(s, def.baseStatus);
       if (def.baseDraw > 0 && alive(s)) drawCards3(s, def.baseDraw);
     }
-    if (def.extraPlays && alive(s)) {
+    const solving =
+      events.length > 0 || answered || yihuaStep || (!!s.confront && confrontAccepts(s, card.id)) || (!!s.feilao && feilaoAccepts(s, card.id));
+    if (def.extraPlays && alive(s) && (!def.extraPlaysOnlyWhenSolving || solving)) {
       s.extraPlays += def.extraPlays;
       log(s, `${def.name}：本回合出牌 +${def.extraPlays}（现为 ${playLimit3(s)}）。`, "good");
     }
@@ -1114,7 +1192,9 @@ function resolvePlay3(s: Z3State, cardUid: string, removeStatusUid?: string): vo
     if (d.needTwo) {
       ev.progress = [...(ev.progress ?? []), card.id];
       if (ev.progress.length >= solveCount(ev)) {
-        if (isLingrong && tier) relationDelta += resolveEventByLingrong(s, ev, tier);
+        // 栗糕清苦：解牌里有陵容（不论先后），就按陵容化解
+        const lingrongTier3 = isLingrong ? tier : ev.progress.includes("lingrongXiangzhu") && lizigaoOpen(s, ev) ? tierOf3(s) : null;
+        if (lingrongTier3) relationDelta += resolveEventByLingrong(s, ev, lingrongTier3);
         else {
           // 连环: with the shared card among the two, its story always wins
           const shared = d.pair ? PAIRS[d.pair].shared : undefined;
@@ -1162,7 +1242,7 @@ function resolvePlay3(s: Z3State, cardUid: string, removeStatusUid?: string): vo
     c.played.push(card.id);
     if (first) {
       // 先挑一条这张牌能专门辩解的、还没被驳过的指控；没有就用通用的作证表忠心
-      const target = confrontLines(s).find((l) => !l.withheld && !c.rebutted.includes(l.id) && CONFRONT.pleas[l.id]?.[card.id]);
+      const target = confrontLines(s).find((l) => !l.withheld && !l.qifei && !c.rebutted.includes(l.id) && CONFRONT.pleas[l.id]?.[card.id]);
       if (target) c.rebutted.push(target.id);
       const text = target ? CONFRONT.pleas[target.id]![card.id]! : CONFRONT.cardStory[card.id];
       const topic = target ? `回应「${target.id === "fabricated" ? "凭空编造的话" : SECRETS[target.id as SecretId].name.replace("恩赏为凭·", "")}」：` : "";
@@ -1307,7 +1387,7 @@ function enterTemple(s: Z3State): void {
   s.lingrongGone = true;
   const guo = [...s.hand, ...s.drawPile, ...s.discard].filter((c) => c.id === "guojunwangXiangzhu");
   s.departed.push(...[...s.hand, ...s.drawPile, ...s.discard].filter((c) => c.id !== "guojunwangXiangzhu"));
-  const ids = s.exitTier === 3 ? STAGE3_TEMPLE_DECK.filter((id, i, all) => !(id === "jinxiXiangzhu" && all.indexOf(id) === i)) : [...STAGE3_TEMPLE_DECK];
+  const ids = [...STAGE3_TEMPLE_DECK];
   const deck: CardInst3[] = [...ids.map((id) => ({ uid: `c${s.nextUid++}`, id })), ...guo];
   s.hand = [];
   s.discard = [];
@@ -1333,12 +1413,12 @@ function moveToPeak(s: Z3State): void {
   removeFromPools(s, ["fazuoCuhuo", "wutouXiangyou"]);
   s.opportunityPool = shuffleInto(s, [...s.opportunityPool, ...PEAK_ADD_OPPORTUNITIES]);
   s.crisisPool = shuffleInto(s, [...s.crisisPool, ...PEAK_ADD_CRISES]);
-  log(s, "迁居凌云峰：杂役磋磨、功德箱失窃移出；月下对谈、夜半惊扰、耳目窥伺加入。");
+  log(s, "迁居凌云峰：杂役磋磨、功德蒙尘移出；月下对谈、夜半惊扰、耳目窥伺加入。");
 }
 
-const ZHOUFU_TURN = 25;
+const ZHOUFU_TURN = STAGE3.zhoufuTurn;
 
-/** 踏雪问疾（打牌化解）与月下琴笛都已完成，合婚庚帖写下时才有琴瑟同心。 */
+/** 踏雪问疾（本回合打牌化解，不走默认）与月下琴笛都已完成，合婚庚帖写下时才有琴瑟同心。 */
 export function qinseReady(s: Z3State): boolean {
   return s.changxiangsiDone === true && s.taxueByCard === true;
 }
@@ -1376,6 +1456,11 @@ function enterYihua(s: Z3State): void {
 function drawEvents(s: Z3State): void {
   const ease = (ev: EventInst3) => {
     const rival = EVENTS3[ev.id].rival;
+    if (rival === "qifei" && hasStatus3(s, "dayaQifeiLizi")) {
+      ev.eased = true;
+      log(s, `【打压·齐妃】齐妃有把柄在皇后手里，不敢闹大：【${EVENTS3[ev.id].name}】少需要 1 张解牌。`, "good");
+      return;
+    }
     const daya = rival ? SUPPRESS_STATUS[rival] : undefined;
     if (!daya || !removeStatusById(s, daya)) return;
     ev.eased = true;
@@ -1452,7 +1537,7 @@ function beginTurn3(s: Z3State, turn: number): void {
     const needed = confrontNeeded(presented) + (s.rank === "guiren" ? 1 : 0);
     s.confront = { presented, needed, played: [], stories: [], rebutted: [] };
     popup(s, "confront");
-    log(s, `剧情事件：【${CONFRONT.name}】皇后拿出了 ${presented} 件事。本回合须打出 ${needed} 张辩白牌${s.rank === "guiren" ? "（贵人多 1 张）" : ""}。陵容称病没来，她的牌打不出。`, "bad");
+    log(s, `剧情事件：【${CONFRONT.name}】被人抓住的把柄有 ${presented} 项。本回合须打出 ${needed} 张辩白牌${s.rank === "guiren" ? "（贵人多 1 张）" : ""}。陵容称病没来，她的牌打不出。`, "bad");
   }
   if (turn === STAGE3.templeLastTurn) {
     if (hasStatus3(s, "hanzheng")) applyDelta3(s, { resource: "shenzi", amount: -1 }, "带着寒疾缠身病倒");
@@ -1497,7 +1582,7 @@ function settleCrisis(s: Z3State, ev: EventInst3): void {
   }
   if (def.rival && removeStatusById(s, "xinGuirenZhangyi")) {
     ev.byXin = true;
-    log(s, `【欣贵人解围】【${def.name}】没化解，欣贵人替你挡下了惩罚。${def.xinCover ?? "她当众顶了回去。"}`, "good");
+    log(s, `【欣贵人解围】【${def.name}】没化解，欣贵人替你挡下了惩罚。${(s.lizigao ? POPUP_TEXT.lizigaoXinCover[ev.id] : undefined) ?? def.xinCover ?? "她当众顶了回去。"}`, "good");
     if (def.pair) log(s, `连环：【${EVENTS3[PAIRS[def.pair].opportunity].name}】随之作废。`, "bad");
     return;
   }
@@ -1589,6 +1674,7 @@ function endTurn3(s: Z3State): void {
     const def = EVENTS3[s.huanghou.id];
     log(s, `皇后事件【${def.name}】按默认结算。`);
     applyDeltas3(s, def.reward, def.name);
+    applyEnvy(s, def);
     addSecret(s, `enshang.${s.huanghou.id as HuanghouId}`, null);
   }
   if (!alive(s)) return;
@@ -1612,7 +1698,7 @@ function endTurn3(s: Z3State): void {
       log(s, "【请脉报喜】没能稳妥报喜，洗回机会牌池。");
     }
   } else if (s.opportunity) s.opportunityUsed.push(s.opportunity.id as OpportunityId3);
-  if (s.crisis) s.crisisUsed.push(s.crisis.id as CrisisId3);
+  if (s.crisis && !(s.lizigao && s.crisis.id === "sanAgeYaochong")) s.crisisUsed.push(s.crisis.id as CrisisId3);
   if (s.huanghou) s.huanghouUsed.push(s.huanghou.id as HuanghouId);
   s.opportunity = null;
   s.crisis = null;
@@ -1639,11 +1725,13 @@ function endTurn3(s: Z3State): void {
     s.feilaoTier = t;
     const tierDef = FEILAO.tiers[t]!;
     log(s, `【${FEILAO.name}】${tierDef.name}：${tierDef.story}`, t === 0 ? "info" : "bad");
-    if (t === 0) {
-      if (!hasStatus3(s, "shitaiBihu")) addStatus3(s, "shitaiBihu");
-    } else {
-      applyDeltas3(s, t === 1 ? [{ resource: "shenzi", amount: -1 }] : [{ resource: "shenzi", amount: -2 }, { resource: "qingyu", amount: -1 }], tierDef.name);
-      if (alive(s)) addStatus3(s, "hanzheng");
+    // 清誉 -(档位+1)：甲 -1、乙 -2、丙 -3
+    const shenzi = t === 0 ? [] : [{ resource: "shenzi" as const, amount: t === 1 ? -1 : -2 }];
+    applyDeltas3(s, [...shenzi, { resource: "qingyu", amount: -(t + 1) }], tierDef.name);
+    if (alive(s)) {
+      if (t === 0) {
+        if (!hasStatus3(s, "shitaiBihu")) addStatus3(s, "shitaiBihu");
+      } else addStatus3(s, "hanzheng");
     }
     if (!alive(s)) return;
     moveToPeak(s);
@@ -1776,6 +1864,8 @@ export function newStage3(seed: number, carry: Carry3 | null): Z3State {
     secrets: {},
     allies: { duanfei: false, jingfei: false, xin: false },
     suppressed: { qifei: false, guaerjia: false },
+    lizigao: false,
+    renxinPlays: 0,
     guoMeet: null,
     chunyuan: null,
     chunyuanPassed: false,
@@ -1897,12 +1987,14 @@ export function replay3(seed: number, carry: Carry3 | null, actions: readonly Z3
 }
 
 /** The 把柄 at 对质: what 皇后 brought out, plus the ones a 亲厚 陵容 kept back (`withheld`). */
-export function confrontLines(s: Z3State): { id: string; line: string; hint: string; lingrong: boolean; withheld?: boolean; duanfei?: string }[] {
+export type ConfrontLine3 = { id: string; line: string; hint: string; lingrong: boolean; withheld?: boolean; duanfei?: string; /** 栗糕清苦：齐妃说到一半语塞。 */ qifei?: boolean };
+
+export function confrontLines(s: Z3State): ConfrontLine3[] {
   const tier = s.exitTierLingrong ?? lingrongTier(s.relation);
   const held = (Object.keys(s.secrets) as SecretId[]).filter((id) => (s.secrets[id] ?? 0) > 0);
   // a 亲厚 陵容 kept two of hers back
   let hidden = tier === "close" ? 2 : 0;
-  const lines: { id: string; line: string; hint: string; lingrong: boolean; withheld?: boolean; duanfei?: string }[] = held.map((id, i) => {
+  const lines: ConfrontLine3[] = held.map((id, i) => {
     const withheld = hidden > 0 && SECRETS[id].lingrong;
     if (withheld) hidden--;
     // 每隔一条由宫人、小太监说出，保证对质里总有下人开口
@@ -1910,9 +2002,17 @@ export function confrontLines(s: Z3State): { id: string; line: string; hint: str
     return { id, line, hint: SECRETS[id].hint, lingrong: SECRETS[id].lingrong, ...(withheld ? { withheld } : {}) };
   });
   if (tier === "resentful") lines.push({ id: "fabricated", line: FABRICATED_SECRET, hint: FABRICATED_HINT, lingrong: true });
+  // 栗糕清苦：齐妃开口的头一条，她说到一半想起栗子糕，语塞了（她名下的版本）
+  if (s.lizigao) {
+    const mine = lines.find((l) => !l.withheld && l.id !== "fabricated" && SECRETS[l.id as SecretId].line.startsWith("齐妃"));
+    if (mine) {
+      mine.line = SECRETS[mine.id as SecretId].line;
+      mine.qifei = true;
+    }
+  }
   // 端妃相护：挡下最后一条真正提出的指控，指控照常提出，端妃在一旁替你说话
   if (hasStatus3(s, "duanfeiXianghu")) {
-    const covered = [...lines].reverse().find((l) => !l.withheld && l.id !== "fabricated");
+    const covered = [...lines].reverse().find((l) => !l.withheld && !l.qifei && l.id !== "fabricated");
     if (covered) covered.duanfei = DUANFEI_DEFENSE[covered.id] ?? DUANFEI_DEFAULT[s.seed % DUANFEI_DEFAULT.length]!;
   }
   return lines;
@@ -1933,6 +2033,7 @@ export function endingStory3(s: Z3State): string[] {
   else if (s.relicsBurned > 0) lines.push(ENDING.relicsBurned);
   lines.push(ENDING.ximai);
   if (s.yihua?.duishi) lines.push(ENDING.duishi);
+  if (hasStatus3(s, "qinseHeming")) lines.push(ENDING.qinse);
   if (s.victory === "narrow") lines.push(YIHUA.dengmenNarrow);
   lines.push(...POPUP_TEXT.homecoming);
   if (s.exitTier) lines.push(POPUP_TEXT.homecomingTier[s.exitTier]!);
