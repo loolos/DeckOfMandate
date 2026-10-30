@@ -93,7 +93,7 @@ import {
   type Z3State,
 } from "../logic/stage3Engine";
 import { cardArtUrl, eventArtUrl, specialArtUrl, storyArtUrl } from "./art";
-import { CardArt, FoldBox, GameHeader, LogView, Pile, PileGroup, ResolvedBanner, ScrollRow, StatChip, TagChip, activateOnKey, countBy, groupStatuses, isTypingTarget, type Fold } from "./common";
+import { BriefDetail, CardArt, FoldBox, GameHeader, LogView, Pile, PileGroup, ResolvedBanner, ScrollRow, StatChip, TagChip, activateOnKey, countBy, groupStatuses, isTypingTarget, type Fold } from "./common";
 import { compactEffect3, expandedEffect3 } from "./effectText3";
 import styles from "./zhenhuan.module.css";
 
@@ -1221,9 +1221,11 @@ function PopupBody({ state, id }: { state: Z3State; id: PopupId }) {
     case "lizigao":
       return (
         <>
-          {POPUP_TEXT.lizigao.map((t) => (
-            <p key={t}>{t}</p>
-          ))}
+          <BriefDetail brief={POPUP_TEXT.lizigaoBrief}>
+            {POPUP_TEXT.lizigao.map((t) => (
+              <p key={t}>{t}</p>
+            ))}
+          </BriefDetail>
           <p className={styles.muted}>{POPUP_TEXT.lizigaoRules}</p>
         </>
       );

@@ -1385,3 +1385,20 @@
   border-radius: 8px;
   padding: 0.3rem 0.5rem;
 }
+
+/* 长弹窗的「展开详情 / 收起」文字按钮。 */
+.briefToggle {
+  display: block;
+  margin: 0.25rem 0 0.75rem auto;
+  padding: 0.15rem 0.25rem;
+  background: none;
+  border: none;
+  color: var(--zh-gold);
+  font: inherit;
+  font-size: 0.9em;
+  cursor: pointer;
+}
+
+.briefToggle:hover {
+  text-decoration: underline;
+}

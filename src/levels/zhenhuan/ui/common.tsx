@@ -724,3 +724,20 @@ export function TagChip({ tone, onExplain, children }: { tone?: string; onExplai
     </button>
   );
 }
+
+/**
+ * Long popup text: shows `brief` first, with a button that swaps in the full `children`.
+ * Collapsed popups usually fit without scrolling; once expanded, the popup auto-scroll (see popupAutoScroll) is
+ * already stopped by the click, so the full text simply opens in place.
+ */
+export function BriefDetail({ brief, children }: { brief: string; children: ReactNode }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <>
+      {open ? children : <p>{brief}</p>}
+      <button type="button" className={styles.briefToggle} aria-expanded={open} onClick={() => setOpen((v) => !v)}>
+        {open ? "收起 ▴" : "展开详情 ▾"}
+      </button>
+    </>
+  );
+}
