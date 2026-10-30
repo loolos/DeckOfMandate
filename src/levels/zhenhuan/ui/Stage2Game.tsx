@@ -819,7 +819,7 @@ function OutcomeModal({ state, onRestart, onMenu, onNextStage }: { state: Z2Stat
 }
 
 function duanfeiSettled(s: Z2State): boolean {
-  return s.stories.some((st) => st.id === "duanfeiJiushi" && st.chosenOptionId != null);
+  return s.stories.some((st) => st.id === "duanfeiJiushi" && (st.chosenOptionId === "wenyanXiangxun" || st.chosenOptionId === "weiDuanfeiZhenmai"));
 }
 
 function Notice({ title, children, onClose }: { title: string; children: ReactNode; onClose: () => void }) {
