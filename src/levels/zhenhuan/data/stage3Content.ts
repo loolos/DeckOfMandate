@@ -784,9 +784,9 @@ export const STATUSES3: Record<StatusId3, StatusDef3> = {
     name: "敬妃周济",
     emoji: "🧺",
     tag: "positive",
-    duration: 3,
+    duration: 1,
     drawModifier: 1,
-    effectText: "未来 3 回合，每回合抓牌数 +1。",
+    effectText: "下回合抓牌数 +1。",
     flavor: "敬妃托温太医捎上山的衣物药材和米面，替你把山居的日子打点得宽裕了些。",
   },
   bingzhongXinyou: {
@@ -2308,7 +2308,7 @@ export const STORIES3: Record<StoryId3, StoryDef3> = {
     name: "故人来访",
     emoji: "🩺",
     flavor: "温实初上山来了，捎来胧月的一张小像，是敬妃托他带的。画上的孩子胖乎乎的，眉眼像你。",
-    note: "有【敬妃之谊】时，另得未来 3 回合每回合抓牌 +1。",
+    note: "有【敬妃之谊】时，另得下回合抓牌 +1。",
     defaultOptionId: "shouxia",
     options: [
       { id: "shouxia", name: "收下小像", effects: [sz(1)], drawCards: 1, text: "抽 1 张牌；身子 +1", story: "你把小像贴在心口看了许久，画上的孩子胖乎乎的，笑得没心没肺。温实初在一旁欲言又止，终是只留下一句：「嬛妹妹，你要好好的。」这一夜，你睡得比往日踏实些。" },
