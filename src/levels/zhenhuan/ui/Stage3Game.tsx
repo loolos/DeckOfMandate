@@ -1149,7 +1149,9 @@ function PopupBody({ state, id }: { state: Z3State; id: PopupId }) {
       const r = state.chunyuanResult ?? "fail";
       return (
         <>
-          <p>{CHUNYUAN.popup[r]}</p>
+          {CHUNYUAN.popup[r].map((para, i) => (
+            <p key={i}>{para}</p>
+          ))}
           <p className={styles.muted}>{CHUNYUAN.popupRules[r]}</p>
         </>
       );
