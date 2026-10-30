@@ -27,6 +27,7 @@ import {
   XIBIE,
   hateTierLabel,
   HATE_REVEAL_TURN,
+  DUANFEI_BRIEF,
   DUANFEI_STORY,
   JINGHONG_STORY,
   XIANYUEGE,
@@ -71,7 +72,7 @@ import {
   type Z2State,
 } from "../logic/stage2Engine";
 import { cardArtUrl, eventArtUrl, specialArtUrl, storyArtUrl } from "./art";
-import { CardArt, FoldBox, GameHeader, LogView, Pile, PileGroup, ResolvedBanner, ScrollRow, StatChip, TagChip, activateOnKey, countBy, groupStatuses, isTypingTarget, type Fold } from "./common";
+import { BriefDetail, CardArt, FoldBox, GameHeader, LogView, Pile, PileGroup, ResolvedBanner, ScrollRow, StatChip, TagChip, activateOnKey, countBy, groupStatuses, isTypingTarget, type Fold } from "./common";
 import { compactEffect2, expandedEffect2 } from "./effectText2";
 import styles from "./zhenhuan.module.css";
 
@@ -1065,17 +1066,21 @@ export function Stage2Game({ state, dispatch, runCode, showRules, onShowRules, o
       ) : null}
       {notice === "xianyuege" ? (
         <Notice title="🪤 闲月阁" onClose={() => setNotice(null)}>
-          {XIANYUEGE.story.map((para) => (
-            <p key={para}>{para}</p>
-          ))}
+          <BriefDetail brief={XIANYUEGE.storyBrief}>
+            {XIANYUEGE.story.map((para) => (
+              <p key={para}>{para}</p>
+            ))}
+          </BriefDetail>
           <p className={styles.muted}>{STATUSES2.jiaoyanZanlian.effectText}整局只会发生一次。</p>
         </Notice>
       ) : null}
       {notice === "duanfei" ? (
         <Notice title="🌸 端妃旧事" onClose={() => setNotice(null)}>
-          {DUANFEI_STORY.map((para) => (
-            <p key={para}>{para}</p>
-          ))}
+          <BriefDetail brief={DUANFEI_BRIEF}>
+            {DUANFEI_STORY.map((para) => (
+              <p key={para}>{para}</p>
+            ))}
+          </BriefDetail>
         </Notice>
       ) : null}
       {notice === "miscarriage" ? (

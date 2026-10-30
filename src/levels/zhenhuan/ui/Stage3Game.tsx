@@ -1139,9 +1139,11 @@ function PopupBody({ state, id }: { state: Z3State; id: PopupId }) {
       const meet = state.guoMeet ?? "di";
       return (
         <>
-          <p>{POPUP_TEXT.tonghuatai.open[meet]}</p>
-          <p>{POPUP_TEXT.tonghuatai.bio}</p>
-          <p>{POPUP_TEXT.tonghuatai.close[meet]}</p>
+          <BriefDetail brief={POPUP_TEXT.tonghuataiBrief[meet]}>
+            <p>{POPUP_TEXT.tonghuatai.open[meet]}</p>
+            <p>{POPUP_TEXT.tonghuatai.bio}</p>
+            <p>{POPUP_TEXT.tonghuatai.close[meet]}</p>
+          </BriefDetail>
           <p className={styles.muted}>{POPUP_TEXT.tonghuataiRules}</p>
         </>
       );
