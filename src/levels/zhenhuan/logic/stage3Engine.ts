@@ -490,9 +490,9 @@ export function dengmenNeeded(s: Z3State, doubt: number, relics: number): number
   return (score <= 2 ? 1 : score <= 4 ? 2 : 3) + (s.exitTier === 1 ? 0 : 1);
 }
 
-/** 甄远道下狱的局势 s：起始 3，【父兄蒙尘】+1，打压过祺贵人 -1，每打出一张解牌 -1；0 即完美解决。 */
+/** 甄远道下狱的局势 s：起始 4，【父兄蒙尘】+1，打压过祺贵人 -1，每打出一张解牌 -1；0 即完美解决。 */
 export function xiayuS(s: Z3State, solved: number): number {
-  return Math.max(0, 3 + (hasStatus3(s, "fuxiongMengchen") ? 1 : 0) - (s.suppressed.guaerjia ? 1 : 0) - solved);
+  return Math.max(0, 4 + (hasStatus3(s, "fuxiongMengchen") ? 1 : 0) - (s.suppressed.guaerjia ? 1 : 0) - solved);
 }
 
 /** 未解决时扣圣宠与清誉各 2s；求太后少扣 2 圣宠，跪求皇上少扣 2 清誉。 */

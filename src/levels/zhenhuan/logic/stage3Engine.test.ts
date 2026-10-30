@@ -203,11 +203,12 @@ describe("zhenhuan stage 3 engine", () => {
       return s;
     };
     let s = base();
-    const [g, j, k] = setHand(s, ["guojunwangXiangzhu", "shoulongRenxin", "jinyanShenxing"]);
+    const [g, g1, j, k] = setHand(s, ["guojunwangXiangzhu", "guojunwangXiangzhu", "shoulongRenxin", "jinyanShenxing"]);
     s = act(s, { type: "playCard", cardUid: g! });
+    s = act(s, { type: "playCard", cardUid: g1! });
     s = act(s, { type: "playCard", cardUid: j! });
     expect(s.stories[0]!.chosenOptionId).toBeNull();
-    expect(s.stories[0]!.steps).toHaveLength(2);
+    expect(s.stories[0]!.steps).toHaveLength(3);
     s = act(s, { type: "playCard", cardUid: k! });
     expect(s.stories[0]!.chosenOptionId).toBe("yinrenBuyan");
     expect(s.stories[0]!.result).toContain("完美解决");
@@ -216,10 +217,10 @@ describe("zhenhuan stage 3 engine", () => {
     const [t3] = setHand(w, ["meizhuangXiangzhu"]);
     w = act(w, { type: "playCard", cardUid: t3! });
     expect(w.stories[0]!.solved).toBeUndefined();
-    // 一张都没打：默认跪求皇上，s=3 → 圣宠 -6、清誉 -4
+    // 一张都没打：默认跪求皇上，s=4 → 圣宠 -8、清誉 -6
     expect(xiayuCost(base(), "kneel", 0)).toEqual([
-      { resource: "shengchong", amount: -6 },
-      { resource: "qingyu", amount: -4 },
+      { resource: "shengchong", amount: -8 },
+      { resource: "qingyu", amount: -6 },
     ]);
     let u = base();
     const [g2] = setHand(u, ["guojunwangXiangzhu"]);
@@ -447,23 +448,23 @@ describe("zhenhuan stage 3 engine", () => {
     expect(resentful.at(-1)!.line).toBe(FABRICATED_SECRET);
   });
 
-  it("甄远道下狱 cost: s 起始 3，父兄蒙尘 +1，打压祺贵人 -1，每张解牌 -1", () => {
+  it("甄远道下狱 cost: s 起始 4，父兄蒙尘 +1，打压祺贵人 -1，每张解牌 -1", () => {
     const s = newStage3(1, CARRY);
-    expect(xiayuS(s, 0)).toBe(3);
-    expect(xiayuS(s, 1)).toBe(2);
+    expect(xiayuS(s, 0)).toBe(4);
+    expect(xiayuS(s, 1)).toBe(3);
     expect(xiayuS(s, 5)).toBe(0);
     expect(xiayuCost(s, "taihou", 0)).toEqual([
-      { resource: "shengchong", amount: -4 },
-      { resource: "qingyu", amount: -6 },
+      { resource: "shengchong", amount: -6 },
+      { resource: "qingyu", amount: -8 },
     ]);
     withStatus(s, "fuxiongMengchen");
-    expect(xiayuS(s, 0)).toBe(4);
+    expect(xiayuS(s, 0)).toBe(5);
     s.suppressed.guaerjia = true;
-    expect(xiayuS(s, 0)).toBe(3);
-    expect(xiayuCost(s, "kneel", 2)).toEqual([
+    expect(xiayuS(s, 0)).toBe(4);
+    expect(xiayuCost(s, "kneel", 3)).toEqual([
       { resource: "shengchong", amount: -2 },
     ]);
-    expect(xiayuCost(s, "kneel", 3)).toEqual([]);
+    expect(xiayuCost(s, "kneel", 4)).toEqual([]);
   });
 
   it("鄂敏参本: 没化解 清誉 -4 + 父兄蒙尘; 一张解牌 清誉 -1 + 父兄蒙尘; 化解也 清誉 -1", () => {
@@ -1093,6 +1094,6 @@ describe("出宫清誉按把柄条数扣", () => {
     // 第 10 回合一张辩白牌都不打：缺 3 张，被废出宫
     const after = replay3(s0.seed, s0.carry, [...s0.actions.slice(0, 59), { type: "endTurn" }]);
     expect(after.exitTier).toBe(3);
-    expect(after.qingyu).toBe(8 - 4); // 呈上 4 条
+    expect(after.qingyu).toBe(8 - 5); // 呈上 5 条（甄远道下狱基础局势提高后，此局回放多一条）
   });
 });
