@@ -93,7 +93,7 @@ import {
   type Z3State,
 } from "../logic/stage3Engine";
 import { cardArtUrl, eventArtUrl, specialArtUrl, storyArtUrl } from "./art";
-import { CardArt, FoldBox, GameHeader, LogView, Pile, PileGroup, ResolvedBanner, ScrollRow, StatChip, TagChip, activateOnKey, countBy, groupStatuses, isTypingTarget, type Fold } from "./common";
+import { BriefDetail, CardArt, FoldBox, GameHeader, LogView, Pile, PileGroup, ResolvedBanner, ScrollRow, StatChip, TagChip, activateOnKey, countBy, groupStatuses, isTypingTarget, type Fold } from "./common";
 import { compactEffect3, expandedEffect3 } from "./effectText3";
 import styles from "./zhenhuan.module.css";
 
@@ -1139,9 +1139,11 @@ function PopupBody({ state, id }: { state: Z3State; id: PopupId }) {
       const meet = state.guoMeet ?? "di";
       return (
         <>
-          <p>{POPUP_TEXT.tonghuatai.open[meet]}</p>
-          <p>{POPUP_TEXT.tonghuatai.bio}</p>
-          <p>{POPUP_TEXT.tonghuatai.close[meet]}</p>
+          <BriefDetail brief={POPUP_TEXT.tonghuataiBrief[meet]}>
+            <p>{POPUP_TEXT.tonghuatai.open[meet]}</p>
+            <p>{POPUP_TEXT.tonghuatai.bio}</p>
+            <p>{POPUP_TEXT.tonghuatai.close[meet]}</p>
+          </BriefDetail>
           <p className={styles.muted}>{POPUP_TEXT.tonghuataiRules}</p>
         </>
       );
@@ -1150,9 +1152,11 @@ function PopupBody({ state, id }: { state: Z3State; id: PopupId }) {
       const r = state.chunyuanResult ?? "fail";
       return (
         <>
-          {CHUNYUAN.popup[r].map((para, i) => (
-            <p key={i}>{para}</p>
-          ))}
+          {(() => {
+            const paras = CHUNYUAN.popup[r].map((para, i) => <p key={i}>{para}</p>);
+            const brief = CHUNYUAN.popupBrief[r];
+            return brief ? <BriefDetail brief={brief}>{paras}</BriefDetail> : paras;
+          })()}
           <p className={styles.muted}>{CHUNYUAN.popupRules[r]}</p>
         </>
       );
@@ -1221,9 +1225,11 @@ function PopupBody({ state, id }: { state: Z3State; id: PopupId }) {
     case "lizigao":
       return (
         <>
-          {POPUP_TEXT.lizigao.map((t) => (
-            <p key={t}>{t}</p>
-          ))}
+          <BriefDetail brief={POPUP_TEXT.lizigaoBrief}>
+            {POPUP_TEXT.lizigao.map((t) => (
+              <p key={t}>{t}</p>
+            ))}
+          </BriefDetail>
           <p className={styles.muted}>{POPUP_TEXT.lizigaoRules}</p>
         </>
       );
@@ -1238,11 +1244,13 @@ function PopupBody({ state, id }: { state: Z3State; id: PopupId }) {
     case "ximai":
       return (
         <>
-          {state.exitTier && state.exitTier <= 3 ? <p>{POPUP_TEXT.ximaiRecall[state.exitTier as 1 | 2 | 3]}</p> : null}
-          <p>{POPUP_TEXT.ximaiBridge}</p>
-          {POPUP_TEXT.ximai.map((t) => (
-            <p key={t}>{t}</p>
-          ))}
+          <BriefDetail brief={POPUP_TEXT.ximaiBrief[(state.exitTier && state.exitTier <= 3 ? state.exitTier : 1) as 1 | 2 | 3]}>
+            {state.exitTier && state.exitTier <= 3 ? <p>{POPUP_TEXT.ximaiRecall[state.exitTier as 1 | 2 | 3]}</p> : null}
+            <p>{POPUP_TEXT.ximaiBridge}</p>
+            {POPUP_TEXT.ximai.map((t) => (
+              <p key={t}>{t}</p>
+            ))}
+          </BriefDetail>
           {state.exitTier === 2 || state.exitTier === 3 ? <p>{POPUP_TEXT.ximaiTierHint[state.exitTier]}</p> : null}
           <p className={styles.muted}>{POPUP_TEXT.ximaiRules}</p>
         </>
