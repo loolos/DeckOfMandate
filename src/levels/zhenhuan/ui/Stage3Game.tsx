@@ -1152,9 +1152,11 @@ function PopupBody({ state, id }: { state: Z3State; id: PopupId }) {
       const r = state.chunyuanResult ?? "fail";
       return (
         <>
-          {CHUNYUAN.popup[r].map((para, i) => (
-            <p key={i}>{para}</p>
-          ))}
+          {(() => {
+            const paras = CHUNYUAN.popup[r].map((para, i) => <p key={i}>{para}</p>);
+            const brief = CHUNYUAN.popupBrief[r];
+            return brief ? <BriefDetail brief={brief}>{paras}</BriefDetail> : paras;
+          })()}
           <p className={styles.muted}>{CHUNYUAN.popupRules[r]}</p>
         </>
       );
@@ -1242,11 +1244,13 @@ function PopupBody({ state, id }: { state: Z3State; id: PopupId }) {
     case "ximai":
       return (
         <>
-          {state.exitTier && state.exitTier <= 3 ? <p>{POPUP_TEXT.ximaiRecall[state.exitTier as 1 | 2 | 3]}</p> : null}
-          <p>{POPUP_TEXT.ximaiBridge}</p>
-          {POPUP_TEXT.ximai.map((t) => (
-            <p key={t}>{t}</p>
-          ))}
+          <BriefDetail brief={POPUP_TEXT.ximaiBrief[(state.exitTier && state.exitTier <= 3 ? state.exitTier : 1) as 1 | 2 | 3]}>
+            {state.exitTier && state.exitTier <= 3 ? <p>{POPUP_TEXT.ximaiRecall[state.exitTier as 1 | 2 | 3]}</p> : null}
+            <p>{POPUP_TEXT.ximaiBridge}</p>
+            {POPUP_TEXT.ximai.map((t) => (
+              <p key={t}>{t}</p>
+            ))}
+          </BriefDetail>
           {state.exitTier === 2 || state.exitTier === 3 ? <p>{POPUP_TEXT.ximaiTierHint[state.exitTier]}</p> : null}
           <p className={styles.muted}>{POPUP_TEXT.ximaiRules}</p>
         </>
