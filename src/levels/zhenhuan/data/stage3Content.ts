@@ -466,11 +466,15 @@ export type StatusDef3 = {
   readonly flavor: string;
   /** Before this turn the player only sees the veiled text (盟友状态的效果日后才揭晓). */
   readonly veiled?: { readonly untilTurn: number; readonly effectText: string; readonly flavor: string };
+  /** From this turn on the status shows a different story text (效果文字不变). */
+  readonly lateFlavor?: { readonly fromTurn: number; readonly flavor: string };
 };
 
 /** What the player is shown of a status on `turn`. */
 export function statusText3(def: StatusDef3, turn: number): { effectText: string; flavor: string } {
-  return def.veiled && turn < def.veiled.untilTurn ? def.veiled : def;
+  if (def.veiled && turn < def.veiled.untilTurn) return def.veiled;
+  if (def.lateFlavor && turn >= def.lateFlavor.fromTurn) return { effectText: def.effectText, flavor: def.lateFlavor.flavor };
+  return def;
 }
 
 /** 打压 leaves one of these per rival: her next crisis needs one fewer 解牌. */
@@ -596,6 +600,10 @@ export const STATUSES3: Record<StatusId3, StatusDef3> = {
     drawModifier: 0,
     effectText: "不再出现召幸。第一幕没有伤胎类事件，孩子一定能平安出生。",
     flavor: "太医跪地道喜：小主有喜了。你抚着小腹，一时竟不知该喜还是该忧。",
+    lateFlavor: {
+      fromTurn: STAGE3.act3Start,
+      flavor: "腹中这个孩子并不是皇上的，可万万不能叫皇上知道，只能让他深信不疑，这是他的骨肉。月份、脉案、人前人后的一言一行，都不能出半点差错。",
+    },
   },
   duanfeiXianghu: {
     id: "duanfeiXianghu",
@@ -681,6 +689,10 @@ export const STATUSES3: Record<StatusId3, StatusDef3> = {
     drawModifier: 0,
     effectText: "下一次危机事件没化解时免罚（静白刁难仍算没化解）。用掉后消失。",
     flavor: "静岸师太嘴上不说，心里却是护着你的，真遇上为难事，她总会替你拦上一拦。",
+    lateFlavor: {
+      fromTurn: STAGE3.templeLastTurn + 1,
+      flavor: "上了凌云峰，静白的手伸不到这里了。山下这份庇护还在，师太没有忘了你，真遇上为难事，仍会托人替你拦上一拦。",
+    },
   },
   hanzheng: {
     id: "hanzheng",
