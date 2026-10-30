@@ -96,6 +96,8 @@ function advanceTo(s: Z3State, turn: number): Z3State {
     if (s.act === 1) s.shengchong = Math.max(s.shengchong, 12);
     s.shenzi = 6;
     if (s.yihua) s.yihua.doubt = 1;
+    // 对质：本帮助函数不出辩白牌，视为全部打够，免得高把柄数直接落到冷宫
+    if (s.confront) s.confront.needed = 0;
     s = act(s, { type: "endTurn" });
     expect(s.outcome, s.lossReason ?? "").toBe("playing");
   }
@@ -134,8 +136,9 @@ describe("zhenhuan stage 3 content", () => {
     expect(confrontOutcome(5, 1)).toBe(2);
     expect(confrontOutcome(5, 2)).toBe(3);
     expect(confrontOutcome(7, 0)).toBe(2);
-    expect(confrontOutcome(11, 2)).toBe(3);
-    expect(confrontOutcome(12, 1)).toBe(3);
+    expect(confrontOutcome(11, 2)).toBe(4);
+    expect(confrontOutcome(12, 0)).toBe(3);
+    expect(confrontOutcome(12, 1)).toBe(4);
     expect(confrontOutcome(16, 2)).toBe(4);
     expect(confrontOutcome(17, 0)).toBe(4);
   });
@@ -697,6 +700,7 @@ describe("zhenhuan stage 3 engine", () => {
     for (const uid of s.hand.filter((c) => CONFRONT.cards.includes(c.id) && c.id !== "lingrongXiangzhu").map((c) => c.uid)) s = act(s, { type: "playCard", cardUid: uid });
     s.drawPile.push({ uid: "g1", id: "guojunwangXiangzhu" });
     const guo = [...s.hand, ...s.drawPile, ...s.discard].filter((c) => c.id === "guojunwangXiangzhu").length;
+    s.confront!.needed = 0;
     s = act(s, { type: "endTurn" });
     expect(s.act).toBe(2);
     expect(s.qingyu).toBeLessThanOrEqual(XIUXING.cap);
