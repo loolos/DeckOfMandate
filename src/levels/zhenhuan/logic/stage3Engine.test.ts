@@ -99,6 +99,8 @@ function advanceTo(s: Z3State, turn: number): Z3State {
     if (s.act === 1) s.shengchong = Math.max(s.shengchong, 12);
     s.shenzi = 6;
     if (s.yihua) s.yihua.doubt = 1;
+    // 对质：本帮助函数不出辩白牌，视为全部打够，免得高把柄数直接落到冷宫
+    if (s.confront) s.confront.needed = 0;
     // 海棠春睡的默认结算会留下抓牌 -1，改变后续牌序；快进时跳过
     if (s.pregnant) s.stories = s.stories.filter((x) => x.id !== "haitangChunshui" && x.id !== "haitangYeyu");
     s = act(s, { type: "endTurn" });
@@ -139,8 +141,9 @@ describe("zhenhuan stage 3 content", () => {
     expect(confrontOutcome(5, 1)).toBe(2);
     expect(confrontOutcome(5, 2)).toBe(3);
     expect(confrontOutcome(7, 0)).toBe(2);
-    expect(confrontOutcome(11, 2)).toBe(3);
-    expect(confrontOutcome(12, 1)).toBe(3);
+    expect(confrontOutcome(11, 2)).toBe(4);
+    expect(confrontOutcome(12, 0)).toBe(3);
+    expect(confrontOutcome(12, 1)).toBe(4);
     expect(confrontOutcome(16, 2)).toBe(4);
     expect(confrontOutcome(17, 0)).toBe(4);
   });
@@ -893,6 +896,7 @@ describe("zhenhuan stage 3 engine", () => {
     for (const uid of s.hand.filter((c) => CONFRONT.cards.includes(c.id) && c.id !== "lingrongXiangzhu").map((c) => c.uid)) s = act(s, { type: "playCard", cardUid: uid });
     s.drawPile.push({ uid: "g1", id: "guojunwangXiangzhu" });
     const guo = [...s.hand, ...s.drawPile, ...s.discard].filter((c) => c.id === "guojunwangXiangzhu").length;
+    s.confront!.needed = 0;
     s = act(s, { type: "endTurn" });
     expect(s.act).toBe(2);
     expect(s.qingyu).toBeLessThanOrEqual(XIUXING.cap);
@@ -1329,7 +1333,7 @@ describe("出宫清誉按把柄条数扣", () => {
     // 第 10 回合一张辩白牌都不打：缺 3 张，被废出宫
     const after = act(s, { type: "endTurn" });
     expect(after.exitTier).toBe(3);
-    expect(after.qingyu).toBe(8 - 5); // 呈上 5 条（甄远道下狱基础局势提高后，此局回放多一条）
+    expect(after.qingyu).toBe(8 - 4); // 呈上 4 条（上面手动指定）
   });
 
   it("对质卡名不预设出宫方式（被废出宫时不应显示“自请出宫”）", () => {
