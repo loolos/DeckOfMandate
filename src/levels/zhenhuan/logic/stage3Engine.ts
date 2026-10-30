@@ -67,6 +67,7 @@ import {
   ZHOUFU,
   confrontNeeded,
   dengmenOpenText,
+  dengmenCloseText,
   confrontOutcome,
   lingrongTier,
   summonInterval,
@@ -1366,7 +1367,7 @@ function finishDengmen(s: Z3State): void {
   const y = s.yihua!;
   y.step = 5;
   y.doneTurn = s.turn;
-  log(s, `④ 登门：${y.dengmen!.needed === 0 ? YIHUA.dengmenNoneDone : s.exitTier === 3 ? YIHUA.dengmenNarrow : YIHUA.dengmenDone}移花接木，四步俱成。`, "good");
+  log(s, `④ 登门：${dengmenCloseText(y.dengmen!.needed === 0 ? "none" : s.exitTier === 3 ? "narrow" : "done", s.exitTier)}移花接木，四步俱成。`, "good");
 }
 
 function openDengmen(s: Z3State): void {
@@ -1790,7 +1791,7 @@ function endTurn3(s: Z3State): void {
         y.doneTurn = s.turn;
         s.outcome = "won";
         s.victory = "narrow";
-        log(s, `④ 登门：${YIHUA.dengmenNarrow}`, "good");
+        log(s, `④ 登门：${dengmenCloseText("narrow", s.exitTier)}`, "good");
         log(s, "凤阙归来（险胜）：皇上心存疑虑，仍下旨接你回宫。", "good");
       } else lose(s, "登门两回合内解牌不足，皇上拂袖而去", "deadline");
       return;
@@ -2034,11 +2035,12 @@ export function endingStory3(s: Z3State): string[] {
   lines.push(ENDING.ximai);
   if (s.yihua?.duishi) lines.push(ENDING.duishi);
   if (hasStatus3(s, "qinseHeming")) lines.push(ENDING.qinse);
-  if (s.victory === "narrow") lines.push(YIHUA.dengmenNarrow);
+  if (s.victory === "narrow") lines.push(dengmenCloseText("narrow", s.exitTier));
   lines.push(...POPUP_TEXT.homecoming);
   if (s.exitTier) lines.push(POPUP_TEXT.homecomingTier[s.exitTier]!);
   if (s.exitTierLingrong) lines.push(ENDING.lingrong[s.exitTierLingrong]);
   if (s.victory === "perfect") lines.push(...ENDING.perfect);
+  if (s.victory === "return") lines.push(ENDING.perfectHint);
   return lines;
 }
 

@@ -47,6 +47,7 @@ import {
   type PopupId,
   type TagId3,
   dengmenOpenText,
+  dengmenCloseText,
 } from "../data/stage3Content";
 import {
   blockedByChezhou3,
@@ -641,7 +642,7 @@ function yihuaDoneText(state: Z3State, n: number): string {
     default: {
       const d = y.dengmen;
       if (!d) return "";
-      const closing = d.needed === 0 ? YIHUA.dengmenNoneDone : state.victory === "narrow" || state.exitTier === 3 ? YIHUA.dengmenNarrow : YIHUA.dengmenDone;
+      const closing = dengmenCloseText(d.needed === 0 ? "none" : state.victory === "narrow" || state.exitTier === 3 ? "narrow" : "done", state.exitTier);
       return d.played.map((id) => YIHUA.dengmenStory[id] ?? "").join("") + closing;
     }
   }
@@ -1242,6 +1243,7 @@ function PopupBody({ state, id }: { state: Z3State; id: PopupId }) {
           {POPUP_TEXT.ximai.map((t) => (
             <p key={t}>{t}</p>
           ))}
+          {state.exitTier === 2 || state.exitTier === 3 ? <p>{POPUP_TEXT.ximaiTierHint[state.exitTier]}</p> : null}
           <p className={styles.muted}>{POPUP_TEXT.ximaiRules}</p>
         </>
       );
