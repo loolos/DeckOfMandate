@@ -5,6 +5,9 @@ import ReactDOM from "react-dom/client";
 import { CampaignShell } from "./app/CampaignShell";
 import { I18nProvider } from "./locales";
 import "./styles/global.css";
+import { installPopupAutoScroll } from "./app/popupAutoScroll";
+
+installPopupAutoScroll();
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
