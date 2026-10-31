@@ -206,7 +206,7 @@ export function ZhenhuanRoot() {
             {CAMPAIGN_TITLE}
           </h1>
           <CampaignSwitcher labelClassName={styles.menuLabel} selectClassName={styles.menuInput} />
-          <CompactModeToggle />
+          <CompactModeToggle hint="建议手机游玩时开启" />
           <MusicToggle />
           <label className={styles.menuLabel} htmlFor="zh-level">
             选择关卡
@@ -228,19 +228,23 @@ export function ZhenhuanRoot() {
                 ? `${STAGE2.title}：甄嬛渐得圣宠，也入了宠冠六宫的华妃的眼。翊坤宫的锋芒，从此冲着她而来。`
                 : `${STAGE3.title}：华妃倒了，皇后的笑意却一日深过一日。从碎玉轩到甘露寺，再从凌云峰回到紫禁城。`}
           </p>
-          <label className={styles.menuLabel} htmlFor="zh-seed">
-            随机种子（可选）
-          </label>
-          <input
-            id="zh-seed"
-            className={styles.menuInput}
-            inputMode="numeric"
-            autoComplete="off"
-            placeholder="留空则随机"
-            value={seedText}
-            onChange={(e) => setSeedText(e.target.value)}
-          />
-          {seedInvalid ? <p className={styles.menuError}>种子必须是整数。</p> : null}
+          <details className={styles.menuAdvanced} open={seedInvalid || undefined}>
+            <summary>高级选项</summary>
+            <label className={styles.menuLabel} htmlFor="zh-seed">
+              随机种子（可选）
+            </label>
+            <input
+              id="zh-seed"
+              className={styles.menuInput}
+              inputMode="numeric"
+              autoComplete="off"
+              placeholder="留空则随机"
+              value={seedText}
+              onChange={(e) => setSeedText(e.target.value)}
+            />
+            {seedInvalid ? <p className={styles.menuError}>种子必须是整数。</p> : null}
+            <RunCodePanel variant="startMenu" code="" onLoad={loadCode} />
+          </details>
           <button
             type="button"
             className={`${styles.btn} ${styles.btnPrimary}`}
@@ -259,7 +263,6 @@ export function ZhenhuanRoot() {
               继续存档（{["", "第一关", "第二关", "第三关"][saved.stage]} 第 {saved.state.turn} 回合开始）
             </button>
           ) : null}
-          <RunCodePanel variant="startMenu" code="" onLoad={loadCode} />
         </div>
         ) : null}
       </div>
