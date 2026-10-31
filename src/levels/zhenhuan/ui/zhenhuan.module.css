@@ -1402,3 +1402,17 @@
 .briefToggle:hover {
   text-decoration: underline;
 }
+
+.menuAdvanced {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  color: var(--zh-muted);
+}
+
+.menuAdvanced > summary {
+  cursor: pointer;
+  user-select: none;
+  margin-bottom: 0.5rem;
+}
