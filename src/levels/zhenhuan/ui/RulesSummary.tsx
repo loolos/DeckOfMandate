@@ -1,6 +1,6 @@
 import { CHAPTER } from "../data/content";
 
-/** Short opening rules (design.md §12: no step-by-step tutorial in v1). */
+/** Short opening rules. The per-zone UI walkthrough lives in tutorial.ts (shown on first play). */
 export function RulesSummary() {
   return (
     <ul>
