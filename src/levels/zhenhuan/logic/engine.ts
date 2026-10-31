@@ -129,8 +129,19 @@ export function cap(s: ZhState): number {
   return RANKS[s.rank].cap;
 }
 
+/**
+ * 本回合已生效且今天就到期的纯抓牌状态：抓牌已在回合开头结算，不会再有后续影响，
+ * 状态栏默认折叠，温太医也不必（无法）移除它。
+ */
+export function isSpentStatus(s: ZhState, st: StatusInst): boolean {
+  const def = STATUSES[st.id];
+  if (st.appliesFromTurn > s.turn || st.remaining > 1) return false;
+  if (def.perTurn || def.blocksCards) return false;
+  return def.drawModifier !== 0;
+}
+
 export function negativeStatuses(s: ZhState): StatusInst[] {
-  return s.statuses.filter((st) => STATUSES[st.id].tag === "negative");
+  return s.statuses.filter((st) => STATUSES[st.id].tag === "negative" && !isSpentStatus(s, st));
 }
 
 export function drawModifierForTurn(s: ZhState, turn: number): number {

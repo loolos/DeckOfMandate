@@ -3,6 +3,8 @@ import type { CardId, StatusId } from "../data/content";
 import { CARDS, EVENTS, RANKS, STATUSES, STORIES } from "../data/content";
 import {
   drawCountForTurn,
+  isSpentStatus,
+  negativeStatuses,
   newGame,
   playLimit,
   reduce,
@@ -487,5 +489,29 @@ describe("zhenhuan engine", () => {
   it("rejects foreign or corrupted run codes", () => {
     expect(decodeRunCode("abc").ok).toBe(false);
     expect(decodeRunCode("ZH1-!!!").ok).toBe(false);
+  });
+});
+
+describe("状态栏：本回合已用尽的状态", () => {
+  const add = (s: ZhState, id: StatusId, remaining: number, appliesFromTurn = s.turn) => {
+    s.statuses.push({ uid: `s${s.nextUid++}`, id, appliesFromTurn, remaining });
+    return s.statuses[s.statuses.length - 1]!;
+  };
+
+  it("已生效、今天到期的纯抓牌状态视为已用尽，也不再可被移除", () => {
+    const s = newGame(1);
+    const st = add(s, "ermuLingtong", 1);
+    expect(isSpentStatus(s, st)).toBe(true);
+    const neg = add(s, "liuyanChanshen", 1);
+    expect(isSpentStatus(s, neg)).toBe(true);
+    expect(negativeStatuses(s)).not.toContain(neg);
+  });
+
+  it("还有后续回合、尚未生效、逐回合结算或限制出牌的状态仍显示", () => {
+    const s = newGame(1);
+    expect(isSpentStatus(s, add(s, "ermuLingtong", 2))).toBe(false);
+    expect(isSpentStatus(s, add(s, "ermuLingtong", 1, s.turn + 1))).toBe(false);
+    expect(isSpentStatus(s, add(s, "gongrenChuifeng", 1))).toBe(false);
+    expect(isSpentStatus(s, add(s, "shiyiMengxiu", 1))).toBe(false);
   });
 });

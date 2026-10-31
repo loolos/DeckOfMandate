@@ -258,8 +258,19 @@ export function playsLeft2(s: Z2State): number {
   return Math.max(0, playLimit2(s) - s.playsUsed);
 }
 
+/**
+ * 本回合已生效且今天就到期的纯抓牌 / 出牌加成状态：抓牌已在回合开头结算，不会再有后续影响，
+ * 状态栏默认折叠，温太医也不必（无法）移除它。
+ */
+export function isSpentStatus2(s: Z2State, st: StatusInst2): boolean {
+  const def = STATUSES2[st.id];
+  if (def.permanent || st.appliesFromTurn > s.turn || st.remaining > 1) return false;
+  if (def.turnStart || def.hateCap != null || def.blocksCards || def.noSummon || def.playCap != null || def.playPenalty) return false;
+  return def.drawModifier !== 0 || (def.playBonus ?? 0) !== 0;
+}
+
 export function removableNegatives(s: Z2State): StatusInst2[] {
-  return s.statuses.filter((st) => STATUSES2[st.id].tag === "negative" && !STATUSES2[st.id].unremovable);
+  return s.statuses.filter((st) => STATUSES2[st.id].tag === "negative" && !STATUSES2[st.id].unremovable && !isSpentStatus2(s, st));
 }
 
 export function drawModifier2(s: Z2State, turn: number): number {

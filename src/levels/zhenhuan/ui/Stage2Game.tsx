@@ -59,6 +59,7 @@ import {
   playLimit2,
   playsLeft2,
   rankCap,
+  isSpentStatus2,
   removableNegatives,
   optionBarredByUnwell,
   storyBasicOptions2,
@@ -636,6 +637,10 @@ function HandCard({ state, card, dispatch, fold }: { state: Z2State; card: CardI
 
 function Statuses({ state, dispatch }: { state: Z2State; dispatch: Dispatch }) {
   const [open, setOpen] = useState<ReadonlySet<string>>(() => new Set());
+  const [showSpent, setShowSpent] = useState(false);
+  const spentCount = state.statuses.filter((st) => isSpentStatus2(state, st)).length;
+  const live = state.statuses.filter((st) => !isSpentStatus2(state, st));
+  const shown = showSpent ? [...live, ...state.statuses.filter((st) => isSpentStatus2(state, st))] : live;
   const removable = new Set(state.pending ? removableNegatives(state).map((s) => s.uid) : []);
   const toggle = (uid: string) =>
     setOpen((cur) => {
@@ -649,7 +654,7 @@ function Statuses({ state, dispatch }: { state: Z2State; dispatch: Dispatch }) {
     <div className={styles.statusRow}>
       <span className={styles.muted}>状态：</span>
       <ScrollRow className={styles.statuses}>
-        {state.turn < HATE_REVEAL_TURN && state.statuses.length === 0 ? <span className={styles.muted}>无</span> : null}
+        {state.turn < HATE_REVEAL_TURN && shown.length === 0 && spentCount === 0 ? <span className={styles.muted}>无</span> : null}
         {state.turn >= HATE_REVEAL_TURN ? (
         <div
           className={[styles.status, styles.statusPositive, evidenceOpen && styles.statusExpanded].filter(Boolean).join(" ")}
@@ -689,7 +694,7 @@ function Statuses({ state, dispatch }: { state: Z2State; dispatch: Dispatch }) {
           ) : null}
         </div>
         ) : null}
-        {groupStatuses(state.statuses).map(({ st, count }) => {
+        {groupStatuses(shown).map(({ st, count }) => {
           const def = STATUSES2[st.id];
           const notYet = !def.permanent && st.appliesFromTurn > state.turn;
           const expanded = open.has(st.uid);
@@ -758,6 +763,11 @@ function Statuses({ state, dispatch }: { state: Z2State; dispatch: Dispatch }) {
             </div>
           );
         })}
+        {spentCount > 0 ? (
+          <button type="button" className={`${styles.btn} ${styles.btnSmall}`} onClick={() => setShowSpent((v) => !v)}>
+            {showSpent ? "收起已生效" : `已生效 ${spentCount} ▸`}
+          </button>
+        ) : null}
       </ScrollRow>
     </div>
   );
