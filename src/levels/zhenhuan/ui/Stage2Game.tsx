@@ -280,14 +280,14 @@ function StoryCard({ state, inst, dispatch, fold }: { state: Z2State; inst: Stor
       <FoldBox fold={fold} className={className}>
         <div className={styles.compactTitle}>
           {def.emoji} {def.name}
-          {chosen ? " 🆗" : ""}
+          {chosen ? " 🆗" : blocked ? " 🔒" : ""}
           {tag}
         </div>
         <div className={styles.compactSummary}>
           {chosenOption
             ? `📝 ${inst.viaCard ? CARDS2[inst.viaCard].emoji : chosenOption.name} ${inst.result ? compactEffect2(inst.result) : (chosenOption.compact ?? compactEffect2(resultText))}`
             : blocked
-              ? "🌺 先应对欢宜香浓"
+              ? "🔒 先应对欢宜香浓"
               : `⏳ 默认「${defaultOption.name}」`}
         </div>
       </FoldBox>
@@ -299,7 +299,7 @@ function StoryCard({ state, inst, dispatch, fold }: { state: Z2State; inst: Stor
         <span className={styles.cardName}>
           <span className={styles.cardEmoji}>{def.emoji}</span>
           {def.name}
-          {chosen ? " 🆗" : null}
+          {chosen ? " 🆗" : blocked ? " 🔒" : null}
         </span>
         {tag}
       </div>
