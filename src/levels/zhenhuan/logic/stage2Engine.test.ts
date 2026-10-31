@@ -1077,7 +1077,7 @@ describe("zhenhuan stage 2 engine", () => {
     expect(resentful.shengchong).toBe(7);
   });
 
-  it("圣宠 helpers: 侍寝 +1; 谨言慎行 on 太后垂询 +1; 欢宜香浓 unanswered only -1", () => {
+  it("圣宠 helpers: 侍寝 +1; 谨言慎行 on 太后垂询 +1; 欢宜香浓 unanswered -2", () => {
     let s = newStage2(39, null);
     s.shengchong = 6;
     s.hate = 0;
@@ -1096,7 +1096,7 @@ describe("zhenhuan stage 2 engine", () => {
     onlyEvents(t, { huafei: ["huanyixiangZhuanchong"] });
     setHand(t, []);
     t = act(t, { type: "endTurn" });
-    expect(t.shengchong).toBe(5);
+    expect(t.shengchong).toBe(4);
   });
 
   it("隔墙有耳: unanswered → 清誉 -1 and a 2-turn 流言缠身; 静观其变 → only 恨意 +1", () => {

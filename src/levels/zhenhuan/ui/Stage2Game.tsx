@@ -261,7 +261,7 @@ function StoryCard({ state, inst, dispatch, fold }: { state: Z2State; inst: Stor
   const chosenOption = chosen ? def.options.find((o) => o.id === chosen) : undefined;
   const defaultOption = def.options.find((o) => o.id === def.defaultOptionId)!;
   const tier = tierOf(state);
-  const className = [styles.card, styles.cardStory, chosen && styles.cardResolved].filter(Boolean).join(" ");
+  const className = [styles.card, styles.cardStory, chosen && styles.cardResolved, blocked && !chosen && styles.cardGreyed].filter(Boolean).join(" ");
   const tag = (
     <span className={styles.tagGroup}>
       {inst.id === "huafeiFanan" ? (
