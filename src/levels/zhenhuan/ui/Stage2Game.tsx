@@ -29,6 +29,7 @@ import {
   HATE_REVEAL_TURN,
   DUANFEI_BRIEF,
   DUANFEI_STORY,
+  FAKUI_MISCARRIAGE_AFTERMATH,
   JINGHONG_STORY,
   XIANYUEGE,
   FINALE,
@@ -1092,6 +1093,7 @@ export function Stage2Game({ state, dispatch, runCode, showRules, onShowRules, o
                 ? "身子亏空到了极处，再也护不住腹中的孩子。太医跪在榻前，只说了一句「小主节哀」。"
                 : `「${state.miscarriageCause ?? "暗手"}」伤了胎气。太医跪在榻前，只说了一句「小主节哀」。`}
           </p>
+          {state.miscarriageCause === "玉阶炎日" ? <p>{FAKUI_MISCARRIAGE_AFTERMATH}</p> : null}
           <p>
             失去了【👶身怀龙裔】。
             {state.miscarriageCost

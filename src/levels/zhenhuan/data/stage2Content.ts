@@ -1387,6 +1387,10 @@ export const DUANFEI_STORY: readonly string[] = [
 export const DUANFEI_BRIEF =
   "端妃说，她与年世兰同是潜邸旧人。华妃头一回有孕时，有人让她端一碗药去探望，那孩子没了，华妃从此恨极了她。后来华妃得了协理六宫之权，第一件事便是传她去翊坤宫，灌下一碗红花，端妃从此再不能有孕，还落下阴雨天发冷的病根。她这些年避世不争，从没对旁人提过，今日说与你听，是因为你受过的苦她都受过，你该知道华妃的手段。";
 
+/** 玉阶炎日（有孕）小产弹窗里接在各选项剧情之后：皇上得知后对华妃的不满。 */
+export const FAKUI_MISCARRIAGE_AFTERMATH =
+  "消息传到养心殿，皇上震怒，沉着脸斥华妃心狠手辣，全不顾及龙裔。他当夜便来看你，坐在榻边久久不语，临走时只说了一句：「是朕对不住你。」此后一连数日，翊坤宫派人来请，他都托词不去，对华妃的不满再明白不过。";
+
 /** 华妃恨意 appears (and is explained) when 初谒翊坤 begins. */
 export const HATE_REVEAL_TURN = 3;
 /** Opportunity events shuffled into the pool at the end of a given turn. */
@@ -1651,7 +1655,7 @@ export const STORIES2: Record<StoryId2, StoryDef2> = {
         effects: [{ resource: "shenzi", amount: -2 }, { resource: "qingyu", amount: -1 }],
         status: "baoyangZaishen",
         text: "身子 -2、清誉 -1；抱恙在身",
-        story: "你在烈日下跪了整整两个时辰，回宫时膝上已是一片青紫。",
+        story: "你在烈日下跪了整整两个时辰，回宫时膝上已是一片青紫。后来皇上听说你在烈日下白白跪了两个时辰，皱着眉说华妃罚得过了，心里很是不满。",
       },
       {
         id: "jinxiHuxi",
@@ -1660,7 +1664,7 @@ export const STORIES2: Record<StoryId2, StoryDef2> = {
         effects: [{ resource: "shenzi", amount: -1 }],
         status: "baoyangZaishen",
         text: "身子 -1（免去清誉 -1）；抱恙在身",
-        story: "槿汐早在你膝下垫了一层软布，又一刻不停地替你打扇。你跪满了时辰，起身时仍是端端正正，没在人前失了体面。",
+        story: "槿汐早在你膝下垫了一层软布，又一刻不停地替你打扇。你跪满了时辰，起身时仍是端端正正，没在人前失了体面。此事传到御前，皇上虽没发作，也嫌华妃借故罚人太过，对她很是不满。",
       },
       {
         id: "feibaoHuangshangPlain",
@@ -1669,7 +1673,7 @@ export const STORIES2: Record<StoryId2, StoryDef2> = {
         effects: [{ resource: "shenzi", amount: -2 }, { resource: "shengchong", amount: 1 }],
         status: "baoyangZaishen",
         text: "身子 -2；圣宠 +1（免去清誉 -1）；抱恙在身",
-        story: "皇上与皇后都去宫外祈福，宫中无人能替你做主。小允子拼死跑去寿康宫求见太后，太后赶到时你已经跪了许久。她当场免了余下的时辰，命人扶你起身，又斥了周宁海几句。待皇上回宫，这份委屈自会有人替你说到他耳边。",
+        story: "皇上与皇后都去宫外祈福，宫中无人能替你做主。小允子拼死跑去寿康宫求见太后，太后赶到时你已经跪了许久。她当场免了余下的时辰，命人扶你起身，又斥了周宁海几句。待皇上回宫，这份委屈自会有人替你说到他耳边。皇上回宫听说后，当面训了华妃几句，脸色很不好看，对她的不满也记在了心里。",
       },
       {
         id: "huTiTangyao",
@@ -1677,7 +1681,7 @@ export const STORIES2: Record<StoryId2, StoryDef2> = {
         card: "wenTaiyiZhenzhi",
         effects: [{ resource: "qingyu", amount: -1 }],
         text: "清誉 -1（免去身子 -2，且不抱恙）",
-        story: "温实初早早备下了护体的汤药，让流朱在你临跪前灌下。你跪满了时辰，膝上虽疼，身子却没有大碍。",
+        story: "温实初早早备下了护体的汤药，让流朱在你临跪前灌下。你跪满了时辰，膝上虽疼，身子却没有大碍。皇上日后得知华妃这般罚人，也很是不悦，嫌她仗着年家的势越发不知收敛。",
       },
       {
         id: "lingrongSongyao",
@@ -1687,7 +1691,7 @@ export const STORIES2: Record<StoryId2, StoryDef2> = {
         shuhenjiao: true,
         distantRemark: "「跪了这半日，姐姐何苦与华妃硬碰。」",
         text: "身子 -2、清誉 -1（不抱恙）；舒痕胶",
-        story: "陵容连夜送来舒痕胶替你敷上，说擦了便不会落疤。",
+        story: "陵容连夜送来舒痕胶替你敷上，说擦了便不会落疤。皇上得知华妃借故罚你，亦很不满，数日不曾理会翊坤宫。",
       },
     ],
   },
