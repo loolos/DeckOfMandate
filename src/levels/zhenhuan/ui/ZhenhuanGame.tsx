@@ -32,6 +32,7 @@ import {
   currentStory,
   eventResolvedStory,
   matchedEvents,
+  isSpentStatus,
   negativeStatuses,
   playLimit,
   playsLeft,
@@ -526,6 +527,10 @@ function HandCard({
 /** Status chips: collapsed to one line by default; click to expand lore, mechanics and source. */
 function Statuses({ state, dispatch }: { state: ZhState; dispatch: Dispatch }) {
   const [open, setOpen] = useState<ReadonlySet<string>>(() => new Set());
+  const [showSpent, setShowSpent] = useState(false);
+  const spentCount = state.statuses.filter((st) => isSpentStatus(state, st)).length;
+  const live = state.statuses.filter((st) => !isSpentStatus(state, st));
+  const shown = showSpent ? [...live, ...state.statuses.filter((st) => isSpentStatus(state, st))] : live;
   const removable = new Set(state.pending ? negativeStatuses(state).map((s) => s.uid) : []);
   const toggle = (uid: string) =>
     setOpen((cur) => {
@@ -537,10 +542,10 @@ function Statuses({ state, dispatch }: { state: ZhState; dispatch: Dispatch }) {
   return (
     <div className={styles.statusRow}>
       <span className={styles.muted}>状态：</span>
-      {state.statuses.length === 0 ? <span className={styles.muted}>无</span> : null}
+      {shown.length === 0 && spentCount === 0 ? <span className={styles.muted}>无</span> : null}
       {state.statuses.length > 0 ? (
         <ScrollRow className={styles.statuses}>
-          {groupStatuses(state.statuses).map(({ st, count }) => {
+          {groupStatuses(shown).map(({ st, count }) => {
             const def = STATUSES[st.id];
             const notYet = st.appliesFromTurn > state.turn;
             const expanded = open.has(st.uid);
@@ -615,6 +620,11 @@ function Statuses({ state, dispatch }: { state: ZhState; dispatch: Dispatch }) {
               </div>
             );
           })}
+          {spentCount > 0 ? (
+            <button type="button" className={`${styles.btn} ${styles.btnSmall}`} onClick={() => setShowSpent((v) => !v)}>
+              {showSpent ? "收起已生效" : `已生效 ${spentCount} ▸`}
+            </button>
+          ) : null}
         </ScrollRow>
       ) : null}
     </div>

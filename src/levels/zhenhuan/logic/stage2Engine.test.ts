@@ -8,7 +8,9 @@ import {
   hateCap,
   isFreeByLianmei,
   lianmeiLit,
+  isSpentStatus2,
   newStage2,
+  removableNegatives,
   playLimit2,
   reduce2,
   replay2,
@@ -1797,5 +1799,31 @@ describe("zhenhuan stage 2 engine", () => {
     expect(again.turn).toBe(s.turn);
     expect(again.qingyu).toBe(s.qingyu);
     expect(again.hand.map((c) => c.uid)).toEqual(s.hand.map((c) => c.uid));
+  });
+});
+
+describe("stage 2 状态栏：本回合已用尽的状态", () => {
+  const add = (s: ReturnType<typeof newStage2>, id: StatusId2, remaining: number, appliesFromTurn = s.turn) => {
+    s.statuses.push({ uid: `s${s.nextUid++}`, id, appliesFromTurn, remaining });
+    return s.statuses[s.statuses.length - 1]!;
+  };
+
+  it("已生效、今天到期的纯抓牌 / 出牌加成状态视为已用尽，也不再可被移除", () => {
+    const s = newStage2(1, null);
+    expect(isSpentStatus2(s, add(s, "ermuLingtong", 1))).toBe(true);
+    expect(isSpentStatus2(s, add(s, "zhushiTuotie", 1))).toBe(true);
+    const neg = add(s, "liuyanChanshen", 1);
+    expect(isSpentStatus2(s, neg)).toBe(true);
+    expect(removableNegatives(s)).not.toContain(neg);
+  });
+
+  it("还有后续回合、尚未生效、永久或带限制的状态仍显示", () => {
+    const s = newStage2(1, null);
+    expect(isSpentStatus2(s, add(s, "ermuLingtong", 2))).toBe(false);
+    expect(isSpentStatus2(s, add(s, "ermuLingtong", 1, s.turn + 1))).toBe(false);
+    expect(isSpentStatus2(s, add(s, "wochuangJingyang", 1))).toBe(false);
+    expect(isSpentStatus2(s, add(s, "baoyangZaishen", 1))).toBe(false);
+    expect(isSpentStatus2(s, add(s, "jiaoyanZanlian", 1))).toBe(false);
+    expect(isSpentStatus2(s, add(s, "meizhuangZhutuo", 1))).toBe(false);
   });
 });
