@@ -29,6 +29,7 @@ import {
   HATE_REVEAL_TURN,
   DUANFEI_BRIEF,
   DUANFEI_STORY,
+  JIAYUN_STORY,
   CAO_TESTIMONY,
   FAKUI_MISCARRIAGE_AFTERMATH,
   JINGHONG_STORY,
@@ -831,6 +832,10 @@ function OutcomeModal({ state, onRestart, onMenu, onNextStage }: { state: Z2Stat
   );
 }
 
+function jiayunOption(s: Z2State): string | null {
+  return s.stories.find((st) => st.id === "jiaYunFengbo")?.chosenOptionId ?? null;
+}
+
 function duanfeiSettled(s: Z2State): boolean {
   return s.stories.some((st) => st.id === "duanfeiJiushi" && (st.chosenOptionId === "wenyanXiangxun" || st.chosenOptionId === "weiDuanfeiZhenmai"));
 }
@@ -891,8 +896,8 @@ export function Stage2Game({ state, dispatch, runCode, showRules, onShowRules, o
   const tier = tierOf(state);
 
   // One-off notices during play (not when loading a save): promotion and 身子 appearing.
-  const [notice, setNotice] = useState<"guiren" | "pin" | "shenzi" | "hate" | "miscarriage" | "jinghong" | "xianyuege" | "duanfei" | "cao" | null>(null);
-  const prev = useRef({ rank: state.rank, shenzi: state.shenziRevealed, turn: state.turn, seed: state.seed, miscarriages: state.miscarriages, jinghong: state.jinghong.done, xianyuege: state.xianyuege.done, duanfei: duanfeiSettled(state), cao: state.caoTestimony });
+  const [notice, setNotice] = useState<"guiren" | "pin" | "shenzi" | "hate" | "miscarriage" | "jinghong" | "xianyuege" | "duanfei" | "jiayun" | "cao" | null>(null);
+  const prev = useRef({ rank: state.rank, shenzi: state.shenziRevealed, turn: state.turn, seed: state.seed, miscarriages: state.miscarriages, jinghong: state.jinghong.done, xianyuege: state.xianyuege.done, duanfei: duanfeiSettled(state), jiayun: jiayunOption(state), cao: state.caoTestimony });
   useEffect(() => {
     const p = prev.current;
     const sameRun = p.seed === state.seed && state.actions.length > 0;
@@ -901,12 +906,13 @@ export function Stage2Game({ state, dispatch, runCode, showRules, onShowRules, o
       else if (!p.jinghong && state.jinghong.done) setNotice("jinghong");
       else if (!p.xianyuege && state.xianyuege.done) setNotice("xianyuege");
       else if (!p.duanfei && duanfeiSettled(state)) setNotice("duanfei");
+      else if (!p.jiayun && jiayunOption(state)) setNotice("jiayun");
       else if (!p.cao && state.caoTestimony) setNotice("cao");
       else if (state.rank !== p.rank && (state.rank === "guiren" || state.rank === "pin")) setNotice(state.rank);
       else if (state.shenziRevealed && !p.shenzi) setNotice("shenzi");
       else if (p.turn < HATE_REVEAL_TURN && state.turn >= HATE_REVEAL_TURN) setNotice("hate");
     }
-    prev.current = { rank: state.rank, shenzi: state.shenziRevealed, turn: state.turn, seed: state.seed, miscarriages: state.miscarriages, jinghong: state.jinghong.done, xianyuege: state.xianyuege.done, duanfei: duanfeiSettled(state), cao: state.caoTestimony };
+    prev.current = { rank: state.rank, shenzi: state.shenziRevealed, turn: state.turn, seed: state.seed, miscarriages: state.miscarriages, jinghong: state.jinghong.done, xianyuege: state.xianyuege.done, duanfei: duanfeiSettled(state), jiayun: jiayunOption(state), cao: state.caoTestimony };
   }, [state]);
 
   const endTurnReady = canEndTurn2(state) && !showRules && notice == null;
@@ -1091,6 +1097,15 @@ export function Stage2Game({ state, dispatch, runCode, showRules, onShowRules, o
         <Notice title="🌸 端妃旧事" onClose={() => setNotice(null)}>
           <BriefDetail brief={DUANFEI_BRIEF}>
             {DUANFEI_STORY.map((para) => (
+              <p key={para}>{para}</p>
+            ))}
+          </BriefDetail>
+        </Notice>
+      ) : null}
+      {notice === "jiayun" ? (
+        <Notice title="⚖️ 菊残霜冷" onClose={() => setNotice(null)}>
+          <BriefDetail brief={`${JIAYUN_STORY.brief}${JIAYUN_STORY.branches[jiayunOption(state) ?? ""]?.brief ?? ""}`}>
+            {[...JIAYUN_STORY.common, ...(JIAYUN_STORY.branches[jiayunOption(state) ?? ""]?.paras ?? [])].map((para) => (
               <p key={para}>{para}</p>
             ))}
           </BriefDetail>
