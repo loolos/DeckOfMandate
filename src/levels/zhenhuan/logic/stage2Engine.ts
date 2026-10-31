@@ -17,6 +17,8 @@ import {
   FAKUI_TURN,
   JINGHONG_STORY,
   XIANYUEGE,
+  CAO_PAIR,
+  CAO_TESTIMONY,
   FIXED_STORY_TURNS,
   GUIREN_PROMOTION_STORY,
   GUIREN_TRIAL,
@@ -155,6 +157,8 @@ export type Z2State = {
   jinghong: { meizhuang: boolean; lingrong: boolean; done: boolean };
   /** 闲月阁 (once per run): which of its three cards were played this turn with 隔墙有耳 on the board. */
   xianyuege: { played: CardId2[]; done: boolean };
+  /** 琴默陈情 answered with both 解牌: 曹贵人 hands over extra evidence (once). */
+  caoTestimony: boolean;
   pregnant: boolean;
   pregnancies: number;
   miscarriages: number;
@@ -1094,6 +1098,15 @@ function resolvePlay2(s: Z2State, cardUid: string, removeStatusUid?: string): vo
     }
   }
 
+  if (alive(s) && !s.caoTestimony && CAO_PAIR.includes(card.id)) {
+    const qinmo = s.opportunity;
+    if (qinmo && qinmo.id === CAO_EVENT && qinmo.resolved && qinmo.resolvedBy != null && qinmo.resolvedBy !== card.id && CAO_PAIR.includes(qinmo.resolvedBy)) {
+      s.caoTestimony = true;
+      log(s, `🍵 ${CAO_TESTIMONY.log}`, "good");
+      for (const id of CAO_TESTIMONY.evidence) gainEvidence(s, id);
+    }
+  }
+
   if (alive(s) && finaleAccepts(s, card.id)) {
     const f = s.finale!;
     const first = !f.played.includes(card.id);
@@ -1508,6 +1521,7 @@ export function newStage2(seed: number, carry: Carry | null): Z2State {
     trial: { active: false, summoned: false },
     jinghong: { meizhuang: false, lingrong: false, done: false },
     xianyuege: { played: [], done: false },
+    caoTestimony: false,
     pregnant: false,
     pregnancies: 0,
     miscarriages: 0,

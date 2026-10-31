@@ -873,7 +873,7 @@ export const EVENTS2: Record<EventId2, EventDef2> = {
     kind: "opportunity",
     name: "琴默陈情",
     emoji: "🍵",
-    flavor: "年家倒了，曹贵人携了一盒点心来访碎玉轩，言谈间句句试探你的态度。你看得分明：此时若能拉拢她，便是在翊坤宫身侧添了一枚钉子。",
+    flavor: "年家既倾，曹贵人携了一盒点心，款款来到碎玉轩。言笑晏晏之间，字字都在探你的心意。你心下明白：此时将她拉拢过来，正是良机。",
     reward: [],
     penalty: [],
     evidence: { id: "caoguirenGaofa", cards: ["shoulongRenxin", "jinyanShenxing"] },
@@ -882,8 +882,8 @@ export const EVENTS2: Record<EventId2, EventDef2> = {
     unresolvedText: "曹贵人等不到你的回音，此事作罢（不会再出现）",
     note: "只出现一次。",
     resolvedStory: {
-      shoulongRenxin: "你屏退左右，先陈利害，再叙情谊，说温宜公主来日的前程，说年家一倒，华妃的靠山再难久持。曹贵人沉吟良久，终是红了眼眶，将翊坤宫这些年的阴私一桩桩道来。临别时她福身道：「愿与姐姐同心。」",
-      jinyanShenxing: "你言辞温婉，晓之以理，动之以情，只道为母者所求，不过是公主一世安稳。曹贵人听罢默然，终于倒向了你这一边，并将华妃往日的罪证细细相告，末了叹道：「为了温宜，我自当在御前把话说清楚。」",
+      shoulongRenxin: "你屏退左右，以茶代言，先陈利害：年家既倒，翊坤宫已是明日黄花，何必再为人作嫁。曹贵人垂眸不语，指尖在盏沿轻轻摩挲，良久方抬头道：「妹妹愿听姐姐的。」",
+      jinyanShenxing: "你语声温婉，晓之以理，动之以情，只说为母者所求，不过是公主一世安稳。曹贵人听罢眼圈微红，终是倒向了你这一边，将华妃往日的种种罪状细细道来，末了轻叹：「为了温宜，我自当在御前言明。」",
     },
   },
   songzhiKuisi: {
@@ -1357,6 +1357,19 @@ export const JINGHONG_STORY =
  * 闲月阁 (once per run): with 隔墙有耳 on the board, play 槿汐相助, 眉庄相助 and 收拢人心 in the same turn
  * to unmask 浣碧 — a false lead sends 华妃 storming into 闲月阁 for nothing.
  */
+/** 琴默陈情: both 解牌 played in one go — 曹贵人 gives extra sources for evidence already on the board. */
+export const CAO_PAIR: readonly CardId2[] = ["shoulongRenxin", "jinyanShenxing"];
+export const CAO_TESTIMONY = {
+  evidence: ["yuyingerYiyan", "maiguanYujue", "kekouZhangce"] as readonly EvidenceId[],
+  log: "曹贵人推心置腹，道出多桩旧事，皆可为华妃的罪证添一份人证。",
+  /** Popup paragraphs. */
+  story: [
+    "你先以利害相陈，再以温宜公主的前程相劝，一张一弛，不露半分机锋。曹贵人静听良久，终于缓缓起身，在你面前敛衽一礼：「姐姐肯为温宜思虑，妹妹岂能再袖手旁观。」",
+    "她压低了声音，将翊坤宫内外的旧事一一道来：倚梅园之功原是余莺儿冒名顶替，背后全是华妃授意；年羹尧在外卖官鬻爵，宫里的打点皆出自华妃之手；至于寒凉之物、克扣份例种种，亦是华妃一手指使，内务府不过奉命行事。",
+    "这些事，你原先只握着零星线索，如今得曹贵人亲口佐证，便有了另一重来历，足以与旧日的人证物证互为印证。",
+  ] as readonly string[],
+} as const;
+
 export const XIANYUEGE = {
   event: "songzhiKuisi" as HuafeiId,
   cards: ["jinxiXiangzhu", "meizhuangXiangzhu", "shoulongRenxin"] as readonly CardId2[],

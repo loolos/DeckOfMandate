@@ -29,6 +29,7 @@ import {
   HATE_REVEAL_TURN,
   DUANFEI_BRIEF,
   DUANFEI_STORY,
+  CAO_TESTIMONY,
   FAKUI_MISCARRIAGE_AFTERMATH,
   JINGHONG_STORY,
   XIANYUEGE,
@@ -890,8 +891,8 @@ export function Stage2Game({ state, dispatch, runCode, showRules, onShowRules, o
   const tier = tierOf(state);
 
   // One-off notices during play (not when loading a save): promotion and 身子 appearing.
-  const [notice, setNotice] = useState<"guiren" | "pin" | "shenzi" | "hate" | "miscarriage" | "jinghong" | "xianyuege" | "duanfei" | null>(null);
-  const prev = useRef({ rank: state.rank, shenzi: state.shenziRevealed, turn: state.turn, seed: state.seed, miscarriages: state.miscarriages, jinghong: state.jinghong.done, xianyuege: state.xianyuege.done, duanfei: duanfeiSettled(state) });
+  const [notice, setNotice] = useState<"guiren" | "pin" | "shenzi" | "hate" | "miscarriage" | "jinghong" | "xianyuege" | "duanfei" | "cao" | null>(null);
+  const prev = useRef({ rank: state.rank, shenzi: state.shenziRevealed, turn: state.turn, seed: state.seed, miscarriages: state.miscarriages, jinghong: state.jinghong.done, xianyuege: state.xianyuege.done, duanfei: duanfeiSettled(state), cao: state.caoTestimony });
   useEffect(() => {
     const p = prev.current;
     const sameRun = p.seed === state.seed && state.actions.length > 0;
@@ -900,11 +901,12 @@ export function Stage2Game({ state, dispatch, runCode, showRules, onShowRules, o
       else if (!p.jinghong && state.jinghong.done) setNotice("jinghong");
       else if (!p.xianyuege && state.xianyuege.done) setNotice("xianyuege");
       else if (!p.duanfei && duanfeiSettled(state)) setNotice("duanfei");
+      else if (!p.cao && state.caoTestimony) setNotice("cao");
       else if (state.rank !== p.rank && (state.rank === "guiren" || state.rank === "pin")) setNotice(state.rank);
       else if (state.shenziRevealed && !p.shenzi) setNotice("shenzi");
       else if (p.turn < HATE_REVEAL_TURN && state.turn >= HATE_REVEAL_TURN) setNotice("hate");
     }
-    prev.current = { rank: state.rank, shenzi: state.shenziRevealed, turn: state.turn, seed: state.seed, miscarriages: state.miscarriages, jinghong: state.jinghong.done, xianyuege: state.xianyuege.done, duanfei: duanfeiSettled(state) };
+    prev.current = { rank: state.rank, shenzi: state.shenziRevealed, turn: state.turn, seed: state.seed, miscarriages: state.miscarriages, jinghong: state.jinghong.done, xianyuege: state.xianyuege.done, duanfei: duanfeiSettled(state), cao: state.caoTestimony };
   }, [state]);
 
   const endTurnReady = canEndTurn2(state) && !showRules && notice == null;
@@ -1092,6 +1094,13 @@ export function Stage2Game({ state, dispatch, runCode, showRules, onShowRules, o
               <p key={para}>{para}</p>
             ))}
           </BriefDetail>
+        </Notice>
+      ) : null}
+      {notice === "cao" ? (
+        <Notice title="🍵 曹贵人倒戈" onClose={() => setNotice(null)}>
+          {CAO_TESTIMONY.story.map((para) => (
+            <p key={para}>{para}</p>
+          ))}
         </Notice>
       ) : null}
       {notice === "miscarriage" ? (

@@ -825,6 +825,22 @@ describe("zhenhuan stage 2 engine", () => {
     const [r] = setHand(s, ["shoulongRenxin"]);
     s = act(s, { type: "playCard", cardUid: r! });
     expect(s.evidence.includes("caoguirenGaofa")).toBe(true);
+    expect(s.caoTestimony).toBe(false);
+
+    // both 解牌 in one turn: 曹贵人 gives extra evidence sources
+    let both = toNian(27, true);
+    both = act(both, { type: "chooseStory", storyId: "nianShiQingtui", optionId: "luojingXiashi" });
+    both.crisis = null;
+    both.huafei = [];
+    both = act(both, { type: "endTurn" });
+    both.stories = [];
+    both.extraPlays = 2;
+    const [r1, r2] = setHand(both, ["shoulongRenxin", "jinyanShenxing"]);
+    both = act(both, { type: "playCard", cardUid: r1! });
+    expect(both.caoTestimony).toBe(false);
+    both = act(both, { type: "playCard", cardUid: r2! });
+    expect(both.caoTestimony).toBe(true);
+    for (const id of ["caoguirenGaofa", "yuyingerYiyan", "maiguanYujue", "kekouZhangce"] as const) expect(both.evidence.includes(id)).toBe(true);
 
     // unresolved: gone for good
     let t = toNian(28, true);
