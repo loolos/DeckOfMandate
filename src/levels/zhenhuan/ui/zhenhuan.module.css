@@ -1416,3 +1416,8 @@
   user-select: none;
   margin-bottom: 0.5rem;
 }
+
+/* Locked behind another event (e.g. 凤鸾承恩 while 欢宜香浓 is on board): keep the original tone, just slightly greyed. */
+.cardGreyed {
+  filter: saturate(0.55) brightness(0.9);
+}
