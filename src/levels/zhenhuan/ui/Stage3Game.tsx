@@ -1413,7 +1413,7 @@ export function Stage3Game({ state, dispatch, runCode, showRules, onShowRules, o
         onMenu={onMenu}
       />
 
-      <div className={styles.topStrip}>
+      <div id="zh-tut-stats" className={styles.topStrip}>
         <ScrollRow className={styles.stats}>
           <StatChip icon="🪷" label="清誉" hint="（归 0 即失败）" info={RESOURCE_INFO3.qingyu} value={state.qingyu} max={rankCap3(state)} danger={state.qingyu <= 1} />
           {shengchongShown ? (
@@ -1473,7 +1473,7 @@ export function Stage3Game({ state, dispatch, runCode, showRules, onShowRules, o
       <h2 className={styles.sectionTitle}>
         本回合事件 <span title="未解决的事件与剧情">{unresolved}</span>
       </h2>
-      <ScrollRow className={styles.events}>
+      <ScrollRow id="zh-tut-events" className={styles.events}>
         <YihuaCard state={state} fold={fold("yihua")} dispatch={dispatch} />
         {state.notices.map((n) => (
           <NoticeCard key={n.name} emoji={n.emoji} name={n.name} text={n.text} fold={fold(`notice-${n.name}`)} />
@@ -1494,14 +1494,14 @@ export function Stage3Game({ state, dispatch, runCode, showRules, onShowRules, o
         手牌（{state.hand.length}）· 按抓牌顺序排列
         <span className={styles.muted}>{compact ? " · 点击展开，双击打出" : " · 双击打出"}</span>
       </h2>
-      <ScrollRow className={styles.hand}>
+      <ScrollRow id="zh-tut-hand" className={styles.hand}>
         {state.hand.length === 0 ? <p className={styles.muted}>没有手牌。</p> : null}
         {state.hand.map((card) => (
           <HandCard key={card.uid} state={state} card={card} dispatch={dispatch} fold={fold(card.uid)} />
         ))}
       </ScrollRow>
 
-      <div className={styles.endTurnRow}>
+      <div id="zh-tut-endturn" className={styles.endTurnRow}>
         <button type="button" className={`${styles.btn} ${styles.btnPrimary}`} disabled={!canEndTurn3(state)} onClick={() => dispatch({ type: "endTurn" })}>
           结束回合（空格）
         </button>
@@ -1512,7 +1512,7 @@ export function Stage3Game({ state, dispatch, runCode, showRules, onShowRules, o
         ))}
       </div>
 
-      <div className={styles.bottom}>
+      <div id="zh-tut-log" className={styles.bottom}>
         <LogView entries={state.log} />
         <RunCodePanel code={runCode} onLoad={onLoadCode} />
       </div>

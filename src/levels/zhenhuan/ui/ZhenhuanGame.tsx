@@ -790,7 +790,7 @@ export function ZhenhuanGame({ state, dispatch, showRules, onShowRules, onRestar
         onMenu={onMenu}
       />
 
-      <div className={styles.topStrip}>
+      <div id="zh-tut-stats" className={styles.topStrip}>
         <ScrollRow className={styles.stats}>
           <ResourceStat state={state} resource="qingyu" />
           <ResourceStat state={state} resource="shengchong" />
@@ -834,7 +834,7 @@ export function ZhenhuanGame({ state, dispatch, showRules, onShowRules, onRestar
       <h2 className={styles.sectionTitle}>
         本回合事件 <span title="未解决 / 事件总数">{eventCount.unresolved}/{eventCount.total}</span>
       </h2>
-      <ScrollRow className={styles.events}>
+      <ScrollRow id="zh-tut-events" className={styles.events}>
         {state.opportunity ? (
           <EventCard state={state} inst={state.opportunity} fold={fold(state.opportunity.uid)} dispatch={dispatch} />
         ) : null}
@@ -852,14 +852,14 @@ export function ZhenhuanGame({ state, dispatch, showRules, onShowRules, onRestar
         手牌（{state.hand.length}）· 回合结束时全部弃置
         <span className={styles.muted}>{compact ? " · 点击展开，双击打出" : " · 双击打出"}</span>
       </h2>
-      <ScrollRow className={styles.hand}>
+      <ScrollRow id="zh-tut-hand" className={styles.hand}>
         {state.hand.length === 0 ? <p className={styles.muted}>没有手牌。</p> : null}
         {state.hand.map((card) => (
           <HandCard key={card.uid} state={state} card={card} dispatch={dispatch} fold={fold(card.uid)} />
         ))}
       </ScrollRow>
 
-      <div className={styles.endTurnRow}>
+      <div id="zh-tut-endturn" className={styles.endTurnRow}>
         <button
           type="button"
           className={`${styles.btn} ${styles.btnPrimary}`}
@@ -875,7 +875,7 @@ export function ZhenhuanGame({ state, dispatch, showRules, onShowRules, onRestar
         ))}
       </div>
 
-      <div className={styles.bottom}>
+      <div id="zh-tut-log" className={styles.bottom}>
         <LogView entries={state.log} />
         <RunCodePanel code={runCode} onLoad={onLoadCode} />
       </div>

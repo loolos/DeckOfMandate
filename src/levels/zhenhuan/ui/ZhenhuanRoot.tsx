@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { LevelTutorialOverlay } from "../../../components/LevelTutorialOverlay";
 import { CampaignSwitcher } from "../../../components/CampaignSwitcher";
 import { RunCodePanel } from "../../../components/RunCodePanel";
 import { CAMPAIGN_TITLE, CHAPTER } from "../data/content";
@@ -25,6 +26,7 @@ import { CompactModeToggle } from "./CompactModeToggle";
 import { Stage2Game } from "./Stage2Game";
 import { Stage3Game } from "./Stage3Game";
 import { musicMood } from "./music";
+import { readZhTutorialOnEntry, writeZhTutorialOnEntry, ZH_TUTORIAL } from "./tutorial";
 import { MusicToggle, useBgm } from "./useBgm";
 import { ZhenhuanGame } from "./ZhenhuanGame";
 import styles from "./zhenhuan.module.css";
@@ -48,6 +50,9 @@ export function ZhenhuanRoot() {
   const [seedText, setSeedText] = useState("");
   const [menuVisible, setMenuVisible] = useState(false);
   const [menuStage, setMenuStage] = useState<1 | 2 | 3>(1);
+  /** 界面教程：第一次玩默认开启，看完（或跳过）后自动关闭，可在开始菜单重新勾选。 */
+  const [tutorialOnEntry, setTutorialOnEntry] = useState(() => readZhTutorialOnEntry());
+  const [pendingTutorial, setPendingTutorial] = useState(false);
 
   const seedTrimmed = seedText.trim();
   const seedInvalid = seedTrimmed !== "" && !Number.isInteger(Number(seedTrimmed));
@@ -98,7 +103,15 @@ export function ZhenhuanRoot() {
     setShowRules(false);
     setIntroPending(rules);
     setIntroFade(false);
+    // Only a freshly started level (rules shown) triggers the tutorial, not loading a save / run code.
+    setPendingTutorial(rules && tutorialOnEntry);
   };
+
+  const dismissTutorial = useCallback(() => {
+    setPendingTutorial(false);
+    setTutorialOnEntry(false);
+    writeZhTutorialOnEntry(false);
+  }, []);
 
   const onShowRules = (show: boolean) => {
     setShowRules(show);
@@ -118,7 +131,16 @@ export function ZhenhuanRoot() {
     setShowRules(false);
     setIntroPending(false);
     setIntroFade(false);
+    setPendingTutorial(false);
   };
+
+  const tutorial = (
+    <LevelTutorialOverlay
+      open={pendingTutorial && !introPending && !showRules && session?.state.outcome === "playing"}
+      onDismiss={dismissTutorial}
+      custom={ZH_TUTORIAL}
+    />
+  );
 
   if (session?.stage === 1) {
     const st = session.state;
@@ -139,6 +161,7 @@ export function ZhenhuanRoot() {
             />
           </div>
         )}
+        {tutorial}
       </div>
     );
   }
@@ -166,6 +189,7 @@ export function ZhenhuanRoot() {
             />
           </div>
         )}
+        {tutorial}
       </div>
     );
   }
@@ -192,6 +216,7 @@ export function ZhenhuanRoot() {
             />
           </div>
         )}
+        {tutorial}
       </div>
     );
   }
@@ -208,6 +233,18 @@ export function ZhenhuanRoot() {
           <CampaignSwitcher labelClassName={styles.menuLabel} selectClassName={styles.menuInput} />
           <CompactModeToggle hint="建议手机游玩时开启" />
           <MusicToggle />
+          <label className={styles.compactToggle}>
+            <input
+              type="checkbox"
+              checked={tutorialOnEntry}
+              onChange={(e) => {
+                setTutorialOnEntry(e.target.checked);
+                writeZhTutorialOnEntry(e.target.checked);
+              }}
+            />
+            <span>进入关卡时显示界面教程</span>
+            <span className={styles.menuHint}>（简单介绍各区域的用途；第一次玩默认开启）</span>
+          </label>
           <label className={styles.menuLabel} htmlFor="zh-level">
             选择关卡
           </label>

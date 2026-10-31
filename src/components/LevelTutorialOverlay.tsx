@@ -3,10 +3,19 @@ import { LEVEL_TUTORIAL_STEPS } from "../data/tutorialCopy";
 import { useI18n } from "../locales";
 import styles from "./LevelTutorialOverlay.module.css";
 
+/** Literal-text steps and labels, for campaigns whose copy is not routed through i18n (e.g. 甄嬛传, Chinese only). */
+export type TutorialOverlayCustom = {
+  steps: readonly { targetId: string; body: string }[];
+  copy: { title: string; skip: string; back: string; next: string; done: string };
+};
+
 type Props = {
   open: boolean;
   onDismiss: () => void;
+  custom?: TutorialOverlayCustom;
 };
+
+type ResolvedStep = { targetId: string; body: string };
 
 const PADDING = 6;
 
@@ -16,10 +25,15 @@ function measureTarget(targetId: string): DOMRect | null {
   return el.getBoundingClientRect();
 }
 
-export function LevelTutorialOverlay({ open, onDismiss }: Props) {
+export function LevelTutorialOverlay({ open, onDismiss, custom }: Props) {
   const { t } = useI18n();
+  const allSteps = useMemo<readonly ResolvedStep[]>(
+    () => custom?.steps ?? LEVEL_TUTORIAL_STEPS.map((st) => ({ targetId: st.targetId, body: t(st.bodyKey) })),
+    [custom, t],
+  );
+  const label = (key: "title" | "skip" | "back" | "next" | "done") => (custom ? custom.copy[key] : t(`tutorial.${key}`));
   const [stepIndex, setStepIndex] = useState(0);
-  const [steps, setSteps] = useState<readonly (typeof LEVEL_TUTORIAL_STEPS)[number][]>(LEVEL_TUTORIAL_STEPS);
+  const [steps, setSteps] = useState<readonly ResolvedStep[]>(allSteps);
   const [rect, setRect] = useState<DOMRect | null>(null);
   const [cardTop, setCardTop] = useState(80);
   const primaryBtnRef = useRef<HTMLButtonElement>(null);
@@ -46,12 +60,13 @@ export function LevelTutorialOverlay({ open, onDismiss }: Props) {
   useLayoutEffect(() => {
     if (!open) {
       setStepIndex(0);
-      setSteps(LEVEL_TUTORIAL_STEPS);
+      setSteps(allSteps);
       return;
     }
-    const resolved = LEVEL_TUTORIAL_STEPS.filter((st) => document.getElementById(st.targetId));
+    const resolved = allSteps.filter((st) => document.getElementById(st.targetId));
     setSteps(resolved);
     setStepIndex(0);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- steps are resolved once per opening
   }, [open]);
 
   useLayoutEffect(() => {
@@ -117,21 +132,21 @@ export function LevelTutorialOverlay({ open, onDismiss }: Props) {
       <div className={styles.dim} aria-hidden />
       <div className={styles.spot} style={spotStyle} />
       <div className={styles.card} style={{ top: cardTop }}>
-        <h2 id="level-tutorial-title">{t("tutorial.title")}</h2>
+        <h2 id="level-tutorial-title">{label("title")}</h2>
         <p className={styles.body} aria-live="polite">
-          {t(step.bodyKey)}
+          {step.body}
         </p>
         <div className={styles.actions}>
           <button type="button" className={styles.skip} onClick={onDismiss}>
-            {t("tutorial.skip")}
+            {label("skip")}
           </button>
           {stepIndex > 0 ? (
             <button type="button" className={styles.btn} onClick={goBack}>
-              {t("tutorial.back")}
+              {label("back")}
             </button>
           ) : null}
           <button ref={primaryBtnRef} type="button" className={styles.btnPrimary} onClick={goNext}>
-            {isLast ? t("tutorial.done") : t("tutorial.next")}
+            {isLast ? label("done") : label("next")}
           </button>
         </div>
       </div>

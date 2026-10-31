@@ -259,7 +259,7 @@ export function GameHeader({
   if (compact) {
     return (
       <>
-        <header className={`${styles.header} ${styles.headerCompact}`}>
+        <header id="zh-tut-header" className={`${styles.header} ${styles.headerCompact}`}>
           <h1 className={styles.title}>{stageTitle}</h1>
           <span className={`${styles.badge} ${styles.badgeGold}`} title={`第 ${turn} / ${totalTurns} 回合`}>
             {turn}/{totalTurns}
@@ -282,7 +282,7 @@ export function GameHeader({
   }
   return (
     <>
-      <header className={styles.header}>
+      <header id="zh-tut-header" className={styles.header}>
         <div className={styles.headerMain}>
           <h1 className={styles.title}>
             {campaignTitle} · {stageTitle}
@@ -454,12 +454,13 @@ function HeaderMenu({
  * One horizontal row of cards. Overflow scrolls sideways: swipe on touch, trackpad/shift+wheel,
  * or press-and-drag with a mouse (a drag never counts as a click on the card under it).
  */
-export function ScrollRow({ className, children }: { className?: string; children: ReactNode }) {
+export function ScrollRow({ id, className, children }: { id?: string; className?: string; children: ReactNode }) {
   const ref = useRef<HTMLDivElement>(null);
   const drag = useRef<{ x: number; left: number; moved: boolean; id: number } | null>(null);
   const [dragging, setDragging] = useState(false);
   return (
     <div
+      id={id}
       ref={ref}
       className={[styles.scrollRow, className, dragging && styles.scrollRowDragging].filter(Boolean).join(" ")}
       onPointerDown={(e) => {
