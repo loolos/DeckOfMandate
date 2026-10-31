@@ -139,7 +139,7 @@ export const EVENTS: Record<EventId, EventDef> = {
     kind: "crisis",
     name: "蜚语盈廊",
     emoji: "🗣️",
-    flavor: "请安散后，不知是谁在各宫间低声说了一句“妹妹福气重”，话里带着刺。闲话四起，矛头隐隐指向你，倒像是翊坤宫那边暗暗推波助澜。",
+    flavor: "请安散后，曹贵人笑吟吟地说了一句“妹妹福气重”，话里带着刺。各宫私下议论纷纷，矛头隐隐指向你。",
     reward: [],
     penalty: [],
     penaltyStatus: "liuyanChanshen",
