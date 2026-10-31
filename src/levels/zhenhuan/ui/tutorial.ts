@@ -4,7 +4,7 @@ import type { TutorialOverlayCustom } from "../../../components/LevelTutorialOve
  * 界面教程：只介绍各区域的用途，不涉及任何事件、剧情或后续回合的内容（避免剧透）。
  * 三关共用同一套区域 id（见各关 Game 组件里的 zh-tut-*）；当前关卡里不存在的区域会被自动跳过。
  */
-export const ZH_TUTORIAL: TutorialOverlayCustom = {
+const BASE: TutorialOverlayCustom = {
   copy: { title: "界面教程", skip: "跳过教程", back: "上一步", next: "下一步", done: "完成" },
   steps: [
     {
@@ -33,6 +33,17 @@ export const ZH_TUTORIAL: TutorialOverlayCustom = {
     },
   ],
 };
+
+/** 第一、二关的手牌里有【仪容整肃】，教程里建议玩家先双击试打一张；第三关没有这张牌，不提。 */
+export function zhTutorial(stage: 1 | 2 | 3): TutorialOverlayCustom {
+  if (stage === 3) return BASE;
+  return {
+    ...BASE,
+    steps: BASE.steps.map((st) =>
+      st.targetId === "zh-tut-hand" ? { ...st, body: `${st.body}不妨现在就试试：双击打出【仪容整肃】。` } : st,
+    ),
+  };
+}
 
 const KEY = "deck-of-mandate.zhenhuan.tutorialOnEntry.v1";
 

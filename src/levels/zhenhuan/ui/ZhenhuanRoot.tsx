@@ -26,7 +26,7 @@ import { CompactModeToggle } from "./CompactModeToggle";
 import { Stage2Game } from "./Stage2Game";
 import { Stage3Game } from "./Stage3Game";
 import { musicMood } from "./music";
-import { readZhTutorialOnEntry, writeZhTutorialOnEntry, ZH_TUTORIAL } from "./tutorial";
+import { readZhTutorialOnEntry, writeZhTutorialOnEntry, zhTutorial } from "./tutorial";
 import { MusicToggle, useBgm } from "./useBgm";
 import { ZhenhuanGame } from "./ZhenhuanGame";
 import styles from "./zhenhuan.module.css";
@@ -138,7 +138,7 @@ export function ZhenhuanRoot() {
     <LevelTutorialOverlay
       open={pendingTutorial && !introPending && !showRules && session?.state.outcome === "playing"}
       onDismiss={dismissTutorial}
-      custom={ZH_TUTORIAL}
+      custom={zhTutorial(session?.stage ?? 1)}
     />
   );
 
