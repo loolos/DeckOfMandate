@@ -873,7 +873,7 @@ export const EVENTS2: Record<EventId2, EventDef2> = {
     kind: "opportunity",
     name: "琴默陈情",
     emoji: "🍵",
-    flavor: "年家倒了，曹贵人连夜来了碎玉轩。她屏退左右，说要还你当日照看温宜的人情。",
+    flavor: "年家倒了，曹贵人携了一盒点心来访碎玉轩，言谈间句句试探你的态度。你看得分明：此时若能拉拢她，便是在翊坤宫身侧添了一枚钉子。",
     reward: [],
     penalty: [],
     evidence: { id: "caoguirenGaofa", cards: ["shoulongRenxin", "jinyanShenxing"] },
@@ -882,8 +882,8 @@ export const EVENTS2: Record<EventId2, EventDef2> = {
     unresolvedText: "曹贵人等不到你的回音，此事作罢（不会再出现）",
     note: "只出现一次。",
     resolvedStory: {
-      shoulongRenxin: "你让槿汐守着门，听曹贵人把翊坤宫这些年的事一桩桩说了出来。临走时她说，若到了御前，她肯站出来作证。",
-      jinyanShenxing: "你只静静听着，一句也不多问。曹贵人说完，叹了口气：「为了温宜，到时我自会在皇上跟前把话说清楚。」",
+      shoulongRenxin: "你屏退左右，先陈利害，再叙情谊，说温宜公主来日的前程，说年家一倒，华妃的靠山再难久持。曹贵人沉吟良久，终是红了眼眶，将翊坤宫这些年的阴私一桩桩道来。临别时她福身道：「愿与姐姐同心。」",
+      jinyanShenxing: "你言辞温婉，晓之以理，动之以情，只道为母者所求，不过是公主一世安稳。曹贵人听罢默然，终于倒向了你这一边，并将华妃往日的罪证细细相告，末了叹道：「为了温宜，我自当在御前把话说清楚。」",
     },
   },
   songzhiKuisi: {
