@@ -134,9 +134,17 @@ export function ZhenhuanRoot() {
     setPendingTutorial(false);
   };
 
+  const tutorialShowing = pendingTutorial && !introPending && !showRules && session?.state.outcome === "playing";
+  // 教程一旦出现就算“看过”：即使没点完就通关/重开/进入下一关，也不会在后面的关卡再默认弹出。
+  useEffect(() => {
+    if (!tutorialShowing) return;
+    setTutorialOnEntry(false);
+    writeZhTutorialOnEntry(false);
+  }, [tutorialShowing]);
+
   const tutorial = (
     <LevelTutorialOverlay
-      open={pendingTutorial && !introPending && !showRules && session?.state.outcome === "playing"}
+      open={tutorialShowing}
       onDismiss={dismissTutorial}
       custom={zhTutorial(session?.stage ?? 1)}
     />
