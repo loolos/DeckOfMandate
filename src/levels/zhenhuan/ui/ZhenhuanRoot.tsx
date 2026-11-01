@@ -230,7 +230,6 @@ export function ZhenhuanRoot() {
           <h1 id="zh-menu-title" className={styles.menuTitle}>
             {CAMPAIGN_TITLE}
           </h1>
-          <CampaignSwitcher labelClassName={styles.menuLabel} selectClassName={styles.menuInput} />
           <CompactModeToggle hint="建议手机游玩时开启" />
           <MusicToggle />
           <label className={styles.compactToggle}>
@@ -245,43 +244,6 @@ export function ZhenhuanRoot() {
             <span>进入关卡时显示界面教程</span>
             <span className={styles.menuHint}>（简单介绍各区域的用途；第一次玩默认开启）</span>
           </label>
-          <label className={styles.menuLabel} htmlFor="zh-level">
-            选择关卡
-          </label>
-          <select
-            id="zh-level"
-            className={styles.menuInput}
-            value={menuStage}
-            onChange={(e) => setMenuStage(e.target.value === "3" ? 3 : e.target.value === "2" ? 2 : 1)}
-          >
-            <option value={1}>{CHAPTER.title}</option>
-            <option value={2}>{STAGE2.title}</option>
-            <option value={3}>{STAGE3.title}</option>
-          </select>
-          <p className={styles.menuHint}>
-            {menuStage === 1
-              ? `${CHAPTER.title}：甄嬛初入宫门，位分低微，宫里的一切规矩、人心与风波，都要她一一去面对。`
-              : menuStage === 2
-                ? `${STAGE2.title}：甄嬛渐得圣宠，也入了宠冠六宫的华妃的眼。翊坤宫的锋芒，从此冲着她而来。`
-                : `${STAGE3.title}：华妃倒了，皇后的笑意却一日深过一日。从碎玉轩到甘露寺，再从凌云峰回到紫禁城。`}
-          </p>
-          <details className={styles.menuAdvanced} open={seedInvalid || undefined}>
-            <summary>高级选项</summary>
-            <label className={styles.menuLabel} htmlFor="zh-seed">
-              随机种子（可选）
-            </label>
-            <input
-              id="zh-seed"
-              className={styles.menuInput}
-              inputMode="numeric"
-              autoComplete="off"
-              placeholder="留空则随机"
-              value={seedText}
-              onChange={(e) => setSeedText(e.target.value)}
-            />
-            {seedInvalid ? <p className={styles.menuError}>种子必须是整数。</p> : null}
-            <RunCodePanel variant="startMenu" code="" onLoad={loadCode} />
-          </details>
           <button
             type="button"
             className={`${styles.btn} ${styles.btnPrimary}`}
@@ -300,6 +262,44 @@ export function ZhenhuanRoot() {
               继续存档（{["", "第一关", "第二关", "第三关"][saved.stage]} 第 {saved.state.turn} 回合开始）
             </button>
           ) : null}
+          <details className={styles.menuAdvanced} open={seedInvalid || undefined}>
+            <summary>高级选项</summary>
+            <CampaignSwitcher labelClassName={styles.menuLabel} selectClassName={styles.menuInput} />
+            <label className={styles.menuLabel} htmlFor="zh-level">
+              选择关卡
+            </label>
+            <select
+              id="zh-level"
+              className={styles.menuInput}
+              value={menuStage}
+              onChange={(e) => setMenuStage(e.target.value === "3" ? 3 : e.target.value === "2" ? 2 : 1)}
+            >
+              <option value={1}>{CHAPTER.title}</option>
+              <option value={2}>{STAGE2.title}</option>
+              <option value={3}>{STAGE3.title}</option>
+            </select>
+            <p className={styles.menuHint}>
+              {menuStage === 1
+                ? `${CHAPTER.title}：甄嬛初入宫门，位分低微，宫里的一切规矩、人心与风波，都要她一一去面对。`
+                : menuStage === 2
+                  ? `${STAGE2.title}：甄嬛渐得圣宠，也入了宠冠六宫的华妃的眼。翊坤宫的锋芒，从此冲着她而来。`
+                  : `${STAGE3.title}：华妃倒了，皇后的笑意却一日深过一日。从碎玉轩到甘露寺，再从凌云峰回到紫禁城。`}
+            </p>
+            <label className={styles.menuLabel} htmlFor="zh-seed">
+              随机种子（可选）
+            </label>
+            <input
+              id="zh-seed"
+              className={styles.menuInput}
+              inputMode="numeric"
+              autoComplete="off"
+              placeholder="留空则随机"
+              value={seedText}
+              onChange={(e) => setSeedText(e.target.value)}
+            />
+            {seedInvalid ? <p className={styles.menuError}>种子必须是整数。</p> : null}
+            <RunCodePanel variant="startMenu" code="" onLoad={loadCode} />
+          </details>
         </div>
         ) : null}
       </div>
