@@ -34,6 +34,7 @@ import {
   cardFlavor3,
   cardRules3,
   unresolvedText3,
+  longyueHidden3,
   STATUSES3,
   statusText3,
   STORIES3,
@@ -365,7 +366,7 @@ function StoryCard({ state, inst, dispatch, fold }: { state: Z3State; inst: Stor
           story={inst.story ?? chosenOption.story}
         />
       ) : null}
-      <p className={styles.flavor}>{def.flavor}</p>
+      <p className={styles.flavor}>{state.exitTier === 3 && def.feichuFlavor ? def.feichuFlavor : def.flavor}</p>
       {def.note ? <p className={styles.rule}>{def.note}</p> : null}
       {def.options.some((o) => o.xiayu) && !chosen ? (
         <p className={styles.rule}>局势 {xiayuS(state, inst.solved ?? 0)}：再打出 {xiayuS(state, inst.solved ?? 0)} 张解牌即可完美解决。</p>
@@ -933,10 +934,10 @@ function Statuses({ state, dispatch }: { state: Z3State; dispatch: Dispatch }) {
               </div>
               {expanded ? (
                 <div className={styles.statusDetail}>
-                  <p className={styles.flavor}>{statusText3(def, state.turn).flavor}</p>
+                  <p className={styles.flavor}>{statusText3(def, state.turn, longyueHidden3(state.exitTier, state.turn)).flavor}</p>
                   <p className={styles.rule}>
                     <span className={styles.ruleLabel}>机制：</span>
-                    {statusText3(def, state.turn).effectText}
+                    {statusText3(def, state.turn, longyueHidden3(state.exitTier, state.turn)).effectText}
                   </p>
                 </div>
               ) : null}
