@@ -15,6 +15,7 @@ export const messagesFrCore: Record<keyof typeof messagesEnCore, string> = {
   "menu.seedHint": "Laissez vide pour une graine aléatoire. La même graine reproduit l'ordre du deck et les premiers événements.",
   "menu.seedInvalid": "Saisissez un nombre fini valide.",
   "menu.seedLabel": "Graine de partie (optionnelle)",
+  "menu.advanced": "Options avancées",
   "menu.seedPlaceholder": "Aléatoire si vide",
   "menu.startConfigured": "Démarrer",
   "menu.title": "Menu principal",

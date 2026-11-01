@@ -670,6 +670,38 @@ export function Game() {
             <LanguageToggle />
           </div>
           <div className={styles.startMenuForm}>
+          <label className={styles.startMenuTutorial}>
+            <input
+              type="checkbox"
+              checked={tutorialOnEntryMenu}
+              onChange={(e) => {
+                const next = e.target.checked;
+                setTutorialOnEntryMenu(next);
+                writeTutorialOnLevelEntry(next);
+              }}
+            />
+            <span>
+              {t("menu.tutorialOnLevelEntry")}
+              <span className={styles.startMenuTutorialHint}>{t("menu.tutorialOnLevelEntryHint")}</span>
+            </span>
+          </label>
+          <button
+            type="button"
+            className={`${styles.btn} ${styles.btnPrimary}`}
+            disabled={menuSeedParsed === "invalid"}
+            onClick={requestStartFromMenu}
+          >
+            {t("menu.startConfigured")}
+          </button>
+          {hadSaveOnLaunch ? (
+            <div className={styles.startMenuResume}>
+              <button type="button" className={styles.btn} onClick={resumeFromStoredSave}>
+                {t("menu.resumeSave")}
+              </button>
+            </div>
+          ) : null}
+          <details className={styles.startMenuAdvanced} open={menuSeedParsed === "invalid" || undefined}>
+            <summary>{t("menu.advanced")}</summary>
           <CampaignSwitcher labelClassName={styles.startMenuLabel} selectClassName={styles.startMenuSelect} />
           <label className={styles.startMenuLabel} htmlFor="start-menu-level">
             {t("menu.levelLabel")}
@@ -718,38 +750,9 @@ export function Game() {
           ) : (
             <p className={styles.startMenuMuted}>{t("menu.seedHint")}</p>
           )}
-          <label className={styles.startMenuTutorial}>
-            <input
-              type="checkbox"
-              checked={tutorialOnEntryMenu}
-              onChange={(e) => {
-                const next = e.target.checked;
-                setTutorialOnEntryMenu(next);
-                writeTutorialOnLevelEntry(next);
-              }}
-            />
-            <span>
-              {t("menu.tutorialOnLevelEntry")}
-              <span className={styles.startMenuTutorialHint}>{t("menu.tutorialOnLevelEntryHint")}</span>
-            </span>
-          </label>
-          <button
-            type="button"
-            className={`${styles.btn} ${styles.btnPrimary}`}
-            disabled={menuSeedParsed === "invalid"}
-            onClick={requestStartFromMenu}
-          >
-            {t("menu.startConfigured")}
-          </button>
           <RunCodePanel variant="startMenu" code="" onLoad={loadFromCode} />
+          </details>
         </div>
-          {hadSaveOnLaunch ? (
-            <div className={styles.startMenuResume}>
-              <button type="button" className={styles.btn} onClick={resumeFromStoredSave}>
-                {t("menu.resumeSave")}
-              </button>
-            </div>
-          ) : null}
         </div>
       ) : null}
     </div>

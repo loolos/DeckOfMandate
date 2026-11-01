@@ -1728,3 +1728,16 @@
     font-size: 0.75rem;
   }
 }
+
+.startMenuAdvanced {
+  margin-top: 0.75rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--border);
+}
+
+.startMenuAdvanced > summary {
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
