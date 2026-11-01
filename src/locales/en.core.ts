@@ -35,6 +35,7 @@ export const messagesEnCore = {
   "menu.campaignLabel": "Campaign",
   "menu.levelLabel": "Level",
   "menu.seedLabel": "Run seed (optional)",
+  "menu.advanced": "Advanced options",
   "menu.seedPlaceholder": "Random if empty",
   "menu.seedHint": "Leave blank for a random seed. The same seed reproduces deck order and early events.",
   "menu.seedInvalid": "Enter a valid finite number.",

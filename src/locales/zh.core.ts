@@ -34,6 +34,7 @@ export const messagesZhCore = {
   "menu.campaignLabel": "战役",
   "menu.levelLabel": "关卡",
   "menu.seedLabel": "随机种子（可选）",
+  "menu.advanced": "高级选项",
   "menu.seedPlaceholder": "留空则随机",
   "menu.seedHint": "留空会随机生成种子；相同种子可复现开局牌库与事件。",
   "menu.seedInvalid": "请输入有效的有限数字。",

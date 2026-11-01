@@ -113,3 +113,14 @@ export function MusicToggle({ brief = false }: { brief?: boolean }) {
     </button>
   );
 }
+
+/** 开始菜单用的背景音乐复选框（与「略缩模式」「界面教程」同样式）；游戏内仍用 MusicToggle 按钮。 */
+export function MusicCheckbox() {
+  const isMuted = useMuted();
+  return (
+    <label className={styles.compactToggle}>
+      <input type="checkbox" checked={!isMuted} onChange={(e) => setMuted(!e.target.checked)} />
+      <span>背景音乐</span>
+    </label>
+  );
+}
