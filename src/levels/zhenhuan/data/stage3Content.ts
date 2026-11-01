@@ -467,11 +467,14 @@ export type StatusDef3 = {
   readonly veiled?: { readonly untilTurn: number; readonly effectText: string; readonly flavor: string };
   /** From this turn on the status shows a different story text (效果文字不变). */
   readonly lateFlavor?: { readonly fromTurn: number; readonly flavor: string };
+  /** 被废出宫、还不知道胧月下落时（见 longyueHidden3）换用的剧情文字。 */
+  readonly longyueHiddenFlavor?: string;
 };
 
 /** What the player is shown of a status on `turn`. */
-export function statusText3(def: StatusDef3, turn: number): { effectText: string; flavor: string } {
+export function statusText3(def: StatusDef3, turn: number, longyueHidden = false): { effectText: string; flavor: string } {
   if (def.veiled && turn < def.veiled.untilTurn) return def.veiled;
+  if (longyueHidden && def.longyueHiddenFlavor) return { effectText: def.effectText, flavor: def.longyueHiddenFlavor };
   if (def.lateFlavor && turn >= def.lateFlavor.fromTurn) return { effectText: def.effectText, flavor: def.lateFlavor.flavor };
   return def;
 }
@@ -626,6 +629,7 @@ export const STATUSES3: Record<StatusId3, StatusDef3> = {
     drawModifier: 0,
     effectText: "【宫中来信】离场时另 🌱身子 +1（无论是否把握）。",
     flavor: "敬妃膝下无子，最盼着你的孩子。她托人捎话：胧月有她看顾，你只管保重自己。",
+    longyueHiddenFlavor: "敬妃没有忘了你。她托人捎话：山中清苦，你只管保重自己，宫里的事，她会替你留心。",
     veiled: { untilTurn: 11, effectText: "日后或许用得上。", flavor: "敬妃拉着你的手说，往后有什么难处，只管来咸福宫找她。" },
   },
   xinGuirenZhangyi: {
@@ -1056,6 +1060,8 @@ export type EventDef3 = {
   readonly jingbai?: boolean;
   /** Only on 凌云峰 (from 肺痨之诬 on) / only in 寺中. */
   readonly place?: "temple" | "peak";
+  /** 有【敬妃之谊】时换用的开场文字（宫中来信：敬妃另托人捎了东西）。 */
+  readonly jingfeiFlavor?: string;
   readonly resolvedText: string;
   readonly unresolvedText: string;
   readonly resolvedStory: Partial<Record<CardId3, string>>;
@@ -1578,15 +1584,17 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     name: "宫中来信",
     emoji: "✉️",
     flavor: "有人托山下的小贩捎来一封信。信封上没有落款，你却认得那字迹——笔锋瘦劲，收尾处总带一点倔强，是沈眉庄的手笔。",
+    jingfeiFlavor:
+      "山下的小贩挑着担子上来，除了一封信，还有两个沉甸甸的包袱。信封上没有落款，你却认得那字迹，是沈眉庄的手笔；包袱上的结打得又密又紧，小贩说是咸福宫的人再三托付的，一样也不许少。",
     reward: [q(1)],
     penalty: NO,
     resolvedText: "清誉 +1（眉庄解决时翻倍）；有【敬妃之谊】时另身子 +1",
     unresolvedText: "有【敬妃之谊】时仍身子 +1，事件消失",
     resolvedStory: {
       meizhuangXiangzhu:
-        "你拆开信，是眉庄的字迹，写得很长，足足三页。她说：「宫里一切都好，你不必挂心，只管保重自己。」信末又添一句：「胧月的事，我时时托人打听，一有准信，立刻写给你。」包袱里是厚实的冬衣和几包药材，药包上还压着一张她亲笔写的服法。你读到最后，眼眶发热，把信折了又折，贴身收好。",
+        "你拆开信，是眉庄的字迹，写得很长，足足三页。她说：「宫里一切都好，你不必挂心，只管保重自己。」信末又添一句：「胧月在咸福宫敬妃身边，我寻了个由头去看过一回，她吃得好睡得香，你别惦记。只是我人微言轻，帮不上更多，往后有什么消息，再写给你。」包袱里是厚实的冬衣和几包药材，药包上还压着一张她亲笔写的服法。你读到最后，眼眶发热，把信折了又折，贴身收好。",
       jinxiXiangzhu:
-        "槿汐托人去山下取了信，一路藏在怀里带回来，还带着她的体温。你拆开一看，是眉庄的字迹，劈头便问你冷不冷、病好了没有，说宫里一切都好，叫你千万保重。末了一句：「胧月的事，我时时托人打听，一有准信，立刻写给你。」槿汐在一旁抹着眼泪，说：「娘娘，眉庄小主心里一直惦记着您呢。」",
+        "槿汐托人去山下取了信，一路藏在怀里带回来，还带着她的体温。你拆开一看，是眉庄的字迹，劈头便问你冷不冷、病好了没有，说宫里一切都好，叫你千万保重。末了一句：「胧月在咸福宫敬妃身边，我寻了个由头去看过一回，她吃得好睡得香，你别惦记。只是我人微言轻，帮不上更多，往后有什么消息，再写给你。」槿汐在一旁抹着眼泪，说：「娘娘，眉庄小主心里一直惦记着您呢。」",
     },
   },
   jinganChuilian: {
@@ -2006,6 +2014,8 @@ export type StoryDef3 = {
   readonly name: string;
   readonly emoji: string;
   readonly flavor: string;
+  /** 被废出宫时换用的开场文字。 */
+  readonly feichuFlavor?: string;
   readonly note?: string;
   readonly defaultOptionId: string;
   readonly options: readonly StoryOption3[];
@@ -2308,6 +2318,8 @@ export const STORIES3: Record<StoryId3, StoryDef3> = {
     name: "故人来访",
     emoji: "🩺",
     flavor: "温实初上山来了，捎来胧月的一张小像，是敬妃托他带的。画上的孩子胖乎乎的，眉眼像你。",
+    feichuFlavor:
+      "温实初上山来了。他还没坐稳，你便抓住他的袖子问：「胧月呢？她被抱去了哪里？」他从怀里取出一张小像：「嬛妹妹别急，公主如今在咸福宫，敬妃娘娘亲自抚养，这画像就是她托我带来的。」画上的孩子胖乎乎的，眉眼像你。你这才知道她的下落，捧着画像，半晌说不出话来。",
     note: "有【敬妃之谊】时，另得下回合抓牌 +1。",
     defaultOptionId: "shouxia",
     options: [
@@ -3096,6 +3108,30 @@ export const TAG3_INFO: Record<TagId3, { label: string; lore: string; rules: str
     lore: "月份差得越多，越瞒不住。",
     rules: "从 1 起算。偶遇前每回合末 +1；睹物生疑（引驾后每回合末手里每件遗物）+1；景仁宫来人没应对 +1。槿汐相助、眉庄相助各 -1。到 5 即失败。",
   },
+};
+
+/** 第 15 回合【故人来访】温太医上山：被废出宫的，到这一回合才知道胧月在敬妃处。 */
+export const GUREN_TURN = Number(Object.keys(FIXED_STORIES3).find((t) => FIXED_STORIES3[Number(t)] === "wentaiyiTanshi"));
+
+/** 被废出宫、故人来访之前：主角还不知道胧月的下落，文本里不能提她在敬妃处。 */
+export function longyueHidden3(exitTier: number | null, turn: number): boolean {
+  return exitTier === 3 && turn < GUREN_TURN;
+}
+
+/** 宫中来信：被废出宫、还不知道胧月下落时，眉庄也只能托人打听。 */
+export const GONGZHONG_LAIXIN_HIDDEN_STORY: Partial<Record<CardId3, string>> = {
+  meizhuangXiangzhu:
+    "你拆开信，是眉庄的字迹，写得很长，足足三页。她说：「宫里一切都好，你不必挂心，只管保重自己。」信末又添一句：「胧月的事，我时时托人打听，一有准信，立刻写给你。」包袱里是厚实的冬衣和几包药材，药包上还压着一张她亲笔写的服法。你读到最后，眼眶发热，把信折了又折，贴身收好。",
+  jinxiXiangzhu:
+    "槿汐托人去山下取了信，一路藏在怀里带回来，还带着她的体温。你拆开一看，是眉庄的字迹，劈头便问你冷不冷、病好了没有，说宫里一切都好，叫你千万保重。末了一句：「胧月的事，我时时托人打听，一有准信，立刻写给你。」槿汐在一旁抹着眼泪，说：「娘娘，眉庄小主心里一直惦记着您呢。」",
+};
+
+/** 宫中来信：有【敬妃之谊】但还不知道胧月下落时，敬妃只托人捎东西，不提胧月。 */
+export const GONGZHONG_LAIXIN_HIDDEN_JINGFEI_STORY: Partial<Record<CardId3, string>> = {
+  meizhuangXiangzhu:
+    "你拆开信，是眉庄的字迹，写得很长，足足三页。她说：「宫里一切都好，你不必挂心。这回的冬衣和药材，是我与敬妃姐姐一同备下的，她比我还操心，连炭火都亲自挑过。」信末又添一句：「胧月的事，我时时托人打听，一有准信，立刻写给你。」你把信看了又看，宫里竟还有两个人这样记挂你，心里暖了一暖，又空落落地疼。",
+  jinxiXiangzhu:
+    "槿汐托人去山下取了信，一路藏在怀里带回来，还带着她的体温。你拆开一看，是眉庄的字迹，问你冷不冷、病好了没有，末了一句：「胧月的事，我时时托人打听。」包袱里除了眉庄备的衣物，还有米面、炭火和几味补药，是敬妃托人一并捎来的。槿汐在一旁抹着眼泪：「娘娘，宫里还有人惦记着您呢。」",
 };
 
 /** 宫中来信: with 敬妃之谊, the 解牌 story reads differently (敬妃 also sent supplies and news of 胧月). */

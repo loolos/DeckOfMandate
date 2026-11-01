@@ -383,6 +383,28 @@ describe("zhenhuan stage 3 engine", () => {
     expect(t.allies.xin).toBe(true);
   });
 
+  it("宫中来信: the 解牌 story follows 敬妃之谊 and whether 胧月's whereabouts are known yet", () => {
+    const letter = (tier: 1 | 3, jingfei: boolean, turn: number): string => {
+      let s = advanceTo(newStage3(2, CARRY), turn);
+      clearBoard(s);
+      s.exitTier = tier;
+      s.statuses = s.statuses.filter((x) => x.id !== "jingfeiZhiyi");
+      if (jingfei) withStatus(s, "jingfeiZhiyi", 0);
+      s.opportunity = ev(s, "gongzhongLaixin");
+      const [uid] = setHand(s, ["jinxiXiangzhu"]);
+      s = act(s, { type: "playCard", cardUid: uid! });
+      expect(s.opportunity!.resolved).toBe(true);
+      return s.opportunity!.story ?? "";
+    };
+    expect(letter(1, false, 12)).toContain("咸福宫敬妃身边");
+    expect(letter(1, true, 12)).toContain("额娘");
+    expect(letter(3, false, 12)).toContain("托人打听");
+    const hiddenJingfei = letter(3, true, 12);
+    expect(hiddenJingfei).toContain("敬妃托人一并捎来");
+    expect(hiddenJingfei).not.toContain("额娘");
+    expect(letter(3, false, 16)).toContain("咸福宫敬妃身边");
+  });
+
   it("佛前供灯: resolving it raises next turn's play limit by 1", () => {
     let s = advanceTo(newStage3(2, CARRY), 12);
     clearBoard(s);

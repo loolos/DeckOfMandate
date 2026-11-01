@@ -18,7 +18,10 @@ import {
   DOUBT,
   EVENT_KIND3_LABEL,
   EVENTS3,
+  GONGZHONG_LAIXIN_HIDDEN_JINGFEI_STORY,
+  GONGZHONG_LAIXIN_HIDDEN_STORY,
   GONGZHONG_LAIXIN_JINGFEI_STORY,
+  longyueHidden3,
   ENDING,
   EXIT,
   FABRICATED_HINT,
@@ -831,7 +834,7 @@ function resolveEventByCard(s: Z3State, ev: EventInst3, card: CardId3, doubleRew
   ev.resolvedBy = card;
   log(s, `${verb(def.kind)}${EVENT_KIND3_LABEL[def.kind]}事件【${def.name}】`, "good");
   const story =
-    (ev.id === "gongzhongLaixin" && hasStatus3(s, "jingfeiZhiyi") ? GONGZHONG_LAIXIN_JINGFEI_STORY[card] : undefined) ??
+    (ev.id === "gongzhongLaixin" ? gongzhongLaixinStory(s, card) : undefined) ??
     (s.lizigao ? POPUP_TEXT.lizigaoStory[ev.id]?.[card] : undefined) ??
     def.resolvedStory[card];
   if (story) {
@@ -868,13 +871,22 @@ function resolveEventByCard(s: Z3State, ev: EventInst3, card: CardId3, doubleRew
   }
 }
 
+/** 宫中来信的解牌剧情：按有无【敬妃之谊】、是否已知胧月下落分四版。 */
+function gongzhongLaixinStory(s: Z3State, card: CardId3): string | undefined {
+  const jingfei = hasStatus3(s, "jingfeiZhiyi");
+  if (longyueHidden3(s.exitTier, s.turn)) return (jingfei ? GONGZHONG_LAIXIN_HIDDEN_JINGFEI_STORY : GONGZHONG_LAIXIN_HIDDEN_STORY)[card];
+  return jingfei ? GONGZHONG_LAIXIN_JINGFEI_STORY[card] : undefined;
+}
+
 const JINGFEI_LETTER_NOTE =
   "山下捎来的信里，另夹着敬妃的小笺：她让人送了米面、炭火和补药，又说胧月在她身边养得很好，前几日会叫「额娘」了。你把小笺看了又看，悬了许久的心总算落下一半。";
+const JINGFEI_LETTER_NOTE_HIDDEN =
+  "山下有人捎来一个包袱，是敬妃让人送的米面、炭火和补药，另附一张小笺，只叮嘱你保重身子，旁的一字未提。";
 
 /** 敬妃之谊: the 宫中来信 bonus lands whether or not the letter itself was taken up. */
 function jingfeiLetter(s: Z3State, ev: EventInst3): void {
   if (!hasStatus3(s, "jingfeiZhiyi")) return;
-  if (!ev.resolved || !ev.story) log(s, JINGFEI_LETTER_NOTE);
+  if (!ev.resolved || !ev.story) log(s, longyueHidden3(s.exitTier, s.turn) ? JINGFEI_LETTER_NOTE_HIDDEN : JINGFEI_LETTER_NOTE);
   applyDelta3(s, { resource: "shenzi", amount: 1 }, "敬妃之谊：胧月的消息");
 }
 
@@ -1517,7 +1529,7 @@ function beginTurn3(s: Z3State, turn: number): void {
   if (turn === STAGE3.act3Start) enterYihua(s);
   for (const st of s.statuses) {
     const v = STATUSES3[st.id].veiled;
-    if (v?.untilTurn === turn) log(s, `【${STATUSES3[st.id].name}】${STATUSES3[st.id].flavor}（${STATUSES3[st.id].effectText}）`, "good");
+    if (v?.untilTurn === turn) log(s, `【${STATUSES3[st.id].name}】${statusText3(STATUSES3[st.id], turn, longyueHidden3(s.exitTier, turn)).flavor}（${STATUSES3[st.id].effectText}）`, "good");
   }
   if (s.yihua?.step === 2 && s.yihua.ouyuDue === turn) {
     log(s, "皇上驾临甘露寺：本回合解决【圣驾偶遇】才算偶遇成功。", "info");
