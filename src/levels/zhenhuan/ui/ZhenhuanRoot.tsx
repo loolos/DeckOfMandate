@@ -27,7 +27,7 @@ import { Stage2Game } from "./Stage2Game";
 import { Stage3Game } from "./Stage3Game";
 import { musicMood } from "./music";
 import { readZhTutorialOnEntry, writeZhTutorialOnEntry, zhTutorial } from "./tutorial";
-import { MusicToggle, useBgm } from "./useBgm";
+import { MusicCheckbox, useBgm } from "./useBgm";
 import { ZhenhuanGame } from "./ZhenhuanGame";
 import styles from "./zhenhuan.module.css";
 
@@ -239,7 +239,7 @@ export function ZhenhuanRoot() {
             {CAMPAIGN_TITLE}
           </h1>
           <CompactModeToggle hint="建议手机游玩时开启" />
-          <MusicToggle />
+          <MusicCheckbox />
           <label className={styles.compactToggle}>
             <input
               type="checkbox"
