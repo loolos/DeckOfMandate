@@ -227,7 +227,7 @@ function EventCard({ state, inst, fold, dispatch }: { state: Z3State; inst: Even
   const resolvedLabel = isOpp ? "已把握" : def.kind === "huanghou" ? "已领受" : "已化解";
   const okLabel = def.kind === "huanghou" ? "打出特定牌：" : "处理：";
   const noLabel = def.kind === "huanghou" ? "默认（回合末）：" : "未处理（回合末）：";
-  const flavor = state.atPeak && def.peakFlavor ? def.peakFlavor : def.flavor;
+  const flavor = state.atPeak && def.peakFlavor ? def.peakFlavor : def.jingfeiFlavor && state.statuses.some((x) => x.id === "jingfeiZhiyi") ? def.jingfeiFlavor : def.flavor;
   if (fold.compact && !fold.expanded) {
     return (
       <FoldBox fold={fold} className={className}>

@@ -1060,6 +1060,8 @@ export type EventDef3 = {
   readonly jingbai?: boolean;
   /** Only on 凌云峰 (from 肺痨之诬 on) / only in 寺中. */
   readonly place?: "temple" | "peak";
+  /** 有【敬妃之谊】时换用的开场文字（宫中来信：敬妃另托人捎了东西）。 */
+  readonly jingfeiFlavor?: string;
   readonly resolvedText: string;
   readonly unresolvedText: string;
   readonly resolvedStory: Partial<Record<CardId3, string>>;
@@ -1582,6 +1584,8 @@ export const EVENTS3: Record<EventId3, EventDef3> = {
     name: "宫中来信",
     emoji: "✉️",
     flavor: "有人托山下的小贩捎来一封信。信封上没有落款，你却认得那字迹——笔锋瘦劲，收尾处总带一点倔强，是沈眉庄的手笔。",
+    jingfeiFlavor:
+      "山下的小贩挑着担子上来，除了一封信，还有两个沉甸甸的包袱。信封上没有落款，你却认得那字迹，是沈眉庄的手笔；包袱上的结打得又密又紧，小贩说是咸福宫的人再三托付的，一样也不许少。",
     reward: [q(1)],
     penalty: NO,
     resolvedText: "清誉 +1（眉庄解决时翻倍）；有【敬妃之谊】时另身子 +1",
