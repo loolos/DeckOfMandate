@@ -2811,9 +2811,15 @@ export const LINGRONG_FAREWELL: Record<LingrongTier, string> = {
 
 // ---------------------------------------------------------------- popups (§五)
 
-export type PopupId = "opening" | "huanghou" | "tonghuatai" | "chunyuan" | "wanwan" | "confront" | "exit" | "feilao" | "zhoufu" | "ximai" | "ouyu" | "dengmen" | "qinse" | "lizigao";
+export type PopupId = "opening" | "huanghou" | "tonghuatai" | "chunyuan" | "wanwan" | "confront" | "exit" | "feilao" | "zhoufu" | "ximai" | "ouyu" | "dengmen" | "qinse" | "lizigao" | "pin";
 
 export const POPUP_TEXT = {
+  /** 有孕晋嫔弹窗（与第二关一致）：陵容送虎头鞋、情分 -1、抓五打三。 */
+  pin: {
+    story: "晋封的旨意颁到碎玉轩，上下跪了一地谢恩。",
+    lingrong: "陵容送来一双亲手绣的虎头鞋：「姐姐如今是嫔了，妹妹……替姐姐高兴。」",
+    lingrongTail: "陵容与你生分了些，如今情分：",
+  },
   opening: "翊坤宫的门关上了。华妃倒了，六宫都说碎玉轩的莞主子是头一份的恩宠。听说景仁宫也要亲自来贺。",
   openingTail: {
     pinPregnant: "你已是嫔位，腹中的孩子一日日大起来，盯着碎玉轩的眼睛也一日日多了起来。",
