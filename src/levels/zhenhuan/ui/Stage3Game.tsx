@@ -1234,6 +1234,28 @@ function PopupBody({ state, id }: { state: Z3State; id: PopupId }) {
           <p className={styles.muted}>{POPUP_TEXT.lizigaoRules}</p>
         </>
       );
+    case "pin": {
+      const tier = tierOf3(state);
+      return (
+        <>
+          <p>{POPUP_TEXT.pin.story}</p>
+          <p>恭喜小主晋为{RANKS.pin.name}！</p>
+          {tier ? (
+            <p>
+              🎶 {POPUP_TEXT.pin.lingrong}
+              <span className={styles.muted}>
+                （{POPUP_TEXT.pin.lingrongTail}
+                {TIER_EMOJI[tier]}
+                {TIER_LABEL[tier]}）
+              </span>
+            </p>
+          ) : null}
+          <p className={styles.muted}>
+            从下一回合起每回合抓 {RANKS.pin.draw} 张、最多打 {RANKS.pin.plays} 张，清誉 / 圣宠上限提高到 {RANKS.pin.cap}。
+          </p>
+        </>
+      );
+    }
     case "qinse":
       return (
         <>
@@ -1274,6 +1296,7 @@ const POPUP_TITLE: Record<PopupId, string> = {
   ouyu: "🌸 圣驾偶遇",
   dengmen: "🚪 皇上登门",
   lizigao: "🥮 栗糕清苦",
+  pin: "🏮 晋为嫔",
 };
 
 function popupTitle(state: Z3State, id: PopupId): string {

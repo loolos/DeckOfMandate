@@ -383,6 +383,22 @@ describe("zhenhuan stage 3 engine", () => {
     expect(t.allies.xin).toBe(true);
   });
 
+  it("有孕晋嫔: 弹出晋嫔提示，陵容情分 -1，下回合起抓五打三", () => {
+    let s = advanceTo(newStage3(2, { ...CARRY, rank: "guiren", pregnant: true, relation: 0 }), 6);
+    clearBoard(s);
+    s.popups = [];
+    s.relation = 0;
+    s.opportunity = ev(s, "qingmaiBaoxi");
+    const uids = setHand(s, ["wenTaiyiZhenzhi", "jinyanShenxing"]);
+    s = act(s, { type: "playCard", cardUid: uids[0]! });
+    s = act(s, { type: "playCard", cardUid: uids[1]! });
+    expect(s.rank).toBe("pin");
+    expect(s.relation).toBe(-1);
+    expect(s.popups).toContain("pin");
+    s = act(s, { type: "endTurn" });
+    expect(s.hand.length).toBeGreaterThanOrEqual(5);
+  });
+
   it("宫中来信: the 解牌 story follows 敬妃之谊 and whether 胧月's whereabouts are known yet", () => {
     const letter = (tier: 1 | 3, jingfei: boolean, turn: number): string => {
       let s = advanceTo(newStage3(2, CARRY), turn);

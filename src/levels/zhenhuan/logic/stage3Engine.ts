@@ -751,8 +751,9 @@ function promoteToPin(s: Z3State): void {
   s.rank = "pin";
   const r = RANKS.pin;
   log(s, `有孕晋封为【${r.name}】：清誉 / 圣宠上限 ${r.cap}；下回合起每回合抓 ${r.draw} 打 ${r.plays}。`, "good");
-  log(s, "陵容送来一双亲手绣的虎头鞋：「姐姐如今是嫔了，妹妹……替姐姐高兴。」");
-  changeRelation(s, -2);
+  log(s, POPUP_TEXT.pin.lingrong);
+  changeRelation(s, -1);
+  popup(s, "pin");
 }
 
 function summonSuccess(s: Z3State): void {
