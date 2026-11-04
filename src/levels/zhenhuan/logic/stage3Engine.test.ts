@@ -823,7 +823,7 @@ describe("zhenhuan stage 3 engine", () => {
     expect(answeringCards3("yebanJingrao", 25)).toContain("jingxinRennai");
   });
 
-  it("山门偶遇: 荆钗布裙可解（清誉 +1），仍加入果郡王相助", () => {
+  it("山门偶遇: 荆钗布裙可解（清誉 +2），仍加入果郡王相助", () => {
     let s = advanceTo(newStage3(6, CARRY), 12);
     s.qingyu = 5;
     const [b] = setHand(s, ["jingchaiBuqun"]);
@@ -832,7 +832,7 @@ describe("zhenhuan stage 3 engine", () => {
     const g0 = gjw();
     s = act(s, { type: "playCard", cardUid: b! });
     expect(s.stories.find((st) => st.id === "shanmenOuyu")?.viaCard).toBe("jingchaiBuqun");
-    expect(s.qingyu).toBe(q0 + 1);
+    expect(s.qingyu).toBe(q0 + 2);
     expect(gjw()).toBe(g0 + 1);
   });
 
