@@ -409,12 +409,21 @@ export function lizigaoOpen(s: Z3State, ev: EventInst3): boolean {
 /** 菀菀类卿那一回合孩子就要落地：栗糕清苦只在这之前。 */
 const WANWAN_TURN = Number(Object.keys(FIXED_STORIES3).find((t) => FIXED_STORIES3[Number(t)] === "wanwanLeiqing"));
 
+/**
+ * 陵容相助能不能接这件事：有陵容事件表，且是她的匹配事件；三阿哥邀宠只在栗糕清苦的条件下才接得了。
+ * 引擎判定、事件卡上的匹配牌和陵容提示都只看这一处。
+ */
+export function lingrongAnswers3(s: Z3State, ev: EventInst3): boolean {
+  if (!LINGRONG_EVENT3[ev.id]) return false;
+  return ev.id === "sanAgeYaochong" ? lizigaoOpen(s, ev) : CARDS3.lingrongXiangzhu.matches.includes(ev.id);
+}
+
 /** Does `cardId` count toward this unresolved event right now (single match or 双牌 progress)? */
 export function cardAffectsEvent3(s: Z3State, ev: EventInst3, cardId: CardId3): boolean {
   if (ev.resolved) return false;
   const def = EVENTS3[ev.id];
   if (cardId === "guojunwangXiangzhu" && s.turn >= STAGE3.zhoufuTurn) return false;
-  if (cardId === "lingrongXiangzhu" && lizigaoOpen(s, ev)) return true;
+  if (cardId === "lingrongXiangzhu") return lingrongAnswers3(s, ev) && !pairLocked(s, ev);
   if (def.double) return def.double.includes(cardId) && !(ev.progress ?? []).includes(cardId);
   if (!CARDS3[cardId].matches.includes(ev.id)) return false;
   // 连环 opportunity stays locked until its crisis is cleared (the shared card among the crisis's two cards takes it afterwards)
@@ -1206,8 +1215,8 @@ function resolvePlay3(s: Z3State, cardUid: string, removeStatusUid?: string): vo
     if (d.needTwo) {
       ev.progress = [...(ev.progress ?? []), card.id];
       if (ev.progress.length >= solveCount(ev)) {
-        // 栗糕清苦：解牌里有陵容（不论先后），就按陵容化解
-        const lingrongTier3 = isLingrong ? tier : ev.progress.includes("lingrongXiangzhu") && lizigaoOpen(s, ev) ? tierOf3(s) : null;
+        // 两张解牌里有陵容（不论先后），就按陵容化解（家宴献艺、栗糕清苦都一样）
+        const lingrongTier3 = ev.progress.includes("lingrongXiangzhu") && lingrongAnswers3(s, ev) ? tierOf3(s) : null;
         if (lingrongTier3) relationDelta += resolveEventByLingrong(s, ev, lingrongTier3);
         else {
           // 连环: with the shared card among the two, its story always wins
@@ -1246,7 +1255,8 @@ function resolvePlay3(s: Z3State, cardUid: string, removeStatusUid?: string): vo
       log(s, `【${CHUNYUAN.name}】② 查实：${CHUNYUAN.checkStory[card.id]}`, "good");
     }
     if (isLingrong && tier) {
-      answered = true;
+      // 纯元故衣已查完后再打陵容，仍是普通的陪伴（情分 +1），不算应对了这件事
+      if (step) answered = true;
       addSecret(s, "guyiYuanyan", tier);
     }
   }

@@ -176,6 +176,24 @@ describe("zhenhuan stage 3 engine", () => {
     expect(s.secrets[`enshang.${id}` as keyof typeof s.secrets]).toBe(1);
   });
 
+  it("家宴献艺：两张解牌里有陵容，不论先后都按陵容化解", () => {
+    const run = (order: CardId3[]): Z3State => {
+      let s = advanceTo(newStage3(5, CARRY), 3);
+      clearBoard(s);
+      s.huanghou = ev(s, "jiayanXianyi");
+      s.relation = 2;
+      s.extraPlays = 2;
+      for (const uid of setHand(s, order)) s = act(s, { type: "playCard", cardUid: uid });
+      return s;
+    };
+    for (const order of [["lingrongXiangzhu", "jingguanQibian"], ["jingguanQibian", "lingrongXiangzhu"]] as CardId3[][]) {
+      const s = run(order);
+      expect(s.huanghou!.resolved).toBe(true);
+      expect(s.huanghou!.resolvedBy).toBe("lingrongXiangzhu");
+      expect(s.relation).toBe(3);
+    }
+  });
+
   it("皇后事件 played with a listed card: that card's own reward, no 把柄", () => {
     let s = advanceTo(newStage3(5, CARRY), 3);
     clearBoard(s);
@@ -338,6 +356,17 @@ describe("zhenhuan stage 3 engine", () => {
     s = act(s, { type: "endTurn" });
     expect(s.log.some((l) => l.text.includes("称病避宠"))).toBe(true);
     expect(s.shengchong).toBeLessThanOrEqual(8);
+  });
+
+  it("纯元故衣查完后再打陵容相助：没有事件可解，照常情分 +1 并留日志", () => {
+    let s = advanceTo(newStage3(17, CARRY), 6);
+    clearBoard(s);
+    s.extraPlays = 3;
+    s.relation = 0;
+    for (const uid of setHand(s, ["yirongZhengsu", "shoulongRenxin", "lingrongXiangzhu"])) s = act(s, { type: "playCard", cardUid: uid });
+    expect(s.chunyuan?.second).not.toBeNull();
+    expect(s.relation).toBe(1);
+    expect(s.log.some((l) => l.text.includes("陵容待你亲近了些"))).toBe(true);
   });
 
   it("纯元故衣: ① 起疑 then ② 查实 avoids it; only ① costs 圣宠 -2, nothing -5; 查实 first does not count", () => {
