@@ -295,7 +295,7 @@ function EventCard({ state, inst, fold, dispatch }: { state: Z3State; inst: Even
       {locked ? <p className={styles.endHint}>🔒 连环危机还没化解，这张机会暂时锁着。</p> : null}
       <p className={styles.rule}>
         <span className={styles.ruleLabel}>匹配牌：</span>
-        <Chips ids={lingrongOpen ? [...answeringCards3(inst.id, state.turn), "lingrongXiangzhu"] : answeringCards3(inst.id, state.turn)} lit={(id) => handIds.has(id)} />
+        <Chips ids={[...answeringCards3(inst.id, state.turn).filter((c) => c !== "lingrongXiangzhu"), ...(lingrongOpen ? (["lingrongXiangzhu"] as const) : [])]} lit={(id) => handIds.has(id)} />
       </p>
       {lingrongTable && tier && lingrongOpen ? (
         <p className={styles.rule}>
