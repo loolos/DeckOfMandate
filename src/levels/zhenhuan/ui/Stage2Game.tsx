@@ -74,6 +74,7 @@ import {
   type StoryInst2,
   type Z2Action,
   type Z2State,
+  stripPregnancyText,
 } from "../logic/stage2Engine";
 import { cardArtUrl, eventArtUrl, specialArtUrl, storyArtUrl } from "./art";
 import { BriefDetail, CardArt, FoldBox, GameHeader, LogView, Pile, PileGroup, ResolvedBanner, ScrollRow, StatChip, TagChip, activateOnKey, countBy, groupStatuses, isTypingTarget, type Fold } from "./common";
@@ -323,7 +324,7 @@ function StoryCard({ state, inst, dispatch, fold }: { state: Z2State; inst: Stor
         <div key={option.id} className={[styles.option, chosen === option.id && styles.optionChosen].filter(Boolean).join(" ")}>
           <span>
             <strong>{option.name}</strong>
-            {option.id === def.defaultOptionId ? <span className={styles.muted}>（默认）</span> : null}：{expandedEffect2(option.text)}
+            {option.id === def.defaultOptionId ? <span className={styles.muted}>（默认）</span> : null}：{expandedEffect2(option.pregnancy && state.pregnant ? stripPregnancyText(option.text) : option.text)}
           </span>
           <button
             type="button"
@@ -348,7 +349,7 @@ function StoryCard({ state, inst, dispatch, fold }: { state: Z2State; inst: Stor
             <span className={[styles.matchChip, inHand && !locked && styles.matchChipInHand].filter(Boolean).join(" ")}>
               {CARDS2[option.card!].emoji} {CARDS2[option.card!].name}
             </span>
-            {option.name}：{expandedEffect2(option.text)}
+            {option.name}：{expandedEffect2(option.pregnancy && state.pregnant ? stripPregnancyText(option.text) : option.text)}
             {lingrongNote}
           </p>
         );
