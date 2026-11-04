@@ -243,7 +243,7 @@ export type Z3State = {
   keepsakes: RelicId[];
   /** 温太医探视: the temporary card's uid, and whether 槿汐相助 was used. */
   changxiangsi: { played: CardId3[]; done: boolean } | null;
-  /** 琴笛合奏 was completed (the event card itself is gone by turn 23). */
+  /** 月下琴笛 was completed (the event card itself is gone by turn 23). */
   changxiangsiDone?: boolean;
   /** 踏雪问疾 was resolved by playing a card (the story is gone from the board by turn 23). */
   taxueByCard?: boolean;
@@ -1442,7 +1442,7 @@ function moveToPeak(s: Z3State): void {
 
 const ZHOUFU_TURN = STAGE3.zhoufuTurn;
 
-/** 踏雪问疾（本回合打牌化解，不走默认）与琴笛合奏都已完成，合婚庚帖写下时才有长相思守。 */
+/** 踏雪问疾（本回合打牌化解，不走默认）与月下琴笛都已完成，合婚庚帖写下时才有长相思守。 */
 export function qinseReady(s: Z3State): boolean {
   return s.changxiangsiDone === true && s.taxueByCard === true;
 }

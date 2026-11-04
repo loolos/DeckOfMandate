@@ -432,8 +432,8 @@ function StoryCard({ state, inst, dispatch, fold }: { state: Z3State; inst: Stor
   );
 }
 
-/** A story-area card with a progress line (纯元故衣 / 对质 / 肺痨之诬 / 琴笛合奏 / 移花接木). */
-/** 合婚庚帖：踏雪问疾与琴笛合奏都已完成时，才写下这一笔的后续效果。 */
+/** A story-area card with a progress line (纯元故衣 / 对质 / 肺痨之诬 / 月下琴笛 / 移花接木). */
+/** 合婚庚帖：踏雪问疾与月下琴笛都已完成时，才写下这一笔的后续效果。 */
 function qinseNote(state: Z3State, option: { readonly flag?: string }): string {
   return option.flag === "gengtie" && qinseReady(state) ? "；此后每回合抓牌 +1（舟覆之后起）" : "";
 }
