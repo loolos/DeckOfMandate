@@ -340,6 +340,17 @@ describe("zhenhuan stage 3 engine", () => {
     expect(s.shengchong).toBeLessThanOrEqual(8);
   });
 
+  it("纯元故衣查完后再打陵容相助：没有事件可解，照常情分 +1 并留日志", () => {
+    let s = advanceTo(newStage3(17, CARRY), 6);
+    clearBoard(s);
+    s.extraPlays = 3;
+    s.relation = 0;
+    for (const uid of setHand(s, ["yirongZhengsu", "shoulongRenxin", "lingrongXiangzhu"])) s = act(s, { type: "playCard", cardUid: uid });
+    expect(s.chunyuan?.second).not.toBeNull();
+    expect(s.relation).toBe(1);
+    expect(s.log.some((l) => l.text.includes("陵容待你亲近了些"))).toBe(true);
+  });
+
   it("纯元故衣: ① 起疑 then ② 查实 avoids it; only ① costs 圣宠 -2, nothing -5; 查实 first does not count", () => {
     const start = advanceTo(newStage3(17, CARRY), 6);
     expect(start.chunyuan).not.toBeNull();

@@ -1246,7 +1246,8 @@ function resolvePlay3(s: Z3State, cardUid: string, removeStatusUid?: string): vo
       log(s, `【${CHUNYUAN.name}】② 查实：${CHUNYUAN.checkStory[card.id]}`, "good");
     }
     if (isLingrong && tier) {
-      answered = true;
+      // 纯元故衣已查完后再打陵容，仍是普通的陪伴（情分 +1），不算应对了这件事
+      if (step) answered = true;
       addSecret(s, "guyiYuanyan", tier);
     }
   }
