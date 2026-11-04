@@ -21,6 +21,7 @@ import {
   type Z2Action,
   type Z2State,
   summonUnwell,
+  stripPregnancyText,
 } from "./stage2Engine";
 
 function act(s: Z2State, a: Z2Action): Z2State {
@@ -1019,6 +1020,18 @@ describe("zhenhuan stage 2 engine", () => {
     onlyEvents(h, {});
     expect(storyResponsesFor(h, "yirongZhengsu")).toHaveLength(1);
     expect(storyResponsesFor(h, "jinyanShenxing")).toHaveLength(1);
+  });
+
+  it("圆明伴驾 already pregnant: result text drops 必定有孕", () => {
+    const s = newStage2(49, null);
+    s.rank = "guiren";
+    s.pregnant = true;
+    openStory(s, "yuanmingyuan");
+    onlyEvents(s, {});
+    const [c] = setHand(s, ["yirongZhengsu"]);
+    const t = act(s, { type: "playCard", cardUid: c! });
+    expect(t.stories[0]!.result).toBe("圣宠 +1；恨意 +3");
+    expect(stripPregnancyText("必定有孕；清誉 +1；恨意 +1")).toBe("清誉 +1；恨意 +1");
   });
 
   it("卧床静养 also rules out 侍寝: 召幸 has no card answers", () => {

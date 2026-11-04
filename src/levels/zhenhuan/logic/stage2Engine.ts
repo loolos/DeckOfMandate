@@ -602,6 +602,11 @@ function lingrongOnPromotion(s: Z2State): void {
   changeRelation(s, -2, "晋封（姐姐越走越远）");
 }
 
+/** 已有孕时，选项文字里去掉「必定有孕」。 */
+export function stripPregnancyText(text: string): string {
+  return text.replace(/必定有孕[；;]?/g, "").replace(/[；;]$/, "");
+}
+
 function becomePregnant(s: Z2State, source: string): void {
   if (s.pregnant || !alive(s)) return;
   s.pregnant = true;
@@ -941,7 +946,11 @@ function applyStoryOption(s: Z2State, inst: StoryInst2, option: StoryOption2, so
     log(s, `${XIBIE[option.exit].who}将要离你远去：【${CARDS2[option.exit].name}】带上【惜别】标签。下次抓到时，其余的同名牌离场，只留这一张。`, "bad");
     cullXibie(s);
   }
-  if (option.pregnancy) becomePregnant(s, def.name);
+  if (option.pregnancy) {
+    // 已有孕时不再写「必定有孕」
+    if (s.pregnant) inst.result = stripPregnancyText(option.text);
+    becomePregnant(s, def.name);
+  }
   if (option.summon === "success") {
     inst.result = "侍寝成功";
     summonSuccess(s, "召幸");
