@@ -251,7 +251,8 @@ function EventCard({ state, inst, fold, dispatch }: { state: Z3State; inst: Even
   }
   const lingrongTable = LINGRONG_EVENT3[inst.id];
   // 三阿哥邀宠只有满足栗糕清苦的条件时，陵容相助才算匹配牌、才显示提示
-  const lingrongOpen = inst.id !== "sanAgeYaochong" || lizigaoOpen(state, inst);
+  // 没有陵容事件表的事件，陵容相助并不是它的解牌，不列出
+  const lingrongOpen = lingrongTable != null && (inst.id !== "sanAgeYaochong" || lizigaoOpen(state, inst));
   const tier = tierOf3(state);
   return (
     <FoldBox fold={fold} className={className}>
