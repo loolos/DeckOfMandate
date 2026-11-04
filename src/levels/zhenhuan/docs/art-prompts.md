@@ -96,7 +96,7 @@
 | S30 | 纯元故衣 | 特殊剧情 | chunyuan |
 | S31 | 景仁宫对质 | 特殊剧情 | confront |
 | S32 | 肺痨之诬 | 特殊剧情 | feilao |
-| S33 | 月下琴笛 | 特殊剧情 | changxiangsi |
+| S33 | 琴笛合奏 | 特殊剧情 | changxiangsi |
 | S34 | 移花接木 | 特殊剧情 | yihua |
 | B3 | 第三关背景 | 背景 | stage3 |
 

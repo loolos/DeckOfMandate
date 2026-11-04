@@ -432,8 +432,8 @@ function StoryCard({ state, inst, dispatch, fold }: { state: Z3State; inst: Stor
   );
 }
 
-/** A story-area card with a progress line (纯元故衣 / 对质 / 肺痨之诬 / 月下琴笛 / 移花接木). */
-/** 合婚庚帖：踏雪问疾与月下琴笛都已完成时，才写下这一笔的后续效果。 */
+/** A story-area card with a progress line (纯元故衣 / 对质 / 肺痨之诬 / 琴笛合奏 / 移花接木). */
+/** 合婚庚帖：踏雪问疾与琴笛合奏都已完成时，才写下这一笔的后续效果。 */
 function qinseNote(state: Z3State, option: { readonly flag?: string }): string {
   return option.flag === "gengtie" && qinseReady(state) ? "；此后每回合抓牌 +1（舟覆之后起）" : "";
 }
@@ -618,11 +618,11 @@ function ChangxiangsiCard({ state, fold, dispatch }: { state: Z3State; fold: Fol
           双牌 {c.done ? 2 : Number(guo) + Number(chan)}/2
         </Tag>
       }
-      summary={c.done ? "🎶 笛箫合奏 🪷+2" : `${guo ? "✓" : "✗"}🎐 ${chan ? "✓" : "✗"}📿 → 🪷+2`}
+      summary={c.done ? "🎶 琴笛合奏 🪷+2" : `${guo ? "✓" : "✗"}🎐 ${chan ? "✓" : "✗"}📿 → 🪷+2`}
       fold={fold}
       dispatch={dispatch}
     >
-      {c.done ? <ResolvedBanner icon="🎶" label="笛箫合奏" detail="清誉 +2。" story={CHANGXIANGSI.story} /> : null}
+      {c.done ? <ResolvedBanner icon="🎶" label="琴笛合奏" detail="清誉 +2。" story={CHANGXIANGSI.story} /> : null}
       <p className={styles.flavor}>{CHANGXIANGSI.flavor}</p>
       <p className={styles.rule}>{expandedEffect3(CHANGXIANGSI.rule)}</p>
       <p className={styles.rule}>
@@ -1293,7 +1293,7 @@ const POPUP_TITLE: Record<PopupId, string> = {
   exit: "⚖️ 景仁宫对质",
   feilao: "🤒 迁居凌云峰",
   zhoufu: "🌊 舟覆噩耗",
-  qinse: "🎼 琴笛合奏",
+  qinse: "🎼 琴瑟和鸣",
   ximai: "💗 喜脉惊心",
   ouyu: "🌸 圣驾偶遇",
   dengmen: "🚪 皇上登门",
