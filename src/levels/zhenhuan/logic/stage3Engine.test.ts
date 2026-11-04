@@ -176,6 +176,24 @@ describe("zhenhuan stage 3 engine", () => {
     expect(s.secrets[`enshang.${id}` as keyof typeof s.secrets]).toBe(1);
   });
 
+  it("家宴献艺：两张解牌里有陵容，不论先后都按陵容化解", () => {
+    const run = (order: CardId3[]): Z3State => {
+      let s = advanceTo(newStage3(5, CARRY), 3);
+      clearBoard(s);
+      s.huanghou = ev(s, "jiayanXianyi");
+      s.relation = 2;
+      s.extraPlays = 2;
+      for (const uid of setHand(s, order)) s = act(s, { type: "playCard", cardUid: uid });
+      return s;
+    };
+    for (const order of [["lingrongXiangzhu", "jingguanQibian"], ["jingguanQibian", "lingrongXiangzhu"]] as CardId3[][]) {
+      const s = run(order);
+      expect(s.huanghou!.resolved).toBe(true);
+      expect(s.huanghou!.resolvedBy).toBe("lingrongXiangzhu");
+      expect(s.relation).toBe(3);
+    }
+  });
+
   it("皇后事件 played with a listed card: that card's own reward, no 把柄", () => {
     let s = advanceTo(newStage3(5, CARRY), 3);
     clearBoard(s);
