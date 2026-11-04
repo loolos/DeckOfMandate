@@ -1293,7 +1293,7 @@ const POPUP_TITLE: Record<PopupId, string> = {
   exit: "⚖️ 景仁宫对质",
   feilao: "🤒 迁居凌云峰",
   zhoufu: "🌊 舟覆噩耗",
-  qinse: "🎼 琴瑟和鸣",
+  qinse: "🎼 长相厮守",
   ximai: "💗 喜脉惊心",
   ouyu: "🌸 圣驾偶遇",
   dengmen: "🚪 皇上登门",
