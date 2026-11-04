@@ -1082,7 +1082,7 @@ describe("zhenhuan stage 3 engine", () => {
     expect(bimen.dg).toBe(0);
   });
 
-  it("合婚庚帖 grants 琴瑟同心 only after 踏雪问疾 (by a card) and 月下琴笛 are both done; draw +1 starts after 舟覆", () => {
+  it("合婚庚帖 grants 长相思守 only after 踏雪问疾 (by a card) and 月下琴笛 are both done; draw +1 starts after 舟覆", () => {
     const run = (taxueByCard: boolean, qinDone: boolean) => {
       let s = advanceTo(newStage3(12, CARRY), 3);
       clearBoard(s);

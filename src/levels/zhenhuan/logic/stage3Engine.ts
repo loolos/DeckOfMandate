@@ -1286,8 +1286,8 @@ function resolvePlay3(s: Z3State, cardUid: string, removeStatusUid?: string): vo
     if (s.changxiangsi.played.includes("guojunwangXiangzhu") && s.changxiangsi.played.includes("chanyuXiushen")) {
       s.changxiangsi.done = true;
       s.changxiangsiDone = true;
-      log(s, `【${CHANGXIANGSI.name}】笛箫合奏：${CHANGXIANGSI.story}`, "good");
-      applyDelta3(s, { resource: "qingyu", amount: 2 }, "笛箫合奏");
+      log(s, `【${CHANGXIANGSI.name}】${CHANGXIANGSI.story}`, "good");
+      applyDelta3(s, { resource: "qingyu", amount: 2 }, "琴笛合奏");
     }
   }
   if (alive(s) && yihuaStep && s.yihua!.step !== 4) advanceYihua(s, card.id);
@@ -1442,7 +1442,7 @@ function moveToPeak(s: Z3State): void {
 
 const ZHOUFU_TURN = STAGE3.zhoufuTurn;
 
-/** 踏雪问疾（本回合打牌化解，不走默认）与月下琴笛都已完成，合婚庚帖写下时才有琴瑟同心。 */
+/** 踏雪问疾（本回合打牌化解，不走默认）与月下琴笛都已完成，合婚庚帖写下时才有长相思守。 */
 export function qinseReady(s: Z3State): boolean {
   return s.changxiangsiDone === true && s.taxueByCard === true;
 }

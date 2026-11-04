@@ -618,11 +618,11 @@ function ChangxiangsiCard({ state, fold, dispatch }: { state: Z3State; fold: Fol
           双牌 {c.done ? 2 : Number(guo) + Number(chan)}/2
         </Tag>
       }
-      summary={c.done ? "🎶 笛箫合奏 🪷+2" : `${guo ? "✓" : "✗"}🎐 ${chan ? "✓" : "✗"}📿 → 🪷+2`}
+      summary={c.done ? "🎶 琴笛合奏 🪷+2" : `${guo ? "✓" : "✗"}🎐 ${chan ? "✓" : "✗"}📿 → 🪷+2`}
       fold={fold}
       dispatch={dispatch}
     >
-      {c.done ? <ResolvedBanner icon="🎶" label="笛箫合奏" detail="清誉 +2。" story={CHANGXIANGSI.story} /> : null}
+      {c.done ? <ResolvedBanner icon="🎶" label="琴笛合奏" detail="清誉 +2。" story={CHANGXIANGSI.story} /> : null}
       <p className={styles.flavor}>{CHANGXIANGSI.flavor}</p>
       <p className={styles.rule}>{expandedEffect3(CHANGXIANGSI.rule)}</p>
       <p className={styles.rule}>
@@ -1293,7 +1293,7 @@ const POPUP_TITLE: Record<PopupId, string> = {
   exit: "⚖️ 景仁宫对质",
   feilao: "🤒 迁居凌云峰",
   zhoufu: "🌊 舟覆噩耗",
-  qinse: "🎼 琴瑟和鸣",
+  qinse: "🎼 长相厮守",
   ximai: "💗 喜脉惊心",
   ouyu: "🌸 圣驾偶遇",
   dengmen: "🚪 皇上登门",
