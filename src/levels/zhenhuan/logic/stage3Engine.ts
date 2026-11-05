@@ -5,8 +5,9 @@
  * Three acts in one run: 第一幕 in the palace (turns 1–10, ending with 景仁宫对质), 第二幕 at 甘露寺 / 凌云峰
  * (11–25, 修行 identity and the temple deck), 第三幕 移花接木 (26–33).
  */
-import { createRngFromSeed, rngNext, shuffle } from "../../../logic/rng";
+import { createRngFromSeed, shuffle } from "../../../logic/rng";
 import type { RngSerialized } from "../../../types/game";
+import { adjacentLingrongCard, alive, drawIntoHand, log, newEvent, removeStatusById, roll, shuffleInto, type LogEntry } from "./engineCommon";
 import {
   ACT1_CRISES,
   ACT1_OPPORTUNITIES,
@@ -123,8 +124,7 @@ export type EventInst3 = {
 
 export type StoryInst3 = { readonly id: StoryId3; chosenOptionId: string | null; viaCard?: CardId3; pendingOptionId?: string; result?: string; story?: string; /** 甄远道下狱: 已打出的解牌数与逐张剧情。 */ solved?: number; steps?: string[] };
 export type StatusInst3 = { readonly uid: string; readonly id: StatusId3; readonly appliesFromTurn: number; remaining: number };
-export type LogTone = "info" | "good" | "bad";
-export type LogEntry = { readonly turn: number; readonly text: string; readonly tone: LogTone };
+export type { LogEntry, LogTone } from "./engineCommon";
 export type Notice3 = { readonly emoji: string; readonly name: string; readonly text: string };
 
 /** What 第二关 hands over (design-stage3.md §2.1–2.4). */
@@ -430,12 +430,7 @@ function lianmeiAvailable(s: Z3State): boolean {
 }
 
 function lianmeiSourceFor(s: Z3State, index: number): CardInst3 | null {
-  if (!lianmeiAvailable(s) || s.turn === STAGE3.confrontTurn) return null;
-  for (const j of [index - 1, index + 1]) {
-    const c = s.hand[j];
-    if (c && c.id === "lingrongXiangzhu") return c;
-  }
-  return null;
+  return lianmeiAvailable(s) && s.turn !== STAGE3.confrontTurn ? adjacentLingrongCard(s.hand, index) : null;
 }
 
 export function lianmeiLit3(s: Z3State, card: CardInst3): boolean {
@@ -558,32 +553,12 @@ export function presentedSecrets(s: Z3State): number {
 
 // ---------------------------------------------------------------- mutation helpers
 
-function log(s: Z3State, text: string, tone: LogTone = "info"): void {
-  s.log.push({ turn: s.turn, text, tone });
-}
-
-function alive(s: Z3State): boolean {
-  return s.outcome === "playing";
-}
-
 function lose(s: Z3State, reason: string, kind: Loss3Kind): void {
   if (!alive(s)) return;
   s.outcome = "lost";
   s.lossReason = reason;
   s.lossKind = kind;
   log(s, `失败：${reason}`, "bad");
-}
-
-function roll(s: Z3State): number {
-  const [rng, x] = rngNext(s.rng);
-  s.rng = rng;
-  return x;
-}
-
-function shuffleInto<T>(s: Z3State, items: readonly T[]): T[] {
-  const [rng, out] = shuffle(s.rng, items);
-  s.rng = rng;
-  return out;
 }
 
 function popup(s: Z3State, id: PopupId): void {
@@ -637,13 +612,6 @@ function addStatus3(s: Z3State, id: StatusId3, turns?: number): void {
   log(s, `获得状态【${def.name}】（${statusText3(def, s.turn).effectText}）`, def.tag === "negative" ? "bad" : "good");
 }
 
-function removeStatusById(s: Z3State, id: StatusId3): boolean {
-  const i = s.statuses.findIndex((st) => st.id === id);
-  if (i < 0) return false;
-  s.statuses.splice(i, 1);
-  return true;
-}
-
 function removeStatus3(s: Z3State, uid: string, source: string): void {
   const st = s.statuses.find((x) => x.uid === uid);
   if (!st) return;
@@ -677,24 +645,8 @@ function addSecret(s: Z3State, id: SecretId, tier: LingrongTier | null): void {
   s.secrets[id] = tier === "resentful" ? 2 : 1;
 }
 
-function newEvent(s: Z3State, id: EventId3): EventInst3 {
-  return { uid: `e${s.nextUid++}`, id, resolved: false };
-}
-
 function drawCards3(s: Z3State, n: number): void {
-  for (let i = 0; i < n; i++) {
-    if (s.drawPile.length === 0) {
-      if (s.discard.length === 0) {
-        log(s, "抽牌堆与弃牌堆都已空，无法继续抽牌。");
-        return;
-      }
-      s.drawPile = shuffleInto(s, s.discard);
-      s.discard = [];
-      log(s, `弃牌堆洗回抽牌堆（${s.drawPile.length} 张）。`);
-    }
-    s.hand.push(s.drawPile.shift()!);
-    s.drawnThisTurn++;
-  }
+  drawIntoHand(s, n);
 }
 
 /** A new card goes into the draw pile at a random place. */

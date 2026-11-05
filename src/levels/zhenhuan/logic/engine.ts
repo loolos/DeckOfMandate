@@ -4,6 +4,7 @@
  */
 import { createRngFromSeed, shuffle } from "../../../logic/rng";
 import type { RngSerialized } from "../../../types/game";
+import { drawIntoHand, log, shuffleInto, type LogEntry } from "./engineCommon";
 import {
   CARDS,
   CHAPTER,
@@ -57,8 +58,7 @@ export type StatusInst = {
   /** Turns of effect left; ticks at end of each turn it applied to. */
   remaining: number;
 };
-export type LogTone = "info" | "good" | "bad";
-export type LogEntry = { readonly turn: number; readonly text: string; readonly tone: LogTone };
+export type { LogEntry, LogTone } from "./engineCommon";
 
 export type ZhAction =
   | { readonly type: "playCard"; readonly cardUid: string }
@@ -203,10 +203,6 @@ export function canEndTurn(s: ZhState): boolean {
 
 // ---------------------------------------------------------------- mutation helpers (operate on a draft)
 
-function log(s: ZhState, text: string, tone: LogTone = "info"): void {
-  s.log.push({ turn: s.turn, text, tone });
-}
-
 function lose(s: ZhState, reason: string, kind: LossKind): void {
   if (s.outcome !== "playing") return;
   s.outcome = "lost";
@@ -240,22 +236,7 @@ function applyDeltas(s: ZhState, deltas: readonly ResourceDelta[], source: strin
 }
 
 function drawCards(s: ZhState, n: number): void {
-  for (let i = 0; i < n; i++) {
-    if (s.drawPile.length === 0) {
-      if (s.discard.length === 0) {
-        log(s, "抽牌堆与弃牌堆都已空，无法继续抽牌。");
-        return;
-      }
-      const [rng, shuffled] = shuffle(s.rng, s.discard);
-      s.rng = rng;
-      s.drawPile = shuffled;
-      s.discard = [];
-      log(s, `弃牌堆洗回抽牌堆（${s.drawPile.length} 张）。`);
-    }
-    const card = s.drawPile.shift()!;
-    s.hand.push(card);
-    s.drawnThisTurn++;
-  }
+  drawIntoHand(s, n);
 }
 
 const POOL_KEYS = {
@@ -267,9 +248,7 @@ const POOL_KEYS = {
 function drawEvent<T extends EventId>(s: ZhState, kind: EventKind): T {
   const [poolKey, usedKey] = POOL_KEYS[kind];
   if (s[poolKey].length === 0) {
-    const [rng, shuffled] = shuffle(s.rng, s[usedKey] as EventId[]);
-    s.rng = rng;
-    (s[poolKey] as EventId[]) = shuffled;
+    (s[poolKey] as EventId[]) = shuffleInto(s, s[usedKey] as EventId[]);
     (s[usedKey] as EventId[]) = [];
     log(s, `${EVENT_KIND_LABEL[kind]}牌池已抽完，已用事件重新洗匀。`);
   }
