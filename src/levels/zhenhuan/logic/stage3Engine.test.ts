@@ -767,6 +767,17 @@ describe("zhenhuan stage 3 engine", () => {
     expect(s.statuses.filter((x) => x.id === "meizhuangDadian")).toHaveLength(1);
   });
 
+  it("故人来访 (turn 15): 果郡王相助 解牌: 身子 +1、清誉 +1、抽 1 张", () => {
+    let s = advanceTo(newStage3(6, CARRY), 15);
+    s.shenzi = 5;
+    s.qingyu = 5;
+    const [g] = setHand(s, ["guojunwangXiangzhu"]);
+    const n = s.hand.length - 1;
+    s = act(s, { type: "playCard", cardUid: g! });
+    expect([s.shenzi, s.qingyu]).toEqual([6, 6]);
+    expect(s.hand.length).toBe(n + 2); // 牌本身抽 1 + 选项抽 1
+  });
+
   it("第二幕危机需两张解牌: 杂役磋磨 -2 none / -1 one card / cleared with two; 断炭缺粮 half = 寒疾缠身 1 turn", () => {
     const run = (id: "fazuoCuhuo" | "tanhuoLiangmi", ids: CardId3[]) => {
       let s = advanceTo(newStage3(6, CARRY), 12);
