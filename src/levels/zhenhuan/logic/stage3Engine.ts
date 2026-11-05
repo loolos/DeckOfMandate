@@ -1574,7 +1574,11 @@ function beginTurn3(s: Z3State, turn: number): void {
     s.changxiangsi = { played: [], done: false };
     log(s, `剧情事件：【${CHANGXIANGSI.name}】${CHANGXIANGSI.rule}`);
   }
-  if (turn === ZHOUFU_TURN) zhoufu(s);
+  if (turn === ZHOUFU_TURN) {
+    zhoufu(s);
+    // 噩耗当回合起不再有月下对谈（该回合的机会事件在此之后才抽）。
+    removeFromPools(s, ["yuexiaDuitan"]);
+  }
 
   if (turn !== STAGE3.confrontTurn) {
     drawEvents(s);
