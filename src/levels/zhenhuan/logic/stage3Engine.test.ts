@@ -1116,6 +1116,14 @@ describe("zhenhuan stage 3 engine", () => {
     expect(drawModifier3(s, 26)).toBe(drawModifier3(base, 26) + 1);
   });
 
+  it("月下对谈 never appears from the 舟覆噩耗 turn on", () => {
+    let s = advanceTo(newStage3(12, CARRY), 24);
+    s.opportunityPool = ["yuexiaDuitan", ...s.opportunityPool];
+    s = advanceTo(s, 25);
+    expect(s.opportunity?.id).not.toBe("yuexiaDuitan");
+    expect([...s.opportunityPool, ...s.opportunityUsed]).not.toContain("yuexiaDuitan");
+  });
+
   it("舟覆噩耗 turns the 果郡王 cards into relics; 移花接木 starts on turn 26 with 疑点 1", () => {
     let s = advanceTo(newStage3(12, CARRY), 24);
     s.gengtie = true;
