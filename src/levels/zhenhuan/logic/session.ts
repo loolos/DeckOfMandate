@@ -13,9 +13,10 @@ import {
   decodeRunCode as decodeStage1,
   encodeAction,
   encodeRunCode as encodeStage1,
-  loadSave as loadStage1Save,
-  saveAtTurnStart as saveStage1,
+  readStage1Save,
+  writeStage1Save,
 } from "./persistence";
+import { classifySaveFailure, clearSaveBuild, readSaveBuild, writeSaveBuild, type SaveFailure } from "./saveVersion";
 import { newStage2, replay2, type Carry, type Z2Action, type Z2State } from "./stage2Engine";
 import { newStage3, replay3, type Carry3, type Z3Action, type Z3State } from "./stage3Engine";
 import type { StoryId2 } from "../data/stage2Content";
@@ -271,62 +272,78 @@ export function startStage3Standalone(seed: number): Stage3Session {
   return { stage: 3, state: newStage3(seed, null), stage1: null, stage2: null };
 }
 
-/** Autosave at turn start. Only one save exists at a time (the latest play-through). */
+/**
+ * Autosave at turn start. Only one save exists at a time (the latest play-through): the new one is
+ * written first and the other stages' saves are cleared only once that write succeeded, so a refused
+ * write (quota / privacy mode) never leaves the player with no save at all.
+ */
 export function saveSession(session: Session): void {
-  if (session.stage === 1) {
-    clearSave2();
-    clearSave3();
-    saveStage1(session.state);
-    return;
-  }
-  if (session.stage === 3) {
-    const st = session.state;
-    const body = sessionBody(session.stage1, session.stage2, { seed: st.seed, carry: st.carry, actions: st.actions.slice(0, st.turnStartActionCount) });
-    try {
+  try {
+    if (session.stage === 1) {
+      writeStage1Save(session.state);
+      writeSaveBuild();
+      clearSave2();
+      clearSave3();
+      return;
+    }
+    if (session.stage === 3) {
+      const st = session.state;
+      localStorage.setItem(SAVE3_KEY, sessionBody(session.stage1, session.stage2, { seed: st.seed, carry: st.carry, actions: st.actions.slice(0, st.turnStartActionCount) }));
+      writeSaveBuild();
       clearStage1Save();
       clearSave2();
-      localStorage.setItem(SAVE3_KEY, body);
-    } catch {
-      /* ignore quota / privacy mode */
+      return;
     }
-    return;
-  }
-  const st = session.state;
-  const body = sessionBody(session.stage1, { seed: st.seed, carry: st.carry, actions: st.actions.slice(0, st.turnStartActionCount) });
-  try {
+    const st = session.state;
+    localStorage.setItem(SAVE2_KEY, sessionBody(session.stage1, { seed: st.seed, carry: st.carry, actions: st.actions.slice(0, st.turnStartActionCount) }));
+    writeSaveBuild();
     clearStage1Save();
     clearSave3();
-    localStorage.setItem(SAVE2_KEY, body);
   } catch {
-    /* ignore quota / privacy mode */
+    /* ignore quota / privacy mode: the previous save stays as it was */
   }
 }
 
-export function loadSession(): Session | null {
-  try {
-    const raw = localStorage.getItem(SAVE3_KEY);
-    if (raw) {
-      const p = parseBody(raw);
-      if (!p.stage3) throw new Error("bad save");
-      const state = replay3(p.stage3.seed, p.stage3.carry, p.stage3.actions);
-      if (state.outcome === "playing") return { stage: 3, state, stage1: p.stage1, stage2: p.stage2 };
-    }
-  } catch {
-    clearSave3();
+export type LoadResult =
+  | { readonly kind: "none" }
+  | { readonly kind: "ok"; readonly session: Session }
+  | { readonly kind: "failed"; readonly failure: SaveFailure };
+
+function readStoredSession(): Session | null {
+  const raw3 = localStorage.getItem(SAVE3_KEY);
+  if (raw3) {
+    const p = parseBody(raw3);
+    if (!p.stage3) throw new Error("bad save");
+    const state = replay3(p.stage3.seed, p.stage3.carry, p.stage3.actions);
+    if (state.outcome !== "playing") throw new Error("存档回放结果与保存时不符");
+    return { stage: 3, state, stage1: p.stage1, stage2: p.stage2 };
   }
-  try {
-    const raw = localStorage.getItem(SAVE2_KEY);
-    if (raw) {
-      const p = parseBody(raw);
-      if (!p.stage2) throw new Error("bad save");
-      const state = replay2(p.stage2.seed, p.stage2.carry, p.stage2.actions);
-      if (state.outcome === "playing") return { stage: 2, state, stage1: p.stage1 };
-    }
-  } catch {
-    clearSave2();
+  const raw2 = localStorage.getItem(SAVE2_KEY);
+  if (raw2) {
+    const p = parseBody(raw2);
+    if (!p.stage2) throw new Error("bad save");
+    const state = replay2(p.stage2.seed, p.stage2.carry, p.stage2.actions);
+    if (state.outcome !== "playing") throw new Error("存档回放结果与保存时不符");
+    return { stage: 2, state, stage1: p.stage1 };
   }
-  const s1 = loadStage1Save();
+  const s1 = readStage1Save();
   return s1 ? { stage: 1, state: s1 } : null;
+}
+
+/**
+ * Replays the autosave whatever build wrote it (most rule changes leave old saves playable). Only
+ * when that fails is the save's build id checked, to tell an outdated save from a broken one. A save
+ * from a newer build (stale tab) is kept so a refresh can still continue it.
+ */
+export function loadSessionResult(): LoadResult {
+  try {
+    const session = readStoredSession();
+    return session ? { kind: "ok", session } : { kind: "none" };
+  } catch {
+    const failure = classifySaveFailure(readSaveBuild());
+    if (failure.kind !== "newer") clearSession();
+    return { kind: "failed", failure };
+  }
 }
 
 function clearSave2(): void {
@@ -349,4 +366,5 @@ export function clearSession(): void {
   clearSave3();
   clearSave2();
   clearStage1Save();
+  clearSaveBuild();
 }

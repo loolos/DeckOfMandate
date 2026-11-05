@@ -95,7 +95,7 @@ import {
 } from "../logic/stage3Engine";
 import { cardArtUrl, eventArtUrl, specialArtUrl, storyArtUrl } from "./art";
 import { BriefDetail, CardArt, FoldBox, GameHeader, LogView, Pile, PileGroup, ResolvedBanner, ScrollRow, StatChip, TagChip, activateOnKey, countBy, groupStatuses, isTypingTarget, type Fold } from "./common";
-import { compactEffect3, expandedEffect3 } from "./effectText3";
+import { compactEffect3, expandedEffect3 } from "./effectText.stage3";
 import styles from "./zhenhuan.module.css";
 
 type Dispatch = (a: Z3Action) => void;

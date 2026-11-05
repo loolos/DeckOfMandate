@@ -12,12 +12,13 @@ import {
   continueToStage3,
   decodeSessionCode,
   encodeSessionCode,
-  loadSession,
+  loadSessionResult,
   saveSession,
   startStage2Standalone,
   startStage3Standalone,
   type Session,
 } from "../logic/session";
+import { saveFailureMessage } from "../logic/saveVersion";
 import { newStage2, reduce2, type Z2Action } from "../logic/stage2Engine";
 import { newStage3, reduce3, type Z3Action } from "../logic/stage3Engine";
 import { backdropUrl } from "./art";
@@ -46,7 +47,8 @@ export function ZhenhuanRoot() {
   /** A level has just started: only the backdrop shows until the delay passes. */
   const [introPending, setIntroPending] = useState(false);
   const [introFade, setIntroFade] = useState(false);
-  const [saved, setSaved] = useState<Session | null>(() => loadSession());
+  const [loaded, setLoaded] = useState(() => loadSessionResult());
+  const saved = loaded.kind === "ok" ? loaded.session : null;
   const [seedText, setSeedText] = useState("");
   const [menuVisible, setMenuVisible] = useState(false);
   const [menuStage, setMenuStage] = useState<1 | 2 | 3>(1);
@@ -126,7 +128,7 @@ export function ZhenhuanRoot() {
   };
 
   const backToMenu = () => {
-    setSaved(loadSession());
+    setLoaded(loadSessionResult());
     setSession(null);
     setShowRules(false);
     setIntroPending(false);
@@ -270,6 +272,7 @@ export function ZhenhuanRoot() {
               继续存档（{["", "第一关", "第二关", "第三关"][saved.stage]} 第 {saved.state.turn} 回合开始）
             </button>
           ) : null}
+          {loaded.kind === "failed" ? <p className={styles.menuError}>{saveFailureMessage(loaded.failure)}</p> : null}
           <details className={styles.menuAdvanced} open={seedInvalid || undefined}>
             <summary>高级选项</summary>
             <CampaignSwitcher labelClassName={styles.menuLabel} selectClassName={styles.menuInput} />
