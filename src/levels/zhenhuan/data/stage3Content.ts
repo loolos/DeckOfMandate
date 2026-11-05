@@ -2323,7 +2323,7 @@ export const STORIES3: Record<StoryId3, StoryDef3> = {
     note: "有【敬妃之谊】时，另得下回合抓牌 +1。",
     defaultOptionId: "shouxia",
     options: [
-      { id: "shouxia", name: "收下小像", effects: [sz(1)], drawCards: 1, text: "抽 1 张牌；身子 +1", story: "你把小像贴在心口看了许久，画上的孩子胖乎乎的，笑得没心没肺。果郡王立在一旁没有出声，临走只留下一句：「你要好好的。」这一夜，你睡得比往日踏实些。" },
+      { id: "shouxia", name: "收下小像", effects: [sz(1)], text: "身子 +1", story: "你把小像贴在心口看了许久，画上的孩子胖乎乎的，笑得没心没肺。果郡王立在一旁没有出声，临走只留下一句：「你要好好的。」这一夜，你睡得比往日踏实些。" },
       { id: "guojunwangXiangzhu", name: "果郡王相助", card: "guojunwangXiangzhu", effects: [sz(1), q(1)], drawCards: 1, text: "抽 1 张牌；身子 +1；清誉 +1", story: "你捧着小像，眼泪一滴一滴落在画上。果郡王默默递过帕子，等你缓过来，才说他已吩咐山下的人，往后凌云峰缺什么，只管递话。他又细细讲了胧月在咸福宫的近况：会唤人了，爱抓着敬妃的衣带不放。你听着听着，竟也笑了。他临走前特意向寺里的师父们问安，山下有人问起，只说是替太妃来还愿，闲话也就淡了。" },
       { id: "zhenzhi", name: "请他诊治", card: "wenTaiyiZhenzhi", effects: [sz(2)], removeNegatives: "all", text: "移除全部负面状态；身子 +2", story: "果郡王请温实初替你诊了脉，开了方子，又留下许多药材。临走时温实初说：「嬛妹妹，你要好好的。」" },
       { id: "yuandaoBuji", name: "眉庄捎来补给", card: "meizhuangXiangzhu", effects: [], status: "meizhuangDadian", text: "未来 3 回合每回合抓牌 +1", story: "眉庄在宫里放心不下，远远托温实初随果郡王带了药材和补给上山，又托沈家在宫里宫外替你四处打点，日子渐渐宽裕了些。" },
