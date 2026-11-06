@@ -176,6 +176,24 @@ describe("zhenhuan stage 3 engine", () => {
     expect(s.secrets[`enshang.${id}` as keyof typeof s.secrets]).toBe(1);
   });
 
+  it("家宴献艺：两张解牌里有陵容，不论先后都按陵容化解", () => {
+    const run = (order: CardId3[]): Z3State => {
+      let s = advanceTo(newStage3(5, CARRY), 3);
+      clearBoard(s);
+      s.huanghou = ev(s, "jiayanXianyi");
+      s.relation = 2;
+      s.extraPlays = 2;
+      for (const uid of setHand(s, order)) s = act(s, { type: "playCard", cardUid: uid });
+      return s;
+    };
+    for (const order of [["lingrongXiangzhu", "jingguanQibian"], ["jingguanQibian", "lingrongXiangzhu"]] as CardId3[][]) {
+      const s = run(order);
+      expect(s.huanghou!.resolved).toBe(true);
+      expect(s.huanghou!.resolvedBy).toBe("lingrongXiangzhu");
+      expect(s.relation).toBe(3);
+    }
+  });
+
   it("皇后事件 played with a listed card: that card's own reward, no 把柄", () => {
     let s = advanceTo(newStage3(5, CARRY), 3);
     clearBoard(s);
@@ -340,6 +358,17 @@ describe("zhenhuan stage 3 engine", () => {
     expect(s.shengchong).toBeLessThanOrEqual(8);
   });
 
+  it("纯元故衣查完后再打陵容相助：没有事件可解，照常情分 +1 并留日志", () => {
+    let s = advanceTo(newStage3(17, CARRY), 6);
+    clearBoard(s);
+    s.extraPlays = 3;
+    s.relation = 0;
+    for (const uid of setHand(s, ["yirongZhengsu", "shoulongRenxin", "lingrongXiangzhu"])) s = act(s, { type: "playCard", cardUid: uid });
+    expect(s.chunyuan?.second).not.toBeNull();
+    expect(s.relation).toBe(1);
+    expect(s.log.some((l) => l.text.includes("陵容待你亲近了些"))).toBe(true);
+  });
+
   it("纯元故衣: ① 起疑 then ② 查实 avoids it; only ① costs 圣宠 -2, nothing -5; 查实 first does not count", () => {
     const start = advanceTo(newStage3(17, CARRY), 6);
     expect(start.chunyuan).not.toBeNull();
@@ -381,6 +410,22 @@ describe("zhenhuan stage 3 engine", () => {
     expect(t.crisis!.resolved && t.opportunity!.resolved).toBe(true);
     expect(t.suppressed.qifei).toBe(true);
     expect(t.allies.xin).toBe(true);
+  });
+
+  it("有孕晋嫔: 弹出晋嫔提示，陵容情分 -1，下回合起抓五打三", () => {
+    let s = advanceTo(newStage3(2, { ...CARRY, rank: "guiren", pregnant: true, relation: 0 }), 6);
+    clearBoard(s);
+    s.popups = [];
+    s.relation = 0;
+    s.opportunity = ev(s, "qingmaiBaoxi");
+    const uids = setHand(s, ["wenTaiyiZhenzhi", "jinyanShenxing"]);
+    s = act(s, { type: "playCard", cardUid: uids[0]! });
+    s = act(s, { type: "playCard", cardUid: uids[1]! });
+    expect(s.rank).toBe("pin");
+    expect(s.relation).toBe(-1);
+    expect(s.popups).toContain("pin");
+    s = act(s, { type: "endTurn" });
+    expect(s.hand.length).toBeGreaterThanOrEqual(5);
   });
 
   it("宫中来信: the 解牌 story follows 敬妃之谊 and whether 胧月's whereabouts are known yet", () => {
@@ -722,6 +767,17 @@ describe("zhenhuan stage 3 engine", () => {
     expect(s.statuses.filter((x) => x.id === "meizhuangDadian")).toHaveLength(1);
   });
 
+  it("故人来访 (turn 15): 果郡王相助 解牌: 身子 +1、清誉 +1、抽 1 张", () => {
+    let s = advanceTo(newStage3(6, CARRY), 15);
+    s.shenzi = 5;
+    s.qingyu = 5;
+    const [g] = setHand(s, ["guojunwangXiangzhu"]);
+    const n = s.hand.length - 1;
+    s = act(s, { type: "playCard", cardUid: g! });
+    expect([s.shenzi, s.qingyu]).toEqual([6, 6]);
+    expect(s.hand.length).toBe(n + 2); // 牌本身抽 1 + 选项抽 1
+  });
+
   it("第二幕危机需两张解牌: 杂役磋磨 -2 none / -1 one card / cleared with two; 断炭缺粮 half = 寒疾缠身 1 turn", () => {
     const run = (id: "fazuoCuhuo" | "tanhuoLiangmi", ids: CardId3[]) => {
       let s = advanceTo(newStage3(6, CARRY), 12);
@@ -778,7 +834,7 @@ describe("zhenhuan stage 3 engine", () => {
     expect(answeringCards3("yebanJingrao", 25)).toContain("jingxinRennai");
   });
 
-  it("山门偶遇: 荆钗布裙可解（清誉 +1），仍加入果郡王相助", () => {
+  it("山门偶遇: 荆钗布裙可解（清誉 +2），仍加入果郡王相助", () => {
     let s = advanceTo(newStage3(6, CARRY), 12);
     s.qingyu = 5;
     const [b] = setHand(s, ["jingchaiBuqun"]);
@@ -787,7 +843,7 @@ describe("zhenhuan stage 3 engine", () => {
     const g0 = gjw();
     s = act(s, { type: "playCard", cardUid: b! });
     expect(s.stories.find((st) => st.id === "shanmenOuyu")?.viaCard).toBe("jingchaiBuqun");
-    expect(s.qingyu).toBe(q0 + 1);
+    expect(s.qingyu).toBe(q0 + 2);
     expect(gjw()).toBe(g0 + 1);
   });
 
@@ -1037,7 +1093,7 @@ describe("zhenhuan stage 3 engine", () => {
     expect(bimen.dg).toBe(0);
   });
 
-  it("合婚庚帖 grants 琴瑟同心 only after 踏雪问疾 (by a card) and 月下琴笛 are both done; draw +1 starts after 舟覆", () => {
+  it("合婚庚帖 grants 长相思守 only after 踏雪问疾 (by a card) and 月下琴笛 are both done; draw +1 starts after 舟覆", () => {
     const run = (taxueByCard: boolean, qinDone: boolean) => {
       let s = advanceTo(newStage3(12, CARRY), 3);
       clearBoard(s);
@@ -1058,6 +1114,14 @@ describe("zhenhuan stage 3 engine", () => {
     const base = run(true, false);
     expect(drawModifier3(s, 25)).toBe(drawModifier3(base, 25));
     expect(drawModifier3(s, 26)).toBe(drawModifier3(base, 26) + 1);
+  });
+
+  it("月下对谈 never appears from the 舟覆噩耗 turn on", () => {
+    let s = advanceTo(newStage3(12, CARRY), 24);
+    s.opportunityPool = ["yuexiaDuitan", ...s.opportunityPool];
+    s = advanceTo(s, 25);
+    expect(s.opportunity?.id).not.toBe("yuexiaDuitan");
+    expect([...s.opportunityPool, ...s.opportunityUsed]).not.toContain("yuexiaDuitan");
   });
 
   it("舟覆噩耗 turns the 果郡王 cards into relics; 移花接木 starts on turn 26 with 疑点 1", () => {

@@ -8,6 +8,7 @@ import {
   EVENTS3,
   FEILAO,
   FIXED_STORIES3,
+  LINGRONG_EVENT3,
   type LingrongTier,
   PAIRS,
   RANKS,
@@ -168,12 +169,21 @@ export function lizigaoOpen(s: Z3State, ev: EventInst3): boolean {
 /** 菀菀类卿那一回合孩子就要落地：栗糕清苦只在这之前。 */
 const WANWAN_TURN = Number(Object.keys(FIXED_STORIES3).find((t) => FIXED_STORIES3[Number(t)] === "wanwanLeiqing"));
 
+/**
+ * 陵容相助能不能接这件事：有陵容事件表，且是她的匹配事件；三阿哥邀宠只在栗糕清苦的条件下才接得了。
+ * 引擎判定、事件卡上的匹配牌和陵容提示都只看这一处。
+ */
+export function lingrongAnswers3(s: Z3State, ev: EventInst3): boolean {
+  if (!LINGRONG_EVENT3[ev.id]) return false;
+  return ev.id === "sanAgeYaochong" ? lizigaoOpen(s, ev) : CARDS3.lingrongXiangzhu.matches.includes(ev.id);
+}
+
 /** Does `cardId` count toward this unresolved event right now (single match or 双牌 progress)? */
 export function cardAffectsEvent3(s: Z3State, ev: EventInst3, cardId: CardId3): boolean {
   if (ev.resolved) return false;
   const def = EVENTS3[ev.id];
   if (cardId === "guojunwangXiangzhu" && s.turn >= STAGE3.zhoufuTurn) return false;
-  if (cardId === "lingrongXiangzhu" && lizigaoOpen(s, ev)) return true;
+  if (cardId === "lingrongXiangzhu") return lingrongAnswers3(s, ev) && !pairLocked(s, ev);
   if (def.double) return def.double.includes(cardId) && !(ev.progress ?? []).includes(cardId);
   if (!CARDS3[cardId].matches.includes(ev.id)) return false;
   // 连环 opportunity stays locked until its crisis is cleared (the shared card among the crisis's two cards takes it afterwards)
@@ -312,7 +322,7 @@ export function presentedSecrets(s: Z3State): number {
 
 export const ZHOUFU_TURN = STAGE3.zhoufuTurn;
 
-/** 踏雪问疾（本回合打牌化解，不走默认）与月下琴笛都已完成，合婚庚帖写下时才有琴瑟同心。 */
+/** 踏雪问疾（本回合打牌化解，不走默认）与月下琴笛都已完成，合婚庚帖写下时才有长相思守。 */
 export function qinseReady(s: Z3State): boolean {
   return s.changxiangsiDone === true && s.taxueByCard === true;
 }

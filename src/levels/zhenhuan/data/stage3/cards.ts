@@ -234,7 +234,7 @@ export const CARDS3: Record<CardId3, CardDef3> = {
     id: "yiwuDi",
     name: "果郡王遗物",
     emoji: "🎐",
-    flavor: "一支长相思笛。笛子还是那支笛子，只是吹笛的人不在了，再没有人来和上一曲。",
+    flavor: "一支竹笛，名唤长相守。那夜它与你的长相思琴相和，笛子还是那支笛子，只是吹笛的人不在了，再没有人来和上一曲。",
     base: [],
     baseDraw: 0,
     matches: [],
@@ -289,7 +289,7 @@ export const CARDS3: Record<CardId3, CardDef3> = {
 
 export const RELIC_TEXT: Record<RelicId, string> = {
   yiwuGengtie: "你把庚帖凑近烛火。「嬛嬛」两个字卷起来，黑了，散了。你没有哭。",
-  yiwuDi: "笛子投进火盆，噼啪响了几声。长相思，摧心肝。你在心里替他吹完了最后一句。",
+  yiwuDi: "笛子投进火盆，噼啪响了几声。长相思，摧心肝。你在心里替他把那曲的最后一句弹完了。",
   yiwuPifeng: "披风烧得很慢，一点一点地，像是舍不得走。",
   yiwuDipu: "谱子卷起了边，那支没有名字的曲子，在火里一个音一个音地没了。",
   yiwuTonghua: "桐花早已干枯，一碰就碎。火舌卷过去，只剩一缕淡淡的香。",

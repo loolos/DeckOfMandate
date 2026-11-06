@@ -576,6 +576,11 @@ function lingrongOnPromotion(s: Z2State): void {
   changeRelation(s, -2, "晋封（姐姐越走越远）");
 }
 
+/** 已有孕时，选项文字里去掉「必定有孕」。 */
+export function stripPregnancyText(text: string): string {
+  return text.replace(/必定有孕[；;]?/g, "").replace(/[；;]$/, "");
+}
+
 function becomePregnant(s: Z2State, source: string): void {
   if (s.pregnant || !alive(s)) return;
   s.pregnant = true;
@@ -895,7 +900,11 @@ function applyStoryOption(s: Z2State, inst: StoryInst2, option: StoryOption2, so
     log(s, `${XIBIE[option.exit].who}将要离你远去：【${CARDS2[option.exit].name}】带上【惜别】标签。下次抓到时，其余的同名牌离场，只留这一张。`, "bad");
     cullXibie(s);
   }
-  if (option.pregnancy) becomePregnant(s, def.name);
+  if (option.pregnancy) {
+    // 已有孕时不再写「必定有孕」
+    if (s.pregnant) inst.result = stripPregnancyText(option.text);
+    becomePregnant(s, def.name);
+  }
   if (option.summon === "success") {
     inst.result = "侍寝成功";
     summonSuccess(s, "召幸");
@@ -1589,6 +1598,7 @@ export function endingLines(s: Z2State): string[] {
   if (s.pregnant) lines.push(s.miscarriages > 0 ? "所幸腹中又有了龙裔，这一回安然无恙，阖宫都在等着这个孩子降生。" : "腹中的龙裔安然无恙，阖宫都在等着这个孩子降生。");
   else if (s.pregnancies === 0) lines.push("这一路走来，腹中始终没有动静。");
   if (s.xibie && s.finale?.xibie) lines.push(XIBIE[s.xibie].finaleEnding);
+  else if (s.xibie && s.finale && s.finale.played.length >= s.finale.needed) lines.push(s.xibie === "meizhuangXiangzhu" ? "华妃倒台之后，闲月阁的门重新开了。眉庄姐姐的冤屈得雪，又回到了你身边，只是对后宫之事，她仍不愿多问。" : "华妃倒台之后，温实初奉旨回了宫，又在太医院当起差来。他的冤屈得雪，见了你，只道一句“万事保重”。");
   else if (s.xibie) lines.push(s.xibie === "meizhuangXiangzhu" ? "眉庄姐姐早已心灰意冷，闭门不出，再不过问后宫之事。" : "疫所的书信隔几日便到，温实初总说一切安好。");
   const tier = tierOf(s);
   if (tier === "close") lines.push("陵容依旧常来碎玉轩，姐妹情分一如往昔。");

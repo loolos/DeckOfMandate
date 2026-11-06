@@ -352,7 +352,7 @@ export const EVENTS2: Record<EventId2, EventDef2> = {
     reward: [],
     penalty: [{ resource: "qingyu", amount: -2 }],
     penaltyStatus: "bimenSiguo",
-    unresolvedHate: 1,
+    unresolvedHate: -1,
     unlockHate: 3,
     responsePenalty: {
       jinyanShenxing: { effects: [{ resource: "qingyu", amount: -1 }] },
@@ -361,7 +361,7 @@ export const EVENTS2: Record<EventId2, EventDef2> = {
     },
     resolvedCompact: "🤐🏮🪷-1 · 👭🔥+1",
     resolvedText: "谨言慎行、槿汐相助：只清誉 -1；眉庄相助：只恨意 +1",
-    unresolvedText: "清誉 -2、未来 2 回合出牌上限 -1；激怒：恨意 +1",
+    unresolvedText: "清誉 -2、未来 2 回合出牌上限 -1；出气：恨意 -1",
     resolvedStory: {
       jinyanShenxing: "你垂首听训，一句不辩，末了只说“娘娘教训得是”。华妃挑不出大错，却还是当众数落了你几句。",
       meizhuangXiangzhu: "眉庄陪你一同站了半日规矩，替你挡下了不少难听的话。华妃冷笑一声，把这笔账记在了你头上。",

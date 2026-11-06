@@ -363,7 +363,7 @@ export const STATUSES3: Record<StatusId3, StatusDef3> = {
   },
   qinseHeming: {
     id: "qinseHeming",
-    name: "琴瑟同心",
+    name: "长相思守",
     emoji: "🎼",
     tag: "positive",
     duration: 0,

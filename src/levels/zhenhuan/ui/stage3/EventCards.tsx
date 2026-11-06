@@ -15,6 +15,7 @@ import {
   type EventInst3,
   type StoryInst3,
   type Z3State,
+  lingrongAnswers3,
   pairLocked,
   solveCount,
   storyBasicOptions3,
@@ -98,6 +99,7 @@ export function EventCard({ state, inst, fold, dispatch }: { state: Z3State; ins
     );
   }
   const lingrongTable = LINGRONG_EVENT3[inst.id];
+  const lingrongOpen = lingrongAnswers3(state, inst);
   const tier = tierOf3(state);
   return (
     <FoldBox fold={fold} className={className}>
@@ -140,9 +142,9 @@ export function EventCard({ state, inst, fold, dispatch }: { state: Z3State; ins
       {locked ? <p className={styles.endHint}>🔒 连环危机还没化解，这张机会暂时锁着。</p> : null}
       <p className={styles.rule}>
         <span className={styles.ruleLabel}>匹配牌：</span>
-        <Chips ids={answeringCards3(inst.id, state.turn)} lit={(id) => handIds.has(id)} />
+        <Chips ids={[...answeringCards3(inst.id, state.turn).filter((c) => c !== "lingrongXiangzhu"), ...(lingrongOpen ? (["lingrongXiangzhu"] as const) : [])]} lit={(id) => handIds.has(id)} />
       </p>
-      {lingrongTable && tier ? (
+      {lingrongTable && tier && lingrongOpen ? (
         <p className={styles.rule}>
           🎶 也可用【陵容相助】，效果视你与陵容的情分而定（当前：{TIER_EMOJI[tier]}
           {TIER_LABEL[tier]}）{Object.values(lingrongTable).some((o) => o.shuhenjiao) ? "；她会送来🧴舒痕胶" : ""}。

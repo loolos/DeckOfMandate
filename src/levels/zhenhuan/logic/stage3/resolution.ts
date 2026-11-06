@@ -72,7 +72,7 @@ import {
   hasStatus3,
   isRelic,
   lianmeiSourceFor,
-  lizigaoOpen,
+  lingrongAnswers3,
   matchedEvents3,
   openStories3,
   playLimit3,
@@ -314,7 +314,7 @@ export function applyStoryOption(s: Z3State, inst: StoryInst3, option: StoryOpti
   if (!alive(s)) return 0;
 
   if (def.id === "wentaiyiTanshi" && hasStatus3(s, "jingfeiZhiyi")) {
-    log(s, "敬妃托温太医带来了不少物资，山居的日子打点得宽裕了些。", "good");
+    log(s, "敬妃托果郡王带来了不少物资，山居的日子打点得宽裕了些。", "good");
     addStatus3(s, "jingfeiZhouji");
   }
   if (option.removeNegatives) removeNegatives(s, option.removeNegatives, option.name);
@@ -484,8 +484,8 @@ export function resolvePlay3(s: Z3State, cardUid: string, removeStatusUid?: stri
     if (d.needTwo) {
       ev.progress = [...(ev.progress ?? []), card.id];
       if (ev.progress.length >= solveCount(ev)) {
-        // 栗糕清苦：解牌里有陵容（不论先后），就按陵容化解
-        const lingrongTier3 = isLingrong ? tier : ev.progress.includes("lingrongXiangzhu") && lizigaoOpen(s, ev) ? tierOf3(s) : null;
+        // 两张解牌里有陵容（不论先后），就按陵容化解（家宴献艺、栗糕清苦都一样）
+        const lingrongTier3 = ev.progress.includes("lingrongXiangzhu") && lingrongAnswers3(s, ev) ? tierOf3(s) : null;
         if (lingrongTier3) relationDelta += resolveEventByLingrong(s, ev, lingrongTier3);
         else {
           // 连环: with the shared card among the two, its story always wins
@@ -524,7 +524,8 @@ export function resolvePlay3(s: Z3State, cardUid: string, removeStatusUid?: stri
       log(s, `【${CHUNYUAN.name}】② 查实：${CHUNYUAN.checkStory[card.id]}`, "good");
     }
     if (isLingrong && tier) {
-      answered = true;
+      // 纯元故衣已查完后再打陵容，仍是普通的陪伴（情分 +1），不算应对了这件事
+      if (step) answered = true;
       addSecret(s, "guyiYuanyan", tier);
     }
   }
@@ -554,8 +555,8 @@ export function resolvePlay3(s: Z3State, cardUid: string, removeStatusUid?: stri
     if (s.changxiangsi.played.includes("guojunwangXiangzhu") && s.changxiangsi.played.includes("chanyuXiushen")) {
       s.changxiangsi.done = true;
       s.changxiangsiDone = true;
-      log(s, `【${CHANGXIANGSI.name}】笛箫合奏：${CHANGXIANGSI.story}`, "good");
-      applyDelta3(s, { resource: "qingyu", amount: 2 }, "笛箫合奏");
+      log(s, `【${CHANGXIANGSI.name}】${CHANGXIANGSI.story}`, "good");
+      applyDelta3(s, { resource: "qingyu", amount: 2 }, "琴笛合奏");
     }
   }
   if (alive(s) && yihuaStep && s.yihua!.step !== 4) advanceYihua(s, card.id);

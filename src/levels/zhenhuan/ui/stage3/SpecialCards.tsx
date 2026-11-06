@@ -24,8 +24,8 @@ import {
 import { specialArtUrl } from "../art";
 import { CardArt, type Fold, FoldBox, ResolvedBanner } from "../common";
 import { compactEffect3, expandedEffect3 } from "../effectText.stage3";
-import type { ReactNode } from "react";
 import styles from "../zhenhuan.module.css";
+import type { ReactNode } from "react";
 import { Chips, type Dispatch, Tag } from "./parts";
 
 // ---------------------------------------------------------------- special story cards
@@ -216,11 +216,11 @@ export function ChangxiangsiCard({ state, fold, dispatch }: { state: Z3State; fo
           双牌 {c.done ? 2 : Number(guo) + Number(chan)}/2
         </Tag>
       }
-      summary={c.done ? "🎶 笛箫合奏 🪷+2" : `${guo ? "✓" : "✗"}🎐 ${chan ? "✓" : "✗"}📿 → 🪷+2`}
+      summary={c.done ? "🎶 琴笛合奏 🪷+2" : `${guo ? "✓" : "✗"}🎐 ${chan ? "✓" : "✗"}📿 → 🪷+2`}
       fold={fold}
       dispatch={dispatch}
     >
-      {c.done ? <ResolvedBanner icon="🎶" label="笛箫合奏" detail="清誉 +2。" story={CHANGXIANGSI.story} /> : null}
+      {c.done ? <ResolvedBanner icon="🎶" label="琴笛合奏" detail="清誉 +2。" story={CHANGXIANGSI.story} /> : null}
       <p className={styles.flavor}>{CHANGXIANGSI.flavor}</p>
       <p className={styles.rule}>{expandedEffect3(CHANGXIANGSI.rule)}</p>
       <p className={styles.rule}>

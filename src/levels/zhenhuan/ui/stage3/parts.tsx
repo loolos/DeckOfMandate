@@ -2,8 +2,8 @@ import { TIER_LABEL } from "../../data/stage2Content";
 import { CARDS3, type CardId3, EVENTS3, type EventId3, PAIRS, RIVALS, type TagId3 } from "../../data/stage3Content";
 import type { EventInst3, Z3Action, Z3State } from "../../logic/stage3Engine";
 import { TagChip, countBy } from "../common";
-import type { ReactNode } from "react";
 import styles from "../zhenhuan.module.css";
+import type { ReactNode } from "react";
 
 // ---------------------------------------------------------------- shared parts
 

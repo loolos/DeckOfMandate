@@ -72,6 +72,7 @@ export {
   pairLocked,
   solveCount,
   lizigaoOpen,
+  lingrongAnswers3,
   cardAffectsEvent3,
   matchedEvents3,
   lianmeiLit3,

@@ -1,3 +1,4 @@
+import { TIER_EMOJI, TIER_LABEL } from "../../data/stage2Content";
 import {
   CHUNYUAN,
   EXIT,
@@ -8,14 +9,15 @@ import {
   LOSS3_STORY,
   POPUP_TEXT,
   type PopupId,
+  RANKS,
   RESOURCE3_LABEL,
   YIHUA,
   dengmenOpenText,
 } from "../../data/stage3Content";
-import { type Z3State, confrontLines, endingLines3, endingStory3, hasStatus3, rankName3 } from "../../logic/stage3Engine";
+import { type Z3State, confrontLines, endingLines3, endingStory3, hasStatus3, rankName3, tierOf3 } from "../../logic/stage3Engine";
 import { BriefDetail } from "../common";
-import type { ReactNode } from "react";
 import styles from "../zhenhuan.module.css";
+import type { ReactNode } from "react";
 
 // ---------------------------------------------------------------- notices and popups
 
@@ -252,6 +254,28 @@ export function PopupBody({ state, id }: { state: Z3State; id: PopupId }) {
           <p className={styles.muted}>{POPUP_TEXT.lizigaoRules}</p>
         </>
       );
+    case "pin": {
+      const tier = tierOf3(state);
+      return (
+        <>
+          <p>{POPUP_TEXT.pin.story}</p>
+          <p>恭喜小主晋为{RANKS.pin.name}！</p>
+          {tier ? (
+            <p>
+              🎶 {POPUP_TEXT.pin.lingrong}
+              <span className={styles.muted}>
+                （{POPUP_TEXT.pin.lingrongTail}
+                {TIER_EMOJI[tier]}
+                {TIER_LABEL[tier]}）
+              </span>
+            </p>
+          ) : null}
+          <p className={styles.muted}>
+            从下一回合起每回合抓 {RANKS.pin.draw} 张、最多打 {RANKS.pin.plays} 张，清誉 / 圣宠上限提高到 {RANKS.pin.cap}。
+          </p>
+        </>
+      );
+    }
     case "qinse":
       return (
         <>
@@ -287,11 +311,12 @@ const POPUP_TITLE: Record<PopupId, string> = {
   exit: "⚖️ 景仁宫对质",
   feilao: "🤒 迁居凌云峰",
   zhoufu: "🌊 舟覆噩耗",
-  qinse: "🎼 琴瑟和鸣",
+  qinse: "🎼 长相厮守",
   ximai: "💗 喜脉惊心",
   ouyu: "🌸 圣驾偶遇",
   dengmen: "🚪 皇上登门",
   lizigao: "🥮 栗糕清苦",
+  pin: "🏮 晋为嫔",
 };
 
 export function popupTitle(state: Z3State, id: PopupId): string {
