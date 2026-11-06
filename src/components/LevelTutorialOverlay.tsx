@@ -66,7 +66,7 @@ export function LevelTutorialOverlay({ open, onDismiss, custom }: Props) {
     const resolved = allSteps.filter((st) => document.getElementById(st.targetId));
     setSteps(resolved);
     setStepIndex(0);
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- steps are resolved once per opening
+    // Steps are resolved once per opening (deliberately not re-run when `allSteps` changes).
   }, [open]);
 
   useLayoutEffect(() => {

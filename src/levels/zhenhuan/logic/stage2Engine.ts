@@ -2,8 +2,9 @@
  * 甄嬛传 · 第二关 rules engine. Pure and deterministic like 第一关's engine: the same seed, carry-over
  * and action list always yield the same state. Rules: `../docs/design-stage2.md`.
  */
-import { createRngFromSeed, rngNext, shuffle } from "../../../logic/rng";
+import { createRngFromSeed, shuffle } from "../../../logic/rng";
 import type { RngSerialized } from "../../../types/game";
+import { adjacentLingrongCard, alive, drawIntoHand, log, newEvent, removeStatusById, roll, shuffleInto, type LogEntry } from "./engineCommon";
 import {
   CARDS2,
   CRISIS2_POOL,
@@ -97,8 +98,7 @@ export type EventInst2 = {
 
 export type StoryInst2 = { readonly id: StoryId2; chosenOptionId: string | null; viaCard?: CardId2; result?: string; story?: string };
 export type StatusInst2 = { readonly uid: string; readonly id: StatusId2; readonly appliesFromTurn: number; remaining: number };
-export type LogTone = "info" | "good" | "bad";
-export type LogEntry = { readonly turn: number; readonly text: string; readonly tone: LogTone };
+export type { LogEntry, LogTone } from "./engineCommon";
 export type Notice = { readonly emoji: string; readonly name: string; readonly text: string };
 export type Carry = { readonly qingyu: number; readonly shengchong: number };
 
@@ -358,12 +358,7 @@ function lianmeiAvailable(s: Z2State): boolean {
 
 /** 陵容 whose 联袂 can make the card at `index` free. */
 function lianmeiSourceFor(s: Z2State, index: number): CardInst2 | null {
-  if (!lianmeiAvailable(s)) return null;
-  for (const j of [index - 1, index + 1]) {
-    const c = s.hand[j];
-    if (c && c.id === "lingrongXiangzhu") return c;
-  }
-  return null;
+  return lianmeiAvailable(s) ? adjacentLingrongCard(s.hand, index) : null;
 }
 
 export function lianmeiLit(s: Z2State, card: CardInst2): boolean {
@@ -438,26 +433,12 @@ export function isXibieCard(s: Z2State, cardId: CardId2): boolean {
 
 // ---------------------------------------------------------------- mutation helpers
 
-function log(s: Z2State, text: string, tone: LogTone = "info"): void {
-  s.log.push({ turn: s.turn, text, tone });
-}
-
 function lose(s: Z2State, reason: string, kind?: Loss2Kind): void {
   if (s.outcome !== "playing") return;
   s.outcome = "lost";
   s.lossReason = reason;
   s.lossStory = kind ? LOSS2_STORY[kind] : null;
   log(s, `失败：${reason}`, "bad");
-}
-
-function roll(s: Z2State): number {
-  const [rng, x] = rngNext(s.rng);
-  s.rng = rng;
-  return x;
-}
-
-function alive(s: Z2State): boolean {
-  return s.outcome === "playing";
 }
 
 function revealShenzi(s: Z2State, by: "summon" | "other" = "other"): void {
@@ -524,13 +505,6 @@ function addStatus2(s: Z2State, id: StatusId2, turns?: number): void {
   s.statuses.push({ uid: `s${s.nextUid++}`, id, appliesFromTurn: s.turn + 1, remaining });
   const text = turns != null ? def.effectText.replace(/未来 \d+ 回合/, `未来 ${turns} 回合`) : def.effectText;
   log(s, `获得状态【${def.name}】（${text}）`, def.tag === "negative" ? "bad" : "good");
-}
-
-function removeStatusById(s: Z2State, id: StatusId2): boolean {
-  const i = s.statuses.findIndex((st) => st.id === id);
-  if (i < 0) return false;
-  s.statuses.splice(i, 1);
-  return true;
 }
 
 function removeStatus2(s: Z2State, uid: string, source: string): void {
@@ -746,21 +720,7 @@ function cullXibie(s: Z2State): void {
 }
 
 function drawCards2(s: Z2State, n: number): void {
-  for (let i = 0; i < n; i++) {
-    if (s.drawPile.length === 0) {
-      if (s.discard.length === 0) {
-        log(s, "抽牌堆与弃牌堆都已空，无法继续抽牌。");
-        return;
-      }
-      const [rng, shuffled] = shuffle(s.rng, s.discard);
-      s.rng = rng;
-      s.drawPile = shuffled;
-      s.discard = [];
-      log(s, `弃牌堆洗回抽牌堆（${s.drawPile.length} 张）。`);
-    }
-    s.hand.push(s.drawPile.shift()!);
-    s.drawnThisTurn++;
-  }
+  drawIntoHand(s, n);
   cullXibie(s);
 }
 
@@ -769,17 +729,11 @@ function drawFromPool<T extends EventId2>(s: Z2State, poolKey: "opportunityPool"
   if (pool.length === 0) {
     const used = s[usedKey] as T[];
     if (used.length === 0) return null;
-    const [rng, shuffled] = shuffle(s.rng, used);
-    s.rng = rng;
-    (s[poolKey] as T[]) = shuffled;
+    (s[poolKey] as T[]) = shuffleInto(s, used);
     (s[usedKey] as T[]) = [];
     log(s, `${poolKey === "opportunityPool" ? "机会" : "危机"}牌池已抽完，已用事件重新洗匀。`);
   }
   return (s[poolKey] as T[]).shift() ?? null;
-}
-
-function newEvent(s: Z2State, id: EventId2): EventInst2 {
-  return { uid: `e${s.nextUid++}`, id, resolved: false };
 }
 
 // ---------------------------------------------------------------- resolution
@@ -959,9 +913,7 @@ function applyStoryOption(s: Z2State, inst: StoryInst2, option: StoryOption2, so
   if (option.caoBefriend) {
     s.caoBefriended = true;
     s.opportunityPool.push("wenyiBaoyang");
-    const [rng, shuffled] = shuffle(s.rng, s.opportunityPool);
-    s.rng = rng;
-    s.opportunityPool = shuffled;
+    s.opportunityPool = shuffleInto(s, s.opportunityPool);
     log(s, "【温宜抱恙】洗入机会池。");
   }
   if (inst.id === "huafeiFanan" && alive(s)) {
@@ -1182,16 +1134,12 @@ function drawFromHuafeiPool(s: Z2State, drawable: (id: HuafeiId) => boolean): Hu
     return id!;
   };
   if (s.huafeiPool == null) {
-    const [rng, shuffled] = shuffle(s.rng, [...HUAFEI_EVENTS]);
-    s.rng = rng;
-    s.huafeiPool = shuffled;
+    s.huafeiPool = shuffleInto(s, [...HUAFEI_EVENTS]);
     s.huafeiUsed = [];
   }
   const first = take();
   if (first || !s.huafeiUsed.some(drawable)) return first;
-  const [rng, shuffled] = shuffle(s.rng, s.huafeiUsed);
-  s.rng = rng;
-  s.huafeiPool = [...s.huafeiPool, ...shuffled];
+  s.huafeiPool = [...s.huafeiPool, ...shuffleInto(s, s.huafeiUsed)];
   s.huafeiUsed = [];
   log(s, "华妃事件已轮过一遍，已出现的事件重新洗匀。");
   return take();
@@ -1384,9 +1332,7 @@ function endTurn2(s: Z2State): void {
   } else if (s.opportunity?.id === PIN_EVENT) {
     // not confirmed yet: shuffled back into the remaining pool while still pregnant
     if (!s.opportunity.resolved && s.pregnant && s.rank === "guiren") {
-      const [rng, shuffled] = shuffle(s.rng, [...s.opportunityPool, PIN_EVENT]);
-      s.rng = rng;
-      s.opportunityPool = shuffled;
+      s.opportunityPool = shuffleInto(s, [...s.opportunityPool, PIN_EVENT]);
       log(s, "【请脉报喜】没能稳妥报喜，洗回机会牌池。");
     }
   } else if (s.opportunity && !retiredOpportunity(s, s.opportunity)) s.opportunityUsed.push(s.opportunity.id as OpportunityId2);
@@ -1456,9 +1402,7 @@ function endTurn2(s: Z2State): void {
   }
   const late = LATE_OPPORTUNITIES[s.turn];
   if (late) {
-    const [rng, shuffled] = shuffle(s.rng, [...s.opportunityPool, late]);
-    s.rng = rng;
-    s.opportunityPool = shuffled;
+    s.opportunityPool = shuffleInto(s, [...s.opportunityPool, late]);
     log(s, `【${EVENTS2[late].name}】洗入机会池。`);
   }
 

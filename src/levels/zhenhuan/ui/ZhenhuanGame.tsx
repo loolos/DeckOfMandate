@@ -49,7 +49,7 @@ import {
 import { encodeRunCode } from "../logic/persistence";
 import { cardArtUrl, eventArtUrl, specialArtUrl, storyArtUrl } from "./art";
 import { RulesSummary } from "./RulesSummary";
-import { compactEffect, expandedEffect } from "./effectText";
+import { compactEffect, expandedEffect } from "./effectText.stage1";
 import styles from "./zhenhuan.module.css";
 
 type Props = {

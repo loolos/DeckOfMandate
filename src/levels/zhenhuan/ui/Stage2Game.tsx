@@ -78,7 +78,7 @@ import {
 } from "../logic/stage2Engine";
 import { cardArtUrl, eventArtUrl, specialArtUrl, storyArtUrl } from "./art";
 import { BriefDetail, CardArt, FoldBox, GameHeader, LogView, Pile, PileGroup, ResolvedBanner, ScrollRow, StatChip, TagChip, activateOnKey, countBy, groupStatuses, isTypingTarget, type Fold } from "./common";
-import { compactEffect2, expandedEffect2 } from "./effectText2";
+import { compactEffect2, expandedEffect2 } from "./effectText.stage2";
 import styles from "./zhenhuan.module.css";
 
 type Dispatch = (a: Z2Action) => void;

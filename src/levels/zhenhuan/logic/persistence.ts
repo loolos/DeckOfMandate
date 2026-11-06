@@ -77,27 +77,23 @@ export function decodeRunCode(code: string): { ok: true; state: ZhState } | { ok
   }
 }
 
-/** Autosave at turn start: only the actions up to the current turn's start. */
-export function saveAtTurnStart(state: ZhState): void {
+/** Autosave at turn start: only the actions up to the current turn's start. Throws if storage refuses. */
+export function writeStage1Save(state: ZhState): void {
   const record: RunRecord = { seed: state.seed, actions: state.actions.slice(0, state.turnStartActionCount) };
-  try {
-    localStorage.setItem(SAVE_KEY, JSON.stringify(record));
-  } catch {
-    /* ignore quota / privacy mode */
-  }
+  localStorage.setItem(SAVE_KEY, JSON.stringify(record));
 }
 
-export function loadSave(): ZhState | null {
-  try {
-    const raw = localStorage.getItem(SAVE_KEY);
-    if (!raw) return null;
-    const record = JSON.parse(raw) as RunRecord;
-    const state = replay(record.seed, record.actions);
-    return state.outcome === "playing" ? state : null;
-  } catch {
-    clearSave();
-    return null;
-  }
+/**
+ * The stored 第一关 run, or null when there is none. Throws when it exists but no longer replays
+ * (or replays into a finished run, which a turn-start save never is).
+ */
+export function readStage1Save(): ZhState | null {
+  const raw = localStorage.getItem(SAVE_KEY);
+  if (!raw) return null;
+  const record = JSON.parse(raw) as RunRecord;
+  const state = replay(record.seed, record.actions);
+  if (state.outcome !== "playing") throw new Error("存档回放结果与保存时不符");
+  return state;
 }
 
 export function clearSave(): void {
