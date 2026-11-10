@@ -69,7 +69,7 @@ export const DUANFEI_DEFENSE: Record<string, string> = {
   qiuziXinqie: "在佛前求个子嗣，本宫当年也求过。这算什么罪？",
   wangyeZengwu: "桐花台人来人往，说几句话便是罪过，那宫里没一个干净的。",
   guyiYuanyan: "一件旧衣裳，谁都可能一时说错话，何必追着不放。",
-  xinlengZhiyu: "深宫里的人，谁不曾在夜里叹过一句错付？伤心话罢了，当不得真。",
+  xinlengZhiyu: "产后心伤，一时说了几句灰心的话罢了。那样的日子本宫也熬过，夜里自怨自艾的话，谁没说过几句？",
   yuzhongShuxin: "做女儿的递一封家书，皇上若要追究，倒显得不近人情。",
   qiciBuyong: "补品入口前验一验，是规矩，不是罪。",
   xijianSiyu: "席间闲话，各宫都说，若都要追究，这景仁宫今日怕是坐不下。",
