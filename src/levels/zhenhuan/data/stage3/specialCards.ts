@@ -110,8 +110,8 @@ export const CONFRONT = {
       meizhuangXiangzhu: "眉庄上前一步：「皇上待嬛儿的情分，她心里比谁都清楚，怎会有怨言。」",
     },
     xinlengZhiyu: {
-      meizhuangXiangzhu: "眉庄道：「早产之后心绪不宁，说几句丧气话，岂能当真？嬛儿心里从没有怨过皇上。」",
-      wenTaiyiZhenzhi: "温实初叩首：「小主产后体虚，情志郁结，那是病里的话，臣可以作证。」",
+      meizhuangXiangzhu: "眉庄道：「嬛儿那些日子心绪郁结，一时伤怀，才说了句自伤的话。‘错付’二字，怨的是她自己福薄，何曾怨过皇上半分？」",
+      wenTaiyiZhenzhi: "温实初叩首：「小主那时体虚，忧思伤脾，情志郁结，所言皆是病中伤怀之语，当不得真。臣可以作证。」",
     },
     yuzhongShuxin: {
       jinyanShenxing: "你泣道：「臣妾身为人女，只想问一声父亲冷暖，信中只字未提朝政。」",
