@@ -4,6 +4,7 @@ import type { CardId2, DepartingCard } from "./cards";
 import type { HuafeiId, OpportunityId2 } from "./events";
 import type { EvidenceId } from "./evidence";
 import type { LingrongTier } from "./lingrongRelation";
+import type { MarkRequirement } from "./marks";
 import type { Delta2 } from "./resources";
 import type { StatusId2 } from "./statuses";
 
@@ -56,6 +57,8 @@ export type StoryOption2 = {
   /** 生分的陵容打出这个卡牌应对时多说的一句风凉话。 */
   readonly distantRemark?: string;
   readonly shuhenjiao?: boolean;
+  /** Only offered when 第一关 left this 旧事印记 (see marks.ts). */
+  readonly mark?: MarkRequirement;
 };
 
 export type StoryDef2 = {
@@ -317,6 +320,25 @@ export const STORIES2: Record<StoryId2, StoryDef2> = {
         evidence: "yuyingerYiyan",
         text: "可能搜集到华妃的罪证",
         story: "你打点冷宫的看守，见了余莺儿最后一面。她惨笑着说，当初是华妃许她荣华，教她冒认倚梅园之功。",
+      },
+      {
+        id: "jiuriPozhan",
+        name: "旧日破绽",
+        card: "meizhuangXiangzhu",
+        mark: { yimei: "jiemeiChafang" },
+        effects: [],
+        evidence: "yuyingerYiyan",
+        text: "可能搜集到华妃的罪证",
+        story: "你带着眉庄当年记下的那几处破绽去了冷宫。余莺儿听你一件件说出当夜当值的宫人、几时点的灯，脸色渐渐灰了，终于惨笑着说，当初是华妃许她荣华，教她冒认倚梅园之功。",
+      },
+      {
+        id: "tuoJiushi",
+        name: "托旧识探视",
+        mark: { yimei: "gongrenToudi" },
+        effects: [{ resource: "qingyu", amount: -1 }],
+        evidence: "yuyingerYiyan",
+        text: "清誉 -1；可能搜集到华妃的罪证",
+        story: "你托当年赏过银子的小太监引路，趁夜去冷宫见了余莺儿最后一面。她惨笑着说，当初是华妃许她荣华，教她冒认倚梅园之功。事后有人说你与冷宫的人来往过密，名声受了些损。",
       },
       {
         id: "lingrongTanshi",

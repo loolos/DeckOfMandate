@@ -17,6 +17,7 @@ import {
   writeStage1Save,
 } from "./persistence";
 import { classifySaveFailure, clearSaveBuild, readSaveBuild, writeSaveBuild, type SaveFailure } from "./saveVersion";
+import { parseXinghua, parseYimei } from "../data/stage2/marks";
 import { newStage2, replay2, type Carry, type Z2Action, type Z2State } from "./stage2Engine";
 import { newStage3, replay3, type Carry3, type Z3Action, type Z3State } from "./stage3Engine";
 import type { StoryId2 } from "../data/stage2Content";
@@ -161,7 +162,9 @@ function sessionBody(stage1: Stage1Record | null, s2: Stage2Record | null, s3?: 
   const parts: string[] = [];
   if (stage1) parts.push(["1", String(stage1.seed), ...stage1.actions.map(encodeAction)].join(" "));
   if (s2) {
-    const carry = s2.carry ? [String(s2.carry.qingyu), String(s2.carry.shengchong)] : ["-", "-"];
+    const carry = s2.carry
+      ? [String(s2.carry.qingyu), String(s2.carry.shengchong), ...(s2.carry.yimei || s2.carry.xinghua ? [s2.carry.yimei ?? "_", s2.carry.xinghua ?? "_"] : [])]
+      : ["-", "-"];
     parts.push(["2", String(s2.seed), ...carry, ...s2.actions.map(encodeAction2)].join(" "));
   }
   if (s3) parts.push(["3", String(s3.seed), encodeCarry3(s3.carry), ...s3.actions.map(encodeAction3)].join(" "));
@@ -182,8 +185,14 @@ function parseBody(body: string): ParsedSession {
     if (!Number.isInteger(seed)) throw new Error("对局码格式错误");
     if (tag === "1") out.stage1 = { seed, actions: rest.map(decodeAction) };
     else if (tag === "2") {
-      const [q, sc, ...acts] = rest;
-      const carry = q === "-" || q == null ? null : { qingyu: Number(q), shengchong: Number(sc) };
+      const [q, sc, ...more] = rest;
+      // 旧事印记（可选）：紧跟在圣宠后面的两个 token，每个是选项 id 或 `_`；没有时（旧对局码）整段是操作。
+      const hasMarks = more.length >= 2 && (more[0] === "_" || parseYimei(more[0]) != null) && (more[1] === "_" || parseXinghua(more[1]) != null);
+      const acts = hasMarks ? more.slice(2) : more;
+      const carry: Carry | null =
+        q === "-" || q == null
+          ? null
+          : { qingyu: Number(q), shengchong: Number(sc), ...(hasMarks ? { yimei: parseYimei(more[0]), xinghua: parseXinghua(more[1]) } : {}) };
       if (carry && (!Number.isInteger(carry.qingyu) || !Number.isInteger(carry.shengchong))) throw new Error("对局码格式错误");
       out.stage2 = { seed, carry, actions: acts.map(decodeAction2) };
     } else if (tag === "3") {
@@ -235,7 +244,12 @@ export function decodeSessionCode(code: string): { ok: true; session: Session } 
 
 /** 第一关 won → 第二关 with the carried 清誉 / 圣宠. */
 export function continueToStage2(stage1: ZhState, seed: number): Stage2Session {
-  const carry: Carry = { qingyu: stage1.qingyu, shengchong: stage1.shengchong };
+  const carry: Carry = {
+    qingyu: stage1.qingyu,
+    shengchong: stage1.shengchong,
+    yimei: parseYimei(stage1.storyChoices.yimeiYuan),
+    xinghua: parseXinghua(stage1.storyChoices.xinghuaWeiyu),
+  };
   return { stage: 2, state: newStage2(seed, carry), stage1: { seed: stage1.seed, actions: stage1.actions } };
 }
 

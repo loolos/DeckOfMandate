@@ -38,7 +38,7 @@ function legalActions(s: Z2State): Z2Action[] {
     out.push({ type: "playCard", cardUid: c.uid });
   }
   for (const st of openStories(s)) {
-    for (const o of storyBasicOptions2(STORIES2[st.id])) out.push({ type: "chooseStory", storyId: st.id, optionId: o.id });
+    for (const o of storyBasicOptions2(STORIES2[st.id], s)) out.push({ type: "chooseStory", storyId: st.id, optionId: o.id });
   }
   return out;
 }

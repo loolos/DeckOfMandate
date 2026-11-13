@@ -72,6 +72,15 @@ import {
   type ResponsePenalty,
 } from "../data/stage2Content";
 import type { Stage2SecretId } from "../data/stage3Content";
+import {
+  CHUQINGAN_MARK_EFFECTS,
+  MARK_SHIELD_LOG,
+  MARK_SUMMON_LOG,
+  marksIntro,
+  storyPrefaceOf,
+  type XinghuaMark,
+  type YimeiMark,
+} from "../data/stage2/marks";
 
 export type CardInst2 = { readonly uid: string; readonly id: CardId2 };
 
@@ -100,7 +109,13 @@ export type StoryInst2 = { readonly id: StoryId2; chosenOptionId: string | null;
 export type StatusInst2 = { readonly uid: string; readonly id: StatusId2; readonly appliesFromTurn: number; remaining: number };
 export type { LogEntry, LogTone } from "./engineCommon";
 export type Notice = { readonly emoji: string; readonly name: string; readonly text: string };
-export type Carry = { readonly qingyu: number; readonly shengchong: number };
+export type Carry = {
+  readonly qingyu: number;
+  readonly shengchong: number;
+  /** 第一关「逆风解意」「杏花微雨」留下的旧事印记；旧存档没有这两项（视为无印记）。 */
+  readonly yimei?: YimeiMark | null;
+  readonly xinghua?: XinghuaMark | null;
+};
 
 export type Z2Action =
   | { readonly type: "playCard"; readonly cardUid: string }
@@ -117,6 +132,9 @@ export type Z2State = {
   stage: 2;
   seed: number;
   carry: Carry | null;
+  /** 旧事印记的一次性效果是否已用掉（杏花：清誉减免 / 首次侍寝加成）。 */
+  markShieldUsed: boolean;
+  markSummonUsed: boolean;
   rng: RngSerialized;
   turn: number;
   rank: RankId;
@@ -312,12 +330,25 @@ export function optionBarredByUnwell(s: Z2State, storyId: StoryId2, optionId: st
   return allowed != null && !allowed.includes(optionId) && summonUnwell(s) != null;
 }
 
-export function storyBasicOptions2(def: StoryDef2): StoryOption2[] {
-  return def.options.filter((o) => !o.card && !o.hidden);
+/** Options gated by a 旧事印记 only show up when 第一关 left that mark. */
+export function optionAvailable2(s: Z2State | undefined, o: StoryOption2): boolean {
+  if (!o.mark) return true;
+  const c = s?.carry;
+  if (!c) return false;
+  return (o.mark.yimei == null || c.yimei === o.mark.yimei) && (o.mark.xinghua == null || c.xinghua === o.mark.xinghua);
 }
 
-export function storyCardResponses2(def: StoryDef2): StoryOption2[] {
-  return def.options.filter((o) => o.card);
+export function storyBasicOptions2(def: StoryDef2, s?: Z2State): StoryOption2[] {
+  return def.options.filter((o) => !o.card && !o.hidden && optionAvailable2(s, o));
+}
+
+export function storyCardResponses2(def: StoryDef2, s?: Z2State): StoryOption2[] {
+  return def.options.filter((o) => o.card && optionAvailable2(s, o));
+}
+
+/** 前置剧情 / 旧事提示 for a story, from the 第一关 marks (null when none applies). */
+export function storyPreface2(s: Z2State, id: StoryId2) {
+  return storyPrefaceOf(id, s.carry);
 }
 
 /** Open stories `cardId` would answer if played now, with the option it picks. */
@@ -326,7 +357,7 @@ export function storyResponsesFor(s: Z2State, cardId: CardId2): { story: StoryIn
   for (const st of openStories(s)) {
     if (storyLocked(s, st)) continue;
     if (st.id === "zhaoxing" && summonUnwell(s)) continue;
-    const option = STORIES2[st.id].options.find((o) => o.card === cardId);
+    const option = STORIES2[st.id].options.find((o) => o.card === cardId && optionAvailable2(s, o));
     if (option && !optionBarredByUnwell(s, st.id, option.id)) out.push({ story: st, option });
   }
   return out;
@@ -486,9 +517,16 @@ function applyDelta2(s: Z2State, d: Delta2, source: string): void {
     log(s, `${source}：${label} +${d.amount}${capped} → ${next}`, "good");
     return;
   }
-  const next = Math.max(0, cur + d.amount);
+  let amount = d.amount;
+  if (d.resource === "qingyu" && !s.markShieldUsed && s.carry?.xinghua === "kanpoBushuopo") {
+    s.markShieldUsed = true;
+    log(s, MARK_SHIELD_LOG, "good");
+    amount += 1;
+    if (amount === 0) return;
+  }
+  const next = Math.max(0, cur + amount);
   s[d.resource] = next;
-  log(s, `${source}：${label} ${d.amount} → ${next}`, "bad");
+  log(s, `${source}：${label} ${amount} → ${next}`, "bad");
   if (next <= 0) lose(s, `${label}降至 0`, d.resource);
 }
 
@@ -663,6 +701,11 @@ function summonSuccess(s: Z2State, source: string): void {
     log(s, "晋封考验：侍寝条件达成。", "good");
   }
   applyDelta2(s, { resource: "shengchong", amount: 1 }, "侍寝");
+  if (!s.markSummonUsed && s.carry?.xinghua === "yishiXianghe") {
+    s.markSummonUsed = true;
+    log(s, MARK_SUMMON_LOG, "good");
+    applyDelta2(s, { resource: "shengchong", amount: 1 }, "旧事");
+  }
   applyDelta2(s, { resource: "hate", amount: 1 }, "侍寝");
   if (!alive(s) || s.pregnant || (s.rank !== "guiren" && s.rank !== "pin")) return;
   const chance = Math.min(1, s.shenzi / SHENZI.divisor);
@@ -697,6 +740,11 @@ function finaleStory(s: Z2State, card: CardId2, tier: LingrongTier | null): stri
 function openStory(s: Z2State, id: StoryId2): void {
   s.stories.push({ id, chosenOptionId: null });
   log(s, `剧情事件：【${STORIES2[id].name}】`);
+  const preface = storyPrefaceOf(id, s.carry);
+  if (preface) {
+    for (const line of preface.lines) log(s, `📜 ${line}`);
+    for (const note of preface.notes) log(s, note);
+  }
 }
 
 /** 惜别: once one of the leaving person's cards is in hand, all their other copies leave; only this one stays. */
@@ -884,6 +932,7 @@ function applyStoryOption(s: Z2State, inst: StoryInst2, option: StoryOption2, so
   if (option.setHate != null) {
     s.hate = option.setHate;
     log(s, `华妃恨意初始为 ${s.hate}。`, "bad");
+    if (inst.id === "chuQingan") applyChuqinganMarks(s);
   }
   if (option.setRelation != null) {
     s.relation = option.setRelation;
@@ -922,6 +971,26 @@ function applyStoryOption(s: Z2State, inst: StoryInst2, option: StoryOption2, so
   }
   if (option.shuhenjiao && tier) shuhenjiao(s, tier);
   return relationDelta;
+}
+
+/** 初谒翊坤: 第一关的旧事让华妃恨意初值（和清誉）有所增减。 */
+function applyChuqinganMarks(s: Z2State): void {
+  const c = s.carry;
+  if (!c) return;
+  const hits = [c.yimei ? CHUQINGAN_MARK_EFFECTS.yimei[c.yimei] : undefined, c.xinghua ? CHUQINGAN_MARK_EFFECTS.xinghua[c.xinghua] : undefined];
+  let hate = 0;
+  let qingyu = 0;
+  for (const h of hits) {
+    if (!h) continue;
+    hate += h.hate;
+    qingyu += h.qingyu;
+  }
+  if (hate !== 0) {
+    const next = Math.max(0, Math.min(HATE.max, s.hate + hate));
+    log(s, `旧事余波：华妃恨意初值 ${hate > 0 ? "+" : ""}${hate} → ${next}`, hate > 0 ? "bad" : "good");
+    s.hate = next;
+  }
+  if (qingyu !== 0) applyDelta2(s, { resource: "qingyu", amount: qingyu }, "旧事余波");
 }
 
 function departXibie(s: Z2State, who: DepartingCard, inFinale = false): void {
@@ -1442,6 +1511,8 @@ export function newStage2(seed: number, carry: Carry | null): Z2State {
     stage: 2,
     seed,
     carry,
+    markShieldUsed: false,
+    markSummonUsed: false,
     rng,
     turn: 0,
     rank: STAGE2.startRank,
@@ -1507,6 +1578,8 @@ export function newStage2(seed: number, carry: Carry | null): Z2State {
     nextUid,
   };
   log(s, carry ? `承接第一关：清誉 ${s.qingyu}、圣宠 ${s.shengchong}。` : `单独开始第二关：清誉 ${s.qingyu}、圣宠 ${s.shengchong}。`);
+  const intro = marksIntro(carry);
+  if (intro) log(s, `📜 ${intro}`);
   beginTurn2(s, 1);
   return s;
 }
@@ -1545,7 +1618,7 @@ export function reduce2(state: Z2State, action: Z2Action): Z2State {
       if (s.pending) return state;
       const inst = s.stories.find((st) => st.id === action.storyId && st.chosenOptionId == null);
       if (!inst || storyLocked(s, inst)) return state;
-      const option = storyBasicOptions2(STORIES2[inst.id]).find((o) => o.id === action.optionId);
+      const option = storyBasicOptions2(STORIES2[inst.id], state).find((o) => o.id === action.optionId);
       if (!option || optionBarredByUnwell(s, inst.id, option.id)) return state;
       const delta = applyStoryOption(s, inst, option, `【${STORIES2[inst.id].name}】选择：${option.name}`, null);
       if (alive(s) && delta) changeRelation(s, delta, "陵容");

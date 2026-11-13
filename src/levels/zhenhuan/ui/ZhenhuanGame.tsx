@@ -669,6 +669,7 @@ function OutcomeModal({
         {won ? (
           <>
             <p>{victoryRecap(state)}</p>
+            <p>这两桩旧事，宫里人都还记着。</p>
             <p>你从答应晋为常在，在这深宫里站稳了第一步。可翊坤宫的华妃，已经注意到了你。</p>
           </>
         ) : (
