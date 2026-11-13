@@ -43,7 +43,7 @@ describe("第一关旧事印记 → 第二关", () => {
     const hate = (c: Carry | null) => reduce2(atStory(c, "chuQingan", 3), { type: "chooseStory", storyId: "chuQingan", optionId: "bubeiBukang" });
     expect(hate(null).hate).toBe(2);
     expect(hate(carry("dangzhongShuopo", null)).hate).toBe(3);
-    expect(hate(carry("yinrenBuyan", "bixianGaotui")).hate).toBe(0);
+    expect(hate(carry("yinrenBuyan", "bixianGaotui")).hate).toBe(2); // 没有后续影响的分支：与无印记完全一样
     const t = hate(carry(null, "yuWangyeChangtan"));
     expect(t.hate).toBe(3);
     expect(t.qingyu).toBe(7);
@@ -63,8 +63,10 @@ describe("第一关旧事印记 → 第二关", () => {
   });
 
   it("每个有后果的旧事都有前置剧情文本", () => {
-    expect(storyPreface2(atStory(carry("dangzhongShuopo", "yishiXianghe"), "chuQingan", 3), "chuQingan")?.lines).toHaveLength(2);
+    expect(storyPreface2(atStory(carry("dangzhongShuopo", "yuWangyeChangtan"), "chuQingan", 3), "chuQingan")?.lines).toHaveLength(2);
     expect(storyPreface2(atStory(carry("jiemeiChafang", null), "yuyingerShishi", 4), "yuyingerShishi")?.notes).toHaveLength(1);
     expect(storyPreface2(atStory(null, "chuQingan", 3), "chuQingan")).toBeNull();
+    expect(storyPreface2(atStory(carry("yinrenBuyan", "bixianGaotui"), "chuQingan", 3), "chuQingan")).toBeNull();
+    expect(storyPreface2(atStory(carry("yinrenBuyan", "bixianGaotui"), "yuyingerShishi", 4), "yuyingerShishi")).toBeNull();
   });
 });

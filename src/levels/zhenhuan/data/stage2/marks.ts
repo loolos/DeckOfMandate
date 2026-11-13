@@ -24,8 +24,8 @@ export const CHUQINGAN_MARK_EFFECTS: {
   readonly yimei: Partial<Record<YimeiMark, { hate: number; qingyu: number }>>;
   readonly xinghua: Partial<Record<XinghuaMark, { hate: number; qingyu: number }>>;
 } = {
-  yimei: { yinrenBuyan: { hate: -1, qingyu: 0 }, dangzhongShuopo: { hate: 1, qingyu: 0 } },
-  xinghua: { bixianGaotui: { hate: -1, qingyu: 0 }, yuWangyeChangtan: { hate: 1, qingyu: -1 } },
+  yimei: { dangzhongShuopo: { hate: 1, qingyu: 0 } },
+  xinghua: { yuWangyeChangtan: { hate: 1, qingyu: -1 } },
 };
 
 export const MARK_SHIELD_LOG = "旧事：杏花微雨里你进退有度，宫里都说你有分寸，这一回的非议被压下去一些：清誉少扣 1。";
@@ -37,26 +37,15 @@ type Preface = { readonly text: string; readonly note?: string };
 const PREFACE: Record<string, { yimei?: Partial<Record<YimeiMark, Preface>>; xinghua?: Partial<Record<XinghuaMark, Preface>> }> = {
   chuQingan: {
     yimei: {
-      yinrenBuyan: {
-        text: "倚梅园那句诗被余莺儿占了去，你始终一个字也没争。这事在宫里传了一阵，传到翊坤宫，华妃只当你是个任人拿捏的软性子，端着茶盏瞥你的眼神里，少了几分戒备。",
-        note: "旧事：华妃恨意初值 -1。",
-      },
       dangzhongShuopo: {
         text: "当初你当众说破倚梅园的诗是自己所念，却拿不出半点凭据，宫里私下都说你是眼红新宠。华妃把这话当笑料听了去，今日一见你，便似笑非笑地道：「听说妹妹也会作诗？」",
         note: "旧事：华妃恨意初值 +1。",
       },
     },
     xinghua: {
-      bixianGaotui: {
-        text: "杏花微雨里，你对那位「王爷」守礼避嫌，福了一福便告退，事后才知那是皇上。这份疏远传到翊坤宫，华妃只当你不是肯争宠的人，神色松了几分。",
-        note: "旧事：华妃恨意初值 -1。",
-      },
       yuWangyeChangtan: {
         text: "杏花微雨里，你与那位「王爷」谈诗论词，相谈甚欢，不知被谁瞧见，宫里渐渐有了「私会外男」的闲话。华妃今日正好拿来作文章：「妹妹好兴致，御花园里的杏花，可还入眼？」",
         note: "旧事：华妃恨意初值 +1，清誉 -1。",
-      },
-      yishiXianghe: {
-        text: "杏花树下你与「王爷」以诗相和，后来才知那是皇上，圣眷也由此而来。华妃自然听说了，今日请安，她的目光在你身上停了许久，却没有急着发难。",
       },
       kanpoBushuopo: {
         text: "杏花微雨里你看破了「王爷」的身份，却始终守着本分，没有半句逾矩之言。宫里提起这事，都夸你进退有度；华妃想挑你的错，一时竟寻不出话头。",
@@ -73,21 +62,12 @@ const PREFACE: Record<string, { yimei?: Partial<Record<YimeiMark, Preface>>; xin
         text: "当初你赏过银子的那几个倚梅园小太监，如今有一个调去了冷宫当差。他托人带话：余莺儿那边，他可以引你去见一面，只是被人看见了，难免惹来闲话。",
         note: "旧事：多出一个不用出牌的选项「托旧识探视」。",
       },
-      yinrenBuyan: {
-        text: "倚梅园的事你始终没有声张。如今余莺儿获罪，宫里议论纷纷，却没有一个人把你牵扯进来；你也无意落井下石，只觉得往事如烟。",
-      },
-      dangzhongShuopo: {
-        text: "当初你当众说破却无凭无据，如今余莺儿一出事，不少人想起这桩旧事，看你的眼神里添了几分探究：莫非那夜念诗的，真是你？",
-      },
     },
   },
   zhaoxing: {
     xinghua: {
       yishiXianghe: {
         text: "你想起杏花微雨那日，皇上在树下认出你就是倚梅园念诗之人。今夜翻了你的牌子，敬事房的公公笑着凑趣：「皇上特意交代，要请的是杏花树下那位小主。」",
-      },
-      bixianGaotui: {
-        text: "杏花微雨那日你福身告退，皇上在树下望了许久。今夜翻了你的牌子，敬事房的公公随口提了一句：「皇上近日倒不大提起碎玉轩了。」",
       },
     },
   },
@@ -106,8 +86,9 @@ export function marksIntro(marks: MarkCarry | null): string | null {
   if (!marks || (!marks.yimei && !marks.xinghua)) return null;
   const recap = (id: "yimeiYuan" | "xinghuaWeiyu", option: string | null | undefined) =>
     option ? STORIES[id].options.find((o) => o.id === option)?.recap : undefined;
-  const a = recap("yimeiYuan", marks.yimei);
-  const b = recap("xinghuaWeiyu", marks.xinghua);
+  // 没有后续影响的选择（隐忍不言、避嫌告退）不再提起
+  const a = marks.yimei && marks.yimei !== "yinrenBuyan" ? recap("yimeiYuan", marks.yimei) : undefined;
+  const b = marks.xinghua && marks.xinghua !== "bixianGaotui" ? recap("xinghuaWeiyu", marks.xinghua) : undefined;
   const parts = [a && `倚梅园一事，你${a}`, b && `杏花微雨中，你${b}`].filter(Boolean);
   return parts.length ? `旧事未了：${parts.join("；")}。宫里人都还记着。` : null;
 }
