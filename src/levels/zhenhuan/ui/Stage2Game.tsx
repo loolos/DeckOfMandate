@@ -65,6 +65,7 @@ import {
   removableNegatives,
   optionBarredByUnwell,
   storyBasicOptions2,
+  storyPreface2,
   storyCardResponses2,
   storyResponsesFor,
   summonBlocked,
@@ -256,13 +257,14 @@ function StoryCard({ state, inst, dispatch, fold }: { state: Z2State; inst: Stor
   const chosen = inst.chosenOptionId;
   const blocked = inst.id === "zhaoxing" && summonBlocked(state);
   // 抱恙在身: no 侍寝, so the card answers are hidden until it is removed
-  const cardResponses = (inst.id === "zhaoxing" && chosen == null && summonUnwell(state) ? [] : storyCardResponses2(def)).filter(
+  const cardResponses = (inst.id === "zhaoxing" && chosen == null && summonUnwell(state) ? [] : storyCardResponses2(def, state)).filter(
     (o) => chosen != null || !optionBarredByUnwell(state, inst.id, o.id),
   );
   const unwellBars = chosen == null && def.unwellOptionIds != null && summonUnwell(state) != null;
   const locked = chosen != null || state.pending != null || state.outcome !== "playing" || blocked;
   const chosenOption = chosen ? def.options.find((o) => o.id === chosen) : undefined;
   const defaultOption = def.options.find((o) => o.id === def.defaultOptionId)!;
+  const preface = storyPreface2(state, inst.id);
   const tier = tierOf(state);
   const className = [styles.card, styles.cardStory, chosen && styles.cardResolved, blocked && !chosen && styles.cardGreyed].filter(Boolean).join(" ");
   const tag = (
@@ -316,11 +318,25 @@ function StoryCard({ state, inst, dispatch, fold }: { state: Z2State; inst: Stor
         />
       ) : null}
       <p className={styles.flavor}>{storyFlavor2(def, state.turn)}</p>
+      {preface ? (
+        <>
+          {preface.lines.map((line) => (
+            <p key={line} className={styles.flavor}>
+              📜 {line}
+            </p>
+          ))}
+          {preface.notes.map((note) => (
+            <p key={note} className={styles.rule}>
+              {note}
+            </p>
+          ))}
+        </>
+      ) : null}
       {def.note ? <p className={styles.rule}>{def.note}</p> : null}
       {blocked ? <p className={styles.endHint}>皇上在翊坤宫，须先化解【欢宜香浓】才能处理召幸。</p> : null}
       {inst.id === "zhaoxing" && chosen == null && summonUnwell(state) ? <p className={styles.endHint}>{summonUnwell(state)}，不能侍寝：只能称病避宠或错过。</p> : null}
       {unwellBars ? <p className={styles.endHint}>{summonUnwell(state)}，只能安分随侍或请温太医相助。</p> : null}
-      {storyBasicOptions2(def).map((option) => (
+      {storyBasicOptions2(def, state).map((option) => (
         <div key={option.id} className={[styles.option, chosen === option.id && styles.optionChosen].filter(Boolean).join(" ")}>
           <span>
             <strong>{option.name}</strong>
